@@ -5,7 +5,7 @@ import { useServerInsertedHTML } from 'next/navigation'
 
 
 
-export const SsrStyles = () => {
-    useServerInsertedHTML(() => <Styles />);
+export const StylesSSR = () => {
+    useServerInsertedHTML(() => <Styles key='123abc' />);
     return <></>;
 }

@@ -1,6 +1,8 @@
 import './layoutStyles.scss'
-import './layoutStylesLoader'
-import { SsrStyles } from './SsrStyles'
+import { LayoutStylesLoader } from './layoutStylesLoader'
+
+import './StylesCSR'                    // client_side_rendering CSS (required)
+import { StylesSSR } from './StylesSSR' // server_side_rendering CSS (optional)
 
 import { Header } from './Header'
 import { Footer } from './Footer'
@@ -22,7 +24,8 @@ export default function RootLayout({
     return (
         <html lang="en">
             <head>
-                <SsrStyles />
+                <LayoutStylesLoader />
+                <StylesSSR />
             </head>
             <body>
                 <Header />
