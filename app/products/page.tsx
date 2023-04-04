@@ -1,9 +1,16 @@
 'use client'
 
-import { usePageStyleSheet } from './pageStylesLoader'
+import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 
 import { Main } from '@/components/sections/Main'
 import { Section } from '@/components/sections/Section'
+
+
+
+// styles:
+export const usePageStyleSheet = dynamicStyleSheets(
+    () => import(/* webpackPrefetch: true */'./pageStyles')
+, { id: 'products-pcyfaeow8d' });
 
 
 

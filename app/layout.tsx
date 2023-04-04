@@ -1,15 +1,23 @@
 'use client'
 
+import { styleSheets } from '@cssfn/core'
+
 import './StylesCSR'                    // client_side_rendering CSS (required)
 import { StylesSSR } from './StylesSSR' // server_side_rendering CSS (optional)
 
 import '@/theme.config'
 
 import './layoutStyles.scss'
-import { LayoutStylesLoader } from './layoutStylesLoader'
 
 import { Header } from './Header'
 import { Footer } from './Footer'
+
+
+
+// styles:
+styleSheets(
+    () => import(/* webpackPrefetch: true */ './layoutStyles')
+, { id: 'layout-eh4gver0nl' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 
 
 
@@ -28,7 +36,6 @@ export default function RootLayout({
     return (
         <html lang="en">
             <head>
-                <LayoutStylesLoader />
                 <StylesSSR />
             </head>
             <body>
