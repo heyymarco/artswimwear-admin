@@ -4,7 +4,12 @@ import nextConnect from 'next-connect'
 
 import { connectDB } from '@/libs/dbConn'
 import { default as Product, ProductSchema } from '@/models/Product'
-import { HydratedDocument } from 'mongoose'
+import type { HydratedDocument } from 'mongoose'
+
+
+
+// types:
+export type PreviewProduct  = Required<Pick<ProductSchema, '_id'>> & Pick<ProductSchema, 'name'|'price'|'stock'> & { image?: Required<ProductSchema>['images'][number] }
 
 
 
@@ -51,5 +56,7 @@ export default nextConnect<NextApiRequest, NextApiResponse>({
     
     
     
-    return res.json({ message : 'Hello, Next.js!' });
+    return res.json(
+        (await Product.find<HydratedDocument<PreviewProduct>>({}, { _id: true, name: true, price: true, stock: true, image: { $first: "$images" } }))
+    );
 })
