@@ -2,17 +2,17 @@
 
 import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 
-import { Main } from '@/components/sections/Main'
-import { Section } from '@/components/sections/Section'
+import { Section, Main } from '@heymarco/section'
+
 import { List, ListItem } from '@reusable-ui/components';
 import { ProductEntry, useGetProductList } from '@/store/features/api/apiSlice';
 import { useState } from 'react';
-import LoadingBar from '@/components/LoadingBar';
+import { LoadingBar } from '@heymarco/loading-bar'
 
 
 
 // styles:
-export const usePageStyleSheet = dynamicStyleSheets(
+const usePageStyleSheet = dynamicStyleSheets(
     () => import(/* webpackPrefetch: true */'./pageStyles')
 , { id: 'products-pcyfaeow8d' });
 
@@ -72,7 +72,7 @@ export default function Products() {
                         </td></tr>}
                         
                         {!!products && Object.values(products?.entities).filter((product): product is Exclude<typeof product, undefined> => !!product).map((product) =>
-                            <tr>
+                            <tr key={product._id}>
                                 <td>
                                     Image
                                 </td>

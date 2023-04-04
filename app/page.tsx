@@ -1,6 +1,7 @@
+'use client'
+
 import Image from 'next/image'
-import { Main } from '@/components/sections/Main'
-import { Section } from '@/components/sections/Section'
+import { Section, Main } from '@heymarco/section'
 
 
 
