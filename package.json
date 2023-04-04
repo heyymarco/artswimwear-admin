@@ -14,6 +14,7 @@
     "@cssfn/cssfn-react": "^2.5.0",
     "@reusable-ui/components": "^5.2.0",
     "@reusable-ui/core": "^5.2.0",
+    "@reusable-ui/next-compat-link": "^5.2.0",
     "@types/node": "18.15.11",
     "@types/react": "18.0.31",
     "@types/react-dom": "18.0.11",

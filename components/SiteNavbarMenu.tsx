@@ -1,8 +1,7 @@
 'use client'
 
-import Link from 'next/link'
 import { Collapse, HamburgerMenuButton, Icon, Nav, NavbarParams, NavItem } from '@reusable-ui/components'
-import { ClientLink } from './ClientLink'
+import Link from '@reusable-ui/next-compat-link';
 
 
 
@@ -31,8 +30,8 @@ const SiteNavbarMenu = ({
             
             <Collapse className='list' mainClass={navbarExpanded ? '' : undefined} expanded={listExpanded}>
                 <Nav tag='ul' role='' {...basicVariantProps} orientation={navbarExpanded ? 'inline' : 'block'} listStyle='flat' gradient={navbarExpanded ? 'inherit' : false}>
-                    <NavItem><ClientLink href='/'>Home</ClientLink></NavItem>
-                    <NavItem><ClientLink href='/products'>Products</ClientLink></NavItem>
+                    <NavItem><Link href='/'>Home</Link></NavItem>
+                    <NavItem><Link href='/products'>Products</Link></NavItem>
                 </Nav>
             </Collapse>
         </>
