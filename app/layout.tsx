@@ -1,8 +1,12 @@
-import './layoutStyles.scss'
-import { LayoutStylesLoader } from './layoutStylesLoader'
+'use client'
 
 import './StylesCSR'                    // client_side_rendering CSS (required)
 import { StylesSSR } from './StylesSSR' // server_side_rendering CSS (optional)
+
+import '@/theme.config'
+
+import './layoutStyles.scss'
+import { LayoutStylesLoader } from './layoutStylesLoader'
 
 import { Header } from './Header'
 import { Footer } from './Footer'
