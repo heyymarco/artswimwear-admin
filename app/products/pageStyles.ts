@@ -7,7 +7,8 @@ import {
 
 // styles:
 export default () => [
-    scopeOf('section1', {
-        background: 'pink',
+    scopeOf('toolbox', {
+    }, { specificityWeight: 2 }),
+    scopeOf('products', {
     }, { specificityWeight: 2 }),
 ];

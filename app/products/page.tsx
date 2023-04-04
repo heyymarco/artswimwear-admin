@@ -4,6 +4,7 @@ import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 
 import { Main } from '@/components/sections/Main'
 import { Section } from '@/components/sections/Section'
+import { List, ListItem } from '@reusable-ui/components';
 
 
 
@@ -22,10 +23,57 @@ export default function Products() {
     // jsx:
     return (
         <Main nude={true}>
-            <Section title='Products' className={styles.section1}>
+            <Section className={styles.toolbox}>
                 <p>
-                    This is a products page.
+                    toolbox
                 </p>
+            </Section>
+            <Section title='Products' className={styles.products}>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>
+                                Products
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>
+                                Image
+                            </th>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Price
+                            </th>
+                            <th>
+                                Stock
+                            </th>
+                            <th>
+                                Status
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                Image
+                            </td>
+                            <td>
+                                Name
+                            </td>
+                            <td>
+                                Price
+                            </td>
+                            <td>
+                                Stock
+                            </td>
+                            <td>
+                                Status
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </Section>
         </Main>
     )
