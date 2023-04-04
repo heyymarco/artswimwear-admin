@@ -12,6 +12,9 @@ import './layoutStyles.scss'
 import { Header } from './Header'
 import { Footer } from './Footer'
 
+import { store } from '@/store/store'
+import { Provider } from 'react-redux'
+
 
 
 // styles:
@@ -40,7 +43,9 @@ export default function RootLayout({
             </head>
             <body>
                 <Header />
-                {children}
+                <Provider store={store}>
+                    {children}
+                </Provider>
                 <Footer />
             </body>
         </html>
