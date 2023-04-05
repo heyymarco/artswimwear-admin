@@ -5,7 +5,7 @@ import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 import { Section, Main } from '@heymarco/section'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, List, ListItem, NavNextItem, NavPrevItem, Pagination } from '@reusable-ui/components';
+import { ButtonIcon, ButtonIconProps, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps } from '@reusable-ui/components';
 import { ProductEntry, useGetProductList } from '@/store/features/api/apiSlice';
 import { useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
@@ -20,6 +20,67 @@ const usePageStyleSheet = dynamicStyleSheets(
 
 
 
+const EditButton = (props: ButtonIconProps) => {
+    return (
+        <ButtonIcon
+            className={props.className ?? 'edit'}
+            icon={props.icon ?? 'edit'}
+            theme={props.theme ?? 'primary'}
+            size={props.size ?? 'xs'}
+            buttonStyle={props.buttonStyle ?? 'link'}
+            title={props.title ?? 'edit'}
+        />
+    );
+}
+interface ProductUiProps extends ListItemProps {
+    product: ProductEntry
+}
+const ProductItem = (props: ProductUiProps) => {
+    // styles:
+    const styles = usePageStyleSheet();
+    
+    
+    
+    const {
+        product,
+    ...restListItem} = props;
+    const {
+        name,
+        image,
+        price,
+        stock,
+    } = product;
+    
+    
+    
+    // jsx:
+    return (
+        <ListItem {...restListItem} className={styles.productItem}>
+            <Image
+                className='prodImg'
+                
+                alt={name ?? ''}
+                src={image ? `/products/${name}/${image}` : undefined}
+                sizes='96px'
+            />
+            <h3 className='title'>
+                {name}
+            </h3>
+            <p className='price'>
+                <strong className='value'>{formatCurrency(price)}</strong>
+                <EditButton />
+            </p>
+            <p className='stock'>
+                Stock: <strong className='value'>{stock ?? 'unlimited'}</strong>
+                <EditButton />
+            </p>
+            <p className='avail'>
+                Availability:
+                <EditButton />
+            </p>
+        </ListItem>
+    );
+}
 export default function Products() {
     // styles:
     const styles = usePageStyleSheet();
@@ -34,8 +95,13 @@ export default function Products() {
     
     
     // jsx:
-    const ProductPagination = () => (
-        <Pagination theme='primary' size='sm' itemsLimit={20}
+    const ProductPagination = (props: PaginationProps) => (
+        <Pagination
+            {...props}
+            theme={props.theme ?? 'primary'}
+            size={props.size ?? 'sm'}
+            itemsLimit={props.itemsLimit ?? 20}
+            
             prevItems={
                 <NavPrevItem
                     onClick={() => setPage(1)}
@@ -73,44 +139,18 @@ export default function Products() {
                 </p>
             </Section>
             <Section title='Products' className={styles.products}>
-                <ProductPagination />
-                <List theme='primary' enabled={!products || !isFetching}>
-                    {isLoading && <LoadingBar
-                        nude={true}
-                    />}
-                    
-                    {isError && <ListItem>
+                <ProductPagination className='pagin-top' />
+                <List className='product-list' theme='primary' enabled={!products || !isFetching} listStyle={(isLoading || isError) ? 'content' : undefined}>
+                    {(isLoading || isError) && <ListItem>
+                        {isLoading && <LoadingBar />}
                         {isError && <p>Oops, an error occured!</p>}
                     </ListItem>}
                     
                     {!!products && Object.values(products?.entities).filter((product): product is Exclude<typeof product, undefined> => !!product).map((product, index) =>
-                        <ListItem key={index}>
-                            <Image
-                                className='prodImg'
-                                
-                                alt={product?.name ?? ''}
-                                src={product?.image ? `/products/${product?.name}/${product?.image}` : undefined}
-                                sizes='48px'
-                            />
-                            <h3>
-                                {product.name}
-                            </h3>
-                            <p>
-                                {formatCurrency(product.price)}
-                                <ButtonIcon icon='edit' theme='primary' size='xs' buttonStyle='link' />
-                            </p>
-                            <p>
-                                Stock: {product.stock}
-                                <ButtonIcon icon='edit' theme='primary' size='xs' buttonStyle='link' />
-                            </p>
-                            <p>
-                                Status
-                                <ButtonIcon icon='edit' theme='primary' size='xs' buttonStyle='link' />
-                            </p>
-                        </ListItem>
+                        <ProductItem key={product._id ?? (`${page}-${index}`)} product={product} />
                     )}
                 </List>
-                <ProductPagination />
+                <ProductPagination className='pagin-btm' />
             </Section>
         </Main>
     )
