@@ -34,6 +34,16 @@ export default nextConnect<NextApiRequest, NextApiResponse>({
     },
 })
 .get<NextApiRequest, NextApiResponse>(async (req, res) => {
+    if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
+        await new Promise<void>((resolve) => {
+            setTimeout(() => {
+                resolve();
+            }, 2000);
+        });
+    } // if
+    
+    
+    
     //#region parsing request
     const {
         page    : pageStr    = 1,
@@ -56,7 +66,12 @@ export default nextConnect<NextApiRequest, NextApiResponse>({
     
     
     
-    return res.json(
-        (await Product.find<HydratedDocument<PreviewProduct>>({}, { _id: true, name: true, price: true, stock: true, image: { $first: "$images" } }))
-    );
+    const total = await Product.count();
+    return res.json({
+        total,
+        entities: (await Product.find<HydratedDocument<PreviewProduct>>({}, { _id: true, name: true, price: true, stock: true, image: { $first: "$images" } }, {
+            skip  : (page - 1) * perPage, // note: not scaleable but works in small commerce app -- will be fixed in the future
+            limit : perPage,
+        }))
+    });
 })

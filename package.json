@@ -12,6 +12,7 @@
     "@cssfn/core": "^2.5.0",
     "@cssfn/cssfn-dom": "^2.5.2",
     "@cssfn/cssfn-react": "^2.5.0",
+    "@heymarco/image": "^1.0.3",
     "@heymarco/loading-bar": "^1.0.0",
     "@heymarco/section": "^1.0.1",
     "@reduxjs/toolkit": "^1.9.3",
