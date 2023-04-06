@@ -43,11 +43,25 @@ export const apiSlice = createApi({
                 ];
             },
         }),
+        updateProduct : builder.mutation<ProductEntry, Pick<ProductEntry, '_id'> & Partial<Omit<ProductEntry, '_id'>>>({
+            query: (patch) => ({
+                url    : 'product',
+                method : 'PATCH',
+                body   : patch
+            }),
+            invalidatesTags: (result, error, page) => [
+                ...((!result ? [] : [{
+                    type : 'Products',
+                    id   : result._id,
+                }]) as Array<{ type: 'Products', id: string }>),
+            ],
+        }),
     }),
 });
 
 
 
 export const {
-    useGetProductListQuery : useGetProductList,
+    useGetProductListQuery   : useGetProductList,
+    useUpdateProductMutation : useUpdateProduct,
 } = apiSlice;

@@ -75,3 +75,48 @@ export default nextConnect<NextApiRequest, NextApiResponse>({
         }))
     });
 })
+.patch<NextApiRequest, NextApiResponse>(async (req, res) => {
+    if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
+        await new Promise<void>((resolve) => {
+            setTimeout(() => {
+                resolve();
+            }, 2000);
+        });
+    } // if
+    
+    
+    
+    //#region parsing request
+    const {
+        _id,
+        name,
+    } = req.body;
+    //#endregion parsing request
+    
+    
+    
+    //#region validating request
+    if ((typeof(_id) !== 'string') || (_id.length < 1)
+        ||
+        ((name !== undefined) && ((typeof(name) !== 'string') || (name.length < 1)))
+    ) {
+        return res.status(400).json({ error: 'invalid data' });
+    } // if
+    const product = await Product.findById(_id, { _id: true, name: true, price: true, stock: true, image: { $first: "$images" } });
+    if (!product) return res.status(400).json({ error: 'invalid ID' });
+    //#endregion validating request
+    
+    
+    
+    //#region save changes
+    if (name !== undefined) product.name = name;
+    
+    try {
+        await product.save();
+        res.status(200).json(product);
+    }
+    catch (error) {
+        res.status(500).json({ error: error });
+    } // try
+    //#endregion save changes
+})

@@ -5,11 +5,12 @@ import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 import { Section, Main } from '@heymarco/section'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, ButtonIconProps, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps } from '@reusable-ui/components';
-import { ProductEntry, useGetProductList } from '@/store/features/api/apiSlice';
-import { useState } from 'react';
+import { ButtonIcon, ButtonIconProps, CardBody, List, ListItem, ListItemProps, ModalCard, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput } from '@reusable-ui/components';
+import { ProductEntry, useGetProductList, useUpdateProduct } from '@/store/features/api/apiSlice';
+import { useEffect, useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
 import { formatCurrency } from '@/libs/formatters';
+import { AccessibilityProvider, useEvent } from '@reusable-ui/core';
 
 
 
@@ -23,6 +24,7 @@ const usePageStyleSheet = dynamicStyleSheets(
 const EditButton = (props: ButtonIconProps) => {
     return (
         <ButtonIcon
+            {...props}
             className={props.className ?? 'edit'}
             icon={props.icon ?? 'edit'}
             theme={props.theme ?? 'primary'}
@@ -32,10 +34,86 @@ const EditButton = (props: ButtonIconProps) => {
         />
     );
 }
-interface ProductUiProps extends ListItemProps {
+interface SimpleEditorProps {
+    product  : ProductEntry
+    edit     : Exclude<keyof ProductEntry, '_id'>
+    type     : 'text'|'number'
+    required : boolean
+    onClose  : () => void
+}
+const SimpleEditor = ({product, edit, type, required, onClose}: SimpleEditorProps) => {
+    // styles:
+    const styles = usePageStyleSheet();
+    
+    
+    
+    // states:
+    const [editorValue, setEditorValue] = useState(product[edit]);
+    
+    
+    
+    // stores:
+    const [updateProduct, {isLoading}] = useUpdateProduct();
+    
+    
+    
+    // handlers:
+    const handleEditorChange : React.ChangeEventHandler<HTMLInputElement> = useEvent((event) => {
+        setEditorValue((type === 'number') ? event.target.valueAsNumber : event.target.value);
+    });
+    const handleSave = useEvent(async () => {
+        try {
+            await updateProduct({
+                _id: product._id,
+                [edit] : editorValue,
+            }).unwrap();
+            
+            onClose();
+        }
+        catch (error) {
+            console.log('error: ', error);
+        } // try
+    });
+    const handleKeyDown : React.KeyboardEventHandler<HTMLElement> = useEvent((event) => {
+        if (event.key === 'Enter') handleSave();
+    })
+    
+    
+    
+    // dom effects:
+    const editorRef = useRef<HTMLInputElement|null>(null);
+    useEffect(() => {
+        // setups:
+        const cancelFocus = setTimeout(() => {
+            editorRef.current?.setSelectionRange(0, -1);
+            editorRef.current?.focus({ preventScroll: true });
+        }, 0);
+        
+        
+        
+        // cleanups:
+        return () => {
+            clearTimeout(cancelFocus);
+        }
+    }, []);
+    
+    
+    
+    // jsx:
+    return (
+        <CardBody className={styles.simpleEditor} onKeyDown={handleKeyDown}>
+            <AccessibilityProvider enabled={!isLoading}>
+                <TextInput className='editor' type={type} value={editorValue} onChange={handleEditorChange} enableValidation={true} required={required} elmRef={editorRef} />
+                <ButtonIcon className='btnSave' icon='save' theme='success' onClick={handleSave}>Save</ButtonIcon>
+                <ButtonIcon className='btnCancel' icon='cancel' theme='danger' onClick={onClose}>Cancel</ButtonIcon>
+            </AccessibilityProvider>
+        </CardBody>
+    );
+}
+interface ProductItemProps extends ListItemProps {
     product: ProductEntry
 }
-const ProductItem = (props: ProductUiProps) => {
+const ProductItem = (props: ProductItemProps) => {
     // styles:
     const styles = usePageStyleSheet();
     
@@ -53,9 +131,20 @@ const ProductItem = (props: ProductUiProps) => {
     
     
     
+    // states:
+    type EditMode = 'name'|'price'|'stock'|'visibility'
+    const [editMode, setEditMode] = useState<EditMode|null>(null);
+    
+    
+    
+    // refs:
+    const listItemRef = useRef<HTMLElement|null>(null);
+    
+    
+    
     // jsx:
     return (
-        <ListItem {...restListItem} className={styles.productItem}>
+        <ListItem {...restListItem} elmRef={listItemRef} className={styles.productItem}>
             <Image
                 className='prodImg'
                 
@@ -63,21 +152,26 @@ const ProductItem = (props: ProductUiProps) => {
                 src={image ? `/products/${name}/${image}` : undefined}
                 sizes='96px'
             />
-            <h3 className='title'>
+            
+            <h3 className='name'>
                 {name}
+                <EditButton onClick={() => setEditMode('name')} />
             </h3>
             <p className='price'>
                 <strong className='value'>{formatCurrency(price)}</strong>
-                <EditButton />
+                <EditButton onClick={() => setEditMode('price')} />
             </p>
             <p className='stock'>
                 Stock: <strong className='value'>{stock ?? 'unlimited'}</strong>
-                <EditButton />
+                <EditButton onClick={() => setEditMode('stock')} />
             </p>
-            <p className='avail'>
-                Availability:
-                <EditButton />
+            <p className='visibility'>
+                Visibility:
+                <EditButton onClick={() => setEditMode('visibility')} />
             </p>
+            <ModalCard modalViewport={listItemRef} expanded={!!editMode} onExpandedChange={({expanded}) => !expanded && setEditMode(null)} lazy={true} backdropStyle='static'>
+                {(editMode === 'name') && <SimpleEditor product={product} type='text' edit='name' required onClose={() => setEditMode(null)} />}
+            </ModalCard>
         </ListItem>
     );
 }
@@ -113,11 +207,11 @@ export default function Products() {
                 />
             }
         >
-            {(isLoading || isError) && <LoadingBar
+            {(isLoading || isError) && <ListItem nude={true}><LoadingBar className={styles.paginationLoading}
                 nude={true}
                 running={isLoading}
                 theme={isError ? 'danger' : undefined}
-            />}
+            /></ListItem>}
             
             {[...Array(pages)].map((_, index) =>
                 <ListItem

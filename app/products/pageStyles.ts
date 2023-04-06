@@ -13,6 +13,9 @@ import { typos } from '@reusable-ui/core';
 export default () => [
     scopeOf('toolbox', {
     }, { specificityWeight: 2 }),
+    scopeOf('paginationLoading', {
+        blockSize: '100%',
+    }, { specificityWeight: 2 }),
     scopeOf('products', {
         ...children('article', {
             display: 'grid',
@@ -42,17 +45,17 @@ export default () => [
     scopeOf('productItem', {
         display: 'grid',
         gridTemplate: [[
-            '"image title"', 'auto',
-            '"image price"', 'auto',
-            '"image stock"', 'auto',
-            '"image avail"', 'auto',
+            '"image      name "', 'auto',
+            '"image      price"', 'auto',
+            '"image      stock"', 'auto',
+            '"image visibility"', 'auto',
             '/',
             'min-content', 'auto',
         ]],
         padding: '1rem',
         gapInline: '1rem',
         gapBlock: '0.5rem',
-        ...descendants(['.title', 'p'], {
+        ...descendants(['.name', 'p'], {
             margin: 0,
         }),
         ...descendants('.value', {
@@ -70,8 +73,8 @@ export default () => [
             gridArea: 'image',
             width: '96px',
         }),
-        ...children('.title', {
-            gridArea: 'title',
+        ...children('.name', {
+            gridArea: 'name',
             fontSize: typos.fontSizeXl,
         }),
         ...children('.price', {
@@ -80,8 +83,30 @@ export default () => [
         ...children('.stock', {
             gridArea: 'stock',
         }),
-        ...children('.avail', {
-            gridArea: 'avail',
+        ...children('.visibility', {
+            gridArea: 'visibility',
         }),
     }, { specificityWeight: 2 }),
+    scopeOf('simpleEditor', {
+        display: 'grid',
+        gridTemplate: [[
+            '"editor     editor"', 'auto',
+            '"btnSave btnCancel"', 'auto',
+            '/',
+            '1fr', '1fr'
+        ]],
+        gap: '0.5rem',
+        ...children('.editor', {
+            gridArea: 'editor',
+            
+            boxSizing: 'content-box',
+            minInlineSize: '20em',
+        }),
+        ...children('.btnSave', {
+            gridArea: 'btnSave',
+        }),
+        ...children('.btnCancel', {
+            gridArea: 'btnCancel',
+        }),
+    }, { specificityWeight: 3 }),
 ];
