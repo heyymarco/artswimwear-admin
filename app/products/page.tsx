@@ -6,7 +6,7 @@ import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 import { Section, Main } from '@heymarco/section'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, ButtonIconProps, CardBody, InputProps, List, ListItem, ListItemProps, ModalCard, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput, NumberInput, Group, Label } from '@reusable-ui/components';
+import { ButtonIcon, ButtonIconProps, CardBody, InputProps, List, ListItem, ListItemProps, ModalCard, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput, NumberInput, Group, Label, Basic, Content } from '@reusable-ui/components';
 import { ProductEntry, useGetProductList, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
@@ -330,8 +330,15 @@ export default function Products() {
     // stores:
     const [page, setPage] = useState<number>(1);
     const [perPage, setPerPage] = useState<number>(5);
-    const {data: products, isError, isLoading, isFetching } = useGetProductList({ page, perPage });
+    const {data: products, isLoading, isFetching, isError, refetch } = useGetProductList({ page, perPage });
+    const isErrorNoData = isError && !products;
     const pages = Math.ceil((products?.total ?? 0) / perPage);
+    
+    
+    
+    // refs:
+    // const
+    
     
     
     // jsx:
@@ -353,10 +360,10 @@ export default function Products() {
                 />
             }
         >
-            {(isLoading || isError) && <ListItem nude={true}><LoadingBar className={styles.paginationLoading}
+            {(isLoading || isErrorNoData) && <ListItem nude={true}><LoadingBar className={styles.paginationLoading}
                 nude={true}
                 running={isLoading}
-                theme={isError ? 'danger' : undefined}
+                theme={isErrorNoData ? 'danger' : undefined}
             /></ListItem>}
             
             {[...Array(pages)].map((_, index) =>
@@ -372,25 +379,35 @@ export default function Products() {
         </Pagination>
     );
     return (
-        <Main nude={true}>
-            <Section className={styles.toolbox}>
+        <Main className={styles.page} title='Products'>
+            <Section className={`fill-self ${styles.toolbox}`}>
                 <p>
                     toolbox
                 </p>
             </Section>
-            <Section title='Products' className={styles.products}>
-                <ProductPagination className='pagin-top' />
-                <List className='product-list' theme='primary' enabled={!products || !isFetching} listStyle={(isLoading || isError) ? 'content' : undefined}>
-                    {(isLoading || isError) && <ListItem>
-                        {isLoading && <LoadingBar />}
-                        {isError && <p>Oops, an error occured!</p>}
-                    </ListItem>}
+            <Section className={`fill-self ${styles.products}`}>
+                <ProductPagination className={styles.paginTop} />
+                <Basic className={styles.productList} theme='primary' mild={true}>
+                    {isLoading && <Content tag='article' className={styles.productFetching}>
+                        <p>Retrieving data from the server. Please wait...</p>
+                        <LoadingBar className='loadingBar' />
+                    </Content>}
                     
-                    {!!products && Object.values(products?.entities).filter((product): product is Exclude<typeof product, undefined> => !!product).map((product, index) =>
-                        <ProductItem key={product._id ?? (`${page}-${index}`)} product={product} />
-                    )}
-                </List>
-                <ProductPagination className='pagin-btm' />
+                    {isErrorNoData && <Content tag='article' className={styles.productFetchError}>
+                        <h3>Oops, an error occured!</h3>
+                        <p>We were unable to retrieve data from the server.</p>
+                        <ButtonIcon icon='refresh' onClick={refetch}>
+                            Retry
+                        </ButtonIcon>
+                    </Content>}
+                    
+                    {!!products && <List listStyle='flush'>
+                        {Object.values(products?.entities).filter((product): product is Exclude<typeof product, undefined> => !!product).map((product, index) =>
+                            <ProductItem key={product._id ?? (`${page}-${index}`)} product={product} />
+                        )}
+                    </List>}
+                </Basic>
+                <ProductPagination className={styles.paginBtm} />
             </Section>
         </Main>
     )

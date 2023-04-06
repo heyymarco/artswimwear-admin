@@ -42,7 +42,7 @@ export default nextConnect<NextApiRequest, NextApiResponse>({
         });
     } // if
     
-    
+    throw '';
     
     //#region parsing request
     const {

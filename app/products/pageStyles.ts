@@ -5,48 +5,86 @@ import {
     rule,
     scopeOf,
 }                           from '@cssfn/core'          // writes css in javascript
-import { typos, usesPadding } from '@reusable-ui/core';
+import { typos, usesBorder, usesGroupable, usesPadding } from '@reusable-ui/core';
 
 
 
 // styles:
 export default () => {
     const {paddingVars} = usesPadding();
+    const {groupableRule} = usesGroupable({
+        orientationInlineSelector : null,
+        orientationBlockSelector  : '&',
+    });
+    const {borderVars} = usesBorder();
     
     
     
     return [
+        scopeOf('page', {
+            display: 'flex',
+            flexDirection: 'column',
+        }),
         scopeOf('toolbox', {
         }, { specificityWeight: 2 }),
         scopeOf('paginationLoading', {
             blockSize: '100%',
         }, { specificityWeight: 2 }),
         scopeOf('products', {
+            flexGrow: 1,
+            
+            display: 'flex',
+            flexDirection: 'column',
             ...children('article', {
+                flexGrow: 1,
+                
                 display: 'grid',
                 gridTemplate: [[
-                    '"pagin-top"',    'auto',
-                    '"product-list"', 'auto',
-                    '"pagin-btm"',    'auto',
+                    '"paginTop"',    'auto',
+                    '"productList"', '1fr',
+                    '"paginBtm"',    'auto',
                     '/',
                     'auto',
                 ]],
                 gapInline: '1rem',
                 gapBlock: '1rem',
-                ...children(['.pagin-top', '.pagin-btm'], {
-                    justifySelf: 'center',
-                }),
-                ...children('.pagin-top', {
-                    gridArea: 'pagin-top',
-                }),
-                ...children('.product-list', {
-                    gridArea: 'product-list',
-                }),
-                ...children('.pagin-btm', {
-                    gridArea: 'pagin-btm',
-                }),
             }),
         }, { specificityWeight: 2 }),
+        scopeOf('paginTop', {
+            gridArea: 'paginTop',
+            
+            justifySelf: 'center',
+        }),
+        scopeOf('productList', {
+            gridArea: 'productList',
+            
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            ...groupableRule(), // make a nicely rounded corners
+            [paddingVars.paddingInline] : '0px',
+            [paddingVars.paddingBlock ] : '0px',
+        }),
+        scopeOf('paginBtm', {
+            gridArea: 'paginBtm',
+            
+            justifySelf: 'center',
+        }),
+        scopeOf('productFetching', {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            [borderVars.borderWidth] : '0px',
+            ...children('.loadingBar', {
+                alignSelf: 'stretch',
+            }),
+        }),
+        scopeOf('productFetchError', {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            [borderVars.borderWidth] : '0px',
+        }),
         scopeOf('productItem', {
             display: 'grid',
             gridTemplate: [[
