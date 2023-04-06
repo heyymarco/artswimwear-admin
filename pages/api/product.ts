@@ -9,7 +9,7 @@ import type { HydratedDocument } from 'mongoose'
 
 
 // types:
-export type PreviewProduct  = Required<Pick<ProductSchema, '_id'>> & Pick<ProductSchema, 'name'|'price'|'stock'> & { image?: Required<ProductSchema>['images'][number] }
+export type PreviewProduct  = Required<Pick<ProductSchema, '_id'>> & Pick<ProductSchema, 'visibility'|'name'|'price'|'stock'> & { image?: Required<ProductSchema>['images'][number] }
 
 
 
@@ -69,7 +69,7 @@ export default nextConnect<NextApiRequest, NextApiResponse>({
     const total = await Product.count();
     return res.json({
         total,
-        entities: (await Product.find<HydratedDocument<PreviewProduct>>({}, { _id: true, name: true, price: true, stock: true, image: { $first: "$images" } }, {
+        entities: (await Product.find<HydratedDocument<PreviewProduct>>({}, { _id: true, visibility: true, name: true, price: true, stock: true, image: { $first: "$images" } }, {
             skip  : (page - 1) * perPage, // note: not scaleable but works in small commerce app -- will be fixed in the future
             limit : perPage,
         }))
@@ -89,7 +89,10 @@ export default nextConnect<NextApiRequest, NextApiResponse>({
     //#region parsing request
     const {
         _id,
+        visibility,
         name,
+        price,
+        stock,
     } = req.body;
     //#endregion parsing request
     
@@ -102,14 +105,17 @@ export default nextConnect<NextApiRequest, NextApiResponse>({
     ) {
         return res.status(400).json({ error: 'invalid data' });
     } // if
-    const product = await Product.findById(_id, { _id: true, name: true, price: true, stock: true, image: { $first: "$images" } });
+    const product = await Product.findById(_id, { _id: true, visibility: true, name: true, price: true, stock: true, image: { $first: "$images" } });
     if (!product) return res.status(400).json({ error: 'invalid ID' });
     //#endregion validating request
     
     
     
     //#region save changes
-    if (name !== undefined) product.name = name;
+    if (visibility !== undefined) product.visibility = visibility;
+    if (name       !== undefined) product.name       = name;
+    if (price      !== undefined) product.price      = price;
+    if (stock      !== undefined) product.stock      = stock;
     
     try {
         await product.save();

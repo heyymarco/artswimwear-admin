@@ -5,11 +5,12 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 
 export interface ProductEntry {
-    _id      : string
-    name     : string
-    price    : number
-    stock    : string
-    image    : string
+    _id        : string
+    visibility : string
+    name       : string
+    price      : number
+    stock      : string
+    image      : string
 }
 export interface PagedProductEntries {
     total    : number

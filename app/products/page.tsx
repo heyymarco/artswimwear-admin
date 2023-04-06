@@ -85,8 +85,21 @@ const SimpleEditor = ({product, edit, type, required, onClose}: SimpleEditorProp
     useEffect(() => {
         // setups:
         const cancelFocus = setTimeout(() => {
-            editorRef.current?.setSelectionRange(0, -1);
-            editorRef.current?.focus({ preventScroll: true });
+            // conditions:
+            const editorElm = editorRef.current;
+            if (!editorElm) return;
+            
+            
+            
+            const originType = editorElm.type;
+            try {
+                editorElm.type = 'text';
+                editorElm.setSelectionRange(0, -1);
+            }
+            finally {
+                editorElm.type = originType;
+            } // try
+            editorElm.focus({ preventScroll: true });
         }, 0);
         
         
@@ -132,7 +145,7 @@ const ProductItem = (props: ProductItemProps) => {
     
     
     // states:
-    type EditMode = 'name'|'price'|'stock'|'visibility'
+    type EditMode = Exclude<keyof ProductEntry, '_id'|'image'>
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     
@@ -170,7 +183,8 @@ const ProductItem = (props: ProductItemProps) => {
                 <EditButton onClick={() => setEditMode('visibility')} />
             </p>
             <ModalCard modalViewport={listItemRef} expanded={!!editMode} onExpandedChange={({expanded}) => !expanded && setEditMode(null)} lazy={true} backdropStyle='static'>
-                {(editMode === 'name') && <SimpleEditor product={product} type='text' edit='name' required onClose={() => setEditMode(null)} />}
+                {(editMode === 'name' ) && <SimpleEditor product={product} type='text'   edit='name'  required={true}  onClose={() => setEditMode(null)} />}
+                {(editMode === 'price') && <SimpleEditor product={product} type='number' edit='price' required={false} onClose={() => setEditMode(null)} />}
             </ModalCard>
         </ListItem>
     );
