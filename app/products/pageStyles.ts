@@ -12,12 +12,11 @@ import { typos, usesBorder, usesGroupable, usesPadding } from '@reusable-ui/core
 // styles:
 export default () => {
     const {paddingVars} = usesPadding();
-    const {groupableRule} = usesGroupable({
+    const {groupableRule, groupableVars} = usesGroupable({
         orientationInlineSelector : null,
-        orientationBlockSelector  : '&',
+        orientationBlockSelector  : null,
     });
     const {borderVars} = usesBorder();
-    
     
     
     return [
@@ -61,10 +60,21 @@ export default () => {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
-            ...groupableRule(), // make a nicely rounded corners
             [paddingVars.paddingInline] : '0px',
             [paddingVars.paddingBlock ] : '0px',
+            ...groupableRule(),  // make a nicely rounded corners
         }),
+        scopeOf('productListInner', {
+            [groupableVars.borderStartStartRadius] : 'inherit !important', // reads parent's prop
+            [groupableVars.borderStartEndRadius  ] : 'inherit !important', // reads parent's prop
+            [groupableVars.borderEndStartRadius  ] : 'inherit !important', // reads parent's prop
+            [groupableVars.borderEndEndRadius    ] : 'inherit !important', // reads parent's prop
+            
+            [borderVars.borderStartStartRadius] : groupableVars.borderStartStartRadius,
+            [borderVars.borderStartEndRadius  ] : groupableVars.borderStartEndRadius,
+            [borderVars.borderEndStartRadius  ] : groupableVars.borderEndStartRadius,
+            [borderVars.borderEndEndRadius    ] : groupableVars.borderEndEndRadius,
+        }, { specificityWeight: 2 }),
         scopeOf('paginBtm', {
             gridArea: 'paginBtm',
             
@@ -74,17 +84,10 @@ export default () => {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            [borderVars.borderWidth] : '0px',
             ...children('.loadingBar', {
                 alignSelf: 'stretch',
             }),
-        }),
-        scopeOf('productFetchError', {
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            [borderVars.borderWidth] : '0px',
-        }),
+        }, { specificityWeight: 2 }),
         scopeOf('productItem', {
             display: 'grid',
             gridTemplate: [[
@@ -134,6 +137,8 @@ export default () => {
                 [paddingVars.paddingBlock ] : '0px',
             }),
         }, { specificityWeight: 2 }),
+        scopeOf('productItem', {
+        }),
         scopeOf('simpleEditor', {
             display: 'grid',
             gridTemplate: [[

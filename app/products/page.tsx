@@ -6,7 +6,7 @@ import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 import { Section, Main } from '@heymarco/section'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, ButtonIconProps, CardBody, InputProps, List, ListItem, ListItemProps, ModalCard, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput, NumberInput, Group, Label, Basic, Content } from '@reusable-ui/components';
+import { ButtonIcon, ButtonIconProps, CardBody, InputProps, List, ListItem, ListItemProps, ModalCard, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput, NumberInput, Group, Label, Basic, Content, Modal } from '@reusable-ui/components';
 import { ProductEntry, useGetProductList, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
@@ -313,7 +313,7 @@ const ProductItem = (props: ProductItemProps) => {
                 Visibility: <strong className='value'>{visibility}</strong>
                 <EditButton onClick={() => setEditMode('visibility')} />
             </p>
-            <ModalCard modalViewport={listItemRef} expanded={!!editMode} onExpandedChange={({expanded}) => !expanded && setEditMode(null)} lazy={true} backdropStyle='static'>
+            <ModalCard modalViewport={listItemRef} expanded={!!editMode} onExpandedChange={({expanded}) => !expanded && setEditMode(null)} backdropStyle='static'>
                 {(editMode === 'name' ) && <SimpleEditor onClose={() => setEditMode(null)} product={product} edit='name'  editor={<TextEditor     required={true }         />} />}
                 {(editMode === 'price') && <SimpleEditor onClose={() => setEditMode(null)} product={product} edit='price' editor={<CurrencyEditor required={true } min={0} />} />}
                 {(editMode === 'stock') && <SimpleEditor onClose={() => setEditMode(null)} product={product} edit='stock' editor={<NumberEditor   required={false} min={0} />} />}
@@ -331,13 +331,30 @@ export default function Products() {
     const [page, setPage] = useState<number>(1);
     const [perPage, setPerPage] = useState<number>(5);
     const {data: products, isLoading, isFetching, isError, refetch } = useGetProductList({ page, perPage });
-    const isErrorNoData = isError && !products;
+    const isErrorNoData  = isError && !products;
     const pages = Math.ceil((products?.total ?? 0) / perPage);
     
     
     
     // refs:
-    // const
+    const [productListRef, setProductListRef] = useState<HTMLElement|null>(null);
+    // for nicely modal collapsing animation -- the JSX is still *residual* even if the modal is *collapsing*:
+    const loadingMessage = useRef<React.ReactNode>(null);
+    if (isFetching) {
+        loadingMessage.current = <>
+            <p>Retrieving data from the server. Please wait...</p>
+            <LoadingBar className='loadingBar' />
+        </>;
+    }
+    else if (isError) {
+        loadingMessage.current = <>
+            <h3>Oops, an error occured!</h3>
+            <p>We were unable to retrieve data from the server.</p>
+            <ButtonIcon icon='refresh' onClick={refetch}>
+                Retry
+            </ButtonIcon>
+        </>;
+    } // if
     
     
     
@@ -387,21 +404,14 @@ export default function Products() {
             </Section>
             <Section className={`fill-self ${styles.products}`}>
                 <ProductPagination className={styles.paginTop} />
-                <Basic className={styles.productList} theme='primary' mild={true}>
-                    {isLoading && <Content tag='article' className={styles.productFetching}>
-                        <p>Retrieving data from the server. Please wait...</p>
-                        <LoadingBar className='loadingBar' />
-                    </Content>}
+                <Basic<HTMLElement> className={styles.productList} theme='primary' mild={true} elmRef={setProductListRef}>
+                    <Modal expanded={isFetching || isError} modalViewport={productListRef}>
+                        <Content tag='article' className={styles.productFetching}>
+                            {loadingMessage.current}
+                        </Content>
+                    </Modal>
                     
-                    {isErrorNoData && <Content tag='article' className={styles.productFetchError}>
-                        <h3>Oops, an error occured!</h3>
-                        <p>We were unable to retrieve data from the server.</p>
-                        <ButtonIcon icon='refresh' onClick={refetch}>
-                            Retry
-                        </ButtonIcon>
-                    </Content>}
-                    
-                    {!!products && <List listStyle='flush'>
+                    {!!products && <List listStyle='flush' className={styles.productListInner}>
                         {Object.values(products?.entities).filter((product): product is Exclude<typeof product, undefined> => !!product).map((product, index) =>
                             <ProductItem key={product._id ?? (`${page}-${index}`)} product={product} />
                         )}
