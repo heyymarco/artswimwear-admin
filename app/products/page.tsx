@@ -1,15 +1,16 @@
 'use client'
 
+import { default as React } from 'react'
 import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 
 import { Section, Main } from '@heymarco/section'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, ButtonIconProps, CardBody, List, ListItem, ListItemProps, ModalCard, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput } from '@reusable-ui/components';
+import { ButtonIcon, ButtonIconProps, CardBody, InputProps, List, ListItem, ListItemProps, ModalCard, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput, NumberInput, Group, Label } from '@reusable-ui/components';
 import { ProductEntry, useGetProductList, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
-import { formatCurrency } from '@/libs/formatters';
+import { formatCurrency, getCurrencySign } from '@/libs/formatters';
 import { AccessibilityProvider, useEvent } from '@reusable-ui/core';
 
 
@@ -34,21 +35,126 @@ const EditButton = (props: ButtonIconProps) => {
         />
     );
 }
+
+type CustomEditor = React.ReactComponentElement<any, Omit<InputProps<HTMLElement>, 'value'|'onChange'> & { value?: any, onChange?: (value: any) => void }>
+const TextEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
+    // rest props:
+    const {
+        // values:
+        value,
+        onChange,
+    ...restTextEditorProps} = props;
+    
+    
+    
+    return (
+        <TextInput
+            // other props:
+            {...restTextEditorProps}
+            
+            
+            
+            // values:
+            value={value ?? ''}
+            onChange={(event) => onChange?.(event.target.value)}
+        />
+    );
+}
+const NumberEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
+    // rest props:
+    const {
+        // values:
+        value,
+        onChange,
+    ...restTextEditorProps} = props;
+    
+    
+    
+    return (
+        <NumberInput
+            // other props:
+            {...restTextEditorProps}
+            
+            
+            
+            // values:
+            value={value ?? NaN}
+            onChange={(event) => onChange?.(event.target.valueAsNumber)}
+        />
+    );
+}
+
+const CurrencyEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
+    // rest props:
+    const {
+        // classes:
+        className,
+        
+        
+        
+        // values:
+        value,
+        onChange,
+    ...restTextEditorProps} = props;
+    
+    
+    
+    return (
+        <Group
+            // classes:
+            className={className}
+        >
+            <Label
+                // classes:
+                className='solid'
+            >
+                {getCurrencySign()}
+            </Label>
+            <NumberInput
+                // other props:
+                {...restTextEditorProps}
+                
+                
+                
+                // classes:
+                className='fluid'
+                
+                
+                
+                // values:
+                value={value ?? NaN}
+                onChange={(event) => onChange?.(event.target.valueAsNumber)}
+            />
+        </Group>
+    );
+}
 interface SimpleEditorProps {
     product  : ProductEntry
     edit     : Exclude<keyof ProductEntry, '_id'>
-    type     : 'text'|'number'
-    required : boolean
+    editor  ?: CustomEditor
     onClose  : () => void
 }
-const SimpleEditor = ({product, edit, type, required, onClose}: SimpleEditorProps) => {
+const SimpleEditor = (props: SimpleEditorProps) => {
     // styles:
     const styles = usePageStyleSheet();
     
     
     
+    // rest props:
+    const {
+        product,
+        
+        edit,
+        editor = (<TextInput /> as CustomEditor),
+        
+        onClose,
+    } = props;
+    
+    
+    
     // states:
-    const [editorValue, setEditorValue] = useState(product[edit]);
+    const [enableValidation, setEnableValidation] = useState<boolean>(false);
+    const [editorValue, setEditorValue] = useState<any>(product[edit]);
     
     
     
@@ -57,14 +163,21 @@ const SimpleEditor = ({product, edit, type, required, onClose}: SimpleEditorProp
     
     
     
+    // refs:
+    const editorRef = useRef<HTMLInputElement|null>(null);
+    
+    
+    
     // handlers:
-    const handleEditorChange : React.ChangeEventHandler<HTMLInputElement> = useEvent((event) => {
-        setEditorValue((type === 'number') ? event.target.valueAsNumber : event.target.value.trim());
-    });
     const handleSave = useEvent(async () => {
+        setEnableValidation(true);
+        if (!editorRef.current?.matches(':valid')) return;
+        
+        
+        
         try {
             await updateProduct({
-                _id: product._id,
+                _id    : product._id,
                 [edit] : editorValue,
             }).unwrap();
             
@@ -81,7 +194,6 @@ const SimpleEditor = ({product, edit, type, required, onClose}: SimpleEditorProp
     
     
     // dom effects:
-    const editorRef = useRef<HTMLInputElement|null>(null);
     useEffect(() => {
         // setups:
         const cancelFocus = setTimeout(() => {
@@ -116,8 +228,26 @@ const SimpleEditor = ({product, edit, type, required, onClose}: SimpleEditorProp
     return (
         <CardBody className={styles.simpleEditor} onKeyDown={handleKeyDown}>
             <AccessibilityProvider enabled={!isLoading}>
-                <TextInput className='editor' type={type} value={editorValue ?? ''} onChange={handleEditorChange} enableValidation={true} required={required} elmRef={editorRef} />
-                <ButtonIcon className='btnSave' icon='save' theme='success' onClick={handleSave}>Save</ButtonIcon>
+                {React.cloneElement(editor,
+                    // props:
+                    {
+                        elmRef           : editorRef,
+                        
+                        
+                        
+                        className        : 'editor',
+                        
+                        
+                        
+                        value            : editorValue,
+                        onChange         : (value: any) => setEditorValue(value),
+                        
+                        
+                        
+                        enableValidation : enableValidation,
+                    },
+                )}
+                <ButtonIcon className='btnSave' icon={isLoading ? 'busy' : 'save'} theme='success' onClick={handleSave}>Save</ButtonIcon>
                 <ButtonIcon className='btnCancel' icon='cancel' theme='danger' onClick={onClose}>Cancel</ButtonIcon>
             </AccessibilityProvider>
         </CardBody>
@@ -136,6 +266,7 @@ const ProductItem = (props: ProductItemProps) => {
         product,
     ...restListItem} = props;
     const {
+        visibility,
         name,
         image,
         price,
@@ -179,13 +310,13 @@ const ProductItem = (props: ProductItemProps) => {
                 <EditButton onClick={() => setEditMode('stock')} />
             </p>
             <p className='visibility'>
-                Visibility:
+                Visibility: <strong className='value'>{visibility}</strong>
                 <EditButton onClick={() => setEditMode('visibility')} />
             </p>
             <ModalCard modalViewport={listItemRef} expanded={!!editMode} onExpandedChange={({expanded}) => !expanded && setEditMode(null)} lazy={true} backdropStyle='static'>
-                {(editMode === 'name' ) && <SimpleEditor product={product} type='text'   edit='name'  required={true}  onClose={() => setEditMode(null)} />}
-                {(editMode === 'price') && <SimpleEditor product={product} type='number' edit='price' required={false} onClose={() => setEditMode(null)} />}
-                {(editMode === 'stock') && <SimpleEditor product={product} type='number' edit='stock' required={false} onClose={() => setEditMode(null)} />}
+                {(editMode === 'name' ) && <SimpleEditor onClose={() => setEditMode(null)} product={product} edit='name'  editor={<TextEditor     required={true }         />} />}
+                {(editMode === 'price') && <SimpleEditor onClose={() => setEditMode(null)} product={product} edit='price' editor={<CurrencyEditor required={true } min={0} />} />}
+                {(editMode === 'stock') && <SimpleEditor onClose={() => setEditMode(null)} product={product} edit='stock' editor={<NumberEditor   required={false} min={0} />} />}
             </ModalCard>
         </ListItem>
     );

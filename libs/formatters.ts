@@ -21,6 +21,9 @@ export const formatCurrency = (value?: number|null|undefined): string => {
     if ((value === null) || (value === undefined) || isNaN(value)) return '-';
     return currencyFormatter.format(value)
 };
+export const getCurrencySign = () => {
+    return currencyFormatter.formatToParts(1)[0].value;
+}
 
 
 
