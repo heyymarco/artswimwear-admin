@@ -59,7 +59,7 @@ const SimpleEditor = ({product, edit, type, required, onClose}: SimpleEditorProp
     
     // handlers:
     const handleEditorChange : React.ChangeEventHandler<HTMLInputElement> = useEvent((event) => {
-        setEditorValue((type === 'number') ? event.target.valueAsNumber : event.target.value);
+        setEditorValue((type === 'number') ? event.target.valueAsNumber : event.target.value.trim());
     });
     const handleSave = useEvent(async () => {
         try {
@@ -116,7 +116,7 @@ const SimpleEditor = ({product, edit, type, required, onClose}: SimpleEditorProp
     return (
         <CardBody className={styles.simpleEditor} onKeyDown={handleKeyDown}>
             <AccessibilityProvider enabled={!isLoading}>
-                <TextInput className='editor' type={type} value={editorValue} onChange={handleEditorChange} enableValidation={true} required={required} elmRef={editorRef} />
+                <TextInput className='editor' type={type} value={editorValue ?? ''} onChange={handleEditorChange} enableValidation={true} required={required} elmRef={editorRef} />
                 <ButtonIcon className='btnSave' icon='save' theme='success' onClick={handleSave}>Save</ButtonIcon>
                 <ButtonIcon className='btnCancel' icon='cancel' theme='danger' onClick={onClose}>Cancel</ButtonIcon>
             </AccessibilityProvider>
@@ -185,6 +185,7 @@ const ProductItem = (props: ProductItemProps) => {
             <ModalCard modalViewport={listItemRef} expanded={!!editMode} onExpandedChange={({expanded}) => !expanded && setEditMode(null)} lazy={true} backdropStyle='static'>
                 {(editMode === 'name' ) && <SimpleEditor product={product} type='text'   edit='name'  required={true}  onClose={() => setEditMode(null)} />}
                 {(editMode === 'price') && <SimpleEditor product={product} type='number' edit='price' required={false} onClose={() => setEditMode(null)} />}
+                {(editMode === 'stock') && <SimpleEditor product={product} type='number' edit='stock' required={false} onClose={() => setEditMode(null)} />}
             </ModalCard>
         </ListItem>
     );
