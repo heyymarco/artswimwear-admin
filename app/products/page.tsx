@@ -158,6 +158,11 @@ const StockEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
     
     
     
+    // states:
+    const [selectedTabLimited, setSelectedTabLimited] = useState<boolean>(typeof(value) === 'number');
+    
+    
+    
     // refs:
     const numberInputRefInternal = useRef<HTMLInputElement|null>(null);
     const numberInputRef = useMergeRefs(
@@ -197,28 +202,29 @@ const StockEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
                 {['unlimited', 'limited'].map((option) =>
                     <ListItem key={option}
                         // accessibilities:
-                        active={
-                            (option === 'unlimited')
-                            ? (value === null)
-                            : (value !== null)
-                        }
+                        active={selectedTabLimited === (option === 'limited')}
                         
                         
                         
                         // handlers:
-                        onClick={() => onChange?.(
-                            (option === 'unlimited')
-                            ? null
-                            : (getRealNumberOrNull(numberInputRefInternal.current?.valueAsNumber) ?? 0)
-                        )}
+                        onClick={() => {
+                            const isSelectedTabLimited = (option === 'limited');
+                            setSelectedTabLimited(isSelectedTabLimited);
+                            
+                            onChange?.(
+                                isSelectedTabLimited
+                                ? (getRealNumberOrNull(numberInputRefInternal.current?.valueAsNumber) ?? 0)
+                                : null
+                            );
+                        }}
                     >
                         {option}
                     </ListItem>
                 )}
             </List>
             <Basic theme='secondary' className={styles.editorTabBody}>
-                <p     className={(value === null) ? undefined : 'hidden'}>The product stock is <em>always available</em>.</p>
-                <Group className={(value !== null) ? undefined : 'hidden'} theme='primary'>
+                <p     className={!selectedTabLimited ? undefined : 'hidden'}>The product stock is <em>always available</em>.</p>
+                <Group className={ selectedTabLimited ? undefined : 'hidden'} theme='primary'>
                     <Label className='solid'>
                         Current stock:
                     </Label>
@@ -240,6 +246,7 @@ const StockEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
                         
                         
                         // validations:
+                        isValid={selectedTabLimited ? undefined : true }
                         required={props.required ?? true}
                         min={props.min ?? 0}
                     />
@@ -351,7 +358,14 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
     // handlers:
     const handleSave = useEvent(async () => {
         setEnableValidation(true);
-        if (editorRef.current?.matches(':invalid')) return;
+        await new Promise<void>((resolve) => { // wait for a validation state applied
+            setTimeout(() => {
+                setTimeout(() => {
+                    resolve();
+                }, 0);
+            }, 0);
+        });
+        if (editorRef.current?.parentElement?.matches(':is(.invalidating, .invalidated)')) return;
         
         
         
