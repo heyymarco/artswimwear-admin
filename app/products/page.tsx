@@ -6,12 +6,13 @@ import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 import { Section, Main } from '@heymarco/section'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, ButtonIconProps, CardBody, InputProps, List, ListItem, ListItemProps, ModalCard, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput, NumberInput, Group, Label, Basic, Content, Modal, Radio } from '@reusable-ui/components';
+import { ButtonIcon, ButtonIconProps, CardBody, InputProps, List, ListItem, ListItemProps, ModalCard, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput, NumberInput, Group, Label, Basic, Content, Modal } from '@reusable-ui/components';
 import { ProductEntry, useGetProductList, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
 import { formatCurrency, getCurrencySign } from '@/libs/formatters';
 import { AccessibilityProvider, useEvent, useMergeRefs } from '@reusable-ui/core';
+import { QuantityInput, QuantityInputProps } from '@heymarco/quantity-input'
 
 
 
@@ -133,7 +134,26 @@ const CurrencyEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
         </Group>
     );
 }
-const StockEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
+interface StockEditorProps
+    extends
+        Omit<CustomEditor['props'],
+            // validations:
+            |'minLength'|'maxLength' // text length constraint is not supported
+            |'pattern'               // text regex is not supported
+            |'min'|'max'|'step'      // only supports numeric value
+        >,
+        Omit<QuantityInputProps,
+            // values:
+            |'defaultValue'|'value'  // only supports numeric value
+            
+            
+            
+            // handlers:
+            |'value'|'onChange'      // custom value
+        >
+{
+}
+const StockEditor = (props: StockEditorProps): CustomEditor['type'] => {
     // styles:
     const styles = usePageStyleSheet();
     
@@ -228,7 +248,7 @@ const StockEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
                     <Label className='solid'>
                         Current stock:
                     </Label>
-                    <NumberInput
+                    <QuantityInput
                         // other props:
                         {...restTextEditorProps}
                         
@@ -248,7 +268,8 @@ const StockEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
                         // validations:
                         isValid={selectedTabLimited ? undefined : true }
                         required={props.required ?? true}
-                        min={props.min ?? 0}
+                        min={props.min ?? 0   }
+                        max={props.max ?? 9999}
                     />
                 </Group>
             </Basic>
