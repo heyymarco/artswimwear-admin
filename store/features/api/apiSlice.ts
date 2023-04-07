@@ -39,7 +39,7 @@ export const apiSlice = createApi({
                     
                     {
                         type : 'Products',
-                        id   : 'PARTIAL_LIST',
+                        id   : 'ORDER_LIST',
                     },
                 ];
             },
@@ -50,12 +50,47 @@ export const apiSlice = createApi({
                 method : 'PATCH',
                 body   : patch
             }),
-            invalidatesTags: (result, error, page) => [
-                ...((!result ? [] : [{
-                    type : 'Products',
-                    id   : result._id,
-                }]) as Array<{ type: 'Products', id: string }>),
-            ],
+            
+            // inefficient:
+            // invalidatesTags: (result, error, page) => [
+            //     ...((!result ? [] : [{
+            //         type : 'Products',
+            //         id   : result._id,
+            //     }]) as Array<{ type: 'Products', id: string }>),
+            // ],
+            
+            // more efficient:
+            onCacheEntryAdded: async (arg, api) => {
+                // updated product data:
+                const { data: updatedProduct } = await api.cacheDataLoaded;
+                
+                // find obsolete product data(s):
+                const state = api.getState();
+                const queries = state.api.queries;
+                const getProductListName = apiSlice.endpoints.getProductList.name;
+                const obsoleteQueryArgs = (
+                    Object.values(queries)
+                    .filter((query): query is Exclude<typeof query, undefined> =>
+                        !!query
+                        &&
+                        (query.endpointName === getProductListName)
+                        &&
+                        !!(query.data as PagedProductEntries|undefined)?.entities.some((searchProduct) => (searchProduct._id === updatedProduct._id))
+                    )
+                    .map((query) => query.originalArgs)
+                );
+                
+                // synch the obsolete product data(s) to the updated one:
+                for (const obsoleteQueryArg of obsoleteQueryArgs) {
+                    api.dispatch(
+                        apiSlice.util.updateQueryData('getProductList', obsoleteQueryArg as any, (draft) => {
+                            const obsoleteProductIndex = draft.entities.findIndex((searchProduct) => (searchProduct._id === updatedProduct._id));
+                            if (obsoleteProductIndex < 0) return;
+                            draft.entities[obsoleteProductIndex] = updatedProduct; // sync
+                        })
+                    );
+                } // for
+            },
         }),
     }),
 });
