@@ -63,7 +63,7 @@ export default () => {
             [paddingVars.paddingInline] : '0px',
             [paddingVars.paddingBlock ] : '0px',
             ...groupableRule(),  // make a nicely rounded corners
-        }),
+        }, { specificityWeight: 2 }),
         scopeOf('productListInner', {
             [groupableVars.borderStartStartRadius] : 'inherit !important', // reads parent's prop
             [groupableVars.borderStartEndRadius  ] : 'inherit !important', // reads parent's prop
@@ -162,5 +162,14 @@ export default () => {
                 gridArea: 'btnCancel',
             }),
         }, { specificityWeight: 3 }),
+        scopeOf('visibilityEditorTabBody', {
+            [borderVars.borderStartStartRadius] : '0px',
+            [borderVars.borderStartEndRadius  ] : '0px',
+            borderBlockStartWidth               : '0px',
+            ...children('.hidden', {
+                visibility: 'hidden',
+                blockSize: 0,
+            }),
+        }, { specificityWeight: 2 }),
     ];
 }

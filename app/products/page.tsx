@@ -6,7 +6,7 @@ import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 import { Section, Main } from '@heymarco/section'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, ButtonIconProps, CardBody, InputProps, List, ListItem, ListItemProps, ModalCard, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput, NumberInput, Group, Label, Basic, Content, Modal } from '@reusable-ui/components';
+import { ButtonIcon, ButtonIconProps, CardBody, InputProps, List, ListItem, ListItemProps, ModalCard, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput, NumberInput, Group, Label, Basic, Content, Modal, Radio } from '@reusable-ui/components';
 import { ProductEntry, useGetProductList, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
@@ -83,7 +83,6 @@ const NumberEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
         />
     );
 }
-
 const CurrencyEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
     // rest props:
     const {
@@ -128,13 +127,73 @@ const CurrencyEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
         </Group>
     );
 }
-interface SimpleEditorProps {
+const VisibilityEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
+    // styles:
+    const styles = usePageStyleSheet();
+    
+    
+    
+    // rest props:
+    const {
+        // classes:
+        className,
+        
+        
+        
+        // values:
+        value,
+        onChange,
+    } = props;
+    
+    
+    
+    // jsx:
+    return (
+        <div
+            // classes:
+            className={className}
+        >
+            <List
+                // variants:
+                theme='secondary'
+                listStyle='tab'
+                orientation='inline'
+                
+                
+                
+                // behaviors:
+                actionCtrl={true}
+            >
+                {['published', 'hidden', 'draft'].map((option) =>
+                    <ListItem key={option}
+                        // accessibilities:
+                        active={value === option}
+                        
+                        
+                        
+                        // handlers:
+                        onClick={() => onChange?.(option)}
+                    >
+                        {option}
+                    </ListItem>
+                )}
+            </List>
+            <Basic theme='secondary' className={styles.visibilityEditorTabBody}>
+                <p className={(value === 'published') ? undefined : 'hidden'}>The product is <em>shown</em> on the webiste.</p>
+                <p className={(value === 'hidden'   ) ? undefined : 'hidden'}>The product can only be viewed via <em>a (bookmarked) link</em>.</p>
+                <p className={(value === 'draft'    ) ? undefined : 'hidden'}>The product <em>cannot be viewed</em> on the entire website.</p>
+            </Basic>
+        </div>
+    );
+}
+
+interface SimpleEditDialogProps {
     product  : ProductEntry
     edit     : Exclude<keyof ProductEntry, '_id'>
     editor  ?: CustomEditor
     onClose  : () => void
 }
-const SimpleEditor = (props: SimpleEditorProps) => {
+const SimpleEditDialog = (props: SimpleEditDialogProps) => {
     // styles:
     const styles = usePageStyleSheet();
     
@@ -171,7 +230,7 @@ const SimpleEditor = (props: SimpleEditorProps) => {
     // handlers:
     const handleSave = useEvent(async () => {
         setEnableValidation(true);
-        if (!editorRef.current?.matches(':valid')) return;
+        if (editorRef.current?.matches(':invalid')) return;
         
         
         
@@ -314,9 +373,10 @@ const ProductItem = (props: ProductItemProps) => {
                 <EditButton onClick={() => setEditMode('visibility')} />
             </p>
             <ModalCard modalViewport={listItemRef} expanded={!!editMode} onExpandedChange={({expanded}) => !expanded && setEditMode(null)} backdropStyle='static'>
-                {(editMode === 'name' ) && <SimpleEditor onClose={() => setEditMode(null)} product={product} edit='name'  editor={<TextEditor     required={true }         />} />}
-                {(editMode === 'price') && <SimpleEditor onClose={() => setEditMode(null)} product={product} edit='price' editor={<CurrencyEditor required={true } min={0} />} />}
-                {(editMode === 'stock') && <SimpleEditor onClose={() => setEditMode(null)} product={product} edit='stock' editor={<NumberEditor   required={false} min={0} />} />}
+                {(editMode === 'name'      ) && <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='name'       editor={<TextEditor       required={true }         />} />}
+                {(editMode === 'price'     ) && <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='price'      editor={<CurrencyEditor   required={true } min={0} />} />}
+                {(editMode === 'stock'     ) && <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='stock'      editor={<NumberEditor     required={false} min={0} />} />}
+                {(editMode === 'visibility') && <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='visibility' editor={<VisibilityEditor                          />} />}
             </ModalCard>
         </ListItem>
     );
