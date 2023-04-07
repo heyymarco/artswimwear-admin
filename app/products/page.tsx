@@ -1,6 +1,6 @@
 'use client'
 
-import { default as React } from 'react'
+import { default as React, useLayoutEffect } from 'react'
 import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 
 import { Section, Main } from '@heymarco/section'
@@ -495,25 +495,25 @@ const ProductItem = (props: ProductItemProps) => {
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     // for nicely modal collapsing animation -- the JSX is still *residual* even if the modal is *collapsing*:
-    const editDialog = useRef<React.ReactNode>(null);
+    const DynamicEditDialog = useRef<() => JSX.Element|null>(() => null);
     switch (editMode) {
         case 'name':
-            editDialog.current = (
+            DynamicEditDialog.current = () => (
                 <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='name'       editor={<TextEditor       required={true } />} />
             );
             break;
         case 'price':
-            editDialog.current = (
+            DynamicEditDialog.current = () => (
                 <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='price'      editor={<CurrencyEditor                    />} />
             );
             break;
         case 'stock':
-            editDialog.current = (
+            DynamicEditDialog.current = () => (
                 <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='stock'      editor={<StockEditor                       />} />
             );
             break;
         case 'visibility':
-            editDialog.current = (
+            DynamicEditDialog.current = () => (
                 <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='visibility' editor={<VisibilityEditor                  />} />
             );
             break;
@@ -554,7 +554,7 @@ const ProductItem = (props: ProductItemProps) => {
                 <EditButton onClick={() => setEditMode('visibility')} />
             </p>
             <ModalCard modalViewport={listItemRef} expanded={!!editMode} onExpandedChange={({expanded}) => !expanded && setEditMode(null)} backdropStyle='static'>
-                {editDialog.current}
+                <DynamicEditDialog.current />
             </ModalCard>
         </ListItem>
     );
@@ -577,15 +577,15 @@ export default function Products() {
     // refs:
     const [productListRef, setProductListRef] = useState<HTMLElement|null>(null);
     // for nicely modal collapsing animation -- the JSX is still *residual* even if the modal is *collapsing*:
-    const loadingMessage = useRef<React.ReactNode>(null);
+    const DynamicLoadingMessage = useRef<() => JSX.Element|null>(() => null);
     if (isFetching) {
-        loadingMessage.current = <>
+        DynamicLoadingMessage.current = () => <>
             <p>Retrieving data from the server. Please wait...</p>
             <LoadingBar className='loadingBar' />
         </>;
     }
     else if (isError) {
-        loadingMessage.current = <>
+        DynamicLoadingMessage.current = () => <>
             <h3>Oops, an error occured!</h3>
             <p>We were unable to retrieve data from the server.</p>
             <ButtonIcon icon='refresh' onClick={refetch}>
@@ -645,7 +645,7 @@ export default function Products() {
                 <Basic<HTMLElement> className={styles.productList} theme='primary' mild={true} elmRef={setProductListRef}>
                     <Modal expanded={isFetching || isError} modalViewport={productListRef}>
                         <Content tag='article' className={styles.productFetching}>
-                            {loadingMessage.current}
+                            <DynamicLoadingMessage.current />
                         </Content>
                     </Modal>
                     
