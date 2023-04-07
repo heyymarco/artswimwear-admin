@@ -11,7 +11,7 @@ import { ProductEntry, useGetProductList, useUpdateProduct } from '@/store/featu
 import { useEffect, useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
 import { formatCurrency, getCurrencySign } from '@/libs/formatters';
-import { AccessibilityProvider, useEvent } from '@reusable-ui/core';
+import { AccessibilityProvider, useEvent, useMergeRefs } from '@reusable-ui/core';
 
 
 
@@ -123,8 +123,129 @@ const CurrencyEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
                 // values:
                 value={value ?? NaN}
                 onChange={(event) => onChange?.(event.target.valueAsNumber)}
+                
+                
+                
+                // validations:
+                required={props.required ?? true}
+                min={props.min ?? 0}
             />
         </Group>
+    );
+}
+const StockEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
+    // styles:
+    const styles = usePageStyleSheet();
+    
+    
+    
+    // rest props:
+    const {
+        // refs:
+        elmRef,
+        
+        
+        
+        // classes:
+        className,
+        
+        
+        
+        // values:
+        value,
+        onChange,
+    ...restTextEditorProps} = props;
+    
+    
+    
+    // refs:
+    const numberInputRefInternal = useRef<HTMLInputElement|null>(null);
+    const numberInputRef = useMergeRefs(
+        elmRef,
+        numberInputRefInternal,
+    );
+    
+    
+    
+    // utilities:
+    const getRealNumberOrNull = (number: number|null|undefined) => {
+        if (number === undefined) return null;
+        if (number === null)      return null;
+        if (!isFinite(number))    return null;
+        return number;
+    }
+    
+    
+    
+    // jsx:
+    return (
+        <div
+            // classes:
+            className={className}
+        >
+            <List
+                // variants:
+                theme='secondary'
+                listStyle='tab'
+                orientation='inline'
+                
+                
+                
+                // behaviors:
+                actionCtrl={true}
+            >
+                {['unlimited', 'limited'].map((option) =>
+                    <ListItem key={option}
+                        // accessibilities:
+                        active={
+                            (option === 'unlimited')
+                            ? (value === null)
+                            : (value !== null)
+                        }
+                        
+                        
+                        
+                        // handlers:
+                        onClick={() => onChange?.(
+                            (option === 'unlimited')
+                            ? null
+                            : (getRealNumberOrNull(numberInputRefInternal.current?.valueAsNumber) ?? 0)
+                        )}
+                    >
+                        {option}
+                    </ListItem>
+                )}
+            </List>
+            <Basic theme='secondary' className={styles.editorTabBody}>
+                <p     className={(value === null) ? undefined : 'hidden'}>The product stock is <em>always available</em>.</p>
+                <Group className={(value !== null) ? undefined : 'hidden'} theme='primary'>
+                    <Label className='solid'>
+                        Current stock:
+                    </Label>
+                    <NumberInput
+                        // other props:
+                        {...restTextEditorProps}
+                        
+                        
+                        
+                        // refs:
+                        elmRef={numberInputRef}
+                        
+                        
+                        
+                        // values:
+                        defaultValue={value ?? 0}
+                        onChange={({target: {valueAsNumber}}) => onChange?.(getRealNumberOrNull(valueAsNumber) ?? 0)}
+                        
+                        
+                        
+                        // validations:
+                        required={props.required ?? true}
+                        min={props.min ?? 0}
+                    />
+                </Group>
+            </Basic>
+        </div>
     );
 }
 const VisibilityEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
@@ -178,7 +299,7 @@ const VisibilityEditor = (props: CustomEditor['props']): CustomEditor['type'] =>
                     </ListItem>
                 )}
             </List>
-            <Basic theme='secondary' className={styles.visibilityEditorTabBody}>
+            <Basic theme='secondary' className={styles.editorTabBody}>
                 <p className={(value === 'published') ? undefined : 'hidden'}>The product is <em>shown</em> on the webiste.</p>
                 <p className={(value === 'hidden'   ) ? undefined : 'hidden'}>The product can only be viewed via <em>a (bookmarked) link</em>.</p>
                 <p className={(value === 'draft'    ) ? undefined : 'hidden'}>The product <em>cannot be viewed</em> on the entire website.</p>
@@ -373,10 +494,10 @@ const ProductItem = (props: ProductItemProps) => {
                 <EditButton onClick={() => setEditMode('visibility')} />
             </p>
             <ModalCard modalViewport={listItemRef} expanded={!!editMode} onExpandedChange={({expanded}) => !expanded && setEditMode(null)} backdropStyle='static'>
-                {(editMode === 'name'      ) && <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='name'       editor={<TextEditor       required={true }         />} />}
-                {(editMode === 'price'     ) && <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='price'      editor={<CurrencyEditor   required={true } min={0} />} />}
-                {(editMode === 'stock'     ) && <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='stock'      editor={<NumberEditor     required={false} min={0} />} />}
-                {(editMode === 'visibility') && <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='visibility' editor={<VisibilityEditor                          />} />}
+                {(editMode === 'name'      ) && <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='name'       editor={<TextEditor       required={true } />} />}
+                {(editMode === 'price'     ) && <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='price'      editor={<CurrencyEditor                    />} />}
+                {(editMode === 'stock'     ) && <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='stock'      editor={<StockEditor                       />} />}
+                {(editMode === 'visibility') && <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='visibility' editor={<VisibilityEditor                  />} />}
             </ModalCard>
         </ListItem>
     );

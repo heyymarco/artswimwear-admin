@@ -162,13 +162,18 @@ export default () => {
                 gridArea: 'btnCancel',
             }),
         }, { specificityWeight: 3 }),
-        scopeOf('visibilityEditorTabBody', {
+        scopeOf('editorTabBody', {
+            display: 'grid',
+            justifyItems: 'center',
+            alignItems: 'center',
             [borderVars.borderStartStartRadius] : '0px',
             [borderVars.borderStartEndRadius  ] : '0px',
             borderBlockStartWidth               : '0px',
+            ...children('*', {
+                gridArea: '1/1/1/1', // the options are overlapping each other, so the parent takes the maximum width & height of children
+            }),
             ...children('.hidden', {
                 visibility: 'hidden',
-                blockSize: 0,
             }),
         }, { specificityWeight: 2 }),
     ];
