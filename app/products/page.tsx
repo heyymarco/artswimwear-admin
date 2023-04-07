@@ -494,6 +494,31 @@ const ProductItem = (props: ProductItemProps) => {
     type EditMode = Exclude<keyof ProductEntry, '_id'|'image'>
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     
+    // for nicely modal collapsing animation -- the JSX is still *residual* even if the modal is *collapsing*:
+    const editDialog = useRef<React.ReactNode>(null);
+    switch (editMode) {
+        case 'name':
+            editDialog.current = (
+                <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='name'       editor={<TextEditor       required={true } />} />
+            );
+            break;
+        case 'price':
+            editDialog.current = (
+                <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='price'      editor={<CurrencyEditor                    />} />
+            );
+            break;
+        case 'stock':
+            editDialog.current = (
+                <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='stock'      editor={<StockEditor                       />} />
+            );
+            break;
+        case 'visibility':
+            editDialog.current = (
+                <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='visibility' editor={<VisibilityEditor                  />} />
+            );
+            break;
+    } // switch
+    
     
     
     // refs:
@@ -529,10 +554,7 @@ const ProductItem = (props: ProductItemProps) => {
                 <EditButton onClick={() => setEditMode('visibility')} />
             </p>
             <ModalCard modalViewport={listItemRef} expanded={!!editMode} onExpandedChange={({expanded}) => !expanded && setEditMode(null)} backdropStyle='static'>
-                {(editMode === 'name'      ) && <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='name'       editor={<TextEditor       required={true } />} />}
-                {(editMode === 'price'     ) && <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='price'      editor={<CurrencyEditor                    />} />}
-                {(editMode === 'stock'     ) && <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='stock'      editor={<StockEditor                       />} />}
-                {(editMode === 'visibility') && <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='visibility' editor={<VisibilityEditor                  />} />}
+                {editDialog.current}
             </ModalCard>
         </ListItem>
     );
