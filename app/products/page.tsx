@@ -548,15 +548,12 @@ const ProductItem = (props: ProductItemProps) => {
                 <EditButton onClick={() => setEditMode('visibility')} />
             </p>
             <ModalStatus modalViewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {
-                    ((editMode === 'name'      ) && <SimpleEditDialog product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<TextEditor       required={true } />} />)
-                    ||
-                    ((editMode === 'price'     ) && <SimpleEditDialog product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<CurrencyEditor                    />} />)
-                    ||
-                    ((editMode === 'stock'     ) && <SimpleEditDialog product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<StockEditor                       />} />)
-                    ||
-                    ((editMode === 'visibility') && <SimpleEditDialog product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<VisibilityEditor                  />} />)
-                }
+                {!!editMode && <>
+                    {(editMode === 'name'      ) && <SimpleEditDialog product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<TextEditor       required={true } />} />}
+                    {(editMode === 'price'     ) && <SimpleEditDialog product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<CurrencyEditor                    />} />}
+                    {(editMode === 'stock'     ) && <SimpleEditDialog product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<StockEditor                       />} />}
+                    {(editMode === 'visibility') && <SimpleEditDialog product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<VisibilityEditor                  />} />}
+                </>}
             </ModalStatus>
         </ListItem>
     );
