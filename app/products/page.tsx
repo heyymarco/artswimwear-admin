@@ -204,6 +204,19 @@ const StockEditor = (props: StockEditorProps): CustomEditor['type'] => {
     
     
     
+    // dom effects:
+    useEffect(() => {
+        // conditions:
+        if (!selectedTabLimited) return;
+        
+        
+        
+        // actions:
+        numberInputRefInternal.current?.focus({ preventScroll: true });
+    }, [selectedTabLimited]);
+    
+    
+    
     // jsx:
     return (
         <div
