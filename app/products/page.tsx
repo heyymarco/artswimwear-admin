@@ -13,8 +13,8 @@ import { LoadingBar } from '@heymarco/loading-bar'
 import { formatCurrency, getCurrencySign } from '@/libs/formatters';
 import { AccessibilityProvider, useEvent, useMergeRefs } from '@reusable-ui/core';
 import { QuantityInput, QuantityInputProps } from '@heymarco/quantity-input'
-import { ModalStatus } from './ModalStatus'
-import { ModalUi } from './ModalUi'
+import { ModalStatus } from '../../components/ModalStatus'
+import { ModalUi } from '../../components/ModalUi'
 
 
 
