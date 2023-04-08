@@ -1,12 +1,12 @@
 'use client'
 
-import { default as React, useLayoutEffect, useMemo } from 'react'
+import { default as React } from 'react'
 import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 
 import { Section, Main } from '@heymarco/section'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, ButtonIconProps, CardBody, InputProps, List, ListItem, ListItemProps, ModalCard, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput, NumberInput, Group, Label, Basic, Content, Modal } from '@reusable-ui/components';
+import { ButtonIcon, ButtonIconProps, InputProps, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput, NumberInput, Group, Label, Basic, Content } from '@reusable-ui/components';
 import { ProductEntry, useGetProductList, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
@@ -14,6 +14,8 @@ import { formatCurrency, getCurrencySign } from '@/libs/formatters';
 import { AccessibilityProvider, useEvent, useMergeRefs } from '@reusable-ui/core';
 import { QuantityInput, QuantityInputProps } from '@heymarco/quantity-input'
 import { ModalStatus } from './ModalStatus'
+import { ModalUi } from './ModalUi'
+
 
 
 // styles:
@@ -458,7 +460,7 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
     
     // jsx:
     return (
-        <CardBody className={styles.simpleEditor} onKeyDown={handleKeyDown}>
+        <Content className={styles.simpleEditor} onKeyDown={handleKeyDown}>
             <AccessibilityProvider enabled={!isLoading}>
                 {React.cloneElement(editorComponent,
                     // props:
@@ -482,7 +484,7 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
                 <ButtonIcon className='btnSave' icon={isLoading ? 'busy' : 'save'} theme='success' onClick={handleSave}>Save</ButtonIcon>
                 <ButtonIcon className='btnCancel' icon='cancel' theme='danger' onClick={onClose}>Cancel</ButtonIcon>
             </AccessibilityProvider>
-        </CardBody>
+        </Content>
     );
 }
 interface ProductItemProps extends ListItemProps {
@@ -510,38 +512,6 @@ const ProductItem = (props: ProductItemProps) => {
     // states:
     type EditMode = Exclude<keyof ProductEntry, '_id'|'image'>
     const [editMode, setEditMode] = useState<EditMode|null>(null);
-    
-    // for nicely modal collapsing animation -- the JSX is still *residual* even if the modal is *collapsing*:
-    const newDynamicEditDialog = useMemo((): React.ReactNode => {
-        // jsx:
-        const uniqueKey = Date.now(); // generate a unique key every time the editMode changes
-        switch (editMode) {
-            /*
-                NOTE:
-                The `key` of `<SimpleEditDialog>` is IMPORTANT in order to React know the `{dynamicEditDialog.current}` was replaced with another <SimpleEditDialog>.
-            */
-            case 'name':
-                return (
-                    <SimpleEditDialog key={uniqueKey} product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<TextEditor       required={true } />} />
-                );
-            case 'price':
-                return (
-                    <SimpleEditDialog key={uniqueKey} product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<CurrencyEditor                    />} />
-                );
-            case 'stock':
-                return (
-                    <SimpleEditDialog key={uniqueKey} product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<StockEditor                       />} />
-                );
-            case 'visibility':
-                return (
-                    <SimpleEditDialog key={uniqueKey} product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<VisibilityEditor                  />} />
-                );
-            default:
-                return undefined;
-        } // switch
-    }, [editMode]);
-    const dynamicEditDialog = useRef<React.ReactNode>(newDynamicEditDialog);
-    if (newDynamicEditDialog !== undefined) dynamicEditDialog.current = newDynamicEditDialog;
     
     
     
@@ -577,9 +547,17 @@ const ProductItem = (props: ProductItemProps) => {
                 Visibility: <strong className='value'>{visibility}</strong>
                 <EditButton onClick={() => setEditMode('visibility')} />
             </p>
-            <ModalCard modalViewport={listItemRef} expanded={!!editMode} onExpandedChange={({expanded}) => !expanded && setEditMode(null)} backdropStyle='static'>
-                {dynamicEditDialog.current}
-            </ModalCard>
+            <ModalUi modalViewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
+                {
+                    ((editMode === 'name'      ) && <SimpleEditDialog product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<TextEditor       required={true } />} />)
+                    ||
+                    ((editMode === 'price'     ) && <SimpleEditDialog product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<CurrencyEditor                    />} />)
+                    ||
+                    ((editMode === 'stock'     ) && <SimpleEditDialog product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<StockEditor                       />} />)
+                    ||
+                    ((editMode === 'visibility') && <SimpleEditDialog product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<VisibilityEditor                  />} />)
+                }
+            </ModalUi>
         </ListItem>
     );
 }
