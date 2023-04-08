@@ -516,7 +516,7 @@ const ProductItem = (props: ProductItemProps) => {
     switch (editMode) {
         /*
             NOTE:
-            The `key` of `<SimpleEditDialog>` is IMPORTANT in order to React know the `{dynamicEditDialog.current}` is changing.
+            The `key` of `<SimpleEditDialog>` is IMPORTANT in order to React know the `{dynamicEditDialog.current}` was replaced with another <SimpleEditDialog>.
         */
         case 'name':
             dynamicEditDialog.current = (
