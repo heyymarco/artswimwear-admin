@@ -13,7 +13,7 @@ import { LoadingBar } from '@heymarco/loading-bar'
 import { formatCurrency, getCurrencySign } from '@/libs/formatters';
 import { AccessibilityProvider, useEvent, useMergeRefs } from '@reusable-ui/core';
 import { QuantityInput, QuantityInputProps } from '@heymarco/quantity-input'
-
+import { ModalStatus } from './ModalStatus'
 
 
 // styles:
@@ -601,34 +601,6 @@ export default function Products() {
     // refs:
     const [productListRef, setProductListRef] = useState<HTMLElement|null>(null);
     
-    // for nicely modal collapsing animation -- the JSX is still *residual* even if the modal is *collapsing*:
-    const newDynamicLoadingMessage = useMemo((): React.ReactNode => {
-        /*
-            NOTE:
-            The `key` of `<React.Fragment>` is NOT_NEEDED because there's no `props` other than `children`.
-        */
-        if (isFetching) {
-            return <>
-                <p>Retrieving data from the server. Please wait...</p>
-                <LoadingBar className='loadingBar' />
-            </>;
-        }
-        else if (isError) {
-            return <>
-                <h3>Oops, an error occured!</h3>
-                <p>We were unable to retrieve data from the server.</p>
-                <ButtonIcon icon='refresh' onClick={refetch}>
-                    Retry
-                </ButtonIcon>
-            </>;
-        }
-        else {
-            return undefined;
-        } // if
-    }, [isFetching, isError]);
-    const dynamicLoadingMessage = useRef<React.ReactNode>(newDynamicLoadingMessage);
-    if (newDynamicLoadingMessage !== undefined) dynamicLoadingMessage.current = newDynamicLoadingMessage;
-    
     
     
     // jsx:
@@ -678,11 +650,22 @@ export default function Products() {
             <Section className={`fill-self ${styles.products}`}>
                 <ProductPagination className={styles.paginTop} />
                 <Basic<HTMLElement> className={styles.productList} theme='primary' mild={true} elmRef={setProductListRef}>
-                    <Modal expanded={isFetching || isError} modalViewport={productListRef}>
-                        <Content tag='article' className={styles.productFetching}>
-                            {dynamicLoadingMessage.current}
-                        </Content>
-                    </Modal>
+                    <ModalStatus contentComponent={<Content className={styles.productFetching} />} modalViewport={productListRef}>
+                        {(isFetching || isError) && <>
+                            {isFetching && <>
+                                <p>Retrieving data from the server. Please wait...</p>
+                                <LoadingBar className='loadingBar' />
+                            </>}
+                            
+                            {isError && <>
+                                <h3>Oops, an error occured!</h3>
+                                <p>We were unable to retrieve data from the server.</p>
+                                <ButtonIcon icon='refresh' onClick={refetch}>
+                                    Retry
+                                </ButtonIcon>
+                            </>}
+                        </>}
+                    </ModalStatus>
                     
                     {!!products && <List listStyle='flush' className={styles.productListInner}>
                         {Object.values(products?.entities).filter((product): product is Exclude<typeof product, undefined> => !!product).map((product, index) =>
