@@ -1,6 +1,6 @@
 'use client'
 
-import { default as React, useLayoutEffect } from 'react'
+import { default as React, useLayoutEffect, useMemo } from 'react'
 import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 
 import { Section, Main } from '@heymarco/section'
@@ -512,33 +512,36 @@ const ProductItem = (props: ProductItemProps) => {
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     // for nicely modal collapsing animation -- the JSX is still *residual* even if the modal is *collapsing*:
-    const dynamicEditDialog = useRef<React.ReactNode>(null);
-    switch (editMode) {
-        /*
-            NOTE:
-            The `key` of `<SimpleEditDialog>` is IMPORTANT in order to React know the `{dynamicEditDialog.current}` was replaced with another <SimpleEditDialog>.
-        */
-        case 'name':
-            dynamicEditDialog.current = (
-                <SimpleEditDialog key={Date.now()} product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<TextEditor       required={true } />} />
-            );
-            break;
-        case 'price':
-            dynamicEditDialog.current = (
-                <SimpleEditDialog key={Date.now()} product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<CurrencyEditor                    />} />
-            );
-            break;
-        case 'stock':
-            dynamicEditDialog.current = (
-                <SimpleEditDialog key={Date.now()} product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<StockEditor                       />} />
-            );
-            break;
-        case 'visibility':
-            dynamicEditDialog.current = (
-                <SimpleEditDialog key={Date.now()} product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<VisibilityEditor                  />} />
-            );
-            break;
-    } // switch
+    const newDynamicEditDialog = useMemo((): React.ReactNode => {
+        // jsx:
+        const uniqueKey = Date.now(); // generate a unique key every time the editMode changes
+        switch (editMode) {
+            /*
+                NOTE:
+                The `key` of `<SimpleEditDialog>` is IMPORTANT in order to React know the `{dynamicEditDialog.current}` was replaced with another <SimpleEditDialog>.
+            */
+            case 'name':
+                return (
+                    <SimpleEditDialog key={uniqueKey} product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<TextEditor       required={true } />} />
+                );
+            case 'price':
+                return (
+                    <SimpleEditDialog key={uniqueKey} product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<CurrencyEditor                    />} />
+                );
+            case 'stock':
+                return (
+                    <SimpleEditDialog key={uniqueKey} product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<StockEditor                       />} />
+                );
+            case 'visibility':
+                return (
+                    <SimpleEditDialog key={uniqueKey} product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<VisibilityEditor                  />} />
+                );
+            default:
+                return undefined;
+        } // switch
+    }, [editMode]);
+    const dynamicEditDialog = useRef<React.ReactNode>(newDynamicEditDialog);
+    if (newDynamicEditDialog !== undefined) dynamicEditDialog.current = newDynamicEditDialog;
     
     
     
