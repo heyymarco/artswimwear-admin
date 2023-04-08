@@ -17,9 +17,15 @@ import {
     ModalProps,
     Modal,
 }                           from '@reusable-ui/components'              // a set of official Reusable-UI components
+import {
+    // hooks:
+    useLastExistingChildren,
+}                           from '@/hooks/lastExistingChildren'
 
 
 
+export type ModalUiComponentProps = GenericProps<Element>|React.HTMLAttributes<HTMLElement>|React.SVGAttributes<SVGElement>
+export type ModalUiComponent      = React.ReactElement<ModalUiComponentProps>
 export interface ModalUiProps
     extends
         Omit<ModalProps,
@@ -33,28 +39,24 @@ export interface ModalUiProps
         >
 {
     // components:
-    children         ?: React.ReactElement<GenericProps<Element>|React.HTMLAttributes<HTMLElement>|React.SVGAttributes<SVGElement>> | undefined|null|boolean
+    children         ?: ModalUiComponent | undefined|null|boolean
 }
 const ModalUi = (props: ModalUiProps): JSX.Element|null => {
     // rest props:
     const {
         // components:
-        children : uiComponent,
+        children : modalUiComponent,
     ...restModalProps} = props;
     
     
     
+    // verifies:
+    React.Children.only(modalUiComponent);
+    
+    
+    
     // states:
-    const lastUiRef = useRef<React.ReactElement<GenericProps<Element>|React.HTMLAttributes<HTMLElement>|React.SVGAttributes<SVGElement>> | undefined|null|boolean>(uiComponent);
-    const hasUi     : boolean = !!uiComponent && (uiComponent !== true); // ignores undefined|null|true|false|emptyString
-    if (hasUi) {
-        lastUiRef.current = React.cloneElement<GenericProps<Element>|React.HTMLAttributes<HTMLElement>|React.SVGAttributes<SVGElement>>(uiComponent as any,
-            // props:
-            {
-                key : Date.now(), // helps React that the last UI was replaced with another UI
-            },
-        );
-    } // if
+    const [hasUi, lastExistingModalUiComponent] = useLastExistingChildren(modalUiComponent);
     
     
     
@@ -70,7 +72,7 @@ const ModalUi = (props: ModalUiProps): JSX.Element|null => {
             expanded={hasUi}
         >
             {/* <Ui> */}
-            {(!!lastUiRef.current && (lastUiRef.current !== true)) ? lastUiRef.current : <React.Fragment />}
+            {(lastExistingModalUiComponent?.[0] as (ModalUiComponent|undefined)) ?? <React.Fragment />}
         </Modal>
     );
 }
