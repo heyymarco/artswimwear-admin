@@ -516,7 +516,7 @@ const ProductItem = (props: ProductItemProps) => {
     switch (editMode) {
         /*
             NOTE:
-            The `key` of `<SimpleEditDialog>` is IMPORTANT in order to React know the `{dynamicEditDialog.current}` is changing
+            The `key` of `<SimpleEditDialog>` is IMPORTANT in order to React know the `{dynamicEditDialog.current}` is changing.
         */
         case 'name':
             dynamicEditDialog.current = (
@@ -598,15 +598,19 @@ export default function Products() {
     // refs:
     const [productListRef, setProductListRef] = useState<HTMLElement|null>(null);
     // for nicely modal collapsing animation -- the JSX is still *residual* even if the modal is *collapsing*:
-    const DynamicLoadingMessage = useRef<() => JSX.Element|null>(() => null);
+    const dynamicLoadingMessage = useRef<React.ReactNode>(null);
+    /*
+        NOTE:
+        The `key` of `<React.Fragment>` is NOT_NEEDED because there's no `props` other than `children`.
+    */
     if (isFetching) {
-        DynamicLoadingMessage.current = () => <>
+        dynamicLoadingMessage.current = <>
             <p>Retrieving data from the server. Please wait...</p>
             <LoadingBar className='loadingBar' />
         </>;
     }
     else if (isError) {
-        DynamicLoadingMessage.current = () => <>
+        dynamicLoadingMessage.current = <>
             <h3>Oops, an error occured!</h3>
             <p>We were unable to retrieve data from the server.</p>
             <ButtonIcon icon='refresh' onClick={refetch}>
@@ -666,7 +670,7 @@ export default function Products() {
                 <Basic<HTMLElement> className={styles.productList} theme='primary' mild={true} elmRef={setProductListRef}>
                     <Modal expanded={isFetching || isError} modalViewport={productListRef}>
                         <Content tag='article' className={styles.productFetching}>
-                            <DynamicLoadingMessage.current />
+                            {dynamicLoadingMessage.current}
                         </Content>
                     </Modal>
                     
