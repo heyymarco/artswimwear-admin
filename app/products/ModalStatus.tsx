@@ -2,17 +2,16 @@
 import {
     // react:
     default as React,
-    
-    
-    
-    // hooks:
-    useRef,
 }                           from 'react'
 
 import {
     ModalCardProps,
     ModalCard,
 }                           from '@reusable-ui/components'              // a set of official Reusable-UI components
+import {
+    // hooks:
+    useLastExistingChildren,
+}                           from '@/hooks/lastExistingChildren'
 
 
 
@@ -33,10 +32,7 @@ const ModalStatus = (props: ModalStatusProps): JSX.Element|null => {
     
     
     
-    // states:
-    const lastChildrenRef = useRef<React.ReactNode>(children);
-    const hasChildren     : boolean = (!!children || (children === 0)) && (children !== true); // ignores undefined|null|true|false|emptyString
-    if (hasChildren) lastChildrenRef.current = children;
+    const [hasChildren, lastExistingChildren] = useLastExistingChildren(children);
     
     
     
@@ -51,7 +47,7 @@ const ModalStatus = (props: ModalStatusProps): JSX.Element|null => {
             // states:
             expanded={hasChildren}
         >
-            {lastChildrenRef.current}
+            {lastExistingChildren}
         </ModalCard>
     );
 }

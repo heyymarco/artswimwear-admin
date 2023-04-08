@@ -6,7 +6,7 @@ import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 import { Section, Main } from '@heymarco/section'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, ButtonIconProps, InputProps, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput, NumberInput, Group, Label, Basic, Content } from '@reusable-ui/components';
+import { ButtonIcon, ButtonIconProps, InputProps, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput, NumberInput, Group, Label, Basic, Content, CardBody } from '@reusable-ui/components';
 import { ProductEntry, useGetProductList, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
@@ -460,7 +460,7 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
     
     // jsx:
     return (
-        <Content className={styles.simpleEditor} onKeyDown={handleKeyDown}>
+        <CardBody className={styles.simpleEditor} onKeyDown={handleKeyDown}>
             <AccessibilityProvider enabled={!isLoading}>
                 {React.cloneElement(editorComponent,
                     // props:
@@ -484,7 +484,7 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
                 <ButtonIcon className='btnSave' icon={isLoading ? 'busy' : 'save'} theme='success' onClick={handleSave}>Save</ButtonIcon>
                 <ButtonIcon className='btnCancel' icon='cancel' theme='danger' onClick={onClose}>Cancel</ButtonIcon>
             </AccessibilityProvider>
-        </Content>
+        </CardBody>
     );
 }
 interface ProductItemProps extends ListItemProps {
@@ -547,7 +547,7 @@ const ProductItem = (props: ProductItemProps) => {
                 Visibility: <strong className='value'>{visibility}</strong>
                 <EditButton onClick={() => setEditMode('visibility')} />
             </p>
-            <ModalUi modalViewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
+            <ModalStatus modalViewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
                 {
                     ((editMode === 'name'      ) && <SimpleEditDialog product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<TextEditor       required={true } />} />)
                     ||
@@ -557,7 +557,7 @@ const ProductItem = (props: ProductItemProps) => {
                     ||
                     ((editMode === 'visibility') && <SimpleEditDialog product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<VisibilityEditor                  />} />)
                 }
-            </ModalUi>
+            </ModalStatus>
         </ListItem>
     );
 }
@@ -628,8 +628,8 @@ export default function Products() {
             <Section className={`fill-self ${styles.products}`}>
                 <ProductPagination className={styles.paginTop} />
                 <Basic<HTMLElement> className={styles.productList} theme='primary' mild={true} elmRef={setProductListRef}>
-                    <ModalStatus contentComponent={<Content className={styles.productFetching} />} modalViewport={productListRef}>
-                        {(isFetching || isError) && <>
+                    <ModalStatus className={styles.productFetching} modalViewport={productListRef}>
+                        {(isFetching || isError) && <CardBody>
                             {isFetching && <>
                                 <p>Retrieving data from the server. Please wait...</p>
                                 <LoadingBar className='loadingBar' />
@@ -642,7 +642,7 @@ export default function Products() {
                                     Retry
                                 </ButtonIcon>
                             </>}
-                        </>}
+                        </CardBody>}
                     </ModalStatus>
                     
                     {!!products && <List listStyle='flush' className={styles.productListInner}>
