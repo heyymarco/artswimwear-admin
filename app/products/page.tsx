@@ -337,10 +337,19 @@ const VisibilityEditor = (props: CustomEditor['props']): CustomEditor['type'] =>
 }
 
 interface SimpleEditDialogProps {
-    product  : ProductEntry
-    edit     : Exclude<keyof ProductEntry, '_id'>
-    editor  ?: CustomEditor
-    onClose  : () => void
+    // data:
+    product          : ProductEntry
+    edit             : Exclude<keyof ProductEntry, '_id'>
+    
+    
+    
+    // components:
+    editorComponent ?: CustomEditor
+    
+    
+    
+    // handlers:
+    onClose          : () => void
 }
 const SimpleEditDialog = (props: SimpleEditDialogProps) => {
     // styles:
@@ -350,11 +359,19 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
     
     // rest props:
     const {
+        // data:
         product,
-        
         edit,
-        editor = (<TextInput /> as CustomEditor),
         
+        
+        
+        // components:
+        editorComponent = (<TextInput /> as CustomEditor),
+        
+        
+        
+        
+        // handlers:
         onClose,
     } = props;
     
@@ -443,7 +460,7 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
     return (
         <CardBody className={styles.simpleEditor} onKeyDown={handleKeyDown}>
             <AccessibilityProvider enabled={!isLoading}>
-                {React.cloneElement(editor,
+                {React.cloneElement(editorComponent,
                     // props:
                     {
                         elmRef           : editorRef,
@@ -499,22 +516,22 @@ const ProductItem = (props: ProductItemProps) => {
     switch (editMode) {
         case 'name':
             DynamicEditDialog.current = () => (
-                <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='name'       editor={<TextEditor       required={true } />} />
+                <SimpleEditDialog product={product} edit='name'       onClose={() => setEditMode(null)} editorComponent={<TextEditor       required={true } />} />
             );
             break;
         case 'price':
             DynamicEditDialog.current = () => (
-                <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='price'      editor={<CurrencyEditor                    />} />
+                <SimpleEditDialog product={product} edit='price'      onClose={() => setEditMode(null)} editorComponent={<CurrencyEditor                    />} />
             );
             break;
         case 'stock':
             DynamicEditDialog.current = () => (
-                <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='stock'      editor={<StockEditor                       />} />
+                <SimpleEditDialog product={product} edit='stock'      onClose={() => setEditMode(null)} editorComponent={<StockEditor                       />} />
             );
             break;
         case 'visibility':
             DynamicEditDialog.current = () => (
-                <SimpleEditDialog onClose={() => setEditMode(null)} product={product} edit='visibility' editor={<VisibilityEditor                  />} />
+                <SimpleEditDialog product={product} edit='visibility' onClose={() => setEditMode(null)} editorComponent={<VisibilityEditor                  />} />
             );
             break;
     } // switch
