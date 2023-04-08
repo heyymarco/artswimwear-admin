@@ -2,11 +2,6 @@
 import {
     // react:
     default as React,
-    
-    
-    
-    // hooks:
-    useRef,
 }                           from 'react'
 
 import {
@@ -29,11 +24,6 @@ export type ModalUiComponent      = React.ReactElement<ModalUiComponentProps>
 export interface ModalUiProps
     extends
         Omit<ModalProps,
-            // states:
-            |'expanded' // replaced with auto expanded `children` as *UI*
-            
-            
-            
             // children:
             |'children' // replaced with auto expanded `children` as *UI*
         >
@@ -69,7 +59,7 @@ const ModalUi = (props: ModalUiProps): JSX.Element|null => {
             
             
             // states:
-            expanded={hasUi}
+            expanded={props.expanded ?? hasUi}
         >
             {/* <Ui> */}
             {(lastExistingModalUiComponent?.[0] as (ModalUiComponent|undefined)) ?? <React.Fragment />}
