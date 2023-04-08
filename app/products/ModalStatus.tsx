@@ -17,10 +17,7 @@ import {
 
 export interface ModalStatusProps
     extends
-        Omit<ModalCardProps,
-            // states:
-            |'expanded' // replaced with auto expanded `children` as *status*
-        >
+        ModalCardProps
 {
 }
 const ModalStatus = (props: ModalStatusProps): JSX.Element|null => {
@@ -45,7 +42,7 @@ const ModalStatus = (props: ModalStatusProps): JSX.Element|null => {
             
             
             // states:
-            expanded={hasChildren}
+            expanded={props.expanded ?? hasChildren}
         >
             {lastExistingChildren}
         </ModalCard>
