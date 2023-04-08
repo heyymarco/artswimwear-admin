@@ -520,22 +520,22 @@ const ProductItem = (props: ProductItemProps) => {
         */
         case 'name':
             dynamicEditDialog.current = (
-                <SimpleEditDialog key={editMode} product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<TextEditor       required={true } />} />
+                <SimpleEditDialog key={Date.now()} product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<TextEditor       required={true } />} />
             );
             break;
         case 'price':
             dynamicEditDialog.current = (
-                <SimpleEditDialog key={editMode} product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<CurrencyEditor                    />} />
+                <SimpleEditDialog key={Date.now()} product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<CurrencyEditor                    />} />
             );
             break;
         case 'stock':
             dynamicEditDialog.current = (
-                <SimpleEditDialog key={editMode} product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<StockEditor                       />} />
+                <SimpleEditDialog key={Date.now()} product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<StockEditor                       />} />
             );
             break;
         case 'visibility':
             dynamicEditDialog.current = (
-                <SimpleEditDialog key={editMode} product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<VisibilityEditor                  />} />
+                <SimpleEditDialog key={Date.now()} product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<VisibilityEditor                  />} />
             );
             break;
     } // switch
