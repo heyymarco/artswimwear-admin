@@ -512,26 +512,30 @@ const ProductItem = (props: ProductItemProps) => {
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     // for nicely modal collapsing animation -- the JSX is still *residual* even if the modal is *collapsing*:
-    const DynamicEditDialog = useRef<() => JSX.Element|null>(() => null);
+    const dynamicEditDialog = useRef<React.ReactNode>(null);
     switch (editMode) {
+        /*
+            NOTE:
+            The `key` of `<SimpleEditDialog>` is IMPORTANT in order to React know the `{dynamicEditDialog.current}` is changing
+        */
         case 'name':
-            DynamicEditDialog.current = () => (
-                <SimpleEditDialog product={product} edit='name'       onClose={() => setEditMode(null)} editorComponent={<TextEditor       required={true } />} />
+            dynamicEditDialog.current = (
+                <SimpleEditDialog key={editMode} product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<TextEditor       required={true } />} />
             );
             break;
         case 'price':
-            DynamicEditDialog.current = () => (
-                <SimpleEditDialog product={product} edit='price'      onClose={() => setEditMode(null)} editorComponent={<CurrencyEditor                    />} />
+            dynamicEditDialog.current = (
+                <SimpleEditDialog key={editMode} product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<CurrencyEditor                    />} />
             );
             break;
         case 'stock':
-            DynamicEditDialog.current = () => (
-                <SimpleEditDialog product={product} edit='stock'      onClose={() => setEditMode(null)} editorComponent={<StockEditor                       />} />
+            dynamicEditDialog.current = (
+                <SimpleEditDialog key={editMode} product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<StockEditor                       />} />
             );
             break;
         case 'visibility':
-            DynamicEditDialog.current = () => (
-                <SimpleEditDialog product={product} edit='visibility' onClose={() => setEditMode(null)} editorComponent={<VisibilityEditor                  />} />
+            dynamicEditDialog.current = (
+                <SimpleEditDialog key={editMode} product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<VisibilityEditor                  />} />
             );
             break;
     } // switch
@@ -571,7 +575,7 @@ const ProductItem = (props: ProductItemProps) => {
                 <EditButton onClick={() => setEditMode('visibility')} />
             </p>
             <ModalCard modalViewport={listItemRef} expanded={!!editMode} onExpandedChange={({expanded}) => !expanded && setEditMode(null)} backdropStyle='static'>
-                <DynamicEditDialog.current />
+                {dynamicEditDialog.current}
             </ModalCard>
         </ListItem>
     );
