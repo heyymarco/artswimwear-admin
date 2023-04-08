@@ -600,27 +600,34 @@ export default function Products() {
     
     // refs:
     const [productListRef, setProductListRef] = useState<HTMLElement|null>(null);
+    
     // for nicely modal collapsing animation -- the JSX is still *residual* even if the modal is *collapsing*:
-    const dynamicLoadingMessage = useRef<React.ReactNode>(null);
-    /*
-        NOTE:
-        The `key` of `<React.Fragment>` is NOT_NEEDED because there's no `props` other than `children`.
-    */
-    if (isFetching) {
-        dynamicLoadingMessage.current = <>
-            <p>Retrieving data from the server. Please wait...</p>
-            <LoadingBar className='loadingBar' />
-        </>;
-    }
-    else if (isError) {
-        dynamicLoadingMessage.current = <>
-            <h3>Oops, an error occured!</h3>
-            <p>We were unable to retrieve data from the server.</p>
-            <ButtonIcon icon='refresh' onClick={refetch}>
-                Retry
-            </ButtonIcon>
-        </>;
-    } // if
+    const newDynamicLoadingMessage = useMemo((): React.ReactNode => {
+        /*
+            NOTE:
+            The `key` of `<React.Fragment>` is NOT_NEEDED because there's no `props` other than `children`.
+        */
+        if (isFetching) {
+            return <>
+                <p>Retrieving data from the server. Please wait...</p>
+                <LoadingBar className='loadingBar' />
+            </>;
+        }
+        else if (isError) {
+            return <>
+                <h3>Oops, an error occured!</h3>
+                <p>We were unable to retrieve data from the server.</p>
+                <ButtonIcon icon='refresh' onClick={refetch}>
+                    Retry
+                </ButtonIcon>
+            </>;
+        }
+        else {
+            return undefined;
+        } // if
+    }, [isFetching, isError]);
+    const dynamicLoadingMessage = useRef<React.ReactNode>(newDynamicLoadingMessage);
+    if (newDynamicLoadingMessage !== undefined) dynamicLoadingMessage.current = newDynamicLoadingMessage;
     
     
     
