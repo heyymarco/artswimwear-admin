@@ -41,7 +41,7 @@ const ModalUi = (props: ModalUiProps): JSX.Element|null => {
     
     
     // states:
-    const [hasUi, lastExistingModalUiComponent] = useLastExistingChildren(modalUiComponent);
+    const [hasUi, lastExistingModalUiComponent, clearModalUiComponent] = useLastExistingChildren(modalUiComponent);
     
     
     
@@ -60,6 +60,11 @@ const ModalUi = (props: ModalUiProps): JSX.Element|null => {
             
             // states:
             expanded={props.expanded ?? hasUi}
+            
+            
+            
+            // handlers:
+            onFullyCollapsed={clearModalUiComponent}
         >
             {/* <Ui> */}
             {(lastExistingModalUiComponent as (ModalUiComponent|undefined)) ?? <React.Fragment />}
