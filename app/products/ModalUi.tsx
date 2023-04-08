@@ -50,13 +50,13 @@ const ModalUi = (props: ModalUiProps): JSX.Element|null => {
     
     
     
-    // verifies:
-    React.Children.only(modalUiComponent);
-    
-    
-    
     // states:
     const [hasUi, lastExistingModalUiComponent] = useLastExistingChildren(modalUiComponent);
+    
+    
+    
+    // verifies:
+    if (hasUi) React.Children.only(lastExistingModalUiComponent);
     
     
     
