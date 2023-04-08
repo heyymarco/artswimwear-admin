@@ -46,7 +46,7 @@ const ModalUi = (props: ModalUiProps): JSX.Element|null => {
     
     
     // verifies:
-    if (hasUi) React.Children.only(lastExistingModalUiComponent?.[0]);
+    if (hasUi) React.Children.only(lastExistingModalUiComponent);
     
     
     
@@ -62,7 +62,7 @@ const ModalUi = (props: ModalUiProps): JSX.Element|null => {
             expanded={props.expanded ?? hasUi}
         >
             {/* <Ui> */}
-            {(lastExistingModalUiComponent?.[0] as (ModalUiComponent|undefined)) ?? <React.Fragment />}
+            {(lastExistingModalUiComponent as (ModalUiComponent|undefined)) ?? <React.Fragment />}
         </Modal>
     );
 }
