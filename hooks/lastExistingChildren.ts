@@ -17,9 +17,9 @@ let childrenKeyCounter = 0;
 
 
 // hooks:
-export const useLastExistingChildren = (children?: React.ReactNode): readonly [boolean, React.ReactNode] => {
+export const useLastExistingChildren = (children?: React.ReactNode): readonly [boolean, React.ReactNode[]|undefined] => {
     // states:
-    const lastExistingChildrenRef = useRef<React.ReactNode>(undefined);
+    const lastExistingChildrenRef = useRef<React.ReactNode[]|undefined>(undefined);
     const hasChildren = (!!children || (children === 0)) && (children !== true) && (!Array.isArray(children) || !!children.length); // ignores undefined|null|true|false|emptyString|emptyArray
     if (hasChildren) {
         lastExistingChildrenRef.current = React.Children.map(children, (child) =>
