@@ -31,8 +31,13 @@ export const useLastExistingChildren = (children?: React.ReactNode): readonly [b
     
     // handlers:
     const clearChildren = useEvent<React.DispatchWithoutAction>(() => {
-        // force React to *forget* the children's state by setting children to `undefined` and re-render the <parent> component:
-        lastExistingChildrenRef.current = undefined;
+        // conditions:
+        if (lastExistingChildrenRef.current === children) return;
+        
+        
+        
+        // force React to *forget* the children's state by setting children to `undefined|null|true|false|emptyString|emptyArray` and re-render the <parent> component:
+        lastExistingChildrenRef.current = children; // the consumer component should set the children to `undefined|null|true|false|emptyString|emptyArray` in order to destroy the children's state.
         triggerRender();
     });
     
