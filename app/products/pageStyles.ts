@@ -92,6 +92,10 @@ export default () => {
             display: 'flex',
             flexDirection: 'column',
             padding: 0,
+            ...descendants('[role="dialog"]', {
+                [paddingVars.paddingInline] : '0px',
+                [paddingVars.paddingBlock ] : '0px',
+            }),
         }, { specificityWeight: 2 }),
         scopeOf('productItemLayout', {
             display: 'grid',
@@ -155,10 +159,6 @@ export default () => {
             ...children('.fullEditor', {
                 gridArea: 'fullEditor',
             }),
-            ...descendants('[role="dialog"]', {
-                [paddingVars.paddingInline] : '0px',
-                [paddingVars.paddingBlock ] : '0px',
-            }),
         }, { specificityWeight: 2 }),
         scopeOf('simpleEditor', {
             display: 'grid',
@@ -192,6 +192,7 @@ export default () => {
             borderBlockStartWidth               : '0px',
             ...children('*', {
                 gridArea: '1/1/1/1', // the options are overlapping each other, so the parent takes the maximum width & height of children
+                margin: 0,
             }),
             ...children('.hidden', {
                 visibility: 'hidden',

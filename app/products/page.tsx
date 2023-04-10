@@ -89,6 +89,15 @@ const NumberEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
 const CurrencyEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
     // rest props:
     const {
+        // variants:
+        size,
+        theme,
+        gradient,
+        outlined,
+        mild,
+        
+        
+        
         // classes:
         className,
         
@@ -103,6 +112,15 @@ const CurrencyEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
     
     return (
         <Group
+            // variants:
+            size={size}
+            theme={theme}
+            gradient={gradient}
+            outlined={outlined}
+            mild={mild}
+            
+            
+            
             // classes:
             className={className}
         >
@@ -168,6 +186,15 @@ const StockEditor = (props: StockEditorProps): CustomEditor['type'] => {
         
         
         
+        // variants:
+        size,
+        theme,
+        gradient,
+        outlined,
+        mild,
+        
+        
+        
         // classes:
         className,
         
@@ -225,7 +252,11 @@ const StockEditor = (props: StockEditorProps): CustomEditor['type'] => {
         >
             <List
                 // variants:
-                theme='secondary'
+                size={size}
+                theme={theme ?? 'secondary'}
+                gradient={gradient}
+                outlined={outlined}
+                mild={mild}
                 listStyle='tab'
                 orientation='inline'
                 
@@ -257,9 +288,33 @@ const StockEditor = (props: StockEditorProps): CustomEditor['type'] => {
                     </ListItem>
                 )}
             </List>
-            <Basic theme='secondary' className={styles.editorTabBody}>
+            <Basic
+                // variants:
+                size='md'
+                theme={theme ?? 'secondary'}
+                gradient={gradient}
+                outlined={outlined}
+                mild={mild}
+                
+                
+                
+                // classes:
+                className={styles.editorTabBody}
+            >
                 <p     className={!selectedTabLimited ? undefined : 'hidden'}>The product stock is <em>always available</em>.</p>
-                <Group className={ selectedTabLimited ? undefined : 'hidden'} theme='primary'>
+                <Group
+                    // variants:
+                    size={size}
+                    theme={theme ?? 'primary'}
+                    gradient={gradient}
+                    outlined={outlined}
+                    mild={mild}
+                    
+                    
+                    
+                    // classes:
+                    className={ selectedTabLimited ? undefined : 'hidden'}
+                >
                     <Label className='solid'>
                         Current stock:
                     </Label>
@@ -299,6 +354,15 @@ const VisibilityEditor = (props: CustomEditor['props']): CustomEditor['type'] =>
     
     // rest props:
     const {
+        // variants:
+        size,
+        theme,
+        gradient,
+        outlined,
+        mild,
+        
+        
+        
         // classes:
         className,
         
@@ -319,7 +383,11 @@ const VisibilityEditor = (props: CustomEditor['props']): CustomEditor['type'] =>
         >
             <List
                 // variants:
-                theme='secondary'
+                size={size}
+                theme={theme ?? 'secondary'}
+                gradient={gradient}
+                outlined={outlined}
+                mild={mild}
                 listStyle='tab'
                 orientation='inline'
                 
@@ -342,7 +410,19 @@ const VisibilityEditor = (props: CustomEditor['props']): CustomEditor['type'] =>
                     </ListItem>
                 )}
             </List>
-            <Basic theme='secondary' className={styles.editorTabBody}>
+            <Basic
+                // variants:
+                size='md'
+                theme={theme ?? 'secondary'}
+                gradient={gradient}
+                outlined={outlined}
+                mild={mild}
+                
+                
+                
+                // classes:
+                className={styles.editorTabBody}
+            >
                 <p className={(value === 'published') ? undefined : 'hidden'}>The product is <em>shown</em> on the webiste.</p>
                 <p className={(value === 'hidden'   ) ? undefined : 'hidden'}>The product can only be viewed via <em>a (bookmarked) link</em>.</p>
                 <p className={(value === 'draft'    ) ? undefined : 'hidden'}>The product <em>cannot be viewed</em> on the entire website.</p>
@@ -502,6 +582,10 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
                         
                         
                         
+                        size             : 'sm',
+                        
+                        
+                        
                         className        : 'editor',
                         
                         
@@ -514,8 +598,8 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
                         enableValidation : enableValidation,
                     },
                 )}
-                <ButtonIcon className='btnSave' icon={isLoading ? 'busy' : 'save'} theme='success' onClick={handleSave}>Save</ButtonIcon>
-                <ButtonIcon className='btnCancel' icon='cancel' theme='danger' onClick={onClose}>Cancel</ButtonIcon>
+                <ButtonIcon className='btnSave' icon={isLoading ? 'busy' : 'save'} theme='success' size='sm' onClick={handleSave}>Save</ButtonIcon>
+                <ButtonIcon className='btnCancel' icon='cancel' theme='danger' size='sm' onClick={onClose}>Cancel</ButtonIcon>
             </AccessibilityProvider>
             <ModalStatus
                 theme='danger'
