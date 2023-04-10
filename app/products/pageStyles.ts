@@ -89,12 +89,18 @@ export default () => {
             }),
         }, { specificityWeight: 2 }),
         scopeOf('productItem', {
+            display: 'flex',
+            flexDirection: 'column',
+            padding: 0,
+        }, { specificityWeight: 2 }),
+        scopeOf('productItemLayout', {
             display: 'grid',
             gridTemplate: [[
                 '"image      name "', 'auto',
                 '"image      price"', 'auto',
                 '"image      stock"', 'auto',
                 '"image visibility"', 'auto',
+                '"image fullEditor"', 'auto',
                 '/',
                 'min-content', 'auto',
             ]],
@@ -110,6 +116,9 @@ export default () => {
             ...descendants('.edit', {
                 marginInlineStart: '0.25em',
                 opacity: 0.5,
+                transition: [
+                    ['transform', '300ms', 'ease-out'],
+                ],
                 ...rule(':hover', {
                     opacity: 'unset',
                     transform: 'scale(105%)',
@@ -117,7 +126,18 @@ export default () => {
             }),
             ...children('.prodImg', {
                 gridArea: 'image',
+                alignSelf: 'center',
                 width: '96px',
+                height: 'fit-content',
+                display: 'grid',
+                ...children('*', {
+                    gridArea: '1/1/-1/-1',
+                }),
+                ...children('.edit', {
+                    justifySelf: 'start',
+                    alignSelf: 'start',
+                    margin: 0,
+                }),
             }),
             ...children('.name', {
                 gridArea: 'name',
@@ -132,13 +152,14 @@ export default () => {
             ...children('.visibility', {
                 gridArea: 'visibility',
             }),
+            ...children('.fullEditor', {
+                gridArea: 'fullEditor',
+            }),
             ...descendants('[role="dialog"]', {
                 [paddingVars.paddingInline] : '0px',
                 [paddingVars.paddingBlock ] : '0px',
             }),
         }, { specificityWeight: 2 }),
-        scopeOf('productItem', {
-        }),
         scopeOf('simpleEditor', {
             display: 'grid',
             gridTemplate: [[

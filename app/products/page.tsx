@@ -6,7 +6,7 @@ import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 import { Section, Main } from '@heymarco/section'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, ButtonIconProps, InputProps, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput, NumberInput, Group, Label, Basic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton } from '@reusable-ui/components';
+import { ButtonIcon, ButtonIconProps, InputProps, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput, NumberInput, Group, Label, Basic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, Badge } from '@reusable-ui/components';
 import { ProductEntry, useGetProductList, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
@@ -574,30 +574,38 @@ const ProductItem = (props: ProductItemProps) => {
     // jsx:
     return (
         <ListItem {...restListItem} elmRef={listItemRef} className={styles.productItem}>
-            <Image
-                className='prodImg'
+            <div className={styles.productItemLayout}>
+                <div className='prodImg'>
+                    <Image
+                        alt={name ?? ''}
+                        src={image ? `/products/${name}/${image}` : undefined}
+                        sizes='96px'
+                    />
+                    <EditButton />
+                </div>
                 
-                alt={name ?? ''}
-                src={image ? `/products/${name}/${image}` : undefined}
-                sizes='96px'
-            />
-            
-            <h3 className='name'>
-                {name}
-                <EditButton onClick={() => setEditMode('name')} />
-            </h3>
-            <p className='price'>
-                <strong className='value'>{formatCurrency(price)}</strong>
-                <EditButton onClick={() => setEditMode('price')} />
-            </p>
-            <p className='stock'>
-                Stock: <strong className='value'>{stock ?? 'unlimited'}</strong>
-                <EditButton onClick={() => setEditMode('stock')} />
-            </p>
-            <p className='visibility'>
-                Visibility: <strong className='value'>{visibility}</strong>
-                <EditButton onClick={() => setEditMode('visibility')} />
-            </p>
+                <h3 className='name'>
+                    {name}
+                    <EditButton onClick={() => setEditMode('name')} />
+                </h3>
+                <p className='price'>
+                    <strong className='value'>{formatCurrency(price)}</strong>
+                    <EditButton onClick={() => setEditMode('price')} />
+                </p>
+                <p className='stock'>
+                    Stock: <strong className='value'>{stock ?? 'unlimited'}</strong>
+                    <EditButton onClick={() => setEditMode('stock')} />
+                </p>
+                <p className='visibility'>
+                    Visibility: <strong className='value'>{visibility}</strong>
+                    <EditButton onClick={() => setEditMode('visibility')} />
+                </p>
+                <p className='fullEditor'>
+                    <EditButton buttonStyle='regular'>
+                        Open full editor
+                    </EditButton>
+                </p>
+            </div>
             <ModalStatus modalViewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
                 {!!editMode && <>
                     {(editMode === 'name'      ) && <SimpleEditDialog product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<TextEditor       required={true } />} />}
