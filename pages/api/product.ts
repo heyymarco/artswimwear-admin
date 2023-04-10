@@ -76,15 +76,17 @@ export default nextConnect<NextApiRequest, NextApiResponse>({
     });
 })
 .patch<NextApiRequest, NextApiResponse>(async (req, res) => {
-    if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
+    // if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
         await new Promise<void>((resolve) => {
             setTimeout(() => {
                 resolve();
             }, 2000);
         });
-    } // if
+    // } // if
     
-    
+    // throw '';
+    // return res.status(400).json({ message: 'not found' });
+    // return res.status(500).json({ message: 'server error' });
     
     //#region parsing request
     const {

@@ -6,7 +6,7 @@ import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 import { Section, Main } from '@heymarco/section'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, ButtonIconProps, InputProps, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput, NumberInput, Group, Label, Basic, Content, CardBody } from '@reusable-ui/components';
+import { ButtonIcon, ButtonIconProps, InputProps, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput, NumberInput, Group, Label, Basic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton } from '@reusable-ui/components';
 import { ProductEntry, useGetProductList, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
@@ -408,6 +408,11 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
     
     
     
+    // dialogs:
+    const [errorMessage, setErrorMessage] = useState<React.ReactNode>(undefined);
+    
+    
+    
     // handlers:
     const handleSave = useEvent(async () => {
         setEnableValidation(true);
@@ -430,8 +435,23 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
             
             onClose();
         }
-        catch (error) {
-            console.log('error: ', error);
+        catch (error: any) {
+            const errorStatus = error?.status;
+            setErrorMessage(<>
+                <p>Oops, an error occured!</p>
+                <p>We were unable to save data to the server.</p>
+                {(errorStatus >= 400) && (errorStatus <= 499) && <p>
+                    There was a <strong>problem contacting our server</strong>.<br />
+                    Make sure your internet connection is available.
+                </p>}
+                {(errorStatus >= 500) && (errorStatus <= 599) && <p>
+                    There was a <strong>problem on our server</strong>.<br />
+                    The server may be busy or currently under maintenance.
+                </p>}
+                <p>
+                    Please try again in a few minutes.
+                </p>
+            </>);
         } // try
     });
     const handleKeyDown : React.KeyboardEventHandler<HTMLElement> = useEvent((event) => {
@@ -497,6 +517,24 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
                 <ButtonIcon className='btnSave' icon={isLoading ? 'busy' : 'save'} theme='success' onClick={handleSave}>Save</ButtonIcon>
                 <ButtonIcon className='btnCancel' icon='cancel' theme='danger' onClick={onClose}>Cancel</ButtonIcon>
             </AccessibilityProvider>
+            <ModalStatus
+                theme='danger'
+            >
+                {!!errorMessage && <>
+                    <CardHeader>
+                        Error Saving Data
+                        <CloseButton onClick={() => setErrorMessage(undefined)} />
+                    </CardHeader>
+                    <CardBody>
+                        {errorMessage}
+                    </CardBody>
+                    <CardFooter>
+                        <Button onClick={() => setErrorMessage(undefined)}>
+                            Okay
+                        </Button>
+                    </CardFooter>
+                </>}
+            </ModalStatus>
         </CardBody>
     );
 }
