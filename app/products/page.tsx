@@ -732,6 +732,23 @@ const CompleteEditDialog = (props: CompleteEditDialogProps) => {
             </CardHeader>
             <CardBody className={styles.fullEditor}>
                 <AccessibilityProvider enabled={!isLoading}>
+                    <span className='name label'>Name:</span>
+                    <TextEditor className='name editor' />
+                    
+                    <span className='path label'>Path:</span>
+                    <TextEditor className='path editor' />
+                    
+                    <span className='price label'>Price:</span>
+                    <CurrencyEditor className='price editor' />
+                    
+                    <span className='sWeight label'>Shipping Weight:</span>
+                    <QuantityInput className='sWeight editor' />
+                    
+                    <span className='stock label'>Stock:</span>
+                    <StockEditor className='stock editor' />
+                    
+                    <span className='visibility label'>Visibility:</span>
+                    <VisibilityEditor className='visibility editor' />
                 </AccessibilityProvider>
                 <ModalStatus
                     theme='danger'
@@ -845,7 +862,7 @@ const ProductItem = (props: ProductItemProps) => {
                     {(editMode === 'visibility') && <SimpleEditDialog product={product} edit={editMode} onClose={handleEditDialogClose} editorComponent={<VisibilityEditor                  />} />}
                 </>}
             </ModalStatus>
-            <ModalStatus theme='primary' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
+            <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
                 {!!editMode && (editMode === 'full') && <CompleteEditDialog product={product} onClose={handleEditDialogClose} />}
             </ModalStatus>
         </ListItem>
