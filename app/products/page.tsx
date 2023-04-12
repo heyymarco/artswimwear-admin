@@ -431,6 +431,8 @@ const VisibilityEditor = (props: CustomEditor['props']): CustomEditor['type'] =>
     );
 }
 
+
+
 interface SimpleEditDialogProps {
     // data:
     product          : ProductEntry
@@ -536,7 +538,7 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
     });
     const handleKeyDown : React.KeyboardEventHandler<HTMLElement> = useEvent((event) => {
         if (event.key === 'Enter') handleSave();
-    })
+    });
     
     
     
@@ -622,6 +624,144 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
         </CardBody>
     );
 }
+
+
+
+interface CompleteEditDialogProps {
+    // data:
+    product          : ProductEntry
+    
+    
+    
+    // handlers:
+    onClose          : () => void
+}
+const CompleteEditDialog = (props: CompleteEditDialogProps) => {
+    // styles:
+    const styles = usePageStyleSheet();
+    
+    
+    
+    // rest props:
+    const {
+        // data:
+        product,
+        
+        
+        
+        
+        // handlers:
+        onClose,
+    } = props;
+    
+    
+    
+    // states:
+    const [enableValidation, setEnableValidation] = useState<boolean>(false);
+    
+    
+    
+    // stores:
+    const [updateProduct, {isLoading}] = useUpdateProduct();
+    
+    
+    
+    // refs:
+    // const editorRef = useRef<HTMLInputElement|null>(null);
+    
+    
+    
+    // dialogs:
+    const [errorMessage, setErrorMessage] = useState<React.ReactNode>(undefined);
+    
+    
+    
+    // handlers:
+    const handleSave = useEvent(async () => {
+        setEnableValidation(true);
+        await new Promise<void>((resolve) => { // wait for a validation state applied
+            setTimeout(() => {
+                setTimeout(() => {
+                    resolve();
+                }, 0);
+            }, 0);
+        });
+        // if (editorRef.current?.parentElement?.matches(':is(.invalidating, .invalidated)')) return;
+        
+        
+        
+        try {
+            // await updateProduct({
+            //     _id    : product._id,
+            //     [edit] : editorValue,
+            // }).unwrap();
+            
+            onClose();
+        }
+        catch (error: any) {
+            const errorStatus = error?.status;
+            setErrorMessage(<>
+                <p>Oops, an error occured!</p>
+                <p>We were unable to save data to the server.</p>
+                {(errorStatus >= 400) && (errorStatus <= 499) && <p>
+                    There was a <strong>problem contacting our server</strong>.<br />
+                    Make sure your internet connection is available.
+                </p>}
+                {(errorStatus >= 500) && (errorStatus <= 599) && <p>
+                    There was a <strong>problem on our server</strong>.<br />
+                    The server may be busy or currently under maintenance.
+                </p>}
+                <p>
+                    Please try again in a few minutes.
+                </p>
+            </>);
+        } // try
+    });
+    const handleClose : React.MouseEventHandler<HTMLButtonElement> = useEvent((event) => {
+        onClose?.();
+    });
+    
+    
+    
+    // jsx:
+    return (
+        <>
+            <CardHeader>
+                {product.name}
+                <CloseButton onClick={handleClose} />
+            </CardHeader>
+            <CardBody className={styles.fullEditor}>
+                <AccessibilityProvider enabled={!isLoading}>
+                </AccessibilityProvider>
+                <ModalStatus
+                    theme='danger'
+                >
+                    {!!errorMessage && <>
+                        <CardHeader>
+                            Error Saving Data
+                            <CloseButton onClick={() => setErrorMessage(undefined)} />
+                        </CardHeader>
+                        <CardBody>
+                            {errorMessage}
+                        </CardBody>
+                        <CardFooter>
+                            <Button onClick={() => setErrorMessage(undefined)}>
+                                Okay
+                            </Button>
+                        </CardFooter>
+                    </>}
+                </ModalStatus>
+            </CardBody>
+            <CardFooter>
+                <ButtonIcon className='btnSave' icon={isLoading ? 'busy' : 'save'} theme='success' onClick={handleSave}>Save</ButtonIcon>
+                <ButtonIcon className='btnCancel' icon='cancel' theme='danger' onClick={onClose}>Cancel</ButtonIcon>
+            </CardFooter>
+        </>
+    );
+}
+
+
+
 interface ProductItemProps extends ListItemProps {
     product: ProductEntry
 }
@@ -645,13 +785,20 @@ const ProductItem = (props: ProductItemProps) => {
     
     
     // states:
-    type EditMode = Exclude<keyof ProductEntry, '_id'|'image'>
+    type EditMode = Exclude<keyof ProductEntry, '_id'|'image'>|'full'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     
     
     // refs:
     const listItemRef = useRef<HTMLElement|null>(null);
+    
+    
+    
+    // handlers:
+    const handleEditDialogClose = useEvent((): void => {
+        setEditMode(null);
+    });
     
     
     
@@ -665,7 +812,7 @@ const ProductItem = (props: ProductItemProps) => {
                         src={image ? `/products/${name}/${image}` : undefined}
                         sizes='96px'
                     />
-                    <EditButton />
+                    <EditButton onClick={() => setEditMode('full')} />
                 </div>
                 
                 <h3 className='name'>
@@ -685,18 +832,21 @@ const ProductItem = (props: ProductItemProps) => {
                     <EditButton onClick={() => setEditMode('visibility')} />
                 </p>
                 <p className='fullEditor'>
-                    <EditButton buttonStyle='regular'>
+                    <EditButton buttonStyle='regular' onClick={() => setEditMode('full')}>
                         Open full editor
                     </EditButton>
                 </p>
             </div>
             <ModalStatus modalViewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {!!editMode && <>
-                    {(editMode === 'name'      ) && <SimpleEditDialog product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<TextEditor       required={true } />} />}
-                    {(editMode === 'price'     ) && <SimpleEditDialog product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<CurrencyEditor                    />} />}
-                    {(editMode === 'stock'     ) && <SimpleEditDialog product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<StockEditor                       />} />}
-                    {(editMode === 'visibility') && <SimpleEditDialog product={product} edit={editMode} onClose={() => setEditMode(null)} editorComponent={<VisibilityEditor                  />} />}
+                {!!editMode && (editMode !== 'full') && <>
+                    {(editMode === 'name'      ) && <SimpleEditDialog product={product} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor       required={true } />} />}
+                    {(editMode === 'price'     ) && <SimpleEditDialog product={product} edit={editMode} onClose={handleEditDialogClose} editorComponent={<CurrencyEditor                    />} />}
+                    {(editMode === 'stock'     ) && <SimpleEditDialog product={product} edit={editMode} onClose={handleEditDialogClose} editorComponent={<StockEditor                       />} />}
+                    {(editMode === 'visibility') && <SimpleEditDialog product={product} edit={editMode} onClose={handleEditDialogClose} editorComponent={<VisibilityEditor                  />} />}
                 </>}
+            </ModalStatus>
+            <ModalStatus theme='primary' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
+                {!!editMode && (editMode === 'full') && <CompleteEditDialog product={product} onClose={handleEditDialogClose} />}
             </ModalStatus>
         </ListItem>
     );

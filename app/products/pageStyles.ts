@@ -183,6 +183,8 @@ export default () => {
                 gridArea: 'btnCancel',
             }),
         }, { specificityWeight: 3 }),
+        scopeOf('fullEditor', {
+        }, { specificityWeight: 3 }),
         scopeOf('editorTabBody', {
             display: 'grid',
             justifyItems: 'center',
