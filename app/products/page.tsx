@@ -796,7 +796,7 @@ const FullEditDialog = (props: FullEditDialogProps) => {
                         <QuantityInput className='sWeight editor'       value={shippingWeight} onChange={({target:{valueAsNumber}}) => { setShippingWeight(getRealNumberOrNull(valueAsNumber) ?? undefined); setIsModified(true); }} />
                         
                         <span className='stock label'>Stock:</span>
-                        <StockEditor className='stock editor'           value={stock}          onChange={({target:{valueAsNumber}}) => { setStock(getRealNumberOrNull(valueAsNumber) ?? undefined); setIsModified(true); }} />
+                        <StockEditor className='stock editor'           value={stock}          onChange={(value) => { setStock(value); setIsModified(true); }} />
                         
                         <span className='visibility label'>Visibility:</span>
                         <VisibilityEditor className='visibility editor' value={visibility}     onChange={(value) => { setVisibility(value); setIsModified(true); }} />
