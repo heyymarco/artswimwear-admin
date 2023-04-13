@@ -5,16 +5,19 @@ import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 
 import { Section, Main } from '@heymarco/section'
 
+import type { Metadata } from 'next'
+
 import { Image } from '@heymarco/image'
 import { ButtonIcon, ButtonIconProps, InputProps, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput, NumberInput, Group, Label, Basic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, Badge } from '@reusable-ui/components';
 import { ProductEntry, useGetProductList, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
 import { formatCurrency, getCurrencySign } from '@/libs/formatters';
-import { AccessibilityProvider, useEvent, useMergeRefs } from '@reusable-ui/core';
+import { AccessibilityProvider, ValidationProvider, useEvent, useMergeRefs } from '@reusable-ui/core';
 import { QuantityInput, QuantityInputProps } from '@heymarco/quantity-input'
 import { ModalStatus } from '../../components/ModalStatus'
-import { ModalUi } from '../../components/ModalUi'
+
+import { PAGE_PRODUCTS_TITLE, PAGE_PRODUCTS_DESCRIPTION, PAGE_PRODUCTS_STOCK_UNLIMITED, PAGE_PRODUCTS_STOCK_LIMITED, PAGE_PRODUCTS_VISIBILITY_DRAFT, PAGE_PRODUCTS_VISIBILITY_HIDDEN, PAGE_PRODUCTS_VISIBILITY_PUBLISHED, PAGE_PRODUCTS_TAB_INFORMATIONS, PAGE_PRODUCTS_TAB_DESCRIPTION, PAGE_PRODUCTS_TAB_IMAGES } from '@/website.config'
 
 
 
@@ -284,7 +287,10 @@ const StockEditor = (props: StockEditorProps): CustomEditor['type'] => {
                             );
                         }}
                     >
-                        {option}
+                        {{
+                            unlimited : PAGE_PRODUCTS_STOCK_UNLIMITED,
+                            limited   : PAGE_PRODUCTS_STOCK_LIMITED,
+                        }[option]}
                     </ListItem>
                 )}
             </List>
@@ -406,7 +412,11 @@ const VisibilityEditor = (props: CustomEditor['props']): CustomEditor['type'] =>
                         // handlers:
                         onClick={() => onChange?.(option)}
                     >
-                        {option}
+                        {{
+                            published : PAGE_PRODUCTS_VISIBILITY_PUBLISHED,
+                            hidden    : PAGE_PRODUCTS_VISIBILITY_HIDDEN,
+                            draft     : PAGE_PRODUCTS_VISIBILITY_DRAFT,
+                        }[option]}
                     </ListItem>
                 )}
             </List>
@@ -659,6 +669,9 @@ const FullEditDialog = (props: FullEditDialogProps) => {
     // states:
     const [activeTab, setActiveTab] = useState<string>('informations');
     
+    const [isPathModified, setIsPathModified] = useState<boolean>(false);
+    const [isModified    , setIsModified    ] = useState<boolean>(false);
+    
     const [enableValidation, setEnableValidation] = useState<boolean>(false);
     const [visibility      , setVisibility      ] = useState<string>(product.visibility);
     const [name            , setName            ] = useState<string>(product.name);
@@ -759,29 +772,35 @@ const FullEditDialog = (props: FullEditDialogProps) => {
                         // handlers:
                         onClick={() => setActiveTab(option)}
                     >
-                        {option}
+                        {{
+                            informations : PAGE_PRODUCTS_TAB_INFORMATIONS,
+                            images       : PAGE_PRODUCTS_TAB_IMAGES,
+                            description  : PAGE_PRODUCTS_TAB_DESCRIPTION,
+                        }[option]}
                     </ListItem>
                 )}
             </List>
             <CardBody className={styles.fullEditor}>
                 <AccessibilityProvider enabled={!isLoading}>
-                    <span className='name label'>Name:</span>
-                    <TextEditor className='name editor'             value={name}           onChange={({target:{value}}) => setName(value)} />
-                    
-                    <span className='path label'>Path:</span>
-                    <TextEditor className='path editor'             value={path}           onChange={({target:{value}}) => setPath(value)} />
-                    
-                    <span className='price label'>Price:</span>
-                    <CurrencyEditor className='price editor'        value={price}          onChange={({target:{valueAsNumber}}) => setPrice(getRealNumberOrNull(valueAsNumber) ?? undefined)} />
-                    
-                    <span className='sWeight label'>Shipping Weight:</span>
-                    <QuantityInput className='sWeight editor'       value={shippingWeight} onChange={({target:{valueAsNumber}}) => setShippingWeight(getRealNumberOrNull(valueAsNumber) ?? undefined)} />
-                    
-                    <span className='stock label'>Stock:</span>
-                    <StockEditor className='stock editor'           value={stock}          onChange={({target:{valueAsNumber}}) => setStock(getRealNumberOrNull(valueAsNumber) ?? undefined)} />
-                    
-                    <span className='visibility label'>Visibility:</span>
-                    <VisibilityEditor className='visibility editor' value={visibility}     onChange={(value) => setVisibility(value)} />
+                    <ValidationProvider enableValidation={enableValidation}>
+                        <span className='name label'>Name:</span>
+                        <TextEditor className='name editor'             value={name}           onChange={({target:{value}}) => { setName(value); setIsModified(true); }} />
+                        
+                        <span className='path label'>Path:</span>
+                        <TextEditor className='path editor'             value={path}           onChange={({target:{value}}) => { setPath(value); setIsPathModified(true); }} />
+                        
+                        <span className='price label'>Price:</span>
+                        <CurrencyEditor className='price editor'        value={price}          onChange={({target:{valueAsNumber}}) => { setPrice(getRealNumberOrNull(valueAsNumber) ?? undefined); setIsModified(true); }} />
+                        
+                        <span className='sWeight label'>Shipping Weight:</span>
+                        <QuantityInput className='sWeight editor'       value={shippingWeight} onChange={({target:{valueAsNumber}}) => { setShippingWeight(getRealNumberOrNull(valueAsNumber) ?? undefined); setIsModified(true); }} />
+                        
+                        <span className='stock label'>Stock:</span>
+                        <StockEditor className='stock editor'           value={stock}          onChange={({target:{valueAsNumber}}) => { setStock(getRealNumberOrNull(valueAsNumber) ?? undefined); setIsModified(true); }} />
+                        
+                        <span className='visibility label'>Visibility:</span>
+                        <VisibilityEditor className='visibility editor' value={visibility}     onChange={(value) => { setVisibility(value); setIsModified(true); }} />
+                    </ValidationProvider>
                 </AccessibilityProvider>
                 <ModalStatus
                     theme='danger'
@@ -996,3 +1015,10 @@ export default function Products() {
         </Main>
     )
 }
+
+
+
+export const metadata : Metadata = {
+    title       : PAGE_PRODUCTS_TITLE,
+    description : PAGE_PRODUCTS_DESCRIPTION,
+};

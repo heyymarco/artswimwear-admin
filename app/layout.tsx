@@ -15,6 +15,8 @@ import { Footer } from './Footer'
 import { store } from '@/store/store'
 import { Provider } from 'react-redux'
 
+import { WEBSITE_LANGUAGE } from '@/website.config'
+
 
 
 // styles:
@@ -37,7 +39,7 @@ export default function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="en">
+        <html lang={WEBSITE_LANGUAGE}>
             <head>
                 <StylesSSR />
             </head>
