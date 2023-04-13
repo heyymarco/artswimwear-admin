@@ -485,6 +485,9 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
     
     
     // states:
+    const [isModified, setIsModified] = useState<boolean>(false);
+    const [showWarnUnsaved, setShowWarnUnsaved] = useState<boolean>(false);
+    
     const [enableValidation, setEnableValidation] = useState<boolean>(false);
     const [editorValue, setEditorValue] = useState<any>(product[edit]);
     
@@ -546,8 +549,26 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
             </>);
         } // try
     });
+    const handleClosing = useEvent(() => {
+        if (isModified) {
+            setShowWarnUnsaved(true);
+        }
+        else {
+            onClose();
+        } // if
+    });
     const handleKeyDown : React.KeyboardEventHandler<HTMLElement> = useEvent((event) => {
-        if (event.key === 'Enter') handleSave();
+        switch (event.key) {
+            case 'Enter':
+                event.preventDefault();
+                handleSave();
+                break;
+            
+            case 'Escape':
+                event.preventDefault();
+                handleClosing();
+                break;
+        } // switch
     });
     
     
@@ -603,7 +624,7 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
                         
                         
                         value            : editorValue,
-                        onChange         : (value: any) => setEditorValue(value),
+                        onChange         : (value: any) => { setEditorValue(value); setIsModified(true); },
                         
                         
                         
@@ -611,10 +632,11 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
                     },
                 )}
                 <ButtonIcon className='btnSave' icon={isLoading ? 'busy' : 'save'} theme='success' size='sm' onClick={handleSave}>Save</ButtonIcon>
-                <ButtonIcon className='btnCancel' icon='cancel' theme='danger' size='sm' onClick={onClose}>Cancel</ButtonIcon>
+                <ButtonIcon className='btnCancel' icon='cancel' theme='danger' size='sm' onClick={handleClosing}>Cancel</ButtonIcon>
             </AccessibilityProvider>
             <ModalStatus
                 theme='danger'
+                backdropStyle='static'
             >
                 {!!errorMessage && <>
                     <CardHeader>
@@ -628,6 +650,45 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
                         <Button onClick={() => setErrorMessage(undefined)}>
                             Okay
                         </Button>
+                    </CardFooter>
+                </>}
+            </ModalStatus>
+            <ModalStatus
+                theme='warning'
+                backdropStyle='static'
+            >
+                {showWarnUnsaved && <>
+                    <CardHeader>
+                        Unsaved Data
+                    </CardHeader>
+                    <CardBody>
+                        <p>
+                            Do you want to save the changes?
+                        </p>
+                    </CardBody>
+                    <CardFooter>
+                        <ButtonIcon theme='success' icon='save' onClick={() => {
+                            // close the dialog first:
+                            setShowWarnUnsaved(false);
+                            // then do a save (it will automatically close the editor after successfully saving):
+                            handleSave();
+                        }}>
+                            Save
+                        </ButtonIcon>
+                        <ButtonIcon theme='danger' icon='cancel' onClick={() => {
+                            // close the dialog first:
+                            setShowWarnUnsaved(false);
+                            // then close the editor (without saving):
+                            onClose();
+                        }}>
+                            Don&apos;t Save
+                        </ButtonIcon>
+                        <ButtonIcon theme='secondary' icon='flip_to_back' onClick={() => {
+                            // close the dialog:
+                            setShowWarnUnsaved(false);
+                        }}>
+                            Continue Editing
+                        </ButtonIcon>
                     </CardFooter>
                 </>}
             </ModalStatus>
@@ -815,6 +876,7 @@ const FullEditDialog = (props: FullEditDialogProps) => {
                 </AccessibilityProvider>
                 <ModalStatus
                     theme='danger'
+                    backdropStyle='static'
                 >
                     {!!errorMessage && <>
                         <CardHeader>
