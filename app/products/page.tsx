@@ -699,6 +699,17 @@ const FullEditDialog = (props: FullEditDialogProps) => {
     
     
     // handlers:
+    const handleNameChange = useEvent((name: string) => {
+        // conditions:
+        if (isPathModified) return;
+        
+        
+        
+        // sync path:
+        setPath(
+            name.trim().toLowerCase().replace(/(\s|_|-)+/ig, '-')
+        );
+    })
     const handleSave = useEvent(async () => {
         setEnableValidation(true);
         await new Promise<void>((resolve) => { // wait for a validation state applied
@@ -784,16 +795,16 @@ const FullEditDialog = (props: FullEditDialogProps) => {
                 <AccessibilityProvider enabled={!isLoading}>
                     <ValidationProvider enableValidation={enableValidation}>
                         <span className='name label'>Name:</span>
-                        <TextEditor className='name editor'             value={name}           onChange={({target:{value}}) => { setName(value); setIsModified(true); }} />
+                        <TextEditor className='name editor'             value={name}           onChange={(value) => { setName(value); setIsModified(true); handleNameChange(value); }} />
                         
                         <span className='path label'>Path:</span>
-                        <TextEditor className='path editor'             value={path}           onChange={({target:{value}}) => { setPath(value); setIsPathModified(true); }} />
+                        <TextEditor className='path editor'             value={path}           onChange={(value) => { setPath(value); setIsPathModified(true); }} />
                         
                         <span className='price label'>Price:</span>
-                        <CurrencyEditor className='price editor'        value={price}          onChange={({target:{valueAsNumber}}) => { setPrice(getRealNumberOrNull(valueAsNumber) ?? undefined); setIsModified(true); }} />
+                        <CurrencyEditor className='price editor'        value={price}          onChange={(value) => { setPrice(getRealNumberOrNull(value) ?? undefined); setIsModified(true); }} />
                         
                         <span className='sWeight label'>Shipping Weight:</span>
-                        <QuantityInput className='sWeight editor'       value={shippingWeight} onChange={({target:{valueAsNumber}}) => { setShippingWeight(getRealNumberOrNull(valueAsNumber) ?? undefined); setIsModified(true); }} />
+                        <NumberEditor className='sWeight editor'        value={shippingWeight} onChange={(value) => { setShippingWeight(getRealNumberOrNull(value) ?? undefined); setIsModified(true); }} />
                         
                         <span className='stock label'>Stock:</span>
                         <StockEditor className='stock editor'           value={stock}          onChange={(value) => { setStock(value); setIsModified(true); }} />
