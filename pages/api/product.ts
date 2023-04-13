@@ -69,7 +69,22 @@ export default nextConnect<NextApiRequest, NextApiResponse>({
     const total = await Product.count();
     return res.json({
         total,
-        entities: (await Product.find<HydratedDocument<PreviewProduct>>({}, { _id: true, visibility: true, name: true, price: true, stock: true, image: { $first: "$images" } }, {
+        entities: (await Product.find<HydratedDocument<PreviewProduct>>({}, {
+            _id            : true,
+            
+            visibility     : true,
+            
+            name           : true,
+            
+            price          : true,
+            shippingWeight : true,
+            
+            stock          : true,
+            
+            description    : true,
+            images         : true,
+            path           : true,
+        }, {
             skip  : (page - 1) * perPage, // note: not scaleable but works in small commerce app -- will be fixed in the future
             limit : perPage,
         }))

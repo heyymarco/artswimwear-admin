@@ -226,6 +226,9 @@ export default () => {
             gapInline: spacers.default,
             gapBlock : spacers.xs,
             
+            
+            
+            // children:
             ...children('.name.label'       , { gridArea: 'name-label'        }),
             ...children('.name.editor'      , { gridArea: 'name-editor'       }),
             

@@ -25,6 +25,16 @@ const usePageStyleSheet = dynamicStyleSheets(
 
 
 
+// utilities:
+const getRealNumberOrNull = (number: number|null|undefined) => {
+    if (number === undefined) return null;
+    if (number === null)      return null;
+    if (!isFinite(number))    return null;
+    return number;
+}
+
+
+
 const EditButton = (props: ButtonIconProps) => {
     return (
         <ButtonIcon
@@ -218,16 +228,6 @@ const StockEditor = (props: StockEditorProps): CustomEditor['type'] => {
         elmRef,
         numberInputRefInternal,
     );
-    
-    
-    
-    // utilities:
-    const getRealNumberOrNull = (number: number|null|undefined) => {
-        if (number === undefined) return null;
-        if (number === null)      return null;
-        if (!isFinite(number))    return null;
-        return number;
-    }
     
     
     
@@ -627,7 +627,7 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
 
 
 
-interface CompleteEditDialogProps {
+interface FullEditDialogProps {
     // data:
     product          : ProductEntry
     
@@ -636,7 +636,7 @@ interface CompleteEditDialogProps {
     // handlers:
     onClose          : () => void
 }
-const CompleteEditDialog = (props: CompleteEditDialogProps) => {
+const FullEditDialog = (props: FullEditDialogProps) => {
     // styles:
     const styles = usePageStyleSheet();
     
@@ -657,7 +657,16 @@ const CompleteEditDialog = (props: CompleteEditDialogProps) => {
     
     
     // states:
+    const [activeTab, setActiveTab] = useState<string>('informations');
+    
     const [enableValidation, setEnableValidation] = useState<boolean>(false);
+    const [visibility      , setVisibility      ] = useState<string>(product.visibility);
+    const [name            , setName            ] = useState<string>(product.name);
+    const [path            , setPath            ] = useState<string>(product.path ?? '');
+    const [price           , setPrice           ] = useState<number|undefined>(product.price);
+    const [shippingWeight  , setShippingWeight  ] = useState<number|undefined>(product.shippingWeight);
+    const [stock           , setStock           ] = useState<number|undefined>(product.stock);
+    const [description     , setDescription     ] = useState<string>(product.description ?? '');
     
     
     
@@ -730,25 +739,49 @@ const CompleteEditDialog = (props: CompleteEditDialogProps) => {
                 {product.name}
                 <CloseButton onClick={handleClose} />
             </CardHeader>
+            <List
+                // variants:
+                listStyle='flat'
+                orientation='inline'
+                
+                
+                
+                // behaviors:
+                actionCtrl={true}
+            >
+                {['informations', 'images', 'description'].map((option) =>
+                    <ListItem key={option}
+                        // accessibilities:
+                        active={activeTab === option}
+                        
+                        
+                        
+                        // handlers:
+                        onClick={() => setActiveTab(option)}
+                    >
+                        {option}
+                    </ListItem>
+                )}
+            </List>
             <CardBody className={styles.fullEditor}>
                 <AccessibilityProvider enabled={!isLoading}>
                     <span className='name label'>Name:</span>
-                    <TextEditor className='name editor' />
+                    <TextEditor className='name editor'             value={name}           onChange={({target:{value}}) => setName(value)} />
                     
                     <span className='path label'>Path:</span>
-                    <TextEditor className='path editor' />
+                    <TextEditor className='path editor'             value={path}           onChange={({target:{value}}) => setPath(value)} />
                     
                     <span className='price label'>Price:</span>
-                    <CurrencyEditor className='price editor' />
+                    <CurrencyEditor className='price editor'        value={price}          onChange={({target:{valueAsNumber}}) => setPrice(getRealNumberOrNull(valueAsNumber) ?? undefined)} />
                     
                     <span className='sWeight label'>Shipping Weight:</span>
-                    <QuantityInput className='sWeight editor' />
+                    <QuantityInput className='sWeight editor'       value={shippingWeight} onChange={({target:{valueAsNumber}}) => setShippingWeight(getRealNumberOrNull(valueAsNumber) ?? undefined)} />
                     
                     <span className='stock label'>Stock:</span>
-                    <StockEditor className='stock editor' />
+                    <StockEditor className='stock editor'           value={stock}          onChange={({target:{valueAsNumber}}) => setStock(getRealNumberOrNull(valueAsNumber) ?? undefined)} />
                     
                     <span className='visibility label'>Visibility:</span>
-                    <VisibilityEditor className='visibility editor' />
+                    <VisibilityEditor className='visibility editor' value={visibility}     onChange={(value) => setVisibility(value)} />
                 </AccessibilityProvider>
                 <ModalStatus
                     theme='danger'
@@ -794,7 +827,7 @@ const ProductItem = (props: ProductItemProps) => {
     const {
         visibility,
         name,
-        image,
+        images,
         price,
         stock,
     } = product;
@@ -826,7 +859,7 @@ const ProductItem = (props: ProductItemProps) => {
                 <div className='prodImg'>
                     <Image
                         alt={name ?? ''}
-                        src={image ? `/products/${name}/${image}` : undefined}
+                        src={images?.[0] ? `/products/${name}/${images[0]}` : undefined}
                         sizes='96px'
                     />
                     <EditButton onClick={() => setEditMode('full')} />
@@ -863,7 +896,7 @@ const ProductItem = (props: ProductItemProps) => {
                 </>}
             </ModalStatus>
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {!!editMode && (editMode === 'full') && <CompleteEditDialog product={product} onClose={handleEditDialogClose} />}
+                {!!editMode && (editMode === 'full') && <FullEditDialog product={product} onClose={handleEditDialogClose} />}
             </ModalStatus>
         </ListItem>
     );
