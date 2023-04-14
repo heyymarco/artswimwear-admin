@@ -8,12 +8,12 @@ import { Section, Main } from '@heymarco/section'
 import type { Metadata } from 'next'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, ButtonIconProps, InputProps, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput, NumberInput, Group, Label, Basic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, Badge } from '@reusable-ui/components';
+import { ButtonIcon, ButtonIconProps, InputProps, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput, NumberInput, Group, Label, Basic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, Badge, Input, Generic } from '@reusable-ui/components';
 import { ProductEntry, useGetProductList, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
 import { formatCurrency, getCurrencySign } from '@/libs/formatters';
-import { AccessibilityProvider, ValidationProvider, useEvent, useMergeRefs } from '@reusable-ui/core';
+import { AccessibilityProvider, ValidationProvider, useEvent, useMergeClasses, useMergeRefs } from '@reusable-ui/core';
 import { QuantityInput, QuantityInputProps } from '@heymarco/quantity-input'
 import { ModalStatus } from '../../components/ModalStatus'
 
@@ -52,56 +52,150 @@ const EditButton = (props: ButtonIconProps) => {
     );
 }
 
-type CustomEditor = React.ReactComponentElement<any, Omit<InputProps<HTMLElement>, 'value'|'onChange'> & { value?: any, onChange?: (value: any) => void }>
-const TextEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
+type EditorChangeEventHandler<TValue> = (value: TValue) => void
+interface EditorProps<TElement extends Element = HTMLElement, TValue extends any = string>
+    extends
+        // bases:
+        Omit<InputProps<TElement>,
+            // values:
+            |'defaultValue'|'value'|'onChange' // converted to TValue
+        >
+{
+    // values:
+    defaultValue   ?: TValue
+    value          ?: TValue
+    onChange       ?: EditorChangeEventHandler<TValue>
+    onChangeAsText ?: EditorChangeEventHandler<string>
+}
+const Editor = <TElement extends Element = HTMLElement, TValue extends any = string>(props: EditorProps<TElement, TValue>): JSX.Element|null => {
     // rest props:
     const {
         // values:
+        defaultValue,
         value,
         onChange,
-    ...restTextEditorProps} = props;
+        onChangeAsText,
+    ...restInputProps} = props;
     
     
     
+    // handlers:
+    const handleTextChange = onChangeAsText ? useEvent<React.ChangeEventHandler<HTMLInputElement>>((event) => {
+        onChangeAsText(event.target.value);
+    }) : undefined;
+    
+    
+    
+    // jsx:
     return (
-        <TextInput
+        <Input<TElement>
             // other props:
-            {...restTextEditorProps}
+            {...restInputProps}
             
             
             
             // values:
-            value={value ?? ''}
-            onChange={(event) => onChange?.(event.target.value)}
+            defaultValue = {defaultValue as string|undefined}
+            value        = {value        as string|undefined}
+            onChange     = {handleTextChange                }
         />
     );
 }
-const NumberEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
+
+interface TextEditorProps<TElement extends Element = HTMLElement>
+    extends
+        // bases:
+        EditorProps<TElement, string>
+{
+}
+const TextEditor = <TElement extends Element = HTMLElement>(props: TextEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // values:
-        value,
         onChange,
-    ...restTextEditorProps} = props;
+    ...restEditorProps} = props;
     
     
     
+    // jsx:
     return (
-        <NumberInput
+        <Editor<TElement, string>
             // other props:
-            {...restTextEditorProps}
+            {...restEditorProps}
             
             
             
             // values:
-            value={value ?? NaN}
-            onChange={(event) => onChange?.(event.target.valueAsNumber)}
+            onChangeAsText={onChange}
         />
     );
 }
-const CurrencyEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
+
+interface NumberEditorProps<TElement extends Element = HTMLElement>
+    extends
+        // bases:
+        Omit<EditorProps<TElement, number|null>,
+            // validations:
+            |'minLength'|'maxLength' // text length constraint is not supported
+            |'pattern'               // text regex is not supported
+            |'min'|'max'|'step'      // only supports numeric value
+        >
+{
+    // validations:
+    min  ?: number
+    max  ?: number
+    step ?: number
+}
+const NumberEditor = <TElement extends Element = HTMLElement>(props: NumberEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
+        // values:
+        onChange,
+    ...restEditorProps} = props;
+    
+    
+    
+    // handlers:
+    const handleChangeAsText = onChange ? useEvent<EditorChangeEventHandler<string>>((value) => {
+        onChange(value ? Number.parseFloat(value) : null);
+    }) : undefined;
+    
+    
+    
+    // jsx:
+    return (
+        <Editor<TElement, number|null>
+            // other props:
+            {...restEditorProps}
+            
+            
+            
+            // values:
+            onChangeAsText={handleChangeAsText}
+        />
+    );
+}
+
+interface CurrencyEditorProps<TElement extends Element = HTMLElement>
+    extends
+        // bases:
+        NumberEditorProps<TElement>
+{
+}
+const CurrencyEditor = <TElement extends Element = HTMLElement>(props: CurrencyEditorProps<TElement>): JSX.Element|null => {
+    // rest props:
+    const {
+        // refs:
+        elmRef,
+        outerRef,
+        
+        
+        
+        // identifiers:
+        id,
+        
+        
+        
         // variants:
         size,
         theme,
@@ -112,19 +206,33 @@ const CurrencyEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
         
         
         // classes:
+        mainClass,
+        classes,
+        variantClasses,
+        stateClasses,
         className,
         
         
         
-        // values:
-        value,
-        onChange,
-    ...restTextEditorProps} = props;
+        // styles:
+        style,
+    ...restNumberEditorProps} = props;
     
     
     
+    // jsx:
     return (
         <Group
+            // refs:
+            outerRef={outerRef}
+            
+            
+            
+            // identifiers:
+            id={id}
+            
+            
+            
             // variants:
             size={size}
             theme={theme}
@@ -135,7 +243,16 @@ const CurrencyEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
             
             
             // classes:
+            mainClass={mainClass}
+            classes={classes}
+            variantClasses={variantClasses}
+            stateClasses={stateClasses}
             className={className}
+            
+            
+            
+            // styles:
+            style={style}
         >
             <Label
                 // classes:
@@ -143,20 +260,19 @@ const CurrencyEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
             >
                 {getCurrencySign()}
             </Label>
-            <NumberInput
+            <NumberEditor<TElement>
                 // other props:
-                {...restTextEditorProps}
+                {...restNumberEditorProps}
+                
+                
+                
+                // refs:
+                elmRef={elmRef}
                 
                 
                 
                 // classes:
                 className='fluid'
-                
-                
-                
-                // values:
-                value={value ?? NaN}
-                onChange={(event) => onChange?.(event.target.valueAsNumber)}
                 
                 
                 
@@ -167,26 +283,14 @@ const CurrencyEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
         </Group>
     );
 }
-interface StockEditorProps
+
+interface StockEditorProps<TElement extends Element = HTMLElement>
     extends
-        Omit<CustomEditor['props'],
-            // validations:
-            |'minLength'|'maxLength' // text length constraint is not supported
-            |'pattern'               // text regex is not supported
-            |'min'|'max'|'step'      // only supports numeric value
-        >,
-        Omit<QuantityInputProps,
-            // values:
-            |'defaultValue'|'value'  // only supports numeric value
-            
-            
-            
-            // handlers:
-            |'value'|'onChange'      // custom value
-        >
+        // bases:
+        NumberEditorProps<TElement>
 {
 }
-const StockEditor = (props: StockEditorProps): CustomEditor['type'] => {
+const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorProps<TElement>): JSX.Element|null => {
     // styles:
     const styles = usePageStyleSheet();
     
@@ -196,12 +300,18 @@ const StockEditor = (props: StockEditorProps): CustomEditor['type'] => {
     const {
         // refs:
         elmRef,
+        outerRef,
+        
+        
+        
+        // identifiers:
+        id,
         
         
         
         // variants:
-        size,
-        theme,
+        size  = 'md',
+        theme = 'secondary',
         gradient,
         outlined,
         mild,
@@ -209,27 +319,41 @@ const StockEditor = (props: StockEditorProps): CustomEditor['type'] => {
         
         
         // classes:
+        mainClass,
+        classes,
+        variantClasses,
+        stateClasses,
         className,
         
         
         
+        // styles:
+        style,
+        
+        
+        
         // values:
+        defaultValue,
         value,
         onChange,
-    ...restTextEditorProps} = props;
+    ...restNumberEditorProps} = props;
     
     
     
     // states:
-    const [selectedTabLimited, setSelectedTabLimited] = useState<boolean>(typeof(value) === 'number');
-    
+    const [selectedTabLimitedDn, setSelectedTabLimitedDn] = useState<boolean>(typeof(defaultValue) === 'number');
+    const selectedTabLimited = (
+        (value !== undefined)
+        ? value                /*controllable*/
+        : selectedTabLimitedDn /*uncontrollable*/
+    );
     
     
     // refs:
-    const numberInputRefInternal = useRef<HTMLInputElement|null>(null);
+    const numberEditorRefInternal = useRef<HTMLInputElement|null>(null);
     const numberInputRef = useMergeRefs(
         elmRef,
-        numberInputRefInternal,
+        numberEditorRefInternal,
     );
     
     
@@ -242,24 +366,49 @@ const StockEditor = (props: StockEditorProps): CustomEditor['type'] => {
         
         
         // actions:
-        numberInputRefInternal.current?.focus({ preventScroll: true });
+        numberEditorRefInternal.current?.focus({ preventScroll: true });
     }, [selectedTabLimited]);
     
     
     
     // jsx:
     return (
-        <div
+        <Generic<TElement>
+            // semantics:
+            tag='div'
+            
+            
+            
+            // refs:
+            outerRef={outerRef}
+            
+            
+            
+            // identifiers:
+            id={id}
+            
+            
+            
             // classes:
+            mainClass={mainClass}
+            classes={classes}
+            variantClasses={variantClasses}
+            stateClasses={stateClasses}
             className={className}
+            
+            
+            
+            // styles:
+            style={style}
         >
             <List
                 // variants:
                 size={size}
-                theme={theme ?? 'secondary'}
+                theme={theme}
                 gradient={gradient}
                 outlined={outlined}
                 mild={mild}
+                
                 listStyle='tab'
                 orientation='inline'
                 
@@ -278,11 +427,11 @@ const StockEditor = (props: StockEditorProps): CustomEditor['type'] => {
                         // handlers:
                         onClick={() => {
                             const isSelectedTabLimited = (option === 'limited');
-                            setSelectedTabLimited(isSelectedTabLimited);
+                            setSelectedTabLimitedDn(isSelectedTabLimited);
                             
                             onChange?.(
                                 isSelectedTabLimited
-                                ? (getRealNumberOrNull(numberInputRefInternal.current?.valueAsNumber) ?? 0)
+                                ? (getRealNumberOrNull(numberEditorRefInternal.current?.valueAsNumber) ?? 0)
                                 : null
                             );
                         }}
@@ -296,8 +445,20 @@ const StockEditor = (props: StockEditorProps): CustomEditor['type'] => {
             </List>
             <Basic
                 // variants:
-                size='md'
-                theme={theme ?? 'secondary'}
+                size={
+                    (size === 'sm')
+                    ? 'md'
+                    : (size === 'md')
+                    ? 'lg'
+                    : size
+                }
+                theme={
+                    (theme === 'secondary')
+                    ? 'secondary'
+                    : (theme === 'primary')
+                    ? 'primary'
+                    : theme
+                }
                 gradient={gradient}
                 outlined={outlined}
                 mild={mild}
@@ -307,11 +468,19 @@ const StockEditor = (props: StockEditorProps): CustomEditor['type'] => {
                 // classes:
                 className={styles.editorTabBody}
             >
-                <p     className={!selectedTabLimited ? undefined : 'hidden'}>The product stock is <em>always available</em>.</p>
+                <p className={!selectedTabLimited ? undefined : 'hidden'}>
+                    The product stock is <em>always available</em>.
+                </p>
                 <Group
                     // variants:
                     size={size}
-                    theme={theme ?? 'primary'}
+                    theme={
+                        (theme === 'secondary')
+                        ? 'primary'
+                        : (theme === 'primary')
+                        ? 'secondary'
+                        : theme
+                    }
                     gradient={gradient}
                     outlined={outlined}
                     mild={mild}
@@ -319,14 +488,14 @@ const StockEditor = (props: StockEditorProps): CustomEditor['type'] => {
                     
                     
                     // classes:
-                    className={ selectedTabLimited ? undefined : 'hidden'}
+                    className={selectedTabLimited ? undefined : 'hidden'}
                 >
                     <Label className='solid'>
                         Current stock:
                     </Label>
-                    <QuantityInput
+                    <NumberEditor<TElement>
                         // other props:
-                        {...restTextEditorProps}
+                        {...restNumberEditorProps}
                         
                         
                         
@@ -335,24 +504,36 @@ const StockEditor = (props: StockEditorProps): CustomEditor['type'] => {
                         
                         
                         
+                        // classes:
+                        className='fluid'
+                        
+                        
+                        
                         // values:
-                        defaultValue={value ?? 0}
-                        onChange={({target: {valueAsNumber}}) => onChange?.(getRealNumberOrNull(valueAsNumber) ?? 0)}
+                        defaultValue={props.defaultValue ?? 0}
+                        onChange={onChange}
                         
                         
                         
                         // validations:
-                        isValid={selectedTabLimited ? undefined : true }
+                        isValid={props.isValid ?? (selectedTabLimited ? undefined : true)}
                         required={props.required ?? true}
                         min={props.min ?? 0   }
                         max={props.max ?? 9999}
                     />
                 </Group>
             </Basic>
-        </div>
+        </Generic>
     );
 }
-const VisibilityEditor = (props: CustomEditor['props']): CustomEditor['type'] => {
+
+type ProductVisibility = 'published'|'hidden'|'draft'
+interface VisibilityEditorProps<TElement extends Element = HTMLElement>
+    extends
+        EditorProps<TElement, ProductVisibility>
+{
+}
+const VisibilityEditor = <TElement extends Element = HTMLElement>(props: VisibilityEditorProps<TElement>): JSX.Element|null => {
     // styles:
     const styles = usePageStyleSheet();
     
@@ -360,9 +541,20 @@ const VisibilityEditor = (props: CustomEditor['props']): CustomEditor['type'] =>
     
     // rest props:
     const {
+        // refs:
+        elmRef,
+        outerRef,
+        
+        
+        
+        // identifiers:
+        id,
+        
+        
+        
         // variants:
-        size,
-        theme,
+        size  = 'md',
+        theme = 'secondary',
         gradient,
         outlined,
         mild,
@@ -370,30 +562,67 @@ const VisibilityEditor = (props: CustomEditor['props']): CustomEditor['type'] =>
         
         
         // classes:
+        mainClass,
+        classes,
+        variantClasses,
+        stateClasses,
         className,
         
         
         
+        // styles:
+        style,
+        
+        
+        
         // values:
+        defaultValue,
         value,
         onChange,
-    } = props;
+    ...restEditorProps} = props;
+    type T1 = typeof restEditorProps
+    type T2 = Omit<T1, keyof HTMLElement>
     
     
     
     // jsx:
     return (
-        <div
+        <Generic
+            // semantics:
+            tag='div'
+            
+            
+            
+            // refs:
+            outerRef={outerRef}
+            
+            
+            
+            // identifiers:
+            id={id}
+            
+            
+            
             // classes:
+            mainClass={mainClass}
+            classes={classes}
+            variantClasses={variantClasses}
+            stateClasses={stateClasses}
             className={className}
+            
+            
+            
+            // styles:
+            style={style}
         >
             <List
                 // variants:
                 size={size}
-                theme={theme ?? 'secondary'}
+                theme={theme}
                 gradient={gradient}
                 outlined={outlined}
                 mild={mild}
+                
                 listStyle='tab'
                 orientation='inline'
                 
@@ -402,10 +631,10 @@ const VisibilityEditor = (props: CustomEditor['props']): CustomEditor['type'] =>
                 // behaviors:
                 actionCtrl={true}
             >
-                {['published', 'hidden', 'draft'].map((option) =>
+                {(['published', 'hidden', 'draft'] as ProductVisibility[]).map((option) =>
                     <ListItem key={option}
                         // accessibilities:
-                        active={value === option}
+                        active={(value ?? defaultValue) === option}
                         
                         
                         
@@ -422,8 +651,20 @@ const VisibilityEditor = (props: CustomEditor['props']): CustomEditor['type'] =>
             </List>
             <Basic
                 // variants:
-                size='md'
-                theme={theme ?? 'secondary'}
+                size={
+                    (size === 'sm')
+                    ? 'md'
+                    : (size === 'md')
+                    ? 'lg'
+                    : size
+                }
+                theme={
+                    (theme === 'secondary')
+                    ? 'secondary'
+                    : (theme === 'primary')
+                    ? 'primary'
+                    : theme
+                }
                 gradient={gradient}
                 outlined={outlined}
                 mild={mild}
@@ -437,28 +678,28 @@ const VisibilityEditor = (props: CustomEditor['props']): CustomEditor['type'] =>
                 <p className={(value === 'hidden'   ) ? undefined : 'hidden'}>The product can only be viewed via <em>a (bookmarked) link</em>.</p>
                 <p className={(value === 'draft'    ) ? undefined : 'hidden'}>The product <em>cannot be viewed</em> on the entire website.</p>
             </Basic>
-        </div>
+        </Generic>
     );
 }
 
 
 
-interface SimpleEditDialogProps {
+interface SimpleEditDialogProps<TValue> {
     // data:
-    product          : ProductEntry
-    edit             : Exclude<keyof ProductEntry, '_id'>
+    product         : ProductEntry
+    edit            : Exclude<keyof ProductEntry, '_id'>
     
     
     
     // components:
-    editorComponent ?: CustomEditor
+    editorComponent : React.ReactComponentElement<any, EditorProps<Element, TValue>>
     
     
     
     // handlers:
-    onClose          : () => void
+    onClose         : () => void
 }
-const SimpleEditDialog = (props: SimpleEditDialogProps) => {
+const SimpleEditDialog = <TValue,>(props: SimpleEditDialogProps<TValue>) => {
     // styles:
     const styles = usePageStyleSheet();
     
@@ -473,7 +714,7 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
         
         
         // components:
-        editorComponent = (<TextInput /> as CustomEditor),
+        editorComponent,
         
         
         
@@ -624,7 +865,7 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
                         
                         
                         value            : editorValue,
-                        onChange         : (value: any) => { setEditorValue(value); setIsModified(true); },
+                        onChange         : (value: TValue) => { setEditorValue(value); setIsModified(true); },
                         
                         
                         
@@ -733,7 +974,7 @@ const FullEditDialog = (props: FullEditDialogProps) => {
     const [isModified      , setIsModified      ] = useState<boolean>(false);
     
     const [enableValidation, setEnableValidation] = useState<boolean>(false);
-    const [visibility      , setVisibility      ] = useState<string>(product.visibility);
+    const [visibility      , setVisibility      ] = useState<ProductVisibility>(product.visibility as ProductVisibility);
     const [name            , setName            ] = useState<string>(product.name);
     const [path            , setPath            ] = useState<string>(product.path ?? '');
     const [price           , setPrice           ] = useState<number|undefined>(product.price);
@@ -926,7 +1167,7 @@ const FullEditDialog = (props: FullEditDialogProps) => {
                         <NumberEditor className='sWeight editor'        value={shippingWeight} onChange={(value) => { setShippingWeight(getRealNumberOrNull(value) ?? undefined); setIsModified(true); }} />
                         
                         <span className='stock label'>Stock:</span>
-                        <StockEditor className='stock editor'           value={stock}          onChange={(value) => { setStock(value); setIsModified(true); }} />
+                        <StockEditor className='stock editor'           value={stock}          onChange={(value) => { setStock(value ?? undefined); setIsModified(true); }} />
                         
                         <span className='visibility label'>Visibility:</span>
                         <VisibilityEditor className='visibility editor' value={visibility}     onChange={(value) => { setVisibility(value); setIsModified(true); }} />
