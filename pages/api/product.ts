@@ -9,7 +9,23 @@ import type { HydratedDocument } from 'mongoose'
 
 
 // types:
-export type PreviewProduct  = Required<Pick<ProductSchema, '_id'>> & Pick<ProductSchema, 'visibility'|'name'|'price'|'stock'> & { image?: Required<ProductSchema>['images'][number] }
+export type PreviewProduct  =
+    Required<Pick<ProductSchema, '_id'>>
+    &
+    Pick<ProductSchema,
+        |'visibility'
+        
+        |'name'
+        
+        |'price'
+        |'shippingWeight'
+        
+        |'stock'
+        
+        |'description'
+        |'images'
+        |'path'
+    >
 
 
 
@@ -106,10 +122,19 @@ export default nextConnect<NextApiRequest, NextApiResponse>({
     //#region parsing request
     const {
         _id,
+        
         visibility,
+        
         name,
+        
         price,
+        shippingWeight,
+        
         stock,
+        
+        description,
+        images,
+        path,
     } = req.body;
     //#endregion parsing request
     
@@ -122,17 +147,40 @@ export default nextConnect<NextApiRequest, NextApiResponse>({
     ) {
         return res.status(400).json({ error: 'invalid data' });
     } // if
-    const product = await Product.findById(_id, { _id: true, visibility: true, name: true, price: true, stock: true, image: { $first: "$images" } });
+    const product = await Product.findById(_id, {
+        _id            : true,
+        
+        visibility     : true,
+        
+        name           : true,
+        
+        price          : true,
+        shippingWeight : true,
+        
+        stock          : true,
+        
+        description    : true,
+        images         : true,
+        path           : true,
+    });
     if (!product) return res.status(400).json({ error: 'invalid ID' });
     //#endregion validating request
     
     
     
     //#region save changes
-    if (visibility !== undefined) product.visibility = visibility;
-    if (name       !== undefined) product.name       = name;
-    if (price      !== undefined) product.price      = price;
-    if (stock      !== undefined) product.stock      = stock;
+    if (visibility     !== undefined) product.visibility     = visibility;
+    
+    if (name           !== undefined) product.name           = name;
+    
+    if (price          !== undefined) product.price          = price;
+    if (shippingWeight !== undefined) product.shippingWeight = shippingWeight;
+    
+    if (stock          !== undefined) product.stock          = stock;
+    
+    if (description    !== undefined) product.description    = description;
+    if (images         !== undefined) product.images         = images;
+    if (path           !== undefined) product.path           = path;
     
     try {
         await product.save();
