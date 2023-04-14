@@ -95,9 +95,9 @@ const Editor = <TElement extends Element = HTMLElement, TValue extends any = str
             
             
             // values:
-            defaultValue = {defaultValue as string|undefined}
-            value        = {value        as string|undefined}
-            onChange     = {handleTextChange                }
+            defaultValue = {(defaultValue !== undefined) ? ((defaultValue !== null) ? `${defaultValue}` : '') : undefined}
+            value        = {(value        !== undefined) ? ((value        !== null) ? `${value}`        : '') : undefined}
+            onChange     = {handleTextChange}
         />
     );
 }
@@ -127,6 +127,11 @@ const TextEditor = <TElement extends Element = HTMLElement>(props: TextEditorPro
             
             // values:
             onChangeAsText={onChange}
+            
+            
+            
+            // formats:
+            type={props.type ?? 'text'}
         />
     );
 }
@@ -172,6 +177,11 @@ const NumberEditor = <TElement extends Element = HTMLElement>(props: NumberEdito
             
             // values:
             onChangeAsText={handleChangeAsText}
+            
+            
+            
+            // formats:
+            type={props.type ?? 'number'}
         />
     );
 }
@@ -341,11 +351,10 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
     
     
     // states:
-    const [selectedTabLimitedDn, setSelectedTabLimitedDn] = useState<boolean>(typeof(defaultValue) === 'number');
-    const selectedTabLimited = (
+    const [selectedTabLimited, setSelectedTabLimited] = useState<boolean>(
         (value !== undefined)
-        ? value                /*controllable*/
-        : selectedTabLimitedDn /*uncontrollable*/
+        ? (typeof(value)        === 'number') /*controllable*/
+        : (typeof(defaultValue) === 'number') /*uncontrollable*/
     );
     
     
@@ -427,7 +436,7 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                         // handlers:
                         onClick={() => {
                             const isSelectedTabLimited = (option === 'limited');
-                            setSelectedTabLimitedDn(isSelectedTabLimited);
+                            setSelectedTabLimited(isSelectedTabLimited);
                             
                             onChange?.(
                                 isSelectedTabLimited
@@ -510,7 +519,7 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                         
                         
                         // values:
-                        defaultValue={props.defaultValue ?? 0}
+                        defaultValue={value ?? defaultValue} // force as UNCONTROLLED, so the last value when switching tab back & forth is NOT LOST
                         onChange={onChange}
                         
                         
@@ -577,7 +586,7 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
         
         // values:
         defaultValue,
-        value,
+        value = defaultValue,
         onChange,
     ...restEditorProps} = props;
     type T1 = typeof restEditorProps
@@ -634,7 +643,7 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
                 {(['published', 'hidden', 'draft'] as ProductVisibility[]).map((option) =>
                     <ListItem key={option}
                         // accessibilities:
-                        active={(value ?? defaultValue) === option}
+                        active={value === option}
                         
                         
                         
@@ -977,9 +986,9 @@ const FullEditDialog = (props: FullEditDialogProps) => {
     const [visibility      , setVisibility      ] = useState<ProductVisibility>(product.visibility as ProductVisibility);
     const [name            , setName            ] = useState<string>(product.name);
     const [path            , setPath            ] = useState<string>(product.path ?? '');
-    const [price           , setPrice           ] = useState<number|undefined>(product.price);
-    const [shippingWeight  , setShippingWeight  ] = useState<number|undefined>(product.shippingWeight);
-    const [stock           , setStock           ] = useState<number|undefined>(product.stock);
+    const [price           , setPrice           ] = useState<number|null>(product.price          ?? null);
+    const [shippingWeight  , setShippingWeight  ] = useState<number|null>(product.shippingWeight ?? null);
+    const [stock           , setStock           ] = useState<number|null>(product.stock          ?? null);
     const [description     , setDescription     ] = useState<string>(product.description ?? '');
     
     
@@ -1033,9 +1042,9 @@ const FullEditDialog = (props: FullEditDialogProps) => {
                 visibility,
                 name,
                 path,
-                price,
-                shippingWeight,
-                stock,
+                price          : price          ?? undefined,
+                shippingWeight : shippingWeight ?? undefined,
+                stock          : stock          ?? undefined,
                 description,
             }).unwrap();
             
@@ -1161,13 +1170,13 @@ const FullEditDialog = (props: FullEditDialogProps) => {
                         <TextEditor className='path editor'             value={path}           onChange={(value) => { setPath(value); setIsPathModified(true); }} />
                         
                         <span className='price label'>Price:</span>
-                        <CurrencyEditor className='price editor'        value={price}          onChange={(value) => { setPrice(getRealNumberOrNull(value) ?? undefined); setIsModified(true); }} />
+                        <CurrencyEditor className='price editor'        value={price}          onChange={(value) => { setPrice(getRealNumberOrNull(value)); setIsModified(true); }} />
                         
                         <span className='sWeight label'>Shipping Weight:</span>
-                        <NumberEditor className='sWeight editor'        value={shippingWeight} onChange={(value) => { setShippingWeight(getRealNumberOrNull(value) ?? undefined); setIsModified(true); }} />
+                        <NumberEditor className='sWeight editor'        value={shippingWeight} onChange={(value) => { setShippingWeight(getRealNumberOrNull(value)); setIsModified(true); }} />
                         
                         <span className='stock label'>Stock:</span>
-                        <StockEditor className='stock editor'           value={stock}          onChange={(value) => { setStock(value ?? undefined); setIsModified(true); }} />
+                        <StockEditor className='stock editor'           value={stock}          onChange={(value) => { setStock(value); setIsModified(true); }} />
                         
                         <span className='visibility label'>Visibility:</span>
                         <VisibilityEditor className='visibility editor' value={visibility}     onChange={(value) => { setVisibility(value); setIsModified(true); }} />
