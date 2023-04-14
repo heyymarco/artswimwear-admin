@@ -477,7 +477,6 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
         
         
         
-        
         // handlers:
         onClose,
     } = props;
@@ -485,11 +484,10 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
     
     
     // states:
-    const [isModified, setIsModified] = useState<boolean>(false);
-    const [showWarnUnsaved, setShowWarnUnsaved] = useState<boolean>(false);
+    const [isModified      , setIsModified      ] = useState<boolean>(false);
     
     const [enableValidation, setEnableValidation] = useState<boolean>(false);
-    const [editorValue, setEditorValue] = useState<any>(product[edit]);
+    const [editorValue     , setEditorValue     ] = useState<any>(product[edit]);
     
     
     
@@ -504,7 +502,8 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
     
     
     // dialogs:
-    const [errorMessage, setErrorMessage] = useState<React.ReactNode>(undefined);
+    const [errorMessage   , setErrorMessage   ] = useState<React.ReactNode>(undefined);
+    const [showWarnUnsaved, setShowWarnUnsaved] = useState<boolean>(false);
     
     
     
@@ -525,6 +524,7 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
         try {
             await updateProduct({
                 _id    : product._id,
+                
                 [edit] : editorValue,
             }).unwrap();
             
@@ -585,11 +585,11 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
             
             const originType = editorElm.type;
             try {
-                editorElm.type = 'text';
+                if (originType !== 'text') editorElm.type = 'text';
                 editorElm.setSelectionRange(0, -1);
             }
             finally {
-                editorElm.type = originType;
+                if (originType !== 'text') editorElm.type = originType;
             } // try
             editorElm.focus({ preventScroll: true });
         }, 0);
@@ -683,7 +683,7 @@ const SimpleEditDialog = (props: SimpleEditDialogProps) => {
                         }}>
                             Don&apos;t Save
                         </ButtonIcon>
-                        <ButtonIcon theme='secondary' icon='flip_to_back' onClick={() => {
+                        <ButtonIcon theme='secondary' icon='edit' onClick={() => {
                             // close the dialog:
                             setShowWarnUnsaved(false);
                         }}>
@@ -720,7 +720,6 @@ const FullEditDialog = (props: FullEditDialogProps) => {
         
         
         
-        
         // handlers:
         onClose,
     } = props;
@@ -728,10 +727,10 @@ const FullEditDialog = (props: FullEditDialogProps) => {
     
     
     // states:
-    const [activeTab, setActiveTab] = useState<string>('informations');
+    const [activeTab       , setActiveTab       ] = useState<string>('informations');
     
-    const [isPathModified, setIsPathModified] = useState<boolean>(false);
-    const [isModified    , setIsModified    ] = useState<boolean>(false);
+    const [isPathModified  , setIsPathModified  ] = useState<boolean>(false);
+    const [isModified      , setIsModified      ] = useState<boolean>(false);
     
     const [enableValidation, setEnableValidation] = useState<boolean>(false);
     const [visibility      , setVisibility      ] = useState<string>(product.visibility);
@@ -750,19 +749,21 @@ const FullEditDialog = (props: FullEditDialogProps) => {
     
     
     // refs:
-    // const editorRef = useRef<HTMLInputElement|null>(null);
+    const firstEditorRef     = useRef<HTMLInputElement|null>(null);
+    const editorContainerRef = useRef<HTMLElement|null>(null);
     
     
     
     // dialogs:
-    const [errorMessage, setErrorMessage] = useState<React.ReactNode>(undefined);
+    const [errorMessage   , setErrorMessage   ] = useState<React.ReactNode>(undefined);
+    const [showWarnUnsaved, setShowWarnUnsaved] = useState<boolean>(false);
     
     
     
     // handlers:
     const handleNameChange = useEvent((name: string) => {
         // conditions:
-        if (isPathModified) return;
+        if (isPathModified) return; // path is already modified by user, do not perform *auto* modify
         
         
         
@@ -780,15 +781,22 @@ const FullEditDialog = (props: FullEditDialogProps) => {
                 }, 0);
             }, 0);
         });
-        // if (editorRef.current?.parentElement?.matches(':is(.invalidating, .invalidated)')) return;
+        if (editorContainerRef.current?.querySelector(':is(.invalidating, .invalidated)')) return;
         
         
         
         try {
-            // await updateProduct({
-            //     _id    : product._id,
-            //     [edit] : editorValue,
-            // }).unwrap();
+            await updateProduct({
+                _id    : product._id,
+                
+                visibility,
+                name,
+                path,
+                price,
+                shippingWeight,
+                stock,
+                description,
+            }).unwrap();
             
             onClose();
         }
@@ -811,18 +819,63 @@ const FullEditDialog = (props: FullEditDialogProps) => {
             </>);
         } // try
     });
-    const handleClose : React.MouseEventHandler<HTMLButtonElement> = useEvent((event) => {
-        onClose?.();
+    const handleClosing = useEvent(() => {
+        if (isModified || isPathModified) {
+            setShowWarnUnsaved(true);
+        }
+        else {
+            onClose();
+        } // if
     });
+    const handleKeyDown : React.KeyboardEventHandler<HTMLElement> = useEvent((event) => {
+        switch (event.key) {
+            // case 'Enter':
+            //     event.preventDefault();
+            //     handleSave();
+            //     break;
+            
+            case 'Escape':
+                event.preventDefault();
+                // handleClosing();
+                break;
+        } // switch
+    });
+    
+    
+    
+    // dom effects:
+    useEffect(() => {
+        // setups:
+        const cancelFocus = setTimeout(() => {
+            // conditions:
+            const firstEditorElm = firstEditorRef.current;
+            if (!firstEditorElm) return;
+            
+            
+            
+            firstEditorElm.setSelectionRange(0, -1);
+            firstEditorElm.focus({ preventScroll: true });
+        }, 0);
+        
+        
+        
+        // cleanups:
+        return () => {
+            clearTimeout(cancelFocus);
+        }
+    }, []);
     
     
     
     // jsx:
     return (
         <>
-            <CardHeader>
-                {product.name}
-                <CloseButton onClick={handleClose} />
+            <CardHeader
+                // handlers:
+                onKeyDown={handleKeyDown}
+            >
+                {name}
+                <CloseButton onClick={handleClosing} />
             </CardHeader>
             <List
                 // variants:
@@ -833,6 +886,11 @@ const FullEditDialog = (props: FullEditDialogProps) => {
                 
                 // behaviors:
                 actionCtrl={true}
+                
+                
+                
+                // handlers:
+                onKeyDown={handleKeyDown}
             >
                 {['informations', 'images', 'description'].map((option) =>
                     <ListItem key={option}
@@ -852,7 +910,7 @@ const FullEditDialog = (props: FullEditDialogProps) => {
                     </ListItem>
                 )}
             </List>
-            <CardBody className={styles.fullEditor}>
+            <CardBody className={styles.fullEditor} onKeyDown={handleKeyDown}>
                 <AccessibilityProvider enabled={!isLoading}>
                     <ValidationProvider enableValidation={enableValidation}>
                         <span className='name label'>Name:</span>
@@ -893,10 +951,49 @@ const FullEditDialog = (props: FullEditDialogProps) => {
                         </CardFooter>
                     </>}
                 </ModalStatus>
+                <ModalStatus
+                    theme='warning'
+                    backdropStyle='static'
+                >
+                    {showWarnUnsaved && <>
+                        <CardHeader>
+                            Unsaved Data
+                        </CardHeader>
+                        <CardBody>
+                            <p>
+                                Do you want to save the changes?
+                            </p>
+                        </CardBody>
+                        <CardFooter>
+                            <ButtonIcon theme='success' icon='save' onClick={() => {
+                                // close the dialog first:
+                                setShowWarnUnsaved(false);
+                                // then do a save (it will automatically close the editor after successfully saving):
+                                handleSave();
+                            }}>
+                                Save
+                            </ButtonIcon>
+                            <ButtonIcon theme='danger' icon='cancel' onClick={() => {
+                                // close the dialog first:
+                                setShowWarnUnsaved(false);
+                                // then close the editor (without saving):
+                                onClose();
+                            }}>
+                                Don&apos;t Save
+                            </ButtonIcon>
+                            <ButtonIcon theme='secondary' icon='edit' onClick={() => {
+                                // close the dialog:
+                                setShowWarnUnsaved(false);
+                            }}>
+                                Continue Editing
+                            </ButtonIcon>
+                        </CardFooter>
+                    </>}
+                </ModalStatus>
             </CardBody>
-            <CardFooter>
+            <CardFooter onKeyDown={handleKeyDown}>
                 <ButtonIcon className='btnSave' icon={isLoading ? 'busy' : 'save'} theme='success' onClick={handleSave}>Save</ButtonIcon>
-                <ButtonIcon className='btnCancel' icon='cancel' theme='danger' onClick={onClose}>Cancel</ButtonIcon>
+                <ButtonIcon className='btnCancel' icon='cancel' theme='danger' onClick={handleClosing}>Cancel</ButtonIcon>
             </CardFooter>
         </>
     );
