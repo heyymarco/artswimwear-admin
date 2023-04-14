@@ -81,8 +81,8 @@ const Editor = <TElement extends Element = HTMLElement, TValue extends any = str
     
     
     // handlers:
-    const handleTextChange = onChangeAsText ? useEvent<React.ChangeEventHandler<HTMLInputElement>>((event) => {
-        onChangeAsText(event.target.value);
+    const handleValueChange = onChangeAsText ? useEvent<React.ChangeEventHandler<HTMLInputElement>>(({target:{value}}) => {
+        onChangeAsText(value);
     }) : undefined;
     
     
@@ -98,7 +98,7 @@ const Editor = <TElement extends Element = HTMLElement, TValue extends any = str
             // values:
             defaultValue = {(defaultValue !== undefined) ? ((defaultValue !== null) ? `${defaultValue}` : '') : undefined}
             value        = {(value        !== undefined) ? ((value        !== null) ? `${value}`        : '') : undefined}
-            onChange     = {handleTextChange}
+            onChange     = {handleValueChange}
         />
     );
 }
@@ -187,13 +187,13 @@ const NumberEditor = <TElement extends Element = HTMLElement>(props: NumberEdito
     );
 }
 
-interface PathEditorProps<TElement extends Element = HTMLElement>
+interface PathEditorProps<TElement extends Element = HTMLSpanElement>
     extends
         // bases:
         TextEditorProps<TElement>
 {
 }
-const PathEditor = <TElement extends Element = HTMLElement>(props: PathEditorProps<TElement>): JSX.Element|null => {
+const PathEditor = <TElement extends Element = HTMLSpanElement>(props: PathEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // refs:
@@ -306,13 +306,13 @@ const PathEditor = <TElement extends Element = HTMLElement>(props: PathEditorPro
     );
 }
 
-interface CurrencyEditorProps<TElement extends Element = HTMLElement>
+interface CurrencyEditorProps<TElement extends Element = HTMLSpanElement>
     extends
         // bases:
         NumberEditorProps<TElement>
 {
 }
-const CurrencyEditor = <TElement extends Element = HTMLElement>(props: CurrencyEditorProps<TElement>): JSX.Element|null => {
+const CurrencyEditor = <TElement extends Element = HTMLSpanElement>(props: CurrencyEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // refs:
@@ -412,6 +412,68 @@ const CurrencyEditor = <TElement extends Element = HTMLElement>(props: CurrencyE
                 step={1/(10 ** COMMERCE_CURRENCY_FRACTION_MAX)}
             />
         </Group>
+    );
+}
+
+interface QuantityEditorProps<TElement extends Element = HTMLSpanElement>
+    extends
+        // bases:
+        NumberEditorProps<TElement>
+{
+}
+const QuantityEditor = <TElement extends Element = HTMLSpanElement>(props: QuantityEditorProps<TElement>): JSX.Element|null => {
+    // rest props:
+    const {
+        // values:
+        defaultValue,
+        value,
+        onChange,
+        onChangeAsText,
+    ...restQuantityInputProps} = props;
+    
+    
+    
+    // handlers:
+    const handleValueChange = (onChangeAsText || onChange) ? useEvent<React.ChangeEventHandler<HTMLInputElement>>(({target:{value, valueAsNumber}}) => {
+        onChangeAsText?.(value);
+        onChange?.(value ? valueAsNumber : null);
+    }) : undefined;
+    
+    
+    
+    // jsx:
+    return (
+        <QuantityInput<TElement>
+            // other props:
+            {...restQuantityInputProps}
+            
+            
+            
+            // values:
+            defaultValue = {(defaultValue !== undefined) ? ((defaultValue !== null) ? defaultValue : NaN) : undefined}
+            value        = {(value        !== undefined) ? ((value        !== null) ? value        : NaN) : undefined}
+            onChange     = {handleValueChange}
+        />
+    );
+}
+
+interface ShippingWeightEditorProps<TElement extends Element = HTMLSpanElement>
+    extends
+        // bases:
+        QuantityEditorProps<TElement>
+{
+}
+const ShippingWeightEditor = <TElement extends Element = HTMLSpanElement>(props: ShippingWeightEditorProps<TElement>): JSX.Element|null => {
+    return (
+        <QuantityEditor
+            // other props:
+            {...props}
+            
+            
+            
+            // validations:
+            step={props.step ?? 0.01}
+        />
     );
 }
 
@@ -1285,22 +1347,22 @@ const FullEditDialog = (props: FullEditDialogProps) => {
                 <AccessibilityProvider enabled={!isLoading}>
                     <ValidationProvider enableValidation={enableValidation}>
                         <span className='name label'>Name:</span>
-                        <TextEditor className='name editor'             value={name}           onChange={(value) => { setName(value); setIsModified(true); handleNameChange(value); }} />
+                        <TextEditor           className='name editor'       value={name}           onChange={(value) => { setName(value); setIsModified(true); handleNameChange(value); }} />
                         
                         <span className='path label'>Path:</span>
-                        <PathEditor className='path editor'             value={path}           onChange={(value) => { setPath(value); setIsPathModified(true); }} />
+                        <PathEditor           className='path editor'       value={path}           onChange={(value) => { setPath(value); setIsPathModified(true); }} />
                         
                         <span className='price label'>Price:</span>
-                        <CurrencyEditor className='price editor'        value={price}          onChange={(value) => { setPrice(getRealNumberOrNull(value)); setIsModified(true); }} />
+                        <CurrencyEditor       className='price editor'      value={price}          onChange={(value) => { setPrice(getRealNumberOrNull(value)); setIsModified(true); }} />
                         
                         <span className='sWeight label'>Shipping Weight:</span>
-                        <NumberEditor className='sWeight editor'        value={shippingWeight} onChange={(value) => { setShippingWeight(getRealNumberOrNull(value)); setIsModified(true); }} />
+                        <ShippingWeightEditor className='sWeight editor'    value={shippingWeight} onChange={(value) => { setShippingWeight(getRealNumberOrNull(value)); setIsModified(true); }} />
                         
                         <span className='stock label'>Stock:</span>
-                        <StockEditor className='stock editor'           value={stock}          onChange={(value) => { setStock(value); setIsModified(true); }} />
+                        <StockEditor          className='stock editor'      value={stock}          onChange={(value) => { setStock(value); setIsModified(true); }} />
                         
                         <span className='visibility label'>Visibility:</span>
-                        <VisibilityEditor className='visibility editor' value={visibility}     onChange={(value) => { setVisibility(value); setIsModified(true); }} />
+                        <VisibilityEditor     className='visibility editor' value={visibility}     onChange={(value) => { setVisibility(value); setIsModified(true); }} />
                     </ValidationProvider>
                 </AccessibilityProvider>
                 <ModalStatus
