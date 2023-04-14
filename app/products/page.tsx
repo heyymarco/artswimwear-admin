@@ -8,7 +8,7 @@ import { Section, Main } from '@heymarco/section'
 import type { Metadata } from 'next'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, ButtonIconProps, InputProps, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput, NumberInput, Group, Label, Basic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, Badge, Input, Generic } from '@reusable-ui/components';
+import { ButtonIcon, ButtonIconProps, InputProps, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput, NumberInput, Group, Label, Basic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, Badge, Input, Generic, Icon } from '@reusable-ui/components';
 import { ProductEntry, useGetProductList, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
@@ -17,7 +17,7 @@ import { AccessibilityProvider, ValidationProvider, useEvent, useMergeClasses, u
 import { QuantityInput, QuantityInputProps } from '@heymarco/quantity-input'
 import { ModalStatus } from '../../components/ModalStatus'
 
-import { PAGE_PRODUCTS_TITLE, PAGE_PRODUCTS_DESCRIPTION, PAGE_PRODUCTS_STOCK_UNLIMITED, PAGE_PRODUCTS_STOCK_LIMITED, PAGE_PRODUCTS_VISIBILITY_DRAFT, PAGE_PRODUCTS_VISIBILITY_HIDDEN, PAGE_PRODUCTS_VISIBILITY_PUBLISHED, PAGE_PRODUCTS_TAB_INFORMATIONS, PAGE_PRODUCTS_TAB_DESCRIPTION, PAGE_PRODUCTS_TAB_IMAGES } from '@/website.config'
+import { WEBSITE_URL, PAGE_PRODUCTS_TITLE, PAGE_PRODUCTS_DESCRIPTION, PAGE_PRODUCTS_STOCK_UNLIMITED, PAGE_PRODUCTS_STOCK_LIMITED, PAGE_PRODUCTS_VISIBILITY_DRAFT, PAGE_PRODUCTS_VISIBILITY_HIDDEN, PAGE_PRODUCTS_VISIBILITY_PUBLISHED, PAGE_PRODUCTS_TAB_INFORMATIONS, PAGE_PRODUCTS_TAB_DESCRIPTION, PAGE_PRODUCTS_TAB_IMAGES } from '@/website.config'
 import { COMMERCE_CURRENCY_FRACTION_MAX } from '@/commerce.config'
 
 
@@ -184,6 +184,125 @@ const NumberEditor = <TElement extends Element = HTMLElement>(props: NumberEdito
             // formats:
             type={props.type ?? 'number'}
         />
+    );
+}
+
+interface PathEditorProps<TElement extends Element = HTMLElement>
+    extends
+        // bases:
+        TextEditorProps<TElement>
+{
+}
+const PathEditor = <TElement extends Element = HTMLElement>(props: PathEditorProps<TElement>): JSX.Element|null => {
+    // rest props:
+    const {
+        // refs:
+        elmRef,
+        outerRef,
+        
+        
+        
+        // identifiers:
+        id,
+        
+        
+        
+        // variants:
+        size,
+        theme,
+        gradient,
+        outlined,
+        mild,
+        
+        
+        
+        // classes:
+        mainClass,
+        classes,
+        variantClasses,
+        stateClasses,
+        className,
+        
+        
+        
+        // styles:
+        style,
+    ...restNumberEditorProps} = props;
+    
+    
+    
+    // jsx:
+    return (
+        <Group
+            // refs:
+            outerRef={outerRef}
+            
+            
+            
+            // identifiers:
+            id={id}
+            
+            
+            
+            // variants:
+            size={size}
+            theme={theme}
+            gradient={gradient}
+            outlined={outlined}
+            mild={mild}
+            
+            
+            
+            // classes:
+            mainClass={mainClass}
+            classes={classes}
+            variantClasses={variantClasses}
+            stateClasses={stateClasses}
+            className={className}
+            
+            
+            
+            // styles:
+            style={style}
+        >
+            <Label
+                // classes:
+                className='solid'
+                
+                
+                
+                // accessibilities:
+                title={WEBSITE_URL}
+            >
+                <Icon icon='home' />
+            </Label>
+            <Label
+                // classes:
+                className='solid'
+            >
+                /products/
+            </Label>
+            <TextEditor<TElement>
+                // other props:
+                {...restNumberEditorProps}
+                
+                
+                
+                // refs:
+                elmRef={elmRef}
+                
+                
+                
+                // classes:
+                className='fluid'
+                
+                
+                
+                // validations:
+                required={props.required ?? true}
+                minLength={props.minLength ?? 1}
+            />
+        </Group>
     );
 }
 
@@ -1169,7 +1288,7 @@ const FullEditDialog = (props: FullEditDialogProps) => {
                         <TextEditor className='name editor'             value={name}           onChange={(value) => { setName(value); setIsModified(true); handleNameChange(value); }} />
                         
                         <span className='path label'>Path:</span>
-                        <TextEditor className='path editor'             value={path}           onChange={(value) => { setPath(value); setIsPathModified(true); }} />
+                        <PathEditor className='path editor'             value={path}           onChange={(value) => { setPath(value); setIsPathModified(true); }} />
                         
                         <span className='price label'>Price:</span>
                         <CurrencyEditor className='price editor'        value={price}          onChange={(value) => { setPrice(getRealNumberOrNull(value)); setIsModified(true); }} />
