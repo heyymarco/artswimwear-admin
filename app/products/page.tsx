@@ -18,6 +18,7 @@ import { QuantityInput, QuantityInputProps } from '@heymarco/quantity-input'
 import { ModalStatus } from '../../components/ModalStatus'
 
 import { PAGE_PRODUCTS_TITLE, PAGE_PRODUCTS_DESCRIPTION, PAGE_PRODUCTS_STOCK_UNLIMITED, PAGE_PRODUCTS_STOCK_LIMITED, PAGE_PRODUCTS_VISIBILITY_DRAFT, PAGE_PRODUCTS_VISIBILITY_HIDDEN, PAGE_PRODUCTS_VISIBILITY_PUBLISHED, PAGE_PRODUCTS_TAB_INFORMATIONS, PAGE_PRODUCTS_TAB_DESCRIPTION, PAGE_PRODUCTS_TAB_IMAGES } from '@/website.config'
+import { COMMERCE_CURRENCY_FRACTION_MAX } from '@/commerce.config'
 
 
 
@@ -289,6 +290,7 @@ const CurrencyEditor = <TElement extends Element = HTMLElement>(props: CurrencyE
                 // validations:
                 required={props.required ?? true}
                 min={props.min ?? 0}
+                step={1/(10 ** COMMERCE_CURRENCY_FRACTION_MAX)}
             />
         </Group>
     );
