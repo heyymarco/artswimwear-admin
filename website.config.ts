@@ -1,4 +1,5 @@
-export const WEBSITE_URL                             = 'http://www.artswimwear.com'
+export const STORE_WEBSITE_URL                       = 'http://www.artswimwear.com'
+
 export const WEBSITE_LANGUAGE                        = 'en'
 
 export const WEBSITE_FAVICON_PNG                     = '/artswimwear.png'
