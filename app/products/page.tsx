@@ -19,6 +19,7 @@ import { ModalStatus } from '../../components/ModalStatus'
 
 import { STORE_WEBSITE_URL, PAGE_PRODUCTS_TITLE, PAGE_PRODUCTS_DESCRIPTION, PAGE_PRODUCTS_STOCK_UNLIMITED, PAGE_PRODUCTS_STOCK_LIMITED, PAGE_PRODUCTS_VISIBILITY_DRAFT, PAGE_PRODUCTS_VISIBILITY_HIDDEN, PAGE_PRODUCTS_VISIBILITY_PUBLISHED, PAGE_PRODUCTS_TAB_INFORMATIONS, PAGE_PRODUCTS_TAB_DESCRIPTION, PAGE_PRODUCTS_TAB_IMAGES } from '@/website.config'
 import { COMMERCE_CURRENCY_FRACTION_MAX } from '@/commerce.config'
+import { EditButton } from '@/components/EditButton'
 
 
 
@@ -38,20 +39,6 @@ const getRealNumberOrNull = (number: number|null|undefined) => {
 }
 
 
-
-const EditButton = (props: ButtonIconProps) => {
-    return (
-        <ButtonIcon
-            {...props}
-            className={props.className ?? 'edit'}
-            icon={props.icon ?? 'edit'}
-            theme={props.theme ?? 'primary'}
-            size={props.size ?? 'xs'}
-            buttonStyle={props.buttonStyle ?? 'link'}
-            title={props.title ?? 'edit'}
-        />
-    );
-}
 
 type EditorChangeEventHandler<TValue> = (value: TValue) => void
 interface EditorProps<TElement extends Element = HTMLElement, TValue extends any = string>
