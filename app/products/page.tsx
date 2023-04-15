@@ -1,6 +1,6 @@
 'use client'
 
-import { default as React } from 'react'
+import { default as React, useMemo } from 'react'
 import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 
 import { Section, Main } from '@heymarco/section'
@@ -13,7 +13,7 @@ import { ProductEntry, useGetProductList, useUpdateProduct } from '@/store/featu
 import { useEffect, useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
 import { formatCurrency, getCurrencySign } from '@/libs/formatters';
-import { AccessibilityProvider, ValidationProvider, useEvent, useMergeClasses, useMergeRefs } from '@reusable-ui/core';
+import { AccessibilityProvider, ValidationProvider, useEvent, useMergeClasses, useMergeRefs, useMergeStyles } from '@reusable-ui/core';
 import { QuantityInput, QuantityInputProps } from '@heymarco/quantity-input'
 import { ModalStatus } from '../../components/ModalStatus'
 
@@ -418,7 +418,10 @@ const CurrencyEditor = <TElement extends Element = HTMLSpanElement>(props: Curre
 interface QuantityEditorProps<TElement extends Element = HTMLSpanElement>
     extends
         // bases:
-        NumberEditorProps<TElement>
+        NumberEditorProps<TElement>,
+        Omit<QuantityInputProps<TElement>,
+            |'onChange' // converted to TValue
+        >
 {
 }
 const QuantityEditor = <TElement extends Element = HTMLSpanElement>(props: QuantityEditorProps<TElement>): JSX.Element|null => {
@@ -429,6 +432,21 @@ const QuantityEditor = <TElement extends Element = HTMLSpanElement>(props: Quant
         value,
         onChange,
         onChangeAsText,
+        
+        
+        
+        // components:
+        decreaseButtonComponent,
+        increaseButtonComponent,
+        inputComponent,
+        
+        
+        
+        // children:
+        childrenBeforeButton,
+        childrenBeforeInput,
+        childrenAfterInput,
+        childrenAfterButton,
     ...restQuantityInputProps} = props;
     
     
@@ -450,9 +468,24 @@ const QuantityEditor = <TElement extends Element = HTMLSpanElement>(props: Quant
             
             
             // values:
-            defaultValue = {(defaultValue !== undefined) ? ((defaultValue !== null) ? defaultValue : NaN) : undefined}
-            value        = {(value        !== undefined) ? ((value        !== null) ? value        : NaN) : undefined}
+            defaultValue = {defaultValue     }
+            value        = {value            }
             onChange     = {handleValueChange}
+            
+            
+            
+            // components:
+            decreaseButtonComponent = {decreaseButtonComponent}
+            increaseButtonComponent = {increaseButtonComponent}
+            inputComponent          = {inputComponent         }
+            
+            
+            
+            // children:
+            childrenBeforeButton = {childrenBeforeButton}
+            childrenBeforeInput  = {childrenBeforeInput }
+            childrenAfterInput   = {childrenAfterInput  }
+            childrenAfterButton  = {childrenAfterButton }
         />
     );
 }
@@ -464,15 +497,56 @@ interface ShippingWeightEditorProps<TElement extends Element = HTMLSpanElement>
 {
 }
 const ShippingWeightEditor = <TElement extends Element = HTMLSpanElement>(props: ShippingWeightEditorProps<TElement>): JSX.Element|null => {
+    // rest props:
+    const {
+        // components:
+        inputComponent = (<Input<TElement> /> as React.ReactComponentElement<any, InputProps<TElement>>),
+    ...restQuantityEditorProps} = props;
+    
+    
+    
+    // styles:
+    const inputStyleInternal = useMemo<React.CSSProperties>(() => ({
+        textAlign: 'end',
+    }), []);
+    const mergedInputStyle   = useMergeStyles(
+        // values:
+        inputStyleInternal,
+        
+        
+        
+        // preserves the original `style` from `inputComponent` (can overwrite the `inputStyleInternal`):
+        inputComponent.props.style,
+    );
+    
+    
+    
+    // jsx:
     return (
-        <QuantityEditor
+        <QuantityEditor<TElement>
             // other props:
-            {...props}
+            {...restQuantityEditorProps}
             
             
             
             // validations:
             step={props.step ?? 0.01}
+            
+            
+            
+            // components:
+            inputComponent={React.cloneElement<InputProps<TElement>>(inputComponent,
+                // props:
+                {
+                    // styles:
+                    style : mergedInputStyle,
+                },
+            )}
+            
+            
+            
+            // children:
+            childrenAfterInput={props.childrenAfterInput ?? <Label className='solid'>Kg</Label>}
         />
     );
 }
