@@ -24,6 +24,7 @@ import { EditorProps } from '@/components/editors/Editor'
 import { TextEditor } from '@/components/editors/TextEditor'
 import { NumberEditorProps, NumberEditor } from '@/components/editors/NumberEditor'
 import { PathEditor } from '@/components/editors/PathEditor'
+import { CurrencyEditor } from '@/components/editors/CurrencyEditor'
 
 
 
@@ -43,115 +44,6 @@ const getRealNumberOrNull = (number: number|null|undefined) => {
 }
 
 
-
-interface CurrencyEditorProps<TElement extends Element = HTMLSpanElement>
-    extends
-        // bases:
-        NumberEditorProps<TElement>
-{
-}
-const CurrencyEditor = <TElement extends Element = HTMLSpanElement>(props: CurrencyEditorProps<TElement>): JSX.Element|null => {
-    // rest props:
-    const {
-        // refs:
-        elmRef,
-        outerRef,
-        
-        
-        
-        // identifiers:
-        id,
-        
-        
-        
-        // variants:
-        size,
-        theme,
-        gradient,
-        outlined,
-        mild,
-        
-        
-        
-        // classes:
-        mainClass,
-        classes,
-        variantClasses,
-        stateClasses,
-        className,
-        
-        
-        
-        // styles:
-        style,
-    ...restNumberEditorProps} = props;
-    
-    
-    
-    // jsx:
-    return (
-        <Group
-            // refs:
-            outerRef={outerRef}
-            
-            
-            
-            // identifiers:
-            id={id}
-            
-            
-            
-            // variants:
-            size={size}
-            theme={theme}
-            gradient={gradient}
-            outlined={outlined}
-            mild={mild}
-            
-            
-            
-            // classes:
-            mainClass={mainClass}
-            classes={classes}
-            variantClasses={variantClasses}
-            stateClasses={stateClasses}
-            className={className}
-            
-            
-            
-            // styles:
-            style={style}
-        >
-            <Label
-                // classes:
-                className='solid'
-            >
-                {getCurrencySign()}
-            </Label>
-            <NumberEditor<TElement>
-                // other props:
-                {...restNumberEditorProps}
-                
-                
-                
-                // refs:
-                elmRef={elmRef}
-                
-                
-                
-                // classes:
-                className='fluid'
-                
-                
-                
-                // validations:
-                required={props.required ?? true}
-                min={props.min ?? 0}
-                step={1/(10 ** COMMERCE_CURRENCY_FRACTION_MAX)}
-            />
-        </Group>
-    );
-}
 
 interface QuantityEditorProps<TElement extends Element = HTMLSpanElement>
     extends
@@ -1165,7 +1057,7 @@ const FullEditDialog = (props: FullEditDialogProps) => {
                         <PathEditor           className='path editor'       value={path}           onChange={(value) => { setPath(value); setIsPathModified(true); }} homeUrl={STORE_WEBSITE_URL} />
                         
                         <span className='price label'>Price:</span>
-                        <CurrencyEditor       className='price editor'      value={price}          onChange={(value) => { setPrice(getRealNumberOrNull(value)); setIsModified(true); }} />
+                        <CurrencyEditor       className='price editor'      value={price}          onChange={(value) => { setPrice(getRealNumberOrNull(value)); setIsModified(true); }} currencySign={getCurrencySign()} currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX} />
                         
                         <span className='sWeight label'>Shipping Weight:</span>
                         <ShippingWeightEditor className='sWeight editor'    value={shippingWeight} onChange={(value) => { setShippingWeight(getRealNumberOrNull(value)); setIsModified(true); }} />
@@ -1324,7 +1216,7 @@ const ProductItem = (props: ProductItemProps) => {
             <ModalStatus modalViewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
                 {!!editMode && (editMode !== 'full') && <>
                     {(editMode === 'name'      ) && <SimpleEditDialog product={product} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor       required={true } />} />}
-                    {(editMode === 'price'     ) && <SimpleEditDialog product={product} edit={editMode} onClose={handleEditDialogClose} editorComponent={<CurrencyEditor                    />} />}
+                    {(editMode === 'price'     ) && <SimpleEditDialog product={product} edit={editMode} onClose={handleEditDialogClose} editorComponent={<CurrencyEditor   currencySign={getCurrencySign()} currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX} />} />}
                     {(editMode === 'stock'     ) && <SimpleEditDialog product={product} edit={editMode} onClose={handleEditDialogClose} editorComponent={<StockEditor                       />} />}
                     {(editMode === 'visibility') && <SimpleEditDialog product={product} edit={editMode} onClose={handleEditDialogClose} editorComponent={<VisibilityEditor                  />} />}
                 </>}
