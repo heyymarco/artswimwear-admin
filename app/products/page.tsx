@@ -8,18 +8,19 @@ import { Section, Main } from '@heymarco/section'
 import type { Metadata } from 'next'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, ButtonIconProps, InputProps, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, TextInput, NumberInput, Group, Label, Basic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, Badge, Input, Generic, Icon } from '@reusable-ui/components';
+import { ButtonIcon, InputProps, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Group, Label, Basic, CardBody, CardHeader, CardFooter, Button, CloseButton, Input, Generic, Icon } from '@reusable-ui/components';
 import { ProductEntry, useGetProductList, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
 import { formatCurrency, getCurrencySign } from '@/libs/formatters';
-import { AccessibilityProvider, ValidationProvider, useEvent, useMergeClasses, useMergeRefs, useMergeStyles } from '@reusable-ui/core';
+import { AccessibilityProvider, ValidationProvider, useEvent, useMergeRefs, useMergeStyles } from '@reusable-ui/core';
 import { QuantityInput, QuantityInputProps } from '@heymarco/quantity-input'
 import { ModalStatus } from '../../components/ModalStatus'
 
 import { STORE_WEBSITE_URL, PAGE_PRODUCTS_TITLE, PAGE_PRODUCTS_DESCRIPTION, PAGE_PRODUCTS_STOCK_UNLIMITED, PAGE_PRODUCTS_STOCK_LIMITED, PAGE_PRODUCTS_VISIBILITY_DRAFT, PAGE_PRODUCTS_VISIBILITY_HIDDEN, PAGE_PRODUCTS_VISIBILITY_PUBLISHED, PAGE_PRODUCTS_TAB_INFORMATIONS, PAGE_PRODUCTS_TAB_DESCRIPTION, PAGE_PRODUCTS_TAB_IMAGES } from '@/website.config'
 import { COMMERCE_CURRENCY_FRACTION_MAX } from '@/commerce.config'
 import { EditButton } from '@/components/EditButton'
+import { EditorChangeEventHandler, EditorProps, Editor } from '@/components/editors/Editor'
 
 
 
@@ -39,56 +40,6 @@ const getRealNumberOrNull = (number: number|null|undefined) => {
 }
 
 
-
-type EditorChangeEventHandler<TValue> = (value: TValue) => void
-interface EditorProps<TElement extends Element = HTMLElement, TValue extends any = string>
-    extends
-        // bases:
-        Omit<InputProps<TElement>,
-            // values:
-            |'defaultValue'|'value'|'onChange' // converted to TValue
-        >
-{
-    // values:
-    defaultValue   ?: TValue
-    value          ?: TValue
-    onChange       ?: EditorChangeEventHandler<TValue>
-    onChangeAsText ?: EditorChangeEventHandler<string>
-}
-const Editor = <TElement extends Element = HTMLElement, TValue extends any = string>(props: EditorProps<TElement, TValue>): JSX.Element|null => {
-    // rest props:
-    const {
-        // values:
-        defaultValue,
-        value,
-        onChange,
-        onChangeAsText,
-    ...restInputProps} = props;
-    
-    
-    
-    // handlers:
-    const handleValueChange = onChangeAsText ? useEvent<React.ChangeEventHandler<HTMLInputElement>>(({target:{value}}) => {
-        onChangeAsText(value);
-    }) : undefined;
-    
-    
-    
-    // jsx:
-    return (
-        <Input<TElement>
-            // other props:
-            {...restInputProps}
-            
-            
-            
-            // values:
-            defaultValue = {(defaultValue !== undefined) ? ((defaultValue !== null) ? `${defaultValue}` : '') : undefined}
-            value        = {(value        !== undefined) ? ((value        !== null) ? `${value}`        : '') : undefined}
-            onChange     = {handleValueChange}
-        />
-    );
-}
 
 interface TextEditorProps<TElement extends Element = HTMLElement>
     extends
