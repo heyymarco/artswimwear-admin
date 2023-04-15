@@ -14,7 +14,7 @@ import {
 import {
     // react components:
     Generic,
-    Basic,
+    Content,
     List,
     ListItem,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
@@ -71,11 +71,11 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
         
         
         // variants:
-        size  = 'md',
-        theme = 'secondary',
+        size     = 'md',
+        theme    = 'secondary',
         gradient,
         outlined,
-        mild,
+        mild     = true,
         
         
         
@@ -167,15 +167,9 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
                     </ListItem>
                 )}
             </List>
-            <Basic
+            <Content
                 // variants:
-                size={
-                    (size === 'sm')
-                    ? 'md'
-                    : (size === 'md')
-                    ? 'lg'
-                    : size
-                }
+                size={size}
                 theme={
                     (theme === 'secondary')
                     ? 'secondary'
@@ -183,9 +177,9 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
                     ? 'primary'
                     : theme
                 }
-                gradient={gradient}
-                outlined={outlined}
-                mild={mild}
+                gradient='inherit'
+                outlined='inherit'
+                mild={!mild}
                 
                 
                 
@@ -195,7 +189,7 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
                 <p className={(value === 'published') ? undefined : 'hidden'}>The product is <em>shown</em> on the webiste.</p>
                 <p className={(value === 'hidden'   ) ? undefined : 'hidden'}>The product can only be viewed via <em>a (bookmarked) link</em>.</p>
                 <p className={(value === 'draft'    ) ? undefined : 'hidden'}>The product <em>cannot be viewed</em> on the entire website.</p>
-            </Basic>
+            </Content>
         </Generic>
     );
 };
