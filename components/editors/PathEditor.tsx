@@ -21,7 +21,7 @@ import {
 
 
 
-interface PathEditorProps<TElement extends Element = HTMLSpanElement>
+export interface PathEditorProps<TElement extends Element = HTMLSpanElement>
     extends
         // bases:
         TextEditorProps<TElement>
