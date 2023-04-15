@@ -25,6 +25,7 @@ import { TextEditor } from '@/components/editors/TextEditor'
 import { NumberEditorProps, NumberEditor } from '@/components/editors/NumberEditor'
 import { PathEditor } from '@/components/editors/PathEditor'
 import { CurrencyEditor } from '@/components/editors/CurrencyEditor'
+import { QuantityEditorProps, QuantityEditor } from '@/components/editors/QuantityEditor'
 
 
 
@@ -44,81 +45,6 @@ const getRealNumberOrNull = (number: number|null|undefined) => {
 }
 
 
-
-interface QuantityEditorProps<TElement extends Element = HTMLSpanElement>
-    extends
-        // bases:
-        NumberEditorProps<TElement>,
-        Omit<QuantityInputProps<TElement>,
-            |'onChange' // converted to TValue
-        >
-{
-}
-const QuantityEditor = <TElement extends Element = HTMLSpanElement>(props: QuantityEditorProps<TElement>): JSX.Element|null => {
-    // rest props:
-    const {
-        // values:
-        defaultValue,
-        value,
-        onChange,
-        onChangeAsText,
-        
-        
-        
-        // components:
-        decreaseButtonComponent,
-        increaseButtonComponent,
-        inputComponent,
-        
-        
-        
-        // children:
-        childrenBeforeButton,
-        childrenBeforeInput,
-        childrenAfterInput,
-        childrenAfterButton,
-    ...restQuantityInputProps} = props;
-    
-    
-    
-    // handlers:
-    const handleValueChange = (onChangeAsText || onChange) ? useEvent<React.ChangeEventHandler<HTMLInputElement>>(({target:{value, valueAsNumber}}) => {
-        onChangeAsText?.(value);
-        onChange?.(value ? valueAsNumber : null);
-    }) : undefined;
-    
-    
-    
-    // jsx:
-    return (
-        <QuantityInput<TElement>
-            // other props:
-            {...restQuantityInputProps}
-            
-            
-            
-            // values:
-            defaultValue = {defaultValue     }
-            value        = {value            }
-            onChange     = {handleValueChange}
-            
-            
-            
-            // components:
-            decreaseButtonComponent = {decreaseButtonComponent}
-            increaseButtonComponent = {increaseButtonComponent}
-            inputComponent          = {inputComponent         }
-            
-            
-            
-            // children:
-            childrenBeforeButton = {childrenBeforeButton}
-            childrenBeforeInput  = {childrenBeforeInput }
-            childrenAfterInput   = {childrenAfterInput  }
-            childrenAfterButton  = {childrenAfterButton }
-        />
-    );
-}
 
 interface ShippingWeightEditorProps<TElement extends Element = HTMLSpanElement>
     extends
