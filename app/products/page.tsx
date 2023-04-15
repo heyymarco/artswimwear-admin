@@ -21,6 +21,7 @@ import { STORE_WEBSITE_URL, PAGE_PRODUCTS_TITLE, PAGE_PRODUCTS_DESCRIPTION, PAGE
 import { COMMERCE_CURRENCY_FRACTION_MAX } from '@/commerce.config'
 import { EditButton } from '@/components/EditButton'
 import { EditorChangeEventHandler, EditorProps, Editor } from '@/components/editors/Editor'
+import { TextEditorProps, TextEditor } from '@/components/editors/TextEditor'
 
 
 
@@ -40,40 +41,6 @@ const getRealNumberOrNull = (number: number|null|undefined) => {
 }
 
 
-
-interface TextEditorProps<TElement extends Element = HTMLElement>
-    extends
-        // bases:
-        EditorProps<TElement, string>
-{
-}
-const TextEditor = <TElement extends Element = HTMLElement>(props: TextEditorProps<TElement>): JSX.Element|null => {
-    // rest props:
-    const {
-        // values:
-        onChange,
-    ...restEditorProps} = props;
-    
-    
-    
-    // jsx:
-    return (
-        <Editor<TElement, string>
-            // other props:
-            {...restEditorProps}
-            
-            
-            
-            // values:
-            onChangeAsText={onChange}
-            
-            
-            
-            // formats:
-            type={props.type ?? 'text'}
-        />
-    );
-}
 
 interface NumberEditorProps<TElement extends Element = HTMLElement>
     extends
