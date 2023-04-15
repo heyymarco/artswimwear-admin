@@ -52,7 +52,7 @@ import {
 // styles:
 export const useTabBodyStyleSheet = dynamicStyleSheet(
     () => import(/* webpackPrefetch: true */ './styles/styles')
-, { id: 'zgn1x8dxdi', specificityWeight: 0 }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
+, { id: 'zgn1x8dxdi', specificityWeight: 2 }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 
 
 
