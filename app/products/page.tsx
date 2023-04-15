@@ -20,8 +20,9 @@ import { ModalStatus } from '../../components/ModalStatus'
 import { STORE_WEBSITE_URL, PAGE_PRODUCTS_TITLE, PAGE_PRODUCTS_DESCRIPTION, PAGE_PRODUCTS_STOCK_UNLIMITED, PAGE_PRODUCTS_STOCK_LIMITED, PAGE_PRODUCTS_VISIBILITY_DRAFT, PAGE_PRODUCTS_VISIBILITY_HIDDEN, PAGE_PRODUCTS_VISIBILITY_PUBLISHED, PAGE_PRODUCTS_TAB_INFORMATIONS, PAGE_PRODUCTS_TAB_DESCRIPTION, PAGE_PRODUCTS_TAB_IMAGES } from '@/website.config'
 import { COMMERCE_CURRENCY_FRACTION_MAX } from '@/commerce.config'
 import { EditButton } from '@/components/EditButton'
-import { EditorChangeEventHandler, EditorProps, Editor } from '@/components/editors/Editor'
+import { EditorProps } from '@/components/editors/Editor'
 import { TextEditorProps, TextEditor } from '@/components/editors/TextEditor'
+import { NumberEditorProps, NumberEditor } from '@/components/editors/NumberEditor'
 
 
 
@@ -41,56 +42,6 @@ const getRealNumberOrNull = (number: number|null|undefined) => {
 }
 
 
-
-interface NumberEditorProps<TElement extends Element = HTMLElement>
-    extends
-        // bases:
-        Omit<EditorProps<TElement, number|null>,
-            // validations:
-            |'minLength'|'maxLength' // text length constraint is not supported
-            |'pattern'               // text regex is not supported
-            |'min'|'max'|'step'      // only supports numeric value
-        >
-{
-    // validations:
-    min  ?: number
-    max  ?: number
-    step ?: number
-}
-const NumberEditor = <TElement extends Element = HTMLElement>(props: NumberEditorProps<TElement>): JSX.Element|null => {
-    // rest props:
-    const {
-        // values:
-        onChange,
-    ...restEditorProps} = props;
-    
-    
-    
-    // handlers:
-    const handleChangeAsText = onChange ? useEvent<EditorChangeEventHandler<string>>((value) => {
-        onChange(value ? Number.parseFloat(value) : null);
-    }) : undefined;
-    
-    
-    
-    // jsx:
-    return (
-        <Editor<TElement, number|null>
-            // other props:
-            {...restEditorProps}
-            
-            
-            
-            // values:
-            onChangeAsText={handleChangeAsText}
-            
-            
-            
-            // formats:
-            type={props.type ?? 'number'}
-        />
-    );
-}
 
 interface PathEditorProps<TElement extends Element = HTMLSpanElement>
     extends
