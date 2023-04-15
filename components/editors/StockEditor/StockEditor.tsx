@@ -37,9 +37,9 @@ import {
 // internals:
 import {
     // react components:
-    NumberEditorProps,
-    NumberEditor,
-}                           from '@/components/editors/NumberEditor'
+    QuantityEditorProps,
+    QuantityEditor,
+}                           from '@/components/editors/QuantityEditor'
 
 // app configs:
 import {
@@ -59,7 +59,7 @@ export const useTabBodyStyleSheet = dynamicStyleSheet(
 export interface StockEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        NumberEditorProps<TElement>
+        QuantityEditorProps<TElement>
 {
 }
 const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorProps<TElement>): JSX.Element|null => {
@@ -258,7 +258,7 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                     <Label className='solid'>
                         Current stock:
                     </Label>
-                    <NumberEditor<TElement>
+                    <QuantityEditor<TElement>
                         // other props:
                         {...restNumberEditorProps}
                         
