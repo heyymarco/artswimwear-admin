@@ -247,20 +247,5 @@ export default () => {
             ...children('.visibility.label' , { gridArea: 'visibility-label'  }),
             ...children('.visibility.editor', { gridArea: 'visibility-editor' }),
         }, { specificityWeight: 3 }),
-        scopeOf('editorTabBody', {
-            display: 'grid',
-            justifyItems: 'center',
-            alignItems: 'center',
-            [borderVars.borderStartStartRadius] : '0px',
-            [borderVars.borderStartEndRadius  ] : '0px',
-            borderBlockStartWidth               : '0px',
-            ...children('*', {
-                gridArea: '1/1/1/1', // the options are overlapping each other, so the parent takes the maximum width & height of children
-                margin: 0,
-            }),
-            ...children('.hidden', {
-                visibility: 'hidden',
-            }),
-        }, { specificityWeight: 2 }),
     ];
 }

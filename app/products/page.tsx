@@ -8,24 +8,24 @@ import { Section, Main } from '@heymarco/section'
 import type { Metadata } from 'next'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Group, Label, Basic, CardBody, CardHeader, CardFooter, Button, CloseButton, Generic } from '@reusable-ui/components';
+import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody, CardHeader, CardFooter, Button, CloseButton } from '@reusable-ui/components';
 import { ProductEntry, useGetProductList, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
 import { formatCurrency, getCurrencySign } from '@/libs/formatters';
-import { AccessibilityProvider, ValidationProvider, useEvent, useMergeRefs } from '@reusable-ui/core';
+import { AccessibilityProvider, ValidationProvider, useEvent } from '@reusable-ui/core';
 import { ModalStatus } from '../../components/ModalStatus'
 
-import { STORE_WEBSITE_URL, PAGE_PRODUCTS_TITLE, PAGE_PRODUCTS_DESCRIPTION, PAGE_PRODUCTS_STOCK_UNLIMITED, PAGE_PRODUCTS_STOCK_LIMITED, PAGE_PRODUCTS_VISIBILITY_DRAFT, PAGE_PRODUCTS_VISIBILITY_HIDDEN, PAGE_PRODUCTS_VISIBILITY_PUBLISHED, PAGE_PRODUCTS_TAB_INFORMATIONS, PAGE_PRODUCTS_TAB_DESCRIPTION, PAGE_PRODUCTS_TAB_IMAGES } from '@/website.config'
+import { STORE_WEBSITE_URL, PAGE_PRODUCTS_TITLE, PAGE_PRODUCTS_DESCRIPTION, PAGE_PRODUCTS_TAB_INFORMATIONS, PAGE_PRODUCTS_TAB_DESCRIPTION, PAGE_PRODUCTS_TAB_IMAGES } from '@/website.config'
 import { COMMERCE_CURRENCY_FRACTION_MAX } from '@/commerce.config'
 import { EditButton } from '@/components/EditButton'
 import { EditorProps } from '@/components/editors/Editor'
 import { TextEditor } from '@/components/editors/TextEditor'
-import { NumberEditorProps, NumberEditor } from '@/components/editors/NumberEditor'
 import { PathEditor } from '@/components/editors/PathEditor'
 import { CurrencyEditor } from '@/components/editors/CurrencyEditor'
 import { ShippingWeightEditor } from '@/components/editors/ShippingWeightEditor'
 import { StockEditor } from '@/components/editors/StockEditor/StockEditor'
+import { ProductVisibility, VisibilityEditor } from '@/components/editors/VisibilityEditor/VisibilityEditor'
 
 
 
@@ -42,163 +42,6 @@ const getRealNumberOrNull = (number: number|null|undefined) => {
     if (number === null)      return null;
     if (!isFinite(number))    return null;
     return number;
-}
-
-
-
-type ProductVisibility = 'published'|'hidden'|'draft'
-interface VisibilityEditorProps<TElement extends Element = HTMLElement>
-    extends
-        EditorProps<TElement, ProductVisibility>
-{
-}
-const VisibilityEditor = <TElement extends Element = HTMLElement>(props: VisibilityEditorProps<TElement>): JSX.Element|null => {
-    // styles:
-    const styles = usePageStyleSheet();
-    
-    
-    
-    // rest props:
-    const {
-        // refs:
-        elmRef,
-        outerRef,
-        
-        
-        
-        // identifiers:
-        id,
-        
-        
-        
-        // variants:
-        size  = 'md',
-        theme = 'secondary',
-        gradient,
-        outlined,
-        mild,
-        
-        
-        
-        // classes:
-        mainClass,
-        classes,
-        variantClasses,
-        stateClasses,
-        className,
-        
-        
-        
-        // styles:
-        style,
-        
-        
-        
-        // values:
-        defaultValue,
-        value = defaultValue,
-        onChange,
-    ...restEditorProps} = props;
-    type T1 = typeof restEditorProps
-    type T2 = Omit<T1, keyof HTMLElement>
-    
-    
-    
-    // jsx:
-    return (
-        <Generic
-            // semantics:
-            tag='div'
-            
-            
-            
-            // refs:
-            outerRef={outerRef}
-            
-            
-            
-            // identifiers:
-            id={id}
-            
-            
-            
-            // classes:
-            mainClass={mainClass}
-            classes={classes}
-            variantClasses={variantClasses}
-            stateClasses={stateClasses}
-            className={className}
-            
-            
-            
-            // styles:
-            style={style}
-        >
-            <List
-                // variants:
-                size={size}
-                theme={theme}
-                gradient={gradient}
-                outlined={outlined}
-                mild={mild}
-                
-                listStyle='tab'
-                orientation='inline'
-                
-                
-                
-                // behaviors:
-                actionCtrl={true}
-            >
-                {(['published', 'hidden', 'draft'] as ProductVisibility[]).map((option) =>
-                    <ListItem key={option}
-                        // accessibilities:
-                        active={value === option}
-                        
-                        
-                        
-                        // handlers:
-                        onClick={() => onChange?.(option)}
-                    >
-                        {{
-                            published : PAGE_PRODUCTS_VISIBILITY_PUBLISHED,
-                            hidden    : PAGE_PRODUCTS_VISIBILITY_HIDDEN,
-                            draft     : PAGE_PRODUCTS_VISIBILITY_DRAFT,
-                        }[option]}
-                    </ListItem>
-                )}
-            </List>
-            <Basic
-                // variants:
-                size={
-                    (size === 'sm')
-                    ? 'md'
-                    : (size === 'md')
-                    ? 'lg'
-                    : size
-                }
-                theme={
-                    (theme === 'secondary')
-                    ? 'secondary'
-                    : (theme === 'primary')
-                    ? 'primary'
-                    : theme
-                }
-                gradient={gradient}
-                outlined={outlined}
-                mild={mild}
-                
-                
-                
-                // classes:
-                className={styles.editorTabBody}
-            >
-                <p className={(value === 'published') ? undefined : 'hidden'}>The product is <em>shown</em> on the webiste.</p>
-                <p className={(value === 'hidden'   ) ? undefined : 'hidden'}>The product can only be viewed via <em>a (bookmarked) link</em>.</p>
-                <p className={(value === 'draft'    ) ? undefined : 'hidden'}>The product <em>cannot be viewed</em> on the entire website.</p>
-            </Basic>
-        </Generic>
-    );
 }
 
 
