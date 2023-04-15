@@ -27,7 +27,7 @@ import {
 import {
     // react components:
     Generic,
-    Basic,
+    Content,
     Label,
     List,
     ListItem,
@@ -82,11 +82,11 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
         
         
         // variants:
-        size  = 'md',
-        theme = 'secondary',
+        size     = 'md',
+        theme    = 'secondary',
         gradient,
         outlined,
-        mild,
+        mild     = true,
         
         
         
@@ -214,15 +214,9 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                     </ListItem>
                 )}
             </List>
-            <Basic
+            <Content
                 // variants:
-                size={
-                    (size === 'sm')
-                    ? 'md'
-                    : (size === 'md')
-                    ? 'lg'
-                    : size
-                }
+                size={size}
                 theme={
                     (theme === 'secondary')
                     ? 'secondary'
@@ -230,9 +224,9 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                     ? 'primary'
                     : theme
                 }
-                gradient={gradient}
-                outlined={outlined}
-                mild={mild}
+                gradient='inherit'
+                outlined='inherit'
+                mild={!mild}
                 
                 
                 
@@ -252,8 +246,8 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                         ? 'secondary'
                         : theme
                     }
-                    gradient={gradient}
-                    outlined={outlined}
+                    gradient='inherit'
+                    outlined='inherit'
                     mild={mild}
                     
                     
@@ -293,7 +287,7 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                         max={props.max ?? 9999}
                     />
                 </Group>
-            </Basic>
+            </Content>
         </Generic>
     );
 };
