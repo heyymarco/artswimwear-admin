@@ -21,8 +21,9 @@ import { STORE_WEBSITE_URL, PAGE_PRODUCTS_TITLE, PAGE_PRODUCTS_DESCRIPTION, PAGE
 import { COMMERCE_CURRENCY_FRACTION_MAX } from '@/commerce.config'
 import { EditButton } from '@/components/EditButton'
 import { EditorProps } from '@/components/editors/Editor'
-import { TextEditorProps, TextEditor } from '@/components/editors/TextEditor'
+import { TextEditor } from '@/components/editors/TextEditor'
 import { NumberEditorProps, NumberEditor } from '@/components/editors/NumberEditor'
+import { PathEditor } from '@/components/editors/PathEditor'
 
 
 
@@ -42,125 +43,6 @@ const getRealNumberOrNull = (number: number|null|undefined) => {
 }
 
 
-
-interface PathEditorProps<TElement extends Element = HTMLSpanElement>
-    extends
-        // bases:
-        TextEditorProps<TElement>
-{
-}
-const PathEditor = <TElement extends Element = HTMLSpanElement>(props: PathEditorProps<TElement>): JSX.Element|null => {
-    // rest props:
-    const {
-        // refs:
-        elmRef,
-        outerRef,
-        
-        
-        
-        // identifiers:
-        id,
-        
-        
-        
-        // variants:
-        size,
-        theme,
-        gradient,
-        outlined,
-        mild,
-        
-        
-        
-        // classes:
-        mainClass,
-        classes,
-        variantClasses,
-        stateClasses,
-        className,
-        
-        
-        
-        // styles:
-        style,
-    ...restNumberEditorProps} = props;
-    
-    
-    
-    // jsx:
-    return (
-        <Group
-            // refs:
-            outerRef={outerRef}
-            
-            
-            
-            // identifiers:
-            id={id}
-            
-            
-            
-            // variants:
-            size={size}
-            theme={theme}
-            gradient={gradient}
-            outlined={outlined}
-            mild={mild}
-            
-            
-            
-            // classes:
-            mainClass={mainClass}
-            classes={classes}
-            variantClasses={variantClasses}
-            stateClasses={stateClasses}
-            className={className}
-            
-            
-            
-            // styles:
-            style={style}
-        >
-            <Label
-                // classes:
-                className='solid'
-                
-                
-                
-                // accessibilities:
-                title={STORE_WEBSITE_URL}
-            >
-                <Icon icon='home' />
-            </Label>
-            <Label
-                // classes:
-                className='solid'
-            >
-                /products/
-            </Label>
-            <TextEditor<TElement>
-                // other props:
-                {...restNumberEditorProps}
-                
-                
-                
-                // refs:
-                elmRef={elmRef}
-                
-                
-                
-                // classes:
-                className='fluid'
-                
-                
-                
-                // validations:
-                required={props.required ?? true}
-                minLength={props.minLength ?? 1}
-            />
-        </Group>
-    );
-}
 
 interface CurrencyEditorProps<TElement extends Element = HTMLSpanElement>
     extends
@@ -1280,7 +1162,7 @@ const FullEditDialog = (props: FullEditDialogProps) => {
                         <TextEditor           className='name editor'       value={name}           onChange={(value) => { setName(value); setIsModified(true); handleNameChange(value); }} />
                         
                         <span className='path label'>Path:</span>
-                        <PathEditor           className='path editor'       value={path}           onChange={(value) => { setPath(value); setIsPathModified(true); }} />
+                        <PathEditor           className='path editor'       value={path}           onChange={(value) => { setPath(value); setIsPathModified(true); }} homeUrl={STORE_WEBSITE_URL} />
                         
                         <span className='price label'>Price:</span>
                         <CurrencyEditor       className='price editor'      value={price}          onChange={(value) => { setPrice(getRealNumberOrNull(value)); setIsModified(true); }} />
