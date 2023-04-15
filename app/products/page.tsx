@@ -1,6 +1,6 @@
 'use client'
 
-import { default as React, useMemo } from 'react'
+import { default as React } from 'react'
 import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 
 import { Section, Main } from '@heymarco/section'
@@ -8,13 +8,12 @@ import { Section, Main } from '@heymarco/section'
 import type { Metadata } from 'next'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, InputProps, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Group, Label, Basic, CardBody, CardHeader, CardFooter, Button, CloseButton, Input, Generic, Icon } from '@reusable-ui/components';
+import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Group, Label, Basic, CardBody, CardHeader, CardFooter, Button, CloseButton, Generic } from '@reusable-ui/components';
 import { ProductEntry, useGetProductList, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
 import { formatCurrency, getCurrencySign } from '@/libs/formatters';
-import { AccessibilityProvider, ValidationProvider, useEvent, useMergeRefs, useMergeStyles } from '@reusable-ui/core';
-import { QuantityInput, QuantityInputProps } from '@heymarco/quantity-input'
+import { AccessibilityProvider, ValidationProvider, useEvent, useMergeRefs } from '@reusable-ui/core';
 import { ModalStatus } from '../../components/ModalStatus'
 
 import { STORE_WEBSITE_URL, PAGE_PRODUCTS_TITLE, PAGE_PRODUCTS_DESCRIPTION, PAGE_PRODUCTS_STOCK_UNLIMITED, PAGE_PRODUCTS_STOCK_LIMITED, PAGE_PRODUCTS_VISIBILITY_DRAFT, PAGE_PRODUCTS_VISIBILITY_HIDDEN, PAGE_PRODUCTS_VISIBILITY_PUBLISHED, PAGE_PRODUCTS_TAB_INFORMATIONS, PAGE_PRODUCTS_TAB_DESCRIPTION, PAGE_PRODUCTS_TAB_IMAGES } from '@/website.config'
@@ -25,7 +24,7 @@ import { TextEditor } from '@/components/editors/TextEditor'
 import { NumberEditorProps, NumberEditor } from '@/components/editors/NumberEditor'
 import { PathEditor } from '@/components/editors/PathEditor'
 import { CurrencyEditor } from '@/components/editors/CurrencyEditor'
-import { QuantityEditorProps, QuantityEditor } from '@/components/editors/QuantityEditor'
+import { ShippingWeightEditor } from '@/components/editors/ShippingWeightEditor'
 
 
 
@@ -45,67 +44,6 @@ const getRealNumberOrNull = (number: number|null|undefined) => {
 }
 
 
-
-interface ShippingWeightEditorProps<TElement extends Element = HTMLSpanElement>
-    extends
-        // bases:
-        QuantityEditorProps<TElement>
-{
-}
-const ShippingWeightEditor = <TElement extends Element = HTMLSpanElement>(props: ShippingWeightEditorProps<TElement>): JSX.Element|null => {
-    // rest props:
-    const {
-        // components:
-        inputComponent = (<Input<TElement> /> as React.ReactComponentElement<any, InputProps<TElement>>),
-    ...restQuantityEditorProps} = props;
-    
-    
-    
-    // styles:
-    const inputStyleInternal = useMemo<React.CSSProperties>(() => ({
-        textAlign: 'end',
-    }), []);
-    const mergedInputStyle   = useMergeStyles(
-        // values:
-        inputStyleInternal,
-        
-        
-        
-        // preserves the original `style` from `inputComponent` (can overwrite the `inputStyleInternal`):
-        inputComponent.props.style,
-    );
-    
-    
-    
-    // jsx:
-    return (
-        <QuantityEditor<TElement>
-            // other props:
-            {...restQuantityEditorProps}
-            
-            
-            
-            // validations:
-            step={props.step ?? 0.01}
-            
-            
-            
-            // components:
-            inputComponent={React.cloneElement<InputProps<TElement>>(inputComponent,
-                // props:
-                {
-                    // styles:
-                    style : mergedInputStyle,
-                },
-            )}
-            
-            
-            
-            // children:
-            childrenAfterInput={props.childrenAfterInput ?? <Label className='solid'>Kg</Label>}
-        />
-    );
-}
 
 interface StockEditorProps<TElement extends Element = HTMLElement>
     extends
