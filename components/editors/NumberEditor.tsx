@@ -32,6 +32,11 @@ export interface NumberEditorProps<TElement extends Element = HTMLElement>
             |'minLength'|'maxLength' // text length constraint is not supported
             |'pattern'               // text regex is not supported
             |'min'|'max'|'step'      // only supports numeric value
+            
+            // formats:
+            |'type'                  // only supports number
+            |'autoCapitalize'        // nothing to capitalize of number
+            |'inputMode'             // always 'numeric'
         >
 {
     // validations:
@@ -69,7 +74,7 @@ const NumberEditor = <TElement extends Element = HTMLElement>(props: NumberEdito
             
             
             // formats:
-            type={props.type ?? 'number'}
+            type={'number'}
         />
     );
 };
