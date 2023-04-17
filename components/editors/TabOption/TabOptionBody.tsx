@@ -80,7 +80,7 @@ const TabOptionBody = <TElement extends Element = HTMLElement, TValue extends an
             className={styles.main}
         >
             {options.map(({value: optionValue, description: optionDescription}) =>
-                <div key={`${value}`} className={`toggleContent ${Object.is(value, optionValue) ? 'expanded' : ''}`}>
+                <div key={`${optionValue}`} className={`toggleContent ${Object.is(value, optionValue) ? 'expanded' : ''}`}>
                     {optionDescription}
                 </div>
             )}
