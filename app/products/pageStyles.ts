@@ -160,29 +160,6 @@ export default () => {
                 gridArea: 'fullEditor',
             }),
         }, { specificityWeight: 2 }),
-        scopeOf('simpleEditor', {
-            display: 'grid',
-            gridTemplate: [[
-                '"editor     editor"', 'auto',
-                '"btnSave btnCancel"', 'auto',
-                '/',
-                '1fr', '1fr'
-            ]],
-            gapInline: '0.5rem',
-            gapBlock : '1rem',
-            ...children('.editor', {
-                gridArea: 'editor',
-                
-                boxSizing: 'content-box',
-                minInlineSize: '20em',
-            }),
-            ...children('.btnSave', {
-                gridArea: 'btnSave',
-            }),
-            ...children('.btnCancel', {
-                gridArea: 'btnCancel',
-            }),
-        }, { specificityWeight: 3 }),
         scopeOf('fullEditor', {
             display: 'grid',
             gridTemplate: [[
