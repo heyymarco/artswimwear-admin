@@ -24,7 +24,7 @@ import { TextEditor } from '@/components/editors/TextEditor'
 import { PathEditor } from '@/components/editors/PathEditor'
 import { CurrencyEditor } from '@/components/editors/CurrencyEditor'
 import { ShippingWeightEditor } from '@/components/editors/ShippingWeightEditor'
-import { StockEditor } from '@/components/editors/StockEditor/StockEditor'
+import { StockEditor } from '@/components/editors/StockEditor'
 import { ProductVisibility, VisibilityEditor } from '@/components/editors/VisibilityEditor'
 
 
