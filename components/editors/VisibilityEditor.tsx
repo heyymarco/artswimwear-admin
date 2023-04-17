@@ -28,6 +28,7 @@ export type ProductVisibility = 'published'|'hidden'|'draft'
 interface VisibilityEditorProps<TElement extends Element = HTMLElement>
     extends
         Omit<TabOptionProps<TElement, ProductVisibility>,
+            // values:
             |'options' // already defined
         >
 {
