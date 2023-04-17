@@ -25,7 +25,7 @@ import { PathEditor } from '@/components/editors/PathEditor'
 import { CurrencyEditor } from '@/components/editors/CurrencyEditor'
 import { ShippingWeightEditor } from '@/components/editors/ShippingWeightEditor'
 import { StockEditor } from '@/components/editors/StockEditor/StockEditor'
-import { ProductVisibility, VisibilityEditor } from '@/components/editors/VisibilityEditor/VisibilityEditor'
+import { ProductVisibility, VisibilityEditor } from '@/components/editors/VisibilityEditor'
 
 
 
@@ -178,14 +178,15 @@ const SimpleEditDialog = <TValue,>(props: SimpleEditDialogProps<TValue>) => {
     
     // dom effects:
     useEffect(() => {
+        // conditions:
+        const editorElm = editorRef.current;
+        if (!editorElm) return;
+        if (typeof(editorElm.setSelectionRange) !== 'function') return;
+        
+        
+        
         // setups:
         const cancelFocus = setTimeout(() => {
-            // conditions:
-            const editorElm = editorRef.current;
-            if (!editorElm) return;
-            
-            
-            
             const originType = editorElm.type;
             try {
                 if (originType !== 'text') editorElm.type = 'text';
