@@ -19,7 +19,11 @@ import {
 
 
 
+// types:
 export type EditorChangeEventHandler<TValue> = (value: TValue) => void
+
+
+
 export interface EditorProps<TElement extends Element = HTMLElement, TValue extends any = string>
     extends
         // bases:
