@@ -13,8 +13,8 @@ import {
 // reusable-ui components:
 import {
     // react components:
-    BasicProps,
-    Content,
+    IndicatorProps,
+    Indicator,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internals:
@@ -34,7 +34,7 @@ export const useTabOptionBodyStyleSheet = dynamicStyleSheet(
 
 export interface TabOptionBodyProps<TElement extends Element = HTMLElement, TValue extends any = string>
     extends
-        Omit<BasicProps<TElement>,
+        Omit<IndicatorProps<TElement>,
             // values:
             |'defaultValue' // converted to TValue
             |'value'        // converted to TValue
@@ -65,9 +65,14 @@ const TabOptionBody = <TElement extends Element = HTMLElement, TValue extends an
     
     // jsx:
     return (
-        <Content
+        <Indicator
             // other props:
             {...restContentProps}
+            
+            
+            
+            // variants:
+            active={props.active ?? true} // to appear as *selected*, so it *looks* the same as *tab*
             
             
             
@@ -79,7 +84,7 @@ const TabOptionBody = <TElement extends Element = HTMLElement, TValue extends an
                     {optionDescription}
                 </div>
             )}
-        </Content>
+        </Indicator>
     );
 };
 export {
