@@ -27,7 +27,9 @@ export type ProductVisibility = 'published'|'hidden'|'draft'
 
 interface VisibilityEditorProps<TElement extends Element = HTMLElement>
     extends
-        TabOptionProps<TElement, ProductVisibility>
+        Omit<TabOptionProps<TElement, ProductVisibility>,
+            |'options' // already defined
+        >
 {
 }
 const VisibilityEditor = <TElement extends Element = HTMLElement>(props: VisibilityEditorProps<TElement>): JSX.Element|null => {
@@ -40,7 +42,7 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
             
             
             // values:
-            options={props.options ?? [
+            options={[
                 { value: 'published', label: PAGE_PRODUCTS_VISIBILITY_PUBLISHED, description: <p>
                     The product is <em>shown</em> on the webiste.
                 </p> },
