@@ -64,7 +64,9 @@ export interface StockEditorProps<TElement extends Element = HTMLElement>
             |'options' // already defined
             
             // formats:
-            |'autoCapitalize'
+            |'type'                  // only supports number
+            |'autoCapitalize'        // nothing to capitalize of number
+            |'inputMode'             // always 'numeric'
         >,
         QuantityEditorProps<TElement>
 {
@@ -89,6 +91,28 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
         
         
         
+        // validations:
+        enableValidation,
+        isValid,
+        inheritValidation,
+        onValidation,
+        customValidator,
+        
+        required,
+        
+        min = 0,
+        max = 9999,
+        step,
+        
+        
+        
+        // formats:
+        placeholder,
+        autoComplete,
+        list,
+        
+        
+        
         // forms:
         name,
         form,
@@ -99,9 +123,30 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
         defaultValue,
         value,
         onChange,
+        onChangeAsText,
+        
+        
+        
+        // states:
+        focused,
+        assertiveFocusable,
+        arrived,
+        
+        
+        
+        // components:
+        decreaseButtonComponent,
+        increaseButtonComponent,
+        inputComponent,
+        
+        
+        
+        // children:
+        childrenBeforeButton,
+        childrenBeforeInput,
+        childrenAfterInput,
+        childrenAfterButton,
     ...restTabOptionProps} = props;
-    type T1 = typeof restTabOptionProps
-    type T2 = Omit<T1, keyof TabOptionProps>
     
     
     
@@ -195,11 +240,42 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                         
                         
                         
+                        // classes:
+                        className='fluid'
+                        
+                        
+                        
                         // accessibilities:
                         {...{
                             autoFocus,
                             tabIndex,
                             enterKeyHint,
+                        }}
+                        
+                        
+                        
+                        // validations:
+                        {...{
+                            enableValidation,
+                            isValid,
+                            inheritValidation,
+                            onValidation,
+                            customValidator,
+                        }}
+                        
+                        isValid={props.isValid ?? (selectedTabLimited ? undefined : true)}
+                        required={required}
+                        min  = {min }
+                        max  = {max }
+                        step = {step}
+                        
+                        
+                        
+                        // formats:
+                        {...{
+                            placeholder,
+                            autoComplete,
+                            list,
                         }}
                         
                         
@@ -212,22 +288,38 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                         
                         
                         
-                        // classes:
-                        className='fluid'
-                        
-                        
-                        
                         // values:
                         defaultValue={value ?? defaultValue ?? 0} // force as UNCONTROLLED, so the last value when switching tab back & forth is NOT LOST
                         onChange={onChange}
+                        onChangeAsText={onChangeAsText}
                         
                         
                         
-                        // validations:
-                        isValid={props.isValid ?? (selectedTabLimited ? undefined : true)}
-                        required={props.required ?? true}
-                        min={props.min ?? 0   }
-                        max={props.max ?? 9999}
+                        // states:
+                        {...{
+                            focused,
+                            assertiveFocusable,
+                            arrived,
+                        }}
+                        
+                        
+                        
+                        // components:
+                        {...{
+                            decreaseButtonComponent,
+                            increaseButtonComponent,
+                            inputComponent,
+                        }}
+                        
+                        
+                        
+                        // children:
+                        {...{
+                            childrenBeforeButton,
+                            childrenBeforeInput,
+                            childrenAfterInput,
+                            childrenAfterButton,
+                        }}
                     />
                 </Group> },
             ]}

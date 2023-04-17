@@ -14,7 +14,7 @@
     "@cssfn/cssfn-react": "^2.5.0",
     "@heymarco/image": "^1.0.3",
     "@heymarco/loading-bar": "^1.0.2",
-    "@heymarco/quantity-input": "^1.0.5",
+    "@heymarco/quantity-input": "^1.0.6",
     "@heymarco/section": "^1.0.1",
     "@reduxjs/toolkit": "^1.9.3",
     "@reusable-ui/components": "^5.2.0",
