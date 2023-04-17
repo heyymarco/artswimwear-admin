@@ -62,10 +62,10 @@ const QuantityEditor = <TElement extends Element = HTMLSpanElement>(props: Quant
     
     
     // handlers:
-    const handleValueChange = (onChangeAsText || onChange) ? useEvent<React.ChangeEventHandler<HTMLInputElement>>(({target:{value, valueAsNumber}}) => {
+    const handleValueChange = useEvent<React.ChangeEventHandler<HTMLInputElement>>(({target:{value, valueAsNumber}}) => {
         onChangeAsText?.(value);
         onChange?.(value ? valueAsNumber : null);
-    }) : undefined;
+    });
     
     
     

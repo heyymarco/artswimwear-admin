@@ -51,9 +51,9 @@ const Editor = <TElement extends Element = HTMLElement, TValue extends any = str
     
     
     // handlers:
-    const handleValueChange = onChangeAsText ? useEvent<React.ChangeEventHandler<HTMLInputElement>>(({target:{value}}) => {
-        onChangeAsText(value);
-    }) : undefined;
+    const handleValueChange = useEvent<React.ChangeEventHandler<HTMLInputElement>>(({target:{value}}) => {
+        onChangeAsText?.(value);
+    });
     
     
     

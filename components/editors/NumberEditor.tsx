@@ -54,9 +54,9 @@ const NumberEditor = <TElement extends Element = HTMLElement>(props: NumberEdito
     
     
     // handlers:
-    const handleChangeAsText = onChange ? useEvent<EditorChangeEventHandler<string>>((value) => {
-        onChange(value ? Number.parseFloat(value) : null);
-    }) : undefined;
+    const handleChangeAsText = useEvent<EditorChangeEventHandler<string>>((value) => {
+        onChange?.(value ? Number.parseFloat(value) : null);
+    });
     
     
     
