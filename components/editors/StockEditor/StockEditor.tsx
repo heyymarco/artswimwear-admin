@@ -11,35 +11,40 @@ import {
     useEffect,
 }                           from 'react'
 
-// cssfn:
-import {
-    // style sheets:
-    dynamicStyleSheet,
-}                           from '@cssfn/cssfn-react'           // writes css in react hook
-
 // reusable-ui core:
 import {
     // react helper hooks:
+    useEvent,
     useMergeRefs,
+    
+    
+    
+    // basic variants of UI:
+    useBasicVariantProps,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
 import {
     // react components:
-    Generic,
-    Content,
     Label,
-    List,
-    ListItem,
     Group,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internals:
+import type {
+    // types:
+    EditorChangeEventHandler,
+}                           from '@/components/editors/Editor'
 import {
     // react components:
     QuantityEditorProps,
     QuantityEditor,
 }                           from '@/components/editors/QuantityEditor'
+import {
+    // react components:
+    TabOptionProps,
+    TabOption,
+}                           from '@/components/editors/TabOption'
 
 // app configs:
 import {
@@ -49,58 +54,44 @@ import {
 
 
 
-// styles:
-export const useTabBodyStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */ './styles/styles')
-, { id: 'zgn1x8dxdi', specificityWeight: 2 }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
-
-
-
 export interface StockEditorProps<TElement extends Element = HTMLElement>
     extends
-        // bases:
+        Omit<TabOptionProps<TElement, number|null>,
+            // refs:
+            |'elmRef'
+            
+            // values:
+            |'options' // already defined
+            
+            // formats:
+            |'autoCapitalize'
+        >,
         QuantityEditorProps<TElement>
 {
 }
 const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorProps<TElement>): JSX.Element|null => {
-    // styles:
-    const styles = useTabBodyStyleSheet();
-    
-    
-    
     // rest props:
     const {
         // refs:
         elmRef,
-        outerRef,
-        
-        
-        
-        // identifiers:
-        id,
         
         
         
         // variants:
-        size     = 'md',
-        theme    = 'secondary',
-        gradient,
-        outlined,
-        mild     = true,
+        theme = 'primary',
         
         
         
-        // classes:
-        mainClass,
-        classes,
-        variantClasses,
-        stateClasses,
-        className,
+        // accessibilities:
+        autoFocus,
+        tabIndex,
+        enterKeyHint,
         
         
         
-        // styles:
-        style,
+        // forms:
+        name,
+        form,
         
         
         
@@ -108,8 +99,14 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
         defaultValue,
         value,
         onChange,
-    ...restNumberEditorProps} = props;
+    ...restTabOptionProps} = props;
+    type T1 = typeof restTabOptionProps
+    type T2 = Omit<T1, keyof TabOptionProps>
     
+    
+    
+    // basic variant props:
+    const basicVariantProps = useBasicVariantProps(props);
     
     
     // states:
@@ -129,6 +126,18 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
     
     
     
+    // handlers:
+    const handleTabChange = useEvent<EditorChangeEventHandler<boolean>>((selectedTabLimited) => {
+        setSelectedTabLimited(selectedTabLimited);
+        onChange?.(
+            selectedTabLimited
+            ? (numberEditorRefInternal.current?.value ? numberEditorRefInternal.current?.valueAsNumber : null)
+            : null
+        );
+    });
+    
+    
+    
     // dom effects:
     useEffect(() => {
         // conditions:
@@ -144,101 +153,26 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
     
     // jsx:
     return (
-        <Generic<TElement>
-            // semantics:
-            tag='div'
+        <TabOption<TElement, boolean>
+            // other props:
+            {...restTabOptionProps}
             
             
             
-            // refs:
-            outerRef={outerRef}
+            // variants:
+            theme={theme}
             
             
             
-            // identifiers:
-            id={id}
-            
-            
-            
-            // classes:
-            mainClass={mainClass}
-            classes={classes}
-            variantClasses={variantClasses}
-            stateClasses={stateClasses}
-            className={className}
-            
-            
-            
-            // styles:
-            style={style}
-        >
-            <List
-                // variants:
-                size={size}
-                theme={theme}
-                gradient={gradient}
-                outlined={outlined}
-                mild={mild}
-                
-                listStyle='tab'
-                orientation='inline'
-                
-                
-                
-                // behaviors:
-                actionCtrl={true}
-            >
-                {['unlimited', 'limited'].map((option) =>
-                    <ListItem key={option}
-                        // accessibilities:
-                        active={selectedTabLimited === (option === 'limited')}
-                        
-                        
-                        
-                        // handlers:
-                        onClick={() => {
-                            const isSelectedTabLimited = (option === 'limited');
-                            setSelectedTabLimited(isSelectedTabLimited);
-                            
-                            onChange?.(
-                                isSelectedTabLimited
-                                ? (numberEditorRefInternal.current?.value ? numberEditorRefInternal.current?.valueAsNumber : null)
-                                : null
-                            );
-                        }}
-                    >
-                        {{
-                            unlimited : PAGE_PRODUCTS_STOCK_UNLIMITED,
-                            limited   : PAGE_PRODUCTS_STOCK_LIMITED,
-                        }[option]}
-                    </ListItem>
-                )}
-            </List>
-            <Content
-                // variants:
-                size={size}
-                theme={
-                    (theme === 'secondary')
-                    ? 'secondary'
-                    : (theme === 'primary')
-                    ? 'primary'
-                    : theme
-                }
-                gradient='inherit'
-                outlined='inherit'
-                mild={!mild}
-                
-                
-                
-                // classes:
-                className={styles.main}
-            >
-                <p className={!selectedTabLimited ? undefined : 'hidden'}>
+            // values:
+            options={[
+                { value: false, label: PAGE_PRODUCTS_STOCK_UNLIMITED, description: <p>
                     The product stock is <em>always available</em>.
-                </p>
-                <Group
+                </p> },
+                
+                { value: true , label: PAGE_PRODUCTS_STOCK_LIMITED  , description: <Group
                     // variants:
-                    size={size}
+                    {...basicVariantProps}
                     theme={
                         (theme === 'secondary')
                         ? 'primary'
@@ -246,9 +180,6 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                         ? 'secondary'
                         : theme
                     }
-                    gradient='inherit'
-                    outlined='inherit'
-                    mild={mild}
                     
                     
                     
@@ -259,13 +190,25 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                         Current stock:
                     </Label>
                     <QuantityEditor<TElement>
-                        // other props:
-                        {...restNumberEditorProps}
-                        
-                        
-                        
                         // refs:
                         elmRef={numberInputRef}
+                        
+                        
+                        
+                        // accessibilities:
+                        {...{
+                            autoFocus,
+                            tabIndex,
+                            enterKeyHint,
+                        }}
+                        
+                        
+                        
+                        // forms:
+                        {...{
+                            name,
+                            form,
+                        }}
                         
                         
                         
@@ -275,7 +218,7 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                         
                         
                         // values:
-                        defaultValue={value ?? defaultValue} // force as UNCONTROLLED, so the last value when switching tab back & forth is NOT LOST
+                        defaultValue={value ?? defaultValue ?? 0} // force as UNCONTROLLED, so the last value when switching tab back & forth is NOT LOST
                         onChange={onChange}
                         
                         
@@ -286,9 +229,11 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                         min={props.min ?? 0   }
                         max={props.max ?? 9999}
                     />
-                </Group>
-            </Content>
-        </Generic>
+                </Group> },
+            ]}
+            value={selectedTabLimited}
+            onChange={handleTabChange}
+        />
     );
 };
 export {
