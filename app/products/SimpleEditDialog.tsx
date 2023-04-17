@@ -3,8 +3,6 @@
 import { default as React } from 'react'
 import { dynamicStyleSheet } from '@cssfn/cssfn-react'
 
-
-
 import { ButtonIcon, CardBody, CardHeader, CardFooter, Button, CloseButton } from '@reusable-ui/components';
 import { ProductEntry, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
