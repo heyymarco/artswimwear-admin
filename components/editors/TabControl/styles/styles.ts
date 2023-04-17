@@ -14,7 +14,7 @@ import {
 
 
 
-export const usesTabBodyLayout = () => {
+export const usesTabControlBodyLayout = () => {
     // dependencies:
     
     // features:
@@ -63,5 +63,5 @@ export const usesTabBodyLayout = () => {
 
 export default () => style({
     // layouts:
-    ...usesTabBodyLayout(),
+    ...usesTabControlBodyLayout(),
 });

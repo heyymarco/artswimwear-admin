@@ -1,5 +1,0 @@
-export *            from './styles/styles'
-export *            from './TabOption'
-export {default}    from './TabOption'
-export *            from './TabOptionHeader'
-export *            from './TabOptionBody'

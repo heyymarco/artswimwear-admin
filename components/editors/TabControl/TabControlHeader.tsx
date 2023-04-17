@@ -21,13 +21,14 @@ import {
 // internals:
 import type {
     // types:
-    TabOptionItem,
+    TabControlOption,
 }                           from './types'
 
 
 
-export interface TabOptionHeaderProps<TElement extends Element = HTMLElement, TValue extends any = string>
+export interface TabControlHeaderProps<TElement extends Element = HTMLElement, TValue extends any = string>
     extends
+        // bases:
         Omit<ListProps<TElement>,
             // values:
             |'defaultValue' // converted to TValue
@@ -39,11 +40,11 @@ export interface TabOptionHeaderProps<TElement extends Element = HTMLElement, TV
         >
 {
     // values:
-    options       : TabOptionItem<TValue>[] // required
+    options       : TabControlOption<TValue>[] // required
     value        ?: TValue
     onChange     ?: EditorChangeEventHandler<TValue>
 }
-const TabOptionHeader = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabOptionHeaderProps<TElement, TValue>): JSX.Element|null => {
+const TabControlHeader = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabControlHeaderProps<TElement, TValue>): JSX.Element|null => {
     // rest props:
     const {
         // values:
@@ -88,6 +89,6 @@ const TabOptionHeader = <TElement extends Element = HTMLElement, TValue extends 
     );
 };
 export {
-    TabOptionHeader,
-    TabOptionHeader as default,
+    TabControlHeader,
+    TabControlHeader as default,
 }

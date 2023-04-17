@@ -34,26 +34,27 @@ import type {
 }                           from '@/components/editors/Editor'
 import {
     // react components:
-    TabOptionHeaderProps,
-    TabOptionHeader,
-}                           from './TabOptionHeader'
+    TabControlHeaderProps,
+    TabControlHeader,
+}                           from './TabControlHeader'
 import {
     // react components:
-    TabOptionBodyProps,
-    TabOptionBody,
-}                           from './TabOptionBody'
+    TabControlBodyProps,
+    TabControlBody,
+}                           from './TabControlBody'
 
 
 
-export interface TabOptionProps<TElement extends Element = HTMLElement, TValue extends any = string>
+export interface TabControlProps<TElement extends Element = HTMLElement, TValue extends any = string>
     extends
-        TabOptionHeaderProps<TElement, TValue>,
-        TabOptionBodyProps<TElement, TValue>
+        // bases:
+        TabControlHeaderProps<TElement, TValue>,
+        TabControlBodyProps<TElement, TValue>
 {
     // values:
     defaultValue ?: TValue
 }
-const TabOption = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabOptionProps<TElement, TValue>): JSX.Element|null => {
+const TabControl = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabControlProps<TElement, TValue>): JSX.Element|null => {
     // rest props:
     const {
         // semantics:
@@ -96,7 +97,7 @@ const TabOption = <TElement extends Element = HTMLElement, TValue extends any = 
         defaultValue,
         value,
         onChange,
-    ...restTabOptionHeaderProps} = props;
+    ...restTabControlHeaderProps} = props;
     
     
     
@@ -163,9 +164,9 @@ const TabOption = <TElement extends Element = HTMLElement, TValue extends any = 
             // styles:
             style={style}
         >
-            <TabOptionHeader
+            <TabControlHeader
                 // other props:
-                {...restTabOptionHeaderProps}
+                {...restTabControlHeaderProps}
                 
                 
                 
@@ -179,7 +180,7 @@ const TabOption = <TElement extends Element = HTMLElement, TValue extends any = 
                 value={valueFn}
                 onChange={handleChange}
             />
-            <TabOptionBody
+            <TabControlBody
                 // variants:
                 {...basicVariantProps}
                 nude={nude}
@@ -194,6 +195,6 @@ const TabOption = <TElement extends Element = HTMLElement, TValue extends any = 
     );
 };
 export {
-    TabOption,
-    TabOption as default,
+    TabControl,
+    TabControl as default,
 }

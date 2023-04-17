@@ -20,20 +20,21 @@ import {
 // internals:
 import type {
     // types:
-    TabOptionItem,
+    TabControlOption,
 }                           from './types'
 
 
 
 // styles:
-export const useTabOptionBodyStyleSheet = dynamicStyleSheet(
+export const useTabControlBodyStyleSheet = dynamicStyleSheet(
     () => import(/* webpackPrefetch: true */ './styles/styles')
 , { id: 'qjlmg10jy4', specificityWeight: 2 }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 
 
 
-export interface TabOptionBodyProps<TElement extends Element = HTMLElement, TValue extends any = string>
+export interface TabControlBodyProps<TElement extends Element = HTMLElement, TValue extends any = string>
     extends
+        // bases:
         Omit<IndicatorProps<TElement>,
             // values:
             |'defaultValue' // converted to TValue
@@ -41,16 +42,16 @@ export interface TabOptionBodyProps<TElement extends Element = HTMLElement, TVal
             |'onChange'     // converted to TValue
             
             // children:
-            |'children'     // replaced `children` with `options.description`
+            |'children'     // replaced `children` with `options.content`
         >
 {
     // values:
-    options       : TabOptionItem<TValue>[] // required
+    options       : TabControlOption<TValue>[] // required
     value        ?: TValue
 }
-const TabOptionBody = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabOptionBodyProps<TElement, TValue>): JSX.Element|null => {
+const TabControlBody = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabControlBodyProps<TElement, TValue>): JSX.Element|null => {
     // styles:
-    const styles = useTabOptionBodyStyleSheet();
+    const styles = useTabControlBodyStyleSheet();
     
     
     
@@ -79,7 +80,7 @@ const TabOptionBody = <TElement extends Element = HTMLElement, TValue extends an
             // classes:
             className={styles.main}
         >
-            {options.map(({value: optionValue, description: optionDescription}) =>
+            {options.map(({value: optionValue, content: optionDescription}) =>
                 <div key={`${optionValue}`} className={`toggleContent ${Object.is(value, optionValue) ? 'expanded' : ''}`}>
                     {optionDescription}
                 </div>
@@ -88,6 +89,6 @@ const TabOptionBody = <TElement extends Element = HTMLElement, TValue extends an
     );
 };
 export {
-    TabOptionBody,
-    TabOptionBody as default,
+    TabControlBody,
+    TabControlBody as default,
 }
