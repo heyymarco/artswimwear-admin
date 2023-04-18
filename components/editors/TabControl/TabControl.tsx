@@ -93,7 +93,7 @@ const TabControl = <TElement extends Element = HTMLElement, TValue extends any =
         
         
         // values:
-        options,
+        children : options,
         defaultValue,
         value,
         onChange,
@@ -176,10 +176,11 @@ const TabControl = <TElement extends Element = HTMLElement, TValue extends any =
                 
                 
                 // values:
-                options={options}
                 value={valueFn}
                 onChange={handleChange}
-            />
+            >
+                {options}
+            </TabControlHeader>
             <TabControlBody
                 // variants:
                 {...basicVariantProps}
@@ -188,9 +189,10 @@ const TabControl = <TElement extends Element = HTMLElement, TValue extends any =
                 
                 
                 // values:
-                options={options}
                 value={valueFn}
-            />
+            >
+                {options}
+            </TabControlBody>
         </Generic>
     );
 };

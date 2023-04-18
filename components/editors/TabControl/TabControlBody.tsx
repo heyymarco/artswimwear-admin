@@ -46,7 +46,7 @@ export interface TabControlBodyProps<TElement extends Element = HTMLElement, TVa
         >
 {
     // values:
-    options       : TabControlOption<TValue>[] // required
+    children      : TabControlOption<TValue>[] // required
     value        ?: TValue
 }
 const TabControlBody = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabControlBodyProps<TElement, TValue>): JSX.Element|null => {
@@ -58,7 +58,7 @@ const TabControlBody = <TElement extends Element = HTMLElement, TValue extends a
     // rest props:
     const {
         // values:
-        options,
+        children : options,
         value,
     ...restContentProps} = props;
     

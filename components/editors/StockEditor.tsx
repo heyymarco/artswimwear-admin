@@ -60,13 +60,13 @@ export interface StockEditorProps<TElement extends Element = HTMLElement>
             // refs:
             |'elmRef'
             
-            // values:
-            |'options' // already defined
-            
             // formats:
             |'type'                  // only supports number
             |'autoCapitalize'        // nothing to capitalize of number
             |'inputMode'             // always 'numeric'
+            
+            // children:
+            |'children'              // already taken over
         >,
         QuantityEditorProps<TElement>
 {
@@ -210,7 +210,10 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
             
             
             // values:
-            options={[
+            value={selectedTabLimited}
+            onChange={handleTabChange}
+        >
+            {[
                 { value: false, label: PAGE_PRODUCTS_STOCK_UNLIMITED, content: <p>
                     The product stock is <em>always available</em>.
                 </p> },
@@ -322,9 +325,7 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                     />
                 </Group> },
             ]}
-            value={selectedTabLimited}
-            onChange={handleTabChange}
-        />
+        </TabControl>
     );
 };
 export {

@@ -40,7 +40,7 @@ export interface TabControlHeaderProps<TElement extends Element = HTMLElement, T
         >
 {
     // values:
-    options       : TabControlOption<TValue>[] // required
+    children      : TabControlOption<TValue>[] // required
     value        ?: TValue
     onChange     ?: EditorChangeEventHandler<TValue>
 }
@@ -48,7 +48,7 @@ const TabControlHeader = <TElement extends Element = HTMLElement, TValue extends
     // rest props:
     const {
         // values:
-        options,
+        children : options,
         value,
         onChange,
     ...restListProps} = props;

@@ -28,8 +28,8 @@ export type ProductVisibility = 'published'|'hidden'|'draft'
 interface VisibilityEditorProps<TElement extends Element = HTMLElement>
     extends
         Omit<TabControlProps<TElement, ProductVisibility>,
-            // values:
-            |'options' // already defined
+            // children:
+            |'children'              // already taken over
         >
 {
 }
@@ -39,11 +39,8 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
         <TabControl<TElement, ProductVisibility>
             // other props:
             {...props}
-            
-            
-            
-            // values:
-            options={[
+        >
+            {[
                 { value: 'published', label: PAGE_PRODUCTS_VISIBILITY_PUBLISHED, content: <p>
                     The product is <em>shown</em> on the webiste.
                 </p> },
@@ -56,7 +53,7 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
                     The product <em>cannot be viewed</em> on the entire website.
                 </p> },
             ]}
-        />
+        </TabControl>
     );
 };
 export {
