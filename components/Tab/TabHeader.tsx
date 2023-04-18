@@ -21,12 +21,12 @@ import {
 // internals:
 import type {
     // react components:
-    TabControlOptionProps,
-}                           from './TabControlOption'
+    TabOptionProps,
+}                           from './TabOption'
 
 
 
-export interface TabControlHeaderProps<TElement extends Element = HTMLElement, TValue extends any = string>
+export interface TabHeaderProps<TElement extends Element = HTMLElement, TValue extends any = string>
     extends
         // bases:
         Omit<ListProps<TElement>,
@@ -44,7 +44,7 @@ export interface TabControlHeaderProps<TElement extends Element = HTMLElement, T
     value        ?: TValue
     onChange     ?: EditorChangeEventHandler<TValue>
 }
-const TabControlHeader = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabControlHeaderProps<TElement, TValue>): JSX.Element|null => {
+const TabHeader = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabHeaderProps<TElement, TValue>): JSX.Element|null => {
     // rest props:
     const {
         // values:
@@ -74,7 +74,7 @@ const TabControlHeader = <TElement extends Element = HTMLElement, TValue extends
         >
             {React.Children.map(options, (option) => {
                 // conditions:
-                if (!React.isValidElement<TabControlOptionProps<TElement, TValue>>(option)) return option;
+                if (!React.isValidElement<TabOptionProps<TElement, TValue>>(option)) return option;
                 
                 
                 
@@ -103,6 +103,6 @@ const TabControlHeader = <TElement extends Element = HTMLElement, TValue extends
     );
 };
 export {
-    TabControlHeader,
-    TabControlHeader as default,
+    TabHeader,
+    TabHeader as default,
 }

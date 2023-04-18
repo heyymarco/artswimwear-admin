@@ -40,36 +40,36 @@ import type {
 }                           from '@/components/editors/Editor'
 import {
     // react components:
-    TabControlHeaderProps,
-    TabControlHeader,
-}                           from './TabControlHeader'
+    TabHeaderProps,
+    TabHeader,
+}                           from './TabHeader'
 import {
     // react components:
-    TabControlBodyProps,
-    TabControlBody,
-}                           from './TabControlBody'
+    TabBodyProps,
+    TabBody,
+}                           from './TabBody'
 
 
 
 // styles:
-export const useTabControlBodyStyleSheet = dynamicStyleSheet(
+export const useTabBodyStyleSheet = dynamicStyleSheet(
     () => import(/* webpackPrefetch: true */ './styles/styles')
 , { id: 'qjlmg10jy4', specificityWeight: 2 }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 
 
 
-export interface TabControlProps<TElement extends Element = HTMLElement, TValue extends any = string>
+export interface TabProps<TElement extends Element = HTMLElement, TValue extends any = string>
     extends
         // bases:
-        TabControlHeaderProps<TElement, TValue>,
-        TabControlBodyProps<TElement, TValue>
+        TabHeaderProps<TElement, TValue>,
+        TabBodyProps<TElement, TValue>
 {
     // values:
     defaultValue ?: TValue
 }
-const TabControl = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabControlProps<TElement, TValue>): JSX.Element|null => {
+const Tab = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabProps<TElement, TValue>): JSX.Element|null => {
     // styles:
-    const styles = useTabControlBodyStyleSheet();
+    const styles = useTabBodyStyleSheet();
     
     
     
@@ -115,7 +115,7 @@ const TabControl = <TElement extends Element = HTMLElement, TValue extends any =
         defaultValue,
         value,
         onChange,
-    ...restTabControlHeaderProps} = props;
+    ...restTabHeaderProps} = props;
     
     
     
@@ -182,9 +182,9 @@ const TabControl = <TElement extends Element = HTMLElement, TValue extends any =
             // styles:
             style={style}
         >
-            <TabControlHeader<TElement, TValue>
+            <TabHeader<TElement, TValue>
                 // other props:
-                {...restTabControlHeaderProps}
+                {...restTabHeaderProps}
                 
                 
                 
@@ -198,8 +198,8 @@ const TabControl = <TElement extends Element = HTMLElement, TValue extends any =
                 onChange={handleChange}
             >
                 {options}
-            </TabControlHeader>
-            <TabControlBody<TElement, TValue>
+            </TabHeader>
+            <TabBody<TElement, TValue>
                 // variants:
                 {...basicVariantProps}
                 nude={nude}
@@ -210,11 +210,11 @@ const TabControl = <TElement extends Element = HTMLElement, TValue extends any =
                 value={valueFn}
             >
                 {options}
-            </TabControlBody>
+            </TabBody>
         </Generic>
     );
 };
 export {
-    TabControl,
-    TabControl as default,
+    Tab,
+    Tab as default,
 }

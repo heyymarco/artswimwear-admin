@@ -20,12 +20,12 @@ import {
 // internals:
 import type {
     // react components:
-    TabControlOptionProps,
-}                           from './TabControlOption'
+    TabOptionProps,
+}                           from './TabOption'
 
 
 
-export interface TabControlBodyProps<TElement extends Element = HTMLElement, TValue extends any = string>
+export interface TabBodyProps<TElement extends Element = HTMLElement, TValue extends any = string>
     extends
         // bases:
         Omit<BasicProps<TElement>,
@@ -42,7 +42,7 @@ export interface TabControlBodyProps<TElement extends Element = HTMLElement, TVa
     children      : React.ReactNode // required
     value        ?: TValue
 }
-const TabControlBody = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabControlBodyProps<TElement, TValue>): JSX.Element|null => {
+const TabBody = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabBodyProps<TElement, TValue>): JSX.Element|null => {
     // rest props:
     const {
         // values:
@@ -89,7 +89,7 @@ const TabControlBody = <TElement extends Element = HTMLElement, TValue extends a
         >
             {React.Children.map(options, (option) => {
                 // conditions:
-                if (!React.isValidElement<TabControlOptionProps<TElement, TValue>>(option)) return option;
+                if (!React.isValidElement<TabOptionProps<TElement, TValue>>(option)) return option;
                 
                 
                 
@@ -101,7 +101,7 @@ const TabControlBody = <TElement extends Element = HTMLElement, TValue extends a
                 
                 // jsx:
                 if (!isActive) return option;
-                return React.cloneElement<TabControlOptionProps<TElement, TValue>>(option,
+                return React.cloneElement<TabOptionProps<TElement, TValue>>(option,
                     // props:
                     {
                         expanded: true,
@@ -112,6 +112,6 @@ const TabControlBody = <TElement extends Element = HTMLElement, TValue extends a
     );
 };
 export {
-    TabControlBody,
-    TabControlBody as default,
+    TabBody,
+    TabBody as default,
 }

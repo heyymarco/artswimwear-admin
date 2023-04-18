@@ -1,6 +1,0 @@
-export *            from './styles/styles'
-export *            from './TabControl'
-export {default}    from './TabControl'
-export *            from './TabControlHeader'
-export *            from './TabControlBody'
-export *            from './TabControlOption'

@@ -19,7 +19,7 @@ import {
 
 
 
-export interface TabControlOptionProps<TElement extends Element = HTMLElement, TValue extends any = string>
+export interface TabOptionProps<TElement extends Element = HTMLElement, TValue extends any = string>
     extends
         // bases:
         GenericProps<TElement>
@@ -42,16 +42,16 @@ export interface TabControlOptionProps<TElement extends Element = HTMLElement, T
     // children:
     children ?: React.ReactNode
 }
-const TabControlOption = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabControlOptionProps<TElement, TValue>): JSX.Element|null => {
+const TabOption = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabOptionProps<TElement, TValue>): JSX.Element|null => {
     // rest props:
     const {
         // accessibilities:
-        label : _label, // not used here, used by <TabControlHeader>|<TabControlBody>
+        label : _label, // not used here, used by <TabHeader>|<TabBody>
         
         
         
         // values:
-        value : _value, // not used here, used by <TabControlHeader>|<TabControlBody>
+        value : _value, // not used here, used by <TabHeader>|<TabBody>
         
         
         
@@ -110,6 +110,6 @@ const TabControlOption = <TElement extends Element = HTMLElement, TValue extends
     );
 };
 export {
-    TabControlOption,
-    TabControlOption as default,
+    TabOption,
+    TabOption as default,
 }

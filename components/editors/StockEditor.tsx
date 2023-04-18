@@ -42,10 +42,10 @@ import {
 }                           from '@/components/editors/QuantityEditor'
 import {
     // react components:
-    TabControlProps,
-    TabControl,
-    TabControlOption,
-}                           from '@/components/editors/TabControl'
+    TabProps,
+    Tab,
+    TabOption,
+}                           from '@/components/Tab'
 
 // app configs:
 import {
@@ -57,7 +57,7 @@ import {
 
 export interface StockEditorProps<TElement extends Element = HTMLElement>
     extends
-        Omit<TabControlProps<TElement, number|null>,
+        Omit<TabProps<TElement, number|null>,
             // refs:
             |'elmRef'
             
@@ -147,7 +147,7 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
         childrenBeforeInput,
         childrenAfterInput,
         childrenAfterButton,
-    ...restTabControlProps} = props;
+    ...restTabProps} = props;
     
     
     
@@ -199,9 +199,9 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
     
     // jsx:
     return (
-        <TabControl<TElement, boolean>
+        <Tab<TElement, boolean>
             // other props:
-            {...restTabControlProps}
+            {...restTabProps}
             
             
             
@@ -214,12 +214,12 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
             value={selectedTabLimited}
             onChange={handleTabChange}
         >
-            <TabControlOption value={false} label={PAGE_PRODUCTS_STOCK_UNLIMITED}>
+            <TabOption value={false} label={PAGE_PRODUCTS_STOCK_UNLIMITED}>
                 <p>
                     The product stock is <em>always available</em>.
                 </p>
-            </TabControlOption>
-            <TabControlOption value={true}  label={PAGE_PRODUCTS_STOCK_LIMITED}>
+            </TabOption>
+            <TabOption value={true}  label={PAGE_PRODUCTS_STOCK_LIMITED}>
                 <Group
                     // variants:
                     {...basicVariantProps}
@@ -326,8 +326,8 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                         }}
                     />
                 </Group>
-            </TabControlOption>
-        </TabControl>
+            </TabOption>
+        </Tab>
     );
 };
 export {

@@ -7,10 +7,10 @@ import {
 // internals:
 import {
     // react components:
-    TabControlProps,
-    TabControl,
-    TabControlOption,
-}                           from '@/components/editors/TabControl'
+    TabProps,
+    Tab,
+    TabOption,
+}                           from '@/components/Tab'
 
 // app configs:
 import {
@@ -28,7 +28,7 @@ export type ProductVisibility = 'published'|'hidden'|'draft'
 
 interface VisibilityEditorProps<TElement extends Element = HTMLElement>
     extends
-        Omit<TabControlProps<TElement, ProductVisibility>,
+        Omit<TabProps<TElement, ProductVisibility>,
             // children:
             |'children'              // already taken over
         >
@@ -37,26 +37,26 @@ interface VisibilityEditorProps<TElement extends Element = HTMLElement>
 const VisibilityEditor = <TElement extends Element = HTMLElement>(props: VisibilityEditorProps<TElement>): JSX.Element|null => {
     // jsx:
     return (
-        <TabControl<TElement, ProductVisibility>
+        <Tab<TElement, ProductVisibility>
             // other props:
             {...props}
         >
-            <TabControlOption value='published' label={PAGE_PRODUCTS_VISIBILITY_PUBLISHED}>
+            <TabOption value='published' label={PAGE_PRODUCTS_VISIBILITY_PUBLISHED}>
                 <p>
                     The product is <em>shown</em> on the webiste.
                 </p>
-            </TabControlOption>
-            <TabControlOption value='hidden'    label={PAGE_PRODUCTS_VISIBILITY_HIDDEN}>
+            </TabOption>
+            <TabOption value='hidden'    label={PAGE_PRODUCTS_VISIBILITY_HIDDEN}>
                 <p>
                     The product can only be viewed via <em>a (bookmarked) link</em>.
                 </p>
-            </TabControlOption>
-            <TabControlOption value='draft'     label={PAGE_PRODUCTS_VISIBILITY_DRAFT}>
+            </TabOption>
+            <TabOption value='draft'     label={PAGE_PRODUCTS_VISIBILITY_DRAFT}>
                 <p>
                     The product <em>cannot be viewed</em> on the entire website.
                 </p>
-            </TabControlOption>
-        </TabControl>
+            </TabOption>
+        </Tab>
     );
 };
 export {
