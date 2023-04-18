@@ -20,9 +20,9 @@ import {
 
 // internals:
 import type {
-    // types:
-    TabControlOption,
-}                           from './types'
+    // react components:
+    TabControlOptionProps,
+}                           from './TabControlOption'
 
 
 
@@ -40,7 +40,7 @@ export interface TabControlHeaderProps<TElement extends Element = HTMLElement, T
         >
 {
     // values:
-    children      : TabControlOption<TValue>[] // required
+    children      : React.ReactNode // required
     value        ?: TValue
     onChange     ?: EditorChangeEventHandler<TValue>
 }
@@ -57,7 +57,7 @@ const TabControlHeader = <TElement extends Element = HTMLElement, TValue extends
     
     // jsx:
     return (
-        <List
+        <List<TElement>
             // other props:
             {...restListProps}
             
@@ -72,19 +72,33 @@ const TabControlHeader = <TElement extends Element = HTMLElement, TValue extends
             // behaviors:
             actionCtrl={props.actionCtrl ?? true}
         >
-            {options.map(({value: optionValue, label: optionLabel}) =>
-                <ListItem key={`${optionValue}`}
-                    // accessibilities:
-                    active={Object.is(value, optionValue)}
-                    
-                    
-                    
-                    // handlers:
-                    onClick={() => onChange?.(optionValue)}
-                >
-                    {((optionLabel !== true) && optionLabel) ?? `${optionValue}`}
-                </ListItem>
-            )}
+            {React.Children.map(options, (option) => {
+                // conditions:
+                if (!React.isValidElement<TabControlOptionProps<TElement, TValue>>(option)) return option;
+                
+                
+                
+                // fn props:
+                const {props: {label: optionLabel, value: optionValue}} = option;
+                const isActive = Object.is(value, optionValue);
+                
+                
+                
+                // jsx:
+                return (
+                    <ListItem key={`${optionValue}`}
+                        // accessibilities:
+                        active={isActive}
+                        
+                        
+                        
+                        // handlers:
+                        onClick={() => onChange?.(optionValue)}
+                    >
+                        {((optionLabel !== true) && optionLabel) ?? `${optionValue}`}
+                    </ListItem>
+                );
+            })}
         </List>
     );
 };

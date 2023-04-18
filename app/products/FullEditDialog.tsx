@@ -18,7 +18,7 @@ import { CurrencyEditor } from '@/components/editors/CurrencyEditor'
 import { ShippingWeightEditor } from '@/components/editors/ShippingWeightEditor'
 import { StockEditor } from '@/components/editors/StockEditor'
 import { ProductVisibility, VisibilityEditor } from '@/components/editors/VisibilityEditor'
-import { TabControl } from '@/components/editors/TabControl';
+import { TabControl, TabControlOption } from '@/components/editors/TabControl';
 
 
 
@@ -212,14 +212,12 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                 // values:
                 defaultValue='info'
             >
-                {[
-                    { value: 'info', label: PAGE_PRODUCTS_TAB_INFORMATIONS, content: <>
-                        <p>test</p>
-                    </> },
-                    { value: 'images', label: PAGE_PRODUCTS_TAB_IMAGES, content: <>
-                        <p>test</p>
-                    </> },
-                ]}
+                <TabControlOption value='info' label={PAGE_PRODUCTS_TAB_INFORMATIONS}>
+                    <p>hello</p>
+                </TabControlOption>
+                <TabControlOption value='images' label={PAGE_PRODUCTS_TAB_IMAGES}>
+                    <p>world</p>
+                </TabControlOption>
             </TabControl>
             <List
                 // variants:

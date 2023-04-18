@@ -23,39 +23,34 @@ export const usesTabControlBodyLayout = () => {
     
     
     return style({
-        // layouts:
-        display: 'grid',
-        justifyItems: 'center',
-        alignItems: 'center',
-        
-        
-        
-        // borders:
-        [borderVars.borderStartStartRadius] : '0px',
-        [borderVars.borderStartEndRadius  ] : '0px',
-        borderBlockStartWidth               : '0px',
-        
-        
-        
         // children:
-        ...children('.toggleContent', {
-            // positions:
-            gridArea: '1/1/1/1', // the options are overlapping each other, so the parent takes the maximum width & height of children
+        ...children('.tabBody', {
+            // layouts:
+            display      : 'grid',
+            justifyItems : 'stretch', // overlaps each <TabOption> to anothers
+            alignItems   : 'stretch', // overlaps each <TabOption> to anothers
             
             
             
-            // appearances:
-            ...rule(':not(.expanded)', {
-                // appearances:
-                visibility: 'hidden',
-            }),
+            // borders:
+            [borderVars.borderStartStartRadius] : '0px', // remove top radius
+            [borderVars.borderStartEndRadius  ] : '0px', // remove top radius
+            borderBlockStartWidth               : '0px', // remove top border (already applied by <Tab>)
             
             
             
             // children:
-            ...children('p', {
-                // spacings:
-                margin: 0,
+            ...children('.tabOption', {
+                // positions:
+                gridArea: '1/1/1/1', // the options are overlapping each other, so the parent takes the maximum width & height of children
+                
+                
+                
+                // appearances:
+                ...rule(':not(.expanded)', {
+                    // appearances:
+                    visibility: 'hidden', // hide inactive <TabOption>
+                }),
             }),
         }),
     });

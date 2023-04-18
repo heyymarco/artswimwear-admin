@@ -44,6 +44,7 @@ import {
     // react components:
     TabControlProps,
     TabControl,
+    TabControlOption,
 }                           from '@/components/editors/TabControl'
 
 // app configs:
@@ -213,12 +214,13 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
             value={selectedTabLimited}
             onChange={handleTabChange}
         >
-            {[
-                { value: false, label: PAGE_PRODUCTS_STOCK_UNLIMITED, content: <p>
+            <TabControlOption value={false} label={PAGE_PRODUCTS_STOCK_UNLIMITED}>
+                <p>
                     The product stock is <em>always available</em>.
-                </p> },
-                
-                { value: true , label: PAGE_PRODUCTS_STOCK_LIMITED  , content: <Group
+                </p>
+            </TabControlOption>
+            <TabControlOption value={true}  label={PAGE_PRODUCTS_STOCK_LIMITED}>
+                <Group
                     // variants:
                     {...basicVariantProps}
                     theme={
@@ -323,8 +325,8 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                             childrenAfterButton,
                         }}
                     />
-                </Group> },
-            ]}
+                </Group>
+            </TabControlOption>
         </TabControl>
     );
 };

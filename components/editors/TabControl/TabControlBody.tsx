@@ -4,38 +4,31 @@ import {
     default as React,
 }                           from 'react'
 
-// cssfn:
+// reusable-ui core:
 import {
-    // style sheets:
-    dynamicStyleSheet,
-}                           from '@cssfn/cssfn-react'           // writes css in react hook
+    // react helper hooks:
+    useMergeClasses,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
 import {
     // react components:
-    IndicatorProps,
-    Indicator,
+    BasicProps,
+    Content,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internals:
 import type {
-    // types:
-    TabControlOption,
-}                           from './types'
-
-
-
-// styles:
-export const useTabControlBodyStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */ './styles/styles')
-, { id: 'qjlmg10jy4', specificityWeight: 2 }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
+    // react components:
+    TabControlOptionProps,
+}                           from './TabControlOption'
 
 
 
 export interface TabControlBodyProps<TElement extends Element = HTMLElement, TValue extends any = string>
     extends
         // bases:
-        Omit<IndicatorProps<TElement>,
+        Omit<BasicProps<TElement>,
             // values:
             |'defaultValue' // converted to TValue
             |'value'        // converted to TValue
@@ -46,15 +39,10 @@ export interface TabControlBodyProps<TElement extends Element = HTMLElement, TVa
         >
 {
     // values:
-    children      : TabControlOption<TValue>[] // required
+    children      : React.ReactNode // required
     value        ?: TValue
 }
 const TabControlBody = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabControlBodyProps<TElement, TValue>): JSX.Element|null => {
-    // styles:
-    const styles = useTabControlBodyStyleSheet();
-    
-    
-    
     // rest props:
     const {
         // values:
@@ -64,28 +52,63 @@ const TabControlBody = <TElement extends Element = HTMLElement, TValue extends a
     
     
     
+    // classes:
+    const classes = useMergeClasses(
+        // preserves the original `classes`:
+        props.classes,
+        
+        
+        
+        // classes:
+        'tabBody',
+    );
+    
+    
+    
     // jsx:
     return (
-        <Indicator
+        <Content<TElement>
             // other props:
             {...restContentProps}
             
             
             
+            // semantics:
+            aria-selected={props['aria-selected'] ?? undefined}
+            
+            
+            
             // variants:
-            active={props.active ?? true} // to appear as *selected*, so it *looks* the same as *tab*
+         // outlined={props.outlined ?? false} // kill outlined variant // to appear as *selected*, so it *looks* the same as *tab*
+            mild={props.mild ?? false}         // kill mild     variant // to appear as *selected*, so it *looks* the same as *tab*
             
             
             
             // classes:
-            className={styles.main}
+            classes={classes}
         >
-            {options.map(({value: optionValue, content: optionDescription}) =>
-                <div key={`${optionValue}`} className={`toggleContent ${Object.is(value, optionValue) ? 'expanded' : ''}`}>
-                    {optionDescription}
-                </div>
-            )}
-        </Indicator>
+            {React.Children.map(options, (option) => {
+                // conditions:
+                if (!React.isValidElement<TabControlOptionProps<TElement, TValue>>(option)) return option;
+                
+                
+                
+                // fn props:
+                const {props: {value: optionValue}} = option;
+                const isActive = Object.is(value, optionValue);
+                
+                
+                
+                // jsx:
+                if (!isActive) return option;
+                return React.cloneElement<TabControlOptionProps<TElement, TValue>>(option,
+                    // props:
+                    {
+                        expanded: true,
+                    },
+                );
+            })}
+        </Content>
     );
 };
 export {
