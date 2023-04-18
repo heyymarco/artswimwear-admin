@@ -257,13 +257,12 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                         // validations:
                         {...{
                             enableValidation,
-                            isValid,
+                            isValid           : props.isValid ?? (selectedTabLimited ? undefined : true),
                             inheritValidation,
                             onValidation,
                             customValidator,
                         }}
                         
-                        isValid={props.isValid ?? (selectedTabLimited ? undefined : true)}
                         required={required}
                         min  = {min }
                         max  = {max }
