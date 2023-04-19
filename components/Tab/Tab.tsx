@@ -115,6 +115,11 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
         defaultValue,
         value,
         onChange,
+        
+        
+        
+        // components:
+        contentComponent,
     ...restTabHeaderProps} = props;
     
     
@@ -208,6 +213,11 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
                 
                 // values:
                 value={valueFn}
+                
+                
+                
+                // components:
+                contentComponent={contentComponent}
             >
                 {options}
             </TabBody>

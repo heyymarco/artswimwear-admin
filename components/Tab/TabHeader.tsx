@@ -15,7 +15,12 @@ import {
     // react components:
     ListProps,
     List,
+    
+    ListItemProps,
     ListItem,
+    
+    ListComponentProps,
+    ListItemComponentProps,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internals:
@@ -37,7 +42,21 @@ export interface TabHeaderProps<TElement extends Element = HTMLElement, TValue e
             
             // children:
             |'children'     // replaced `children` with `options.label`
-        >
+        >,
+        
+        // components:
+        Omit<ListComponentProps<TElement>,
+            // we don't need these extra properties because the <Nav> is sub <List>
+            |'listRef'
+            |'listOrientation'
+            |'listStyle'
+            
+            
+            
+            // children:
+            |'listItems' // replaced `listItems` with `options.label`
+        >,
+        ListItemComponentProps<Element>
 {
     // values:
     children      : React.ReactNode // required
@@ -51,55 +70,71 @@ const TabHeader = <TElement extends Element = HTMLElement, TValue extends any = 
         children : options,
         value,
         onChange,
+        
+        
+        
+        // components:
+        listComponent     = (<List<TElement>    /> as React.ReactComponentElement<any, ListProps<TElement>    >),
+        listItemComponent = (<ListItem<Element> /> as React.ReactComponentElement<any, ListItemProps<Element> >),
     ...restListProps} = props;
     
     
     
     // jsx:
-    return (
-        <List<TElement>
+    /* <List> */
+    return React.cloneElement<ListProps<TElement>>(listComponent,
+        // props:
+        {
             // other props:
-            {...restListProps}
+            ...restListProps,
             
             
             
             // variants:
-            listStyle={props.listStyle ?? 'tab'}
-            orientation={props.orientation ?? 'inline'}
+            listStyle   : props.listStyle   ?? 'tab',
+            orientation : props.orientation ?? 'inline',
             
             
             
             // behaviors:
-            actionCtrl={props.actionCtrl ?? true}
-        >
-            {React.Children.map(options, (option) => {
-                // conditions:
-                if (!React.isValidElement<TabOptionProps<TElement, TValue>>(option)) return option;
+            actionCtrl  : props.actionCtrl ?? true,
+        },
+        
+        
+        
+        // children:
+        React.Children.map(options, (option) => {
+            // conditions:
+            if (!React.isValidElement<TabOptionProps<TElement, TValue>>(option)) return option;
+            
+            
+            
+            // fn props:
+            const {props: {label: optionLabel, value: optionValue}} = option;
+            const isActive = Object.is(value, optionValue);
+            
+            
+            
+            // jsx:
+            /* <ListItem> */
+            return React.cloneElement<ListItemProps<Element>>(listItemComponent,
+                // props:
+                {
+                    // accessibilities:
+                    active  : isActive,
+                    
+                    
+                    
+                    // handlers:
+                    onClick : () => onChange?.(optionValue),
+                },
                 
                 
                 
-                // fn props:
-                const {props: {label: optionLabel, value: optionValue}} = option;
-                const isActive = Object.is(value, optionValue);
-                
-                
-                
-                // jsx:
-                return (
-                    <ListItem key={`${optionValue}`}
-                        // accessibilities:
-                        active={isActive}
-                        
-                        
-                        
-                        // handlers:
-                        onClick={() => onChange?.(optionValue)}
-                    >
-                        {((optionLabel !== true) && optionLabel) ?? `${optionValue}`}
-                    </ListItem>
-                );
-            })}
-        </List>
+                // children:
+                ((optionLabel !== true) && optionLabel) ?? `${optionValue}`,
+            );
+        })
     );
 };
 export {

@@ -39,8 +39,13 @@ export interface TabBodyProps<TElement extends Element = HTMLElement, TValue ext
         >
 {
     // values:
-    children      : React.ReactNode // required
-    value        ?: TValue
+    children          : React.ReactNode // required
+    value            ?: TValue
+    
+    
+    
+    // components:
+    contentComponent ?: React.ReactComponentElement<any, BasicProps<TElement>>
 }
 const TabBody = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabBodyProps<TElement, TValue>): JSX.Element|null => {
     // rest props:
@@ -48,7 +53,12 @@ const TabBody = <TElement extends Element = HTMLElement, TValue extends any = st
         // values:
         children : options,
         value,
-    ...restContentProps} = props;
+        
+        
+        
+        // components:
+        contentComponent = (<Content<TElement> /> as React.ReactComponentElement<any, BasicProps<TElement>>),
+    ...restBasicProps} = props;
     
     
     
@@ -66,49 +76,54 @@ const TabBody = <TElement extends Element = HTMLElement, TValue extends any = st
     
     
     // jsx:
-    return (
-        <Content<TElement>
+    /* <Content> */
+    return React.cloneElement<BasicProps<TElement>>(contentComponent,
+        // props:
+        {
             // other props:
-            {...restContentProps}
+            ...restBasicProps,
             
             
             
             // semantics:
-            aria-selected={props['aria-selected'] ?? undefined}
+            'aria-selected' : props['aria-selected'] ?? undefined,
             
             
             
             // variants:
-         // outlined={props.outlined ?? false} // kill outlined variant // to appear as *selected*, so it *looks* the same as *tab*
-            mild={props.mild ?? false}         // kill mild     variant // to appear as *selected*, so it *looks* the same as *tab*
+         // outlined        : props.outlined ?? false, // kill outlined variant // to appear as *selected*, so it *looks* the same as *tab*
+            mild            : props.mild ?? false,     // kill mild     variant // to appear as *selected*, so it *looks* the same as *tab*
             
             
             
             // classes:
-            classes={classes}
-        >
-            {React.Children.map(options, (option) => {
-                // conditions:
-                if (!React.isValidElement<TabOptionProps<TElement, TValue>>(option)) return option;
-                
-                
-                
-                // fn props:
-                const {props: {value: optionValue}} = option;
-                const isActive = Object.is(value, optionValue);
-                
-                
-                
-                // jsx:
-                if (!isActive) return option;
-                return React.cloneElement<TabOptionProps<TElement, TValue>>(option,
-                    // props:
-                    {
-                        expanded: true,
-                    },
-                );
-            })}
-        </Content>
+            classes         : classes,
+        },
+        
+        
+        
+        // children:
+        React.Children.map(options, (option) => {
+            // conditions:
+            if (!React.isValidElement<TabOptionProps<TElement, TValue>>(option)) return option;
+            
+            
+            
+            // fn props:
+            const {props: {value: optionValue}} = option;
+            const isActive = Object.is(value, optionValue);
+            
+            
+            
+            // jsx:
+            if (!isActive) return option;
+            return React.cloneElement<TabOptionProps<TElement, TValue>>(option,
+                // props:
+                {
+                    expanded: true,
+                },
+            );
+        })
     );
 };
 export {
