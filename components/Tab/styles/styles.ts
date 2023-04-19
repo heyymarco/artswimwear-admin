@@ -96,7 +96,9 @@ export const usesTabLayout = () => {
             
             
             // spacings:
-            padding: 0,
+         // padding                : paddingVars.padding,
+            paddingInline          : paddingVars.paddingInline,
+            paddingBlock           : paddingVars.paddingBlock,
         }),
         
         
@@ -106,11 +108,6 @@ export const usesTabLayout = () => {
         // use manually applying `borderRule` feature to avoid useless `borderVars.borderColorFn` & `borderVars.borderColor`
      // ...borderRule(),  // must be placed at the last
         
-        // use manually applying `paddingRule` feature to avoid useless `paddingVars.padding`
-     // ...paddingRule(), // must be placed at the last
-        
-        
-        
         // manually applying `borderRule` feature:
         ...vars({
             // borders:
@@ -118,9 +115,13 @@ export const usesTabLayout = () => {
             [borderVars.borderStartEndRadius  ] : '0px',
             [borderVars.borderEndStartRadius  ] : basics.borderRadius,
             [borderVars.borderEndEndRadius    ] : basics.borderRadius,
-            
-            
-            
+        }),
+        
+        // use manually applying `paddingRule` feature to avoid useless `paddingVars.padding`
+     // ...paddingRule(), // must be placed at the last
+        
+        // manually applying `paddingRule` feature:
+        ...vars({
             // spacings:
             [paddingVars.paddingInline        ] : '0px',
             [paddingVars.paddingBlock         ] : '0px',
