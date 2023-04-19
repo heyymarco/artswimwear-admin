@@ -1,9 +1,9 @@
 'use client'
 
 import { default as React } from 'react'
-import { dynamicStyleSheet } from '@cssfn/cssfn-react'
+import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 
-import { ButtonIcon, Generic, CardBody, CardHeader, CardFooter, Button, CloseButton, Basic } from '@reusable-ui/components';
+import { ButtonIcon, Generic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, Basic } from '@reusable-ui/components';
 import { ProductEntry, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { getCurrencySign } from '@/libs/formatters';
@@ -23,9 +23,9 @@ import { Tab, TabOption } from '@/components/Tab';
 
 
 // styles:
-const useFullEditDialogStyleSheet = dynamicStyleSheet(
+const useFullEditDialogStyleSheet = dynamicStyleSheets(
     () => import(/* webpackPrefetch: true */'./FullEditDialogStyles')
-, { id: 'pkeb1tledn', specificityWeight: 3 }); // need 3 degrees to overwrite `.cardClass.body`
+, { id: 'pkeb1tledn' }); // need 3 degrees to overwrite `.cardClass.body`
 
 
 
@@ -212,15 +212,25 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                 
                 
                 
+                // classes:
+                className={styles.cardBody}
+                
+                
+                
                 // values:
                 defaultValue='informations'
+                
+                
+                
+                // components:
+                bodyComponent={<Content className={styles.tabBody} />}
                 
                 
                 
                 // handlers:
                 onKeyDown={handleKeyDown}
             >
-                <TabOption value='informations' label={PAGE_PRODUCTS_TAB_INFORMATIONS} contentComponent={<Generic className={styles.main} />}>
+                <TabOption value='informations' label={PAGE_PRODUCTS_TAB_INFORMATIONS} contentComponent={<Generic className={styles.pageInfo} />}>
                     <AccessibilityProvider enabled={!isLoading}>
                         <ValidationProvider enableValidation={enableValidation}>
                             <span className='name label'>Name:</span>

@@ -2,16 +2,104 @@
 import {
     style,
     children,
+    scopeOf,
 }                           from '@cssfn/core'          // writes css in javascript
-import { ifScreenWidthAtLeast, spacers } from '@reusable-ui/core';
+import {
+    // background stuff of UI:
+    usesBackground,
+    
+    
+    
+    // border (stroke) stuff of UI:
+    usesBorder,
+    
+    
+    
+    // a spacer (gap) management system:
+    spacers,
+    
+    
+    
+    // a responsive management system:
+    ifScreenWidthAtLeast,
+}                           from '@reusable-ui/core'    // a set of reusable-ui packages which are responsible for building any component
 
 
 
 // styles:
-export const usesFullEditDialogLayout = () => {
+export const usesCardBodyLayout = () => {
+    // dependencies:
+    
+    // features:
+    const {backgroundRule, backgroundVars} = usesBackground();
+    const {borderVars} = usesBorder();
+    
+    
+    
     return style({
-        display: 'grid',
-        gridTemplate: [[
+        // layouts:
+        ...style({
+            // layouts:
+            display        : 'flex',
+            flexDirection  : 'column',
+            justifyContent : 'start',       // if items are not growable, the excess space (if any) placed at the end, and if no sufficient space available => the first item should be visible first
+            alignItems     : 'stretch',     // items width are 100% of the parent (for variant `.block`) or height (for variant `.inline`)
+            flexWrap       : 'nowrap',      // no wrapping
+            
+            
+            
+            // sizes:
+            // the default <Card>'s body height is resizeable, ensuring footers are aligned to the bottom:
+            flex           : [[1, 1, 'auto']], // growable, shrinkable, initial from it's width (for variant `.inline`) or height (for variant `.block`)
+            
+            
+            
+            // scrolls:
+            overflow       : 'hidden', // force <TabBody> to scroll
+            
+            
+            
+            // backgrounds:
+            backg         : backgroundVars.backg,
+            
+            
+            
+            // borders:
+            [borderVars.borderStartStartRadius] : '0px',
+            [borderVars.borderStartEndRadius  ] : '0px',
+            [borderVars.borderEndStartRadius  ] : '0px',
+            [borderVars.borderEndEndRadius    ] : '0px',
+        }),
+        
+        
+        
+        // features:
+        ...backgroundRule(), // must be placed at the last
+    });
+};
+export const usesTabBodyLayout = () => {
+    // dependencies:
+    
+    // features:
+    const {borderVars} = usesBorder();
+    
+    
+    
+    return style({
+        // scrolls:
+        overflow       : 'auto', // enable horz & vert scrolling
+        
+        
+        
+        // borders:
+        [borderVars.borderWidth]: '0px',
+    });
+};
+export const usesPageInfoLayout = () => {
+    return style({
+        // layouts:
+        display          : 'grid',
+        gridTemplate     : [[
             '"name-label       "', 'auto',
             '"name-editor      "', 'auto',
             '"................."', spacers.sm,
@@ -33,7 +121,7 @@ export const usesFullEditDialogLayout = () => {
             '1fr'
         ]],
         ...ifScreenWidthAtLeast('lg', {
-            gridTemplate: [[
+            gridTemplate : [[
                 '"name-label               name-label"', 'auto',
                 '"name-editor             name-editor"', 'auto',
                 '"................. ................."', spacers.sm,
@@ -49,8 +137,12 @@ export const usesFullEditDialogLayout = () => {
                 '1fr', '1fr'
             ]],
         }),
-        gapInline: spacers.default,
-        gapBlock : spacers.xs,
+        
+        
+        
+        // spacings:
+        gapInline : spacers.default,
+        gapBlock  : spacers.xs,
         
         
         
@@ -75,7 +167,16 @@ export const usesFullEditDialogLayout = () => {
     });
 };
 
-export default () => style({
-    // layouts:
-    ...usesFullEditDialogLayout(),
-});
+export default () => [
+    scopeOf('cardBody', {
+        ...usesCardBodyLayout(),
+    }, { specificityWeight: 3 }),
+    
+    scopeOf('tabBody', {
+        ...usesTabBodyLayout(),
+    }, { specificityWeight: 3 }),
+    
+    scopeOf('pageInfo', {
+        ...usesPageInfoLayout(),
+    }, { specificityWeight: 3 }),
+];
