@@ -1,15 +1,12 @@
 // cssfn:
 import {
-    style,
+    // writes css in javascript:
     children,
+    style,
+    vars,
     scopeOf,
 }                           from '@cssfn/core'          // writes css in javascript
 import {
-    // background stuff of UI:
-    usesBackground,
-    
-    
-    
     // border (stroke) stuff of UI:
     usesBorder,
     
@@ -24,6 +21,12 @@ import {
     ifScreenWidthAtLeast,
 }                           from '@reusable-ui/core'    // a set of reusable-ui packages which are responsible for building any component
 
+// reusable-ui components:
+import {
+    // configs:
+    lists,
+}                           from '@reusable-ui/components'      // a set of official Reusable-UI components
+
 
 
 // styles:
@@ -31,7 +34,6 @@ export const usesCardBodyLayout = () => {
     // dependencies:
     
     // features:
-    const {backgroundRule, backgroundVars} = usesBackground();
     const {borderVars} = usesBorder();
     
     
@@ -59,22 +61,18 @@ export const usesCardBodyLayout = () => {
             
             
             
-            // backgrounds:
-            backg         : backgroundVars.backg,
-            
-            
-            
             // borders:
             [borderVars.borderStartStartRadius] : '0px',
             [borderVars.borderStartEndRadius  ] : '0px',
             [borderVars.borderEndStartRadius  ] : '0px',
             [borderVars.borderEndEndRadius    ] : '0px',
         }),
-        
-        
-        
-        // features:
-        ...backgroundRule(), // must be placed at the last
+    });
+};
+export const usesTabListLayout = () => {
+    return vars({
+        // configs:
+        [lists.borderRadius] : '0px',
     });
 };
 export const usesTabBodyLayout = () => {
@@ -172,11 +170,15 @@ export default () => [
         ...usesCardBodyLayout(),
     }, { specificityWeight: 3 }),
     
+    scopeOf('tabList', {
+        ...usesTabListLayout(),
+    }, { specificityWeight: 2 }),
+    
     scopeOf('tabBody', {
         ...usesTabBodyLayout(),
-    }, { specificityWeight: 3 }),
+    }, { specificityWeight: 2 }),
     
     scopeOf('pageInfo', {
         ...usesPageInfoLayout(),
-    }, { specificityWeight: 3 }),
+    }),
 ];

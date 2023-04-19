@@ -3,7 +3,7 @@
 import { default as React } from 'react'
 import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 
-import { ButtonIcon, Generic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, Basic } from '@reusable-ui/components';
+import { ButtonIcon, Generic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, List } from '@reusable-ui/components';
 import { ProductEntry, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { getCurrencySign } from '@/libs/formatters';
@@ -223,6 +223,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                 
                 
                 // components:
+                listComponent={<List className={styles.tabList} />}
                 bodyComponent={<Content className={styles.tabBody} />}
                 
                 
