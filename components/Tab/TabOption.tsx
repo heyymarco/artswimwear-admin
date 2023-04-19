@@ -41,6 +41,11 @@ export interface TabOptionProps<TElement extends Element = HTMLElement, TValue e
     
     // children:
     children ?: React.ReactNode
+    
+    
+    
+    // components:
+    contentComponent ?: React.ReactComponentElement<any, GenericProps<TElement>>
 }
 const TabOption = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabOptionProps<TElement, TValue>): JSX.Element|null => {
     // rest props:
@@ -57,6 +62,11 @@ const TabOption = <TElement extends Element = HTMLElement, TValue extends any = 
         
         // states:
         expanded = false,
+        
+        
+        
+        // components:
+        contentComponent = (<Generic<TElement> /> as React.ReactComponentElement<any, GenericProps<TElement>>),
         
         
         
@@ -89,24 +99,29 @@ const TabOption = <TElement extends Element = HTMLElement, TValue extends any = 
     
     
     // jsx:
-    return (
-        <Generic<TElement>
+    /* <Content> */
+    return React.cloneElement<GenericProps<TElement>>(contentComponent,
+        // props:
+        {
             // other props:
-            {...restGenericProps}
+            ...restGenericProps,
             
             
             
             // semantics:
-            aria-selected={props['aria-selected'] ?? expanded}
+            'aria-selected' : props['aria-selected'] ?? expanded,
             
             
             
             // classes:
-            classes={classes}
-            stateClasses={stateClasses}
-        >
-            {children}
-        </Generic>
+            classes         : classes,
+            stateClasses    : stateClasses,
+        },
+        
+        
+        
+        // children:
+        children,
     );
 };
 export {

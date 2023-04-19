@@ -45,7 +45,7 @@ export interface TabBodyProps<TElement extends Element = HTMLElement, TValue ext
     
     
     // components:
-    contentComponent ?: React.ReactComponentElement<any, BasicProps<TElement>>
+    bodyComponent ?: React.ReactComponentElement<any, BasicProps<TElement>>
 }
 const TabBody = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabBodyProps<TElement, TValue>): JSX.Element|null => {
     // rest props:
@@ -57,7 +57,7 @@ const TabBody = <TElement extends Element = HTMLElement, TValue extends any = st
         
         
         // components:
-        contentComponent = (<Content<TElement> /> as React.ReactComponentElement<any, BasicProps<TElement>>),
+        bodyComponent = (<Content<TElement> /> as React.ReactComponentElement<any, BasicProps<TElement>>),
     ...restBasicProps} = props;
     
     
@@ -76,8 +76,8 @@ const TabBody = <TElement extends Element = HTMLElement, TValue extends any = st
     
     
     // jsx:
-    /* <Content> */
-    return React.cloneElement<BasicProps<TElement>>(contentComponent,
+    /* <TabBody> */
+    return React.cloneElement<BasicProps<TElement>>(bodyComponent,
         // props:
         {
             // other props:

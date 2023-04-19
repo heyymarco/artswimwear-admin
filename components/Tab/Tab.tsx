@@ -119,7 +119,7 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
         
         
         // components:
-        contentComponent,
+        bodyComponent,
     ...restTabHeaderProps} = props;
     
     
@@ -217,7 +217,7 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
                 
                 
                 // components:
-                contentComponent={contentComponent}
+                bodyComponent={bodyComponent}
             >
                 {options}
             </TabBody>
