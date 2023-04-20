@@ -64,13 +64,22 @@ export const useTabStyleSheet = dynamicStyleSheet(
 export interface TabProps<TElement extends Element = HTMLElement, TValue extends any = string>
     extends
         // bases:
-        Pick<GenericProps<HTMLElement>,         // the *wrapper* component of <Generic<HTMLElement> >
+        Omit<GenericProps<HTMLElement>,         // the *wrapper* component of <Generic<HTMLElement> >
             // refs:
-            |'outerRef' // the outer is moved to <Wrapper>
+            |'elmRef'       // the elmRef is moved to <TabHeader>
+            
+            // values:
+            |'onChange'     // converted to TValue
         >,
         Omit<TabHeaderProps<TElement, TValue>,  // the *main* component of <List<TElement> >
-            // refs:
-            |'outerRef' // the outer is moved to <Wrapper>
+            // <Generic>:
+            |keyof Omit<GenericProps<HTMLElement>,
+                // refs:
+                |'elmRef'   // the elmRef is moved to <TabHeader>
+                
+                // values:
+                |'onChange' // converted to TValue
+            >
         >,
         Omit<TabBodyProps<HTMLElement, TValue>, // the *complement* component of <Content<HTMLElement> >
             |keyof BasicProps<HTMLElement>
