@@ -64,7 +64,7 @@ export const useTabStyleSheet = dynamicStyleSheet(
 export interface TabProps<TElement extends Element = HTMLElement, TValue extends any = string>
     extends
         // bases:
-        Omit<GenericProps<HTMLElement>,         // the *wrapper* component of <Generic<HTMLElement> >
+        Omit<GenericProps<Element>,             // the *wrapper* component of <Generic<Element> >
             // refs:
             |'elmRef'                           // the elmRef is moved to <TabHeader>
             
@@ -77,7 +77,7 @@ export interface TabProps<TElement extends Element = HTMLElement, TValue extends
         >,
         Omit<TabHeaderProps<TElement, TValue>,  // the *main* component of <List<TElement> >
             // <Generic>:
-            |keyof Omit<GenericProps<HTMLElement>,
+            |keyof Omit<GenericProps<Element>,
                 // refs:
                 |'elmRef'                       // the elmRef is moved to <TabHeader>
                 
@@ -89,8 +89,8 @@ export interface TabProps<TElement extends Element = HTMLElement, TValue extends
                 |'dangerouslySetInnerHTML'      // not supported
             >
         >,
-        Omit<TabBodyProps<HTMLElement, TValue>, // the *complement* component of <Content<HTMLElement> >
-            |keyof BasicProps<HTMLElement>
+        Omit<TabBodyProps<Element, TValue>,     // the *complement* component of <Content<Element> >
+            |keyof BasicProps<Element>
         >
 {
     // values:
@@ -188,8 +188,8 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
     
     // jsx:
     return (
-        /* the *wrapper* component of <Generic<HTMLElement> > */
-        <Generic<HTMLElement>
+        /* the *wrapper* component of <Generic<Element> > */
+        <Generic<Element>
             // other props:
             {...restGenericProps}
             
@@ -251,8 +251,8 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
                 {options}
             </TabHeader>
             
-            {/* the *complement* component of <Content<HTMLElement> > */}
-            <TabBody<HTMLElement, TValue>
+            {/* the *complement* component of <Content<Element> > */}
+            <TabBody<Element, TValue>
                 // variants:
                 {...basicVariantProps}
                 
