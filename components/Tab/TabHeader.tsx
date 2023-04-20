@@ -4,12 +4,6 @@ import {
     default as React,
 }                           from 'react'
 
-// internals:
-import type {
-    // types:
-    EditorChangeEventHandler,
-}                           from '@/components/editors/Editor'
-
 // reusable-ui components:
 import {
     // react components:
@@ -25,6 +19,10 @@ import {
 
 // internals:
 import type {
+    // types:
+    EditorChangeEventHandler,
+}                           from '@/components/editors/Editor'
+import type {
     // react components:
     TabOptionProps,
 }                           from './TabOption'
@@ -36,12 +34,13 @@ export interface TabHeaderProps<TElement extends Element = HTMLElement, TValue e
         // bases:
         Omit<ListProps<TElement>,
             // values:
-            |'defaultValue' // converted to TValue
-            |'value'        // converted to TValue
-            |'onChange'     // converted to TValue
+            |'defaultValue'            // converted to TValue
+            |'value'                   // converted to TValue
+            |'onChange'                // converted to TValue
             
             // children:
-            |'children'     // replaced `children` with `options.label`
+            |'children'                // replaced `children` with `options`
+            |'dangerouslySetInnerHTML' // not supported
         >,
         
         // components:
@@ -59,9 +58,9 @@ export interface TabHeaderProps<TElement extends Element = HTMLElement, TValue e
         ListItemComponentProps<Element>
 {
     // values:
-    children      : React.ReactNode // required
-    value        ?: TValue
-    onChange     ?: EditorChangeEventHandler<TValue>
+    children       : React.ReactNode // required
+    value         ?: TValue
+    onChange      ?: EditorChangeEventHandler<TValue>
 }
 const TabHeader = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabHeaderProps<TElement, TValue>): JSX.Element|null => {
     // rest props:

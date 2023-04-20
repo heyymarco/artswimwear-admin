@@ -30,17 +30,18 @@ export interface TabBodyProps<TElement extends Element = HTMLElement, TValue ext
         // bases:
         Omit<BasicProps<TElement>,
             // values:
-            |'defaultValue' // converted to TValue
-            |'value'        // converted to TValue
-            |'onChange'     // converted to TValue
+            |'defaultValue'            // converted to TValue
+            |'value'                   // converted to TValue
+            |'onChange'                // converted to TValue
             
             // children:
-            |'children'     // replaced `children` with `options.content`
+            |'children'                // replaced `children` with `options`
+            |'dangerouslySetInnerHTML' // not supported
         >
 {
     // values:
-    children          : React.ReactNode // required
-    value            ?: TValue
+    children       : React.ReactNode // required
+    value         ?: TValue
     
     
     

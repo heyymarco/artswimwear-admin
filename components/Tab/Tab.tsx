@@ -66,19 +66,27 @@ export interface TabProps<TElement extends Element = HTMLElement, TValue extends
         // bases:
         Omit<GenericProps<HTMLElement>,         // the *wrapper* component of <Generic<HTMLElement> >
             // refs:
-            |'elmRef'       // the elmRef is moved to <TabHeader>
+            |'elmRef'                           // the elmRef is moved to <TabHeader>
             
             // values:
-            |'onChange'     // converted to TValue
+            |'onChange'                         // converted to TValue
+            
+            // children:
+            |'children'                         // replaced `children` with `options.label`
+            |'dangerouslySetInnerHTML'          // not supported
         >,
         Omit<TabHeaderProps<TElement, TValue>,  // the *main* component of <List<TElement> >
             // <Generic>:
             |keyof Omit<GenericProps<HTMLElement>,
                 // refs:
-                |'elmRef'   // the elmRef is moved to <TabHeader>
+                |'elmRef'                       // the elmRef is moved to <TabHeader>
                 
                 // values:
-                |'onChange' // converted to TValue
+                |'onChange'                     // converted to TValue
+                
+                // children:
+                |'children'                     // replaced `children` with `options.label`
+                |'dangerouslySetInnerHTML'      // not supported
             >
         >,
         Omit<TabBodyProps<HTMLElement, TValue>, // the *complement* component of <Content<HTMLElement> >
