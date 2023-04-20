@@ -135,13 +135,27 @@ const TabHeader = <TElement extends Element = HTMLElement, TValue extends any = 
             return React.cloneElement<ListItemProps<Element>>(listItemComponent,
                 // props:
                 {
+                    // identifiers:
+                 // id              : collapsibleId,
+                    
+                    
+                    
+                    // semantics:
+                    semanticTag     : listItemComponent.props.semanticTag      ?? '',
+                    semanticRole    : listItemComponent.props.semanticRole     ?? 'tab',
+                    'aria-selected' : listItemComponent.props['aria-selected'] ?? isActive,
+                 // 'aria-controls' : listItemComponent.props['aria-controls'] ?? collapsibleId,
+                    
+                    
+                    
                     // accessibilities:
-                    active  : listItemComponent.props.active ?? isActive,
+                    active          : listItemComponent.props.active           ?? isActive,
+                    tabIndex        : listItemComponent.props.tabIndex         ?? (isActive ? 0 : -1),
                     
                     
                     
                     // handlers:
-                    onClick : () => onChange?.(optionValue),
+                    onClick         : () => onChange?.(optionValue),
                 },
                 
                 
