@@ -94,35 +94,28 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
     
     
     
+    // basic variant props:
+    const basicVariantProps = useBasicVariantProps(props);
+    
+    
+    
     // rest props:
     const {
-        // semantics:
-        tag = 'div',
-        
-        
-        
         // refs:
         elmRef,
         outerRef,
         
         
         
-        // identifiers:
-        id,
+        // variants:
+        size     : _size,     // remove
+        theme    : _theme,    // remove
+        gradient : _gradient, // remove
+        outlined : _outlined, // remove
+        mild     : _mild,     // remove
         
-        
-        
-        // classes:
-        mainClass,
-        classes,
-        variantClasses,
-        stateClasses,
-        className,
-        
-        
-        
-        // styles:
-        style,
+        orientation,
+        listStyle,
         
         
         
@@ -134,14 +127,26 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
         
         
         
+        // behaviors:
+        actionCtrl,
+        
+        
+        
+        // states:
+        enabled,
+        inheritEnabled,
+        active,
+        inheritActive,
+        readOnly,
+        inheritReadOnly,
+        
+        
+        
         // components:
+        listComponent,
+        listItemComponent,
         bodyComponent,
-    ...restTabHeaderProps} = props;
-    
-    
-    
-    // basic variant props:
-    const basicVariantProps = useBasicVariantProps(props);
+    ...restGenericProps} = props;
     
     
     
@@ -177,8 +182,13 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
     return (
         /* the *wrapper* component of <Generic<HTMLElement> > */
         <Generic<HTMLElement>
+            // other props:
+            {...restGenericProps}
+            
+            
+            
             // semantics:
-            tag={tag}
+            tag={props.tag ?? 'div'}
             
             
             
@@ -187,38 +197,48 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
             
             
             
-            // identifiers:
-            id={id}
-            
-            
-            
             // classes:
-            mainClass={mainClass ?? styles.main}
-            classes={classes}
-            variantClasses={variantClasses}
-            stateClasses={stateClasses}
-            className={className}
-            
-            
-            
-            // styles:
-            style={style}
+            mainClass={props.mainClass ?? styles.main}
         >
             {/* the *main* component of <List<TElement> > */}
             <TabHeader<TElement, TValue>
-                // other props:
-                {...restTabHeaderProps}
-                
-                
-                
                 // refs:
                 elmRef={elmRef}
+                
+                
+                
+                // variants:
+                {...basicVariantProps}
+                
+                orientation={orientation}
+                listStyle={listStyle}
                 
                 
                 
                 // values:
                 value={valueFn}
                 onChange={handleChange}
+                
+                
+                
+                // behaviors:
+                actionCtrl={actionCtrl}
+                
+                
+                
+                // states:
+                enabled={enabled}
+                inheritEnabled={inheritEnabled}
+                active={active}
+                inheritActive={inheritActive}
+                readOnly={readOnly}
+                inheritReadOnly={inheritReadOnly}
+                
+                
+                
+                // components:
+                listComponent={listComponent}
+                listItemComponent={listItemComponent}
             >
                 {options}
             </TabHeader>
