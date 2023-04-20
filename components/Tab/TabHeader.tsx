@@ -106,13 +106,13 @@ const TabHeader = <TElement extends Element = HTMLElement, TValue extends any = 
             
             
             // variants:
-            listStyle   : props.listStyle      ?? 'tab',
-            orientation : props.orientation    ?? 'inline',
+            listStyle    : props.listStyle     ?? 'tab',
+            orientation  : props.orientation   ?? 'inline',
             
             
             
             // behaviors:
-            actionCtrl  : props.actionCtrl     ?? true,
+            actionCtrl   : props.actionCtrl    ?? true,
         },
         
         
@@ -136,7 +136,7 @@ const TabHeader = <TElement extends Element = HTMLElement, TValue extends any = 
                 // props:
                 {
                     // accessibilities:
-                    active  : isActive,
+                    active  : listItemComponent.props.active ?? isActive,
                     
                     
                     
@@ -147,7 +147,7 @@ const TabHeader = <TElement extends Element = HTMLElement, TValue extends any = 
                 
                 
                 // children:
-                ((optionLabel !== true) && optionLabel) ?? `${optionValue}`,
+                listItemComponent.props.children ?? ((optionLabel !== true) && optionLabel) ?? `${optionValue}`,
             );
         })
     );
