@@ -55,7 +55,7 @@ import {
 
 
 // styles:
-export const useTabBodyStyleSheet = dynamicStyleSheet(
+export const useTabStyleSheet = dynamicStyleSheet(
     () => import(/* webpackPrefetch: true */ './styles/styles')
 , { id: 'qjlmg10jy4' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 
@@ -81,7 +81,7 @@ export interface TabProps<TElement extends Element = HTMLElement, TValue extends
 }
 const Tab = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabProps<TElement, TValue>): JSX.Element|null => {
     // styles:
-    const styles = useTabBodyStyleSheet();
+    const styles = useTabStyleSheet();
     
     
     
@@ -166,6 +166,7 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
     
     // jsx:
     return (
+        /* the *wrapper* component of <Generic<HTMLElement> > */
         <Generic<HTMLElement>
             // semantics:
             tag={tag}
@@ -194,6 +195,7 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
             // styles:
             style={style}
         >
+            {/* the *main* component of <List<TElement> > */}
             <TabHeader<TElement, TValue>
                 // other props:
                 {...restTabHeaderProps}
@@ -211,6 +213,8 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
             >
                 {options}
             </TabHeader>
+            
+            {/* the *complement* component of <Content<HTMLElement> > */}
             <TabBody<HTMLElement, TValue>
                 // variants:
                 {...basicVariantProps}
