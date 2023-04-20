@@ -24,7 +24,10 @@ import {
 // reusable-ui components:
 import {
     // react components:
+    GenericProps,
     Generic,
+    
+    BasicProps,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // cssfn:
@@ -61,8 +64,17 @@ export const useTabBodyStyleSheet = dynamicStyleSheet(
 export interface TabProps<TElement extends Element = HTMLElement, TValue extends any = string>
     extends
         // bases:
-        TabHeaderProps<TElement, TValue>,
-        TabBodyProps<TElement, TValue>
+        Pick<GenericProps<HTMLElement>,         // the *wrapper* component of <Generic<HTMLElement> >
+            // refs:
+            |'outerRef' // the outer is moved to <Wrapper>
+        >,
+        Omit<TabHeaderProps<TElement, TValue>,  // the *main* component of <List<TElement> >
+            // refs:
+            |'outerRef' // the outer is moved to <Wrapper>
+        >,
+        Omit<TabBodyProps<HTMLElement, TValue>, // the *complement* component of <Content<HTMLElement> >
+            |keyof BasicProps<HTMLElement>
+        >
 {
     // values:
     defaultValue ?: TValue
@@ -88,11 +100,6 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
         
         // identifiers:
         id,
-        
-        
-        
-        // variants:
-        nude,
         
         
         
@@ -159,7 +166,7 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
     
     // jsx:
     return (
-        <Generic<TElement>
+        <Generic<HTMLElement>
             // semantics:
             tag={tag}
             
@@ -204,10 +211,9 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
             >
                 {options}
             </TabHeader>
-            <TabBody<TElement, TValue>
+            <TabBody<HTMLElement, TValue>
                 // variants:
                 {...basicVariantProps}
-                nude={nude}
                 
                 
                 
