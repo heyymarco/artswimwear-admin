@@ -127,6 +127,11 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
         
         
         
+        // accessibilities:
+        label,
+        
+        
+        
         // values:
         children : options,
         defaultValue,
@@ -220,6 +225,11 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
                 
                 orientation={orientation}
                 listStyle={listStyle}
+                
+                
+                
+                // accessibilities:
+                label={label}
                 
                 
                 

@@ -45,7 +45,7 @@ export interface TabHeaderProps<TElement extends Element = HTMLElement, TValue e
         
         // components:
         Omit<ListComponentProps<TElement>,
-            // we don't need these extra properties because the <Nav> is sub <List>
+            // we don't need these extra properties because the <TabHeader> is sub <List>
             |'listRef'
             |'listOrientation'
             |'listStyle'
@@ -57,6 +57,11 @@ export interface TabHeaderProps<TElement extends Element = HTMLElement, TValue e
         >,
         ListItemComponentProps<Element>
 {
+    // accessibilities:
+    label         ?: string
+    
+    
+    
     // values:
     children       : React.ReactNode // required
     value         ?: TValue
@@ -65,6 +70,11 @@ export interface TabHeaderProps<TElement extends Element = HTMLElement, TValue e
 const TabHeader = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabHeaderProps<TElement, TValue>): JSX.Element|null => {
     // rest props:
     const {
+        // accessibilities:
+        label,
+        
+        
+        
         // values:
         children : options,
         value,
@@ -89,14 +99,20 @@ const TabHeader = <TElement extends Element = HTMLElement, TValue extends any = 
             
             
             
+            // semantics:
+            semanticTag  : props.semanticTag   ?? '',
+            semanticRole : props.semanticRole  ?? 'tablist',
+            'aria-label' : props['aria-label'] ?? label,
+            
+            
             // variants:
-            listStyle   : props.listStyle   ?? 'tab',
-            orientation : props.orientation ?? 'inline',
+            listStyle   : props.listStyle      ?? 'tab',
+            orientation : props.orientation    ?? 'inline',
             
             
             
             // behaviors:
-            actionCtrl  : props.actionCtrl ?? true,
+            actionCtrl  : props.actionCtrl     ?? true,
         },
         
         
@@ -104,7 +120,7 @@ const TabHeader = <TElement extends Element = HTMLElement, TValue extends any = 
         // children:
         React.Children.map(options, (option) => {
             // conditions:
-            if (!React.isValidElement<TabOptionProps<TElement, TValue>>(option)) return option;
+            if (!React.isValidElement<TabOptionProps<Element, TValue>>(option)) return option;
             
             
             
@@ -115,7 +131,7 @@ const TabHeader = <TElement extends Element = HTMLElement, TValue extends any = 
             
             
             // jsx:
-            /* <ListItem> */
+            /* <ListItem<Element> > */
             return React.cloneElement<ListItemProps<Element>>(listItemComponent,
                 // props:
                 {
