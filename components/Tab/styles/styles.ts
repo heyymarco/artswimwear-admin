@@ -34,8 +34,8 @@ export const usesTabLayout = () => {
     // dependencies:
     
     // features:
-    const {borderVars} = usesBorder();
-    const {paddingVars} = usesPadding();
+    const {borderVars   } = usesBorder();
+    const {paddingVars  } = usesPadding();
     const {groupableRule} = usesGroupable({
         orientationInlineSelector : null, // never  => the <TabHeader> & <TabBody> are never  stacked in horizontal
         orientationBlockSelector  : '&',  // always => the <TabHeader> & <TabBody> are always stacked in vertical
