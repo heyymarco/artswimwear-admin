@@ -75,7 +75,7 @@ export interface TabStateProps<TTabExpandedChangeEvent extends TabExpandedChange
     
     
     // children:
-    children ?: React.ReactNode
+    children                ?: React.ReactNode
 }
 const TabStateProvider = <TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>(props: TabStateProps<TTabExpandedChangeEvent>): JSX.Element|null => {
     // rest props:
