@@ -92,19 +92,14 @@ const TabBody = <TElement extends Element = HTMLElement, TValue extends any = st
             
             
             
-            // semantics:
-            'aria-selected' : bodyComponent.props['aria-selected'] ?? props['aria-selected'] ?? undefined,
-            
-            
-            
             // variants:
-         // outlined        : bodyComponent.props.outlined         ?? props.outlined         ?? false, // kill outlined variant // to appear as *selected*, so it *looks* the same as *tab*
-            mild            : bodyComponent.props.mild             ?? props.mild             ?? false, // kill mild     variant // to appear as *selected*, so it *looks* the same as *tab*
+         // outlined : bodyComponent.props.outlined ?? props.outlined ?? false, // kill outlined variant // to appear as *selected*, so it *looks* the same as *tab*
+            mild     : bodyComponent.props.mild     ?? props.mild     ?? false, // kill mild     variant // to appear as *selected*, so it *looks* the same as *tab*
             
             
             
             // classes:
-            classes         : classes,
+            classes  : classes,
         },
         
         
