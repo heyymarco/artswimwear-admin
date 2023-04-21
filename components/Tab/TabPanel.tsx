@@ -19,7 +19,7 @@ import {
 
 
 
-export interface TabOptionProps<TElement extends Element = HTMLElement, TValue extends any = string>
+export interface TabPanelProps<TElement extends Element = HTMLElement, TValue extends any = string>
     extends
         // bases:
         GenericProps<TElement>
@@ -47,7 +47,7 @@ export interface TabOptionProps<TElement extends Element = HTMLElement, TValue e
     // children:
     children       ?: React.ReactNode
 }
-const TabOption = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabOptionProps<TElement, TValue>): JSX.Element|null => {
+const TabPanel = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabPanelProps<TElement, TValue>): JSX.Element|null => {
     // rest props:
     const {
         // accessibilities:
@@ -89,7 +89,7 @@ const TabOption = <TElement extends Element = HTMLElement, TValue extends any = 
         
         
         // classes:
-        'tabOption',
+        'tabPanel',
     );
     const stateClasses = useMergeClasses(
         // preserves the original `stateClasses` from `panelComponent`:
@@ -138,6 +138,6 @@ const TabOption = <TElement extends Element = HTMLElement, TValue extends any = 
     );
 };
 export {
-    TabOption,
-    TabOption as default,
+    TabPanel,
+    TabPanel as default,
 }

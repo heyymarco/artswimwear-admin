@@ -44,7 +44,7 @@ import {
     // react components:
     TabProps,
     Tab,
-    TabOption,
+    TabPanel,
 }                           from '@/components/Tab'
 
 // app configs:
@@ -214,12 +214,12 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
             value={selectedTabLimited}
             onChange={handleTabChange}
         >
-            <TabOption value={false} label={PAGE_PRODUCTS_STOCK_UNLIMITED}>
+            <TabPanel value={false} label={PAGE_PRODUCTS_STOCK_UNLIMITED}>
                 <p>
                     The product stock is <em>always available</em>.
                 </p>
-            </TabOption>
-            <TabOption value={true}  label={PAGE_PRODUCTS_STOCK_LIMITED}>
+            </TabPanel>
+            <TabPanel value={true}  label={PAGE_PRODUCTS_STOCK_LIMITED}>
                 <Group
                     // variants:
                     {...basicVariantProps}
@@ -326,7 +326,7 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                         }}
                     />
                 </Group>
-            </TabOption>
+            </TabPanel>
         </Tab>
     );
 };

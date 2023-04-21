@@ -20,8 +20,8 @@ import {
 // internals:
 import type {
     // react components:
-    TabOptionProps,
-}                           from './TabOption'
+    TabPanelProps,
+}                           from './TabPanel'
 
 
 
@@ -107,7 +107,7 @@ const TabBody = <TElement extends Element = HTMLElement, TValue extends any = st
         // children:
         bodyComponent.props.children ?? React.Children.map(options, (option) => {
             // conditions:
-            if (!React.isValidElement<TabOptionProps<Element, TValue>>(option)) return option;
+            if (!React.isValidElement<TabPanelProps<Element, TValue>>(option)) return option;
             
             
             
@@ -119,7 +119,7 @@ const TabBody = <TElement extends Element = HTMLElement, TValue extends any = st
             
             // jsx:
             if (!isActive) return option;
-            return React.cloneElement<TabOptionProps<Element, TValue>>(option,
+            return React.cloneElement<TabPanelProps<Element, TValue>>(option,
                 // props:
                 {
                     expanded : option.props.expanded ?? true,

@@ -24,8 +24,8 @@ import type {
 }                           from '@/components/editors/Editor'
 import type {
     // react components:
-    TabOptionProps,
-}                           from './TabOption'
+    TabPanelProps,
+}                           from './TabPanel'
 
 
 
@@ -121,7 +121,7 @@ const TabHeader = <TElement extends Element = HTMLElement, TValue extends any = 
         // children:
         listComponent.props.children ?? React.Children.map(options, (option) => {
             // conditions:
-            if (!React.isValidElement<TabOptionProps<Element, TValue>>(option)) return option;
+            if (!React.isValidElement<TabPanelProps<Element, TValue>>(option)) return option;
             
             
             

@@ -18,7 +18,7 @@ import { CurrencyEditor } from '@/components/editors/CurrencyEditor'
 import { ShippingWeightEditor } from '@/components/editors/ShippingWeightEditor'
 import { StockEditor } from '@/components/editors/StockEditor'
 import { ProductVisibility, VisibilityEditor } from '@/components/editors/VisibilityEditor'
-import { Tab, TabOption } from '@/components/Tab';
+import { Tab, TabPanel } from '@/components/Tab';
 
 
 
@@ -231,7 +231,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                 // handlers:
                 onKeyDown={handleKeyDown}
             >
-                <TabOption value='informations' label={PAGE_PRODUCTS_TAB_INFORMATIONS} panelComponent={<Generic className={styles.pageInfo} />}>
+                <TabPanel value='informations' label={PAGE_PRODUCTS_TAB_INFORMATIONS} panelComponent={<Generic className={styles.pageInfo} />}>
                     <AccessibilityProvider enabled={!isLoading}>
                         <ValidationProvider enableValidation={enableValidation}>
                             <span className='name label'>Name:</span>
@@ -311,13 +311,13 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                             </CardFooter>
                         </>}
                     </ModalStatus>
-                </TabOption>
-                <TabOption value='images'       label={PAGE_PRODUCTS_TAB_IMAGES}>
+                </TabPanel>
+                <TabPanel value='images'       label={PAGE_PRODUCTS_TAB_IMAGES}>
                     <p>todo images</p>
-                </TabOption>
-                <TabOption value='description'  label={PAGE_PRODUCTS_TAB_DESCRIPTION}>
+                </TabPanel>
+                <TabPanel value='description'  label={PAGE_PRODUCTS_TAB_DESCRIPTION}>
                     <p>todo description</p>
-                </TabOption>
+                </TabPanel>
             </Tab>
             <CardFooter onKeyDown={handleKeyDown}>
                 <ButtonIcon className='btnSave' icon={isLoading ? 'busy' : 'save'} theme='success' onClick={handleSave}>Save</ButtonIcon>

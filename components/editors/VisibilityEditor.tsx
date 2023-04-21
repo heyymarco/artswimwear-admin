@@ -9,7 +9,7 @@ import {
     // react components:
     TabProps,
     Tab,
-    TabOption,
+    TabPanel,
 }                           from '@/components/Tab'
 
 // app configs:
@@ -41,21 +41,21 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
             // other props:
             {...props}
         >
-            <TabOption value='published' label={PAGE_PRODUCTS_VISIBILITY_PUBLISHED}>
+            <TabPanel value='published' label={PAGE_PRODUCTS_VISIBILITY_PUBLISHED}>
                 <p>
                     The product is <em>shown</em> on the webiste.
                 </p>
-            </TabOption>
-            <TabOption value='hidden'    label={PAGE_PRODUCTS_VISIBILITY_HIDDEN}>
+            </TabPanel>
+            <TabPanel value='hidden'    label={PAGE_PRODUCTS_VISIBILITY_HIDDEN}>
                 <p>
                     The product can only be viewed via <em>a (bookmarked) link</em>.
                 </p>
-            </TabOption>
-            <TabOption value='draft'     label={PAGE_PRODUCTS_VISIBILITY_DRAFT}>
+            </TabPanel>
+            <TabPanel value='draft'     label={PAGE_PRODUCTS_VISIBILITY_DRAFT}>
                 <p>
                     The product <em>cannot be viewed</em> on the entire website.
                 </p>
-            </TabOption>
+            </TabPanel>
         </Tab>
     );
 };

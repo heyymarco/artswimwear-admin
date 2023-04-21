@@ -56,8 +56,8 @@ export const usesTabLayout = () => {
             ...children('.tabBody', {
                 // layouts:
                 display      : 'grid',
-                justifyItems : 'stretch', // overlaps each <TabOption> to anothers
-                alignItems   : 'stretch', // overlaps each <TabOption> to anothers
+                justifyItems : 'stretch', // overlaps each <TabPanel> to anothers
+                alignItems   : 'stretch', // overlaps each <TabPanel> to anothers
                 
                 
                 
@@ -69,7 +69,7 @@ export const usesTabLayout = () => {
                 
                 
                 // children:
-                ...children('.tabOption', {
+                ...children('.tabPanel', {
                     // positions:
                     gridArea: '1/1/1/1', // the options are overlapping each other, so the parent takes the maximum width & height of children
                     
@@ -78,7 +78,7 @@ export const usesTabLayout = () => {
                     // appearances:
                     ...rule(':not(.expanded)', {
                         // appearances:
-                        visibility: 'hidden', // hide inactive <TabOption>
+                        visibility: 'hidden', // hide inactive <TabPanel>
                     }),
                 }),
             }),
