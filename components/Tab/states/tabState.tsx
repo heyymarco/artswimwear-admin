@@ -45,14 +45,23 @@ export interface TabExpandedChangeEvent extends ExpandedChangeEvent {
 export interface TabState
 {
     // states:
-    tabPanels                : React.ReactNode // required
     expandedTabIndex        ?: number
     triggerExpandedChange    : (tabIndex: number) => void
+    
+    
+    
+    // data:
+    tabPanels                : React.ReactNode // required
 }
 
 const TabStateContext = createContext<TabState>({
-    tabPanels                : undefined,
+    // states:
     triggerExpandedChange    : () => {},
+    
+    
+    
+    // data:
+    tabPanels                : undefined,
 });
 TabStateContext.displayName  = 'TabState';
 
@@ -66,10 +75,14 @@ export const useTabState = (): TabState => {
 export interface TabStateProps<TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>
 {
     // states:
-    tabPanels                : React.ReactNode // required
     defaultExpandedTabIndex ?: number
     expandedTabIndex        ?: number
     onExpandedChange        ?: EventHandler<TTabExpandedChangeEvent>
+    
+    
+    
+    // data:
+    tabPanels                : React.ReactNode // required
     
     
     
@@ -80,10 +93,14 @@ const TabStateProvider = <TTabExpandedChangeEvent extends TabExpandedChangeEvent
     // rest props:
     const {
         // states:
-        tabPanels,
         defaultExpandedTabIndex,
         expandedTabIndex,
         onExpandedChange,
+        
+        
+        
+        // data:
+        tabPanels,
         
         
         
@@ -123,9 +140,14 @@ const TabStateProvider = <TTabExpandedChangeEvent extends TabExpandedChangeEvent
     // jsx:
     return (
         <TabStateContext.Provider value={{
-            tabPanels             : tabPanels,
+            // states:
             expandedTabIndex      : expandedTabIndexFn,
             triggerExpandedChange : triggerExpandedChange,
+            
+            
+            
+            // data:
+            tabPanels             : tabPanels,
         }}>
             {children}
         </TabStateContext.Provider>
