@@ -96,29 +96,30 @@ const TabHeader = <TElement extends Element = HTMLElement, TValue extends any = 
         {
             // other props:
             ...restListProps,
+            ...listComponent.props, // overwrites restListProps (if any conflics)
             
             
             
             // semantics:
-            semanticTag  : props.semanticTag   ?? '',
-            semanticRole : props.semanticRole  ?? 'tablist',
-            'aria-label' : props['aria-label'] ?? label,
+            semanticTag  : listComponent.props.semanticTag   ?? props.semanticTag   ?? '',
+            semanticRole : listComponent.props.semanticRole  ?? props.semanticRole  ?? 'tablist',
+            'aria-label' : listComponent.props['aria-label'] ?? props['aria-label'] ?? label,
             
             
             // variants:
-            listStyle    : props.listStyle     ?? 'tab',
-            orientation  : props.orientation   ?? 'inline',
+            listStyle    : listComponent.props.listStyle     ?? props.listStyle     ?? 'tab',
+            orientation  : listComponent.props.orientation   ?? props.orientation   ?? 'inline',
             
             
             
             // behaviors:
-            actionCtrl   : props.actionCtrl    ?? true,
+            actionCtrl   : listComponent.props.actionCtrl    ?? props.actionCtrl    ?? true,
         },
         
         
         
         // children:
-        React.Children.map(options, (option) => {
+        listComponent.props.children ?? React.Children.map(options, (option) => {
             // conditions:
             if (!React.isValidElement<TabOptionProps<Element, TValue>>(option)) return option;
             

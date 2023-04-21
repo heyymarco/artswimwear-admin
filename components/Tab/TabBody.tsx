@@ -65,7 +65,12 @@ const TabBody = <TElement extends Element = HTMLElement, TValue extends any = st
     
     // classes:
     const classes = useMergeClasses(
-        // preserves the original `classes`:
+        // preserves the original `classes` from `bodyComponent`:
+        bodyComponent.props.classes,
+        
+        
+        
+        // preserves the original `classes` from `props`:
         props.classes,
         
         
@@ -83,17 +88,18 @@ const TabBody = <TElement extends Element = HTMLElement, TValue extends any = st
         {
             // other props:
             ...restBasicProps,
+            ...bodyComponent.props, // overwrites restBasicProps (if any conflics)
             
             
             
             // semantics:
-            'aria-selected' : props['aria-selected'] ?? undefined,
+            'aria-selected' : bodyComponent.props['aria-selected'] ?? props['aria-selected'] ?? undefined,
             
             
             
             // variants:
-         // outlined        : props.outlined ?? false, // kill outlined variant // to appear as *selected*, so it *looks* the same as *tab*
-            mild            : props.mild ?? false,     // kill mild     variant // to appear as *selected*, so it *looks* the same as *tab*
+         // outlined        : bodyComponent.props.outlined         ?? props.outlined         ?? false, // kill outlined variant // to appear as *selected*, so it *looks* the same as *tab*
+            mild            : bodyComponent.props.mild             ?? props.mild             ?? false, // kill mild     variant // to appear as *selected*, so it *looks* the same as *tab*
             
             
             
@@ -104,9 +110,9 @@ const TabBody = <TElement extends Element = HTMLElement, TValue extends any = st
         
         
         // children:
-        React.Children.map(options, (option) => {
+        bodyComponent.props.children ?? React.Children.map(options, (option) => {
             // conditions:
-            if (!React.isValidElement<TabOptionProps<TElement, TValue>>(option)) return option;
+            if (!React.isValidElement<TabOptionProps<Element, TValue>>(option)) return option;
             
             
             
@@ -118,10 +124,10 @@ const TabBody = <TElement extends Element = HTMLElement, TValue extends any = st
             
             // jsx:
             if (!isActive) return option;
-            return React.cloneElement<TabOptionProps<TElement, TValue>>(option,
+            return React.cloneElement<TabOptionProps<Element, TValue>>(option,
                 // props:
                 {
-                    expanded: true,
+                    expanded : option.props.expanded ?? true,
                 },
             );
         })
