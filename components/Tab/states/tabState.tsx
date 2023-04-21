@@ -13,7 +13,6 @@ import {
     // hooks:
     useContext,
     useState,
-    useMemo,
 }                           from 'react'
 
 // reusable-ui core:
