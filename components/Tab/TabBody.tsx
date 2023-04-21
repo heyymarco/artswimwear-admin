@@ -19,7 +19,8 @@ import {
 
 // internals:
 import {
-    // hooks:
+    // states:
+    TabExpandedChangeEvent,
     useTabState,
 }                           from './states/tabState'
 import type {
@@ -29,24 +30,24 @@ import type {
 
 
 
-export interface TabBodyProps<TElement extends Element = HTMLElement, TValue extends any = string>
+export interface TabBodyProps<TElement extends Element = HTMLElement>
     extends
         // bases:
         Omit<BasicProps<TElement>,
             // values:
-            |'defaultValue'            // converted to TValue
-            |'value'                   // converted to TValue
-            |'onChange'                // converted to TValue
+            |'defaultValue'            // not supported
+            |'value'                   // not supported
+            |'onChange'                // not supported
             
             // children:
-            |'children'                // replaced `children` with `options`
+            |'children'                // replaced `children` with `tabPanels`
             |'dangerouslySetInnerHTML' // not supported
         >
 {
     // components:
     bodyComponent ?: React.ReactComponentElement<any, BasicProps<TElement>>
 }
-const TabBody = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabBodyProps<TElement, TValue>): JSX.Element|null => {
+const TabBody = <TElement extends Element = HTMLElement, TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>(props: TabBodyProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // components:
@@ -75,10 +76,9 @@ const TabBody = <TElement extends Element = HTMLElement, TValue extends any = st
     
     // states:
     const {
-        // values:
-        options,
-        value,
-    } = useTabState<TValue>();
+        tabPanels,
+        expandedTabIndex,
+    } = useTabState<TTabExpandedChangeEvent>();
     
     
     
@@ -106,24 +106,23 @@ const TabBody = <TElement extends Element = HTMLElement, TValue extends any = st
         
         
         // children:
-        bodyComponent.props.children ?? React.Children.map(options, (option) => {
+        bodyComponent.props.children ?? React.Children.map(tabPanels, (tabPanel, index) => {
             // conditions:
-            if (!React.isValidElement<TabPanelProps<Element, TValue>>(option)) return option;
+            if (!React.isValidElement<TabPanelProps<Element, TTabExpandedChangeEvent>>(tabPanel)) return tabPanel;
             
             
             
             // fn props:
-            const {props: {value: selectedValue}} = option;
-            const isActive = Object.is(value, selectedValue);
+            const isActive = (expandedTabIndex === index);
             
             
             
             // jsx:
-            if (!isActive) return option;
-            return React.cloneElement<TabPanelProps<Element, TValue>>(option,
+            if (!isActive) return tabPanel;
+            return React.cloneElement<TabPanelProps<Element, TTabExpandedChangeEvent>>(tabPanel,
                 // props:
                 {
-                    expanded : option.props.expanded ?? true,
+                    expanded : tabPanel.props.expanded ?? true,
                 },
             );
         })

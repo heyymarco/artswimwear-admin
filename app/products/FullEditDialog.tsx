@@ -217,11 +217,6 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                 
                 
                 
-                // values:
-                defaultValue='informations'
-                
-                
-                
                 // components:
                 listComponent={<List className={styles.tabList} />}
                 bodyComponent={<Content className={styles.tabBody} />}
@@ -231,7 +226,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                 // handlers:
                 onKeyDown={handleKeyDown}
             >
-                <TabPanel value='informations' label={PAGE_PRODUCTS_TAB_INFORMATIONS} panelComponent={<Generic className={styles.pageInfo} />}>
+                <TabPanel label={PAGE_PRODUCTS_TAB_INFORMATIONS} panelComponent={<Generic className={styles.pageInfo} />}>
                     <AccessibilityProvider enabled={!isLoading}>
                         <ValidationProvider enableValidation={enableValidation}>
                             <span className='name label'>Name:</span>
@@ -312,10 +307,10 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                         </>}
                     </ModalStatus>
                 </TabPanel>
-                <TabPanel value='images'       label={PAGE_PRODUCTS_TAB_IMAGES}>
+                <TabPanel label={PAGE_PRODUCTS_TAB_IMAGES}>
                     <p>todo images</p>
                 </TabPanel>
-                <TabPanel value='description'  label={PAGE_PRODUCTS_TAB_DESCRIPTION}>
+                <TabPanel label={PAGE_PRODUCTS_TAB_DESCRIPTION}>
                     <p>todo description</p>
                 </TabPanel>
             </Tab>

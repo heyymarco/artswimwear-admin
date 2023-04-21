@@ -15,6 +15,7 @@ import {
 import {
     // react helper hooks:
     useEvent,
+    EventHandler,
     useMergeRefs,
     
     
@@ -27,13 +28,14 @@ import {
 import {
     // react components:
     Label,
+    InputProps,
     Group,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internals:
 import type {
-    // types:
-    EditorChangeEventHandler,
+    // react components:
+    EditorProps,
 }                           from '@/components/editors/Editor'
 import {
     // react components:
@@ -42,6 +44,7 @@ import {
 }                           from '@/components/editors/QuantityEditor'
 import {
     // react components:
+    TabExpandedChangeEvent,
     TabProps,
     Tab,
     TabPanel,
@@ -57,19 +60,31 @@ import {
 
 export interface StockEditorProps<TElement extends Element = HTMLElement>
     extends
-        Omit<TabProps<TElement, number|null>,
+        // bases:
+        Omit<QuantityEditorProps<TElement>,
             // refs:
-            |'elmRef'
+            |'outerRef'                // taken by <Tab>
             
-            // formats:
-            |'type'                  // only supports number
-            |'autoCapitalize'        // nothing to capitalize of number
-            |'inputMode'             // always 'numeric'
+            // variants:
+            |'nude'                    // not supported
             
             // children:
-            |'children'              // already taken over
+            |'children'                // not supported
+            |'dangerouslySetInnerHTML' // not supported
         >,
-        QuantityEditorProps<TElement>
+        Omit<TabProps<TElement>,
+            // refs:
+            |'elmRef'                  // taken by <QuantityEditor>
+            
+            // states:
+            |'tabPanels'               // already taken over
+            |'defaultExpandedTabIndex' // already taken over
+            |'expandedTabIndex'        // already taken over
+            |'onExpandedChange'        // already taken over
+            
+            // children:
+            |'children'                // already taken over
+        >
 {
 }
 const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorProps<TElement>): JSX.Element|null => {
@@ -148,6 +163,8 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
         childrenAfterInput,
         childrenAfterButton,
     ...restTabProps} = props;
+    type T1 = typeof restTabProps
+    type T2 = Omit<T1, keyof TabProps>
     
     
     
@@ -173,7 +190,8 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
     
     
     // handlers:
-    const handleTabChange = useEvent<EditorChangeEventHandler<boolean>>((selectedTabLimited) => {
+    const handleExpandedChange = useEvent<EventHandler<TabExpandedChangeEvent>>(({tabIndex}) => {
+        const selectedTabLimited = (tabIndex === 1);
         setSelectedTabLimited(selectedTabLimited);
         onChange?.(
             selectedTabLimited
@@ -199,7 +217,7 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
     
     // jsx:
     return (
-        <Tab<TElement, boolean>
+        <Tab<TElement>
             // other props:
             {...restTabProps}
             
@@ -210,16 +228,16 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
             
             
             
-            // values:
-            value={selectedTabLimited}
-            onChange={handleTabChange}
+            // states:
+            expandedTabIndex={selectedTabLimited ? 1 : 0}
+            onExpandedChange={handleExpandedChange}
         >
-            <TabPanel value={false} label={PAGE_PRODUCTS_STOCK_UNLIMITED}>
+            <TabPanel label={PAGE_PRODUCTS_STOCK_UNLIMITED}>
                 <p>
                     The product stock is <em>always available</em>.
                 </p>
             </TabPanel>
-            <TabPanel value={true}  label={PAGE_PRODUCTS_STOCK_LIMITED}>
+            <TabPanel label={PAGE_PRODUCTS_STOCK_LIMITED}>
                 <Group
                     // variants:
                     {...basicVariantProps}

@@ -20,60 +20,67 @@ import {
 import {
     // react helper hooks:
     useEvent,
+    EventHandler,
     useMergeEvents,
     
     
     
-    // basic variants of UI:
-    useBasicVariantProps,
+    // a capability of UI to expand/reduce its size or toggle the visibility:
+    ExpandedChangeEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
-
-// internals:
-import type {
-    // types:
-    EditorChangeEventHandler,
-}                           from '@/components/editors/Editor'
-
-
-
-// contexts:
-export interface TabState<TValue extends any = string> {
-    // values:
-    options        : React.ReactNode // required
-    defaultValue  ?: TValue
-    value         ?: TValue
-    onChange      ?: EditorChangeEventHandler<TValue>
-}
-const TabStateContext = createContext<TabState<any>>({
-    options        : undefined,
-});
-TabStateContext.displayName  = 'TabState';
 
 
 
 // hooks:
-export const useTabState = <TValue extends any = string>(): TabState<TValue> => {
-    return useContext(TabStateContext) as TabState<TValue>;
+
+// states:
+
+//#region tabState
+export interface TabExpandedChangeEvent extends ExpandedChangeEvent {
+    // positions:
+    tabIndex : number
+}
+
+
+
+export interface TabState<TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>
+{
+    // states:
+    tabPanels                : React.ReactNode // required
+    defaultExpandedTabIndex ?: number
+    expandedTabIndex        ?: number
+    onExpandedChange        ?: EventHandler<TTabExpandedChangeEvent>
+}
+
+
+
+const TabStateContext = createContext<TabState<any>>({
+    tabPanels                : undefined,
+});
+TabStateContext.displayName  = 'TabState';
+
+export const useTabState = <TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>(): TabState<TTabExpandedChangeEvent> => {
+    return useContext(TabStateContext) as TabState<TTabExpandedChangeEvent>;
 }
 
 
 
 // react components:
-export interface TabStateProps<TValue extends any = string>
+export interface TabStateProps<TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>
     extends
-        TabState<TValue>
+        TabState<TTabExpandedChangeEvent>
 {
     // children:
     children ?: React.ReactNode
 }
-const TabStateProvider = <TValue extends any = string>(props: TabStateProps<TValue>): JSX.Element|null => {
+const TabStateProvider = <TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>(props: TabStateProps<TTabExpandedChangeEvent>): JSX.Element|null => {
     // rest props:
     const {
-        // values:
-        options,
-        defaultValue,
-        value,
-        onChange,
+        // states:
+        tabPanels,
+        defaultExpandedTabIndex,
+        expandedTabIndex,
+        onExpandedChange,
         
         
         
@@ -84,40 +91,36 @@ const TabStateProvider = <TValue extends any = string>(props: TabStateProps<TVal
     
     
     // fn states:
-    const isControllableValue = (value !== undefined);
-    const [valueDn, setValueDn] = useState<TValue|undefined>(defaultValue);
-    const valueFn : TValue|undefined = (
-        (value !== undefined)
-        ? value   /*controllable*/
-        : valueDn /*uncontrollable*/
-    );
+    const isControllableExpanded = (expandedTabIndex !== undefined);
+    const [expandedTabIndexDn, setExpandedTabIndexDn] = useState<number>(defaultExpandedTabIndex ?? 0);
+    const expandedTabIndexFn : number = (expandedTabIndex /*controllable*/ ?? expandedTabIndexDn /*uncontrollable*/);
     
     
     
     // handlers:
-    const handleChangeInternal = useEvent<EditorChangeEventHandler<TValue>>((value) => {
+    const handleExpandedChangeInternal = useEvent<EventHandler<TTabExpandedChangeEvent>>(({tabIndex}) => {
         // update state:
-        if (!isControllableValue) setValueDn(value);
+        if (!isControllableExpanded) setExpandedTabIndexDn(tabIndex);
     });
-    const handleChange         = useMergeEvents(
-        // preserves the original `onChange` from `props`:
-        onChange,
+    const handleExpandedChange         = useMergeEvents(
+        // preserves the original `onExpandedChange` from `props`:
+        onExpandedChange,
         
         
         
         // actions:
-        handleChangeInternal,
+        handleExpandedChangeInternal,
     );
     
     
     
     // contexts:
-    const tabState = useMemo<TabState<TValue>>(() => ({
-        options      : options,
-        defaultValue : defaultValue,
-        value        : valueFn,
-        onChange     : handleChange,
-    }), [options, defaultValue, valueFn, handleChange]);
+    const tabState = useMemo<TabState<TTabExpandedChangeEvent>>(() => ({
+        tabPanels               : tabPanels,
+        defaultExpandedTabIndex : defaultExpandedTabIndex,
+        expandedTabIndex        : expandedTabIndexFn,
+        onExpandedChange        : handleExpandedChange,
+    }), [tabPanels, defaultExpandedTabIndex, expandedTabIndexFn, handleExpandedChange]);
     
     
     
@@ -132,3 +135,4 @@ export {
     TabStateProvider,
     TabStateProvider as default,
 }
+//#endregion tabState

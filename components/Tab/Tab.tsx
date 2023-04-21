@@ -27,7 +27,8 @@ import {
 
 // internals:
 import {
-    // contexts:
+    // states:
+    TabExpandedChangeEvent,
     TabState,
     
     
@@ -55,7 +56,7 @@ export const useTabStyleSheet = dynamicStyleSheet(
 
 
 
-export interface TabProps<TElement extends Element = HTMLElement, TValue extends any = string>
+export interface TabProps<TElement extends Element = HTMLElement, TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>
     extends
         // bases:
         Omit<GenericProps<TElement>,            // the *wrapper* component of <Generic<TElement> >
@@ -63,37 +64,39 @@ export interface TabProps<TElement extends Element = HTMLElement, TValue extends
             |'elmRef'                           // the elmRef is moved to <TabHeader>
             
             // values:
-            |'onChange'                         // converted to TValue
+            |'defaultValue'                     // not supported
+            |'value'                            // not supported
+            |'onChange'                         // not supported
+            
+            // formats:
+            |'autoCapitalize'                   // not supported
             
             // children:
-            |'children'                         // aliased `children` to `options`
+            |'children'                         // aliased `children` to `tabPanels`
             |'dangerouslySetInnerHTML'          // not supported
         >,
-        Omit<TabHeaderProps<Element, TValue>,   // the *main* component of <List<Element> >
+        Omit<TabHeaderProps<Element>,           // the *main* component of <List<Element> >
             // <Generic>:
             |keyof Omit<GenericProps<TElement>,
                 // refs:
                 |'elmRef'                       // the elmRef is moved to <TabHeader>
                 
-                // values:
-                |'onChange'                     // converted to TValue
-                
                 // children:
-                |'children'                     // aliased `children` to `options`
+                |'children'                     // aliased `children` to `tabPanels`
                 |'dangerouslySetInnerHTML'      // not supported
             >
         >,
-        Omit<TabBodyProps<Element, TValue>,     // the *complement* component of <Content<Element> >
+        Omit<TabBodyProps<Element>,             // the *complement* component of <Content<Element> >
             |keyof BasicProps<Element>
         >,
-        Omit<TabState<TValue>,
-            |'options'                          // already aliased by `children`
+        Omit<TabState<TTabExpandedChangeEvent>,
+            |'tabPanels'                        // already aliased by `children`
         >
 {
     // children:
-    children : TabState<TValue>['options']
+    children : TabState<TTabExpandedChangeEvent>['tabPanels']
 }
-const Tab = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabProps<TElement, TValue>): JSX.Element|null => {
+const Tab = <TElement extends Element = HTMLElement, TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>(props: TabProps<TElement, TTabExpandedChangeEvent>): JSX.Element|null => {
     // styles:
     const styles = useTabStyleSheet();
     
@@ -129,14 +132,6 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
         
         
         
-        // values:
-        children : options,
-        defaultValue,
-        value,
-        onChange,
-        
-        
-        
         // behaviors:
         actionCtrl,
         
@@ -149,6 +144,11 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
         inheritActive,
         readOnly,
         inheritReadOnly,
+        
+        children : tabPanels,
+        defaultExpandedTabIndex,
+        expandedTabIndex,
+        onExpandedChange,
         
         
         
@@ -182,15 +182,15 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
             // classes:
             mainClass={props.mainClass ?? styles.main}
         >
-            <TabStateProvider<TValue>
-                // values:
-                options={options}
-                defaultValue={defaultValue}
-                value={value}
-                onChange={onChange}
+            <TabStateProvider<TTabExpandedChangeEvent>
+                // states:
+                tabPanels={tabPanels}
+                defaultExpandedTabIndex={defaultExpandedTabIndex}
+                expandedTabIndex={expandedTabIndex}
+                onExpandedChange={onExpandedChange}
             >
                 {/* the *main* component of <List<Element> > */}
-                <TabHeader<Element, TValue>
+                <TabHeader<Element, TTabExpandedChangeEvent>
                     // refs:
                     elmRef={elmRef}
                     
@@ -230,7 +230,7 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
                 />
                 
                 {/* the *complement* component of <Content<Element> > */}
-                <TabBody<Element, TValue>
+                <TabBody<Element, TTabExpandedChangeEvent>
                     // variants:
                     {...basicVariantProps}
                     

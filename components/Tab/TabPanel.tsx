@@ -8,6 +8,11 @@ import {
 import {
     // react helper hooks:
     useMergeClasses,
+    
+    
+    
+    // a capability of UI to expand/reduce its size or toggle the visibility:
+    CollapsibleProps,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -17,20 +22,24 @@ import {
     Generic,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
+// internals:
+import type {
+    // states:
+    TabExpandedChangeEvent,
+}                           from './states/tabState'
 
 
-export interface TabPanelProps<TElement extends Element = HTMLElement, TValue extends any = string>
+
+export interface TabPanelProps<TElement extends Element = HTMLElement, TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>
     extends
         // bases:
-        GenericProps<TElement>
+        GenericProps<TElement>,
+        
+        // states:
+        CollapsibleProps<TTabExpandedChangeEvent>
 {
     // accessibilities:
     label          ?: React.ReactNode
-    
-    
-    
-    // values:
-    value           : TValue
     
     
     
@@ -47,16 +56,11 @@ export interface TabPanelProps<TElement extends Element = HTMLElement, TValue ex
     // children:
     children       ?: React.ReactNode
 }
-const TabPanel = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabPanelProps<TElement, TValue>): JSX.Element|null => {
+const TabPanel = <TElement extends Element = HTMLElement, TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>(props: TabPanelProps<TElement, TTabExpandedChangeEvent>): JSX.Element|null => {
     // rest props:
     const {
         // accessibilities:
         label : _label, // not used here, used by <TabHeader>|<TabBody>
-        
-        
-        
-        // values:
-        value : _value, // not used here, used by <TabHeader>|<TabBody>
         
         
         

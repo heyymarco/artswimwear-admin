@@ -19,7 +19,8 @@ import {
 
 // internals:
 import {
-    // hooks:
+    // states:
+    TabExpandedChangeEvent,
     useTabState,
 }                           from './states/tabState'
 import type {
@@ -29,17 +30,20 @@ import type {
 
 
 
-export interface TabHeaderProps<TElement extends Element = HTMLElement, TValue extends any = string>
+export interface TabHeaderProps<TElement extends Element = HTMLElement>
     extends
         // bases:
         Omit<ListProps<TElement>,
             // values:
-            |'defaultValue'            // converted to TValue
-            |'value'                   // converted to TValue
-            |'onChange'                // converted to TValue
+            |'defaultValue'            // not supported
+            |'value'                   // not supported
+            |'onChange'                // not supported
+            
+            // formats:
+            |'autoCapitalize'          // not supported
             
             // children:
-            |'children'                // replaced `children` with `options`
+            |'children'                // replaced `children` with `tabPanels`
             |'dangerouslySetInnerHTML' // not supported
         >,
         
@@ -53,14 +57,14 @@ export interface TabHeaderProps<TElement extends Element = HTMLElement, TValue e
             
             
             // children:
-            |'listItems' // replaced `listItems` with `options.label`
+            |'listItems' // replaced `listItems` with `tabPanels.label`
         >,
         ListItemComponentProps<Element>
 {
     // accessibilities:
     label ?: string
 }
-const TabHeader = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabHeaderProps<TElement, TValue>): JSX.Element|null => {
+const TabHeader = <TElement extends Element = HTMLElement, TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>(props: TabHeaderProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // accessibilities:
@@ -77,11 +81,10 @@ const TabHeader = <TElement extends Element = HTMLElement, TValue extends any = 
     
     // states:
     const {
-        // values:
-        options,
-        value,
-        onChange,
-    } = useTabState<TValue>();
+        tabPanels,
+        expandedTabIndex,
+        onExpandedChange,
+    } = useTabState<TTabExpandedChangeEvent>();
     
     
     
@@ -115,15 +118,15 @@ const TabHeader = <TElement extends Element = HTMLElement, TValue extends any = 
         
         
         // children:
-        listComponent.props.children ?? React.Children.map(options, (option) => {
+        listComponent.props.children ?? React.Children.map(tabPanels, (tabPanel, index) => {
             // conditions:
-            if (!React.isValidElement<TabPanelProps<Element, TValue>>(option)) return option;
+            if (!React.isValidElement<TabPanelProps<Element, TTabExpandedChangeEvent>>(tabPanel)) return tabPanel;
             
             
             
             // fn props:
-            const {props: {label: optionLabel, value: selectedValue}} = option;
-            const isActive = Object.is(value, selectedValue);
+            const {props: {label: tabPanelLabel}} = tabPanel;
+            const isActive = (expandedTabIndex === index);
             
             
             
@@ -152,13 +155,13 @@ const TabHeader = <TElement extends Element = HTMLElement, TValue extends any = 
                     
                     
                     // handlers:
-                    onClick         : () => onChange?.(selectedValue),
+                    onClick         : () => onExpandedChange?.({ expanded: true, tabIndex: index } as TTabExpandedChangeEvent),
                 },
                 
                 
                 
                 // children:
-                listItemComponent.props.children ?? ((optionLabel !== true) && optionLabel) ?? `${selectedValue}`,
+                listItemComponent.props.children ?? tabPanelLabel,
             );
         })
     );
