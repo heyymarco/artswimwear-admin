@@ -25,27 +25,27 @@ export interface TabOptionProps<TElement extends Element = HTMLElement, TValue e
         GenericProps<TElement>
 {
     // accessibilities:
-    label    ?: React.ReactNode
+    label          ?: React.ReactNode
     
     
     
     // values:
-    value     : TValue
+    value           : TValue
     
     
     
     // states:
-    expanded ?: boolean
-    
-    
-    
-    // children:
-    children ?: React.ReactNode
+    expanded       ?: boolean
     
     
     
     // components:
-    contentComponent ?: React.ReactComponentElement<any, GenericProps<TElement>>
+    panelComponent ?: React.ReactComponentElement<any, GenericProps<TElement>>
+    
+    
+    
+    // children:
+    children       ?: React.ReactNode
 }
 const TabOption = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabOptionProps<TElement, TValue>): JSX.Element|null => {
     // rest props:
@@ -61,12 +61,12 @@ const TabOption = <TElement extends Element = HTMLElement, TValue extends any = 
         
         
         // states:
-        expanded = false,
+        expanded       = false,
         
         
         
         // components:
-        contentComponent = (<Generic<TElement> /> as React.ReactComponentElement<any, GenericProps<TElement>>),
+        panelComponent = (<Generic<TElement> /> as React.ReactComponentElement<any, GenericProps<TElement>>),
         
         
         
@@ -78,7 +78,12 @@ const TabOption = <TElement extends Element = HTMLElement, TValue extends any = 
     
     // classes:
     const classes = useMergeClasses(
-        // preserves the original `classes`:
+        // preserves the original `classes` from `panelComponent`:
+        panelComponent.props.classes,
+        
+        
+        
+        // preserves the original `classes` from `props`:
         props.classes,
         
         
@@ -87,7 +92,12 @@ const TabOption = <TElement extends Element = HTMLElement, TValue extends any = 
         'tabOption',
     );
     const stateClasses = useMergeClasses(
-        // preserves the original `stateClasses`:
+        // preserves the original `stateClasses` from `panelComponent`:
+        panelComponent.props.stateClasses,
+        
+        
+        
+        // preserves the original `stateClasses` from `props`:
         props.stateClasses,
         
         
@@ -99,29 +109,32 @@ const TabOption = <TElement extends Element = HTMLElement, TValue extends any = 
     
     
     // jsx:
-    /* <Content> */
-    return React.cloneElement<GenericProps<TElement>>(contentComponent,
+    /* <Panel> */
+    return React.cloneElement<GenericProps<TElement>>(panelComponent,
         // props:
         {
             // other props:
             ...restGenericProps,
+            ...panelComponent.props, // overwrites restGenericProps (if any conflics)
             
             
             
             // semantics:
-            'aria-selected' : props['aria-selected'] ?? expanded,
+            semanticTag       : panelComponent.props.semanticTag        ?? props.semanticTag        ?? '',
+            semanticRole      : panelComponent.props.semanticRole       ?? props.semanticRole       ?? 'tabpanel',
+         // 'aria-labelledby' : panelComponent.props['aria-labelledby'] ?? props['aria-labelledby'] ?? collapsibleId,
             
             
             
             // classes:
-            classes         : classes,
-            stateClasses    : stateClasses,
+            classes           : classes,
+            stateClasses      : stateClasses,
         },
         
         
         
         // children:
-        children,
+        panelComponent.props.children ?? children,
     );
 };
 export {

@@ -231,7 +231,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                 // handlers:
                 onKeyDown={handleKeyDown}
             >
-                <TabOption value='informations' label={PAGE_PRODUCTS_TAB_INFORMATIONS} contentComponent={<Generic className={styles.pageInfo} />}>
+                <TabOption value='informations' label={PAGE_PRODUCTS_TAB_INFORMATIONS} panelComponent={<Generic className={styles.pageInfo} />}>
                     <AccessibilityProvider enabled={!isLoading}>
                         <ValidationProvider enableValidation={enableValidation}>
                             <span className='name label'>Name:</span>
