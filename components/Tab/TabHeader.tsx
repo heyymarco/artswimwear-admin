@@ -18,10 +18,10 @@ import {
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internals:
-import type {
-    // types:
-    EditorChangeEventHandler,
-}                           from '@/components/editors/Editor'
+import {
+    // hooks:
+    useTabState,
+}                           from './states/tabState'
 import type {
     // react components:
     TabPanelProps,
@@ -58,14 +58,7 @@ export interface TabHeaderProps<TElement extends Element = HTMLElement, TValue e
         ListItemComponentProps<Element>
 {
     // accessibilities:
-    label         ?: string
-    
-    
-    
-    // values:
-    children       : React.ReactNode // required
-    value         ?: TValue
-    onChange      ?: EditorChangeEventHandler<TValue>
+    label ?: string
 }
 const TabHeader = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabHeaderProps<TElement, TValue>): JSX.Element|null => {
     // rest props:
@@ -75,17 +68,20 @@ const TabHeader = <TElement extends Element = HTMLElement, TValue extends any = 
         
         
         
-        // values:
-        children : options,
-        value,
-        onChange,
-        
-        
-        
         // components:
         listComponent     = (<List<TElement>    /> as React.ReactComponentElement<any, ListProps<TElement>    >),
         listItemComponent = (<ListItem<Element> /> as React.ReactComponentElement<any, ListItemProps<Element> >),
     ...restListProps} = props;
+    
+    
+    
+    // states:
+    const {
+        // values:
+        options,
+        value,
+        onChange,
+    } = useTabState<TValue>();
     
     
     
@@ -126,8 +122,8 @@ const TabHeader = <TElement extends Element = HTMLElement, TValue extends any = 
             
             
             // fn props:
-            const {props: {label: optionLabel, value: optionValue}} = option;
-            const isActive = Object.is(value, optionValue);
+            const {props: {label: optionLabel, value: selectedValue}} = option;
+            const isActive = Object.is(value, selectedValue);
             
             
             
@@ -156,13 +152,13 @@ const TabHeader = <TElement extends Element = HTMLElement, TValue extends any = 
                     
                     
                     // handlers:
-                    onClick         : () => onChange?.(optionValue),
+                    onClick         : () => onChange?.(selectedValue),
                 },
                 
                 
                 
                 // children:
-                listItemComponent.props.children ?? ((optionLabel !== true) && optionLabel) ?? `${optionValue}`,
+                listItemComponent.props.children ?? ((optionLabel !== true) && optionLabel) ?? `${selectedValue}`,
             );
         })
     );

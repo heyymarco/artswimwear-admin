@@ -18,6 +18,10 @@ import {
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internals:
+import {
+    // hooks:
+    useTabState,
+}                           from './states/tabState'
 import type {
     // react components:
     TabPanelProps,
@@ -39,24 +43,12 @@ export interface TabBodyProps<TElement extends Element = HTMLElement, TValue ext
             |'dangerouslySetInnerHTML' // not supported
         >
 {
-    // values:
-    children       : React.ReactNode // required
-    value         ?: TValue
-    
-    
-    
     // components:
     bodyComponent ?: React.ReactComponentElement<any, BasicProps<TElement>>
 }
 const TabBody = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabBodyProps<TElement, TValue>): JSX.Element|null => {
     // rest props:
     const {
-        // values:
-        children : options,
-        value,
-        
-        
-        
         // components:
         bodyComponent = (<Content<TElement> /> as React.ReactComponentElement<any, BasicProps<TElement>>),
     ...restBasicProps} = props;
@@ -78,6 +70,15 @@ const TabBody = <TElement extends Element = HTMLElement, TValue extends any = st
         // classes:
         'tabBody',
     );
+    
+    
+    
+    // states:
+    const {
+        // values:
+        options,
+        value,
+    } = useTabState<TValue>();
     
     
     
@@ -112,8 +113,8 @@ const TabBody = <TElement extends Element = HTMLElement, TValue extends any = st
             
             
             // fn props:
-            const {props: {value: optionValue}} = option;
-            const isActive = Object.is(value, optionValue);
+            const {props: {value: selectedValue}} = option;
+            const isActive = Object.is(value, selectedValue);
             
             
             

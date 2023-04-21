@@ -2,21 +2,10 @@
 import {
     // react:
     default as React,
-    
-    
-    
-    // hooks:
-    useState,
 }                           from 'react'
 
 // reusable-ui core:
 import {
-    // react helper hooks:
-    useEvent,
-    useMergeEvents,
-    
-    
-    
     // basic variants of UI:
     useBasicVariantProps,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
@@ -37,10 +26,15 @@ import {
 }                           from '@cssfn/cssfn-react'           // writes css in react hook
 
 // internals:
-import type {
-    // types:
-    EditorChangeEventHandler,
-}                           from '@/components/editors/Editor'
+import {
+    // contexts:
+    TabState,
+    
+    
+    
+    // react components:
+    TabStateProvider,
+}                           from './states/tabState'
 import {
     // react components:
     TabHeaderProps,
@@ -72,7 +66,7 @@ export interface TabProps<TElement extends Element = HTMLElement, TValue extends
             |'onChange'                         // converted to TValue
             
             // children:
-            |'children'                         // replaced `children` with `options.label`
+            |'children'                         // aliased `children` to `options`
             |'dangerouslySetInnerHTML'          // not supported
         >,
         Omit<TabHeaderProps<Element, TValue>,   // the *main* component of <List<Element> >
@@ -85,16 +79,19 @@ export interface TabProps<TElement extends Element = HTMLElement, TValue extends
                 |'onChange'                     // converted to TValue
                 
                 // children:
-                |'children'                     // replaced `children` with `options.label`
+                |'children'                     // aliased `children` to `options`
                 |'dangerouslySetInnerHTML'      // not supported
             >
         >,
         Omit<TabBodyProps<Element, TValue>,     // the *complement* component of <Content<Element> >
             |keyof BasicProps<Element>
+        >,
+        Omit<TabState<TValue>,
+            |'options'                          // already aliased by `children`
         >
 {
-    // values:
-    defaultValue ?: TValue
+    // children:
+    children : TabState<TValue>['options']
 }
 const Tab = <TElement extends Element = HTMLElement, TValue extends any = string>(props: TabProps<TElement, TValue>): JSX.Element|null => {
     // styles:
@@ -163,34 +160,6 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
     
     
     
-    // fn states:
-    const isControllableValue = (value !== undefined);
-    const [valueDn, setValueDn] = useState<TValue|undefined>(defaultValue);
-    const valueFn : TValue|undefined = (
-        (value !== undefined)
-        ? value   /*controllable*/
-        : valueDn /*uncontrollable*/
-    );
-    
-    
-    
-    // handlers:
-    const handleChangeInternal = useEvent<EditorChangeEventHandler<TValue>>((value) => {
-        // update state:
-        if (!isControllableValue) setValueDn(value);
-    });
-    const handleChange         = useMergeEvents(
-        // preserves the original `onChange` from `props`:
-        onChange,
-        
-        
-        
-        // actions:
-        handleChangeInternal,
-    );
-    
-    
-    
     // jsx:
     return (
         /* the *wrapper* component of <Generic<TElement> > */
@@ -213,71 +182,64 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
             // classes:
             mainClass={props.mainClass ?? styles.main}
         >
-            {/* the *main* component of <List<Element> > */}
-            <TabHeader<Element, TValue>
-                // refs:
-                elmRef={elmRef}
-                
-                
-                
-                // variants:
-                {...basicVariantProps}
-                
-                orientation={orientation}
-                listStyle={listStyle}
-                
-                
-                
-                // accessibilities:
-                label={label}
-                
-                
-                
+            <TabStateProvider<TValue>
                 // values:
-                value={valueFn}
-                onChange={handleChange}
-                
-                
-                
-                // behaviors:
-                actionCtrl={actionCtrl}
-                
-                
-                
-                // states:
-                enabled={enabled}
-                inheritEnabled={inheritEnabled}
-                active={active}
-                inheritActive={inheritActive}
-                readOnly={readOnly}
-                inheritReadOnly={inheritReadOnly}
-                
-                
-                
-                // components:
-                listComponent={listComponent}
-                listItemComponent={listItemComponent}
+                options={options}
+                defaultValue={defaultValue}
+                value={value}
+                onChange={onChange}
             >
-                {options}
-            </TabHeader>
-            
-            {/* the *complement* component of <Content<Element> > */}
-            <TabBody<Element, TValue>
-                // variants:
-                {...basicVariantProps}
+                {/* the *main* component of <List<Element> > */}
+                <TabHeader<Element, TValue>
+                    // refs:
+                    elmRef={elmRef}
+                    
+                    
+                    
+                    // variants:
+                    {...basicVariantProps}
+                    
+                    orientation={orientation}
+                    listStyle={listStyle}
+                    
+                    
+                    
+                    // accessibilities:
+                    label={label}
+                    
+                    
+                    
+                    // behaviors:
+                    actionCtrl={actionCtrl}
+                    
+                    
+                    
+                    // states:
+                    enabled={enabled}
+                    inheritEnabled={inheritEnabled}
+                    active={active}
+                    inheritActive={inheritActive}
+                    readOnly={readOnly}
+                    inheritReadOnly={inheritReadOnly}
+                    
+                    
+                    
+                    // components:
+                    listComponent={listComponent}
+                    listItemComponent={listItemComponent}
+                />
                 
-                
-                
-                // values:
-                value={valueFn}
-                
-                
-                
-                // components:
-                bodyComponent={bodyComponent}
-            >
-                {options}
-            </TabBody>
+                {/* the *complement* component of <Content<Element> > */}
+                <TabBody<Element, TValue>
+                    // variants:
+                    {...basicVariantProps}
+                    
+                    
+                    
+                    // components:
+                    bodyComponent={bodyComponent}
+                />
+            </TabStateProvider>
         </Generic>
     );
 };
