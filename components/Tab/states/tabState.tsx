@@ -132,7 +132,7 @@ const TabStateProvider = <TTabExpandedChangeEvent extends TabExpandedChangeEvent
         handleExpandedChangeInternal,
     );
     const triggerExpandedChange        = useEvent((tabIndex: number): void => {
-        handleExpandedChange?.({ expanded: true, tabIndex } as TTabExpandedChangeEvent)
+        handleExpandedChange?.({ expanded: true, tabIndex } as TTabExpandedChangeEvent);
     });
     
     
