@@ -43,33 +43,37 @@ export interface TabExpandedChangeEvent extends ExpandedChangeEvent {
 
 
 
-export interface TabState<TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>
+export interface TabState
 {
     // states:
     tabPanels                : React.ReactNode // required
-    defaultExpandedTabIndex ?: number
     expandedTabIndex        ?: number
-    onExpandedChange        ?: EventHandler<TTabExpandedChangeEvent>
+    triggerExpandedChange    : (tabIndex: number) => void
 }
 
-
-
-const TabStateContext = createContext<TabState<any>>({
+const TabStateContext = createContext<TabState>({
     tabPanels                : undefined,
+    triggerExpandedChange    : () => {},
 });
 TabStateContext.displayName  = 'TabState';
 
-export const useTabState = <TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>(): TabState<TTabExpandedChangeEvent> => {
-    return useContext(TabStateContext) as TabState<TTabExpandedChangeEvent>;
+export const useTabState = (): TabState => {
+    return useContext(TabStateContext);
 }
 
 
 
 // react components:
 export interface TabStateProps<TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>
-    extends
-        TabState<TTabExpandedChangeEvent>
 {
+    // states:
+    tabPanels                : React.ReactNode // required
+    defaultExpandedTabIndex ?: number
+    expandedTabIndex        ?: number
+    onExpandedChange        ?: EventHandler<TTabExpandedChangeEvent>
+    
+    
+    
     // children:
     children ?: React.ReactNode
 }
@@ -111,22 +115,19 @@ const TabStateProvider = <TTabExpandedChangeEvent extends TabExpandedChangeEvent
         // actions:
         handleExpandedChangeInternal,
     );
-    
-    
-    
-    // contexts:
-    const tabState = useMemo<TabState<TTabExpandedChangeEvent>>(() => ({
-        tabPanels               : tabPanels,
-        defaultExpandedTabIndex : defaultExpandedTabIndex,
-        expandedTabIndex        : expandedTabIndexFn,
-        onExpandedChange        : handleExpandedChange,
-    }), [tabPanels, defaultExpandedTabIndex, expandedTabIndexFn, handleExpandedChange]);
+    const triggerExpandedChange        = useEvent((tabIndex: number): void => {
+        handleExpandedChange?.({ expanded: true, tabIndex } as TTabExpandedChangeEvent)
+    });
     
     
     
     // jsx:
     return (
-        <TabStateContext.Provider value={tabState}>
+        <TabStateContext.Provider value={{
+            tabPanels             : tabPanels,
+            expandedTabIndex      : expandedTabIndexFn,
+            triggerExpandedChange : triggerExpandedChange,
+        }}>
             {children}
         </TabStateContext.Provider>
     );

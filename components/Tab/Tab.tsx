@@ -29,7 +29,7 @@ import {
 import {
     // states:
     TabExpandedChangeEvent,
-    TabState,
+    TabStateProps,
     
     
     
@@ -89,12 +89,12 @@ export interface TabProps<TElement extends Element = HTMLElement, TTabExpandedCh
         Omit<TabBodyProps<Element>,             // the *complement* component of <Content<Element> >
             |keyof BasicProps<Element>
         >,
-        Omit<TabState<TTabExpandedChangeEvent>,
+        Omit<TabStateProps<TTabExpandedChangeEvent>,
             |'tabPanels'                        // already aliased by `children`
         >
 {
     // children:
-    children : TabState<TTabExpandedChangeEvent>['tabPanels']
+    children : TabStateProps<TTabExpandedChangeEvent>['tabPanels']
 }
 const Tab = <TElement extends Element = HTMLElement, TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>(props: TabProps<TElement, TTabExpandedChangeEvent>): JSX.Element|null => {
     // styles:
@@ -190,7 +190,7 @@ const Tab = <TElement extends Element = HTMLElement, TTabExpandedChangeEvent ext
                 onExpandedChange={onExpandedChange}
             >
                 {/* the *main* component of <List<Element> > */}
-                <TabHeader<Element, TTabExpandedChangeEvent>
+                <TabHeader<Element>
                     // refs:
                     elmRef={elmRef}
                     
@@ -230,7 +230,7 @@ const Tab = <TElement extends Element = HTMLElement, TTabExpandedChangeEvent ext
                 />
                 
                 {/* the *complement* component of <Content<Element> > */}
-                <TabBody<Element, TTabExpandedChangeEvent>
+                <TabBody<Element>
                     // variants:
                     {...basicVariantProps}
                     

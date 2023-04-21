@@ -64,7 +64,7 @@ export interface TabHeaderProps<TElement extends Element = HTMLElement>
     // accessibilities:
     label ?: string
 }
-const TabHeader = <TElement extends Element = HTMLElement, TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>(props: TabHeaderProps<TElement>): JSX.Element|null => {
+const TabHeader = <TElement extends Element = HTMLElement>(props: TabHeaderProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // accessibilities:
@@ -83,8 +83,8 @@ const TabHeader = <TElement extends Element = HTMLElement, TTabExpandedChangeEve
     const {
         tabPanels,
         expandedTabIndex,
-        onExpandedChange,
-    } = useTabState<TTabExpandedChangeEvent>();
+        triggerExpandedChange,
+    } = useTabState();
     
     
     
@@ -120,7 +120,7 @@ const TabHeader = <TElement extends Element = HTMLElement, TTabExpandedChangeEve
         // children:
         listComponent.props.children ?? React.Children.map(tabPanels, (tabPanel, index) => {
             // conditions:
-            if (!React.isValidElement<TabPanelProps<Element, TTabExpandedChangeEvent>>(tabPanel)) return tabPanel;
+            if (!React.isValidElement<TabPanelProps<Element, TabExpandedChangeEvent>>(tabPanel)) return tabPanel;
             
             
             
@@ -155,7 +155,7 @@ const TabHeader = <TElement extends Element = HTMLElement, TTabExpandedChangeEve
                     
                     
                     // handlers:
-                    onClick         : () => onExpandedChange?.({ expanded: true, tabIndex: index } as TTabExpandedChangeEvent),
+                    onClick         : () => triggerExpandedChange(index),
                 },
                 
                 

@@ -47,7 +47,7 @@ export interface TabBodyProps<TElement extends Element = HTMLElement>
     // components:
     bodyComponent ?: React.ReactComponentElement<any, BasicProps<TElement>>
 }
-const TabBody = <TElement extends Element = HTMLElement, TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>(props: TabBodyProps<TElement>): JSX.Element|null => {
+const TabBody = <TElement extends Element = HTMLElement>(props: TabBodyProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // components:
@@ -78,7 +78,7 @@ const TabBody = <TElement extends Element = HTMLElement, TTabExpandedChangeEvent
     const {
         tabPanels,
         expandedTabIndex,
-    } = useTabState<TTabExpandedChangeEvent>();
+    } = useTabState();
     
     
     
@@ -108,18 +108,14 @@ const TabBody = <TElement extends Element = HTMLElement, TTabExpandedChangeEvent
         // children:
         bodyComponent.props.children ?? React.Children.map(tabPanels, (tabPanel, index) => {
             // conditions:
-            if (!React.isValidElement<TabPanelProps<Element, TTabExpandedChangeEvent>>(tabPanel)) return tabPanel;
-            
-            
-            
-            // fn props:
             const isActive = (expandedTabIndex === index);
+            if (!isActive) return tabPanel;
+            if (!React.isValidElement<TabPanelProps<Element, TabExpandedChangeEvent>>(tabPanel)) return tabPanel;
             
             
             
             // jsx:
-            if (!isActive) return tabPanel;
-            return React.cloneElement<TabPanelProps<Element, TTabExpandedChangeEvent>>(tabPanel,
+            return React.cloneElement<TabPanelProps<Element, TabExpandedChangeEvent>>(tabPanel,
                 // props:
                 {
                     expanded : tabPanel.props.expanded ?? true,
