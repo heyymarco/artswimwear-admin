@@ -64,7 +64,7 @@ export const useTabStyleSheet = dynamicStyleSheet(
 export interface TabProps<TElement extends Element = HTMLElement, TValue extends any = string>
     extends
         // bases:
-        Omit<GenericProps<Element>,             // the *wrapper* component of <Generic<Element> >
+        Omit<GenericProps<TElement>,            // the *wrapper* component of <Generic<TElement> >
             // refs:
             |'elmRef'                           // the elmRef is moved to <TabHeader>
             
@@ -75,9 +75,9 @@ export interface TabProps<TElement extends Element = HTMLElement, TValue extends
             |'children'                         // replaced `children` with `options.label`
             |'dangerouslySetInnerHTML'          // not supported
         >,
-        Omit<TabHeaderProps<TElement, TValue>,  // the *main* component of <List<TElement> >
+        Omit<TabHeaderProps<Element, TValue>,   // the *main* component of <List<Element> >
             // <Generic>:
-            |keyof Omit<GenericProps<Element>,
+            |keyof Omit<GenericProps<TElement>,
                 // refs:
                 |'elmRef'                       // the elmRef is moved to <TabHeader>
                 
@@ -193,8 +193,8 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
     
     // jsx:
     return (
-        /* the *wrapper* component of <Generic<Element> > */
-        <Generic<Element>
+        /* the *wrapper* component of <Generic<TElement> > */
+        <Generic<TElement>
             // other props:
             {...restGenericProps}
             
@@ -213,8 +213,8 @@ const Tab = <TElement extends Element = HTMLElement, TValue extends any = string
             // classes:
             mainClass={props.mainClass ?? styles.main}
         >
-            {/* the *main* component of <List<TElement> > */}
-            <TabHeader<TElement, TValue>
+            {/* the *main* component of <List<Element> > */}
+            <TabHeader<Element, TValue>
                 // refs:
                 elmRef={elmRef}
                 
