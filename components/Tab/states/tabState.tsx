@@ -50,7 +50,7 @@ export interface TabExpandedChangeEvent extends ExpandedChangeEvent {
 export interface TabState
 {
     // states:
-    expandedTabIndex        ?: number
+    expandedTabIndex         : number
     triggerExpandedChange    : (tabIndex: number) => void
     
     
@@ -61,6 +61,7 @@ export interface TabState
 
 const TabStateContext = createContext<TabState>({
     // states:
+    expandedTabIndex         : _defaultExpandedTabIndex,
     triggerExpandedChange    : () => { throw Error('not inside <TabStateProvider>'); },
     
     
