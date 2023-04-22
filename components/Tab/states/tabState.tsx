@@ -35,6 +35,11 @@ import {
 // states:
 
 //#region tabState
+// defaults:
+const _defaultExpandedTabIndex = 0;
+
+
+
 export interface TabExpandedChangeEvent extends ExpandedChangeEvent {
     // positions:
     tabIndex : number
@@ -56,7 +61,7 @@ export interface TabState
 
 const TabStateContext = createContext<TabState>({
     // states:
-    triggerExpandedChange    : () => {},
+    triggerExpandedChange    : () => { throw Error('not inside <TabStateProvider>'); },
     
     
     
@@ -110,17 +115,17 @@ const TabStateProvider = <TTabExpandedChangeEvent extends TabExpandedChangeEvent
     
     
     
-    // fn states:
+    // states:
     const isControllableExpanded = (expandedTabIndex !== undefined);
-    const [expandedTabIndexDn, setExpandedTabIndexDn] = useState<number>(defaultExpandedTabIndex ?? 0);
+    const [expandedTabIndexDn, setExpandedTabIndexDn] = useState<number>(defaultExpandedTabIndex ?? _defaultExpandedTabIndex);
     const expandedTabIndexFn : number = (expandedTabIndex /*controllable*/ ?? expandedTabIndexDn /*uncontrollable*/);
     
     
     
     // handlers:
-    const handleExpandedChangeInternal = useEvent<EventHandler<TTabExpandedChangeEvent>>(({tabIndex}) => {
+    const handleExpandedChangeInternal = useEvent<EventHandler<TTabExpandedChangeEvent>>(({expanded, tabIndex}) => {
         // update state:
-        if (!isControllableExpanded) setExpandedTabIndexDn(tabIndex);
+        if (!isControllableExpanded) setExpandedTabIndexDn(expanded ? tabIndex : _defaultExpandedTabIndex);
     });
     const handleExpandedChange         = useMergeEvents(
         // preserves the original `onExpandedChange` from `props`:
