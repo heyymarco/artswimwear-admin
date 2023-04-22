@@ -81,9 +81,14 @@ const TabHeader = <TElement extends Element = HTMLElement>(props: TabHeaderProps
     
     // states:
     const {
-        tabPanels,
+        // states:
         expandedTabIndex,
         triggerExpandedChange,
+        
+        
+        
+        // data:
+        tabPanels,
     } = useTabState();
     
     

@@ -76,8 +76,13 @@ const TabBody = <TElement extends Element = HTMLElement>(props: TabBodyProps<TEl
     
     // states:
     const {
-        tabPanels,
+        // states:
         expandedTabIndex,
+        
+        
+        
+        // data:
+        tabPanels,
     } = useTabState();
     
     
