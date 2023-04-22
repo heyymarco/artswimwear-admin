@@ -29,11 +29,11 @@ import {
 import {
     // states:
     TabExpandedChangeEvent,
-    TabStateProps,
     
     
     
     // react components:
+    TabStateProps,
     TabStateProvider,
 }                           from './states/tabState'
 import {
@@ -89,6 +89,8 @@ export interface TabProps<TElement extends Element = HTMLElement, TTabExpandedCh
         Omit<TabBodyProps<Element>,             // the *complement* component of <Content<Element> >
             |keyof BasicProps<Element>
         >,
+        
+        // states:
         Omit<TabStateProps<TTabExpandedChangeEvent>,
             |'tabPanels'                        // already aliased by `children`
         >
@@ -184,10 +186,14 @@ const Tab = <TElement extends Element = HTMLElement, TTabExpandedChangeEvent ext
         >
             <TabStateProvider<TTabExpandedChangeEvent>
                 // states:
-                tabPanels={tabPanels}
                 defaultExpandedTabIndex={defaultExpandedTabIndex}
                 expandedTabIndex={expandedTabIndex}
                 onExpandedChange={onExpandedChange}
+                
+                
+                
+                // data:
+                tabPanels={tabPanels}
             >
                 {/* the *main* component of <List<Element> > */}
                 <TabHeader<Element>
