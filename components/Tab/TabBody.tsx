@@ -106,9 +106,9 @@ const TabBody = <TElement extends Element = HTMLElement>(props: TabBodyProps<TEl
         
         
         // children:
-        bodyComponent.props.children ?? React.Children.map(tabPanels, (tabPanel, index) => {
+        bodyComponent.props.children ?? React.Children.map(tabPanels, (tabPanel, tabIndex) => {
             // conditions:
-            const isActive = (expandedTabIndex === index);
+            const isActive = (expandedTabIndex === tabIndex);
             if (!isActive) return tabPanel;
             if (!React.isValidElement<TabPanelProps<Element, TabExpandedChangeEvent>>(tabPanel)) return tabPanel;
             

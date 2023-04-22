@@ -118,7 +118,7 @@ const TabHeader = <TElement extends Element = HTMLElement>(props: TabHeaderProps
         
         
         // children:
-        listComponent.props.children ?? React.Children.map(tabPanels, (tabPanel, index) => {
+        listComponent.props.children ?? React.Children.map(tabPanels, (tabPanel, tabIndex) => {
             // conditions:
             if (!React.isValidElement<TabPanelProps<Element, TabExpandedChangeEvent>>(tabPanel)) return tabPanel;
             
@@ -126,7 +126,7 @@ const TabHeader = <TElement extends Element = HTMLElement>(props: TabHeaderProps
             
             // fn props:
             const {props: {label: tabPanelLabel}} = tabPanel;
-            const isActive = (expandedTabIndex === index);
+            const isActive = (expandedTabIndex === tabIndex);
             
             
             
@@ -155,7 +155,7 @@ const TabHeader = <TElement extends Element = HTMLElement>(props: TabHeaderProps
                     
                     
                     // handlers:
-                    onClick         : () => triggerExpandedChange(index),
+                    onClick         : () => triggerExpandedChange(tabIndex),
                 },
                 
                 
