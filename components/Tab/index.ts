@@ -1,4 +1,5 @@
 export *            from './states/tabState'
+
 export *            from './styles/styles'
 export *            from './Tab'
 export {default}    from './Tab'

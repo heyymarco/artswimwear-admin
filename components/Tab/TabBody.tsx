@@ -30,6 +30,7 @@ import type {
 
 
 
+// react components:
 export interface TabBodyProps<TElement extends Element = HTMLElement>
     extends
         // bases:

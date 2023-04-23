@@ -56,6 +56,7 @@ export const useTabStyleSheet = dynamicStyleSheet(
 
 
 
+// react components:
 export interface TabProps<TElement extends Element = HTMLElement, TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>
     extends
         // bases:

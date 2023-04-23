@@ -29,6 +29,7 @@ const useFullEditDialogStyleSheet = dynamicStyleSheets(
 
 
 
+// react components:
 export interface FullEditDialogProps {
     // data:
     product          : ProductEntry

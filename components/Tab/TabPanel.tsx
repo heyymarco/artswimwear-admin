@@ -30,6 +30,7 @@ import type {
 
 
 
+// react components:
 export interface TabPanelProps<TElement extends Element = HTMLElement, TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>
     extends
         // bases:

@@ -20,6 +20,7 @@ const useSimpleEditDialogStyleSheet = dynamicStyleSheet(
 
 
 
+// react components:
 export interface SimpleEditDialogProps<TValue> {
     // data:
     product         : ProductEntry

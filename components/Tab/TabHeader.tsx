@@ -7,14 +7,15 @@ import {
 // reusable-ui components:
 import {
     // react components:
-    ListProps,
-    List,
-    
     ListItemProps,
     ListItem,
     
-    ListComponentProps,
     ListItemComponentProps,
+    
+    ListProps,
+    List,
+    
+    ListComponentProps,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internals:
@@ -34,6 +35,7 @@ import type {
 
 
 
+// react components:
 export interface TabHeaderProps<TElement extends Element = HTMLElement>
     extends
         // bases:
@@ -123,7 +125,7 @@ const TabHeader = <TElement extends Element = HTMLElement>(props: TabHeaderProps
         // children:
         listComponent.props.children ?? React.Children.map(tabPanels, (tabPanel, tabIndex) => {
             // conditions:
-            if (!React.isValidElement<TabPanelProps<Element, TabExpandedChangeEvent>>(tabPanel)) return tabPanel;
+            if (!React.isValidElement<TabPanelProps<Element, TabExpandedChangeEvent>>(tabPanel)) return tabPanel; // not a <TabPanel> => ignore
             
             
             
@@ -174,7 +176,7 @@ const TabHeader = <TElement extends Element = HTMLElement>(props: TabHeaderProps
                     // components:
                     listItemComponent={
                         // clone listItemComponent element with (almost) blank props:
-                        <listItemComponent.type
+                        <listItemComponent.type<Element, TabExpandedChangeEvent>
                             // identifiers:
                             key={listItemComponent.key}
                             

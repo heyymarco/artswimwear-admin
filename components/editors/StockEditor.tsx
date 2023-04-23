@@ -58,6 +58,7 @@ import {
 
 
 
+// react components:
 export interface StockEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:

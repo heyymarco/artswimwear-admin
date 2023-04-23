@@ -36,6 +36,7 @@ export type ProductVisibility = 'published'|'hidden'|'draft'
 
 
 
+// react components:
 interface VisibilityEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
