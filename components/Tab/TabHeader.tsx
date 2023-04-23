@@ -23,6 +23,10 @@ import {
     TabExpandedChangeEvent,
     useTabState,
 }                           from './states/tabState'
+import {
+    // react components:
+    ListItemWithState,
+}                           from './ListItemWithState'
 import type {
     // react components:
     TabPanelProps,
@@ -81,12 +85,6 @@ const TabHeader = <TElement extends Element = HTMLElement>(props: TabHeaderProps
     
     // states:
     const {
-        // states:
-        expandedTabIndex,
-        triggerExpandedChange,
-        
-        
-        
         // data:
         tabPanels,
     } = useTabState();
@@ -131,42 +129,66 @@ const TabHeader = <TElement extends Element = HTMLElement>(props: TabHeaderProps
             
             // fn props:
             const {props: {label: tabPanelLabel}} = tabPanel;
-            const isActive = (expandedTabIndex === tabIndex);
             
             
             
-            // jsx:
-            /* <ListItem<Element> > */
-            return React.cloneElement<ListItemProps<Element>>(listItemComponent,
-                // props:
-                {
-                    // identifiers:
-                 // id              : collapsibleId,
-                    
-                    
-                    
-                    // semantics:
-                    semanticTag     : listItemComponent.props.semanticTag      ?? '',
-                    semanticRole    : listItemComponent.props.semanticRole     ?? 'tab',
-                    'aria-selected' : listItemComponent.props['aria-selected'] ?? isActive,
-                 // 'aria-controls' : listItemComponent.props['aria-controls'] ?? collapsibleId,
-                    
-                    
-                    
-                    // accessibilities:
-                    active          : listItemComponent.props.active           ?? isActive,
-                    tabIndex        : listItemComponent.props.tabIndex         ?? (isActive ? 0 : -1),
-                    
-                    
-                    
-                    // handlers:
-                    onClick         : () => triggerExpandedChange(tabIndex),
-                },
+            // props:
+            const listItemComponentProps = {
+                // other props:
+                ...listItemComponent.props,
+                
+                
+                
+                // identifiers:
+             // id              : collapsibleId,
+                
+                
+                
+                // semantics:
+                semanticTag     : listItemComponent.props.semanticTag      ?? '',
+                semanticRole    : listItemComponent.props.semanticRole     ?? 'tab',
+             // 'aria-controls' : listItemComponent.props['aria-controls'] ?? collapsibleId,
                 
                 
                 
                 // children:
-                listItemComponent.props.children ?? tabPanelLabel,
+                children        : listItemComponent.props.children ?? tabPanelLabel,
+            };
+            
+            
+            
+            // jsx:
+            /* ListItemWithState<Element> */
+            return (
+                <ListItemWithState<Element, TabExpandedChangeEvent>
+                    // other props:
+                    {...listItemComponentProps} // steals all listItemComponent's props, so the <Owner> can recognize the <ListItemWithState> as <TheirChild>
+                    
+                    
+                    
+                    // positions:
+                    tabIndex={tabIndex}
+                    
+                    
+                    
+                    // components:
+                    listItemComponent={
+                        // clone listItemComponent element with (almost) blank props:
+                        <listItemComponent.type
+                            // identifiers:
+                            key={listItemComponent.key}
+                            
+                            
+                            
+                            //#region restore conflicting props
+                            {...{
+                                ...(('tabIndex'          in listItemComponentProps) ? { tabIndex          : listItemComponentProps.tabIndex          } : undefined),
+                                ...(('listItemComponent' in listItemComponentProps) ? { listItemComponent : listItemComponentProps.listItemComponent } : undefined),
+                            }}
+                            //#endregion restore conflicting props
+                        />
+                    }
+                />
             );
         })
     );
