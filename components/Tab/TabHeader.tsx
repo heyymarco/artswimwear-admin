@@ -110,6 +110,7 @@ const TabHeader = <TElement extends Element = HTMLElement>(props: TabHeaderProps
             'aria-label' : listComponent.props['aria-label'] ?? props['aria-label'] ?? label,
             
             
+            
             // variants:
             listStyle    : listComponent.props.listStyle     ?? props.listStyle     ?? 'tab',
             orientation  : listComponent.props.orientation   ?? props.orientation   ?? 'inline',
@@ -123,7 +124,7 @@ const TabHeader = <TElement extends Element = HTMLElement>(props: TabHeaderProps
         
         
         // children:
-        listComponent.props.children ?? React.Children.map(tabPanels, (tabPanel, tabIndex) => {
+        React.Children.map(listComponent.props.children ?? tabPanels, (tabPanel, tabIndex) => {
             // conditions:
             if (!React.isValidElement<TabPanelProps<Element, TabExpandedChangeEvent>>(tabPanel)) return tabPanel; // not a <TabPanel> => ignore
             
@@ -135,7 +136,7 @@ const TabHeader = <TElement extends Element = HTMLElement>(props: TabHeaderProps
             
             
             // props:
-            const listItemComponentProps = {
+            const listItemComponentProps : ListItemProps<Element> = {
                 // other props:
                 ...listItemComponent.props,
                 
@@ -160,7 +161,6 @@ const TabHeader = <TElement extends Element = HTMLElement>(props: TabHeaderProps
             
             
             // jsx:
-            /* ListItemWithState<Element> */
             return (
                 <ListItemWithState<Element, TabExpandedChangeEvent>
                     // other props:
@@ -176,7 +176,7 @@ const TabHeader = <TElement extends Element = HTMLElement>(props: TabHeaderProps
                     // components:
                     listItemComponent={
                         // clone listItemComponent element with (almost) blank props:
-                        <listItemComponent.type<Element, TabExpandedChangeEvent>
+                        <listItemComponent.type
                             // identifiers:
                             key={listItemComponent.key}
                             
