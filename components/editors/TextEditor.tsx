@@ -13,6 +13,7 @@ import {
 
 
 
+// react components:
 export interface TextEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:

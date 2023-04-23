@@ -4,12 +4,6 @@ import {
     default as React,
 }                           from 'react'
 
-// reusable-ui components:
-import type {
-    // react components:
-    InputProps,
-}                           from '@reusable-ui/components'      // a set of official Reusable-UI components
-
 // internals:
 import type {
     // react components:

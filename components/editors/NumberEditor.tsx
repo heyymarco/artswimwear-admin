@@ -24,6 +24,7 @@ import {
 
 
 
+// react components:
 export interface NumberEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:

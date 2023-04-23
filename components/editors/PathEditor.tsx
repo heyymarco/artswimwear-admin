@@ -21,6 +21,7 @@ import {
 
 
 
+// react components:
 export interface PathEditorProps<TElement extends Element = HTMLSpanElement>
     extends
         // bases:

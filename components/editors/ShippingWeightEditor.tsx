@@ -33,6 +33,7 @@ import {
 
 
 
+// react components:
 export interface ShippingWeightEditorProps<TElement extends Element = HTMLSpanElement>
     extends
         // bases:

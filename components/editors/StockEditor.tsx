@@ -33,10 +33,6 @@ import {
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internals:
-import type {
-    // react components:
-    EditorProps,
-}                           from '@/components/editors/Editor'
 import {
     // react components:
     QuantityEditorProps,

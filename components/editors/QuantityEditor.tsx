@@ -25,6 +25,7 @@ import type {
 
 
 
+// react components:
 export interface QuantityEditorProps<TElement extends Element = HTMLSpanElement>
     extends
         // bases:

@@ -20,6 +20,7 @@ import {
 
 
 
+// react components:
 export interface CurrencyEditorProps<TElement extends Element = HTMLSpanElement>
     extends
         // bases:
