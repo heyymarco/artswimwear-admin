@@ -63,7 +63,7 @@ export interface TabHeaderProps<TElement extends Element = HTMLElement>
             
             
             // children:
-            |'listItems' // replaced `listItems` with `tabPanels.label`
+            |'listItems'               // replaced `listItems` with `tabPanels.label`
         >,
         ListItemComponentProps<Element>
 {
