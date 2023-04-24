@@ -89,6 +89,7 @@ const TabHeader = <TElement extends Element = HTMLElement>(props: TabHeaderProps
     const {
         // data:
         tabPanels,
+        tabId,
     } = useTabState();
     
     
@@ -131,6 +132,8 @@ const TabHeader = <TElement extends Element = HTMLElement>(props: TabHeaderProps
             
             
             // fn props:
+            const tabHeaderId = `${tabId}h${tabIndex}`;
+            const tabPanelId  = `${tabId}p${tabIndex}`;
             const {props: {label: tabPanelLabel}} = tabPanel;
             
             
@@ -143,19 +146,19 @@ const TabHeader = <TElement extends Element = HTMLElement>(props: TabHeaderProps
                 
                 
                 // identifiers:
-             // id              : collapsibleId,
+                id              : listItemComponent.props.id               ?? tabHeaderId,
                 
                 
                 
                 // semantics:
                 semanticTag     : listItemComponent.props.semanticTag      ?? '',
                 semanticRole    : listItemComponent.props.semanticRole     ?? 'tab',
-             // 'aria-controls' : listItemComponent.props['aria-controls'] ?? collapsibleId,
+                'aria-controls' : listItemComponent.props['aria-controls'] ?? tabPanelId,
                 
                 
                 
                 // children:
-                children        : listItemComponent.props.children ?? tabPanelLabel,
+                children        : listItemComponent.props.children         ?? tabPanelLabel,
             };
             
             

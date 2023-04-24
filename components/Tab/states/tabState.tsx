@@ -57,6 +57,7 @@ export interface TabState
     
     // data:
     tabPanels                : React.ReactNode // required
+    tabId                    : string
 }
 
 const TabStateContext = createContext<TabState>({
@@ -68,6 +69,7 @@ const TabStateContext = createContext<TabState>({
     
     // data:
     tabPanels                : undefined,
+    tabId                    : '',
 });
 TabStateContext.displayName  = 'TabState';
 
@@ -89,6 +91,7 @@ export interface TabStateProps<TTabExpandedChangeEvent extends TabExpandedChange
     
     // data:
     tabPanels                : React.ReactNode // required
+    tabId                    : string
     
     
     
@@ -107,6 +110,7 @@ const TabStateProvider = <TTabExpandedChangeEvent extends TabExpandedChangeEvent
         
         // data:
         tabPanels,
+        tabId,
         
         
         
@@ -154,6 +158,7 @@ const TabStateProvider = <TTabExpandedChangeEvent extends TabExpandedChangeEvent
             
             // data:
             tabPanels             : tabPanels,
+            tabId                 : tabId,
         }}>
             {children}
         </TabStateContext.Provider>

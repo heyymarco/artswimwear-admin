@@ -127,7 +127,6 @@ const TabPanel = <TElement extends Element = HTMLElement, TTabExpandedChangeEven
             // semantics:
             semanticTag       : panelComponent.props.semanticTag        ?? props.semanticTag        ?? '',
             semanticRole      : panelComponent.props.semanticRole       ?? props.semanticRole       ?? 'tabpanel',
-         // 'aria-labelledby' : panelComponent.props['aria-labelledby'] ?? props['aria-labelledby'] ?? collapsibleId,
             
             
             

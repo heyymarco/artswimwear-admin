@@ -83,6 +83,7 @@ const TabBody = <TElement extends Element = HTMLElement>(props: TabBodyProps<TEl
     const {
         // data:
         tabPanels,
+        tabId,
     } = useTabState();
     
     
@@ -117,6 +118,12 @@ const TabBody = <TElement extends Element = HTMLElement>(props: TabBodyProps<TEl
             
             
             
+            // fn props:
+            const tabHeaderId = `${tabId}h${tabIndex}`;
+            const tabPanelId  = `${tabId}p${tabIndex}`;
+            
+            
+            
             // props:
             const tabPanelProps = tabPanel.props;
             
@@ -141,6 +148,16 @@ const TabBody = <TElement extends Element = HTMLElement>(props: TabBodyProps<TEl
                         <tabPanel.type
                             // identifiers:
                             key={tabPanel.key}
+                            
+                            
+                            
+                            // identifiers:
+                            id={tabPanelProps.id ?? tabPanelId}
+                            
+                            
+                            
+                            // semantics:
+                            aria-labelledby={tabPanelProps['aria-labelledby'] ?? tabHeaderId}
                             
                             
                             

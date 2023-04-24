@@ -2,6 +2,11 @@
 import {
     // react:
     default as React,
+    
+    
+    
+    // hooks:
+    useId,
 }                           from 'react'
 
 // reusable-ui core:
@@ -93,7 +98,9 @@ export interface TabProps<TElement extends Element = HTMLElement, TTabExpandedCh
         
         // states:
         Omit<TabStateProps<TTabExpandedChangeEvent>,
+            // data:
             |'tabPanels'                        // already aliased by `children`
+            |'tabId'                            // already aliased by `id`
         >
 {
     // children:
@@ -110,11 +117,21 @@ const Tab = <TElement extends Element = HTMLElement, TTabExpandedChangeEvent ext
     
     
     
+    // identifiers:
+    const defaultId = useId();
+    
+    
+    
     // rest props:
     const {
         // refs:
         elmRef,
         outerRef,
+        
+        
+        
+        // identifiers:
+        id = defaultId,
         
         
         
@@ -172,13 +189,18 @@ const Tab = <TElement extends Element = HTMLElement, TTabExpandedChangeEvent ext
             
             
             
-            // semantics:
-            tag={props.tag ?? 'div'}
-            
-            
-            
             // refs:
             outerRef={outerRef}
+            
+            
+            
+            // identifiers:
+            id={id}
+            
+            
+            
+            // semantics:
+            tag={props.tag ?? 'div'}
             
             
             
@@ -195,6 +217,7 @@ const Tab = <TElement extends Element = HTMLElement, TTabExpandedChangeEvent ext
                 
                 // data:
                 tabPanels={tabPanels}
+                tabId={id}
             >
                 {/* the *main* component of <List<Element> > */}
                 <TabHeader<Element>
