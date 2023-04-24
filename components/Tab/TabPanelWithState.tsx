@@ -23,13 +23,13 @@ import type {
 export interface TabPanelWithStateProps<TElement extends Element = HTMLElement, TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>
     extends
         // bases:
-        Omit<TabPanelProps<TElement>, 'tabIndex'>,
+        Omit<TabPanelProps<TElement, TTabExpandedChangeEvent>, 'tabIndex'>,
         
         // positions:
         Pick<TTabExpandedChangeEvent, 'tabIndex'>,
         
         // components:
-        Required<TabPanelComponentProps<TElement>>
+        Required<TabPanelComponentProps<TElement, TTabExpandedChangeEvent>>
 {
 }
 export const TabPanelWithState = <TElement extends Element = HTMLElement, TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>(props: TabPanelWithStateProps<TElement, TTabExpandedChangeEvent>): JSX.Element|null => {
@@ -57,7 +57,7 @@ export const TabPanelWithState = <TElement extends Element = HTMLElement, TTabEx
     
     // jsx:
     /* <TabPanel> */
-    return React.cloneElement<TabPanelProps<TElement>>(tabPanelComponent,
+    return React.cloneElement<TabPanelProps<TElement, TTabExpandedChangeEvent>>(tabPanelComponent,
         // props:
         {
             // other props:
