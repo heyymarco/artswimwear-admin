@@ -146,3 +146,11 @@ export {
     TabPanel,
     TabPanel as default,
 }
+
+
+
+export interface TabPanelComponentProps<TElement extends Element = HTMLElement, TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>
+{
+    // components:
+    tabPanelComponent ?: React.ReactComponentElement<any, TabPanelProps<TElement, TTabExpandedChangeEvent>>
+}
