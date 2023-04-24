@@ -111,7 +111,7 @@ const TabBody = <TElement extends Element = HTMLElement>(props: TabBodyProps<TEl
         
         
         // children:
-        bodyComponent.props.children ?? React.Children.map(tabPanels, (tabPanel, tabIndex) => {
+        React.Children.map(bodyComponent.props.children ?? tabPanels, (tabPanel, tabIndex) => {
             // conditions:
             if (!React.isValidElement<TabPanelProps<Element, TabExpandedChangeEvent>>(tabPanel)) return tabPanel; // not a <TabPanel> => ignore
             
