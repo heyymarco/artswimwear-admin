@@ -5,6 +5,12 @@ import {
     children,
     style,
     vars,
+    
+    
+    
+    // reads/writes css variables configuration:
+    usesCssProps,
+    usesPrefixedProps,
 }                           from '@cssfn/core'                  // writes css in javascript
 
 // reusable-ui core:
@@ -34,8 +40,13 @@ import {
 import {
     // configs:
     basics,
-    collapses,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
+
+// internals:
+import {
+    // configs:
+    tabs,
+}                           from './config'
 
 
 
@@ -48,7 +59,7 @@ export const usesTabPanelLayout = () => {
     
     // more efficient:
     // states:
-    const {collapsibleVars} = usesCollapsible(collapses);
+    const {collapsibleVars} = usesCollapsible();
     
     
     
@@ -57,6 +68,11 @@ export const usesTabPanelLayout = () => {
         ...style({
             // positions:
             gridArea: '1/1/1/1', // the options are overlapping each other, so the parent takes the maximum width & height of children
+            
+            
+            
+            // customize:
+            ...usesCssProps(usesPrefixedProps(tabs, 'panel')), // apply config's cssProps starting with panel***
             
             
             
@@ -76,7 +92,7 @@ export const usesTabPanelStates = () => {
     // dependencies:
     
     // states:
-    const {collapsibleRule} = usesCollapsible(collapses);
+    const {collapsibleRule} = usesCollapsible(usesPrefixedProps(tabs, 'panel'));
     
     
     
@@ -134,6 +150,11 @@ export const usesTabBodyLayout = () => {
             // states:
             ...usesTabPanelStates(),
         })),
+        
+        
+        
+        // customize:
+        ...usesCssProps(usesPrefixedProps(tabs, 'body')), // apply config's cssProps starting with body***
     });
 };
 export const usesTabLayout = () => {
@@ -177,6 +198,11 @@ export const usesTabLayout = () => {
          // padding                : paddingVars.padding,
             paddingInline          : paddingVars.paddingInline,
             paddingBlock           : paddingVars.paddingBlock,
+            
+            
+            
+            // customize:
+            ...usesCssProps(tabs), // apply config's cssProps
         }),
         
         
