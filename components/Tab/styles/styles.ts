@@ -57,6 +57,9 @@ export const usesTabPanelLayout = () => {
     // // features:
     // const {animationRule, animationVars} = usesAnimation();
     
+    // capabilities:
+    const {groupableVars  } = usesGroupable();
+    
     // more efficient:
     // states:
     const {collapsibleVars} = usesCollapsible();
@@ -67,7 +70,20 @@ export const usesTabPanelLayout = () => {
         // layouts:
         ...style({
             // positions:
-            gridArea: '1/1/1/1', // the options are overlapping each other, so the parent takes the maximum width & height of children
+            gridArea      : '1/1/1/1', // the options are overlapping each other, so the parent takes the maximum width & height of children
+            
+            
+            
+            // scrolls:
+            overflow      : 'auto', // enable horz & vert scrolling
+            
+            
+            
+            // spacings:
+            marginInline  : `calc(0px - ${groupableVars.paddingInline})`, // cancel out parent's padding with negative margin
+            marginBlock   : `calc(0px - ${groupableVars.paddingBlock })`, // cancel out parent's padding with negative margin
+            paddingInline : groupableVars.paddingInline,                  // restore parent's padding with positive margin
+            paddingBlock  : groupableVars.paddingBlock,                   // restore parent's padding with positive margin
             
             
             
@@ -77,8 +93,8 @@ export const usesTabPanelLayout = () => {
             
             
             // animations:
-         // anim : animationVars.anim,   // inefficient: just for single animation
-            anim : collapsibleVars.anim, // more efficient
+         // anim          : animationVars.anim,   // inefficient: just for single animation
+            anim          : collapsibleVars.anim, // more efficient
         }),
         
         
@@ -105,9 +121,10 @@ export const usesTabPanelStates = () => {
                 visibility   : 'hidden', // hide the <TabPanel> while   consuming space
             }),
             ifCollapsed({
-                // do not remove the <TabPanel> from DOM, causing <TabBody>'s width changing when switching tab
-             // // appearances:
+                // appearances:
+             // do not remove the <TabPanel> from DOM, causing <TabBody>'s width changing when switching tab
              // display      : 'none',   // hide the <TabPanel> without consuming space
+                visibility   : 'hidden', // hide the <TabPanel> while   consuming space
                 
                 
                 
@@ -123,7 +140,7 @@ export const usesTabBodyLayout = () => {
     // dependencies:
     
     // features:
-    const {borderVars   } = usesBorder();
+    const {borderVars} = usesBorder();
     
     
     
@@ -132,6 +149,11 @@ export const usesTabBodyLayout = () => {
         display      : 'grid',
         justifyItems : 'stretch', // overlaps each <TabPanel> to anothers
         alignItems   : 'stretch', // overlaps each <TabPanel> to anothers
+        
+        
+        
+        // scrolls:
+        overflow     : 'hidden', // force <TabPanel> to activate the `overflow: 'auto'`
         
         
         
@@ -163,6 +185,8 @@ export const usesTabLayout = () => {
     // features:
     const {borderVars   } = usesBorder();
     const {paddingVars  } = usesPadding();
+    
+    // capabilities:
     const {groupableRule} = usesGroupable({
         orientationInlineSelector : null, // never  => the <TabHeader> & <TabBody> are never  stacked in horizontal
         orientationBlockSelector  : '&',  // always => the <TabHeader> & <TabBody> are always stacked in vertical

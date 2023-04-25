@@ -84,11 +84,6 @@ export const usesTabBodyLayout = () => {
     
     
     return style({
-        // scrolls:
-        overflow       : 'auto', // enable horz & vert scrolling
-        
-        
-        
         // borders:
         [borderVars.borderWidth]: '0px',
     });
