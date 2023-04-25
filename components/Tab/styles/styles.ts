@@ -1,7 +1,6 @@
 // cssfn:
 import {
     // writes css in javascript:
-    rule,
     states,
     children,
     style,
