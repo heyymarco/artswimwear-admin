@@ -2,12 +2,18 @@
 import {
     // react:
     default as React,
+    
+    
+    
+    // hooks:
+    useMemo,
 }                           from 'react'
 
 // reusable-ui core:
 import {
     // react helper hooks:
     useMergeClasses,
+    useMergeStyles,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -18,6 +24,10 @@ import {
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internals:
+import {
+    // features:
+    usesTab,
+}                           from './features/tab'
 import {
     // variants:
     TabPanelVariant,
@@ -108,10 +118,45 @@ const TabBody = <TElement extends Element = HTMLElement>(props: TabBodyProps<TEl
     
     // states:
     const {
+        // states:
+        expandedTabIndex,
+        
+        
+        
         // data:
         tabPanels,
         tabId,
     } = useTabState();
+    
+    
+    
+    // features:
+    const {tabVars} = usesTab();
+    
+    
+    
+    // styles:
+    const expandedTabIndexStyle = useMemo<React.CSSProperties>(() => ({
+        // values:
+        [
+            tabVars.expandedTabIndex
+            .slice(4, -1) // fix: var(--customProp) => --customProp
+        ] : expandedTabIndex,
+    }), [tabVars.expandedTabIndex, expandedTabIndex]);
+    const mergedStyle           = useMergeStyles(
+        // values:
+        expandedTabIndexStyle,
+        
+        
+        
+        // preserves the original `style` from `props` (can overwrite the `expandedTabIndexStyle`):
+        props.style,
+        
+        
+        
+        // preserves the original `style` from `bodyComponent` (can overwrite the `style` and/or the `expandedTabIndexStyle`):
+        bodyComponent.props.style,
+    );
     
     
     
@@ -135,6 +180,11 @@ const TabBody = <TElement extends Element = HTMLElement>(props: TabBodyProps<TEl
             // classes:
             classes        : classes,
             variantClasses : variantClasses,
+            
+            
+            
+            // styles:
+            style          : mergedStyle,
         },
         
         

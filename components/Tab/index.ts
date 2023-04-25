@@ -1,3 +1,4 @@
+export *            from './features/tab'
 export *            from './variants/TabPanelVariant'
 export *            from './states/tabState'
 
