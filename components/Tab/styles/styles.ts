@@ -15,6 +15,11 @@ import {
     
     
     
+    // animation stuff of UI:
+    usesAnimation,
+    
+    
+    
     // padding (inner spacing) stuff of UI:
     usesPadding,
     
@@ -22,29 +27,69 @@ import {
     
     // groups a list of UIs into a single UI:
     usesGroupable,
+    
+    
+    
+    // a capability of UI to expand/reduce its size or toggle the visibility:
+    ifCollapsing,
+    ifCollapsed,
+    usesCollapsible,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
 import {
     // configs:
     basics,
+    collapses,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 
 
 export const usesTabPanelLayout = () => {
+    // dependencies:
+    
+    // features:
+    const {animationRule, animationVars} = usesAnimation();
+    
+    
+    
     return style({
-        // positions:
-        gridArea: '1/1/1/1', // the options are overlapping each other, so the parent takes the maximum width & height of children
+        // layouts:
+        ...style({
+            // positions:
+            gridArea: '1/1/1/1', // the options are overlapping each other, so the parent takes the maximum width & height of children
+            
+            
+            
+            // animations:
+            anim : animationVars.anim,
+        }),
+        
+        
+        
+        // features:
+        ...animationRule(), // must be placed at the last
     });
 };
 export const usesTabPanelStates = () => {
+    // dependencies:
+    
+    // states:
+    const {collapsibleRule} = usesCollapsible(collapses);
+    
+    
+    
     return style({
         // states:
+        ...collapsibleRule(),
         ...states([
-            rule(':not(.expanded)', {
+            ifCollapsing({
                 // appearances:
-                visibility: 'hidden', // hide inactive <TabPanel>
+                visibility : 'hidden', // hide the <TabPanel> while   consuming space
+            }),
+            ifCollapsed({
+                // appearances:
+                display    : 'none',   // hide the <TabPanel> without consuming space
             }),
         ]),
     });

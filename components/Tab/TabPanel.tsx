@@ -7,12 +7,14 @@ import {
 // reusable-ui core:
 import {
     // react helper hooks:
+    useMergeEvents,
     useMergeClasses,
     
     
     
     // a capability of UI to expand/reduce its size or toggle the visibility:
     CollapsibleProps,
+    useCollapsible,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -44,6 +46,11 @@ export interface TabPanelProps<TElement extends Element = HTMLElement, TTabExpan
     
     
     
+    // behaviors:
+    lazy           ?: boolean
+    
+    
+    
     // states:
     expanded       ?: boolean
     
@@ -58,6 +65,12 @@ export interface TabPanelProps<TElement extends Element = HTMLElement, TTabExpan
     children       ?: React.ReactNode
 }
 const TabPanel = <TElement extends Element = HTMLElement, TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>(props: TabPanelProps<TElement, TTabExpandedChangeEvent>): JSX.Element|null => {
+    // states:
+    const collapsibleState = useCollapsible<TElement, TTabExpandedChangeEvent>(props);
+    const isVisible        = collapsibleState.isVisible; // visible = showing, shown, hidding ; !visible = hidden
+    
+    
+    
     // rest props:
     const {
         // accessibilities:
@@ -65,8 +78,13 @@ const TabPanel = <TElement extends Element = HTMLElement, TTabExpandedChangeEven
         
         
         
+        // behaviors:
+        lazy     = false,
+        
+        
+        
         // states:
-        expanded       = false,
+        expanded : _expanded, // remove
         
         
         
@@ -108,7 +126,29 @@ const TabPanel = <TElement extends Element = HTMLElement, TTabExpandedChangeEven
         
         
         // states:
-        expanded ? 'expanded' : null,
+        collapsibleState.class,
+    );
+    
+    
+    
+    // handlers:
+    const handleAnimationStart = useMergeEvents(
+        // preserves the original `onAnimationStart`:
+        props.onAnimationStart,
+        
+        
+        
+        // states:
+        collapsibleState.handleAnimationStart,
+    );
+    const handleAnimationEnd   = useMergeEvents(
+        // preserves the original `onAnimationEnd`:
+        props.onAnimationEnd,
+        
+        
+        
+        // states:
+        collapsibleState.handleAnimationEnd,
     );
     
     
@@ -133,6 +173,12 @@ const TabPanel = <TElement extends Element = HTMLElement, TTabExpandedChangeEven
             // classes:
             classes           : classes,
             stateClasses      : stateClasses,
+            
+            
+            
+            // handlers:
+            onAnimationStart  : handleAnimationStart,
+            onAnimationEnd    : handleAnimationEnd,
         },
         
         
