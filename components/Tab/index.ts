@@ -1,3 +1,4 @@
+export *            from './variants/TabPanelVariant'
 export *            from './states/tabState'
 
 export *            from './styles/styles'

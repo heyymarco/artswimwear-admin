@@ -19,6 +19,11 @@ import {
 
 // internals:
 import {
+    // variants:
+    TabPanelVariant,
+    useTabPanelVariant,
+}                           from './variants/TabPanelVariant'
+import {
     // states:
     TabExpandedChangeEvent,
     useTabState,
@@ -47,14 +52,27 @@ export interface TabBodyProps<TElement extends Element = HTMLElement>
             // children:
             |'children'                // replaced `children` with `tabPanels`
             |'dangerouslySetInnerHTML' // not supported
-        >
+        >,
+        
+        // variants:
+        TabPanelVariant
 {
     // components:
     bodyComponent ?: React.ReactComponentElement<any, BasicProps<TElement>>
 }
 const TabBody = <TElement extends Element = HTMLElement>(props: TabBodyProps<TElement>): JSX.Element|null => {
+    // variants:
+    const tabPanelVariant = useTabPanelVariant(props);
+    
+    
+    
     // rest props:
     const {
+        // variants:
+        tabPanelStyle : _tabPanelStyle, // remove
+        
+        
+        
         // components:
         bodyComponent = (<Content<TElement> /> as React.ReactComponentElement<any, BasicProps<TElement>>),
     ...restBasicProps} = props;
@@ -75,6 +93,15 @@ const TabBody = <TElement extends Element = HTMLElement>(props: TabBodyProps<TEl
         
         // classes:
         'tabBody',
+    );
+    const variantClasses = useMergeClasses(
+        // preserves the original `variantClasses`:
+        props.variantClasses,
+        
+        
+        
+        // variants:
+        tabPanelVariant.class,
     );
     
     
@@ -100,13 +127,14 @@ const TabBody = <TElement extends Element = HTMLElement>(props: TabBodyProps<TEl
             
             
             // variants:
-         // outlined : bodyComponent.props.outlined ?? props.outlined ?? false, // kill outlined variant // to appear as *selected*, so it *looks* the same as *tab*
-            mild     : bodyComponent.props.mild     ?? props.mild     ?? false, // kill mild     variant // to appear as *selected*, so it *looks* the same as *tab*
+         // outlined       : bodyComponent.props.outlined ?? props.outlined ?? false, // kill outlined variant // to appear as *selected*, so it *looks* the same as *tab*
+            mild           : bodyComponent.props.mild     ?? props.mild     ?? false, // kill mild     variant // to appear as *selected*, so it *looks* the same as *tab*
             
             
             
             // classes:
-            classes  : classes,
+            classes        : classes,
+            variantClasses : variantClasses,
         },
         
         
@@ -148,10 +176,6 @@ const TabBody = <TElement extends Element = HTMLElement>(props: TabBodyProps<TEl
                         <tabPanel.type
                             // identifiers:
                             key={tabPanel.key}
-                            
-                            
-                            
-                            // identifiers:
                             id={tabPanelProps.id ?? tabPanelId}
                             
                             

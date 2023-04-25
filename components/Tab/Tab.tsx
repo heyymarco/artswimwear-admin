@@ -112,13 +112,13 @@ const Tab = <TElement extends Element = HTMLElement, TTabExpandedChangeEvent ext
     
     
     
-    // basic variant props:
-    const basicVariantProps = useBasicVariantProps(props);
-    
-    
-    
     // identifiers:
     const defaultId = useId();
+    
+    
+    
+    // basic variant props:
+    const basicVariantProps = useBasicVariantProps(props);
     
     
     
@@ -144,6 +144,7 @@ const Tab = <TElement extends Element = HTMLElement, TTabExpandedChangeEvent ext
         
         orientation,
         listStyle,
+        tabPanelStyle,
         
         
         
@@ -263,6 +264,7 @@ const Tab = <TElement extends Element = HTMLElement, TTabExpandedChangeEvent ext
                 <TabBody<Element>
                     // variants:
                     {...basicVariantProps}
+                    tabPanelStyle={tabPanelStyle}
                     
                     
                     

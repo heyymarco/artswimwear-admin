@@ -2,6 +2,7 @@
 import {
     // writes css in javascript:
     rule,
+    states,
     children,
     style,
     vars,
@@ -30,6 +31,57 @@ import {
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 
+
+export const usesTabPanelLayout = () => {
+    return style({
+        // positions:
+        gridArea: '1/1/1/1', // the options are overlapping each other, so the parent takes the maximum width & height of children
+    });
+};
+export const usesTabPanelStates = () => {
+    return style({
+        // states:
+        ...states([
+            rule(':not(.expanded)', {
+                // appearances:
+                visibility: 'hidden', // hide inactive <TabPanel>
+            }),
+        ]),
+    });
+};
+export const usesTabBodyLayout = () => {
+    // dependencies:
+    
+    // features:
+    const {borderVars   } = usesBorder();
+    
+    
+    
+    return style({
+        // layouts:
+        display      : 'grid',
+        justifyItems : 'stretch', // overlaps each <TabPanel> to anothers
+        alignItems   : 'stretch', // overlaps each <TabPanel> to anothers
+        
+        
+        
+        // borders:
+        [borderVars.borderStartStartRadius] : '0px', // remove top radius
+        [borderVars.borderStartEndRadius  ] : '0px', // remove top radius
+        borderBlockStartWidth               : '0px', // remove top border (already applied by <Tab>)
+        
+        
+        
+        // children:
+        ...children('.tabPanel', style({
+            // layouts:
+            ...usesTabPanelLayout(),
+            
+            // states:
+            ...usesTabPanelStates(),
+        })),
+    });
+};
 export const usesTabLayout = () => {
     // dependencies:
     
@@ -53,35 +105,7 @@ export const usesTabLayout = () => {
         // layouts:
         ...style({
             // children:
-            ...children('.tabBody', {
-                // layouts:
-                display      : 'grid',
-                justifyItems : 'stretch', // overlaps each <TabPanel> to anothers
-                alignItems   : 'stretch', // overlaps each <TabPanel> to anothers
-                
-                
-                
-                // borders:
-                [borderVars.borderStartStartRadius] : '0px', // remove top radius
-                [borderVars.borderStartEndRadius  ] : '0px', // remove top radius
-                borderBlockStartWidth               : '0px', // remove top border (already applied by <Tab>)
-                
-                
-                
-                // children:
-                ...children('.tabPanel', {
-                    // positions:
-                    gridArea: '1/1/1/1', // the options are overlapping each other, so the parent takes the maximum width & height of children
-                    
-                    
-                    
-                    // appearances:
-                    ...rule(':not(.expanded)', {
-                        // appearances:
-                        visibility: 'hidden', // hide inactive <TabPanel>
-                    }),
-                }),
-            }),
+            ...children('.tabBody', usesTabBodyLayout()),
             
             
             
