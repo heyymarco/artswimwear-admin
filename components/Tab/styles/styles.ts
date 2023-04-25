@@ -131,6 +131,7 @@ export const usesTabPanelStates = () => {
         ]),
     });
 };
+
 export const usesTabBodyLayout = () => {
     // dependencies:
     
@@ -194,6 +195,7 @@ export const usesTabBodyVariants = () => {
         ]),
     });
 };
+
 export const usesTabLayout = () => {
     // dependencies:
     
