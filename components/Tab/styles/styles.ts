@@ -86,11 +86,19 @@ export const usesTabPanelStates = () => {
         ...states([
             ifCollapsing({
                 // appearances:
-                visibility : 'hidden', // hide the <TabPanel> while   consuming space
+                visibility   : 'hidden', // hide the <TabPanel> while   consuming space
             }),
             ifCollapsed({
-                // appearances:
-                display    : 'none',   // hide the <TabPanel> without consuming space
+                // do not remove the <TabPanel> from DOM, causing <TabBody>'s width changing when switching tab
+             // // appearances:
+             // display      : 'none',   // hide the <TabPanel> without consuming space
+                
+                
+                
+                // sizes:
+                // remove the height while maintaining it's width:
+                maxBlockSize : 0,
+                overflowY    : 'hidden',
             }),
         ]),
     });
