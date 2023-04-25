@@ -1,6 +1,8 @@
 // cssfn:
 import {
     // writes css in javascript:
+    rule,
+    variants,
     states,
     children,
     style,
@@ -125,13 +127,6 @@ export const usesTabPanelStates = () => {
              // do not remove the <TabPanel> from DOM, causing <TabBody>'s width changing when switching tab
              // display      : 'none',   // hide the <TabPanel> without consuming space
                 visibility   : 'hidden', // hide the <TabPanel> while   consuming space
-                
-                
-                
-                // sizes:
-                // remove the height while maintaining it's width:
-                maxBlockSize : 0,
-                overflowY    : 'hidden',
             }),
         ]),
     });
@@ -179,6 +174,26 @@ export const usesTabBodyLayout = () => {
         ...usesCssProps(usesPrefixedProps(tabs, 'body')), // apply config's cssProps starting with body***
     });
 };
+export const usesTabBodyVariants = () => {
+    return style({
+        ...variants([
+            rule('.fitContent', {
+                // children:
+                ...children('.tabPanel', {
+                    // states:
+                    ...states([
+                        ifCollapsed({
+                            // sizes:
+                            // remove the height while maintaining it's width:
+                            maxBlockSize : 0,
+                            overflowY    : 'hidden',
+                        }),
+                    ]),
+                }),
+            }),
+        ]),
+    });
+};
 export const usesTabLayout = () => {
     // dependencies:
     
@@ -204,7 +219,13 @@ export const usesTabLayout = () => {
         // layouts:
         ...style({
             // children:
-            ...children('.tabBody', usesTabBodyLayout()),
+            ...children('.tabBody', style({
+                // layouts:
+                ...usesTabBodyLayout(),
+                
+                // variants:
+                ...usesTabBodyVariants(),
+            })),
             
             
             
