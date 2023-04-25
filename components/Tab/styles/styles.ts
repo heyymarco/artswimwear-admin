@@ -14,11 +14,6 @@ import {
     
     
     
-    // animation stuff of UI:
-    usesAnimation,
-    
-    
-    
     // padding (inner spacing) stuff of UI:
     usesPadding,
     
@@ -47,8 +42,13 @@ import {
 export const usesTabPanelLayout = () => {
     // dependencies:
     
-    // features:
-    const {animationRule, animationVars} = usesAnimation();
+    // inefficient: just for single animation:
+    // // features:
+    // const {animationRule, animationVars} = usesAnimation();
+    
+    // more efficient:
+    // states:
+    const {collapsibleVars} = usesCollapsible(collapses);
     
     
     
@@ -61,13 +61,15 @@ export const usesTabPanelLayout = () => {
             
             
             // animations:
-            anim : animationVars.anim,
+         // anim : animationVars.anim,   // inefficient: just for single animation
+            anim : collapsibleVars.anim, // more efficient
         }),
         
         
         
-        // features:
-        ...animationRule(), // must be placed at the last
+        // inefficient: just for single animation:
+        // // features:
+        // ...animationRule(), // must be placed at the last
     });
 };
 export const usesTabPanelStates = () => {
