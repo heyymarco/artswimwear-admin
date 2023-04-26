@@ -34,7 +34,6 @@ import {
     
     
     // a capability of UI to expand/reduce its size or toggle the visibility:
-    ifCollapsing,
     ifCollapsed,
     usesCollapsible,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
