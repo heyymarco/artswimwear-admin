@@ -44,12 +44,25 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
     
     
     
+    const panelFrameCollapsed    = style({
+        ...panelFrameCollapsedPosition,
+    });
+    const panelFrameIntermediate = style({
+        ...panelFrameIntermediatePosition,
+    });
+    const panelFrameExpanded     = style({
+        ...panelFrameExpandedPosition,
+    });
     const [panelKeyframesExpandRule  , panelKeyframesExpand  ] = keyframes({
-        /* no animation */
+        from  : panelFrameCollapsed,
+        '80%' : panelFrameIntermediate,
+        to    : panelFrameExpanded,
     });
     panelKeyframesExpand.value   = 'expand';   // the @keyframes name should contain 'expand'   in order to be recognized by `useCollapsible`
     const [panelKeyframesCollapseRule, panelKeyframesCollapse] = keyframes({
-        /* no animation */
+        from  : panelFrameExpanded,
+        '20%' : panelFrameIntermediate,
+        to    : panelFrameCollapsed,
     });
     panelKeyframesCollapse.value = 'collapse'; // the @keyframes name should contain 'collapse' in order to be recognized by `useCollapsible`
     
