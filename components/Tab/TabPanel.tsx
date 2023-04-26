@@ -67,7 +67,6 @@ export interface TabPanelProps<TElement extends Element = HTMLElement, TTabExpan
 const TabPanel = <TElement extends Element = HTMLElement, TTabExpandedChangeEvent extends TabExpandedChangeEvent = TabExpandedChangeEvent>(props: TabPanelProps<TElement, TTabExpandedChangeEvent>): JSX.Element|null => {
     // states:
     const collapsibleState = useCollapsible<TElement, TTabExpandedChangeEvent>(props);
-    const isVisible        = collapsibleState.isVisible; // visible = showing, shown, hidding ; !visible = hidden
     
     
     
@@ -133,7 +132,12 @@ const TabPanel = <TElement extends Element = HTMLElement, TTabExpandedChangeEven
     
     // handlers:
     const handleAnimationStart = useMergeEvents(
-        // preserves the original `onAnimationStart`:
+        // preserves the original `onAnimationStart` from `panelComponent`:
+        panelComponent.props.onAnimationStart,
+        
+        
+        
+        // preserves the original `onAnimationStart` from `props`:
         props.onAnimationStart,
         
         
@@ -142,7 +146,12 @@ const TabPanel = <TElement extends Element = HTMLElement, TTabExpandedChangeEven
         collapsibleState.handleAnimationStart,
     );
     const handleAnimationEnd   = useMergeEvents(
-        // preserves the original `onAnimationEnd`:
+        // preserves the original `onAnimationEnd` from `panelComponent`:
+        panelComponent.props.onAnimationEnd,
+        
+        
+        
+        // preserves the original `onAnimationEnd` from `props`:
         props.onAnimationEnd,
         
         
@@ -165,8 +174,8 @@ const TabPanel = <TElement extends Element = HTMLElement, TTabExpandedChangeEven
             
             
             // semantics:
-            semanticTag       : panelComponent.props.semanticTag        ?? props.semanticTag        ?? '',
-            semanticRole      : panelComponent.props.semanticRole       ?? props.semanticRole       ?? 'tabpanel',
+            semanticTag       : panelComponent.props.semanticTag  ?? props.semanticTag  ?? '',
+            semanticRole      : panelComponent.props.semanticRole ?? props.semanticRole ?? 'tabpanel',
             
             
             
