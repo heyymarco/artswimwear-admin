@@ -92,7 +92,7 @@ const TabBody = <TElement extends Element = HTMLElement>(props: TabBodyProps<TEl
     
     
     // classes:
-    const classes = useMergeClasses(
+    const classes        = useMergeClasses(
         // preserves the original `classes` from `bodyComponent`:
         bodyComponent.props.classes,
         
@@ -107,7 +107,12 @@ const TabBody = <TElement extends Element = HTMLElement>(props: TabBodyProps<TEl
         'tabBody',
     );
     const variantClasses = useMergeClasses(
-        // preserves the original `variantClasses`:
+        // preserves the original `variantClasses` from `bodyComponent`:
+        bodyComponent.props.variantClasses,
+        
+        
+        
+        // preserves the original `variantClasses` from `props`:
         props.variantClasses,
         
         
@@ -159,7 +164,7 @@ const TabBody = <TElement extends Element = HTMLElement>(props: TabBodyProps<TEl
         ] : expandedTabIndex,
     }), [tabVars.expandedTabIndex, expandedTabIndex]);
     const mergedStyle           = useMergeStyles(
-        // values:
+        // styles:
         expandedTabIndexStyle,
         
         

@@ -84,7 +84,7 @@ export const TabPanelWithState = <TElement extends Element = HTMLElement, TTabEx
         ] : tabIndex,
     }), [tabVars.tabIndex, tabIndex]);
     const mergedStyle   = useMergeStyles(
-        // values:
+        // styles:
         tabIndexStyle,
         
         
