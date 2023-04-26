@@ -9,6 +9,13 @@ import {
     keyframes,
     fallbacks,
     style,
+    vars,
+    
+    
+    
+    // strongly typed of css variables:
+    cssVars,
+    switchOf,
     
     
     
@@ -21,6 +28,16 @@ import {
     // features:
     usesTab,
 }                           from '../features/tab'
+
+
+
+interface ConfigVars {
+    startsMin : any
+    startsMax : any
+    endsMax   : any
+    endsMin   : any
+}
+const [configVars] = cssVars<ConfigVars>({ prefix: 'cTabVar' });
 
 
 
@@ -73,28 +90,58 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
     
     
     //#region animation for tabPanelStyle='fitContent'
+    const configVarsDecl                   = vars({
+        // expanding => starting from 0:
+        [configVars.startsMin] : [[
+            tabVars.expandedSw, // the expanded switching function (will be valid if expanded, otherwise invalid)
+            0,
+        ]],
+        // collapsing => starting from 100vh:
+        [configVars.startsMax] : '100vh',
+        
+        
+        
+        // expanding => ending to 100vh:
+        [configVars.endsMax]   : [[
+            tabVars.expandedSw, // the expanded switching function (will be valid if expanded, otherwise invalid)
+            '100vh',
+        ]],
+        // collapsing => ending to 0:
+        [configVars.endsMin]   : 0,
+    });
     const panelFramePrevFitContent         = style({
         ...panelFramePrevPosition,
+        ...configVarsDecl,
         
-        overflowY     : 'clip',
+        overflowY              : 'clip',
         ...fallbacks({
-            overflowY : 'hidden',
+            overflowY          : 'hidden',
         }),
-        maxBlockSize  : 0,
+        
+        maxBlockSize : switchOf(
+            configVars.startsMin, // first  priority
+            configVars.startsMax, // second priority
+        ),
     });
     const panelFrameIntermediateFitContent = style({
         ...panelFrameIntermediatePosition,
     });
     const panelFrameSemifinalFitContent    = style({
-        overflowY     : 'clip',
+        overflowY              : 'clip',
         ...fallbacks({
-            overflowY : 'hidden',
+            overflowY          : 'hidden',
         }),
-        maxBlockSize  : '100vh',
+        
+        maxBlockSize : switchOf(
+            configVars.endsMax, // first  priority
+            configVars.endsMin, // second priority
+        ),
     });
     const panelFrameCurrentFitContent      = style({
         ...panelFrameCurrentPosition,
+        ...configVarsDecl,
         
+        // cleanups => reset modified props:
         overflowY     : 'unset',
         maxBlockSize  : 'unset',
     });
@@ -107,8 +154,8 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
     panelKeyframesExpandFitContent.value   = 'expandFitContent';   // the @keyframes name should contain 'expand'   in order to be recognized by `useCollapsible`
     const [panelKeyframesCollapseFitContentRule, panelKeyframesCollapseFitContent] = keyframes({
         from  : panelFramePrevFitContent,
-        '1%'  : panelFrameSemifinalFitContent,
         '30%' : panelFrameIntermediateFitContent,
+        '99%' : panelFrameSemifinalFitContent,
         to    : panelFrameCurrentFitContent,
     });
     panelKeyframesCollapseFitContent.value = 'collapseFitContent'; // the @keyframes name should contain 'collapse' in order to be recognized by `useCollapsible`
@@ -122,10 +169,10 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
         ...panelKeyframesExpandMaxContentRule,
         ...panelKeyframesCollapseMaxContentRule,
         panelAnimExpandMaxContent   : [
-            ['300ms', 'ease-out', panelKeyframesExpandMaxContent  ],
+            ['300ms', 'ease-out', 'both', panelKeyframesExpandMaxContent  ],
         ]                                                               as CssKnownProps['animation'],
         panelAnimCollapseMaxContent : [
-            ['300ms', 'ease-out', panelKeyframesCollapseMaxContent],
+            ['300ms', 'ease-out', 'both', panelKeyframesCollapseMaxContent],
         ]                                                               as CssKnownProps['animation'],
         
         
@@ -133,10 +180,10 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
         ...panelKeyframesExpandFitContentRule,
         ...panelKeyframesCollapseFitContentRule,
         panelAnimExpandFitContent   : [
-            ['300ms', 'ease-out', panelKeyframesExpandFitContent  ],
+            ['300ms', 'ease-out', 'both', panelKeyframesExpandFitContent  ],
         ]                                                               as CssKnownProps['animation'],
         panelAnimCollapseFitContent : [
-            ['300ms', 'ease-out', panelKeyframesCollapseFitContent],
+            ['300ms', 'ease-out', 'both', panelKeyframesCollapseFitContent],
         ]                                                               as CssKnownProps['animation'],
     };
 }, { prefix: 'tab' });

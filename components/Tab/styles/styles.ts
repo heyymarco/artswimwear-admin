@@ -186,6 +186,9 @@ export const usesTabBodyVariants = () => {
                             overflowY    : 'hidden', // the *grid* of <TabBody> will adjust to the highest of <TabPanel>(s)
                         }),
                     ]),
+                    transition : [
+                        ['max-block-size', '300ms', 'ease-out'],
+                    ],
                 }),
             }),
         ]),

@@ -1,5 +1,5 @@
 // defaults:
-const _defaultTabPanelStyle : TabPanelStyle = 'maxContent'
+const _defaultTabPanelStyle : TabPanelStyle = 'fitContent'
 
 
 
