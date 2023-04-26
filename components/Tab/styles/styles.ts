@@ -126,23 +126,6 @@ export const usesTabPanelLayout = () => {
         // ...animationRule(), // must be placed at the last
     });
 };
-export const usesTabPanelStates = () => {
-    return style({
-        // states:
-        ...states([
-            ifCollapsing({
-                // appearances:
-                visibility   : 'hidden', // hide the <TabPanel> while   consuming space
-            }),
-            ifCollapsed({
-                // appearances:
-             // do not remove the <TabPanel> from DOM, causing <TabBody>'s width changing when switching tab
-             // display      : 'none',   // hide the <TabPanel> without consuming space
-                visibility   : 'hidden', // hide the <TabPanel> while   consuming space
-            }),
-        ]),
-    });
-};
 
 export const usesTabBodyLayout = () => {
     // dependencies:
@@ -173,13 +156,7 @@ export const usesTabBodyLayout = () => {
         
         
         // children:
-        ...children('.tabPanel', style({
-            // layouts:
-            ...usesTabPanelLayout(),
-            
-            // states:
-            ...usesTabPanelStates(),
-        })),
+        ...children('.tabPanel', usesTabPanelLayout()),
         
         
         
@@ -191,6 +168,13 @@ export const usesTabBodyVariants = () => {
     return style({
         // variants:
         ...variants([
+            rule('.maxContent', {
+                // children:
+                ...children('.tabPanel', {
+                    // states:
+                    ...usesCollapsible(usesSuffixedProps(usesPrefixedProps(tabs, 'panel'), 'maxContent')).collapsibleRule(), // overwrites {panel}PropName = {panel}PropName{MaxContent}
+                }),
+            }),
             rule('.fitContent', {
                 // children:
                 ...children('.tabPanel', {
@@ -204,13 +188,6 @@ export const usesTabBodyVariants = () => {
                             overflowY    : 'hidden', // the *grid* of <TabBody> will adjust to the highest of <TabPanel>(s)
                         }),
                     ]),
-                }),
-            }),
-            rule('.maxContent', {
-                // children:
-                ...children('.tabPanel', {
-                    // states:
-                    ...usesCollapsible(usesSuffixedProps(usesPrefixedProps(tabs, 'panel'), 'maxContent')).collapsibleRule(), // overwrites {panel}PropName = {panel}PropName{MaxContent}
                 }),
             }),
         ]),

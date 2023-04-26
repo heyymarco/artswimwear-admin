@@ -1,5 +1,5 @@
 // defaults:
-const _defaultTabPanelStyle : TabPanelStyle = 'fitContent'
+const _defaultTabPanelStyle : TabPanelStyle = 'maxContent'
 
 
 
@@ -8,7 +8,7 @@ const _defaultTabPanelStyle : TabPanelStyle = 'fitContent'
 // variants:
 
 //#region TabPanelVariant
-export type TabPanelStyle = 'fitContent'|'maxContent' // might be added more styles in the future
+export type TabPanelStyle = 'maxContent'|'fitContent' // might be added more styles in the future
 export interface TabPanelVariant {
     tabPanelStyle ?: TabPanelStyle
 }

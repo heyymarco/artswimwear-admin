@@ -32,6 +32,7 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
     
     
     //#region keyframes
+    //#region shared sliding animation
     const panelFrameCollapsedPosition    = style({
         insetInlineStart : tabVars.prevTabPosition,
     });
@@ -41,33 +42,37 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
     const panelFrameExpandedPosition     = style({
         insetInlineStart : tabVars.currentTabPosition,
     });
+    //#endregion shared sliding animation
     
     
     
-    const panelFrameCollapsed    = style({
+    //#region animation for tabPanelStyle='maxContent'
+    const panelFrameCollapsedMaxContent    = style({
         ...panelFrameCollapsedPosition,
     });
-    const panelFrameIntermediate = style({
+    const panelFrameIntermediateMaxContent = style({
         ...panelFrameIntermediatePosition,
     });
-    const panelFrameExpanded     = style({
+    const panelFrameExpandedMaxContent     = style({
         ...panelFrameExpandedPosition,
     });
-    const [panelKeyframesExpandRule  , panelKeyframesExpand  ] = keyframes({
-        from  : panelFrameCollapsed,
-        '80%' : panelFrameIntermediate,
-        to    : panelFrameExpanded,
+    const [panelKeyframesExpandMaxContentRule  , panelKeyframesExpandMaxContent  ] = keyframes({
+        from  : panelFrameCollapsedMaxContent,
+        '80%' : panelFrameIntermediateMaxContent,
+        to    : panelFrameExpandedMaxContent,
     });
-    panelKeyframesExpand.value   = 'expand';   // the @keyframes name should contain 'expand'   in order to be recognized by `useCollapsible`
-    const [panelKeyframesCollapseRule, panelKeyframesCollapse] = keyframes({
-        from  : panelFrameExpanded,
-        '20%' : panelFrameIntermediate,
-        to    : panelFrameCollapsed,
+    panelKeyframesExpandMaxContent.value   = 'expandMaxContent';   // the @keyframes name should contain 'expand'   in order to be recognized by `useCollapsible`
+    const [panelKeyframesCollapseMaxContentRule, panelKeyframesCollapseMaxContent] = keyframes({
+        from  : panelFrameExpandedMaxContent,
+        '20%' : panelFrameIntermediateMaxContent,
+        to    : panelFrameCollapsedMaxContent,
     });
-    panelKeyframesCollapse.value = 'collapse'; // the @keyframes name should contain 'collapse' in order to be recognized by `useCollapsible`
+    panelKeyframesCollapseMaxContent.value = 'collapseMaxContent'; // the @keyframes name should contain 'collapse' in order to be recognized by `useCollapsible`
+    //#endregion animation for tabPanelStyle='maxContent'
     
     
     
+    //#region animation for tabPanelStyle='fitContent'
     const panelFrameCollapsedFitContent    = style({
         ...panelFrameCollapsedPosition,
         
@@ -99,27 +104,28 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
         '99%' : panelFrameSemifinalFitContent,
         to    : panelFrameExpandedFitContent,
     });
-    panelKeyframesExpandFitContent.value   = 'expand';   // the @keyframes name should contain 'expand'   in order to be recognized by `useCollapsible`
+    panelKeyframesExpandFitContent.value   = 'expandFitContent';   // the @keyframes name should contain 'expand'   in order to be recognized by `useCollapsible`
     const [panelKeyframesCollapseFitContentRule, panelKeyframesCollapseFitContent] = keyframes({
         from  : panelFrameExpandedFitContent,
         '1%'  : panelFrameSemifinalFitContent,
         '20%' : panelFrameIntermediateFitContent,
         to    : panelFrameCollapsedFitContent,
     });
-    panelKeyframesCollapseFitContent.value = 'collapse'; // the @keyframes name should contain 'collapse' in order to be recognized by `useCollapsible`
+    panelKeyframesCollapseFitContent.value = 'collapseFitContent'; // the @keyframes name should contain 'collapse' in order to be recognized by `useCollapsible`
+    //#endregion animation for tabPanelStyle='fitContent'
     //#endregion keyframes
     
     
     
     return {
         // animations:
-        ...panelKeyframesExpandRule,
-        ...panelKeyframesCollapseRule,
-        panelAnimExpand   : [
-            ['1ms', 'ease-out', 'both', panelKeyframesExpand  ],
+        ...panelKeyframesExpandMaxContentRule,
+        ...panelKeyframesCollapseMaxContentRule,
+        panelAnimExpandMaxContent   : [
+            ['300ms', 'ease-out', 'both', panelKeyframesExpandMaxContent  ],
         ]                                                       as CssKnownProps['animation'],
-        panelAnimCollapse : [
-            ['1ms', 'ease-out', 'both', panelKeyframesCollapse],
+        panelAnimCollapseMaxContent : [
+            ['300ms', 'ease-out', 'both', panelKeyframesCollapseMaxContent],
         ]                                                       as CssKnownProps['animation'],
         
         
