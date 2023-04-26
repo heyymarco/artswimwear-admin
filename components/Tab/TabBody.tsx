@@ -8,6 +8,7 @@ import {
     // hooks:
     useMemo,
     useRef,
+    useEffect,
 }                           from 'react'
 
 // reusable-ui core:
@@ -128,7 +129,14 @@ const TabBody = <TElement extends Element = HTMLElement>(props: TabBodyProps<TEl
         tabPanels,
         tabId,
     } = useTabState();
+    
+    
+    
     const collapsedTabIndexRef = useRef<number>(expandedTabIndex);
+    useEffect(() => {
+        // sync:
+        collapsedTabIndexRef.current = expandedTabIndex;
+    }, [expandedTabIndex]);
     
     
     
