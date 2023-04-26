@@ -31,30 +31,30 @@ import {
 //#region tab
 export interface TabVars {
     /**
-     * <Tab>'s index.
+     * `<Tab>`'s index.
      */
     tabIndex           : any
     
     /**
-     * <TabPanel>'s width (inline) or height (block).
+     * `<TabPanel>`'s width (inline) or height (block).
      */
     panelSize          : any
     
     /**
-     * <Tab>'s previously expanded (active) index.
+     * `<Tab>`'s previously expanded (active) index.
      */
     collapsedTabIndex  : any
     /**
-     * <Tab>'s expanded (active) index.
+     * `<Tab>`'s expanded (active) index.
      */
     expandedTabIndex   : any
     
     /**
-     * <Tab>'s previous position.
+     * `<Tab>`'s previous position.
      */
     prevTabPosition    : any
     /**
-     * <Tab>'s current position.
+     * `<Tab>`'s current position.
      */
     currentTabPosition : any
 }
