@@ -14,7 +14,6 @@ import {
     usesCssProps,
     usesPrefixedProps,
     usesSuffixedProps,
-    overwriteProps,
 }                           from '@cssfn/core'                  // writes css in javascript
 
 // reusable-ui core:
