@@ -77,8 +77,8 @@ export const usesTab = (config?: TabConfig): TabStuff => {
             // position functions:
             ...vars({
                 [tabVars.panelSize         ] : config?.panelSize ?? '100%',
-                [tabVars.prevTabPosition   ] : `${tabVars.panelSize} * (${tabVars.tabIndex} - ${tabVars.collapsedTabIndex}))`,
-                [tabVars.currentTabPosition] : `${tabVars.panelSize} * (${tabVars.tabIndex} - ${tabVars.expandedTabIndex }))`,
+                [tabVars.prevTabPosition   ] : `calc(${tabVars.panelSize} * (${tabVars.tabIndex} - ${tabVars.collapsedTabIndex}))`,
+                [tabVars.currentTabPosition] : `calc(${tabVars.panelSize} * (${tabVars.tabIndex} - ${tabVars.expandedTabIndex }))`,
             }),
         }),
         tabVars,
