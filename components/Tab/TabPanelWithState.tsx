@@ -79,10 +79,10 @@ export const TabPanelWithState = <TElement extends Element = HTMLElement, TTabEx
     const tabIndexStyle = useMemo<React.CSSProperties>(() => ({
         // values:
         [
-            tabVars.currentTabIndex
+            tabVars.tabIndex
             .slice(4, -1) // fix: var(--customProp) => --customProp
         ] : tabIndex,
-    }), [tabVars.currentTabIndex, tabIndex]);
+    }), [tabVars.tabIndex, tabIndex]);
     const mergedStyle   = useMergeStyles(
         // values:
         tabIndexStyle,

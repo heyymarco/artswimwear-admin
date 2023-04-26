@@ -36,9 +36,9 @@ export interface TabVars {
     expandedTabIndex   : any
     
     /**
-     * <Tab>'s current index.
+     * <Tab>'s index.
      */
-    currentTabIndex    : any
+    tabIndex           : any
     
     /**
      * <Tab>'s current position.
@@ -63,7 +63,7 @@ export const usesTab = (config?: TabConfig): TabStuff => {
         tabRule: () => style({
             ...vars({
                 // variables:
-                [tabVars.currentTabPosition] : `calc((100%${(config?.paddingInline !== undefined) ? ` + (${config?.paddingInline} * 2)` : ''}) * (${tabVars.currentTabIndex} - ${tabVars.expandedTabIndex}))`,
+                [tabVars.currentTabPosition] : `calc((100%${(config?.paddingInline !== undefined) ? ` + (${config?.paddingInline} * 2)` : ''}) * (${tabVars.tabIndex} - ${tabVars.expandedTabIndex}))`,
             }),
         }),
         tabVars,
