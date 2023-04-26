@@ -33,13 +33,13 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
     
     //#region keyframes
     //#region shared sliding animation
-    const panelFrameCollapsedPosition    = style({
+    const panelFramePrevPosition           = style({
         insetInlineStart : tabVars.prevTabPosition,
     });
-    const panelFrameIntermediatePosition = style({
+    const panelFrameIntermediatePosition   = style({
         // TODO...
     });
-    const panelFrameExpandedPosition     = style({
+    const panelFrameCurrentPosition        = style({
         insetInlineStart : tabVars.currentTabPosition,
     });
     //#endregion shared sliding animation
@@ -47,25 +47,25 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
     
     
     //#region animation for tabPanelStyle='maxContent'
-    const panelFrameCollapsedMaxContent    = style({
-        ...panelFrameCollapsedPosition,
+    const panelFramePrevMaxContent         = style({
+        ...panelFramePrevPosition,
     });
     const panelFrameIntermediateMaxContent = style({
         ...panelFrameIntermediatePosition,
     });
-    const panelFrameExpandedMaxContent     = style({
-        ...panelFrameExpandedPosition,
+    const panelFrameCurrentMaxContent      = style({
+        ...panelFrameCurrentPosition,
     });
     const [panelKeyframesExpandMaxContentRule  , panelKeyframesExpandMaxContent  ] = keyframes({
-        from  : panelFrameCollapsedMaxContent,
+        from  : panelFramePrevMaxContent,
         '80%' : panelFrameIntermediateMaxContent,
-        to    : panelFrameExpandedMaxContent,
+        to    : panelFrameCurrentMaxContent,
     });
     panelKeyframesExpandMaxContent.value   = 'expandMaxContent';   // the @keyframes name should contain 'expand'   in order to be recognized by `useCollapsible`
     const [panelKeyframesCollapseMaxContentRule, panelKeyframesCollapseMaxContent] = keyframes({
-        from  : panelFrameExpandedMaxContent,
+        from  : panelFramePrevMaxContent,
         '20%' : panelFrameIntermediateMaxContent,
-        to    : panelFrameCollapsedMaxContent,
+        to    : panelFrameCurrentMaxContent,
     });
     panelKeyframesCollapseMaxContent.value = 'collapseMaxContent'; // the @keyframes name should contain 'collapse' in order to be recognized by `useCollapsible`
     //#endregion animation for tabPanelStyle='maxContent'
@@ -73,8 +73,8 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
     
     
     //#region animation for tabPanelStyle='fitContent'
-    const panelFrameCollapsedFitContent    = style({
-        ...panelFrameCollapsedPosition,
+    const panelFramePrevFitContent         = style({
+        ...panelFramePrevPosition,
         
         overflowY     : 'clip',
         ...fallbacks({
@@ -92,24 +92,24 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
         }),
         maxBlockSize  : '100vh',
     });
-    const panelFrameExpandedFitContent     = style({
-        ...panelFrameExpandedPosition,
+    const panelFrameCurrentFitContent      = style({
+        ...panelFrameCurrentPosition,
         
         overflowY     : 'unset',
         maxBlockSize  : 'unset',
     });
     const [panelKeyframesExpandFitContentRule  , panelKeyframesExpandFitContent  ] = keyframes({
-        from  : panelFrameCollapsedFitContent,
+        from  : panelFramePrevFitContent,
         '80%' : panelFrameIntermediateFitContent,
         '99%' : panelFrameSemifinalFitContent,
-        to    : panelFrameExpandedFitContent,
+        to    : panelFrameCurrentFitContent,
     });
     panelKeyframesExpandFitContent.value   = 'expandFitContent';   // the @keyframes name should contain 'expand'   in order to be recognized by `useCollapsible`
     const [panelKeyframesCollapseFitContentRule, panelKeyframesCollapseFitContent] = keyframes({
-        from  : panelFrameExpandedFitContent,
+        from  : panelFramePrevFitContent,
         '1%'  : panelFrameSemifinalFitContent,
         '20%' : panelFrameIntermediateFitContent,
-        to    : panelFrameCollapsedFitContent,
+        to    : panelFrameCurrentFitContent,
     });
     panelKeyframesCollapseFitContent.value = 'collapseFitContent'; // the @keyframes name should contain 'collapse' in order to be recognized by `useCollapsible`
     //#endregion animation for tabPanelStyle='fitContent'
