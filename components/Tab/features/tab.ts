@@ -31,15 +31,24 @@ import {
 //#region tab
 export interface TabVars {
     /**
-     * <Tab>'s expanded (active) index.
-     */
-    expandedTabIndex   : any
-    
-    /**
      * <Tab>'s index.
      */
     tabIndex           : any
     
+    /**
+     * <Tab>'s previously expanded (active) index.
+     */
+    collapsedTabIndex  : any
+    /**
+     * <Tab>'s expanded (active) index.
+     */
+    expandedTabIndex   : any
+    
+    
+    /**
+     * <Tab>'s previous position.
+     */
+    prevTabPosition    : any
     /**
      * <Tab>'s current position.
      */
@@ -61,9 +70,10 @@ export interface TabConfig {
 export const usesTab = (config?: TabConfig): TabStuff => {
     return {
         tabRule: () => style({
+            // position functions:
             ...vars({
-                // variables:
-                [tabVars.currentTabPosition] : `calc((100%${(config?.paddingInline !== undefined) ? ` + (${config?.paddingInline} * 2)` : ''}) * (${tabVars.tabIndex} - ${tabVars.expandedTabIndex}))`,
+                [tabVars.prevTabPosition   ] : `calc((100%${(config?.paddingInline !== undefined) ? ` + (${config?.paddingInline} * 2)` : ''}) * (${tabVars.tabIndex} - ${tabVars.collapsedTabIndex}))`,
+                [tabVars.currentTabPosition] : `calc((100%${(config?.paddingInline !== undefined) ? ` + (${config?.paddingInline} * 2)` : ''}) * (${tabVars.tabIndex} - ${tabVars.expandedTabIndex }))`,
             }),
         }),
         tabVars,
