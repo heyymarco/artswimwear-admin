@@ -37,7 +37,7 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
         insetInlineStart : tabVars.prevTabPosition,
     });
     const panelFrameIntermediatePosition   = style({
-        // TODO...
+        insetInlineStart : `calc(${tabVars.currentTabPosition} + ((${tabVars.currentTabPosition} - ${tabVars.prevTabPosition}) * 0.05))`, // add a bumpy effect
     });
     const panelFrameCurrentPosition        = style({
         insetInlineStart : tabVars.currentTabPosition,
@@ -58,13 +58,13 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
     });
     const [panelKeyframesExpandMaxContentRule  , panelKeyframesExpandMaxContent  ] = keyframes({
         from  : panelFramePrevMaxContent,
-        '80%' : panelFrameIntermediateMaxContent,
+        '70%' : panelFrameIntermediateMaxContent,
         to    : panelFrameCurrentMaxContent,
     });
     panelKeyframesExpandMaxContent.value   = 'expandMaxContent';   // the @keyframes name should contain 'expand'   in order to be recognized by `useCollapsible`
     const [panelKeyframesCollapseMaxContentRule, panelKeyframesCollapseMaxContent] = keyframes({
         from  : panelFramePrevMaxContent,
-        '20%' : panelFrameIntermediateMaxContent,
+        '30%' : panelFrameIntermediateMaxContent,
         to    : panelFrameCurrentMaxContent,
     });
     panelKeyframesCollapseMaxContent.value = 'collapseMaxContent'; // the @keyframes name should contain 'collapse' in order to be recognized by `useCollapsible`
@@ -100,7 +100,7 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
     });
     const [panelKeyframesExpandFitContentRule  , panelKeyframesExpandFitContent  ] = keyframes({
         from  : panelFramePrevFitContent,
-        '80%' : panelFrameIntermediateFitContent,
+        '70%' : panelFrameIntermediateFitContent,
         '99%' : panelFrameSemifinalFitContent,
         to    : panelFrameCurrentFitContent,
     });
@@ -108,7 +108,7 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
     const [panelKeyframesCollapseFitContentRule, panelKeyframesCollapseFitContent] = keyframes({
         from  : panelFramePrevFitContent,
         '1%'  : panelFrameSemifinalFitContent,
-        '20%' : panelFrameIntermediateFitContent,
+        '30%' : panelFrameIntermediateFitContent,
         to    : panelFrameCurrentFitContent,
     });
     panelKeyframesCollapseFitContent.value = 'collapseFitContent'; // the @keyframes name should contain 'collapse' in order to be recognized by `useCollapsible`
@@ -123,10 +123,10 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
         ...panelKeyframesCollapseMaxContentRule,
         panelAnimExpandMaxContent   : [
             ['300ms', 'ease-out', panelKeyframesExpandMaxContent  ],
-        ]                                                       as CssKnownProps['animation'],
+        ]                                                               as CssKnownProps['animation'],
         panelAnimCollapseMaxContent : [
             ['300ms', 'ease-out', panelKeyframesCollapseMaxContent],
-        ]                                                       as CssKnownProps['animation'],
+        ]                                                               as CssKnownProps['animation'],
         
         
         
@@ -134,9 +134,9 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
         ...panelKeyframesCollapseFitContentRule,
         panelAnimExpandFitContent   : [
             ['300ms', 'ease-out', panelKeyframesExpandFitContent  ],
-        ]                                                       as CssKnownProps['animation'],
+        ]                                                               as CssKnownProps['animation'],
         panelAnimCollapseFitContent : [
             ['300ms', 'ease-out', panelKeyframesCollapseFitContent],
-        ]                                                       as CssKnownProps['animation'],
+        ]                                                               as CssKnownProps['animation'],
     };
 }, { prefix: 'tab' });
