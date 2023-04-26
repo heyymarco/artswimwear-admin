@@ -74,7 +74,7 @@ export const usesTabPanelLayout = () => {
     
     // features:
     const {tabRule, tabVars} = usesTab({
-        paddingInline : groupableVars.paddingInline,
+        panelSize : `calc((100% + (${groupableVars.paddingInline} * 2))`,
     });
     
     

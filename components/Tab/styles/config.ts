@@ -16,11 +16,34 @@ import {
     cssConfig,
 }                           from '@cssfn/core'                  // writes css in javascript
 
+// internals:
+import {
+    // features:
+    usesTab,
+}                           from '../features/tab'
+
 
 
 // configs:
 export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
+    // features:
+    const {tabVars} = usesTab();
+    
+    
+    
     //#region keyframes
+    const panelFrameCollapsedPosition    = style({
+        insetInlineStart : tabVars.prevTabPosition,
+    });
+    const panelFrameIntermediatePosition = style({
+        // TODO...
+    });
+    const panelFrameExpandedPosition     = style({
+        insetInlineStart : tabVars.currentTabPosition,
+    });
+    
+    
+    
     const [panelKeyframesExpandRule  , panelKeyframesExpand  ] = keyframes({
         /* no animation */
     });

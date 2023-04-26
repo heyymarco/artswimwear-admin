@@ -36,6 +36,11 @@ export interface TabVars {
     tabIndex           : any
     
     /**
+     * <TabPanel>'s width (inline) or height (block).
+     */
+    panelSize          : any
+    
+    /**
      * <Tab>'s previously expanded (active) index.
      */
     collapsedTabIndex  : any
@@ -43,7 +48,6 @@ export interface TabVars {
      * <Tab>'s expanded (active) index.
      */
     expandedTabIndex   : any
-    
     
     /**
      * <Tab>'s previous position.
@@ -60,7 +64,7 @@ const [tabVars] = cssVars<TabVars>({ prefix: 'tabb', minify: false }); // shared
 
 export interface TabStuff { tabRule: Factory<CssRule>, tabVars: CssVars<TabVars> }
 export interface TabConfig {
-    paddingInline ?: CssKnownProps['paddingInline']
+    panelSize ?: CssKnownProps['inlineSize']
 }
 /**
  * Uses tab variables.
@@ -72,8 +76,9 @@ export const usesTab = (config?: TabConfig): TabStuff => {
         tabRule: () => style({
             // position functions:
             ...vars({
-                [tabVars.prevTabPosition   ] : `calc((100%${(config?.paddingInline !== undefined) ? ` + (${config?.paddingInline} * 2)` : ''}) * (${tabVars.tabIndex} - ${tabVars.collapsedTabIndex}))`,
-                [tabVars.currentTabPosition] : `calc((100%${(config?.paddingInline !== undefined) ? ` + (${config?.paddingInline} * 2)` : ''}) * (${tabVars.tabIndex} - ${tabVars.expandedTabIndex }))`,
+                [tabVars.panelSize         ] : config?.panelSize ?? '100%',
+                [tabVars.prevTabPosition   ] : `${tabVars.panelSize} * (${tabVars.tabIndex} - ${tabVars.collapsedTabIndex}))`,
+                [tabVars.currentTabPosition] : `${tabVars.panelSize} * (${tabVars.tabIndex} - ${tabVars.expandedTabIndex }))`,
             }),
         }),
         tabVars,
