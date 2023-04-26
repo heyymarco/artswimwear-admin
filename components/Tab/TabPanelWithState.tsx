@@ -112,7 +112,7 @@ export const TabPanelWithState = <TElement extends Element = HTMLElement, TTabEx
             
             
             // semantics:
-            role     : tabPanelComponent.props.role     ?? props.role     ?? 'presentation',
+            role     : isActive ? (tabPanelComponent.props.role ?? props.role) : 'presentation', // overwrite the role if *inactive*
             
             
             
