@@ -2,6 +2,7 @@ export *            from './features/tab'
 export *            from './variants/TabPanelVariant'
 export *            from './states/tabState'
 
+export *            from './styles/config'
 export *            from './styles/styles'
 export *            from './Tab'
 export {default}    from './Tab'
