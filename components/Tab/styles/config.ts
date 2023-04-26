@@ -21,36 +21,47 @@ import {
 // configs:
 export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
     //#region keyframes
-    const panelFrameCollapsed    = style({
+    const [panelKeyframesExpandRule  , panelKeyframesExpand  ] = keyframes({
+        /* no animation */
+    });
+    panelKeyframesExpand.value   = 'expand';   // the @keyframes name should contain 'expand'   in order to be recognized by `useCollapsible`
+    const [panelKeyframesCollapseRule, panelKeyframesCollapse] = keyframes({
+        /* no animation */
+    });
+    panelKeyframesCollapse.value = 'collapse'; // the @keyframes name should contain 'collapse' in order to be recognized by `useCollapsible`
+    
+    
+    
+    const panelFrameCollapsedFitContent    = style({
         overflowY     : 'clip',
         ...fallbacks({
             overflowY : 'hidden',
         }),
         maxBlockSize  : 0,
     });
-    const panelFrameIntermediate = style({
+    const panelFrameIntermediateFitContent = style({
         overflowY     : 'clip',
         ...fallbacks({
             overflowY : 'hidden',
         }),
         maxBlockSize  : '100vh',
     });
-    const panelFrameExpanded     = style({
+    const panelFrameExpandedFitContent     = style({
         overflowY     : 'unset',
         maxBlockSize  : 'unset',
     });
-    const [panelKeyframesExpandRule  , panelKeyframesExpand  ] = keyframes({
-        from  : panelFrameCollapsed,
-        '99%' : panelFrameIntermediate,
-        to    : panelFrameExpanded,
+    const [panelKeyframesExpandFitContentRule  , panelKeyframesExpandFitContent  ] = keyframes({
+        from  : panelFrameCollapsedFitContent,
+        '99%' : panelFrameIntermediateFitContent,
+        to    : panelFrameExpandedFitContent,
     });
-    panelKeyframesExpand.value   = 'expand';   // the @keyframes name should contain 'expand'   in order to be recognized by `useCollapsible`
-    const [panelKeyframesCollapseRule, panelKeyframesCollapse] = keyframes({
-        from  : panelFrameExpanded,
-        '1%'  : panelFrameIntermediate,
-        to    : panelFrameCollapsed,
+    panelKeyframesExpandFitContent.value   = 'expand';   // the @keyframes name should contain 'expand'   in order to be recognized by `useCollapsible`
+    const [panelKeyframesCollapseFitContentRule, panelKeyframesCollapseFitContent] = keyframes({
+        from  : panelFrameExpandedFitContent,
+        '1%'  : panelFrameIntermediateFitContent,
+        to    : panelFrameCollapsedFitContent,
     });
-    panelKeyframesCollapse.value = 'collapse'; // the @keyframes name should contain 'collapse' in order to be recognized by `useCollapsible`
+    panelKeyframesCollapseFitContent.value = 'collapse'; // the @keyframes name should contain 'collapse' in order to be recognized by `useCollapsible`
     //#endregion keyframes
     
     
@@ -60,10 +71,21 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
         ...panelKeyframesExpandRule,
         ...panelKeyframesCollapseRule,
         panelAnimExpand   : [
-            ['300ms', 'ease-out', 'both', panelKeyframesExpand  ],
+            ['1ms', 'ease-out', 'both', panelKeyframesExpand  ],
         ]                                                       as CssKnownProps['animation'],
         panelAnimCollapse : [
-            ['300ms', 'ease-out', 'both', panelKeyframesCollapse],
+            ['1ms', 'ease-out', 'both', panelKeyframesCollapse],
+        ]                                                       as CssKnownProps['animation'],
+        
+        
+        
+        ...panelKeyframesExpandFitContentRule,
+        ...panelKeyframesCollapseFitContentRule,
+        panelAnimExpandFitContent   : [
+            ['300ms', 'ease-out', 'both', panelKeyframesExpandFitContent  ],
+        ]                                                       as CssKnownProps['animation'],
+        panelAnimCollapseFitContent : [
+            ['300ms', 'ease-out', 'both', panelKeyframesCollapseFitContent],
         ]                                                       as CssKnownProps['animation'],
     };
 }, { prefix: 'tab' });

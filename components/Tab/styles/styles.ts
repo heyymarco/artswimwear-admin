@@ -13,6 +13,8 @@ import {
     // reads/writes css variables configuration:
     usesCssProps,
     usesPrefixedProps,
+    usesSuffixedProps,
+    overwriteProps,
 }                           from '@cssfn/core'                  // writes css in javascript
 
 // reusable-ui core:
@@ -59,8 +61,9 @@ import {
 export const usesTabPanelLayout = () => {
     // dependencies:
     
+    // features:
+    const {tabVars      } = usesTab();
     // inefficient: just for single animation:
-    // // features:
     // const {animationRule, animationVars} = usesAnimation();
     
     // capabilities:
@@ -76,20 +79,24 @@ export const usesTabPanelLayout = () => {
         // layouts:
         ...style({
             // positions:
-            gridArea      : '1/1/1/1', // the options are overlapping each other, so the parent takes the maximum width & height of children
+            gridArea         : '1/1/1/1', // the options are overlapping each other, so the parent takes the maximum width & height of children
+            
+            // stack the <TabPanel>(s) horizontally -- without changing the <TabBody>'s width:
+            position         : 'relative',
+            insetInlineStart : `calc((100% + (${groupableVars.paddingInline} * 2)) * (${tabVars.tabIndex} - ${tabVars.expandedTabIndex}))`,
             
             
             
             // scrolls:
-            overflow      : 'auto', // enable horz & vert scrolling
+            overflow         : 'auto', // enable horz & vert scrolling
             
             
             
             // spacings:
-            marginInline  : `calc(0px - ${groupableVars.paddingInline})`, // cancel out parent's padding with negative margin
-            marginBlock   : `calc(0px - ${groupableVars.paddingBlock })`, // cancel out parent's padding with negative margin
-            paddingInline : groupableVars.paddingInline,                  // restore parent's padding with positive margin
-            paddingBlock  : groupableVars.paddingBlock,                   // restore parent's padding with positive margin
+            marginInline     : `calc(0px - ${groupableVars.paddingInline})`, // cancel out parent's padding with negative margin
+            marginBlock      : `calc(0px - ${groupableVars.paddingBlock })`, // cancel out parent's padding with negative margin
+            paddingInline    : groupableVars.paddingInline,                  // restore parent's padding with positive margin
+            paddingBlock     : groupableVars.paddingBlock,                   // restore parent's padding with positive margin
             
             
             
@@ -99,28 +106,20 @@ export const usesTabPanelLayout = () => {
             
             
             // animations:
-         // anim          : animationVars.anim,   // inefficient: just for single animation
-            anim          : collapsibleVars.anim, // more efficient
+         // anim             : animationVars.anim,   // inefficient: just for single animation
+            anim             : collapsibleVars.anim, // more efficient
         }),
         
         
         
+        // features:
         // inefficient: just for single animation:
-        // // features:
         // ...animationRule(), // must be placed at the last
     });
 };
 export const usesTabPanelStates = () => {
-    // dependencies:
-    
-    // states:
-    const {collapsibleRule} = usesCollapsible(usesPrefixedProps(tabs, 'panel'));
-    
-    
-    
     return style({
         // states:
-        ...collapsibleRule(),
         ...states([
             ifCollapsing({
                 // appearances:
@@ -180,28 +179,20 @@ export const usesTabBodyLayout = () => {
     });
 };
 export const usesTabBodyVariants = () => {
-    // dependencies:
-    
-    // features:
-    const {tabVars      } = usesTab();
-    
-    // capabilities:
-    const {groupableVars} = usesGroupable();
-    
-    
-    
     return style({
+        // variants:
         ...variants([
             rule('.fitContent', {
                 // children:
                 ...children('.tabPanel', {
                     // states:
+                    ...usesCollapsible(usesSuffixedProps(usesPrefixedProps(tabs, 'panel'), 'fitContent')).collapsibleRule(), // overwrites {panel}PropName = {panel}PropName{FitContent}
                     ...states([
                         ifCollapsed({
                             // sizes:
                             // remove the height while maintaining it's width:
-                            maxBlockSize : 0,
-                            overflowY    : 'hidden',
+                            maxBlockSize : 0,        // the *grid* of <TabBody> will adjust to the highest of <TabPanel>(s)
+                            overflowY    : 'hidden', // the *grid* of <TabBody> will adjust to the highest of <TabPanel>(s)
                         }),
                     ]),
                 }),
@@ -209,12 +200,8 @@ export const usesTabBodyVariants = () => {
             rule('.maxContent', {
                 // children:
                 ...children('.tabPanel', {
-                    // layouts:
-                    ...style({
-                        // positions:
-                        position         : 'relative',
-                        insetInlineStart : `calc((100% + (${groupableVars.paddingInline} * 2)) * (${tabVars.tabIndex} - ${tabVars.expandedTabIndex}))`,
-                    }),
+                    // states:
+                    ...usesCollapsible(usesSuffixedProps(usesPrefixedProps(tabs, 'panel'), 'maxContent')).collapsibleRule(), // overwrites {panel}PropName = {panel}PropName{MaxContent}
                 }),
             }),
         ]),
