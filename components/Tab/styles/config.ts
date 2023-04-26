@@ -37,7 +37,7 @@ interface ConfigVars {
     endsMax   : any
     endsMin   : any
 }
-const [configVars] = cssVars<ConfigVars>({ prefix: 'cTabVar' });
+const [configVars] = cssVars<ConfigVars>();
 
 
 
