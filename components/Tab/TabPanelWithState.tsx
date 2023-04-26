@@ -111,13 +111,18 @@ export const TabPanelWithState = <TElement extends Element = HTMLElement, TTabEx
             
             
             
+            // semantics:
+            role     : tabPanelComponent.props.role     ?? props.role     ?? 'presentation',
+            
+            
+            
             // styles:
             style    : mergedStyle,
             
             
             
             // states:
-            expanded : tabPanelComponent.props.expanded ??  isActive,
+            expanded : tabPanelComponent.props.expanded ?? props.expanded ?? isActive,
         },
     );
 };

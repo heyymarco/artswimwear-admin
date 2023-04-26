@@ -66,17 +66,22 @@ export const ListItemWithState = <TElement extends Element = HTMLElement, TTabEx
     
     
     // handlers:
-    const handleClickInternal = useEvent<React.MouseEventHandler<TElement>>(() => {
+    const handleListItemClickInternal = useEvent<React.MouseEventHandler<TElement>>(() => {
         triggerExpandedChange(tabIndex);
     });
-    const handleClick         = useMergeEvents(
+    const handleListItemClick         = useMergeEvents(
         // preserves the original `onClick` from `listItemComponent`:
         listItemComponent.props.onClick,
         
         
         
+        // preserves the original `onClick` from `props`:
+        props.onClick,
+        
+        
+        
         // actions:
-        handleClickInternal,
+        handleListItemClickInternal,
     );
     
     
@@ -93,18 +98,18 @@ export const ListItemWithState = <TElement extends Element = HTMLElement, TTabEx
             
             
             // semantics:
-            'aria-selected' : listItemComponent.props['aria-selected'] ??  isActive,
+            'aria-selected' : listItemComponent.props['aria-selected'] ?? props['aria-selected'] ??  isActive,
             
             
             
             // accessibilities:
-            active          : listItemComponent.props.active           ??  isActive,
-            tabIndex        : listItemComponent.props.tabIndex         ?? (isActive ? 0 : -1),
+            active          : listItemComponent.props.active           ?? props.active           ??  isActive,
+            tabIndex        : listItemComponent.props.tabIndex      /* ?? props.tabIndex */      ?? (isActive ? 0 : -1),
             
             
             
             // handlers:
-            onClick         : handleClick,
+            onClick         : handleListItemClick,
         },
     );
 };
