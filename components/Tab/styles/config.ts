@@ -37,7 +37,7 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
         insetInlineStart : tabVars.prevTabPosition,
     });
     const panelFrameIntermediatePosition   = style({
-        insetInlineStart : `calc(${tabVars.currentTabPosition} + ((${tabVars.currentTabPosition} - ${tabVars.prevTabPosition}) * 0.05))`, // add a bumpy effect
+        insetInlineStart : `calc(${tabVars.currentTabPosition} + ((${tabVars.currentTabPosition} - ${tabVars.prevTabPosition}) * 0.02))`, // add a bumpy effect
     });
     const panelFrameCurrentPosition        = style({
         insetInlineStart : tabVars.currentTabPosition,
