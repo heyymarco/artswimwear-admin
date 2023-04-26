@@ -222,7 +222,7 @@ export default function Products() {
 
 
 
-export const metadata : Metadata = {
-    title       : PAGE_PRODUCTS_TITLE,
-    description : PAGE_PRODUCTS_DESCRIPTION,
-};
+// export const metadata : Metadata = {
+//     title       : PAGE_PRODUCTS_TITLE,
+//     description : PAGE_PRODUCTS_DESCRIPTION,
+// };
