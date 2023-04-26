@@ -34,6 +34,7 @@ import {
 interface ConfigVars {
     startsMin : any
     startsMax : any
+    
     endsMax   : any
     endsMin   : any
 }
@@ -102,23 +103,23 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
         
         
         // expanding => ending to 100vh:
-        [configVars.endsMax]   : [[
+        [configVars.endsMax  ] : [[
             tabVars.expandedSw, // the expanded switching function (will be valid if expanded, otherwise invalid)
             '100vh',
         ]],
         // collapsing => ending to 0:
-        [configVars.endsMin]   : 0,
+        [configVars.endsMin  ] : 0,
     });
     const panelFramePrevFitContent         = style({
         ...panelFramePrevPosition,
         ...configVarsDecl,
         
-        overflowY              : 'clip',
+        overflowY     : 'clip',
         ...fallbacks({
-            overflowY          : 'hidden',
+            overflowY : 'hidden',
         }),
         
-        maxBlockSize : switchOf(
+        maxBlockSize  : switchOf(
             configVars.startsMin, // first  priority
             configVars.startsMax, // second priority
         ),
@@ -127,23 +128,22 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
         ...panelFrameIntermediatePosition,
     });
     const panelFrameSemifinalFitContent    = style({
-        overflowY              : 'clip',
+        overflowY     : 'clip',
         ...fallbacks({
-            overflowY          : 'hidden',
+            overflowY : 'hidden',
         }),
-        
-        maxBlockSize : switchOf(
-            configVars.endsMax, // first  priority
-            configVars.endsMin, // second priority
-        ),
     });
     const panelFrameCurrentFitContent      = style({
         ...panelFrameCurrentPosition,
         ...configVarsDecl,
         
+        maxBlockSize  : switchOf(
+            configVars.endsMax, // first  priority
+            configVars.endsMin, // second priority
+        ),
+        
         // cleanups => reset modified props:
         overflowY     : 'unset',
-        maxBlockSize  : 'unset',
     });
     const [panelKeyframesExpandFitContentRule  , panelKeyframesExpandFitContent  ] = keyframes({
         from  : panelFramePrevFitContent,
