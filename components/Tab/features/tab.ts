@@ -33,6 +33,11 @@ export interface TabVars {
      * <Tab>'s expanded (active) index.
      */
     expandedTabIndex : any
+    
+    /**
+     * <Tab>'s index.
+     */
+    tabIndex         : any
 }
 const [tabVars] = cssVars<TabVars>({ prefix: 'tabb', minify: false }); // shared variables: ensures the server-side & client-side have the same generated css variable names
 
@@ -41,6 +46,7 @@ const [tabVars] = cssVars<TabVars>({ prefix: 'tabb', minify: false }); // shared
 export interface TabStuff { tabRule: Factory<CssRule>, tabVars: CssVars<TabVars> }
 export interface TabConfig {
     expandedTabIndex ?: number
+    tabIndex         ?: number
 }
 /**
  * Uses tab variables.
@@ -53,6 +59,7 @@ export const usesTab = (config?: TabConfig): TabStuff => {
             ...vars({
                 // variables:
                 [tabVars.expandedTabIndex] : config?.expandedTabIndex,
+                [tabVars.tabIndex        ] : config?.tabIndex,
             }),
         }),
         tabVars,

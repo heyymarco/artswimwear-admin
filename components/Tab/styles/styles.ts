@@ -46,6 +46,10 @@ import {
 
 // internals:
 import {
+    // features:
+    usesTab,
+}                           from '../features/tab'
+import {
     // configs:
     tabs,
 }                           from './config'
@@ -176,6 +180,16 @@ export const usesTabBodyLayout = () => {
     });
 };
 export const usesTabBodyVariants = () => {
+    // dependencies:
+    
+    // features:
+    const {tabVars      } = usesTab();
+    
+    // capabilities:
+    const {groupableVars} = usesGroupable();
+    
+    
+    
     return style({
         ...variants([
             rule('.fitContent', {
@@ -190,6 +204,17 @@ export const usesTabBodyVariants = () => {
                             overflowY    : 'hidden',
                         }),
                     ]),
+                }),
+            }),
+            rule('.maxContent', {
+                // children:
+                ...children('.tabPanel', {
+                    // layouts:
+                    ...style({
+                        // positions:
+                        position         : 'relative',
+                        insetInlineStart : `calc((100% + (${groupableVars.paddingInline} * 2)) * (${tabVars.tabIndex} - ${tabVars.expandedTabIndex}))`,
+                    }),
                 }),
             }),
         ]),
