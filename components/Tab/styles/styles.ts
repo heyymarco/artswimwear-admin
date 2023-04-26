@@ -62,20 +62,29 @@ export const usesTabPanelLayout = () => {
     // dependencies:
     
     // features:
-    const {tabVars      } = usesTab();
     // inefficient: just for single animation:
     // const {animationRule, animationVars} = usesAnimation();
     
     // capabilities:
-    const {groupableVars  } = usesGroupable();
+    const {groupableVars   } = usesGroupable();
     
     // more efficient:
     // states:
-    const {collapsibleVars} = usesCollapsible();
+    const {collapsibleVars } = usesCollapsible();
+    
+    // features:
+    const {tabRule, tabVars} = usesTab({
+        paddingInline : groupableVars.paddingInline,
+    });
     
     
     
     return style({
+        // features:
+        ...tabRule(),
+        
+        
+        
         // layouts:
         ...style({
             // positions:
@@ -83,7 +92,7 @@ export const usesTabPanelLayout = () => {
             
             // stack the <TabPanel>(s) horizontally -- without changing the <TabBody>'s width:
             position         : 'relative',
-            insetInlineStart : `calc((100% + (${groupableVars.paddingInline} * 2)) * (${tabVars.tabIndex} - ${tabVars.expandedTabIndex}))`,
+            insetInlineStart : tabVars.currentTabPosition,
             
             
             

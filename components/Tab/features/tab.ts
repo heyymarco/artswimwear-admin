@@ -6,6 +6,7 @@ import {
     
     
     // cssfn css specific types:
+    CssKnownProps,
     CssRule,
     
     
@@ -32,12 +33,17 @@ export interface TabVars {
     /**
      * <Tab>'s expanded (active) index.
      */
-    expandedTabIndex : any
+    expandedTabIndex   : any
     
     /**
-     * <Tab>'s index.
+     * <Tab>'s current index.
      */
-    tabIndex         : any
+    currentTabIndex    : any
+    
+    /**
+     * <Tab>'s current position.
+     */
+    currentTabPosition : any
 }
 const [tabVars] = cssVars<TabVars>({ prefix: 'tabb', minify: false }); // shared variables: ensures the server-side & client-side have the same generated css variable names
 
@@ -45,8 +51,7 @@ const [tabVars] = cssVars<TabVars>({ prefix: 'tabb', minify: false }); // shared
 
 export interface TabStuff { tabRule: Factory<CssRule>, tabVars: CssVars<TabVars> }
 export interface TabConfig {
-    expandedTabIndex ?: number
-    tabIndex         ?: number
+    paddingInline ?: CssKnownProps['paddingInline']
 }
 /**
  * Uses tab variables.
@@ -58,8 +63,7 @@ export const usesTab = (config?: TabConfig): TabStuff => {
         tabRule: () => style({
             ...vars({
                 // variables:
-                [tabVars.expandedTabIndex] : config?.expandedTabIndex,
-                [tabVars.tabIndex        ] : config?.tabIndex,
+                [tabVars.currentTabPosition] : `calc((100%${(config?.paddingInline !== undefined) ? ` + (${config?.paddingInline} * 2)` : ''}) * (${tabVars.currentTabIndex} - ${tabVars.expandedTabIndex}))`,
             }),
         }),
         tabVars,
