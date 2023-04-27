@@ -30,6 +30,11 @@ import {
     Label,
     InputProps,
     Group,
+    
+    TabExpandedChangeEvent,
+    TabProps,
+    Tab,
+    TabPanel,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internals:
@@ -38,13 +43,6 @@ import {
     QuantityEditorProps,
     QuantityEditor,
 }                           from '@/components/editors/QuantityEditor'
-import {
-    // react components:
-    TabExpandedChangeEvent,
-    TabProps,
-    Tab,
-    TabPanel,
-}                           from '@/components/Tab'
 
 // app configs:
 import {

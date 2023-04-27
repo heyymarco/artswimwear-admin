@@ -14,7 +14,7 @@ import {
     TabProps,
     Tab,
     TabPanel,
-}                           from '@/components/Tab'
+}                           from '@reusable-ui/components'
 
 // app configs:
 import {

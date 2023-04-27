@@ -18,7 +18,7 @@ import { CurrencyEditor } from '@/components/editors/CurrencyEditor'
 import { ShippingWeightEditor } from '@/components/editors/ShippingWeightEditor'
 import { StockEditor } from '@/components/editors/StockEditor'
 import { ProductVisibility, VisibilityEditor } from '@/components/editors/VisibilityEditor'
-import { Tab, TabPanel } from '@/components/Tab';
+import { Tab, TabPanel } from '@reusable-ui/components'
 
 
 
