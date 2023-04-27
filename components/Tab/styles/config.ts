@@ -113,12 +113,7 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
         ...panelFramePrevPosition,
         ...configVarsDecl,
         
-     // overflowY     : 'clip',
-     // ...fallbacks({
-     //     overflowY : 'hidden',
-     // }),
-        
-        maxBlockSize  : switchOf(
+        maxBlockSize : switchOf(
             configVars.startsMin, // first  priority
             configVars.startsMax, // second priority
         ),
@@ -126,35 +121,24 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
     const panelFrameIntermediateFitContent = style({
         ...panelFrameIntermediatePosition,
     });
-    const panelFrameSemifinalFitContent    = style({
-     // overflowY     : 'clip',
-     // ...fallbacks({
-     //     overflowY : 'hidden',
-     // }),
-    });
     const panelFrameCurrentFitContent      = style({
         ...panelFrameCurrentPosition,
         ...configVarsDecl,
         
-        maxBlockSize  : switchOf(
+        maxBlockSize : switchOf(
             configVars.endsMax, // first  priority
             configVars.endsMin, // second priority
         ),
-        
-     // // cleanups => reset modified props:
-     // overflowY     : 'unset',
     });
     const [panelKeyframesExpandFitContentRule  , panelKeyframesExpandFitContent  ] = keyframes({
         from  : panelFramePrevFitContent,
         '70%' : panelFrameIntermediateFitContent,
-        '99%' : panelFrameSemifinalFitContent,
         to    : panelFrameCurrentFitContent,
     });
     panelKeyframesExpandFitContent.value   = 'expandFitContent';   // the @keyframes name should contain 'expand'   in order to be recognized by `useCollapsible`
     const [panelKeyframesCollapseFitContentRule, panelKeyframesCollapseFitContent] = keyframes({
         from  : panelFramePrevFitContent,
         '30%' : panelFrameIntermediateFitContent,
-        '99%' : panelFrameSemifinalFitContent,
         to    : panelFrameCurrentFitContent,
     });
     panelKeyframesCollapseFitContent.value = 'collapseFitContent'; // the @keyframes name should contain 'collapse' in order to be recognized by `useCollapsible`
