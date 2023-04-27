@@ -158,8 +158,6 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
             ['300ms', 'ease-out', 'both', panelKeyframesCollapseMaxContent],
         ]                                                               as CssKnownProps['animation'],
         
-        
-        
         ...panelKeyframesExpandFitContentRule,
         ...panelKeyframesCollapseFitContentRule,
         panelAnimExpandFitContent   : [
