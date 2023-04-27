@@ -7,7 +7,6 @@ import {
     
     // writes css in javascript:
     keyframes,
-    fallbacks,
     style,
     vars,
     
@@ -114,10 +113,10 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
         ...panelFramePrevPosition,
         ...configVarsDecl,
         
-        overflowY     : 'clip',
-        ...fallbacks({
-            overflowY : 'hidden',
-        }),
+     // overflowY     : 'clip',
+     // ...fallbacks({
+     //     overflowY : 'hidden',
+     // }),
         
         maxBlockSize  : switchOf(
             configVars.startsMin, // first  priority
@@ -128,10 +127,10 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
         ...panelFrameIntermediatePosition,
     });
     const panelFrameSemifinalFitContent    = style({
-        overflowY     : 'clip',
-        ...fallbacks({
-            overflowY : 'hidden',
-        }),
+     // overflowY     : 'clip',
+     // ...fallbacks({
+     //     overflowY : 'hidden',
+     // }),
     });
     const panelFrameCurrentFitContent      = style({
         ...panelFrameCurrentPosition,
@@ -142,8 +141,8 @@ export const [tabs, tabValues, cssTabConfig] = cssConfig(() => {
             configVars.endsMin, // second priority
         ),
         
-        // cleanups => reset modified props:
-        overflowY     : 'unset',
+     // // cleanups => reset modified props:
+     // overflowY     : 'unset',
     });
     const [panelKeyframesExpandFitContentRule  , panelKeyframesExpandFitContent  ] = keyframes({
         from  : panelFramePrevFitContent,

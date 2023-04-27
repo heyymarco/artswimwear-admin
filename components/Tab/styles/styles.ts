@@ -183,7 +183,7 @@ export const usesTabBodyVariants = () => {
                             // sizes:
                             // remove the height while maintaining it's width:
                             maxBlockSize : 0,        // the *grid* of <TabBody> will adjust to the highest of <TabPanel>(s)
-                            overflowY    : 'hidden', // the *grid* of <TabBody> will adjust to the highest of <TabPanel>(s)
+                         // overflowY    : 'hidden', // the *grid* of <TabBody> will adjust to the highest of <TabPanel>(s)
                         }),
                     ]),
                     transition : [
