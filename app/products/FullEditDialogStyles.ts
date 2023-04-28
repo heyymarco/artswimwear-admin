@@ -92,6 +92,7 @@ export const usesPageInfoLayout = () => {
     return style({
         // layouts:
         display          : 'grid',
+        alignContent     : 'start',
         gridTemplate     : [[
             '"name-label       "', 'auto',
             '"name-editor      "', 'auto',
