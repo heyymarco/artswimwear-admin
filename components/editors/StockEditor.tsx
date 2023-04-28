@@ -28,7 +28,6 @@ import {
 import {
     // react components:
     Label,
-    InputProps,
     Group,
     
     TabExpandedChangeEvent,
@@ -72,7 +71,6 @@ export interface StockEditorProps<TElement extends Element = HTMLElement>
             |'elmRef'                  // taken by <QuantityEditor>
             
             // states:
-            |'tabPanels'               // already taken over
             |'defaultExpandedTabIndex' // already taken over
             |'expandedTabIndex'        // already taken over
             |'onExpandedChange'        // already taken over
@@ -158,8 +156,6 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
         childrenAfterInput,
         childrenAfterButton,
     ...restTabProps} = props;
-    type T1 = typeof restTabProps
-    type T2 = Omit<T1, keyof TabProps>
     
     
     
