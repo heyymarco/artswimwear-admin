@@ -4,6 +4,13 @@ import {
     default as React,
 }                           from 'react'
 
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useEvent,
+    EventHandler,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
 // internals:
 import type {
     // react components:
@@ -11,6 +18,7 @@ import type {
 }                           from '@/components/editors/Editor'
 import {
     // react components:
+    TabExpandedChangeEvent,
     TabProps,
     Tab,
     TabPanel,
@@ -27,6 +35,7 @@ import {
 
 // types:
 export type ProductVisibility = 'published'|'hidden'|'draft'
+const possibleValues : ProductVisibility[] = ['published', 'hidden', 'draft'];
 
 
 
@@ -34,21 +43,14 @@ export type ProductVisibility = 'published'|'hidden'|'draft'
 interface VisibilityEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Omit<EditorProps<TElement, ProductVisibility>,
-            // refs:
-            |'elmRef'                  // taken by <Tab>
-            |'outerRef'                // taken by <Tab>
-            
-            // variants:
-            |'nude'                    // not supported
-            
-            // children:
-            |'children'                // not supported
-            |'dangerouslySetInnerHTML' // not supported
+        Pick<EditorProps<TElement, ProductVisibility>,
+            // values:
+            |'defaultValue'
+            |'value'
+            |'onChange'
         >,
         Omit<TabProps<TElement>,
             // states:
-            |'tabPanels'               // already taken over
             |'defaultExpandedTabIndex' // already taken over
             |'expandedTabIndex'        // already taken over
             |'onExpandedChange'        // already taken over
@@ -61,9 +63,20 @@ interface VisibilityEditorProps<TElement extends Element = HTMLElement>
 const VisibilityEditor = <TElement extends Element = HTMLElement>(props: VisibilityEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
+        // values:
+        defaultValue,
+        value,
+        onChange,
     ...restTabProps} = props;
-    type T1 = typeof restTabProps
-    type T2 = Omit<T1, keyof TabProps>
+    
+    
+    
+    // handlers:
+    const handleExpandedChange = useEvent<EventHandler<TabExpandedChangeEvent>>(({tabIndex}) => {
+        onChange?.(
+            possibleValues[tabIndex]
+        );
+    });
     
     
     
@@ -72,6 +85,12 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
         <Tab<TElement>
             // other props:
             {...restTabProps}
+            
+            
+            
+            // states:
+            defaultExpandedTabIndex={possibleValues.findIndex((possibleValue) => (possibleValue === (value ?? defaultValue)))}
+            onExpandedChange={handleExpandedChange}
         >
             <TabPanel label={PAGE_PRODUCTS_VISIBILITY_PUBLISHED}>
                 <p>
