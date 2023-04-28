@@ -6,7 +6,7 @@ import { dynamicStyleSheet } from '@cssfn/cssfn-react'
 import { ButtonIcon, CardBody, CardHeader, CardFooter, Button, CloseButton } from '@reusable-ui/components';
 import { ProductEntry, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
-import { AccessibilityProvider, useEvent } from '@reusable-ui/core';
+import { AccessibilityProvider, ValidationProvider, useEvent } from '@reusable-ui/core';
 import { ModalStatus } from '../../components/ModalStatus'
 
 import { EditorProps } from '@/components/editors/Editor'
@@ -187,29 +187,27 @@ export const SimpleEditDialog = <TValue,>(props: SimpleEditDialogProps<TValue>) 
     return (
         <CardBody className={styles.main} onKeyDown={handleKeyDown}>
             <AccessibilityProvider enabled={!isLoading}>
-                {React.cloneElement(editorComponent,
-                    // props:
-                    {
-                        elmRef           : editorRef,
-                        
-                        
-                        
-                        size             : 'sm',
-                        
-                        
-                        
-                        className        : 'editor',
-                        
-                        
-                        
-                        value            : editorValue,
-                        onChange         : (value: TValue) => { setEditorValue(value); setIsModified(true); },
-                        
-                        
-                        
-                        enableValidation : enableValidation,
-                    },
-                )}
+                <ValidationProvider enableValidation={enableValidation}>
+                    {React.cloneElement(editorComponent,
+                        // props:
+                        {
+                            elmRef    : editorRef,
+                            
+                            
+                            
+                            size      : 'sm',
+                            
+                            
+                            
+                            className : 'editor',
+                            
+                            
+                            
+                            value     : editorValue,
+                            onChange  : (value: TValue) => { setEditorValue(value); setIsModified(true); },
+                        },
+                    )}
+                </ValidationProvider>
                 <ButtonIcon className='btnSave' icon={isLoading ? 'busy' : 'save'} theme='success' size='sm' onClick={handleSave}>Save</ButtonIcon>
                 <ButtonIcon className='btnCancel' icon='cancel' theme='danger' size='sm' onClick={handleClosing}>Cancel</ButtonIcon>
             </AccessibilityProvider>
