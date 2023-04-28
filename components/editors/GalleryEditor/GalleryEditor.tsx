@@ -9,16 +9,17 @@ import {
     useState,
 }                           from 'react'
 
+// cssfn:
+import {
+    // style sheets:
+    dynamicStyleSheet,
+}                           from '@cssfn/cssfn-react'           // writes css in react hook
+
 // reusable-ui core:
 import {
     // react components:
-    MasonryProps,
-    Masonry,
-    
-    
-    
-    // configs:
-    masonries,
+    ContentProps,
+    Content,
 }                           from '@reusable-ui/components'
 import {
     // react components:
@@ -30,6 +31,17 @@ import type {
     // react components:
     EditorProps,
 }                           from '@/components/editors/Editor'
+import {
+    // configs:
+    gedits,
+}                           from './styles/config'
+
+
+
+// styles:
+export const useGalleryEditorStyleSheet = dynamicStyleSheet(
+    () => import(/* webpackPrefetch: true */ './styles/styles')
+, { id: 'd3yn00z8kw' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 
 
 
@@ -43,7 +55,7 @@ interface GalleryEditorProps<TElement extends Element = HTMLElement>
             |'value'
             |'onChange'
         >,
-        Omit<MasonryProps<TElement>,
+        Omit<ContentProps<TElement>,
             // values:
             |'defaultValue' // not supported
             |'value'        // not supported
@@ -56,6 +68,11 @@ interface GalleryEditorProps<TElement extends Element = HTMLElement>
     productName: string
 }
 const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEditorProps<TElement>): JSX.Element|null => {
+    // styles:
+    const styleSheet = useGalleryEditorStyleSheet();
+    
+    
+    
     // rest props:
     const {
         // values:
@@ -66,7 +83,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         productName,
-    ...restMasonryProps} = props;
+    ...restContentProps} = props;
     
     
     
@@ -78,14 +95,19 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     
     // jsx:
     return (
-        <Masonry<TElement>
+        <Content<TElement>
             // other props:
-            {...restMasonryProps}
+            {...restContentProps}
             
             
             
             // variants:
             nude={props.nude ?? true}
+            
+            
+            
+            // classes:
+            mainClass={props.mainClass ?? styleSheet.main}
         >
             {imagesFn.map((image, index) =>
                 <Image
@@ -93,10 +115,10 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     
                     alt={''}
                     src={image ? `/products/${productName}/${image}` : undefined}
-                    sizes={`calc((${masonries.itemMinColumnWidth} * 2) + ${masonries.gapInline})`}
+                    sizes={`calc((${gedits.itemMinColumnWidth} * 2) + ${gedits.gapInline})`}
                 />
             )}
-        </Masonry>
+        </Content>
     );
 };
 export {
