@@ -3,7 +3,7 @@
 import { default as React } from 'react'
 import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 
-import { ButtonIcon, Generic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, List } from '@reusable-ui/components';
+import { ButtonIcon, Generic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, List, Carousel, Masonry, masonries } from '@reusable-ui/components';
 import { ProductEntry, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { getCurrencySign } from '@/libs/formatters';
@@ -17,8 +17,10 @@ import { PathEditor } from '@/components/editors/PathEditor'
 import { CurrencyEditor } from '@/components/editors/CurrencyEditor'
 import { ShippingWeightEditor } from '@/components/editors/ShippingWeightEditor'
 import { StockEditor } from '@/components/editors/StockEditor'
+import { GalleryEditor } from '@/components/editors/GalleryEditor'
 import { ProductVisibility, VisibilityEditor } from '@/components/editors/VisibilityEditor'
 import { Tab, TabPanel } from '@reusable-ui/components'
+import { Image } from '@heymarco/image'
 
 
 
@@ -69,6 +71,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
     const [price           , setPrice           ] = useState<number|null>(product.price          ?? null);
     const [shippingWeight  , setShippingWeight  ] = useState<number|null>(product.shippingWeight ?? null);
     const [stock           , setStock           ] = useState<number|null>(product.stock          ?? null);
+    const [images          , setImages          ] = useState<string[]>(product.images);
     const [description     , setDescription     ] = useState<string>(product.description ?? '');
     
     
@@ -309,10 +312,10 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                     </ModalStatus>
                 </TabPanel>
                 <TabPanel label={PAGE_PRODUCTS_TAB_IMAGES}>
-                    <p>todo images</p>
+                    <GalleryEditor productName={name} value={images} onChange={(value) => { setImages(value); setIsModified(true); }} />
                 </TabPanel>
                 <TabPanel label={PAGE_PRODUCTS_TAB_DESCRIPTION}>
-                    <p>todo description</p>
+                    <p>Under construction...</p>
                 </TabPanel>
             </Tab>
             <CardFooter onKeyDown={handleKeyDown}>
