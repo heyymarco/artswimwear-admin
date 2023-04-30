@@ -68,7 +68,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
     const [visibility      , setVisibility      ] = useState<ProductVisibility>(product.visibility as ProductVisibility);
     const [name            , setName            ] = useState<string>(product.name);
     const [path            , setPath            ] = useState<string>(product.path ?? '');
-    const [price           , setPrice           ] = useState<number|null>(product.price          ?? null);
+    const [price           , setPrice           ] = useState<number>(product.price);
     const [shippingWeight  , setShippingWeight  ] = useState<number|null>(product.shippingWeight ?? null);
     const [stock           , setStock           ] = useState<number|null>(product.stock          ?? null);
     const [images          , setImages          ] = useState<string[]>(product.images);
@@ -240,7 +240,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                             <PathEditor           className='path editor'       value={path}           onChange={(value) => { setPath(value); setIsPathModified(true); }} homeUrl={STORE_WEBSITE_URL} />
                             
                             <span className='price label'>Price:</span>
-                            <CurrencyEditor       className='price editor'      value={price}          onChange={(value) => { setPrice(value); setIsModified(true); }} currencySign={getCurrencySign()} currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX} />
+                            <CurrencyEditor       className='price editor'      value={price}          onChange={(value) => { setPrice(value ?? 0); setIsModified(true); }} currencySign={getCurrencySign()} currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX} />
                             
                             <span className='sWeight label'>Shipping Weight:</span>
                             <ShippingWeightEditor className='sWeight editor'    value={shippingWeight} onChange={(value) => { setShippingWeight(value); setIsModified(true); }} />
