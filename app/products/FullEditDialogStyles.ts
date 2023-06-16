@@ -4,7 +4,7 @@ import {
     children,
     style,
     vars,
-    scopeOf,
+    scope,
 }                           from '@cssfn/core'          // writes css in javascript
 import {
     // border (stroke) stuff of UI:
@@ -162,19 +162,19 @@ export const usesPageInfoLayout = () => {
 };
 
 export default () => [
-    scopeOf('cardBody', {
+    scope('cardBody', {
         ...usesCardBodyLayout(),
     }, { specificityWeight: 3 }),
     
-    scopeOf('tabList', {
+    scope('tabList', {
         ...usesTabListLayout(),
     }, { specificityWeight: 2 }),
     
-    scopeOf('tabBody', {
+    scope('tabBody', {
         ...usesTabBodyLayout(),
     }, { specificityWeight: 2 }),
     
-    scopeOf('pageInfo', {
+    scope('pageInfo', {
         ...usesPageInfoLayout(),
     }),
 ];

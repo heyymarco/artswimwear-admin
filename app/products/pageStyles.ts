@@ -3,7 +3,7 @@ import {
     children,
     descendants,
     rule,
-    scopeOf,
+    scope,
 }                           from '@cssfn/core'          // writes css in javascript
 import { typos, usesBorder, usesGroupable, usesPadding } from '@reusable-ui/core';
 
@@ -20,16 +20,16 @@ export default () => {
     
     
     return [
-        scopeOf('page', {
+        scope('page', {
             display: 'flex',
             flexDirection: 'column',
         }),
-        scopeOf('toolbox', {
+        scope('toolbox', {
         }, { specificityWeight: 2 }),
-        scopeOf('paginationLoading', {
+        scope('paginationLoading', {
             blockSize: '100%',
         }, { specificityWeight: 2 }),
-        scopeOf('products', {
+        scope('products', {
             flexGrow: 1,
             
             display: 'flex',
@@ -49,12 +49,12 @@ export default () => {
                 gapBlock: '1rem',
             }),
         }, { specificityWeight: 2 }),
-        scopeOf('paginTop', {
+        scope('paginTop', {
             gridArea: 'paginTop',
             
             justifySelf: 'center',
         }),
-        scopeOf('productList', {
+        scope('productList', {
             gridArea: 'productList',
             
             display: 'flex',
@@ -64,7 +64,7 @@ export default () => {
             [paddingVars.paddingBlock ] : '0px',
             ...groupableRule(),  // make a nicely rounded corners
         }, { specificityWeight: 2 }),
-        scopeOf('productListInner', {
+        scope('productListInner', {
             [groupableVars.borderStartStartRadius] : 'inherit !important', // reads parent's prop
             [groupableVars.borderStartEndRadius  ] : 'inherit !important', // reads parent's prop
             [groupableVars.borderEndStartRadius  ] : 'inherit !important', // reads parent's prop
@@ -75,12 +75,12 @@ export default () => {
             [borderVars.borderEndStartRadius  ] : groupableVars.borderEndStartRadius,
             [borderVars.borderEndEndRadius    ] : groupableVars.borderEndEndRadius,
         }, { specificityWeight: 2 }),
-        scopeOf('paginBtm', {
+        scope('paginBtm', {
             gridArea: 'paginBtm',
             
             justifySelf: 'center',
         }),
-        scopeOf('productFetching', {
+        scope('productFetching', {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -88,7 +88,7 @@ export default () => {
                 alignSelf: 'stretch',
             }),
         }, { specificityWeight: 2 }),
-        scopeOf('productItem', {
+        scope('productItem', {
             display: 'flex',
             flexDirection: 'column',
             padding: 0,
@@ -97,7 +97,7 @@ export default () => {
                 [paddingVars.paddingBlock ] : '0px',
             }),
         }, { specificityWeight: 2 }),
-        scopeOf('productItemLayout', {
+        scope('productItemLayout', {
             display: 'grid',
             gridTemplate: [[
                 '"image      name "', 'auto',
