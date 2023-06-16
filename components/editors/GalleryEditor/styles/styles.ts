@@ -61,7 +61,16 @@ export const usesMasonryLayout = () => {
             
             // children:
             ...children('*', {
-                inlineSize    : 'unset',                 // we need to manage the <img>'s width
+                // sizes:
+                inlineSize : 'unset', // we need to manage the <img>'s width
+                
+                
+                
+                // accessibilities:
+                cursor     : 'move',
+                ...children('*', {
+                    pointerEvents : 'none',
+                }),
             }),
             
             

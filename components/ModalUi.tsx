@@ -64,7 +64,7 @@ const ModalUi = (props: ModalUiProps): JSX.Element|null => {
             
             
             // handlers:
-            onFullyCollapsed={clearModalUiComponent}
+            onCollapseEnd={clearModalUiComponent}
         >
             {/* <Ui> */}
             {(lastExistingModalUiComponent as (ModalUiComponent|undefined)) ?? <React.Fragment />}

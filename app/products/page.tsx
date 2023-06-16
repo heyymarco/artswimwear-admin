@@ -110,7 +110,7 @@ const ProductItem = (props: ProductItemProps) => {
                     </EditButton>
                 </p>
             </div>
-            <ModalStatus modalViewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
+            <ModalStatus theme='primary' viewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
                 {!!editMode && (editMode !== 'full') && <>
                     {(editMode === 'name'      ) && <SimpleEditDialog product={product} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor       required={true } />} />}
                     {(editMode === 'price'     ) && <SimpleEditDialog product={product} edit={editMode} onClose={handleEditDialogClose} editorComponent={<CurrencyEditor   currencySign={getCurrencySign()} currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX} />} />}
@@ -191,7 +191,7 @@ export default function Products() {
             <Section className={`fill-self ${styles.products}`}>
                 <ProductPagination className={styles.paginTop} />
                 <Basic<HTMLElement> className={styles.productList} theme='primary' mild={true} elmRef={setProductListRef}>
-                    <ModalStatus className={styles.productFetching} modalViewport={productListRef}>
+                    <ModalStatus className={styles.productFetching} viewport={productListRef}>
                         {(isFetching || isError) && <CardBody>
                             {isFetching && <>
                                 <p>Retrieving data from the server. Please wait...</p>

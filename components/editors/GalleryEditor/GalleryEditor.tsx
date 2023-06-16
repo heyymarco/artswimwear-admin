@@ -116,6 +116,23 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     alt={''}
                     src={image ? `/products/${productName}/${image}` : undefined}
                     sizes={`calc((${gedits.itemMinColumnWidth} * 2) + ${gedits.gapInline})`}
+                    
+                    draggable={true}
+                    onDragStart={(event) => {
+                        // event.currentTarget.style.opacity = '0.4';
+                        
+                        event.dataTransfer.effectAllowed = 'move';
+                        event.dataTransfer.setData('text/html', event.currentTarget.outerHTML);
+                        // event.dataTransfer.setDragImage(event.currentTarget.children?.[0] ?? event.currentTarget, 0 , 0);
+                    }}
+                    onDragEnd={(event) => { event.currentTarget.style.opacity = '1' }}
+                    
+                    onDragOver={(event) => {event.preventDefault(); return false}}
+                    onDrop={(event) => {
+                        event.stopPropagation();
+                        event.preventDefault();
+                        return false
+                    }}
                 />
             )}
         </Content>
