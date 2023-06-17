@@ -28,6 +28,11 @@ import { FullEditDialog } from './FullEditDialog'
 
 
 
+// defaults:
+const imageSize = 96;  // 96px
+
+
+
 // styles:
 const usePageStyleSheet = dynamicStyleSheets(
     () => import(/* webpackPrefetch: true */'./pageStyles')
@@ -81,9 +86,10 @@ const ProductItem = (props: ProductItemProps) => {
             <div className={styles.productItemLayout}>
                 <div className='prodImg'>
                     <Image
+                        className='image'
                         alt={name ?? ''}
                         src={images?.[0] ? `/products/${name}/${images[0]}` : undefined}
-                        sizes='96px'
+                        sizes={`${imageSize}px`}
                     />
                     <EditButton onClick={() => setEditMode('full')} />
                 </div>

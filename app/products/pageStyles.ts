@@ -9,6 +9,11 @@ import { typos, usesBorder, usesGroupable, usesPadding } from '@reusable-ui/core
 
 
 
+// defaults:
+const imageSize = 96;  // 96px
+
+
+
 // styles:
 export default () => {
     const {paddingVars} = usesPadding();
@@ -106,7 +111,7 @@ export default () => {
                 '"image visibility"', 'auto',
                 '"image fullEditor"', 'auto',
                 '/',
-                'min-content', 'auto',
+                `${imageSize}px`, 'auto',
             ]],
             padding: '1rem',
             gapInline: '1rem',
@@ -136,6 +141,10 @@ export default () => {
                 display: 'grid',
                 ...children('*', {
                     gridArea: '1/1/-1/-1',
+                }),
+                ...children('.image', {
+                    width: '100%',
+                    minHeight: `${imageSize}px`,
                 }),
                 ...children('.edit', {
                     justifySelf: 'start',
