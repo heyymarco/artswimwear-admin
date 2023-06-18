@@ -8,6 +8,7 @@ import {
     // hooks:
     useState,
     useId,
+    useEffect,
 }                           from 'react'
 
 // cssfn:
@@ -17,6 +18,15 @@ import {
 }                           from '@cssfn/cssfn-react'           // writes css in react hook
 
 // reusable-ui core:
+import {
+    // react helper hooks:
+    useEvent,
+    EventHandler,
+    useMergeEvents,
+    useScheduleTriggerEvent,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
+// reusable-ui components:
 import {
     // react components:
     ContentProps,
@@ -29,6 +39,11 @@ import {
 
 // internals:
 import type {
+    // types:
+    EditorChangeEventHandler,
+    
+    
+    
     // react components:
     EditorProps,
 }                           from '@/components/editors/Editor'
@@ -88,14 +103,88 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     
     
     
-    // states:
-    const [imagesDn, setImagesDn] = useState<string[]>(defaultImages ?? []);
-    const imagesFn : string[] = (images /*controllable*/ ?? imagesDn /*uncontrollable*/);
-    
-    
-    
+    // identifiers:
     const editorId     = useId().toLowerCase();
     const dragDataType = `application/${editorId}`;
+    
+    
+    
+    // states:
+    const isControllableImages    = (images !== undefined);
+    const [imagesDn, setImagesDn] = useState<string[]>(defaultImages ?? []);
+    const imagesFn : string[]     = (images /*controllable*/ ?? imagesDn /*uncontrollable*/);
+    
+    const [draftImages, setDraftImages] = useState<string[]>([]);
+    useEffect(() => {
+        setDraftImages(imagesFn.slice(0)); // clone the image
+    }, [imagesFn]);
+    
+    
+    
+    // events:
+    const scheduleTriggerEvent = useScheduleTriggerEvent();
+    
+    
+    
+    // handlers:
+    const handleChangeInternal = useEvent<EditorChangeEventHandler<string[]>>((images) => {
+        // update state:
+        if (!isControllableImages) setImagesDn(images);
+    });
+    const handleChange         = useMergeEvents(
+        // preserves the original `onChange` from `props`:
+        onChange,
+        
+        
+        
+        // actions:
+        handleChangeInternal,
+    );
+    
+    const handlePreviewMoved = useEvent((fromItemIndex: number, toItemIndex: number) => {
+        if (fromItemIndex === toItemIndex) return; // no change => nothing to shift => ignore
+        
+        
+        
+        // backup the fromItem's image before shifting (destructing the data):
+        const fromItemImage = draftImages[fromItemIndex];
+        
+        
+        
+        // shift the images:
+        if (fromItemIndex < toItemIndex) {
+            // shift the images [fromItemIndex ...up_to... beforeToItemIndex]:
+            for (let shiftItemIndex = fromItemIndex; shiftItemIndex < toItemIndex; shiftItemIndex++) {
+                draftImages[shiftItemIndex] = draftImages[shiftItemIndex + 1];
+            } // for
+        }
+        else {
+            // shift the images [fromItemIndex ...down_to... afterToItemIndex]:
+            for (let shiftItemIndex = fromItemIndex; shiftItemIndex > toItemIndex; shiftItemIndex--) {
+                draftImages[shiftItemIndex] = draftImages[shiftItemIndex - 1];
+            } // for
+        } // if
+        
+        
+        
+        // and replace the target's image with origin's image:
+        draftImages[toItemIndex] = fromItemImage;
+        
+        
+        
+        // notify changes by supplying a copy of the modified array:
+        setDraftImages(draftImages.slice(0));
+    });
+    const handleDropped = useEvent((fromItemIndex: number, toItemIndex: number) => {
+        handlePreviewMoved(fromItemIndex, toItemIndex);
+        
+        
+        
+        if (handleChange) scheduleTriggerEvent(() => { // runs the `onChange` event *next after* current macroTask completed
+            // fire `onChange` react event:
+            handleChange(draftImages);
+        });
+    });
     
     
     
@@ -159,18 +248,19 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     }}
                     onDragLeave={(event) => {
                         // todo: restore drop target styling
+                        console.log('LEAVE')
                     }}
                     onDrop={(event) => {
                         // conditions:
-                        const dragData = event.dataTransfer.getData(dragDataType);
-                        if (!dragData) return; // unknown drag object => ignore
+                        const fromItemIndex = Number.parseInt(event.dataTransfer.getData(dragDataType));
+                        if (isNaN(fromItemIndex)) return; // unknown drag object => ignore
                         
                         
                         
                         // actions:
-                        console.log({ dragData });
                         event.preventDefault();
                         event.stopPropagation(); // do not bubble event to the <parent>
+                        handleDropped(fromItemIndex, /*toItemIndex = */itemIndex);
                     }}
                 />
             )}
