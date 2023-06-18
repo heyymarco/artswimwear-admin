@@ -141,13 +141,18 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         handleChangeInternal,
     );
     
-    const handlePreviewMoved = useEvent((fromItemIndex: number, toItemIndex: number) => {
-        if (fromItemIndex === toItemIndex) return; // no change => nothing to shift => ignore
+    const handlePreviewMoved = useEvent((fromItemIndex: number, toItemIndex: number): string[]|undefined => {
+        if (fromItemIndex === toItemIndex) return undefined; // no change => nothing to shift => ignore
+        
+        
+        
+        // create a new local draftImages:
+        const newDraftImages = imagesFn.slice(0);
         
         
         
         // backup the fromItem's image before shifting (destructing the data):
-        const fromItemImage = draftImages[fromItemIndex];
+        const fromItemImage = newDraftImages[fromItemIndex];
         
         
         
@@ -155,34 +160,40 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         if (fromItemIndex < toItemIndex) {
             // shift the images [fromItemIndex ...up_to... beforeToItemIndex]:
             for (let shiftItemIndex = fromItemIndex; shiftItemIndex < toItemIndex; shiftItemIndex++) {
-                draftImages[shiftItemIndex] = draftImages[shiftItemIndex + 1];
+                newDraftImages[shiftItemIndex] = newDraftImages[shiftItemIndex + 1];
             } // for
         }
         else {
             // shift the images [fromItemIndex ...down_to... afterToItemIndex]:
             for (let shiftItemIndex = fromItemIndex; shiftItemIndex > toItemIndex; shiftItemIndex--) {
-                draftImages[shiftItemIndex] = draftImages[shiftItemIndex - 1];
+                newDraftImages[shiftItemIndex] = newDraftImages[shiftItemIndex - 1];
             } // for
         } // if
         
         
         
         // and replace the target's image with origin's image:
-        draftImages[toItemIndex] = fromItemImage;
+        newDraftImages[toItemIndex] = fromItemImage;
         
         
         
         // notify changes by supplying a copy of the modified array:
-        setDraftImages(draftImages.slice(0));
+        setDraftImages(newDraftImages);
+        
+        
+        
+        // return the modified:
+        return newDraftImages;
     });
-    const handleDropped = useEvent((fromItemIndex: number, toItemIndex: number) => {
-        handlePreviewMoved(fromItemIndex, toItemIndex);
+    const handleMoved = useEvent((fromItemIndex: number, toItemIndex: number) => {
+        const newDraftImages = handlePreviewMoved(fromItemIndex, toItemIndex);
+        if (!newDraftImages) return; // no change => ignore
         
         
         
         if (handleChange) scheduleTriggerEvent(() => { // runs the `onChange` event *next after* current macroTask completed
             // fire `onChange` react event:
-            handleChange(draftImages);
+            handleChange(newDraftImages);
         });
     });
     
@@ -204,7 +215,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
             // classes:
             mainClass={props.mainClass ?? styleSheet.main}
         >
-            {imagesFn.map((image, itemIndex) =>
+            {draftImages.map((image, itemIndex) =>
                 <Image
                     key={itemIndex}
                     
@@ -212,20 +223,30 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     src={image ? `/products/${productName}/${image}` : undefined}
                     sizes={`calc((${gedits.itemMinColumnWidth} * 2) + ${gedits.gapInline})`}
                     
+                    
+                    
                     // draggable:
                     draggable={true}
                     onDragStart={(event) => {
-                        // event.currentTarget.style.opacity = '0.4';
-                        
+                        // events:
                         event.dataTransfer.effectAllowed = 'move';
                         event.dataTransfer.setData(dragDataType, `${itemIndex}`);
                         // event.dataTransfer.setDragImage(event.currentTarget.children?.[0] ?? event.currentTarget, 0 , 0);
+                        
+                        
+                        
+                        // actions:
+                        // event.currentTarget.style.opacity = '0.4';
                     }}
                     onDragEnd={(event) => {
+                        // actions:
                         // event.currentTarget.style.opacity = '1';
                     }}
                     
+                    
+                    
                     // droppable:
+                    // onDragEnter // useless
                     onDragOver={(event) => {
                         // conditions:
                         const isValidDragObject = event.dataTransfer.types.includes(dragDataType);
@@ -233,22 +254,11 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                         
                         
                         
-                        // actions:
+                        // events:
                         event.preventDefault(); // prevents the default behavior to *disallow* for dropping here
                     }}
-                    onDragEnter={(event) => {
-                        // conditions:
-                        const dragData = event.dataTransfer.getData(dragDataType);
-                        if (!dragData) return; // unknown drag object => ignore
-                        
-                        
-                        
-                        // todo: setup drop target styling
-                        event.dataTransfer.dropEffect = 'move';
-                    }}
                     onDragLeave={(event) => {
-                        // todo: restore drop target styling
-                        console.log('LEAVE')
+                        // actions:
                     }}
                     onDrop={(event) => {
                         // conditions:
@@ -257,10 +267,14 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                         
                         
                         
-                        // actions:
+                        // events:
                         event.preventDefault();
                         event.stopPropagation(); // do not bubble event to the <parent>
-                        handleDropped(fromItemIndex, /*toItemIndex = */itemIndex);
+                        
+                        
+                        
+                        // actions:
+                        handleMoved(fromItemIndex, /*toItemIndex = */itemIndex);
                     }}
                 />
             )}
