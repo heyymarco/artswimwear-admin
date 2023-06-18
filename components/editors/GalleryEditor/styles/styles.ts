@@ -40,16 +40,16 @@ import {
 
 
 // styles:
-export const onMasonryStylesChange = watchChanges(onContentStylesChange, cssGeditConfig.onChange);
+export const onGalleryEditorStylesChange = watchChanges(onContentStylesChange, cssGeditConfig.onChange);
 
-export const usesMasonryLayout = () => {
+export const usesGalleryEditorLayout = () => {
     return style({
         // layouts:
         ...usesContentLayout(),
         ...style({
             // layouts:
-            display             : 'grid',        // use css block grid for layouting, the core of our Masonry layout
-            gridAutoFlow        : 'row',         // items direction is to inline & masonry's direction is to block
+            display             : 'grid',        // use css block grid for layouting, the core of our GalleryEditor layout
+            gridAutoFlow        : 'row',         // items direction is to inline & wrap's direction is to block
             gridAutoRows        : gedits.itemRaiseRowHeight,
             gridTemplateColumns : `repeat(auto-fill, minmax(${gedits.itemMinColumnWidth}, 1fr))`,
             gridTemplateRows    : '1fr',         // consistent height for each item
@@ -69,9 +69,6 @@ export const usesMasonryLayout = () => {
                 
                 // accessibilities:
                 cursor     : 'move',
-                ...children('*', {
-                    pointerEvents : 'none',
-                }),
                 
                 
                 
@@ -87,7 +84,7 @@ export const usesMasonryLayout = () => {
     });
 };
 
-export const usesMasonryVariants = () => {
+export const usesGalleryEditorVariants = () => {
     // dependencies:
     
     // variants:
@@ -104,8 +101,8 @@ export const usesMasonryVariants = () => {
 
 export default () => style({
     // layouts:
-    ...usesMasonryLayout(),
+    ...usesGalleryEditorLayout(),
     
     // variants:
-    ...usesMasonryVariants(),
+    ...usesGalleryEditorVariants(),
 });
