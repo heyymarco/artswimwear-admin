@@ -1,6 +1,7 @@
 // cssfn:
 import {
     // writes css in javascript:
+    rule,
     children,
     style,
     
@@ -61,7 +62,7 @@ export const usesGalleryEditorLayout = () => {
             
             
             // children:
-            ...children('*', {
+            ...children(':nth-child(n)', {
                 // sizes:
                 inlineSize : 'unset', // we need to manage the <img>'s width
                 
@@ -74,6 +75,16 @@ export const usesGalleryEditorLayout = () => {
                 
                 // customize:
                 ...usesCssProps(usesPrefixedProps(gedits, 'item')), // apply config's cssProps starting with item***
+                
+                
+                
+                // states:
+                ...rule('.dropped', {
+                    scale: '120%',
+                }),
+                ...rule('.shifted', {
+                    opacity: 0.5,
+                }),
             }),
             
             

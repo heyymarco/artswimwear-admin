@@ -21,8 +21,8 @@ import {
 // reusable-ui core:
 import {
     // react helper hooks:
+    useIsomorphicLayoutEffect,
     useEvent,
-    EventHandler,
     useMergeEvents,
     useScheduleTriggerEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
@@ -111,16 +111,16 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     
     
     // states:
-    const isControllableImages          = (images !== undefined);
-    const [imagesDn, setImagesDn]       = useState<string[]>(defaultImages ?? []);
-    const imagesFn : string[]           = (images /*controllable*/ ?? imagesDn /*uncontrollable*/);
+    const isControllableImages                    = (images !== undefined);
+    const [imagesDn, setImagesDn]                 = useState<string[]>(defaultImages ?? []);
+    const imagesFn : string[]                     = (images /*controllable*/ ?? imagesDn /*uncontrollable*/);
     
-    const draggedItemIndex              = useRef<number>(0);
+    const [draggedItemIndex, setDraggedItemIndex] = useState<number>(-1);
     
-    const [draftImages, setDraftImages] = useState<string[]>([]);
-    const previewMovedCache             = useRef<{fromItemIndex: number, toItemIndex: number, newDraftImages: string[]}|undefined>(undefined);
+    const [draftImages, setDraftImages]           = useState<string[]>([]);
+    const previewMovedCache                       = useRef<{fromItemIndex: number, toItemIndex: number, newDraftImages: string[]}|undefined>(undefined);
     
-    useEffect(() => {
+    useIsomorphicLayoutEffect(() => {
         setDraftImages(imagesFn);              // copy the *source of truth* images
         previewMovedCache.current = undefined; // clear the cache
     }, [imagesFn]); // (re)update the draft images every time the *source of truth* images updated
@@ -251,8 +251,23 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         >
             {draftImages.map((image, itemIndex) =>
                 <Image
+                    // identifiers:
                     key={itemIndex}
                     
+                    
+                    
+                    // classes:
+                    className={
+                        (image === imagesFn[draggedItemIndex])
+                        ? 'dropped'
+                        : (image !== imagesFn[itemIndex])
+                            ? 'shifted'
+                            : undefined
+                    }
+                    
+                    
+                    
+                    // images:
                     alt={''}
                     src={image ? `/products/${productName}/${image}` : undefined}
                     sizes={`calc((${gedits.itemMinColumnWidth} * 2) + ${gedits.gapInline})`}
@@ -267,16 +282,15 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                         // event.dataTransfer.setDragImage(event.currentTarget.children?.[0] ?? event.currentTarget, 0 , 0);
                         
                         event.dataTransfer.setData(dragDataType, ''); // we don't store the data here, just for marking purpose
-                        draggedItemIndex.current = itemIndex;         // rather, we store the data here
                         
                         
                         
                         // actions:
-                        // event.currentTarget.style.opacity = '0.4';
+                        setDraggedItemIndex(itemIndex);               // rather, we store the data here
                     }}
                     onDragEnd={(event) => {
                         // actions:
-                        // event.currentTarget.style.opacity = '1';
+                        setDraggedItemIndex(-1);                      // clear selection
                     }}
                     
                     
@@ -296,7 +310,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                         
                         
                         // actions:
-                        handlePreviewMoved(draggedItemIndex.current, /*toItemIndex = */itemIndex);
+                        handlePreviewMoved(draggedItemIndex, /*toItemIndex = */itemIndex);
                     }}
                     onDragLeave={(event) => {
                         // actions:
@@ -315,7 +329,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                         
                         
                         // actions:
-                        handleMoved(draggedItemIndex.current, /*toItemIndex = */itemIndex);
+                        handleMoved(draggedItemIndex, /*toItemIndex = */itemIndex);
                     }}
                 />
             )}
