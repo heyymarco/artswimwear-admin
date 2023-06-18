@@ -8,6 +8,7 @@ import {
     
     // reads/writes css variables configuration:
     usesCssProps,
+    usesPrefixedProps,
     
     
     
@@ -71,6 +72,11 @@ export const usesMasonryLayout = () => {
                 ...children('*', {
                     pointerEvents : 'none',
                 }),
+                
+                
+                
+                // customize:
+                ...usesCssProps(usesPrefixedProps(gedits, 'item')), // apply config's cssProps starting with item***
             }),
             
             
