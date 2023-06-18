@@ -7,6 +7,7 @@ import {
     
     // hooks:
     useState,
+    useId,
 }                           from 'react'
 
 // cssfn:
@@ -93,6 +94,11 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     
     
     
+    const editorId     = useId().toLowerCase();
+    const dragDataType = `application/${editorId}`;
+    
+    
+    
     // jsx:
     return (
         <Content<TElement>
@@ -109,29 +115,62 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
             // classes:
             mainClass={props.mainClass ?? styleSheet.main}
         >
-            {imagesFn.map((image, index) =>
+            {imagesFn.map((image, itemIndex) =>
                 <Image
-                    key={index}
+                    key={itemIndex}
                     
                     alt={''}
                     src={image ? `/products/${productName}/${image}` : undefined}
                     sizes={`calc((${gedits.itemMinColumnWidth} * 2) + ${gedits.gapInline})`}
                     
+                    // draggable:
                     draggable={true}
                     onDragStart={(event) => {
                         // event.currentTarget.style.opacity = '0.4';
                         
                         event.dataTransfer.effectAllowed = 'move';
-                        event.dataTransfer.setData('text/html', event.currentTarget.outerHTML);
+                        event.dataTransfer.setData(dragDataType, `${itemIndex}`);
                         // event.dataTransfer.setDragImage(event.currentTarget.children?.[0] ?? event.currentTarget, 0 , 0);
                     }}
-                    onDragEnd={(event) => { event.currentTarget.style.opacity = '1' }}
+                    onDragEnd={(event) => {
+                        // event.currentTarget.style.opacity = '1';
+                    }}
                     
-                    onDragOver={(event) => {event.preventDefault(); return false}}
+                    // droppable:
+                    onDragOver={(event) => {
+                        // conditions:
+                        const isValidDragObject = event.dataTransfer.types.includes(dragDataType);
+                        if (!isValidDragObject) return; // unknown drag object => ignore
+                        
+                        
+                        
+                        // actions:
+                        event.preventDefault(); // prevents the default behavior to *disallow* for dropping here
+                    }}
+                    onDragEnter={(event) => {
+                        // conditions:
+                        const dragData = event.dataTransfer.getData(dragDataType);
+                        if (!dragData) return; // unknown drag object => ignore
+                        
+                        
+                        
+                        // todo: setup drop target styling
+                        event.dataTransfer.dropEffect = 'move';
+                    }}
+                    onDragLeave={(event) => {
+                        // todo: restore drop target styling
+                    }}
                     onDrop={(event) => {
-                        event.stopPropagation();
+                        // conditions:
+                        const dragData = event.dataTransfer.getData(dragDataType);
+                        if (!dragData) return; // unknown drag object => ignore
+                        
+                        
+                        
+                        // actions:
+                        console.log({ dragData });
                         event.preventDefault();
-                        return false
+                        event.stopPropagation(); // do not bubble event to the <parent>
                     }}
                 />
             )}
