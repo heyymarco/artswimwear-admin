@@ -20,7 +20,10 @@ export default function Home() {
     return (
         <Main nude={true}>
             <Section title='Homepage'>
-                <GalleryEditor productName='lorem-img' value={images} onChange={(value) => setImages(value)} />
+                <GalleryEditor productName='lorem-img' value={images} onChange={(value) => {
+                    console.log(`onChange: ${value.map((val) => val.split('-')[0]).join(', ')}`);
+                    setImages(value);
+                }} />
             </Section>
         </Main>
     )

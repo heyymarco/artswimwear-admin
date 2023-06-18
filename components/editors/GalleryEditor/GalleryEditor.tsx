@@ -9,6 +9,7 @@ import {
     useState,
     useId,
     useEffect,
+    useRef,
 }                           from 'react'
 
 // cssfn:
@@ -110,14 +111,19 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     
     
     // states:
-    const isControllableImages    = (images !== undefined);
-    const [imagesDn, setImagesDn] = useState<string[]>(defaultImages ?? []);
-    const imagesFn : string[]     = (images /*controllable*/ ?? imagesDn /*uncontrollable*/);
+    const isControllableImages          = (images !== undefined);
+    const [imagesDn, setImagesDn]       = useState<string[]>(defaultImages ?? []);
+    const imagesFn : string[]           = (images /*controllable*/ ?? imagesDn /*uncontrollable*/);
+    
+    const draggedItemIndex              = useRef<number>(0);
     
     const [draftImages, setDraftImages] = useState<string[]>([]);
+    const previewMovedCache             = useRef<{fromItemIndex: number, toItemIndex: number, newDraftImages: string[]}|undefined>(undefined);
+    
     useEffect(() => {
-        setDraftImages(imagesFn.slice(0)); // clone the image
-    }, [imagesFn]);
+        setDraftImages(imagesFn);              // copy the *source of truth* images
+        previewMovedCache.current = undefined; // clear the cache
+    }, [imagesFn]); // (re)update the draft images every time the *source of truth* images updated
     
     
     
@@ -142,12 +148,31 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     );
     
     const handlePreviewMoved = useEvent((fromItemIndex: number, toItemIndex: number): string[]|undefined => {
-        if (fromItemIndex === toItemIndex) return undefined; // no change => nothing to shift => ignore
+        if (fromItemIndex === toItemIndex) { // no change => nothing to shift => return the (original) *source of truth* images
+            // reset the preview:
+            if (draftImages !== imagesFn) setDraftImages(imagesFn);
+            
+            
+            
+            // clear the cache:
+            previewMovedCache.current = undefined;
+            
+            
+            
+            // return the original:
+            return imagesFn;
+        } // if
+        
+        
+        
+        // retrieve from cache:
+        const cached = previewMovedCache.current;
+        if (cached && (cached.fromItemIndex === fromItemIndex) && (cached.toItemIndex === toItemIndex)) return cached.newDraftImages;
         
         
         
         // create a new local draftImages:
-        const newDraftImages = imagesFn.slice(0);
+        const newDraftImages = imagesFn.slice(0); // clone (copy and then modify) the *source of truth* images
         
         
         
@@ -177,8 +202,17 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         
-        // notify changes by supplying a copy of the modified array:
+        // update the preview:
         setDraftImages(newDraftImages);
+        
+        
+        
+        // update the cache:
+        previewMovedCache.current = {
+            fromItemIndex,
+            toItemIndex,
+            newDraftImages,
+        };
         
         
         
@@ -230,8 +264,10 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     onDragStart={(event) => {
                         // events:
                         event.dataTransfer.effectAllowed = 'move';
-                        event.dataTransfer.setData(dragDataType, `${itemIndex}`);
                         // event.dataTransfer.setDragImage(event.currentTarget.children?.[0] ?? event.currentTarget, 0 , 0);
+                        
+                        event.dataTransfer.setData(dragDataType, ''); // we don't store the data here, just for marking purpose
+                        draggedItemIndex.current = itemIndex;         // rather, we store the data here
                         
                         
                         
@@ -256,14 +292,19 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                         
                         // events:
                         event.preventDefault(); // prevents the default behavior to *disallow* for dropping here
+                        
+                        
+                        
+                        // actions:
+                        handlePreviewMoved(draggedItemIndex.current, /*toItemIndex = */itemIndex);
                     }}
                     onDragLeave={(event) => {
                         // actions:
                     }}
                     onDrop={(event) => {
                         // conditions:
-                        const fromItemIndex = Number.parseInt(event.dataTransfer.getData(dragDataType));
-                        if (isNaN(fromItemIndex)) return; // unknown drag object => ignore
+                        const isValidDragObject = event.dataTransfer.types.includes(dragDataType);
+                        if (!isValidDragObject) return; // unknown drag object => ignore
                         
                         
                         
@@ -274,7 +315,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                         
                         
                         // actions:
-                        handleMoved(fromItemIndex, /*toItemIndex = */itemIndex);
+                        handleMoved(draggedItemIndex.current, /*toItemIndex = */itemIndex);
                     }}
                 />
             )}
