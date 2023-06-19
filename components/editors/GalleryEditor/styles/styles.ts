@@ -2,6 +2,7 @@
 import {
     // writes css in javascript:
     rule,
+    states,
     children,
     style,
     
@@ -62,7 +63,7 @@ export const usesGalleryEditorLayout = () => {
             
             
             // children:
-            ...children(':nth-child(n)', {
+            ...children('*', {
                 // sizes:
                 inlineSize : 'unset', // we need to manage the <img>'s width
                 
@@ -75,30 +76,6 @@ export const usesGalleryEditorLayout = () => {
                 
                 // customize:
                 ...usesCssProps(usesPrefixedProps(gedits, 'item')), // apply config's cssProps starting with item***
-                
-                
-                
-                // states:
-                ...rule('.dragged', {
-                    // animations:
-                    anim : gedits.animDragged,
-                }),
-                ...rule('.dropped', {
-                    // animations:
-                    anim : gedits.animDropped,
-                }),
-                ...rule('.dropTarget', {
-                    // animations:
-                    anim : gedits.animDropTarget,
-                }),
-                ...rule('.shiftedUp', {
-                    // animations:
-                    anim : gedits.animShiftedUp,
-                }),
-                ...rule('.shiftedDown', {
-                    // animations:
-                    anim : gedits.animShiftedDown,
-                }),
             }),
             
             
@@ -124,10 +101,44 @@ export const usesGalleryEditorVariants = () => {
     });
 };
 
+export const usesGalleryEditorStates = () => {
+    return style({
+        // children:
+        ...children('*', {
+            // states:
+            ...states([
+                rule('.dragged', {
+                    // animations:
+                    anim : gedits.animDragged,
+                }),
+                rule('.dropped', {
+                    // animations:
+                    anim : gedits.animDropped,
+                }),
+                rule('.dropTarget', {
+                    // animations:
+                    anim : gedits.animDropTarget,
+                }),
+                rule('.shiftedUp', {
+                    // animations:
+                    anim : gedits.animShiftedUp,
+                }),
+                rule('.shiftedDown', {
+                    // animations:
+                    anim : gedits.animShiftedDown,
+                }),
+            ]),
+        }),
+    });
+};
+
 export default () => style({
     // layouts:
     ...usesGalleryEditorLayout(),
     
     // variants:
     ...usesGalleryEditorVariants(),
+    
+    // states:
+    ...usesGalleryEditorStates(),
 });
