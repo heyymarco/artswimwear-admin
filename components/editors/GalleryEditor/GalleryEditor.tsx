@@ -297,9 +297,11 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     onDragStart={(event) => {
                         // events:
                         event.dataTransfer.effectAllowed = 'move';
-                        // event.dataTransfer.setDragImage(event.currentTarget.children?.[0] ?? event.currentTarget, 0 , 0);
-                        
                         event.dataTransfer.setData(dragDataType, ''); // we don't store the data here, just for marking purpose
+                        
+                        const dragImageElm = event.currentTarget.children?.[0] ?? event.currentTarget;
+                        const { width: dragImageWidth, height: dragImageHeight } = getComputedStyle(dragImageElm);
+                        event.dataTransfer.setDragImage(dragImageElm, Number.parseFloat(dragImageWidth) / 2, Number.parseFloat(dragImageHeight) / 2);
                         
                         
                         
