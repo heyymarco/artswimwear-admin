@@ -116,7 +116,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     const imagesFn : string[]                     = (images /*controllable*/ ?? imagesDn /*uncontrollable*/);
     
     const [draggedItemIndex, setDraggedItemIndex] = useState<number>(-1);
-    const [droppedItemIndex, setDroppedItemIndex] = useState<number>(-1);
+    let   [droppedItemIndex, setDroppedItemIndex] = useState<number>(-1);
     
     const [draftImages, setDraftImages]           = useState<string[]>([]);
     
@@ -147,8 +147,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         handleChangeInternal,
     );
     
-    const handlePreviewMoved = useEvent((draggedItemIndex: number, droppedItemIndex: number): string[]|undefined => {
-        if (draggedItemIndex === droppedItemIndex) { // no change => nothing to shift => return the (original) *source of truth* images
+    const handlePreviewMoved = useEvent((newDroppedItemIndex: number): string[]|undefined => {
+        if (draggedItemIndex === newDroppedItemIndex) { // no change => nothing to shift => return the (original) *source of truth* images
             // reset the preview:
             return handleRevertPreview();
         } // if
@@ -166,15 +166,15 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         // shift the images:
-        if (draggedItemIndex < droppedItemIndex) {
+        if (draggedItemIndex < newDroppedItemIndex) {
             // shift the images [draggedItemIndex ...up_to... beforeToItemIndex]:
-            for (let shiftedItemIndex = draggedItemIndex; shiftedItemIndex < droppedItemIndex; shiftedItemIndex++) {
+            for (let shiftedItemIndex = draggedItemIndex; shiftedItemIndex < newDroppedItemIndex; shiftedItemIndex++) {
                 newDraftImages[shiftedItemIndex] = newDraftImages[shiftedItemIndex + 1];
             } // for
         }
         else {
             // shift the images [draggedItemIndex ...down_to... afterToItemIndex]:
-            for (let shiftedItemIndex = draggedItemIndex; shiftedItemIndex > droppedItemIndex; shiftedItemIndex--) {
+            for (let shiftedItemIndex = draggedItemIndex; shiftedItemIndex > newDroppedItemIndex; shiftedItemIndex--) {
                 newDraftImages[shiftedItemIndex] = newDraftImages[shiftedItemIndex - 1];
             } // for
         } // if
@@ -182,7 +182,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         // and replace the target's image with origin's image:
-        newDraftImages[droppedItemIndex] = fromItemImage;
+        newDraftImages[newDroppedItemIndex] = fromItemImage;
         
         
         
@@ -192,15 +192,15 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         // update the dropped index:
-        setDroppedItemIndex(droppedItemIndex);
+        setDroppedItemIndex(droppedItemIndex /* instant update without waiting for re-render */ = newDroppedItemIndex);
         
         
         
         // return the modified:
         return newDraftImages;
     });
-    const handleMoved = useEvent((draggedItemIndex: number, droppedItemIndex: number) => {
-        const newDraftImages = handlePreviewMoved(draggedItemIndex, droppedItemIndex);
+    const handleMoved = useEvent((newDroppedItemIndex: number) => {
+        const newDraftImages = handlePreviewMoved(newDroppedItemIndex);
         if (!newDraftImages) return; // no change => ignore
         
         
@@ -217,7 +217,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         // reset the dropped index:
-        if (droppedItemIndex !== -1) setDroppedItemIndex(-1);
+        if (droppedItemIndex !== -1) setDroppedItemIndex(droppedItemIndex /* instant update without waiting for re-render */ = -1);
         
         
         
@@ -322,7 +322,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                         
                         
                         // actions:
-                        handlePreviewMoved(draggedItemIndex, /*droppedItemIndex = */itemIndex);
+                        handlePreviewMoved(/*newDroppedItemIndex = */itemIndex);
                     }}
                     onDragOver={(event) => {
                         // conditions:
@@ -335,6 +335,11 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                         event.preventDefault(); // prevents the default behavior to *disallow* for dropping here
                     }}
                     onDragLeave={(event) => {
+                        // conditions:
+                        if (droppedItemIndex !== itemIndex) return; // the last preview is already updated by another item => no need to revert
+                        
+                        
+                        
                         // actions:
                         handleRevertPreview();
                     }}
@@ -352,7 +357,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                         
                         
                         // actions:
-                        handleMoved(draggedItemIndex, /*droppedItemIndex = */itemIndex);
+                        handleMoved(/*newDroppedItemIndex = */itemIndex);
                     }}
                 />
             )}
