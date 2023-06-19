@@ -227,6 +227,26 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         return imagesFn;
     });
     
+    // draggable handlers:
+    const handleDragStart      = setDraggedItemIndex;
+    const handleDragEnd        = useEvent((itemIndex: number): void => {
+        // actions:
+        setDraggedItemIndex(-1); // clear selection
+    });
+    
+    // droppable handlers:
+    const handleDragEnter      = handlePreviewMoved;
+    const handleDragLeave      = useEvent((itemIndex: number): void => {
+        // conditions:
+        if (droppedItemIndex !== itemIndex) return; // the last preview is already updated by another item => no need to revert
+        
+        
+        
+        // actions:
+        handleRevertPreview();
+    });
+    const handleDrop           = handleMoved;
+    
     
     
     // jsx:
@@ -303,36 +323,16 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     
                     
                     // draggable:
-                    dragDataType={dragDataType}
-                    onDragStart={(itemIndex) => {
-                        // actions:
-                        setDraggedItemIndex(itemIndex);               // rather, we store the data here
-                    }}
-                    onDragEnd={(itemIndex) => {
-                        // actions:
-                        setDraggedItemIndex(-1);                      // clear selection
-                    }}
+                    dragDataType = {dragDataType   }
+                    onDragStart  = {handleDragStart}
+                    onDragEnd    = {handleDragEnd  }
                     
                     
                     
                     // droppable:
-                    onDragEnter={(itemIndex) => {
-                        // actions:
-                        handlePreviewMoved(/*newDroppedItemIndex = */itemIndex);
-                    }}
-                    onDragLeave={(itemIndex) => {
-                        // conditions:
-                        if (droppedItemIndex !== itemIndex) return; // the last preview is already updated by another item => no need to revert
-                        
-                        
-                        
-                        // actions:
-                        handleRevertPreview();
-                    }}
-                    onDrop={(itemIndex) => {
-                        // actions:
-                        handleMoved(/*newDroppedItemIndex = */itemIndex);
-                    }}
+                    onDragEnter  = {handleDragEnter}
+                    onDragLeave  = {handleDragLeave}
+                    onDrop       = {handleDrop     }
                 />
             )}
         </Content>

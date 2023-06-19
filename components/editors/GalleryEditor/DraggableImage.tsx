@@ -84,7 +84,7 @@ const DraggableImage = (props: DraggableImageProps) => {
     
     
     // draggable handlers:
-    const handleDragStart = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
+    const handleDragStart   = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
         // events:
         event.dataTransfer.effectAllowed = 'move';
         event.dataTransfer.setData(dragDataType, ''); // we don't store the data here, just for marking purpose
@@ -98,7 +98,7 @@ const DraggableImage = (props: DraggableImageProps) => {
         // callback:
         onDragStart?.(itemIndex);                     // rather, we store the data at the <parent>'s state
     });
-    const handleDragEnd   = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
+    const handleDragEnd     = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
         // callback:
         onDragEnd?.(itemIndex);
     });
@@ -116,7 +116,7 @@ const DraggableImage = (props: DraggableImageProps) => {
         // callback:
         onDragEnter?.(itemIndex);
     });
-    const handleDragOver   = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
+    const handleDragOver    = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
         // conditions:
         const isValidDragObject = event.dataTransfer.types.includes(dragDataType);
         if (!isValidDragObject) return; // unknown drag object => ignore
@@ -135,7 +135,7 @@ const DraggableImage = (props: DraggableImageProps) => {
         // callback:
         onDragLeave?.(itemIndex);
     });
-    const handleDrop   = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
+    const handleDrop        = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
         // conditions:
         const isValidDragObject = event.dataTransfer.types.includes(dragDataType);
         if (!isValidDragObject) return; // unknown drag object => ignore
