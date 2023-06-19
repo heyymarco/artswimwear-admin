@@ -38,10 +38,10 @@ export const [gedits, geditValues, cssGeditConfig] = cssConfig(() => {
     
     const [keyframesShiftedRule, keyframesShifted] = keyframes({
         from  : {
-            translate : [['-2%', '0%']],
+            translate : [['-0.5%', '0%']],
         },
         to    : {
-            translate : [[ '2%', '0%']],
+            translate : [[ '0.5%', '0%']],
         },
     });
     //#endregion keyframes
@@ -61,12 +61,12 @@ export const [gedits, geditValues, cssGeditConfig] = cssConfig(() => {
         // animations:
         ...keyframesDroppedRule,
         animDropped          : [
-            ['300ms', 'linear', 'both', 'alternate', 'infinite', keyframesDropped],
+            ['300ms', 'linear', 'none', 'alternate', 'infinite', keyframesDropped],
         ]                                                   as CssKnownProps['animation'  ],
         
         ...keyframesShiftedRule,
         animShifted          : [
-            ['300ms', 'linear', 'both', 'alternate', 'infinite', keyframesShifted],
+            ['300ms', 'linear', 'none', 'alternate', 'infinite', keyframesShifted],
         ]                                                   as CssKnownProps['animation'  ],
         
         
