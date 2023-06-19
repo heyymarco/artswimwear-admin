@@ -20,6 +20,12 @@ import {
     spacers,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
+// reusable-ui components:
+import {
+    // configs:
+    basics,
+}                           from '@reusable-ui/basic'           // a base component
+
 
 
 // configs:
@@ -86,59 +92,61 @@ export const [gedits, geditValues, cssGeditConfig] = cssConfig(() => {
     
     const bases = {
         // sizes:
-        itemMinColumnWidthSm : 'calc(3 * 40px)'             as CssKnownProps['columnWidth'],
-        itemMinColumnWidthMd : 'calc(5 * 40px)'             as CssKnownProps['columnWidth'],
-        itemMinColumnWidthLg : 'calc(8 * 40px)'             as CssKnownProps['columnWidth'],
+        itemMinColumnWidthSm : 'calc(3 * 40px)'                     as CssKnownProps['columnWidth'      ],
+        itemMinColumnWidthMd : 'calc(5 * 40px)'                     as CssKnownProps['columnWidth'      ],
+        itemMinColumnWidthLg : 'calc(8 * 40px)'                     as CssKnownProps['columnWidth'      ],
         
-        itemAspectRatio      : '1/1'                        as CssKnownProps['aspectRatio'],
+        itemAspectRatio      : '1/1'                                as CssKnownProps['aspectRatio'      ],
         
         
         
         // animations:
+        defaultAnimationDuration : basics.defaultAnimationDuration  as CssKnownProps['animationDuration'],
+        
         ...keyframesDraggedRule,
         ...keyframesDroppedRule,
         ...keyframesDropTargetRule,
         animDragged          : [
-            ['600ms', 'linear'  , 'none', 'alternate', 'infinite', keyframesDragged    ],
-        ]                                                   as CssKnownProps['animation'  ],
+            ['300ms', 'linear'  , 'none', 'alternate', 'infinite', keyframesDragged    ],
+        ]                                                           as CssKnownProps['animation'        ],
         animDropped          : [
             ['300ms', 'linear'  , 'none', 'alternate', 'infinite', keyframesDropped    ],
-        ]                                                   as CssKnownProps['animation'  ],
+        ]                                                           as CssKnownProps['animation'        ],
         animDropTarget       : [
             ['300ms', 'linear'  , 'none', 'alternate', 'infinite', keyframesDropTarget ],
-        ]                                                   as CssKnownProps['animation'  ],
+        ]                                                           as CssKnownProps['animation'        ],
         
         ...keyframesShiftedUpRule,
         ...keyframesShiftedDownRule,
         animShiftedUp        : [
             ['300ms', 'ease-out', 'none', 'alternate', 'infinite', keyframesShiftedUp  ],
-        ]                                                   as CssKnownProps['animation'  ],
+        ]                                                           as CssKnownProps['animation'        ],
         animShiftedDown      : [
             ['300ms', 'ease-out', 'none', 'alternate', 'infinite', keyframesShiftedDown],
-        ]                                                   as CssKnownProps['animation'  ],
+        ]                                                           as CssKnownProps['animation'        ],
         
         
         
         // spacings:
-        gapInlineSm          : spacers.xs                   as CssKnownProps['gapInline'  ],
-        gapBlockSm           : spacers.xs                   as CssKnownProps['gapBlock'   ],
-        gapInlineMd          : spacers.sm                   as CssKnownProps['gapInline'  ],
-        gapBlockMd           : spacers.sm                   as CssKnownProps['gapBlock'   ],
-        gapInlineLg          : spacers.md                   as CssKnownProps['gapInline'  ],
-        gapBlockLg           : spacers.md                   as CssKnownProps['gapBlock'   ],
+        gapInlineSm          : spacers.xs                           as CssKnownProps['gapInline'        ],
+        gapBlockSm           : spacers.xs                           as CssKnownProps['gapBlock'         ],
+        gapInlineMd          : spacers.sm                           as CssKnownProps['gapInline'        ],
+        gapBlockMd           : spacers.sm                           as CssKnownProps['gapBlock'         ],
+        gapInlineLg          : spacers.md                           as CssKnownProps['gapInline'        ],
+        gapBlockLg           : spacers.md                           as CssKnownProps['gapBlock'         ],
     };
     
     
     
     const defaults = {
         // sizes:
-        itemMinColumnWidth   : bases.itemMinColumnWidthMd   as CssKnownProps['columnWidth'],
+        itemMinColumnWidth   : bases.itemMinColumnWidthMd           as CssKnownProps['columnWidth'      ],
         
         
         
         // spacings:
-        gapInline            : bases.gapInlineMd            as CssKnownProps['gapInline'  ],
-        gapBlock             : bases.gapBlockMd             as CssKnownProps['gapBlock'   ],
+        gapInline            : bases.gapInlineMd                    as CssKnownProps['gapInline'        ],
+        gapBlock             : bases.gapBlockMd                     as CssKnownProps['gapBlock'         ],
     };
     
     
