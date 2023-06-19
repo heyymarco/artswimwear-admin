@@ -38,7 +38,7 @@ export const [gedits, geditValues, cssGeditConfig] = cssConfig(() => {
             scale : '100%',
         },
         to    : {
-            scale : '105%',
+            scale : '103%',
         },
     });
     const [keyframesDropTargetRule, keyframesDropTarget] = keyframes({
@@ -53,31 +53,31 @@ export const [gedits, geditValues, cssGeditConfig] = cssConfig(() => {
     
     
     const [keyframesShiftedUpRule, keyframesShiftedUp] = keyframes({
-        '0%'   : {
-            translate : [[ '0%', '0%']],
+        from  : {
+            transform: [[
+                'perspective(500px)',
+                'rotateY(0deg)',
+            ]],
         },
-        '5%'  : {
-            translate : [['-1%', '0%']],
-        },
-        '50%' : {
-            translate : [[ '0%', '0%']],
-        },
-        '100%' : {
-            translate : [[ '0%', '0%']],
+        to    : {
+            transform: [[
+                'perspective(500px)',
+                'rotateY(5deg)',
+            ]],
         },
     });
     const [keyframesShiftedDownRule, keyframesShiftedDown] = keyframes({
-        '0%'   : {
-            translate : [[ '0%', '0%']],
+        from  : {
+            transform: [[
+                'perspective(500px)',
+                'rotateY(0deg)',
+            ]],
         },
-        '5%'  : {
-            translate : [[ '1%', '0%']],
-        },
-        '50%' : {
-            translate : [[ '0%', '0%']],
-        },
-        '100%' : {
-            translate : [[ '0%', '0%']],
+        to    : {
+            transform: [[
+                'perspective(500px)',
+                'rotateY(-5deg)',
+            ]],
         },
     });
     //#endregion keyframes
@@ -111,10 +111,10 @@ export const [gedits, geditValues, cssGeditConfig] = cssConfig(() => {
         ...keyframesShiftedUpRule,
         ...keyframesShiftedDownRule,
         animShiftedUp        : [
-            ['600ms', 'ease-out', 'none', 'normal'   , 'infinite', keyframesShiftedUp  ],
+            ['300ms', 'ease-out', 'none', 'alternate', 'infinite', keyframesShiftedUp  ],
         ]                                                   as CssKnownProps['animation'  ],
         animShiftedDown      : [
-            ['600ms', 'ease-out', 'none', 'normal'   , 'infinite', keyframesShiftedDown],
+            ['300ms', 'ease-out', 'none', 'alternate', 'infinite', keyframesShiftedDown],
         ]                                                   as CssKnownProps['animation'  ],
         
         
