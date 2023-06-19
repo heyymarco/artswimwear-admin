@@ -119,7 +119,6 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     const [droppedItemIndex, setDroppedItemIndex] = useState<number>(-1);
     
     const [draftImages, setDraftImages]           = useState<string[]>([]);
-    const previewMovedCache                       = useRef<{draggedItemIndex: number, droppedItemIndex: number, newDraftImages: string[]}|undefined>(undefined);
     
     useIsomorphicLayoutEffect(() => {
         // reset the preview:
@@ -153,12 +152,6 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
             // reset the preview:
             return handleRevertPreview();
         } // if
-        
-        
-        
-        // retrieve from cache:
-        const cached = previewMovedCache.current;
-        if (cached && (cached.draggedItemIndex === draggedItemIndex) && (cached.droppedItemIndex === droppedItemIndex)) return cached.newDraftImages;
         
         
         
@@ -203,15 +196,6 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         
-        // update the cache:
-        previewMovedCache.current = {
-            draggedItemIndex,
-            droppedItemIndex,
-            newDraftImages,
-        };
-        
-        
-        
         // return the modified:
         return newDraftImages;
     });
@@ -234,11 +218,6 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         // reset the dropped index:
         if (droppedItemIndex !== -1) setDroppedItemIndex(-1);
-        
-        
-        
-        // clear the cache:
-        previewMovedCache.current = undefined;
         
         
         
@@ -335,7 +314,16 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     
                     
                     // droppable:
-                    // onDragEnter // useless
+                    onDragEnter={(event) => {
+                        // conditions:
+                        const isValidDragObject = event.dataTransfer.types.includes(dragDataType);
+                        if (!isValidDragObject) return; // unknown drag object => ignore
+                        
+                        
+                        
+                        // actions:
+                        handlePreviewMoved(draggedItemIndex, /*droppedItemIndex = */itemIndex);
+                    }}
                     onDragOver={(event) => {
                         // conditions:
                         const isValidDragObject = event.dataTransfer.types.includes(dragDataType);
@@ -345,11 +333,6 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                         
                         // events:
                         event.preventDefault(); // prevents the default behavior to *disallow* for dropping here
-                        
-                        
-                        
-                        // actions:
-                        handlePreviewMoved(draggedItemIndex, /*droppedItemIndex = */itemIndex);
                     }}
                     onDragLeave={(event) => {
                         // actions:
