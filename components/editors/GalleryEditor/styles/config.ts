@@ -25,6 +25,14 @@ import {
 // configs:
 export const [gedits, geditValues, cssGeditConfig] = cssConfig(() => {
     //#region keyframes
+    const [keyframesDraggedRule, keyframesDragged] = keyframes({
+        from  : {
+            opacity : 0.4,
+        },
+        to    : {
+            opacity : 0.6,
+        },
+    });
     const [keyframesDroppedRule, keyframesDropped] = keyframes({
         from  : {
             scale : '100%',
@@ -33,15 +41,43 @@ export const [gedits, geditValues, cssGeditConfig] = cssConfig(() => {
             scale : '105%',
         },
     });
-    
-    
-    
-    const [keyframesShiftedRule, keyframesShifted] = keyframes({
+    const [keyframesDropTargetRule, keyframesDropTarget] = keyframes({
         from  : {
-            translate : [['-0.5%', '0%']],
+            rotate : '-0.5deg',
         },
         to    : {
-            translate : [[ '0.5%', '0%']],
+            rotate : '0.5deg',
+        },
+    });
+    
+    
+    
+    const [keyframesShiftedUpRule, keyframesShiftedUp] = keyframes({
+        '0%'   : {
+            translate : [[ '0%', '0%']],
+        },
+        '5%'  : {
+            translate : [['-1%', '0%']],
+        },
+        '50%' : {
+            translate : [[ '0%', '0%']],
+        },
+        '100%' : {
+            translate : [[ '0%', '0%']],
+        },
+    });
+    const [keyframesShiftedDownRule, keyframesShiftedDown] = keyframes({
+        '0%'   : {
+            translate : [[ '0%', '0%']],
+        },
+        '5%'  : {
+            translate : [[ '1%', '0%']],
+        },
+        '50%' : {
+            translate : [[ '0%', '0%']],
+        },
+        '100%' : {
+            translate : [[ '0%', '0%']],
         },
     });
     //#endregion keyframes
@@ -59,14 +95,26 @@ export const [gedits, geditValues, cssGeditConfig] = cssConfig(() => {
         
         
         // animations:
+        ...keyframesDraggedRule,
         ...keyframesDroppedRule,
+        ...keyframesDropTargetRule,
+        animDragged          : [
+            ['600ms', 'linear'  , 'none', 'alternate', 'infinite', keyframesDragged    ],
+        ]                                                   as CssKnownProps['animation'  ],
         animDropped          : [
-            ['300ms', 'linear', 'none', 'alternate', 'infinite', keyframesDropped],
+            ['300ms', 'linear'  , 'none', 'alternate', 'infinite', keyframesDropped    ],
+        ]                                                   as CssKnownProps['animation'  ],
+        animDropTarget       : [
+            ['300ms', 'linear'  , 'none', 'alternate', 'infinite', keyframesDropTarget ],
         ]                                                   as CssKnownProps['animation'  ],
         
-        ...keyframesShiftedRule,
-        animShifted          : [
-            ['300ms', 'linear', 'none', 'alternate', 'infinite', keyframesShifted],
+        ...keyframesShiftedUpRule,
+        ...keyframesShiftedDownRule,
+        animShiftedUp        : [
+            ['600ms', 'ease-out', 'none', 'normal'   , 'infinite', keyframesShiftedUp  ],
+        ]                                                   as CssKnownProps['animation'  ],
+        animShiftedDown      : [
+            ['600ms', 'ease-out', 'none', 'normal'   , 'infinite', keyframesShiftedDown],
         ]                                                   as CssKnownProps['animation'  ],
         
         

@@ -119,7 +119,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     const [droppedItemIndex, setDroppedItemIndex] = useState<number>(-1);
     
     const [draftImages, setDraftImages]           = useState<string[]>([]);
-    const previewMovedCache                       = useRef<{fromItemIndex: number, toItemIndex: number, newDraftImages: string[]}|undefined>(undefined);
+    const previewMovedCache                       = useRef<{draggedItemIndex: number, droppedItemIndex: number, newDraftImages: string[]}|undefined>(undefined);
     
     useIsomorphicLayoutEffect(() => {
         // reset the preview:
@@ -148,8 +148,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         handleChangeInternal,
     );
     
-    const handlePreviewMoved = useEvent((fromItemIndex: number, toItemIndex: number): string[]|undefined => {
-        if (fromItemIndex === toItemIndex) { // no change => nothing to shift => return the (original) *source of truth* images
+    const handlePreviewMoved = useEvent((draggedItemIndex: number, droppedItemIndex: number): string[]|undefined => {
+        if (draggedItemIndex === droppedItemIndex) { // no change => nothing to shift => return the (original) *source of truth* images
             // reset the preview:
             return handleRevertPreview();
         } // if
@@ -158,7 +158,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         // retrieve from cache:
         const cached = previewMovedCache.current;
-        if (cached && (cached.fromItemIndex === fromItemIndex) && (cached.toItemIndex === toItemIndex)) return cached.newDraftImages;
+        if (cached && (cached.draggedItemIndex === draggedItemIndex) && (cached.droppedItemIndex === droppedItemIndex)) return cached.newDraftImages;
         
         
         
@@ -168,28 +168,28 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         // backup the fromItem's image before shifting (destructing the data):
-        const fromItemImage = newDraftImages[fromItemIndex];
+        const fromItemImage = newDraftImages[draggedItemIndex];
         
         
         
         // shift the images:
-        if (fromItemIndex < toItemIndex) {
-            // shift the images [fromItemIndex ...up_to... beforeToItemIndex]:
-            for (let shiftItemIndex = fromItemIndex; shiftItemIndex < toItemIndex; shiftItemIndex++) {
-                newDraftImages[shiftItemIndex] = newDraftImages[shiftItemIndex + 1];
+        if (draggedItemIndex < droppedItemIndex) {
+            // shift the images [draggedItemIndex ...up_to... beforeToItemIndex]:
+            for (let shiftedItemIndex = draggedItemIndex; shiftedItemIndex < droppedItemIndex; shiftedItemIndex++) {
+                newDraftImages[shiftedItemIndex] = newDraftImages[shiftedItemIndex + 1];
             } // for
         }
         else {
-            // shift the images [fromItemIndex ...down_to... afterToItemIndex]:
-            for (let shiftItemIndex = fromItemIndex; shiftItemIndex > toItemIndex; shiftItemIndex--) {
-                newDraftImages[shiftItemIndex] = newDraftImages[shiftItemIndex - 1];
+            // shift the images [draggedItemIndex ...down_to... afterToItemIndex]:
+            for (let shiftedItemIndex = draggedItemIndex; shiftedItemIndex > droppedItemIndex; shiftedItemIndex--) {
+                newDraftImages[shiftedItemIndex] = newDraftImages[shiftedItemIndex - 1];
             } // for
         } // if
         
         
         
         // and replace the target's image with origin's image:
-        newDraftImages[toItemIndex] = fromItemImage;
+        newDraftImages[droppedItemIndex] = fromItemImage;
         
         
         
@@ -199,14 +199,14 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         // update the dropped index:
-        setDroppedItemIndex(toItemIndex);
+        setDroppedItemIndex(droppedItemIndex);
         
         
         
         // update the cache:
         previewMovedCache.current = {
-            fromItemIndex,
-            toItemIndex,
+            draggedItemIndex,
+            droppedItemIndex,
             newDraftImages,
         };
         
@@ -215,8 +215,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         // return the modified:
         return newDraftImages;
     });
-    const handleMoved = useEvent((fromItemIndex: number, toItemIndex: number) => {
-        const newDraftImages = handlePreviewMoved(fromItemIndex, toItemIndex);
+    const handleMoved = useEvent((draggedItemIndex: number, droppedItemIndex: number) => {
+        const newDraftImages = handlePreviewMoved(draggedItemIndex, droppedItemIndex);
         if (!newDraftImages) return; // no change => ignore
         
         
@@ -272,13 +272,37 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     
                     
                     // classes:
-                    className={
-                        (itemIndex === droppedItemIndex)
-                        ? 'dropped'
-                        : (image !== imagesFn[itemIndex])
-                            ? 'shifted'
-                            : undefined
-                    }
+                    className={((): string|undefined => {
+                        // dropped item:
+                        if (itemIndex === droppedItemIndex) return 'dropped';
+                        
+                        
+                        
+                        // shifted item(s):
+                        if ((draggedItemIndex !== -1) && (droppedItemIndex !== -1)) {
+                            if (draggedItemIndex < droppedItemIndex) {
+                                if ((itemIndex >= draggedItemIndex) && (itemIndex <= droppedItemIndex)) return 'shiftedDown';
+                            }
+                            else if (draggedItemIndex > droppedItemIndex) {
+                                if ((itemIndex <= draggedItemIndex) && (itemIndex >= droppedItemIndex)) return 'shiftedUp';
+                            } // if
+                        } // if
+                        
+                        
+                        
+                        // dragged item:
+                        if ((draggedItemIndex !== -1) && (itemIndex === draggedItemIndex)) return 'dragged';
+                        
+                        
+                        
+                        // dropping target:
+                        if ((draggedItemIndex !== -1) && (itemIndex !== draggedItemIndex)) return 'dropTarget';
+                        
+                        
+                        
+                        // unmoved item(s):
+                        return undefined;
+                    })()}
                     
                     
                     
@@ -325,7 +349,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                         
                         
                         // actions:
-                        handlePreviewMoved(draggedItemIndex, /*toItemIndex = */itemIndex);
+                        handlePreviewMoved(draggedItemIndex, /*droppedItemIndex = */itemIndex);
                     }}
                     onDragLeave={(event) => {
                         // actions:
@@ -345,7 +369,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                         
                         
                         // actions:
-                        handleMoved(draggedItemIndex, /*toItemIndex = */itemIndex);
+                        handleMoved(draggedItemIndex, /*droppedItemIndex = */itemIndex);
                     }}
                 />
             )}

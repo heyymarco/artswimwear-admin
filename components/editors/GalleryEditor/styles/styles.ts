@@ -79,13 +79,25 @@ export const usesGalleryEditorLayout = () => {
                 
                 
                 // states:
+                ...rule('.dragged', {
+                    // animations:
+                    anim : gedits.animDragged,
+                }),
                 ...rule('.dropped', {
                     // animations:
                     anim : gedits.animDropped,
                 }),
-                ...rule('.shifted', {
+                ...rule('.dropTarget', {
                     // animations:
-                    anim : gedits.animShifted,
+                    anim : gedits.animDropTarget,
+                }),
+                ...rule('.shiftedUp', {
+                    // animations:
+                    anim : gedits.animShiftedUp,
+                }),
+                ...rule('.shiftedDown', {
+                    // animations:
+                    anim : gedits.animShiftedDown,
                 }),
             }),
             
