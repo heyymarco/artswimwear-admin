@@ -5,6 +5,11 @@ import {
     
     
     
+    // writes css in javascript:
+    keyframes,
+    
+    
+    
     // reads/writes css variables configuration:
     cssConfig,
 }                           from '@cssfn/core'                  // writes css in javascript
@@ -19,6 +24,30 @@ import {
 
 // configs:
 export const [gedits, geditValues, cssGeditConfig] = cssConfig(() => {
+    //#region keyframes
+    const [keyframesDroppedRule, keyframesDropped] = keyframes({
+        from  : {
+            scale : '100%',
+        },
+        to    : {
+            scale : '105%',
+        },
+    });
+    
+    
+    
+    const [keyframesShiftedRule, keyframesShifted] = keyframes({
+        from  : {
+            translate : [['-2%', '0%']],
+        },
+        to    : {
+            translate : [[ '2%', '0%']],
+        },
+    });
+    //#endregion keyframes
+    
+    
+    
     const bases = {
         // sizes:
         itemMinColumnWidthSm : 'calc(3 * 40px)'             as CssKnownProps['columnWidth'],
@@ -26,6 +55,19 @@ export const [gedits, geditValues, cssGeditConfig] = cssConfig(() => {
         itemMinColumnWidthLg : 'calc(8 * 40px)'             as CssKnownProps['columnWidth'],
         
         itemAspectRatio      : '1/1'                        as CssKnownProps['aspectRatio'],
+        
+        
+        
+        // animations:
+        ...keyframesDroppedRule,
+        animDropped          : [
+            ['300ms', 'linear', 'both', 'alternate', 'infinite', keyframesDropped],
+        ]                                                   as CssKnownProps['animation'  ],
+        
+        ...keyframesShiftedRule,
+        animShifted          : [
+            ['300ms', 'linear', 'both', 'alternate', 'infinite', keyframesShifted],
+        ]                                                   as CssKnownProps['animation'  ],
         
         
         

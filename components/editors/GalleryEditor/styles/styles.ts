@@ -80,10 +80,12 @@ export const usesGalleryEditorLayout = () => {
                 
                 // states:
                 ...rule('.dropped', {
-                    scale: '120%',
+                    // animations:
+                    anim : gedits.animDropped,
                 }),
                 ...rule('.shifted', {
-                    opacity: 0.5,
+                    // animations:
+                    anim : gedits.animShifted,
                 }),
             }),
             
