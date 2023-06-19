@@ -91,15 +91,6 @@ export const [gedits, geditValues, cssGeditConfig] = cssConfig(() => {
     
     
     const bases = {
-        // sizes:
-        itemMinColumnWidthSm : 'calc(3 * 40px)'                     as CssKnownProps['columnWidth'      ],
-        itemMinColumnWidthMd : 'calc(5 * 40px)'                     as CssKnownProps['columnWidth'      ],
-        itemMinColumnWidthLg : 'calc(8 * 40px)'                     as CssKnownProps['columnWidth'      ],
-        
-        itemAspectRatio      : '1/1'                                as CssKnownProps['aspectRatio'      ],
-        
-        
-        
         // animations:
         defaultAnimationDuration : basics.defaultAnimationDuration  as CssKnownProps['animationDuration'],
         
@@ -112,6 +103,20 @@ export const [gedits, geditValues, cssGeditConfig] = cssConfig(() => {
         gapBlockMd           : spacers.sm                           as CssKnownProps['gapBlock'         ],
         gapInlineLg          : spacers.md                           as CssKnownProps['gapInline'        ],
         gapBlockLg           : spacers.md                           as CssKnownProps['gapBlock'         ],
+        
+        
+        
+        // items:
+        itemMinColumnWidthSm : 'calc(3 * 40px)'                     as CssKnownProps['columnWidth'      ],
+        itemMinColumnWidthMd : 'calc(5 * 40px)'                     as CssKnownProps['columnWidth'      ],
+        itemMinColumnWidthLg : 'calc(8 * 40px)'                     as CssKnownProps['columnWidth'      ],
+        
+        itemAspectRatio      : '1/1'                                as CssKnownProps['aspectRatio'      ],
+        
+        
+        
+        // uploads:
+        uploadBorderStyle    : 'dashed'                             as CssKnownProps['borderStyle'      ],
     };
     
     
@@ -145,14 +150,14 @@ export const [gedits, geditValues, cssGeditConfig] = cssConfig(() => {
     
     
     const defaults = {
-        // sizes:
-        itemMinColumnWidth   : bases.itemMinColumnWidthMd           as CssKnownProps['columnWidth'      ],
-        
-        
-        
         // spacings:
         gapInline            : bases.gapInlineMd                    as CssKnownProps['gapInline'        ],
         gapBlock             : bases.gapBlockMd                     as CssKnownProps['gapBlock'         ],
+        
+        
+        
+        // items:
+        itemMinColumnWidth   : bases.itemMinColumnWidthMd           as CssKnownProps['columnWidth'      ],
     };
     
     

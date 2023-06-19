@@ -41,6 +41,12 @@ import {
 
 
 
+// elements:
+const imageElm       = '.image';
+const uploadImageElm = '.upload';
+
+
+
 // styles:
 export const onGalleryEditorStylesChange = watchChanges(onContentStylesChange, cssGeditConfig.onChange);
 
@@ -63,19 +69,27 @@ export const usesGalleryEditorLayout = () => {
             
             
             // children:
-            ...children('.image', {
+            ...children([imageElm, uploadImageElm], {
                 // sizes:
                 inlineSize : 'unset', // we need to manage the <img>'s width
                 
                 
                 
+                // customize:
+                ...usesCssProps(usesPrefixedProps(gedits, 'item')), // apply config's cssProps starting with item***
+            }),
+            ...children(imageElm, {
                 // accessibilities:
                 cursor     : 'move',
                 
                 
                 
                 // customize:
-                ...usesCssProps(usesPrefixedProps(gedits, 'item')), // apply config's cssProps starting with item***
+                ...usesCssProps(usesPrefixedProps(gedits, 'image')), // apply config's cssProps starting with image***
+            }),
+            ...children(uploadImageElm, {
+                // customize:
+                ...usesCssProps(usesPrefixedProps(gedits, 'upload')), // apply config's cssProps starting with upload***
             }),
             
             
@@ -104,7 +118,7 @@ export const usesGalleryEditorVariants = () => {
 export const usesGalleryEditorStates = () => {
     return style({
         // children:
-        ...children('*', {
+        ...children(imageElm, {
             // states:
             ...states([
                 rule('.dragged', {
