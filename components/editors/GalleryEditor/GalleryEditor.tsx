@@ -8,8 +8,6 @@ import {
     // hooks:
     useState,
     useId,
-    useEffect,
-    useRef,
 }                           from 'react'
 
 // cssfn:
@@ -147,7 +145,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         handleChangeInternal,
     );
     
-    const handlePreviewMoved = useEvent((newDroppedItemIndex: number): string[]|undefined => {
+    const handlePreviewMoved   = useEvent((newDroppedItemIndex: number): string[]|undefined => {
         if (draggedItemIndex === newDroppedItemIndex) { // no change => nothing to shift => return the (original) *source of truth* images
             // reset the preview:
             return handleRevertPreview();
@@ -199,7 +197,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         // return the modified:
         return newDraftImages;
     });
-    const handleMoved = useEvent((newDroppedItemIndex: number) => {
+    const handleMoved          = useEvent((newDroppedItemIndex: number) => {
         const newDraftImages = handlePreviewMoved(newDroppedItemIndex);
         if (!newDraftImages) return; // no change => ignore
         
@@ -210,7 +208,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
             handleChange(newDraftImages);
         });
     });
-    const handleRevertPreview = useEvent(() => {
+    const handleRevertPreview  = useEvent(() => {
         // reset the preview:
         if (draftImages !== imagesFn) setDraftImages(imagesFn);
         
