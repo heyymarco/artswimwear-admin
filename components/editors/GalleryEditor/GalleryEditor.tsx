@@ -288,7 +288,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     
                     
                     // classes:
-                    className={((): string|undefined => {
+                    className={'image' + ((): string|undefined => {
                         // dropped item:
                         if (itemIndex === droppedItemIndex) return 'dropped';
                         
@@ -317,7 +317,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                         
                         
                         // unmoved item(s):
-                        return undefined;
+                        return '';
                     })()}
                     
                     
@@ -335,6 +335,9 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     onDrop       = {handleDrop     }
                 />
             )}
+            <div style={{background: 'pink'}}>
+                add a new image
+            </div>
         </Content>
     );
 };

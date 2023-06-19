@@ -63,7 +63,7 @@ export const usesGalleryEditorLayout = () => {
             
             
             // children:
-            ...children('*', {
+            ...children('.image', {
                 // sizes:
                 inlineSize : 'unset', // we need to manage the <img>'s width
                 
