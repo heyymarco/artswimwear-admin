@@ -103,28 +103,6 @@ export const [gedits, geditValues, cssGeditConfig] = cssConfig(() => {
         // animations:
         defaultAnimationDuration : basics.defaultAnimationDuration  as CssKnownProps['animationDuration'],
         
-        ...keyframesDraggedRule,
-        ...keyframesDroppedRule,
-        ...keyframesDropTargetRule,
-        animDragged          : [
-            ['300ms', 'linear'  , 'none', 'alternate', 'infinite', keyframesDragged    ],
-        ]                                                           as CssKnownProps['animation'        ],
-        animDropped          : [
-            ['300ms', 'linear'  , 'none', 'alternate', 'infinite', keyframesDropped    ],
-        ]                                                           as CssKnownProps['animation'        ],
-        animDropTarget       : [
-            ['300ms', 'linear'  , 'none', 'alternate', 'infinite', keyframesDropTarget ],
-        ]                                                           as CssKnownProps['animation'        ],
-        
-        ...keyframesShiftedUpRule,
-        ...keyframesShiftedDownRule,
-        animShiftedUp        : [
-            ['300ms', 'ease-out', 'none', 'alternate', 'infinite', keyframesShiftedUp  ],
-        ]                                                           as CssKnownProps['animation'        ],
-        animShiftedDown      : [
-            ['300ms', 'ease-out', 'none', 'alternate', 'infinite', keyframesShiftedDown],
-        ]                                                           as CssKnownProps['animation'        ],
-        
         
         
         // spacings:
@@ -134,6 +112,34 @@ export const [gedits, geditValues, cssGeditConfig] = cssConfig(() => {
         gapBlockMd           : spacers.sm                           as CssKnownProps['gapBlock'         ],
         gapInlineLg          : spacers.md                           as CssKnownProps['gapInline'        ],
         gapBlockLg           : spacers.md                           as CssKnownProps['gapBlock'         ],
+    };
+    
+    
+    
+    const subs = {
+        // animations:
+        
+        ...keyframesDraggedRule,
+        ...keyframesDroppedRule,
+        ...keyframesDropTargetRule,
+        animDragged          : [
+            [bases.defaultAnimationDuration, 'linear'  , 'none', 'alternate', 'infinite', keyframesDragged    ],
+        ]                                                           as CssKnownProps['animation'        ],
+        animDropped          : [
+            [bases.defaultAnimationDuration, 'linear'  , 'none', 'alternate', 'infinite', keyframesDropped    ],
+        ]                                                           as CssKnownProps['animation'        ],
+        animDropTarget       : [
+            [bases.defaultAnimationDuration, 'linear'  , 'none', 'alternate', 'infinite', keyframesDropTarget ],
+        ]                                                           as CssKnownProps['animation'        ],
+        
+        ...keyframesShiftedUpRule,
+        ...keyframesShiftedDownRule,
+        animShiftedUp        : [
+            [bases.defaultAnimationDuration, 'ease-out', 'none', 'alternate', 'infinite', keyframesShiftedUp  ],
+        ]                                                           as CssKnownProps['animation'        ],
+        animShiftedDown      : [
+            [bases.defaultAnimationDuration, 'ease-out', 'none', 'alternate', 'infinite', keyframesShiftedDown],
+        ]                                                           as CssKnownProps['animation'        ],
     };
     
     
@@ -153,6 +159,7 @@ export const [gedits, geditValues, cssGeditConfig] = cssConfig(() => {
     
     return {
         ...bases,
+        ...subs,
         ...defaults,
     };
 }, { prefix: 'gedit' });
