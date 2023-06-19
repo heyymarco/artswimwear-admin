@@ -50,6 +50,10 @@ import {
     // configs:
     gedits,
 }                           from './styles/config'
+import {
+    // react components:
+    DraggableImage,
+}                           from './DraggableImage'
 
 
 
@@ -242,9 +246,24 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
             mainClass={props.mainClass ?? styleSheet.main}
         >
             {draftImages.map((image, itemIndex) =>
-                <Image
+                <DraggableImage
                     // identifiers:
                     key={itemIndex}
+                    
+                    
+                    
+                    // positions:
+                    itemIndex={itemIndex}
+                    
+                    
+                    
+                    // components:
+                    imageComponent={<Image
+                        // images:
+                        alt={''}
+                        src={image ? `/products/${productName}/${image}` : undefined}
+                        sizes={`calc((${gedits.itemMinColumnWidth} * 2) + ${gedits.gapInline})`}
+                    />}
                     
                     
                     
@@ -283,30 +302,13 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     
                     
                     
-                    // images:
-                    alt={''}
-                    src={image ? `/products/${productName}/${image}` : undefined}
-                    sizes={`calc((${gedits.itemMinColumnWidth} * 2) + ${gedits.gapInline})`}
-                    
-                    
-                    
                     // draggable:
-                    draggable={true}
-                    onDragStart={(event) => {
-                        // events:
-                        event.dataTransfer.effectAllowed = 'move';
-                        event.dataTransfer.setData(dragDataType, ''); // we don't store the data here, just for marking purpose
-                        
-                        const dragImageElm = event.currentTarget.children?.[0] ?? event.currentTarget;
-                        const { width: dragImageWidth, height: dragImageHeight } = getComputedStyle(dragImageElm);
-                        event.dataTransfer.setDragImage(dragImageElm, Number.parseFloat(dragImageWidth) / 2, Number.parseFloat(dragImageHeight) / 2);
-                        
-                        
-                        
+                    dragDataType={dragDataType}
+                    onDragStart={(itemIndex) => {
                         // actions:
                         setDraggedItemIndex(itemIndex);               // rather, we store the data here
                     }}
-                    onDragEnd={(event) => {
+                    onDragEnd={(itemIndex) => {
                         // actions:
                         setDraggedItemIndex(-1);                      // clear selection
                     }}
@@ -314,27 +316,11 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     
                     
                     // droppable:
-                    onDragEnter={(event) => {
-                        // conditions:
-                        const isValidDragObject = event.dataTransfer.types.includes(dragDataType);
-                        if (!isValidDragObject) return; // unknown drag object => ignore
-                        
-                        
-                        
+                    onDragEnter={(itemIndex) => {
                         // actions:
                         handlePreviewMoved(/*newDroppedItemIndex = */itemIndex);
                     }}
-                    onDragOver={(event) => {
-                        // conditions:
-                        const isValidDragObject = event.dataTransfer.types.includes(dragDataType);
-                        if (!isValidDragObject) return; // unknown drag object => ignore
-                        
-                        
-                        
-                        // events:
-                        event.preventDefault(); // prevents the default behavior to *disallow* for dropping here
-                    }}
-                    onDragLeave={(event) => {
+                    onDragLeave={(itemIndex) => {
                         // conditions:
                         if (droppedItemIndex !== itemIndex) return; // the last preview is already updated by another item => no need to revert
                         
@@ -343,19 +329,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                         // actions:
                         handleRevertPreview();
                     }}
-                    onDrop={(event) => {
-                        // conditions:
-                        const isValidDragObject = event.dataTransfer.types.includes(dragDataType);
-                        if (!isValidDragObject) return; // unknown drag object => ignore
-                        
-                        
-                        
-                        // events:
-                        event.preventDefault();
-                        event.stopPropagation(); // do not bubble event to the <parent>
-                        
-                        
-                        
+                    onDrop={(itemIndex) => {
                         // actions:
                         handleMoved(/*newDroppedItemIndex = */itemIndex);
                     }}
