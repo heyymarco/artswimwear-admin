@@ -116,13 +116,14 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     const imagesFn : string[]                     = (images /*controllable*/ ?? imagesDn /*uncontrollable*/);
     
     const [draggedItemIndex, setDraggedItemIndex] = useState<number>(-1);
+    const [droppedItemIndex, setDroppedItemIndex] = useState<number>(-1);
     
     const [draftImages, setDraftImages]           = useState<string[]>([]);
     const previewMovedCache                       = useRef<{fromItemIndex: number, toItemIndex: number, newDraftImages: string[]}|undefined>(undefined);
     
     useIsomorphicLayoutEffect(() => {
-        setDraftImages(imagesFn);              // copy the *source of truth* images
-        previewMovedCache.current = undefined; // clear the cache
+        // reset the preview:
+        handleRevertPreview();
     }, [imagesFn]); // (re)update the draft images every time the *source of truth* images updated
     
     
@@ -150,17 +151,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     const handlePreviewMoved = useEvent((fromItemIndex: number, toItemIndex: number): string[]|undefined => {
         if (fromItemIndex === toItemIndex) { // no change => nothing to shift => return the (original) *source of truth* images
             // reset the preview:
-            if (draftImages !== imagesFn) setDraftImages(imagesFn);
-            
-            
-            
-            // clear the cache:
-            previewMovedCache.current = undefined;
-            
-            
-            
-            // return the original:
-            return imagesFn;
+            return handleRevertPreview();
         } // if
         
         
@@ -207,6 +198,11 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         
+        // update the dropped index:
+        setDroppedItemIndex(toItemIndex);
+        
+        
+        
         // update the cache:
         previewMovedCache.current = {
             fromItemIndex,
@@ -229,6 +225,25 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
             // fire `onChange` react event:
             handleChange(newDraftImages);
         });
+    });
+    const handleRevertPreview = useEvent(() => {
+        // reset the preview:
+        if (draftImages !== imagesFn) setDraftImages(imagesFn);
+        
+        
+        
+        // reset the dropped index:
+        if (droppedItemIndex !== -1) setDroppedItemIndex(-1);
+        
+        
+        
+        // clear the cache:
+        previewMovedCache.current = undefined;
+        
+        
+        
+        // return the original:
+        return imagesFn;
     });
     
     
@@ -258,7 +273,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     
                     // classes:
                     className={
-                        (image === imagesFn[draggedItemIndex])
+                        (itemIndex === droppedItemIndex)
                         ? 'dropped'
                         : (image !== imagesFn[itemIndex])
                             ? 'shifted'
@@ -314,6 +329,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     }}
                     onDragLeave={(event) => {
                         // actions:
+                        handleRevertPreview();
                     }}
                     onDrop={(event) => {
                         // conditions:
