@@ -111,6 +111,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         
         
         // events:
+        event.dataTransfer.dropEffect = 'copy';
         event.preventDefault(); // prevents the default behavior to *disallow* for dropping here
     });
     const handleDragLeave   = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
