@@ -2,6 +2,11 @@
 import {
     // react:
     default as React,
+    
+    
+    
+    // hooks:
+    useRef,
 }                           from 'react'
 
 // reusable-ui core:
@@ -83,6 +88,11 @@ const DraggableImage = (props: DraggableImageProps): JSX.Element|null => {
     
     
     
+    // states:
+    const dragEnterCounter = useRef<number>(0);
+    
+    
+    
     // draggable handlers:
     const handleDragStart   = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
         // events:
@@ -115,7 +125,8 @@ const DraggableImage = (props: DraggableImageProps): JSX.Element|null => {
         
         
         // callback:
-        onDragEnter?.(itemIndex);
+        dragEnterCounter.current++;
+        if (dragEnterCounter.current === 1) onDragEnter?.(itemIndex);
     });
     const handleDragOver    = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
         // conditions:
@@ -134,7 +145,10 @@ const DraggableImage = (props: DraggableImageProps): JSX.Element|null => {
     });
     const handleDragLeave   = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
         // callback:
-        onDragLeave?.(itemIndex);
+        if (dragEnterCounter.current >= 1) {
+            dragEnterCounter.current--;
+            if (dragEnterCounter.current === 0) onDragLeave?.(itemIndex);
+        } // if
     });
     const handleDrop        = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
         // conditions:
@@ -150,6 +164,10 @@ const DraggableImage = (props: DraggableImageProps): JSX.Element|null => {
         
         
         // callback:
+        if (dragEnterCounter.current >= 1) {
+            dragEnterCounter.current = 0;
+            onDragLeave?.(itemIndex);
+        } // if
         onDrop?.(itemIndex);
     });
     
