@@ -20,6 +20,11 @@ import {
 
 // reusable-ui core:
 import {
+    // a spacer (gap) management system:
+    spacers,
+    
+    
+    
     // size options of UI:
     usesResizable,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
@@ -42,8 +47,9 @@ import {
 
 
 // elements:
-const imageElm       = '.image';
-const uploadImageElm = '.upload';
+const imageElm          = '.image';
+const uploadingImageElm = '.uploadingImage';
+const uploadImageElm    = '.uploadImage';
 
 
 
@@ -69,7 +75,7 @@ export const usesGalleryEditorLayout = () => {
             
             
             // children:
-            ...children([imageElm, uploadImageElm], {
+            ...children([imageElm, uploadingImageElm, uploadImageElm], {
                 // sizes:
                 inlineSize : 'unset', // we need to manage the <img>'s width
                 
@@ -87,7 +93,20 @@ export const usesGalleryEditorLayout = () => {
                 // customize:
                 ...usesCssProps(usesPrefixedProps(gedits, 'image')), // apply config's cssProps starting with image***
             }),
+            ...children(uploadingImageElm, {
+                // customize:
+                ...usesCssProps(usesPrefixedProps(gedits, 'uploading')), // apply config's cssProps starting with uploading***
+            }),
             ...children(uploadImageElm, {
+                // layouts:
+                display        : 'flex',    // use block flexbox, so it takes the entire parent's width
+                flexDirection  : 'column',  // items are stacked vertically
+                justifyContent : 'center',  // center item vertically
+                alignItems     : 'center',  // center item horizontally
+                flexWrap       : 'nowrap',  // prevents the items to wrap to the next column
+                
+                
+                
                 // customize:
                 ...usesCssProps(usesPrefixedProps(gedits, 'upload')), // apply config's cssProps starting with upload***
             }),

@@ -57,6 +57,11 @@ import {
     // react components:
     DraggableImage,
 }                           from './DraggableImage'
+import {
+    // react components:
+    UploadImageProps,
+    UploadImage,
+}                           from './UploadImage'
 
 
 
@@ -85,8 +90,12 @@ interface GalleryEditorProps<TElement extends Element = HTMLElement>
             
             // children:
             |'children'     // already taken over
-        >
+        >,
+        
+        // sub components:
+        UploadImageProps
 {
+    // paths:
     productName: string
 }
 const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEditorProps<TElement>): JSX.Element|null => {
@@ -97,6 +106,11 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     
     // rest props:
     const {
+        // paths:
+        productName,
+        
+        
+        
         // values:
         defaultValue : defaultImages,
         value        : images,
@@ -104,7 +118,15 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         
-        productName,
+        // upload images:
+        uploadImageTitle,
+        uploadImageSelectImage,
+        uploadImageDropImage,
+        
+        
+        
+        // components:
+        selectImageButtonComponent,
     ...restContentProps} = props;
     
     
@@ -349,17 +371,19 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     Cancel
                 </ButtonIcon>
             </Content>
-            <Content mild={true} className='upload'>
-                <h6>
-                    Add New Image(s)
-                </h6>
-                <ButtonIcon icon='upload_file'>
-                    Select Images
-                </ButtonIcon>
-                <p>
-                    or drop images here
-                </p>
-            </Content>
+            <UploadImage
+                {...{
+                    // upload images:
+                    uploadImageTitle,
+                    uploadImageSelectImage,
+                    uploadImageDropImage,
+                    
+                    
+                    
+                    // components:
+                    selectImageButtonComponent,
+                }}
+            />
         </Content>
     );
 };
