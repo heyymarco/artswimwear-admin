@@ -62,6 +62,11 @@ import {
     UploadImageProps,
     UploadImage,
 }                           from './UploadImage'
+import {
+    // react components:
+    UploadingImageProps,
+    UploadingImage,
+}                           from './UploadingImage'
 
 
 
@@ -93,7 +98,8 @@ interface GalleryEditorProps<TElement extends Element = HTMLElement>
         >,
         
         // sub components:
-        UploadImageProps
+        UploadImageProps,
+        UploadingImageProps
 {
     // paths:
     productName: string
@@ -125,8 +131,19 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         
+        // uploading images:
+        uploadingImageTitle,
+        uploadingImageCancel,
+        uploadingImageProgress,
+        
+        
+        
         // components:
-        selectImageButtonComponent,
+        uploadImageButtonComponent,
+        
+        uploadingImageProgressComponent,
+        uploadingImageProgressBarComponent,
+        uploadingImageCancelButtonComponent,
     ...restContentProps} = props;
     
     
@@ -360,17 +377,21 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     onDrop       = {handleDrop     }
                 />
             )}
-            <Content mild={true} className='upload'>
-                <h6>
-                    Uploading...
-                </h6>
-                <Progress size='sm'>
-                    <ProgressBar value={70} />
-                </Progress>
-                <ButtonIcon icon='cancel' theme='danger' size='sm'>
-                    Cancel
-                </ButtonIcon>
-            </Content>
+            <UploadingImage
+                {...{
+                    // uploading images:
+                    uploadingImageTitle,
+                    uploadingImageCancel,
+                    uploadingImageProgress,
+                    
+                    
+                    
+                    // components:
+                    uploadingImageProgressComponent,
+                    uploadingImageProgressBarComponent,
+                    uploadingImageCancelButtonComponent,
+                }}
+            />
             <UploadImage
                 {...{
                     // upload images:
@@ -381,7 +402,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     
                     
                     // components:
-                    selectImageButtonComponent,
+                    uploadImageButtonComponent,
                 }}
             />
         </Content>

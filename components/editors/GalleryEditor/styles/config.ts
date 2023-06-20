@@ -117,6 +117,11 @@ export const [gedits, geditValues, cssGeditConfig] = cssConfig(() => {
         
         // uploads:
         uploadBorderStyle    : 'dashed'                             as CssKnownProps['borderStyle'      ],
+        
+        
+        
+        // uploadings:
+        uploadingBorderStyle : 'dashed'                             as CssKnownProps['borderStyle'      ],
     };
     
     

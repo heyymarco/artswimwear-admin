@@ -93,11 +93,7 @@ export const usesGalleryEditorLayout = () => {
                 // customize:
                 ...usesCssProps(usesPrefixedProps(gedits, 'image')), // apply config's cssProps starting with image***
             }),
-            ...children(uploadingImageElm, {
-                // customize:
-                ...usesCssProps(usesPrefixedProps(gedits, 'uploading')), // apply config's cssProps starting with uploading***
-            }),
-            ...children(uploadImageElm, {
+            ...children([uploadingImageElm, uploadImageElm], {
                 // layouts:
                 display        : 'flex',    // use block flexbox, so it takes the entire parent's width
                 flexDirection  : 'column',  // items are stacked vertically
@@ -107,6 +103,22 @@ export const usesGalleryEditorLayout = () => {
                 
                 
                 
+                // spacings:
+                gap            : spacers.default,
+                
+                
+                
+                // children:
+                ...children('*', {
+                    // spacings:
+                    margin     : 0,
+                }),
+            }),
+            ...children(uploadingImageElm, {
+                // customize:
+                ...usesCssProps(usesPrefixedProps(gedits, 'uploading')), // apply config's cssProps starting with uploading***
+            }),
+            ...children(uploadImageElm, {
                 // customize:
                 ...usesCssProps(usesPrefixedProps(gedits, 'upload')), // apply config's cssProps starting with upload***
             }),

@@ -37,7 +37,7 @@ export interface UploadImageProps
     
     
     // components:
-    selectImageButtonComponent ?: React.ReactComponentElement<any, ButtonProps>
+    uploadImageButtonComponent ?: React.ReactComponentElement<any, ButtonProps>
 }
 const UploadImage = (props: UploadImageProps): JSX.Element|null => {
     // rest props:
@@ -50,7 +50,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         
         
         // components:
-        selectImageButtonComponent = (<ButtonIcon icon='upload_file' /> as React.ReactComponentElement<any, ButtonProps>),
+        uploadImageButtonComponent = (<ButtonIcon icon='upload_file' /> as React.ReactComponentElement<any, ButtonProps>),
     } = props;
     
     
@@ -69,7 +69,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
             <h6>
                 {uploadImageTitle}
             </h6>
-            {React.cloneElement(selectImageButtonComponent,
+            {React.cloneElement(uploadImageButtonComponent,
                 // props:
                 {
                     // TODO: add handler
