@@ -115,8 +115,10 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
     });
     const handleDragLeave   = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
         // actions:
-        if (dragEnterCounter.current >= 1) dragEnterCounter.current--;
-        if (dragEnterCounter.current === 0) setHasEnterCounter(false);
+        if (dragEnterCounter.current >= 1) {
+            dragEnterCounter.current--;
+            if (dragEnterCounter.current === 0) setHasEnterCounter(false);
+        } // if
     });
     const handleDrop        = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
         // conditions:
@@ -132,9 +134,10 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         
         
         // actions:
-        dragEnterCounter.current = 0;
-        setHasEnterCounter(false);
-        
+        if (dragEnterCounter.current >= 1) {
+            dragEnterCounter.current = 0;
+            setHasEnterCounter(false);
+        } // if
         handleFilesAdded(event.dataTransfer.files);
     });
     
