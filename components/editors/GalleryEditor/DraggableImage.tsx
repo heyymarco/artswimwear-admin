@@ -136,6 +136,7 @@ const DraggableImage = (props: DraggableImageProps): JSX.Element|null => {
         
         
         // events:
+        event.dataTransfer.dropEffect = 'move';
         event.preventDefault(); // prevents the default behavior to *disallow* for dropping here
         
         
