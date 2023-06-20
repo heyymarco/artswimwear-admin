@@ -2,6 +2,11 @@
 import {
     // react:
     default as React,
+    
+    
+    
+    // hooks:
+    useRef,
 }                           from 'react'
 
 // reusable-ui core:
@@ -24,6 +29,11 @@ import {
     ProgressBar,
 }                           from '@reusable-ui/components'
 
+// other libs:
+import {
+    default as MimeMatcher,
+}                           from 'mime-matcher'
+
 
 
 // react components:
@@ -33,7 +43,7 @@ export interface UploadImageProps
     uploadImageTitle           ?: string
     uploadImageSelectImage     ?: string
     uploadImageDropImage       ?: string
-    uploadImageType            ?: RegExp
+    uploadImageType            ?: string
     
     
     
@@ -47,13 +57,18 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         uploadImageTitle       = 'Add New Image(s)',
         uploadImageSelectImage = 'Select Images',
         uploadImageDropImage   = 'or drop images here',
-        uploadImageType        = /^image\/(jpg|jpeg|png|svg)(;.*)?/i,
+        uploadImageType        = 'image/jpg, image/jpeg, image/png, image/svg',
         
         
         
         // components:
         uploadImageButtonComponent = (<ButtonIcon icon='upload_file' /> as React.ReactComponentElement<any, ButtonProps>),
     } = props;
+    
+    
+    
+    // refs:
+    const inputFileRef = useRef<HTMLInputElement|null>(null);
     
     
     
@@ -109,8 +124,9 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
                 
                 // actions:
                 event.currentTarget.style.borderColor = '';
+                const mimeMatcher = new MimeMatcher(...uploadImageType.split(',').map((mime) => mime.trim()));
                 for (const file of event.dataTransfer.files) {
-                    if (uploadImageType.test(file.type)) {
+                    if (mimeMatcher.match(file.type)) {
                         console.log('image file: ', file.name);
                     }
                     else {
@@ -125,7 +141,10 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
             {React.cloneElement(uploadImageButtonComponent,
                 // props:
                 {
-                    // TODO: add handler
+                    // handlers:
+                    onClick : () => {
+                        inputFileRef.current?.click();
+                    },
                 },
                 
                 
@@ -133,6 +152,42 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
                 // children:
                 uploadImageSelectImage,
             )}
+            <input
+                // refs:
+                ref={inputFileRef}
+                
+                
+                
+                // classes:
+                className='inputFile'
+                
+                
+                
+                // formats:
+                type='file'
+                accept={uploadImageType}
+                multiple={true}
+                
+                
+                
+                // handlers:
+                onChange={(event) => {
+                    const files = inputFileRef.current?.files;
+                    if (!files) return;
+                    
+                    
+                    
+                    const mimeMatcher = new MimeMatcher(...uploadImageType.split(',').map((mime) => mime.trim()));
+                    for (const file of files) {
+                        if (mimeMatcher.match(file.type)) {
+                            console.log('image file: ', file.name);
+                        }
+                        else {
+                            console.log('unknown file: ', file.name);
+                        } // if
+                    } // for
+                }}
+            />
             <p>
                 {uploadImageDropImage}
             </p>

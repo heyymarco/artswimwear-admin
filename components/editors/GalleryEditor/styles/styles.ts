@@ -50,6 +50,7 @@ import {
 const imageElm          = '.image';
 const uploadingImageElm = '.uploadingImage';
 const uploadImageElm    = '.uploadImage';
+const inputFileElm      = '.inputFile';
 
 
 
@@ -119,6 +120,14 @@ export const usesGalleryEditorLayout = () => {
                 ...usesCssProps(usesPrefixedProps(gedits, 'uploading')), // apply config's cssProps starting with uploading***
             }),
             ...children(uploadImageElm, {
+                // children:
+                ...children(inputFileElm, {
+                    // layouts:
+                    display: 'none',
+                }),
+                
+                
+                
                 // customize:
                 ...usesCssProps(usesPrefixedProps(gedits, 'upload')), // apply config's cssProps starting with upload***
             }),
