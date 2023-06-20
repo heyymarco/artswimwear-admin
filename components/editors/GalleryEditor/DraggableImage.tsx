@@ -87,6 +87,7 @@ const DraggableImage = (props: DraggableImageProps): JSX.Element|null => {
     const handleDragStart   = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
         // events:
         event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.clearData();
         event.dataTransfer.setData(dragDataType, ''); // we don't store the data here, just for marking purpose
         
         const dragImageElm = event.currentTarget.children?.[0] ?? event.currentTarget;
