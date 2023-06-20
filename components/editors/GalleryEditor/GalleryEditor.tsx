@@ -28,10 +28,11 @@ import {
 // reusable-ui components:
 import {
     // react components:
-    Basic,
-    
     ContentProps,
     Content,
+    ButtonIcon,
+    Progress,
+    ProgressBar,
 }                           from '@reusable-ui/components'
 import {
     // react components:
@@ -337,9 +338,28 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     onDrop       = {handleDrop     }
                 />
             )}
-            <Basic className='upload'>
-                add a new image
-            </Basic>
+            <Content mild={true} className='upload'>
+                <h6>
+                    Uploading...
+                </h6>
+                <Progress size='sm'>
+                    <ProgressBar value={70} />
+                </Progress>
+                <ButtonIcon icon='cancel' theme='danger' size='sm'>
+                    Cancel
+                </ButtonIcon>
+            </Content>
+            <Content mild={true} className='upload'>
+                <h6>
+                    Add New Image(s)
+                </h6>
+                <ButtonIcon icon='upload_file'>
+                    Select Images
+                </ButtonIcon>
+                <p>
+                    or drop images here
+                </p>
+            </Content>
         </Content>
     );
 };
