@@ -54,7 +54,7 @@ export interface DraggableImageProps
     // components:
     imageComponent : React.ReactComponentElement<any, React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>>
 }
-const DraggableImage = (props: DraggableImageProps) => {
+const DraggableImage = (props: DraggableImageProps): JSX.Element|null => {
     // rest props:
     const {
         // positions:
