@@ -172,7 +172,9 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
                 
                 // handlers:
                 onChange={(event) => {
-                    const files = inputFileRef.current?.files;
+                    const inputFileElm = inputFileRef.current;
+                    if (!inputFileElm) return;
+                    const files = inputFileElm.files;
                     if (!files) return;
                     
                     
@@ -186,6 +188,11 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
                             console.log('unknown file: ', file.name);
                         } // if
                     } // for
+                    
+                    
+                    
+                    // reset:
+                    inputFileElm.value = '';
                 }}
             />
             <p>
