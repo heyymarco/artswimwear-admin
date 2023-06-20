@@ -41,6 +41,7 @@ export interface UploadImageProps
     uploadImageSelectImage     ?: string
     uploadImageDropImage       ?: string
     uploadImageType            ?: string
+    uploadImageAdded           ?: (imageFile: File) => void
     
     
     
@@ -55,6 +56,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         uploadImageSelectImage     = 'Select Images',
         uploadImageDropImage       = 'or drop images here',
         uploadImageType            = 'image/jpg, image/jpeg, image/png, image/svg',
+        uploadImageAdded,
         
         
         
@@ -72,6 +74,20 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
     // states:
     const [dragEnterCounter, setDragEnterCounter] = useState<number>(0);
     
+    
+    
+    // handlers:
+    const handleFilesAdded  = useEvent((files: FileList): void => {
+        const mimeMatcher = new MimeMatcher(...uploadImageType.split(',').map((mime) => mime.trim()));
+        for (const file of files) {
+            if (mimeMatcher.match(file.type)) {
+                uploadImageAdded?.(file);
+            }
+            else {
+                console.log('unknown file: ', file.name);
+            } // if
+        } // for
+    })
     
     
     // droppable handlers:
@@ -114,16 +130,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         
         // actions:
         setDragEnterCounter((counter) => (counter >= 1) ? (counter - 1) : 0);
-        
-        const mimeMatcher = new MimeMatcher(...uploadImageType.split(',').map((mime) => mime.trim()));
-        for (const file of event.dataTransfer.files) {
-            if (mimeMatcher.match(file.type)) {
-                console.log('image file: ', file.name);
-            }
-            else {
-                console.log('unknown file: ', file.name);
-            } // if
-        } // for
+        handleFilesAdded(event.dataTransfer.files);
     });
     
     
@@ -140,15 +147,8 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         
         
         
-        const mimeMatcher = new MimeMatcher(...uploadImageType.split(',').map((mime) => mime.trim()));
-        for (const file of files) {
-            if (mimeMatcher.match(file.type)) {
-                console.log('image file: ', file.name);
-            }
-            else {
-                console.log('unknown file: ', file.name);
-            } // if
-        } // for
+        // actions:
+        handleFilesAdded(files);
         
         
         

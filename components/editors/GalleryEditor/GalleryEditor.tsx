@@ -129,6 +129,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         uploadImageSelectImage,
         uploadImageDropImage,
         uploadImageType,
+        uploadImageAdded,
         
         
         
@@ -400,6 +401,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     uploadImageSelectImage,
                     uploadImageDropImage,
                     uploadImageType,
+                    uploadImageAdded,
                     
                     
                     
