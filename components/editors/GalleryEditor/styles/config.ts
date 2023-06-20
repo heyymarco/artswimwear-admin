@@ -16,6 +16,11 @@ import {
 
 // reusable-ui core:
 import {
+    // a border (stroke) management system:
+    borders,
+    
+    
+    
     // a spacer (gap) management system:
     spacers,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
@@ -86,6 +91,19 @@ export const [gedits, geditValues, cssGeditConfig] = cssConfig(() => {
             ]],
         },
     });
+    
+    
+    
+    const [uploadKeyframesDropTargetRule, uploadKeyframesDropTarget] = keyframes({
+        from  : {
+            borderStyle : 'solid',
+            borderWidth : borders.hair,
+        },
+        to    : {
+            borderStyle : 'solid',
+            borderWidth : borders.bold,
+        },
+    });
     //#endregion keyframes
     
     
@@ -133,22 +151,30 @@ export const [gedits, geditValues, cssGeditConfig] = cssConfig(() => {
         ...keyframesDroppedRule,
         ...keyframesDropTargetRule,
         animDragged          : [
-            [bases.defaultAnimationDuration, 'linear'  , 'none', 'alternate', 'infinite', keyframesDragged    ],
+            [bases.defaultAnimationDuration, 'linear'  , 'none', 'alternate', 'infinite', keyframesDragged          ],
         ]                                                           as CssKnownProps['animation'        ],
         animDropped          : [
-            [bases.defaultAnimationDuration, 'linear'  , 'none', 'alternate', 'infinite', keyframesDropped    ],
+            [bases.defaultAnimationDuration, 'linear'  , 'none', 'alternate', 'infinite', keyframesDropped          ],
         ]                                                           as CssKnownProps['animation'        ],
         animDropTarget       : [
-            [bases.defaultAnimationDuration, 'linear'  , 'none', 'alternate', 'infinite', keyframesDropTarget ],
+            [bases.defaultAnimationDuration, 'linear'  , 'none', 'alternate', 'infinite', keyframesDropTarget       ],
         ]                                                           as CssKnownProps['animation'        ],
         
         ...keyframesShiftedUpRule,
         ...keyframesShiftedDownRule,
         animShiftedUp        : [
-            [bases.defaultAnimationDuration, 'ease-out', 'none', 'alternate', 'infinite', keyframesShiftedUp  ],
+            [bases.defaultAnimationDuration, 'ease-out', 'none', 'alternate', 'infinite', keyframesShiftedUp        ],
         ]                                                           as CssKnownProps['animation'        ],
         animShiftedDown      : [
-            [bases.defaultAnimationDuration, 'ease-out', 'none', 'alternate', 'infinite', keyframesShiftedDown],
+            [bases.defaultAnimationDuration, 'ease-out', 'none', 'alternate', 'infinite', keyframesShiftedDown      ],
+        ]                                                           as CssKnownProps['animation'        ],
+        
+        
+        
+        // uploads:
+        ...uploadKeyframesDropTargetRule,
+        uploadAnimDropTarget : [
+            [bases.defaultAnimationDuration, 'linear'  , 'none', 'alternate', 'infinite', uploadKeyframesDropTarget ],
         ]                                                           as CssKnownProps['animation'        ],
     };
     

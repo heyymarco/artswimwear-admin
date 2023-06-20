@@ -183,6 +183,15 @@ export const usesGalleryEditorStates = () => {
                 }),
             ]),
         }),
+        ...children(uploadImageElm, {
+            // states:
+            ...states([
+                rule('.dropTarget', {
+                    // animations:
+                    anim : gedits.uploadAnimDropTarget,
+                }),
+            ]),
+        }),
     });
 };
 

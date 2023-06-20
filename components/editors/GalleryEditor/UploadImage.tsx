@@ -7,6 +7,7 @@ import {
     
     // hooks:
     useRef,
+    useState,
 }                           from 'react'
 
 // reusable-ui core:
@@ -50,10 +51,10 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
     // rest props:
     const {
         // upload images:
-        uploadImageTitle       = 'Add New Image(s)',
-        uploadImageSelectImage = 'Select Images',
-        uploadImageDropImage   = 'or drop images here',
-        uploadImageType        = 'image/jpg, image/jpeg, image/png, image/svg',
+        uploadImageTitle           = 'Add New Image(s)',
+        uploadImageSelectImage     = 'Select Images',
+        uploadImageDropImage       = 'or drop images here',
+        uploadImageType            = 'image/jpg, image/jpeg, image/png, image/svg',
         
         
         
@@ -68,6 +69,11 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
     
     
     
+    // states:
+    const [dragEnterCounter, setDragEnterCounter] = useState<number>(0);
+    
+    
+    
     // droppable handlers:
     const handleDragEnter   = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
         // conditions:
@@ -77,7 +83,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         
         
         // actions:
-        event.currentTarget.style.borderColor = 'red';
+        setDragEnterCounter((counter) => counter + 1);
     });
     const handleDragOver    = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
         // conditions:
@@ -91,7 +97,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
     });
     const handleDragLeave   = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
         // actions:
-        event.currentTarget.style.borderColor = '';
+        setDragEnterCounter((counter) => (counter >= 1) ? (counter - 1) : 0);
     });
     const handleDrop        = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
         // conditions:
@@ -107,7 +113,8 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         
         
         // actions:
-        event.currentTarget.style.borderColor = '';
+        setDragEnterCounter((counter) => (counter >= 1) ? (counter - 1) : 0);
+        
         const mimeMatcher = new MimeMatcher(...uploadImageType.split(',').map((mime) => mime.trim()));
         for (const file of event.dataTransfer.files) {
             if (mimeMatcher.match(file.type)) {
@@ -160,7 +167,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
             
             
             // classes:
-            className='uploadImage'
+            className={`uploadImage ${dragEnterCounter ? 'dropTarget' : ''}`}
             
             
             
@@ -170,7 +177,9 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
             onDragLeave = {handleDragLeave}
             onDrop      = {handleDrop     }
         >
-            <h6>
+            <h6
+                draggable={true}
+            >
                 {uploadImageTitle}
             </h6>
             {React.cloneElement(uploadImageButtonComponent,
