@@ -18,15 +18,11 @@ import {
 // reusable-ui components:
 import {
     // react components:
-    ContentProps,
     Content,
     
     ButtonProps,
     
     ButtonIcon,
-    
-    Progress,
-    ProgressBar,
 }                           from '@reusable-ui/components'
 
 // other libs:
@@ -72,6 +68,89 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
     
     
     
+    // droppable handlers:
+    const handleDragEnter   = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
+        // conditions:
+        const isValidDragFiles = event.dataTransfer.types.includes('Files');
+        if (!isValidDragFiles) return; // unknown drag file(s) => ignore
+        
+        
+        
+        // actions:
+        event.currentTarget.style.borderColor = 'red';
+    });
+    const handleDragOver    = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
+        // conditions:
+        const isValidDragFiles = event.dataTransfer.types.includes('Files');
+        if (!isValidDragFiles) return; // unknown drag file(s) => ignore
+        
+        
+        
+        // events:
+        event.preventDefault(); // prevents the default behavior to *disallow* for dropping here
+    });
+    const handleDragLeave   = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
+        // actions:
+        event.currentTarget.style.borderColor = '';
+    });
+    const handleDrop        = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
+        // conditions:
+        const isValidDragFiles = event.dataTransfer.types.includes('Files');
+        if (!isValidDragFiles) return; // unknown drag file(s) => ignore
+        
+        
+        
+        // events:
+        event.preventDefault();
+        event.stopPropagation(); // do not bubble event to the <parent>
+        
+        
+        
+        // actions:
+        event.currentTarget.style.borderColor = '';
+        const mimeMatcher = new MimeMatcher(...uploadImageType.split(',').map((mime) => mime.trim()));
+        for (const file of event.dataTransfer.files) {
+            if (mimeMatcher.match(file.type)) {
+                console.log('image file: ', file.name);
+            }
+            else {
+                console.log('unknown file: ', file.name);
+            } // if
+        } // for
+    });
+    
+    
+    
+    // handlers:
+    const uploadImageButtonHandleClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
+        inputFileRef.current?.click();
+    });
+    const inputFileHandleChange        = useEvent<React.ChangeEventHandler<HTMLInputElement>>(() => {
+        const inputFileElm = inputFileRef.current;
+        if (!inputFileElm) return;
+        const files = inputFileElm.files;
+        if (!files) return;
+        
+        
+        
+        const mimeMatcher = new MimeMatcher(...uploadImageType.split(',').map((mime) => mime.trim()));
+        for (const file of files) {
+            if (mimeMatcher.match(file.type)) {
+                console.log('image file: ', file.name);
+            }
+            else {
+                console.log('unknown file: ', file.name);
+            } // if
+        } // for
+        
+        
+        
+        // unselect files after the selected files has taken:
+        inputFileElm.value = '';
+    });
+    
+    
+    
     // jsx:
     return (
         <Content
@@ -86,54 +165,10 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
             
             
             // droppable handlers:
-            onDragEnter={(event) => {
-                // conditions:
-                const isValidDragFiles = event.dataTransfer.types.includes('Files');
-                if (!isValidDragFiles) return; // unknown drag file(s) => ignore
-                
-                
-                
-                // actions:
-                event.currentTarget.style.borderColor = 'red';
-            }}
-            onDragOver={(event) => {
-                // conditions:
-                const isValidDragFiles = event.dataTransfer.types.includes('Files');
-                if (!isValidDragFiles) return; // unknown drag file(s) => ignore
-                
-                
-                
-                event.preventDefault();
-            }}
-            onDragLeave={(event) => {
-                // actions:
-                event.currentTarget.style.borderColor = '';
-            }}
-            onDrop={(event) => {
-                // conditions:
-                const isValidDragFiles = event.dataTransfer.types.includes('Files');
-                if (!isValidDragFiles) return; // unknown drag file(s) => ignore
-                
-                
-                
-                // events:
-                event.preventDefault();
-                event.stopPropagation(); // do not bubble event to the <parent>
-                
-                
-                
-                // actions:
-                event.currentTarget.style.borderColor = '';
-                const mimeMatcher = new MimeMatcher(...uploadImageType.split(',').map((mime) => mime.trim()));
-                for (const file of event.dataTransfer.files) {
-                    if (mimeMatcher.match(file.type)) {
-                        console.log('image file: ', file.name);
-                    }
-                    else {
-                        console.log('unknown file: ', file.name);
-                    } // if
-                } // for
-            }}
+            onDragEnter = {handleDragEnter}
+            onDragOver  = {handleDragOver }
+            onDragLeave = {handleDragLeave}
+            onDrop      = {handleDrop     }
         >
             <h6>
                 {uploadImageTitle}
@@ -142,9 +177,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
                 // props:
                 {
                     // handlers:
-                    onClick : () => {
-                        inputFileRef.current?.click();
-                    },
+                    onClick : uploadImageButtonHandleClick,
                 },
                 
                 
@@ -171,29 +204,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
                 
                 
                 // handlers:
-                onChange={(event) => {
-                    const inputFileElm = inputFileRef.current;
-                    if (!inputFileElm) return;
-                    const files = inputFileElm.files;
-                    if (!files) return;
-                    
-                    
-                    
-                    const mimeMatcher = new MimeMatcher(...uploadImageType.split(',').map((mime) => mime.trim()));
-                    for (const file of files) {
-                        if (mimeMatcher.match(file.type)) {
-                            console.log('image file: ', file.name);
-                        }
-                        else {
-                            console.log('unknown file: ', file.name);
-                        } // if
-                    } // for
-                    
-                    
-                    
-                    // reset:
-                    inputFileElm.value = '';
-                }}
+                onChange={inputFileHandleChange}
             />
             <p>
                 {uploadImageDropImage}
