@@ -72,7 +72,8 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
     
     
     // states:
-    const [dragEnterCounter, setDragEnterCounter] = useState<number>(0);
+    const dragEnterCounter = useRef<number>(0);
+    const [hasEnterCounter, setHasEnterCounter] = useState<boolean>(false);
     
     
     
@@ -99,7 +100,8 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         
         
         // actions:
-        setDragEnterCounter((counter) => counter + 1);
+        dragEnterCounter.current++;
+        if (dragEnterCounter.current === 1) setHasEnterCounter(true);
     });
     const handleDragOver    = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
         // conditions:
@@ -113,7 +115,8 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
     });
     const handleDragLeave   = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
         // actions:
-        setDragEnterCounter((counter) => (counter >= 1) ? (counter - 1) : 0);
+        if (dragEnterCounter.current >= 1) dragEnterCounter.current--;
+        if (dragEnterCounter.current === 0) setHasEnterCounter(false);
     });
     const handleDrop        = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
         // conditions:
@@ -129,7 +132,9 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         
         
         // actions:
-        setDragEnterCounter((counter) => (counter >= 1) ? (counter - 1) : 0);
+        dragEnterCounter.current = 0;
+        setHasEnterCounter(false);
+        
         handleFilesAdded(event.dataTransfer.files);
     });
     
@@ -167,7 +172,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
             
             
             // classes:
-            className={`uploadImage ${dragEnterCounter ? 'dropTarget' : ''}`}
+            className={`uploadImage ${hasEnterCounter ? 'dropTarget' : ''}`}
             
             
             
