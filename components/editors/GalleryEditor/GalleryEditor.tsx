@@ -109,8 +109,8 @@ interface GalleryEditorProps<TElement extends Element = HTMLElement>
         
         // sub components:
         Omit<UploadImageProps,
-            // upload images:
-            |'onUploadImageStart' // enhanced with return Promise<ImageData>
+            // upload activities:
+            |'onUploadImageStart'             // enhanced with return Promise<ImageData>
         >,
         Omit<UploadingImageProps,
             // positions:
@@ -123,7 +123,7 @@ interface GalleryEditorProps<TElement extends Element = HTMLElement>
             |'uploadingImageCancelController' // already handled internally
         >
 {
-    // upload images:
+    // upload activities:
     onUploadImageStart ?: (imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal) => Promise<ImageData>
 }
 const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEditorProps<TElement>): JSX.Element|null => {
@@ -146,6 +146,10 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         uploadImageSelectImage,
         uploadImageDropImage,
         uploadImageType,
+        
+        
+        
+        // upload activities:
         onUploadImageStart,
         
         
@@ -500,6 +504,10 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     uploadImageSelectImage,
                     uploadImageDropImage,
                     uploadImageType,
+                    
+                    
+                    
+                    // upload activities:
                     onUploadImageStart : uploadImageHandleUploadImageStart,
                     
                     

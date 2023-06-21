@@ -41,6 +41,10 @@ export interface UploadImageProps
     uploadImageSelectImage     ?: string
     uploadImageDropImage       ?: string
     uploadImageType            ?: string
+    
+    
+    
+    // upload activities:
     onUploadImageStart         ?: (imageFile: File) => void
     
     
@@ -56,6 +60,10 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         uploadImageSelectImage     = 'Select Images',
         uploadImageDropImage       = 'or drop images here',
         uploadImageType            = 'image/jpg, image/jpeg, image/png, image/svg',
+        
+        
+        
+        // upload activities:
         onUploadImageStart,
         
         
