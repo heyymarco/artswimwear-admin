@@ -13,7 +13,6 @@ import {
 // reusable-ui components:
 import {
     // react components:
-    ContentProps,
     Content,
     
     ButtonProps,
