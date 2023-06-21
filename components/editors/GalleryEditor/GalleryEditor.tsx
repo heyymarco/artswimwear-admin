@@ -106,9 +106,14 @@ interface GalleryEditorProps<TElement extends Element = HTMLElement>
         >,
         
         // sub components:
-        UploadImageProps,
+        Omit<UploadImageProps,
+            // upload images:
+            |'onUploadImageStart' // enhanced with return Promise<ImageData>
+        >,
         UploadingImageProps
 {
+    // upload images:
+    onUploadImageStart ?: (imageFile: File, reportProgress: (percentage: number) => void) => Promise<ImageData>
 }
 const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEditorProps<TElement>): JSX.Element|null => {
     // styles:
@@ -130,7 +135,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         uploadImageSelectImage,
         uploadImageDropImage,
         uploadImageType,
-        uploadImageStart,
+        onUploadImageStart,
         
         
         
@@ -295,6 +300,27 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     
     
     
+    // handlers:
+    const uploadImageHandleUploadImageStart = useEvent(async (imageFile: File): Promise<void> => {
+        // conditions:
+        if (!onUploadImageStart) return; // the upload image handler is not configured => ignore
+        
+        
+        
+        // actions:
+        try {
+            const reportProgress = (percentage: number): void => {
+                //
+            };
+            const imageData = await onUploadImageStart(imageFile, reportProgress);
+        }
+        catch (error: any) {
+            console.log('oops, an error occured', error);
+        } // try
+    });
+    
+    
+    
     // jsx:
     return (
         <Content<TElement>
@@ -404,7 +430,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     uploadImageSelectImage,
                     uploadImageDropImage,
                     uploadImageType,
-                    uploadImageStart,
+                    onUploadImageStart : uploadImageHandleUploadImageStart,
                     
                     
                     

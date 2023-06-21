@@ -41,7 +41,7 @@ export interface UploadImageProps
     uploadImageSelectImage     ?: string
     uploadImageDropImage       ?: string
     uploadImageType            ?: string
-    uploadImageStart           ?: (imageFile: File) => void
+    onUploadImageStart         ?: (imageFile: File) => void
     
     
     
@@ -56,7 +56,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         uploadImageSelectImage     = 'Select Images',
         uploadImageDropImage       = 'or drop images here',
         uploadImageType            = 'image/jpg, image/jpeg, image/png, image/svg',
-        uploadImageStart,
+        onUploadImageStart,
         
         
         
@@ -82,7 +82,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         const mimeMatcher = new MimeMatcher(...uploadImageType.split(',').map((mime) => mime.trim()));
         for (const file of files) {
             if (mimeMatcher.match(file.type)) {
-                uploadImageStart?.(file);
+                onUploadImageStart?.(file);
             }
             else {
                 console.log('unknown file: ', file.name);
