@@ -199,6 +199,12 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         // actions:
         handleChangeInternal,
     );
+    const triggerChange        = useEvent((newDraftImages: ImageData[]): void => {
+        if (handleChange) scheduleTriggerEvent(() => { // runs the `onChange` event *next after* current macroTask completed
+            // fire `onChange` react event:
+            handleChange(newDraftImages);
+        });
+    });
     
     const handlePreviewMoved   = useEvent((newDroppedItemIndex: number): ImageData[]|undefined => {
         if (draggedItemIndex === newDroppedItemIndex) { // no change => nothing to shift => return the (original) *source of truth* images
@@ -258,10 +264,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         
-        if (handleChange) scheduleTriggerEvent(() => { // runs the `onChange` event *next after* current macroTask completed
-            // fire `onChange` react event:
-            handleChange(newDraftImages);
-        });
+        // notify the gallery's images changed:
+        triggerChange(newDraftImages);
     });
     const handleRevertPreview  = useEvent((): ImageData[] => {
         // reset the preview:
@@ -308,15 +312,25 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         // actions:
+        let imageData : ImageData;
         try {
             const reportProgress = (percentage: number): void => {
                 //
             };
-            const imageData = await onUploadImageStart(imageFile, reportProgress);
+            imageData = await onUploadImageStart(imageFile, reportProgress);
         }
         catch (error: any) {
             console.log('oops, an error occured', error);
+            return;
         } // try
+        
+        // append the new image into a new draft images:
+        const newDraftImages = [
+            ...imagesFn, // clone (copy and then modify) the *source of truth* images
+            imageData,   // the modification
+        ];
+        // notify the gallery's images changed:
+        triggerChange(newDraftImages);
     });
     
     
