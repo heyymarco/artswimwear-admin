@@ -34,7 +34,7 @@ export interface UploadingImageProps
     // uploading images:
     uploadingImageTitle                 ?: string
     uploadingImageCancel                ?: string
-    uploadingImageProgress              ?: (percentage: number) => string
+    onUploadingImageProgress            ?: (percentage: number) => string
     
     
     
@@ -47,10 +47,10 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
     // rest props:
     const {
         // uploading images:
-        uploadingImageTitle    = 'Uploading...',
-        uploadingImageCancel   = 'Cancel',
-        // uploadingImageProgress = (percentage) => `${percentage}%`,
-        uploadingImageProgress = (percentage) => '',
+        uploadingImageTitle      = 'Uploading...',
+        uploadingImageCancel     = 'Cancel',
+        // onUploadingImageProgress = (percentage) => `${percentage}%`,
+        onUploadingImageProgress = (percentage) => '',
         
         
         
@@ -93,7 +93,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                     
                     
                     // children:
-                    uploadingImageProgress(70),
+                    onUploadingImageProgress(70),
                 ),
             )}
             {React.cloneElement(uploadingImageCancelButtonComponent,

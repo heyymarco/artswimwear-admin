@@ -142,7 +142,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         // uploading images:
         uploadingImageTitle,
         uploadingImageCancel,
-        uploadingImageProgress,
+        onUploadingImageProgress,
         
         
         
@@ -413,7 +413,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     // uploading images:
                     uploadingImageTitle,
                     uploadingImageCancel,
-                    uploadingImageProgress,
+                    onUploadingImageProgress,
                     
                     
                     
