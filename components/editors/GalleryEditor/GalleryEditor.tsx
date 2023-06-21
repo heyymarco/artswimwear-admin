@@ -316,7 +316,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         let imageData : ImageData;
         try {
             const reportProgress = (percentage: number): void => {
-                //
+                console.log(`progress: ${percentage}% completed.`);
             };
             imageData = await onUploadImageStart(imageFile, reportProgress);
         }
