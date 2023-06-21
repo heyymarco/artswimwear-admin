@@ -22,6 +22,7 @@ import {
     useIsomorphicLayoutEffect,
     useEvent,
     useMergeEvents,
+    useMountedFlag,
     useScheduleTriggerEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
@@ -30,9 +31,6 @@ import {
     // react components:
     ContentProps,
     Content,
-    ButtonIcon,
-    Progress,
-    ProgressBar,
 }                           from '@reusable-ui/components'
 import {
     // react components:
@@ -87,10 +85,10 @@ export type ImageData =
     |DetailedImageData
 
 type UploadingImageData = {
-    percentage       : number|null
-    cancelController : AbortController
-    uploadError      : string
-    onRetry          : () => void
+    percentage  : number|null
+    uploadError : string
+    onRetry     : () => void
+    onCancel    : () => void
 }
 
 
@@ -118,19 +116,19 @@ interface GalleryEditorProps<TElement extends Element = HTMLElement>
         // sub components:
         Omit<UploadImageProps,
             // upload activities:
-            |'onUploadImageStart'             // enhanced with return Promise<ImageData>
+            |'onUploadImageStart'         // enhanced with return Promise<ImageData>
         >,
         Omit<UploadingImageProps,
             // positions:
-            |'uploadingItemIndex'             // already handled internally
+            |'uploadingItemIndex'         // already handled internally
             
             
             
             // uploading activities:
-            |'uploadingImagePercentage'       // already handled internally
-            |'uploadingImageCancelController' // already handled internally
-            |'uploadingImageErrorMessage'     // already handled internally
-            |'onUploadingImageRetry'          // already handled internally
+            |'uploadingImagePercentage'   // already handled internally
+            |'uploadingImageErrorMessage' // already handled internally
+            |'onUploadingImageRetry'      // already handled internally
+            |'onUploadingImageCancel'     // already handled internally
         >
 {
     // upload activities:
@@ -210,6 +208,11 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     
     // events:
     const scheduleTriggerEvent = useScheduleTriggerEvent();
+    
+    
+    
+    // dom effects:
+    const isMounted = useMountedFlag();
     
     
     
@@ -331,32 +334,59 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     });
     const handleDrop           = handleMoved;
     
-    
-    
     // handlers:
-    const uploadImageHandleUploadImageStart = useEvent(async (imageFile: File): Promise<void> => {
+    const uploadImageHandleUploadImageStart = useEvent((imageFile: File): void => {
         // conditions:
         if (!onUploadImageStart) return; // the upload image handler is not configured => ignore
         
         
         
         // add a new uploading status:
-        const handleUploadRetry = () => {
-            uploadingImageData.percentage  = null;  // reset progress
-            uploadingImageData.uploadError = ''; // reset error
+        const abortController    = new AbortController();
+        const abortSignal        = abortController.signal;
+        const isUploadCanceled   = (): boolean => {
+            return (
+                !isMounted.current
+                ||
+                abortSignal.aborted
+            );
+        };
+        const handleUploadRetry  = (): void => {
+            // conditions:
+            if (isUploadCanceled()) return; // the uploader was canceled => ignore
+            
+            
+            
+            uploadingImageData.percentage  = null; // reset progress
+            uploadingImageData.uploadError = '';   // reset error
             setUploadingImages((current) => current.slice(0)); // force to re-render
             performUpload();
         };
-        const uploadingImageData : UploadingImageData = { percentage: null, cancelController: new AbortController(), uploadError: '', onRetry: handleUploadRetry };
+        const handleUploadCancel = (): void => {
+            // conditions:
+            if (isUploadCanceled()) return; // the uploader was canceled => ignore
+            
+            
+            
+            // abort the upload progress:
+            abortController.abort();
+            
+            
+            
+            // remove the uploading status:
+            performRemove();
+        };
+        const uploadingImageData : UploadingImageData = { percentage: null, uploadError: '', onRetry: handleUploadRetry, onCancel: handleUploadCancel };
         setUploadingImages((current) => [...current, uploadingImageData]); // append a new uploading status
         
         
         
         // uploading progress:
         let imageData : ImageData|null|undefined = undefined;
-        const reportProgress = (percentage: number): void => {
+        const handleReportProgress = (percentage: number): void => {
             // conditions:
-            if (uploadingImageData.percentage === percentage) return; // already the same => ignore
+            if (isUploadCanceled()) return; // the uploader was canceled => ignore
+            if (uploadingImageData.percentage === percentage)  return; // already the same => ignore
             
             
             
@@ -364,11 +394,30 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
             uploadingImageData.percentage = percentage; // update the percentage
             setUploadingImages((current) => current.slice(0)); // force to re-render
         };
+        const performRemove = (): void => {
+            // remove the uploading status:
+            setUploadingImages((current) => {
+                const foundIndex = current.findIndex((search) => (uploadingImageData === search));
+                if (foundIndex < 0) return current;
+                current.splice(foundIndex, 1); // remove the `uploadingImageData`
+                return current.slice(0); // force to re-render
+            });
+        };
         const performUpload  = async (): Promise<void> => {
             try {
-                imageData = await onUploadImageStart(imageFile, reportProgress, uploadingImageData.cancelController.signal);
+                imageData = await onUploadImageStart(imageFile, handleReportProgress, abortSignal);
+                
+                
+                
+                // conditions:
+                if (isUploadCanceled()) return; // the uploader was canceled => ignore
             }
             catch (error: any) {
+                // conditions:
+                if (isUploadCanceled()) return; // the uploader was canceled => ignore
+                
+                
+                
                 uploadingImageData.uploadError = `${error?.message ?? error}` || 'Failed to upload image.';
                 setUploadingImages((current) => current.slice(0)); // force to re-render
                 return; // failed => no further actions
@@ -377,13 +426,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
             
             
             // remove the uploading status:
-            setUploadingImages((current) => {
-                const foundIndex = current.findIndex((search) => (uploadingImageData === search));
-                console.log({foundIndex});
-                if (foundIndex < 0) return current;
-                current.splice(foundIndex, 1); // remove the `uploadingImageData`
-                return current.slice(0); // force to re-render
-            }); // append a new uploading status
+            performRemove();
             
             
             
@@ -394,13 +437,19 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     ...imagesFn, // clone (copy and then modify) the *source of truth* images
                     imageData,   // the modification
                 ];
+                
+                
+                
                 // refresh the preview moved:
                 if (droppedItemIndex !== -1) handlePreviewMoved(droppedItemIndex);
+                
+                
+                
                 // notify the gallery's images changed:
                 triggerChange(newDraftImages);
             } // if
         };
-        await performUpload();
+        performUpload();
     });
     
     
@@ -492,7 +541,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     onDrop       = {handleDrop     }
                 />
             )}
-            {uploadingImages.map(({percentage, cancelController, uploadError, onRetry}, uploadingItemIndex) =>
+            {uploadingImages.map(({percentage, uploadError, onRetry, onCancel}, uploadingItemIndex) =>
                 <UploadingImage
                     // identifiers:
                     key={`upl:${uploadingItemIndex}`}
@@ -515,10 +564,10 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                         
                         
                         // uploading activities:
-                        uploadingImagePercentage       : percentage,
-                        uploadingImageCancelController : cancelController,
-                        uploadingImageErrorMessage     : uploadError,
-                        onUploadingImageRetry          : onRetry,
+                        uploadingImagePercentage   : percentage,
+                        uploadingImageErrorMessage : uploadError,
+                        onUploadingImageRetry      : onRetry,
+                        onUploadingImageCancel     : onCancel,
                         
                         
                         

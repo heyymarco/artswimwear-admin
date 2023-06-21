@@ -47,9 +47,9 @@ export interface UploadingImageProps
     
     // uploading activities:
     uploadingImagePercentage             : number|null
-    uploadingImageCancelController       : AbortController
     uploadingImageErrorMessage           : string
     onUploadingImageRetry                : () => void
+    onUploadingImageCancel               : () => void
     
     
     
@@ -79,9 +79,9 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
         
         // uploading activities:
         uploadingImagePercentage,
-        uploadingImageCancelController,
         uploadingImageErrorMessage,
         onUploadingImageRetry,
+        onUploadingImageCancel,
         
         
         
@@ -105,7 +105,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
         onUploadingImageRetry();
     });
     const uploadingImageCancelButtonHandleClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
-        uploadingImageCancelController.abort();
+        onUploadingImageCancel();
     });
     
     
