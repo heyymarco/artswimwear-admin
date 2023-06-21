@@ -31,10 +31,17 @@ import {
 // react components:
 export interface UploadingImageProps
 {
+    // positions:
+    uploadingItemIndex                   : number
+    
+    
+    
     // uploading images:
     uploadingImageTitle                 ?: string
     uploadingImageCancel                ?: string
     onUploadingImageProgress            ?: (percentage: number) => string
+    uploadingImagePercentage             : number
+    uploadingImageCancelController       : AbortController
     
     
     
@@ -46,11 +53,18 @@ export interface UploadingImageProps
 const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
     // rest props:
     const {
+        // positions:
+        uploadingItemIndex,
+        
+        
+        
         // uploading images:
         uploadingImageTitle      = 'Uploading...',
         uploadingImageCancel     = 'Cancel',
         // onUploadingImageProgress = (percentage) => `${percentage}%`,
         onUploadingImageProgress = (percentage) => '',
+        uploadingImagePercentage,
+        uploadingImageCancelController,
         
         
         
@@ -59,6 +73,13 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
         uploadingImageProgressBarComponent  = (<ProgressBar                                       /> as React.ReactComponentElement<any, ProgressBarProps>),
         uploadingImageCancelButtonComponent = (<ButtonIcon icon='cancel' theme='danger' size='sm' /> as React.ReactComponentElement<any, ButtonProps>),
     } = props;
+    
+    
+    
+    // handlers:
+    const uploadingImageCancelButtonHandleClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
+        uploadingImageCancelController.abort();
+    });
     
     
     
@@ -87,19 +108,20 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                     // props:
                     {
                         // values:
-                        value : 70,
+                        value : uploadingImagePercentage,
                     },
                     
                     
                     
                     // children:
-                    onUploadingImageProgress(70),
+                    onUploadingImageProgress(uploadingImagePercentage),
                 ),
             )}
             {React.cloneElement(uploadingImageCancelButtonComponent,
                 // props:
                 {
-                    // TODO: add handler
+                    // handlers:
+                    onClick : uploadingImageCancelButtonHandleClick,
                 },
                 
                 

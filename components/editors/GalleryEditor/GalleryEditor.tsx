@@ -83,6 +83,8 @@ export type ImageData =
     |string
     |DetailedImageData
 
+type UploadingImageData = { percentage: number, cancelController: AbortController }
+
 
 
 // react components:
@@ -171,7 +173,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     let   [droppedItemIndex, setDroppedItemIndex] = useState<number>(-1);
     
     const [draftImages    , setDraftImages    ]   = useState<ImageData[]>([]);
-    const [uploadingImages, setUploadingImages]   = useState<ImageData[]>([]);
+    const [uploadingImages, setUploadingImages]   = useState<UploadingImageData[]>([]);
     
     useIsomorphicLayoutEffect(() => {
         // reset the preview:
@@ -354,7 +356,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
             // classes:
             mainClass={props.mainClass ?? styleSheet.main}
         >
-            {draftImages.map((image, itemIndex) =>
+            {draftImages.map((imageData, itemIndex) =>
                 <DraggableImage
                     // identifiers:
                     key={`img:${itemIndex}`}
@@ -369,8 +371,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     // components:
                     imageComponent={<Image
                         // images:
-                        alt={((typeof(image) === 'string') ? '' : image.title) || ''}
-                        src={((typeof(image) === 'string') ? image : image.url) || undefined} // convert empty string to undefined
+                        alt={((typeof(imageData) === 'string') ? '' : imageData.title) || ''}
+                        src={((typeof(imageData) === 'string') ? imageData : imageData.url) || undefined} // convert empty string to undefined
                         sizes={`calc((${gedits.itemMinColumnWidth} * 2) + ${gedits.gapInline})`}
                         priority={true}
                     />}
@@ -425,21 +427,35 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     onDrop       = {handleDrop     }
                 />
             )}
-            <UploadingImage
-                {...{
-                    // uploading images:
-                    uploadingImageTitle,
-                    uploadingImageCancel,
-                    onUploadingImageProgress,
+            {uploadingImages.map(({percentage, cancelController}, uploadingItemIndex) =>
+                <UploadingImage
+                    // identifiers:
+                    key={`upl:${uploadingItemIndex}`}
                     
                     
                     
-                    // components:
-                    uploadingImageProgressComponent,
-                    uploadingImageProgressBarComponent,
-                    uploadingImageCancelButtonComponent,
-                }}
-            />
+                    // positions:
+                    uploadingItemIndex={uploadingItemIndex}
+                    
+                    
+                    
+                    {...{
+                        // uploading images:
+                        uploadingImageTitle,
+                        uploadingImageCancel,
+                        onUploadingImageProgress,
+                        uploadingImagePercentage       : percentage,
+                        uploadingImageCancelController : cancelController,
+                        
+                        
+                        
+                        // components:
+                        uploadingImageProgressComponent,
+                        uploadingImageProgressBarComponent,
+                        uploadingImageCancelButtonComponent,
+                    }}
+                />
+            )}
             <UploadImage
                 {...{
                     // upload images:
