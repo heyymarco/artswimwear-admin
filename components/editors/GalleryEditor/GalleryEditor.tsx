@@ -355,8 +355,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
             const foundIndex = current.findIndex((search) => (uploadingImageData === search));
             console.log({foundIndex});
             if (foundIndex < 0) return current;
-            current.splice(foundIndex, 1)
-            return current.slice(0);
+            current.splice(foundIndex, 1); // remove the `uploadingImageData`
+            return current.slice(0); // force to re-render
         }); // append a new uploading status
         
         
