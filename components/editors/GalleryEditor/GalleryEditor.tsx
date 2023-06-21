@@ -77,11 +77,19 @@ export const useGalleryEditorStyleSheet = dynamicStyleSheet(
 
 
 
+// types:
+export type DetailedImageData = { url: string, title?: string }
+export type ImageData =
+    |string
+    |DetailedImageData
+
+
+
 // react components:
 interface GalleryEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Pick<EditorProps<TElement, string[]>,
+        Pick<EditorProps<TElement, ImageData[]>,
             // values:
             |'defaultValue'
             |'value'
@@ -151,14 +159,14 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     
     // states:
     const isControllableImages                    = (images !== undefined);
-    const [imagesDn, setImagesDn]                 = useState<string[]>(defaultImages ?? []);
-    const imagesFn : string[]                     = (images /*controllable*/ ?? imagesDn /*uncontrollable*/);
+    const [imagesDn, setImagesDn]                 = useState<ImageData[]>(defaultImages ?? []);
+    const imagesFn : ImageData[]                  = (images /*controllable*/ ?? imagesDn /*uncontrollable*/);
     
     const [draggedItemIndex, setDraggedItemIndex] = useState<number>(-1);
     let   [droppedItemIndex, setDroppedItemIndex] = useState<number>(-1);
     
-    const [draftImages    , setDraftImages    ]   = useState<string[]>([]);
-    const [uploadingImages, setUploadingImages]   = useState<string[]>([]);
+    const [draftImages    , setDraftImages    ]   = useState<ImageData[]>([]);
+    const [uploadingImages, setUploadingImages]   = useState<ImageData[]>([]);
     
     useIsomorphicLayoutEffect(() => {
         // reset the preview:
@@ -173,7 +181,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     
     
     // handlers:
-    const handleChangeInternal = useEvent<EditorChangeEventHandler<string[]>>((images) => {
+    const handleChangeInternal = useEvent<EditorChangeEventHandler<ImageData[]>>((images) => {
         // update state:
         if (!isControllableImages) setImagesDn(images);
     });
@@ -187,7 +195,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         handleChangeInternal,
     );
     
-    const handlePreviewMoved   = useEvent((newDroppedItemIndex: number): string[]|undefined => {
+    const handlePreviewMoved   = useEvent((newDroppedItemIndex: number): ImageData[]|undefined => {
         if (draggedItemIndex === newDroppedItemIndex) { // no change => nothing to shift => return the (original) *source of truth* images
             // reset the preview:
             return handleRevertPreview();
@@ -239,7 +247,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         // return the modified:
         return newDraftImages;
     });
-    const handleMoved          = useEvent((newDroppedItemIndex: number) => {
+    const handleMoved          = useEvent((newDroppedItemIndex: number): void => {
         const newDraftImages = handlePreviewMoved(newDroppedItemIndex);
         if (!newDraftImages) return; // no change => ignore
         
@@ -250,7 +258,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
             handleChange(newDraftImages);
         });
     });
-    const handleRevertPreview  = useEvent(() => {
+    const handleRevertPreview  = useEvent((): ImageData[] => {
         // reset the preview:
         if (draftImages !== imagesFn) setDraftImages(imagesFn);
         
@@ -318,8 +326,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     // components:
                     imageComponent={<Image
                         // images:
-                        alt={''}
-                        src={image || undefined} // convert empty string to undefined
+                        alt={((typeof(image) === 'string') ? '' : image.title) || ''}
+                        src={((typeof(image) === 'string') ? image : image.url) || undefined} // convert empty string to undefined
                         sizes={`calc((${gedits.itemMinColumnWidth} * 2) + ${gedits.gapInline})`}
                         priority={true}
                     />}

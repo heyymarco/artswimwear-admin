@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 import { Section, Main } from '@heymarco/section'
-import { GalleryEditor } from '@/components/editors/GalleryEditor/GalleryEditor';
+import { ImageData, GalleryEditor } from '@/components/editors/GalleryEditor/GalleryEditor';
 
 
 
 export default function Home() {
-    const [images, setImages] = useState<string[]>(() => [
+    const [images, setImages] = useState<ImageData[]>(() => [
         '/products/lorem-img/waves-800x600.jpg',
         '/products/lorem-img/leaf-800x700.jpg',
         '/products/lorem-img/building-800x500.jpg',
@@ -20,7 +20,7 @@ export default function Home() {
         <Main nude={true}>
             <Section title='Homepage'>
                 <GalleryEditor theme='primary' value={images} onChange={(value) => {
-                    console.log(`onChange: ${value.map((val) => val.split('-')[0]).join(', ')}`);
+                    console.log(`onChange: ${value.map((val) => ((typeof(val) === 'string') ? val : val.url).split('-')[0]).join(', ')}`);
                     setImages(value);
                 }} uploadImageStart={(imageFile) => {
                     console.log(imageFile.name);
