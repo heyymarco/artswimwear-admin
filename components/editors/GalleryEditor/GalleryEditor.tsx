@@ -83,7 +83,7 @@ export type ImageData =
     |string
     |DetailedImageData
 
-type UploadingImageData = { percentage: number, cancelController: AbortController }
+type UploadingImageData = { percentage: number, cancelController: AbortController, uploadError: string }
 
 
 
@@ -121,10 +121,11 @@ interface GalleryEditorProps<TElement extends Element = HTMLElement>
             // uploading activities:
             |'uploadingImagePercentage'       // already handled internally
             |'uploadingImageCancelController' // already handled internally
+            |'uploadingImageErrorMessage'     // already handled internally
         >
 {
     // upload activities:
-    onUploadImageStart ?: (imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal) => Promise<ImageData>
+    onUploadImageStart ?: (imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal) => Promise<ImageData|null>
 }
 const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEditorProps<TElement>): JSX.Element|null => {
     // styles:
@@ -156,6 +157,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         // uploading images:
         uploadingImageTitle,
+        uploadingImageErrorTitle,
+        uploadingImageRetry,
         uploadingImageCancel,
         onUploadingImageProgress,
         
@@ -166,6 +169,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         uploadingImageProgressComponent,
         uploadingImageProgressBarComponent,
+        uploadingImageRetryButtonComponent,
         uploadingImageCancelButtonComponent,
     ...restContentProps} = props;
     
@@ -328,13 +332,13 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         // add a new uploading status:
-        const uploadingImageData : UploadingImageData = { percentage: 0, cancelController: new AbortController() };
+        const uploadingImageData : UploadingImageData = { percentage: 0, cancelController: new AbortController(), uploadError: '' };
         setUploadingImages((current) => [...current, uploadingImageData]); // append a new uploading status
         
         
         
         // uploading progress:
-        let imageData : ImageData|undefined = undefined;
+        let imageData : ImageData|null|undefined = undefined;
         try {
             const reportProgress = (percentage: number): void => {
                 // conditions:
@@ -349,7 +353,9 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
             imageData = await onUploadImageStart(imageFile, reportProgress, uploadingImageData.cancelController.signal);
         }
         catch (error: any) {
-            console.log('oops, an error occured', error);
+            uploadingImageData.uploadError = `${error?.message ?? error}` || 'Failed to upload image.';
+            setUploadingImages((current) => current.slice(0)); // force to re-render
+            return; // no further actions
         } // try
         
         
@@ -366,7 +372,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         // successfully uploaded:
-        if (imageData !== undefined) {
+        if (imageData) {
             // append the new image into a new draft images:
             const newDraftImages = [
                 ...imagesFn, // clone (copy and then modify) the *source of truth* images
@@ -468,7 +474,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     onDrop       = {handleDrop     }
                 />
             )}
-            {uploadingImages.map(({percentage, cancelController}, uploadingItemIndex) =>
+            {uploadingImages.map(({percentage, cancelController, uploadError}, uploadingItemIndex) =>
                 <UploadingImage
                     // identifiers:
                     key={`upl:${uploadingItemIndex}`}
@@ -483,6 +489,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     {...{
                         // uploading images:
                         uploadingImageTitle,
+                        uploadingImageErrorTitle,
+                        uploadingImageRetry,
                         uploadingImageCancel,
                         onUploadingImageProgress,
                         
@@ -491,12 +499,14 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                         // uploading activities:
                         uploadingImagePercentage       : percentage,
                         uploadingImageCancelController : cancelController,
+                        uploadingImageErrorMessage     : uploadError,
                         
                         
                         
                         // components:
                         uploadingImageProgressComponent,
                         uploadingImageProgressBarComponent,
+                        uploadingImageRetryButtonComponent,
                         uploadingImageCancelButtonComponent,
                     }}
                 />

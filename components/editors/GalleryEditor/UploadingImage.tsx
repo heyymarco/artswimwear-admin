@@ -38,6 +38,8 @@ export interface UploadingImageProps
     
     // uploading images:
     uploadingImageTitle                 ?: string
+    uploadingImageErrorTitle            ?: string
+    uploadingImageRetry                 ?: string
     uploadingImageCancel                ?: string
     onUploadingImageProgress            ?: (percentage: number) => string
     
@@ -46,12 +48,14 @@ export interface UploadingImageProps
     // uploading activities:
     uploadingImagePercentage             : number
     uploadingImageCancelController       : AbortController
+    uploadingImageErrorMessage           : string
     
     
     
     // components:
     uploadingImageProgressComponent     ?: React.ReactComponentElement<any, ProgressProps>
     uploadingImageProgressBarComponent  ?: React.ReactComponentElement<any, ProgressBarProps>
+    uploadingImageRetryButtonComponent  ?: React.ReactComponentElement<any, ButtonProps>
     uploadingImageCancelButtonComponent ?: React.ReactComponentElement<any, ButtonProps>
 }
 const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
@@ -64,6 +68,8 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
         
         // uploading images:
         uploadingImageTitle      = 'Uploading...',
+        uploadingImageErrorTitle = 'Upload Error',
+        uploadingImageRetry      = 'Retry',
         uploadingImageCancel     = 'Cancel',
         // onUploadingImageProgress = (percentage) => `${percentage}%`,
         onUploadingImageProgress = (percentage) => '',
@@ -73,18 +79,23 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
         // uploading activities:
         uploadingImagePercentage,
         uploadingImageCancelController,
+        uploadingImageErrorMessage,
         
         
         
         // components:
-        uploadingImageProgressComponent     = (<Progress                                size='sm' /> as React.ReactComponentElement<any, ProgressProps>),
-        uploadingImageProgressBarComponent  = (<ProgressBar                                       /> as React.ReactComponentElement<any, ProgressBarProps>),
-        uploadingImageCancelButtonComponent = (<ButtonIcon icon='cancel' theme='danger' size='sm' /> as React.ReactComponentElement<any, ButtonProps>),
+        uploadingImageProgressComponent     = (<Progress                                  size='sm' /> as React.ReactComponentElement<any, ProgressProps>),
+        uploadingImageProgressBarComponent  = (<ProgressBar                                         /> as React.ReactComponentElement<any, ProgressBarProps>),
+        uploadingImageRetryButtonComponent  = (<ButtonIcon icon='refresh' theme='success' size='sm' /> as React.ReactComponentElement<any, ButtonProps>),
+        uploadingImageCancelButtonComponent = (<ButtonIcon icon='cancel'  theme='danger'  size='sm' /> as React.ReactComponentElement<any, ButtonProps>),
     } = props;
     
     
     
     // handlers:
+    const uploadingImageRetryButtonHandleClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
+        // uploadingImageCancelController.abort();
+    });
     const uploadingImageCancelButtonHandleClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
         uploadingImageCancelController.abort();
     });
@@ -103,9 +114,10 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
             className='uploadingImage'
         >
             <h6>
-                {uploadingImageTitle}
+                { !uploadingImageErrorMessage && uploadingImageTitle     }
+                {!!uploadingImageErrorMessage && uploadingImageErrorTitle}
             </h6>
-            {React.cloneElement(uploadingImageProgressComponent,
+            {!uploadingImageErrorMessage && React.cloneElement(uploadingImageProgressComponent,
                 // props:
                 {},
                 
@@ -125,6 +137,23 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                     onUploadingImageProgress(uploadingImagePercentage),
                 ),
             )}
+            {!!uploadingImageErrorMessage && <>
+                <p>
+                    {uploadingImageErrorMessage}
+                </p>
+                {React.cloneElement(uploadingImageRetryButtonComponent,
+                    // props:
+                    {
+                        // handlers:
+                        onClick : uploadingImageRetryButtonHandleClick,
+                    },
+                    
+                    
+                    
+                    // children:
+                    uploadingImageRetry,
+                )}
+            </>}
             {React.cloneElement(uploadingImageCancelButtonComponent,
                 // props:
                 {

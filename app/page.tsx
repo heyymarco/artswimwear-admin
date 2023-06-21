@@ -34,7 +34,7 @@ export default function Home() {
                         await sleep(500);
                         reportProgress(progress);
                     } // for
-                    throw Error('oops, the upload was error.');
+                    throw Error('The server was busy.');
                 }} />
             </Section>
         </Main>
