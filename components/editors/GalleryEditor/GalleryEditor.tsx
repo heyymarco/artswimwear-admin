@@ -101,8 +101,6 @@ interface GalleryEditorProps<TElement extends Element = HTMLElement>
         UploadImageProps,
         UploadingImageProps
 {
-    // paths:
-    productName: string
 }
 const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEditorProps<TElement>): JSX.Element|null => {
     // styles:
@@ -112,11 +110,6 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     
     // rest props:
     const {
-        // paths:
-        productName,
-        
-        
-        
         // values:
         defaultValue : defaultImages,
         value        : images,
@@ -313,7 +306,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
             {draftImages.map((image, itemIndex) =>
                 <DraggableImage
                     // identifiers:
-                    key={itemIndex}
+                    key={`img:${itemIndex}`}
                     
                     
                     
@@ -326,8 +319,9 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     imageComponent={<Image
                         // images:
                         alt={''}
-                        src={image ? `/products/${productName}/${image}` : undefined}
+                        src={image || undefined} // convert empty string to undefined
                         sizes={`calc((${gedits.itemMinColumnWidth} * 2) + ${gedits.gapInline})`}
+                        priority={true}
                     />}
                     
                     
