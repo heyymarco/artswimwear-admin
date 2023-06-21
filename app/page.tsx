@@ -23,7 +23,7 @@ export default function Home() {
                 <GalleryEditor theme='primary' productName='lorem-img' value={images} onChange={(value) => {
                     console.log(`onChange: ${value.map((val) => val.split('-')[0]).join(', ')}`);
                     setImages(value);
-                }} uploadImageAdded={(imageFile) => {
+                }} uploadImageStart={(imageFile) => {
                     console.log(imageFile.name);
                 }} />
             </Section>

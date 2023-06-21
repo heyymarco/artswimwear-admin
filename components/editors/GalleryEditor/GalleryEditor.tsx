@@ -129,7 +129,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         uploadImageSelectImage,
         uploadImageDropImage,
         uploadImageType,
-        uploadImageAdded,
+        uploadImageStart,
         
         
         
@@ -164,7 +164,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     const [draggedItemIndex, setDraggedItemIndex] = useState<number>(-1);
     let   [droppedItemIndex, setDroppedItemIndex] = useState<number>(-1);
     
-    const [draftImages, setDraftImages]           = useState<string[]>([]);
+    const [draftImages    , setDraftImages    ]   = useState<string[]>([]);
+    const [uploadingImages, setUploadingImages]   = useState<string[]>([]);
     
     useIsomorphicLayoutEffect(() => {
         // reset the preview:
@@ -401,7 +402,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     uploadImageSelectImage,
                     uploadImageDropImage,
                     uploadImageType,
-                    uploadImageAdded,
+                    uploadImageStart,
                     
                     
                     
