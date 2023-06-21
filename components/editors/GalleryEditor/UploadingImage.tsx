@@ -41,14 +41,15 @@ export interface UploadingImageProps
     uploadingImageErrorTitle            ?: string
     uploadingImageRetry                 ?: string
     uploadingImageCancel                ?: string
-    onUploadingImageProgress            ?: (percentage: number) => string
+    onUploadingImageProgress            ?: (percentage: number|null) => string
     
     
     
     // uploading activities:
-    uploadingImagePercentage             : number
+    uploadingImagePercentage             : number|null
     uploadingImageCancelController       : AbortController
     uploadingImageErrorMessage           : string
+    onUploadingImageRetry                : () => void
     
     
     
@@ -80,6 +81,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
         uploadingImagePercentage,
         uploadingImageCancelController,
         uploadingImageErrorMessage,
+        onUploadingImageRetry,
         
         
         
@@ -92,9 +94,14 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
     
     
     
+    // fn props:
+    const isUnknownProgress = (uploadingImagePercentage === null);
+    
+    
+    
     // handlers:
     const uploadingImageRetryButtonHandleClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
-        // uploadingImageCancelController.abort();
+        onUploadingImageRetry();
     });
     const uploadingImageCancelButtonHandleClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
         uploadingImageCancelController.abort();
@@ -127,8 +134,18 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                 React.cloneElement(uploadingImageProgressBarComponent,
                     // props:
                     {
+                        // variants:
+                        progressBarStyle : isUnknownProgress ? 'striped' : undefined,
+                        
+                        
+                        
+                        // states:
+                        running          : isUnknownProgress ? true : undefined,
+                        
+                        
+                        
                         // values:
-                        value : uploadingImagePercentage,
+                        value            : isUnknownProgress ? 100  : uploadingImagePercentage,
                     },
                     
                     

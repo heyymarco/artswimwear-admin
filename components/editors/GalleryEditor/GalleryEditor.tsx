@@ -78,12 +78,20 @@ export const useGalleryEditorStyleSheet = dynamicStyleSheet(
 
 
 // types:
-export type DetailedImageData = { url: string, title?: string }
+export type DetailedImageData = {
+    url    : string
+    title ?: string
+}
 export type ImageData =
     |string
     |DetailedImageData
 
-type UploadingImageData = { percentage: number, cancelController: AbortController, uploadError: string }
+type UploadingImageData = {
+    percentage       : number|null
+    cancelController : AbortController
+    uploadError      : string
+    onRetry          : () => void
+}
 
 
 
@@ -122,6 +130,7 @@ interface GalleryEditorProps<TElement extends Element = HTMLElement>
             |'uploadingImagePercentage'       // already handled internally
             |'uploadingImageCancelController' // already handled internally
             |'uploadingImageErrorMessage'     // already handled internally
+            |'onUploadingImageRetry'          // already handled internally
         >
 {
     // upload activities:
@@ -332,57 +341,66 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         // add a new uploading status:
-        const uploadingImageData : UploadingImageData = { percentage: 0, cancelController: new AbortController(), uploadError: '' };
+        const handleUploadRetry = () => {
+            uploadingImageData.percentage  = null;  // reset progress
+            uploadingImageData.uploadError = ''; // reset error
+            setUploadingImages((current) => current.slice(0)); // force to re-render
+            performUpload();
+        };
+        const uploadingImageData : UploadingImageData = { percentage: null, cancelController: new AbortController(), uploadError: '', onRetry: handleUploadRetry };
         setUploadingImages((current) => [...current, uploadingImageData]); // append a new uploading status
         
         
         
         // uploading progress:
         let imageData : ImageData|null|undefined = undefined;
-        try {
-            const reportProgress = (percentage: number): void => {
-                // conditions:
-                if (uploadingImageData.percentage === percentage) return; // already the same => ignore
-                
-                
-                
-                // updates:
-                uploadingImageData.percentage = percentage; // update the percentage
-                setUploadingImages((current) => current.slice(0)); // force to re-render
-            };
-            imageData = await onUploadImageStart(imageFile, reportProgress, uploadingImageData.cancelController.signal);
-        }
-        catch (error: any) {
-            uploadingImageData.uploadError = `${error?.message ?? error}` || 'Failed to upload image.';
+        const reportProgress = (percentage: number): void => {
+            // conditions:
+            if (uploadingImageData.percentage === percentage) return; // already the same => ignore
+            
+            
+            
+            // updates:
+            uploadingImageData.percentage = percentage; // update the percentage
             setUploadingImages((current) => current.slice(0)); // force to re-render
-            return; // no further actions
-        } // try
-        
-        
-        
-        // remove the uploading status:
-        setUploadingImages((current) => {
-            const foundIndex = current.findIndex((search) => (uploadingImageData === search));
-            console.log({foundIndex});
-            if (foundIndex < 0) return current;
-            current.splice(foundIndex, 1); // remove the `uploadingImageData`
-            return current.slice(0); // force to re-render
-        }); // append a new uploading status
-        
-        
-        
-        // successfully uploaded:
-        if (imageData) {
-            // append the new image into a new draft images:
-            const newDraftImages = [
-                ...imagesFn, // clone (copy and then modify) the *source of truth* images
-                imageData,   // the modification
-            ];
-            // refresh the preview moved:
-            if (droppedItemIndex !== -1) handlePreviewMoved(droppedItemIndex);
-            // notify the gallery's images changed:
-            triggerChange(newDraftImages);
-        } // if
+        };
+        const performUpload  = async (): Promise<void> => {
+            try {
+                imageData = await onUploadImageStart(imageFile, reportProgress, uploadingImageData.cancelController.signal);
+            }
+            catch (error: any) {
+                uploadingImageData.uploadError = `${error?.message ?? error}` || 'Failed to upload image.';
+                setUploadingImages((current) => current.slice(0)); // force to re-render
+                return; // failed => no further actions
+            } // try
+            
+            
+            
+            // remove the uploading status:
+            setUploadingImages((current) => {
+                const foundIndex = current.findIndex((search) => (uploadingImageData === search));
+                console.log({foundIndex});
+                if (foundIndex < 0) return current;
+                current.splice(foundIndex, 1); // remove the `uploadingImageData`
+                return current.slice(0); // force to re-render
+            }); // append a new uploading status
+            
+            
+            
+            // successfully uploaded:
+            if (imageData) {
+                // append the new image into a new draft images:
+                const newDraftImages = [
+                    ...imagesFn, // clone (copy and then modify) the *source of truth* images
+                    imageData,   // the modification
+                ];
+                // refresh the preview moved:
+                if (droppedItemIndex !== -1) handlePreviewMoved(droppedItemIndex);
+                // notify the gallery's images changed:
+                triggerChange(newDraftImages);
+            } // if
+        };
+        await performUpload();
     });
     
     
@@ -474,7 +492,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     onDrop       = {handleDrop     }
                 />
             )}
-            {uploadingImages.map(({percentage, cancelController, uploadError}, uploadingItemIndex) =>
+            {uploadingImages.map(({percentage, cancelController, uploadError, onRetry}, uploadingItemIndex) =>
                 <UploadingImage
                     // identifiers:
                     key={`upl:${uploadingItemIndex}`}
@@ -500,6 +518,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                         uploadingImagePercentage       : percentage,
                         uploadingImageCancelController : cancelController,
                         uploadingImageErrorMessage     : uploadError,
+                        onUploadingImageRetry          : onRetry,
                         
                         
                         
