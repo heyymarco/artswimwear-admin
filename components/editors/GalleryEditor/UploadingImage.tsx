@@ -96,6 +96,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
     
     // fn props:
     const isUnknownProgress = (uploadingImagePercentage === null);
+    const isError           = !!uploadingImageErrorMessage;
     
     
     
@@ -113,6 +114,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
     return (
         <Content
             // variants:
+            theme={isError ? 'danger' : undefined}
             mild={true}
             
             
@@ -121,10 +123,10 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
             className='uploadingImage'
         >
             <h6>
-                { !uploadingImageErrorMessage && uploadingImageTitle     }
-                {!!uploadingImageErrorMessage && uploadingImageErrorTitle}
+                {!isError && uploadingImageTitle     }
+                { isError && uploadingImageErrorTitle}
             </h6>
-            {!uploadingImageErrorMessage && React.cloneElement(uploadingImageProgressComponent,
+            {!isError && React.cloneElement(uploadingImageProgressComponent,
                 // props:
                 {},
                 
@@ -154,7 +156,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                     onUploadingImageProgress(uploadingImagePercentage),
                 ),
             )}
-            {!!uploadingImageErrorMessage && <>
+            { isError && <>
                 <p>
                     {uploadingImageErrorMessage}
                 </p>
