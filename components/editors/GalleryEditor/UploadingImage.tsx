@@ -40,6 +40,10 @@ export interface UploadingImageProps
     uploadingImageTitle                 ?: string
     uploadingImageCancel                ?: string
     onUploadingImageProgress            ?: (percentage: number) => string
+    
+    
+    
+    // uploading activities:
     uploadingImagePercentage             : number
     uploadingImageCancelController       : AbortController
     
@@ -63,6 +67,10 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
         uploadingImageCancel     = 'Cancel',
         // onUploadingImageProgress = (percentage) => `${percentage}%`,
         onUploadingImageProgress = (percentage) => '',
+        
+        
+        
+        // uploading activities:
         uploadingImagePercentage,
         uploadingImageCancelController,
         

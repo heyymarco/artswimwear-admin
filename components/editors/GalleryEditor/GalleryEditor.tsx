@@ -118,7 +118,7 @@ interface GalleryEditorProps<TElement extends Element = HTMLElement>
             
             
             
-            // uploading images:
+            // uploading activities:
             |'uploadingImagePercentage'       // already handled internally
             |'uploadingImageCancelController' // already handled internally
         >
@@ -485,6 +485,10 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                         uploadingImageTitle,
                         uploadingImageCancel,
                         onUploadingImageProgress,
+                        
+                        
+                        
+                        // uploading activities:
                         uploadingImagePercentage       : percentage,
                         uploadingImageCancelController : cancelController,
                         
