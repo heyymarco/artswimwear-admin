@@ -259,13 +259,14 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         return newDraftImages;
     });
     const handleMoved          = useEvent((newDroppedItemIndex: number): void => {
+        // update the preview:
         const newDraftImages = handlePreviewMoved(newDroppedItemIndex);
         if (!newDraftImages) return; // no change => ignore
         
         
         
         // notify the gallery's images changed:
-        triggerChange(newDraftImages);
+        triggerChange(newDraftImages); // then the *controllable* `images` will change and trigger the `handleRevertPreview` and the `droppedItemIndex` will be reset
     });
     const handleRevertPreview  = useEvent((): ImageData[] => {
         // reset the preview:
@@ -329,6 +330,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
             ...imagesFn, // clone (copy and then modify) the *source of truth* images
             imageData,   // the modification
         ];
+        // refresh the preview moved:
+        if (droppedItemIndex !== -1) handlePreviewMoved(droppedItemIndex);
         // notify the gallery's images changed:
         triggerChange(newDraftImages);
     });
