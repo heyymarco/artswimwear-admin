@@ -112,10 +112,19 @@ interface GalleryEditorProps<TElement extends Element = HTMLElement>
             // upload images:
             |'onUploadImageStart' // enhanced with return Promise<ImageData>
         >,
-        UploadingImageProps
+        Omit<UploadingImageProps,
+            // positions:
+            |'uploadingItemIndex'             // already handled internally
+            
+            
+            
+            // uploading images:
+            |'uploadingImagePercentage'       // already handled internally
+            |'uploadingImageCancelController' // already handled internally
+        >
 {
     // upload images:
-    onUploadImageStart ?: (imageFile: File, reportProgress: (percentage: number) => void) => Promise<ImageData>
+    onUploadImageStart ?: (imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal) => Promise<ImageData>
 }
 const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEditorProps<TElement>): JSX.Element|null => {
     // styles:
@@ -314,28 +323,56 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         
-        // actions:
-        let imageData : ImageData;
+        // add a new uploading status:
+        const uploadingImageData : UploadingImageData = { percentage: 0, cancelController: new AbortController() };
+        setUploadingImages((current) => [...current, uploadingImageData]); // append a new uploading status
+        
+        
+        
+        // uploading progress:
+        let imageData : ImageData|undefined = undefined;
         try {
             const reportProgress = (percentage: number): void => {
-                console.log(`progress: ${percentage}% completed.`);
+                // conditions:
+                if (uploadingImageData.percentage === percentage) return; // already the same => ignore
+                
+                
+                
+                // updates:
+                uploadingImageData.percentage = percentage; // update the percentage
+                setUploadingImages((current) => current.slice(0)); // force to re-render
             };
-            imageData = await onUploadImageStart(imageFile, reportProgress);
+            imageData = await onUploadImageStart(imageFile, reportProgress, uploadingImageData.cancelController.signal);
         }
         catch (error: any) {
             console.log('oops, an error occured', error);
-            return;
         } // try
         
-        // append the new image into a new draft images:
-        const newDraftImages = [
-            ...imagesFn, // clone (copy and then modify) the *source of truth* images
-            imageData,   // the modification
-        ];
-        // refresh the preview moved:
-        if (droppedItemIndex !== -1) handlePreviewMoved(droppedItemIndex);
-        // notify the gallery's images changed:
-        triggerChange(newDraftImages);
+        
+        
+        // remove the uploading status:
+        setUploadingImages((current) => {
+            const foundIndex = current.findIndex((search) => (uploadingImageData === search));
+            console.log({foundIndex});
+            if (foundIndex < 0) return current;
+            current.splice(foundIndex, 1)
+            return current.slice(0);
+        }); // append a new uploading status
+        
+        
+        
+        // successfully uploaded:
+        if (imageData !== undefined) {
+            // append the new image into a new draft images:
+            const newDraftImages = [
+                ...imagesFn, // clone (copy and then modify) the *source of truth* images
+                imageData,   // the modification
+            ];
+            // refresh the preview moved:
+            if (droppedItemIndex !== -1) handlePreviewMoved(droppedItemIndex);
+            // notify the gallery's images changed:
+            triggerChange(newDraftImages);
+        } // if
     });
     
     

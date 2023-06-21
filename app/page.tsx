@@ -28,10 +28,10 @@ export default function Home() {
                 <GalleryEditor theme='primary' value={images} onChange={(value) => {
                     console.log(`onChange: ${value.map((val) => ((typeof(val) === 'string') ? val : val.url).split('-')[0]).join(', ')}`);
                     setImages(value);
-                }} onUploadImageStart={async (imageFile: File, reportProgress: (percentage: number) => void): Promise<ImageData> => {
+                }} onUploadImageStart={async (imageFile: File, reportProgress: (percentage: number) => void, cancelController): Promise<ImageData> => {
                     console.log('uploading: ', imageFile.name);
                     for (let progress = 0; progress <= 100; progress += 10) {
-                        await sleep(300);
+                        await sleep(500);
                         reportProgress(progress);
                     } // for
                     throw Error('oops, the upload was error.');
