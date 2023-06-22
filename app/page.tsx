@@ -8,6 +8,7 @@ import {
     // react components:
     Image,
 }                           from '@heymarco/image'
+import axios from 'axios'
 
 
 
@@ -33,13 +34,24 @@ export default function Home() {
                 <GalleryEditor theme='primary' value={images} onChange={(value) => {
                     console.log(`onChange: ${value.map((val) => ((typeof(val) === 'string') ? val : val.url).split('-')[0]).join(', ')}`);
                     setImages(value);
-                }} onUploadImageStart={async (imageFile: File, reportProgress: (percentage: number) => void, cancelController): Promise<ImageData> => {
-                    console.log('uploading: ', imageFile.name);
-                    for (let progress = 0; progress <= 100; progress += 10) {
-                        await sleep(500);
-                        reportProgress(progress);
-                    } // for
-                    throw Error('The server was busy.');
+                }} onUploadImageStart={async (imageFile: File, reportProgress: (percentage: number) => void, cancelController): Promise<ImageData|null> => {
+                    // console.log('uploading: ', imageFile.name);
+                    // for (let progress = 0; progress <= 100; progress += 10) {
+                    //     await sleep(500);
+                    //     reportProgress(progress);
+                    // } // for
+                    // throw Error('The server was busy.');
+                    const formData = new FormData();
+                    formData.append('testFile', imageFile);
+                    const response = await axios.post('/api/upload', formData, {
+                        headers          : { 'content-type': 'multipart/form-data' },
+                        onUploadProgress : (event) => {
+                            reportProgress(
+                                (event.loaded * 100) / (event.total ?? 100)
+                            );
+                        },
+                    });
+                    return response.data.url;
                 }}
                 imageComponent={
                     // @ts-ignore
