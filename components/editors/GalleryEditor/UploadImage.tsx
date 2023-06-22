@@ -184,7 +184,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
             
             
             // classes:
-            className={`uploadPanel ${hasEnterCounter ? 'dropTarget' : ''}`}
+            className={`uploadImage ${hasEnterCounter ? 'dropTarget' : ''}`}
             
             
             

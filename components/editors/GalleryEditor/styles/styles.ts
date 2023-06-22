@@ -48,8 +48,8 @@ import {
 
 // elements:
 const imageElm          = '.image';
-const uploadingPanelElm = '.uploadingPanel';
-const uploadPanelElm    = '.uploadPanel';
+const uploadingImageElm = '.uploadingImage';
+const uploadImageElm    = '.uploadImage';
 const inputFileElm      = '.inputFile';
 
 
@@ -76,7 +76,7 @@ export const usesGalleryEditorLayout = () => {
             
             
             // children:
-            ...children([imageElm, uploadingPanelElm, uploadPanelElm], {
+            ...children([imageElm, uploadingImageElm, uploadImageElm], {
                 // sizes:
                 inlineSize : 'unset', // we need to manage the <img>'s width
                 
@@ -94,7 +94,7 @@ export const usesGalleryEditorLayout = () => {
                 // customize:
                 ...usesCssProps(usesPrefixedProps(gedits, 'image')), // apply config's cssProps starting with image***
             }),
-            ...children([uploadingPanelElm, uploadPanelElm], {
+            ...children([uploadingImageElm, uploadImageElm], {
                 // layouts:
                 display        : 'flex',    // use block flexbox, so it takes the entire parent's width
                 flexDirection  : 'column',  // items are stacked vertically
@@ -115,7 +115,7 @@ export const usesGalleryEditorLayout = () => {
                     margin     : 0,
                 }),
             }),
-            ...children(uploadingPanelElm, {
+            ...children(uploadingImageElm, {
                 // children:
                 ...children(imageElm, {
                     // positions:
@@ -129,7 +129,7 @@ export const usesGalleryEditorLayout = () => {
                 // customize:
                 ...usesCssProps(usesPrefixedProps(gedits, 'uploading')), // apply config's cssProps starting with uploading***
             }),
-            ...children(uploadPanelElm, {
+            ...children(uploadImageElm, {
                 // children:
                 ...children(inputFileElm, {
                     // layouts:
@@ -193,7 +193,7 @@ export const usesGalleryEditorStates = () => {
                 }),
             ]),
         }),
-        ...children(uploadPanelElm, {
+        ...children(uploadImageElm, {
             // states:
             ...states([
                 rule('.dropTarget', {

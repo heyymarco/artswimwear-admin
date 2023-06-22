@@ -146,7 +146,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
             
             
             // classes:
-            className='uploadingPanel'
+            className='uploadingImage'
         >
             {React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
                 // props:
