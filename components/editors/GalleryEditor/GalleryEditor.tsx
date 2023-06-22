@@ -53,8 +53,8 @@ import {
 }                           from './styles/config'
 import {
     // react components:
-    DraggableImage,
-}                           from './DraggableImage'
+    WithDraggable,
+}                           from './WithDraggable'
 import {
     // react components:
     UploadImageProps,
@@ -503,7 +503,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
             mainClass={props.mainClass ?? styleSheet.main}
         >
             {draftImages.map((imageData, itemIndex) =>
-                <DraggableImage
+                <WithDraggable
                     // identifiers:
                     key={`img:${itemIndex}`}
                     
