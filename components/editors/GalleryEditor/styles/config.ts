@@ -140,6 +140,13 @@ export const [gedits, geditValues, cssGeditConfig] = cssConfig(() => {
         
         // uploadings:
         uploadingBorderStyle : 'dashed'                             as CssKnownProps['borderStyle'      ],
+        
+        
+        
+        // previews:
+        previewFilter        : [[
+            'opacity(50%)',
+        ]]                                                          as CssKnownProps['filter'           ],
     };
     
     

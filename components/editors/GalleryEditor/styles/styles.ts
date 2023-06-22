@@ -39,18 +39,18 @@ import {
 
 // internals:
 import {
+    // elements:
+    imageElm,
+    uploadingImageElm,
+    uploadingImagePreviewElm,
+    uploadImageElm,
+    uploadImageInputFileElm,
+}                           from './elements'
+import {
     // configs:
     gedits,
     cssGeditConfig,
 }                           from './config'
-
-
-
-// elements:
-const imageElm          = '.image';
-const uploadingImageElm = '.uploadingImage';
-const uploadImageElm    = '.uploadImage';
-const inputFileElm      = '.inputFile';
 
 
 
@@ -117,11 +117,17 @@ export const usesGalleryEditorLayout = () => {
             }),
             ...children(uploadingImageElm, {
                 // children:
-                ...children(imageElm, {
+                ...children(uploadingImagePreviewElm, {
                     // positions:
                     position : 'absolute',
                     inset    : 0,
+                    margin   : 'auto',
                     zIndex   : -9,
+                    
+                    
+                    
+                    // customize:
+                    ...usesCssProps(usesPrefixedProps(gedits, 'preview')), // apply config's cssProps starting with preview***
                 }),
                 
                 
@@ -131,7 +137,7 @@ export const usesGalleryEditorLayout = () => {
             }),
             ...children(uploadImageElm, {
                 // children:
-                ...children(inputFileElm, {
+                ...children(uploadImageInputFileElm, {
                     // layouts:
                     display: 'none',
                 }),

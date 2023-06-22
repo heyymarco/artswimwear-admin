@@ -152,7 +152,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                 // props:
                 {
                     // classes:
-                    className : imageComponent.props.className ?? 'image',
+                    className : imageComponent.props.className ?? 'uploadingPreview',
                     
                     
                     
