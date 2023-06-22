@@ -2,11 +2,17 @@
 import {
     // react:
     default as React,
+    
+    
+    
+    // hooks:
+    useRef,
 }                           from 'react'
 
 // reusable-ui core:
 import {
     // react helper hooks:
+    useIsomorphicLayoutEffect,
     useEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
@@ -45,6 +51,7 @@ export interface UploadingImageProps
     
     
     // uploading activities:
+    uploadingImageFile                   : File
     uploadingImagePercentage             : number|null
     uploadingImageErrorMessage           : string
     onUploadingImageRetry                : () => void
@@ -53,6 +60,7 @@ export interface UploadingImageProps
     
     
     // components:
+    imageComponent                       : React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
     uploadingImageProgressComponent     ?: React.ReactComponentElement<any, ProgressProps>
     uploadingImageProgressBarComponent  ?: React.ReactComponentElement<any, ProgressBarProps>
     uploadingImageRetryButtonComponent  ?: React.ReactComponentElement<any, ButtonProps>
@@ -77,6 +85,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
         
         
         // uploading activities:
+        uploadingImageFile,
         uploadingImagePercentage,
         uploadingImageErrorMessage,
         onUploadingImageRetry,
@@ -85,6 +94,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
         
         
         // components:
+        imageComponent,
         uploadingImageProgressComponent     = (<Progress                                  size='sm' /> as React.ReactComponentElement<any, ProgressProps>),
         uploadingImageProgressBarComponent  = (<ProgressBar                                         /> as React.ReactComponentElement<any, ProgressBarProps>),
         uploadingImageRetryButtonComponent  = (<ButtonIcon icon='refresh' theme='success' size='sm' /> as React.ReactComponentElement<any, ButtonProps>),
@@ -99,8 +109,25 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
     
     
     
+    // dom effects:
+    const previewImageRef = useRef<string|undefined>(undefined);
+    useIsomorphicLayoutEffect(() => {
+        // setups:
+        const previewImageUrl = URL.createObjectURL(uploadingImageFile);
+        previewImageRef.current = previewImageUrl;
+        
+        
+        
+        // cleanups:
+        return () => {
+            URL.revokeObjectURL(previewImageUrl);
+        };
+    }, [uploadingImageFile]);
+    
+    
+    
     // handlers:
-    const uploadingImageRetryButtonHandleClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
+    const uploadingImageRetryButtonHandleClick  = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
         onUploadingImageRetry();
     });
     const uploadingImageCancelButtonHandleClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
@@ -121,6 +148,19 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
             // classes:
             className='uploadingImage'
         >
+            {React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
+                // props:
+                {
+                    // classes:
+                    className : imageComponent.props.className ?? 'image',
+                    
+                    
+                    
+                    // images:
+                    alt       : imageComponent.props.alt       ?? 'preview',
+                    src       : imageComponent.props.src       ?? previewImageRef.current,
+                },
+            )}
             <h6>
                 {!isError && uploadingImageTitle     }
                 { isError && uploadingImageErrorTitle}

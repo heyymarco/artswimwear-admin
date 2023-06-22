@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Section, Main } from '@heymarco/section'
 import { ImageData, GalleryEditor } from '@/components/editors/GalleryEditor/GalleryEditor';
+import Image from 'next/image'
 
 
 
@@ -35,7 +36,14 @@ export default function Home() {
                         reportProgress(progress);
                     } // for
                     throw Error('The server was busy.');
-                }} />
+                }}
+                imageComponent={
+                    // @ts-ignore
+                    <Image
+                        priority={true}
+                    />
+                }
+                />
             </Section>
         </Main>
     )

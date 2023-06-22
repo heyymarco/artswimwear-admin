@@ -85,6 +85,7 @@ export type ImageData =
     |DetailedImageData
 
 type UploadingImageData = {
+    file        : File
     percentage  : number|null
     uploadError : string
     onRetry     : () => void
@@ -125,14 +126,25 @@ interface GalleryEditorProps<TElement extends Element = HTMLElement>
             
             
             // uploading activities:
+            |'uploadingImageFile'         // already handled internally
             |'uploadingImagePercentage'   // already handled internally
             |'uploadingImageErrorMessage' // already handled internally
             |'onUploadingImageRetry'      // already handled internally
             |'onUploadingImageCancel'     // already handled internally
+            
+            
+            
+            // components:
+            |'imageComponent'             // already handled internally
         >
 {
     // upload activities:
     onUploadImageStart ?: (imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal) => Promise<ImageData|null>
+    
+    
+    
+    // components:
+    imageComponent     ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
 }
 const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEditorProps<TElement>): JSX.Element|null => {
     // styles:
@@ -172,6 +184,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         // components:
+        imageComponent = (<img /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
+        
         uploadImageButtonComponent,
         
         uploadingImageProgressComponent,
@@ -376,7 +390,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
             // remove the uploading status:
             performRemove();
         };
-        const uploadingImageData : UploadingImageData = { percentage: null, uploadError: '', onRetry: handleUploadRetry, onCancel: handleUploadCancel };
+        const uploadingImageData : UploadingImageData = { file: imageFile, percentage: null, uploadError: '', onRetry: handleUploadRetry, onCancel: handleUploadCancel };
         setUploadingImages((current) => [...current, uploadingImageData]); // append a new uploading status
         
         
@@ -394,7 +408,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
             uploadingImageData.percentage = percentage; // update the percentage
             setUploadingImages((current) => current.slice(0)); // force to re-render
         };
-        const performRemove = (): void => {
+        const performRemove        = (): void => {
             // remove the uploading status:
             setUploadingImages((current) => {
                 const foundIndex = current.findIndex((search) => (uploadingImageData === search));
@@ -403,7 +417,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                 return current.slice(0); // force to re-render
             });
         };
-        const performUpload  = async (): Promise<void> => {
+        const performUpload        = async (): Promise<void> => {
             try {
                 imageData = await onUploadImageStart(imageFile, handleReportProgress, abortSignal);
                 
@@ -483,13 +497,15 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     
                     
                     // components:
-                    imageComponent={<Image
-                        // images:
-                        alt={((typeof(imageData) === 'string') ? '' : imageData.title) || ''}
-                        src={((typeof(imageData) === 'string') ? imageData : imageData.url) || undefined} // convert empty string to undefined
-                        sizes={`calc((${gedits.itemMinColumnWidth} * 2) + ${gedits.gapInline})`}
-                        priority={true}
-                    />}
+                    imageComponent={React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
+                        // props:
+                        {
+                            // images:
+                            alt   : imageComponent.props.alt   ?? (((typeof(imageData) === 'string') ? '' : imageData.title) || ''),
+                            src   : imageComponent.props.src   ?? (((typeof(imageData) === 'string') ? imageData : imageData.url) || undefined), // convert empty string to undefined
+                            sizes : imageComponent.props.sizes ?? `calc((${gedits.itemMinColumnWidth} * 2) + ${gedits.gapInline})`,
+                        },
+                    )}
                     
                     
                     
@@ -541,7 +557,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     onDrop       = {handleDrop     }
                 />
             )}
-            {uploadingImages.map(({percentage, uploadError, onRetry, onCancel}, uploadingItemIndex) =>
+            {uploadingImages.map(({file, percentage, uploadError, onRetry, onCancel}, uploadingItemIndex) =>
                 <UploadingImage
                     // identifiers:
                     key={`upl:${uploadingItemIndex}`}
@@ -564,6 +580,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                         
                         
                         // uploading activities:
+                        uploadingImageFile         : file,
                         uploadingImagePercentage   : percentage,
                         uploadingImageErrorMessage : uploadError,
                         onUploadingImageRetry      : onRetry,
@@ -572,6 +589,14 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                         
                         
                         // components:
+                        imageComponent : React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
+                            // props:
+                            {
+                                // images:
+                                alt   : imageComponent.props.alt   ?? 'preview',
+                                sizes : imageComponent.props.sizes ?? `calc((${gedits.itemMinColumnWidth} * 2) + ${gedits.gapInline})`,
+                            },
+                        ),
                         uploadingImageProgressComponent,
                         uploadingImageProgressBarComponent,
                         uploadingImageRetryButtonComponent,
