@@ -514,19 +514,6 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     
                     
                     
-                    // components:
-                    imageComponent={React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
-                        // props:
-                        {
-                            // images:
-                            alt   : imageComponent.props.alt   ?? (((typeof(imageData) === 'string') ? '' : imageData.title) || ''),
-                            src   : imageComponent.props.src   ?? (((typeof(imageData) === 'string') ? imageData : imageData.url) || undefined), // convert empty string to undefined
-                            sizes : imageComponent.props.sizes ?? `calc((${gedits.itemMinColumnWidth} * 2) + ${gedits.gapInline})`,
-                        },
-                    )}
-                    
-                    
-                    
                     // classes:
                     className={'image ' + ((): string|undefined => {
                         // dropped item:
@@ -573,7 +560,17 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                     onDragEnter  = {handleDragEnter}
                     onDragLeave  = {handleDragLeave}
                     onDrop       = {handleDrop     }
-                />
+                >
+                    {React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
+                        // props:
+                        {
+                            // images:
+                            alt   : imageComponent.props.alt   ?? (((typeof(imageData) === 'string') ? '' : imageData.title) || ''),
+                            src   : imageComponent.props.src   ?? (((typeof(imageData) === 'string') ? imageData : imageData.url) || undefined), // convert empty string to undefined
+                            sizes : imageComponent.props.sizes ?? `calc((${gedits.itemMinColumnWidth} * 2) + ${gedits.gapInline})`,
+                        },
+                    )}
+                </WithDraggable>
             )}
             {uploadingImages.map(({file, percentage, uploadError, onRetry, onCancel}, uploadingItemIndex) =>
                 <UploadingImage

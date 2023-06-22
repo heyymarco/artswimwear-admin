@@ -21,7 +21,7 @@ import {
 export interface WithDraggableProps
     extends
         // bases:
-        Omit<React.ImgHTMLAttributes<HTMLImageElement>,
+        Omit<React.HTMLAttributes<HTMLElement>,
             // draggable:
             |'draggable'   // already implemented internally
             |'onDragStart' // already implemented internally
@@ -57,7 +57,7 @@ export interface WithDraggableProps
     
     
     // components:
-    imageComponent : React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
+    children       : React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
 }
 const WithDraggable = (props: WithDraggableProps): JSX.Element|null => {
     // rest props:
@@ -83,8 +83,8 @@ const WithDraggable = (props: WithDraggableProps): JSX.Element|null => {
         
         
         // components:
-        imageComponent,
-    ...restImageProps} = props;
+        children: component,
+    ...restComponentProps} = props;
     
     
     
@@ -176,12 +176,12 @@ const WithDraggable = (props: WithDraggableProps): JSX.Element|null => {
     
     // jsx:
     /* <Image> */
-    return React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
+    return React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(component,
         // props:
         {
             // other props:
-            ...restImageProps,
-            ...imageComponent.props, // overwrites restImageProps (if any conflics)
+            ...restComponentProps,
+            ...component.props, // overwrites restComponentProps (if any conflics)
             
             
             
