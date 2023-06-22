@@ -1,6 +1,6 @@
 
 import type { NextApiRequest, NextApiResponse } from 'next'
-import nextConnect from 'next-connect'
+import { createRouter, expressWrapper } from 'next-connect'
 
 import { connectDB } from '@/libs/dbConn'
 import { default as Product, ProductSchema } from '@/models/Product'
@@ -40,16 +40,14 @@ catch (error) {
 
 
 
-export default nextConnect<NextApiRequest, NextApiResponse>({
-    onError: (err, req, res, next) => {
-        console.error(err.stack);
-        res.status(500).json({ error: 'Something broke!' });
-    },
-    onNoMatch: (req, res) => {
-        res.status(404).json({ error: 'Page is not found' });
-    },
-})
-.get<NextApiRequest, NextApiResponse>(async (req, res) => {
+const router = createRouter<NextApiRequest, NextApiResponse>();
+
+
+
+router
+// Use express middleware in next-connect with expressWrapper function
+// .use(expressWrapper(passport.session()))
+.get(async (req, res) => {
     if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
         await new Promise<void>((resolve) => {
             setTimeout(() => {
@@ -106,7 +104,7 @@ export default nextConnect<NextApiRequest, NextApiResponse>({
         }))
     });
 })
-.patch<NextApiRequest, NextApiResponse>(async (req, res) => {
+.patch(async (req, res) => {
     // if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
         await new Promise<void>((resolve) => {
             setTimeout(() => {
@@ -190,4 +188,16 @@ export default nextConnect<NextApiRequest, NextApiResponse>({
         res.status(500).json({ error: error });
     } // try
     //#endregion save changes
-})
+});
+
+
+
+export default router.handler({
+    onError: (err: any, req, res) => {
+        console.error(err.stack);
+        res.status(err.statusCode || 500).end(err.message);
+    },
+    onNoMatch: (req, res) => {
+        res.status(404).json({ error: 'Page is not found' });
+    },
+});
