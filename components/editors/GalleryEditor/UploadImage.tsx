@@ -19,7 +19,7 @@ import {
 // reusable-ui components:
 import {
     // react components:
-    Content,
+    Basic,
     
     ButtonProps,
     
@@ -177,14 +177,14 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
     
     // jsx:
     return (
-        <Content
+        <Basic
             // variants:
             mild={true}
             
             
             
             // classes:
-            className={`uploadImage ${hasEnterCounter ? 'dropTarget' : ''}`}
+            className={`uploadPanel ${hasEnterCounter ? 'dropTarget' : ''}`}
             
             
             
@@ -235,7 +235,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
             <p>
                 {uploadImageDropImage}
             </p>
-        </Content>
+        </Basic>
     );
 };
 export {

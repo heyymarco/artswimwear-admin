@@ -19,7 +19,7 @@ import {
 // reusable-ui components:
 import {
     // react components:
-    Content,
+    Basic,
     
     ButtonProps,
     
@@ -138,7 +138,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
     
     // jsx:
     return (
-        <Content
+        <Basic
             // variants:
             theme={isError ? 'danger' : undefined}
             mild={true}
@@ -146,7 +146,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
             
             
             // classes:
-            className='uploadingImage'
+            className='uploadingPanel'
         >
             {React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
                 // props:
@@ -224,7 +224,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                 // children:
                 uploadingImageCancel,
             )}
-        </Content>
+        </Basic>
     );
 };
 export {

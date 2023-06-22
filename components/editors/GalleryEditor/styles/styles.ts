@@ -48,8 +48,8 @@ import {
 
 // elements:
 const imageElm          = '.image';
-const uploadingImageElm = '.uploadingImage';
-const uploadImageElm    = '.uploadImage';
+const uploadingPanelElm = '.uploadingPanel';
+const uploadPanelElm    = '.uploadPanel';
 const inputFileElm      = '.inputFile';
 
 
@@ -76,7 +76,7 @@ export const usesGalleryEditorLayout = () => {
             
             
             // children:
-            ...children([imageElm, uploadingImageElm, uploadImageElm], {
+            ...children([imageElm, uploadingPanelElm, uploadPanelElm], {
                 // sizes:
                 inlineSize : 'unset', // we need to manage the <img>'s width
                 
@@ -94,7 +94,7 @@ export const usesGalleryEditorLayout = () => {
                 // customize:
                 ...usesCssProps(usesPrefixedProps(gedits, 'image')), // apply config's cssProps starting with image***
             }),
-            ...children([uploadingImageElm, uploadImageElm], {
+            ...children([uploadingPanelElm, uploadPanelElm], {
                 // layouts:
                 display        : 'flex',    // use block flexbox, so it takes the entire parent's width
                 flexDirection  : 'column',  // items are stacked vertically
@@ -115,11 +115,21 @@ export const usesGalleryEditorLayout = () => {
                     margin     : 0,
                 }),
             }),
-            ...children(uploadingImageElm, {
+            ...children(uploadingPanelElm, {
+                // children:
+                ...children(imageElm, {
+                    // positions:
+                    position : 'absolute',
+                    inset    : 0,
+                    zIndex   : -9,
+                }),
+                
+                
+                
                 // customize:
                 ...usesCssProps(usesPrefixedProps(gedits, 'uploading')), // apply config's cssProps starting with uploading***
             }),
-            ...children(uploadImageElm, {
+            ...children(uploadPanelElm, {
                 // children:
                 ...children(inputFileElm, {
                     // layouts:
@@ -183,7 +193,7 @@ export const usesGalleryEditorStates = () => {
                 }),
             ]),
         }),
-        ...children(uploadImageElm, {
+        ...children(uploadPanelElm, {
             // states:
             ...states([
                 rule('.dropTarget', {

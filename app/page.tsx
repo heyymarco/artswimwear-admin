@@ -3,7 +3,11 @@
 import { useState } from 'react';
 import { Section, Main } from '@heymarco/section'
 import { ImageData, GalleryEditor } from '@/components/editors/GalleryEditor/GalleryEditor';
-import Image from 'next/image'
+// import Image from 'next/image'
+import {
+    // react components:
+    Image,
+}                           from '@heymarco/image'
 
 
 
