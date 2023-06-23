@@ -232,7 +232,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     const imagesFn : ImageData[]                  = (images /*controllable*/ ?? imagesDn /*uncontrollable*/);
     
     const [draggedItemIndex, setDraggedItemIndex] = useState<number>(-1);
-    let   [droppedItemIndex, setDroppedItemIndex] = useState<number>(-1);
+    const [droppedItemIndex, setDroppedItemIndex] = useState<number>(-1);
     
     const [draftImages     , setDraftImages     ] = useState<ImageData[]>([]);
     const [uploadingImages , setUploadingImages ] = useState<UploadingImageData[]>([]);
@@ -324,7 +324,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         // update the dropped index:
-        setDroppedItemIndex(droppedItemIndex /* instant update without waiting for re-render */ = newDroppedItemIndex);
+        setDroppedItemIndex(newDroppedItemIndex);
         
         
         
@@ -348,7 +348,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         // reset the dropped index:
-        if (droppedItemIndex !== -1) setDroppedItemIndex(droppedItemIndex /* instant update without waiting for re-render */ = -1);
+        if (droppedItemIndex !== -1) setDroppedItemIndex(-1);
         
         
         
