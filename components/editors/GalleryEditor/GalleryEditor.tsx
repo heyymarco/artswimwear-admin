@@ -491,7 +491,16 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                 
                 
                 // update:
-                imagesFn = newDraftImages;
+                /*
+                    uncontrollable:
+                        The `imagesDn` and `imagesFn` has been updated and the `setImagesDn()` has been invoked when the `triggerChange()` called.
+                        Then the *next re-render* will happen shortly (maybe delayed).
+                    
+                    controllable:
+                        We have called the `performRemove()`, so it's guaranteed the *next re-render* will happen shortly (maybe delayed), even if the <parent> won't update the *controllable* `images` prop.
+                        When the *next re-render* occured, the `imagesFn` will reflect the *controllable* `images`'s value.
+                */
+                imagesFn = newDraftImages; // a temporary update regradless of (/*controllable*/ ?? /*uncontrollable*/), will be re-updated on *next re-render*
             } // if
         };
         performUpload();
