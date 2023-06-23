@@ -278,7 +278,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         });
     });
     
-    const handlePreviewMoved   = useEvent((newDroppedItemIndex: number, currentImages?: ImageData[]): ImageData[]|undefined => {
+    const handlePreviewMoved   = useEvent((newDroppedItemIndex: number): ImageData[]|undefined => {
         if (draggedItemIndex === newDroppedItemIndex) { // no change => nothing to shift => return the (original) *source of truth* images
             // reset the preview:
             return handleRevertPreview();
@@ -287,7 +287,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         // create a new local draftImages:
-        const newDraftImages = (currentImages ?? latestImagesFnRef.current).slice(0); // clone (copy and then modify) the *source of truth* images
+        const newDraftImages = latestImagesFnRef.current.slice(0); // clone (copy and then modify) the *source of truth* images
         
         
         
@@ -482,7 +482,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                 
                 
                 // update the preview:
-                if (droppedItemIndex !== -1) handlePreviewMoved(droppedItemIndex, latestImagesFnRef.current);
+                if (droppedItemIndex !== -1) handlePreviewMoved(droppedItemIndex);
                 
                 
                 
