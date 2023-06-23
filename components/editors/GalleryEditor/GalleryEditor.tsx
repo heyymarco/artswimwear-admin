@@ -76,13 +76,12 @@ export const useGalleryEditorStyleSheet = dynamicStyleSheet(
 
 
 // utilities:
-const resolveSrc = (imageData: ImageData, onResolveUrl: ((imageData: ImageData) => URL|string)|undefined): string => {
-    const url = (typeof(imageData) === 'string') ? imageData : imageData.url;
-    if (!onResolveUrl) return url;
-    const resolved = onResolveUrl(url);
+const resolveSrc = <TValue extends ImageData = ImageData>(imageData: TValue, onResolveUrl: ((imageData: TValue) => URL|string)|undefined): string => {
+    if (!onResolveUrl) return (typeof(imageData) === 'string') ? imageData : imageData.url;
+    const resolved = onResolveUrl(imageData);
     return (typeof(resolved) === 'string') ? resolved : resolved.href;
 };
-const resolveAlt = (imageData: ImageData): string => {
+const resolveAlt = <TValue extends ImageData = ImageData>(imageData: TValue): string => {
     return ((typeof(imageData) === 'string') ? '' : imageData.title) || '';
 };
 
@@ -108,10 +107,10 @@ type UploadingImageData = {
 
 
 // react components:
-interface GalleryEditorProps<TElement extends Element = HTMLElement>
+interface GalleryEditorProps<TElement extends Element = HTMLElement, TValue extends ImageData = ImageData>
     extends
         // bases:
-        Pick<EditorProps<TElement, ImageData[]>,
+        Pick<EditorProps<TElement, TValue[]>,
             // values:
             |'defaultValue'
             |'value'
@@ -130,7 +129,7 @@ interface GalleryEditorProps<TElement extends Element = HTMLElement>
         // sub components:
         Omit<UploadImageProps,
             // upload activities:
-            |'onUploadImageStart'         // enhanced with return Promise<ImageData>
+            |'onUploadImageStart'         // enhanced with return Promise<TValue>
         >,
         Omit<UploadingImageProps,
             // positions:
@@ -152,7 +151,7 @@ interface GalleryEditorProps<TElement extends Element = HTMLElement>
         >
 {
     // upload activities:
-    onUploadImageStart ?: (imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal) => Promise<ImageData|null>
+    onUploadImageStart ?: (imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal) => Promise<TValue|null>
     
     
     
@@ -162,9 +161,9 @@ interface GalleryEditorProps<TElement extends Element = HTMLElement>
     
     
     // handlers:
-    onResolveUrl       ?: (imageData: ImageData) => URL|string
+    onResolveUrl       ?: (imageData: TValue) => URL|string
 }
-const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEditorProps<TElement>): JSX.Element|null => {
+const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends ImageData = ImageData>(props: GalleryEditorProps<TElement, TValue>): JSX.Element|null => {
     // styles:
     const styleSheet = useGalleryEditorStyleSheet();
     
@@ -227,13 +226,13 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     
     // states:
     const isControllableImages                    = (images !== undefined);
-    let   [imagesDn, setImagesDn]                 = useState<ImageData[]>(defaultImages ?? []);
-    let   imagesFn : ImageData[]                  = (images /*controllable*/ ?? imagesDn /*uncontrollable*/);
+    let   [imagesDn, setImagesDn]                 = useState<TValue[]>(defaultImages ?? []);
+    let   imagesFn : TValue[]                     = (images /*controllable*/ ?? imagesDn /*uncontrollable*/);
     
     const [draggedItemIndex, setDraggedItemIndex] = useState<number>(-1);
     let   [droppedItemIndex, setDroppedItemIndex] = useState<number>(-1);
     
-    const [draftImages     , setDraftImages     ] = useState<ImageData[]>([]);
+    const [draftImages     , setDraftImages     ] = useState<TValue[]>([]);
     const [uploadingImages , setUploadingImages ] = useState<UploadingImageData[]>([]);
     
     useIsomorphicLayoutEffect(() => {
@@ -254,7 +253,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     
     
     // handlers:
-    const handleChangeInternal = useEvent<EditorChangeEventHandler<ImageData[]>>((images) => {
+    const handleChangeInternal = useEvent<EditorChangeEventHandler<TValue[]>>((images) => {
         // update state:
         if (!isControllableImages) {
             setImagesDn(imagesDn /* instant update without waiting for (slow|delayed) re-render */ = images);
@@ -270,14 +269,14 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         // actions:
         handleChangeInternal,
     );
-    const triggerChange        = useEvent((newDraftImages: ImageData[]): void => {
+    const triggerChange        = useEvent((newDraftImages: TValue[]): void => {
         if (handleChange) scheduleTriggerEvent(() => { // runs the `onChange` event *next after* current macroTask completed
             // fire `onChange` react event:
             handleChange(newDraftImages);
         });
     });
     
-    const handlePreviewMoved   = useEvent((newDroppedItemIndex: number): ImageData[]|undefined => {
+    const handlePreviewMoved   = useEvent((newDroppedItemIndex: number): TValue[]|undefined => {
         if (draggedItemIndex === newDroppedItemIndex) { // no change => nothing to shift => return the (original) *source of truth* images
             // reset the preview:
             return handleRevertPreview();
@@ -339,7 +338,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         // notify the gallery's images changed:
         triggerChange(newDraftImages); // then at the *next re-render*, the *controllable* `images` will change and trigger the `handleRevertPreview` and the `droppedItemIndex` will be reset
     });
-    const handleRevertPreview  = useEvent((): ImageData[] => {
+    const handleRevertPreview  = useEvent((): TValue[] => {
         // reset the preview:
         if (draftImages !== imagesFn) setDraftImages(imagesFn);
         
@@ -422,7 +421,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         // uploading progress:
-        let imageData : ImageData|null|undefined = undefined;
+        let imageData : TValue|null|undefined = undefined;
         const handleReportProgress = (percentage: number): void => {
             // conditions:
             if (isUploadCanceled()) return; // the uploader was canceled => ignore
