@@ -8,7 +8,6 @@ import {
     // hooks:
     useState,
     useId,
-    useRef,
 }                           from 'react'
 
 // cssfn:
@@ -229,17 +228,13 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     // states:
     const isControllableImages                    = (images !== undefined);
     const [imagesDn, setImagesDn]                 = useState<ImageData[]>(defaultImages ?? []);
-    const imagesFn : ImageData[]                  = (images /*controllable*/ ?? imagesDn /*uncontrollable*/);
+    let   imagesFn : ImageData[]                  = (images /*controllable*/ ?? imagesDn /*uncontrollable*/);
     
     const [draggedItemIndex, setDraggedItemIndex] = useState<number>(-1);
     let   [droppedItemIndex, setDroppedItemIndex] = useState<number>(-1);
     
     const [draftImages     , setDraftImages     ] = useState<ImageData[]>([]);
     const [uploadingImages , setUploadingImages ] = useState<UploadingImageData[]>([]);
-    
-    // a workaround for massive|fast|async|cumulative updateState, in which the next re-render is too delayed:
-    const latestImagesFnRef                       = useRef<ImageData[]>(imagesFn);
-    latestImagesFnRef.current                     = imagesFn; // sync on re-render
     
     useIsomorphicLayoutEffect(() => {
         // reset the preview:
@@ -288,7 +283,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         // create a new local draftImages:
-        const newDraftImages = latestImagesFnRef.current.slice(0); // clone (copy and then modify) the *source of truth* images
+        const newDraftImages = imagesFn.slice(0); // clone (copy and then modify) the *source of truth* images
         
         
         
@@ -343,7 +338,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     });
     const handleRevertPreview  = useEvent((): ImageData[] => {
         // reset the preview:
-        if (draftImages !== latestImagesFnRef.current) setDraftImages(latestImagesFnRef.current);
+        if (draftImages !== imagesFn) setDraftImages(imagesFn);
         
         
         
@@ -353,7 +348,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         // return the original:
-        return latestImagesFnRef.current;
+        return imagesFn;
     });
     
     // draggable handlers:
@@ -476,7 +471,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
             if (imageData) {
                 // append the new image into a new draft images:
                 const newDraftImages = [
-                    ...latestImagesFnRef.current, // clone (copy and then modify) the *source of truth* images
+                    ...imagesFn, // clone (copy and then modify) the *source of truth* images
                     imageData,                    // the change
                 ];
                 
@@ -493,7 +488,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                 
                 
                 // update:
-                latestImagesFnRef.current = newDraftImages;
+                imagesFn = newDraftImages;
             } // if
         };
         performUpload();
