@@ -227,7 +227,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     
     // states:
     const isControllableImages                    = (images !== undefined);
-    const [imagesDn, setImagesDn]                 = useState<ImageData[]>(defaultImages ?? []);
+    let   [imagesDn, setImagesDn]                 = useState<ImageData[]>(defaultImages ?? []);
     let   imagesFn : ImageData[]                  = (images /*controllable*/ ?? imagesDn /*uncontrollable*/);
     
     const [draggedItemIndex, setDraggedItemIndex] = useState<number>(-1);
@@ -256,7 +256,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     // handlers:
     const handleChangeInternal = useEvent<EditorChangeEventHandler<ImageData[]>>((images) => {
         // update state:
-        if (!isControllableImages) setImagesDn(images);
+        if (!isControllableImages) setImagesDn(imagesDn /* instant update without waiting for (slow|delayed) re-render */ = images);
     });
     const handleChange         = useMergeEvents(
         // preserves the original `onChange` from `props`:
