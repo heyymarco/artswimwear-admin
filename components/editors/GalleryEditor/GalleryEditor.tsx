@@ -237,6 +237,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     const [draftImages    , setDraftImages    ]   = useState<ImageData[]>([]);
     const [uploadingImages, setUploadingImages]   = useState<UploadingImageData[]>([]);
     
+    // a workaround for massive|fast|async|cumulative updateState, in which the next re-render is too delayed:
     const latestImagesFnRef                       = useRef<ImageData[]>(imagesFn);
     latestImagesFnRef.current                     = imagesFn; // sync on re-render
     
