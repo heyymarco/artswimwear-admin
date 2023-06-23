@@ -76,10 +76,10 @@ export const useGalleryEditorStyleSheet = dynamicStyleSheet(
 
 
 // utilities:
-const resolveSrc = (imageData: ImageData, resolveUrl: ((imageData: ImageData) => URL|string)|undefined): string => {
+const resolveSrc = (imageData: ImageData, onResolveUrl: ((imageData: ImageData) => URL|string)|undefined): string => {
     const url = (typeof(imageData) === 'string') ? imageData : imageData.url;
-    if (!resolveUrl) return url;
-    const resolved = resolveUrl(url);
+    if (!onResolveUrl) return url;
+    const resolved = onResolveUrl(url);
     return (typeof(resolved) === 'string') ? resolved : resolved.href;
 };
 const resolveAlt = (imageData: ImageData): string => {
@@ -151,13 +151,13 @@ interface GalleryEditorProps<TElement extends Element = HTMLElement>
             |'imageComponent'             // already handled internally
         >
 {
-    // paths:
-    resolveUrl         ?: (imageData: ImageData) => URL|string
-    
-    
-    
     // upload activities:
     onUploadImageStart ?: (imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal) => Promise<ImageData|null>
+    
+    
+    
+    // handlers:
+    onResolveUrl       ?: (imageData: ImageData) => URL|string
     
     
     
@@ -176,11 +176,6 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         defaultValue : defaultImages,
         value        : images,
         onChange,
-        
-        
-        
-        // paths:
-        resolveUrl,
         
         
         
@@ -203,6 +198,11 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         // upload/uploading activities:
         onUploadImageStart,
         onUploadingImageProgress,
+        
+        
+        
+        // handlers:
+        onResolveUrl,
         
         
         
@@ -588,7 +588,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
                         {
                             // images:
                             alt   : imageComponent.props.alt   ??  resolveAlt(imageData),
-                            src   : imageComponent.props.src   ?? (resolveSrc(imageData, resolveUrl) || undefined), // convert empty string to undefined
+                            src   : imageComponent.props.src   ?? (resolveSrc(imageData, onResolveUrl) || undefined), // convert empty string to undefined
                             sizes : imageComponent.props.sizes ?? `calc((${gedits.itemMinColumnWidth} * 2) + ${gedits.gapInline})`,
                         },
                     )}

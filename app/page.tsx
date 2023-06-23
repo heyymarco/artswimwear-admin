@@ -37,15 +37,6 @@ export default function Home() {
                     
                     
                     
-                    // paths:
-                    resolveUrl={(imageData) => {
-                        const rawUrl = ((typeof(imageData) === 'string')) ? imageData : imageData.url;
-                        if (rawUrl.includes('/')) return rawUrl;
-                        return `/products/lorem-img/${rawUrl}`
-                    }}
-                    
-                    
-                    
                     // values:
                     value={images}
                     onChange={(value) => {
@@ -70,6 +61,15 @@ export default function Home() {
                         return response.data.url;
                     }}
                     onUploadingImageProgress={undefined}
+                    
+                    
+                    
+                    // handlers:
+                    onResolveUrl={(imageData) => {
+                        const rawUrl = ((typeof(imageData) === 'string')) ? imageData : imageData.url;
+                        if (rawUrl.includes('/')) return rawUrl;
+                        return `/products/lorem-img/${rawUrl}`
+                    }}
                     
                     
                     
