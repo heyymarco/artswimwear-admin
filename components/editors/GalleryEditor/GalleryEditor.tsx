@@ -156,13 +156,13 @@ interface GalleryEditorProps<TElement extends Element = HTMLElement>
     
     
     
-    // handlers:
-    onResolveUrl       ?: (imageData: ImageData) => URL|string
-    
-    
-    
     // components:
     imageComponent     ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
+    
+    
+    
+    // handlers:
+    onResolveUrl       ?: (imageData: ImageData) => URL|string
 }
 const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEditorProps<TElement>): JSX.Element|null => {
     // styles:
@@ -201,11 +201,6 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         
-        // handlers:
-        onResolveUrl,
-        
-        
-        
         // components:
         imageComponent = (<img /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
         
@@ -215,6 +210,11 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         uploadingImageProgressBarComponent,
         uploadingImageRetryButtonComponent,
         uploadingImageCancelButtonComponent,
+        
+        
+        
+        // handlers:
+        onResolveUrl,
     ...restContentProps} = props;
     
     

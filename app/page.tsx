@@ -64,15 +64,6 @@ export default function Home() {
                     
                     
                     
-                    // handlers:
-                    onResolveUrl={(imageData) => {
-                        const rawUrl = ((typeof(imageData) === 'string')) ? imageData : imageData.url;
-                        if (rawUrl.includes('/')) return rawUrl;
-                        return `/products/lorem-img/${rawUrl}`
-                    }}
-                    
-                    
-                    
                     // components:
                     imageComponent={
                         // @ts-ignore
@@ -80,6 +71,15 @@ export default function Home() {
                             priority={true}
                         />
                     }
+                    
+                    
+                    
+                    // handlers:
+                    onResolveUrl={(imageData) => {
+                        const rawUrl = ((typeof(imageData) === 'string')) ? imageData : imageData.url;
+                        if (rawUrl.includes('/')) return rawUrl;
+                        return `/products/lorem-img/${rawUrl}`
+                    }}
                 />
             </Section>
         </Main>
