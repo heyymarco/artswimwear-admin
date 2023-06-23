@@ -324,7 +324,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         // update the dropped index:
-        setDroppedItemIndex(droppedItemIndex /* instant update without waiting for re-render */ = newDroppedItemIndex);
+        setDroppedItemIndex(droppedItemIndex /* instant update without waiting for (slow|delayed) re-render */ = newDroppedItemIndex);
         
         
         
@@ -348,7 +348,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         // reset the dropped index:
-        if (droppedItemIndex !== -1) setDroppedItemIndex(droppedItemIndex /* instant update without waiting for re-render */ = -1);
+        if (droppedItemIndex !== -1) setDroppedItemIndex(droppedItemIndex /* instant update without waiting for (slow|delayed) re-render */ = -1);
         
         
         
