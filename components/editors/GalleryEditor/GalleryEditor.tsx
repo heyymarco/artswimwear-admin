@@ -258,7 +258,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         // update state:
         if (!isControllableImages) {
             setImagesDn(imagesDn /* instant update without waiting for (slow|delayed) re-render */ = images);
-            imagesFn = (images /*controllable*/ ?? imagesDn /*uncontrollable*/); // instant update the computed variable too, without waiting for (slow|delayed) re-render
+            imagesFn =  imagesDn /*uncontrollable*/; // instant update the computed variable too, without waiting for (slow|delayed) re-render
         } // if
     });
     const handleChange         = useMergeEvents(
