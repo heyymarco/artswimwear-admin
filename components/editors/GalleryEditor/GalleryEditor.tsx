@@ -241,16 +241,12 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         handleRevertPreview();
     }, [imagesFn]); // (re)update the draft images every time the *source of truth* images updated
     
-    const [imagesFnMirror, setImagesFnMirror] = useState<ImageData[]>(imagesFn);
+    const [, setImagesFnMirror] = useState<ImageData[]>(imagesFn);
     useIsomorphicLayoutEffect(() => {
-        // conditions:
-        if (imagesFnMirror === imagesFn) return; // already the same => nothing to sync
-        
-        
-        
         // sync:
         setImagesFnMirror(imagesFn);
-    }, [imagesFn, imagesFnMirror]); // (re)update the *mirror* images every time the `imagesFn` updated
+        console.log('REFRESH');
+    }, [imagesFn]); // (re)update the *mirror* images every time the `imagesFn` updated
     
     
     
