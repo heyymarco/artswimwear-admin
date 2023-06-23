@@ -192,16 +192,16 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
         
         
         
-        // upload activities:
-        onUploadImageStart,
-        
-        
-        
         // uploading images:
         uploadingImageTitle,
         uploadingImageErrorTitle,
         uploadingImageRetry,
         uploadingImageCancel,
+        
+        
+        
+        // upload/uploading activities:
+        onUploadImageStart,
         onUploadingImageProgress,
         
         

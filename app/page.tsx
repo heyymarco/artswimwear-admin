@@ -55,7 +55,7 @@ export default function Home() {
                     
                     
                     
-                    // upload activities:
+                    // upload/uploading activities:
                     onUploadImageStart={async (imageFile, reportProgress, cancelController) => {
                         const formData = new FormData();
                         formData.append('testFile', imageFile);
@@ -69,6 +69,7 @@ export default function Home() {
                         });
                         return response.data.url;
                     }}
+                    onUploadingImageProgress={undefined}
                     
                     
                     
