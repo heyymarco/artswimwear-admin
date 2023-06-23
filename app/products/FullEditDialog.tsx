@@ -21,6 +21,7 @@ import { GalleryEditor } from '@/components/editors/GalleryEditor/GalleryEditor'
 import { ProductVisibility, VisibilityEditor } from '@/components/editors/VisibilityEditor'
 import { Tab, TabPanel } from '@reusable-ui/components'
 import { Image } from '@heymarco/image'
+import axios from 'axios'
 
 
 
@@ -312,7 +313,49 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                     </ModalStatus>
                 </TabPanel>
                 <TabPanel label={PAGE_PRODUCTS_TAB_IMAGES}>
-                    <GalleryEditor productName={name} value={images} onChange={(value) => { setImages(value); setIsModified(true); }} />
+                    <GalleryEditor<HTMLElement, string>
+                        // values:
+                        value={images}
+                        onChange={(value) => {
+                            setImages(value);
+                            setIsModified(true);
+                        }}
+                        
+                        
+                        
+                        // upload/uploading activities:
+                        onUploadImageStart={async (imageFile, reportProgress, cancelController) => {
+                            const formData = new FormData();
+                            formData.append('testFile', imageFile);
+                            const response = await axios.post('/api/upload', formData, {
+                                headers          : { 'content-type': 'multipart/form-data' },
+                                onUploadProgress : (event) => {
+                                    reportProgress(
+                                        (event.loaded * 100) / (event.total ?? 100)
+                                    );
+                                },
+                            });
+                            return response.data.url;
+                        }}
+                        
+                        
+                        
+                        // components:
+                        imageComponent={
+                            // @ts-ignore
+                            <Image
+                                priority={true}
+                            />
+                        }
+                        
+                        
+                        
+                        // handlers:
+                        onResolveUrl={(rawUrl) => {
+                            if (rawUrl.includes('/')) return rawUrl;
+                            return `/products/${name}/${rawUrl}`
+                        }}
+                    />
                 </TabPanel>
                 <TabPanel label={PAGE_PRODUCTS_TAB_DESCRIPTION}>
                     <p>Under construction...</p>
