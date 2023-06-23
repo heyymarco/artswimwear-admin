@@ -8,6 +8,7 @@ import {
     // hooks:
     useState,
     useId,
+    useRef,
 }                           from 'react'
 
 // cssfn:
@@ -236,17 +237,13 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
     const [draftImages    , setDraftImages    ]   = useState<ImageData[]>([]);
     const [uploadingImages, setUploadingImages]   = useState<UploadingImageData[]>([]);
     
+    const latestImagesFnRef                       = useRef<ImageData[]>(imagesFn);
+    latestImagesFnRef.current                     = imagesFn; // sync on re-render
+    
     useIsomorphicLayoutEffect(() => {
         // reset the preview:
         handleRevertPreview();
     }, [imagesFn]); // (re)update the draft images every time the *source of truth* images updated
-    
-    const [, setImagesFnMirror] = useState<ImageData[]>(imagesFn);
-    useIsomorphicLayoutEffect(() => {
-        // sync:
-        setImagesFnMirror(imagesFn);
-        console.log('REFRESH');
-    }, [imagesFn]); // (re)update the *mirror* images every time the `imagesFn` updated
     
     
     
@@ -476,28 +473,26 @@ const GalleryEditor = <TElement extends Element = HTMLElement>(props: GalleryEdi
             
             // successfully uploaded:
             if (imageData) {
-                const newImageData = imageData;
-                setImagesFnMirror((latestImagesFn) => {
-                    // append the new image into a new draft images:
-                    const newDraftImages = [
-                        ...latestImagesFn, // clone (copy and then modify) the *source of truth* images
-                        newImageData,      // the change
-                    ];
-                    
-                    
-                    
-                    // update the preview:
-                    if (droppedItemIndex !== -1) handlePreviewMoved(droppedItemIndex, latestImagesFn);
-                    
-                    
-                    
-                    // notify the gallery's images changed:
-                    triggerChange(newDraftImages); // then at the *next re-render*, the *controllable* `images` will change and trigger the `handleRevertPreview` and the `droppedItemIndex` will be reset
-                    
-                    
-                    
-                    return newDraftImages;
-                });
+                // append the new image into a new draft images:
+                const newDraftImages = [
+                    ...latestImagesFnRef.current, // clone (copy and then modify) the *source of truth* images
+                    imageData,                    // the change
+                ];
+                
+                
+                
+                // update the preview:
+                if (droppedItemIndex !== -1) handlePreviewMoved(droppedItemIndex, latestImagesFnRef.current);
+                
+                
+                
+                // notify the gallery's images changed:
+                triggerChange(newDraftImages); // then at the *next re-render*, the *controllable* `images` will change and trigger the `handleRevertPreview` and the `droppedItemIndex` will be reset
+                
+                
+                
+                // update:
+                latestImagesFnRef.current = newDraftImages;
             } // if
         };
         performUpload();
