@@ -9,6 +9,7 @@ import {
     Image,
 }                           from '@heymarco/image'
 import axios from 'axios'
+import resolveImageUrl from '@/libs/resolveImageUrl'
 
 
 
@@ -19,7 +20,7 @@ const sleep = (timeout: number) => new Promise<void>((resolve) => {
 
 
 export default function Home() {
-    const [images, setImages] = useState<ImageData[]>(() => [
+    const [images, setImages] = useState<string[]>(() => [
         'waves-800x600.jpg',
         'leaf-800x700.jpg',
         'building-800x500.jpg',
@@ -31,7 +32,7 @@ export default function Home() {
     return (
         <Main nude={true}>
             <Section title='Homepage'>
-                <GalleryEditor
+                <GalleryEditor<HTMLElement, string>
                     // variants:
                     theme='primary'
                     
@@ -75,12 +76,7 @@ export default function Home() {
                     
                     
                     // handlers:
-                    onResolveUrl={(imageData) => {
-                        const rawUrl = ((typeof(imageData) === 'string')) ? imageData : imageData.url;
-                        if (rawUrl.includes('/')) return rawUrl;
-                        if (!rawUrl.includes('.')) return `https://drive.google.com/uc?id=${rawUrl}`;
-                        return `/products/lorem-img/${rawUrl}`
-                    }}
+                    onResolveUrl={resolveImageUrl<never>}
                 />
             </Section>
         </Main>

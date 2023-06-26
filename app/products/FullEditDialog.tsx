@@ -22,6 +22,7 @@ import { ProductVisibility, VisibilityEditor } from '@/components/editors/Visibi
 import { Tab, TabPanel } from '@reusable-ui/components'
 import { Image } from '@heymarco/image'
 import axios from 'axios'
+import resolveImageUrl from '@/libs/resolveImageUrl'
 
 
 
@@ -352,11 +353,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                         
                         
                         // handlers:
-                        onResolveUrl={(rawUrl) => {
-                            if (rawUrl.includes('/')) return rawUrl;
-                            if (!rawUrl.includes('.')) return `https://drive.google.com/uc?id=${rawUrl}`;
-                            return `/products/${name}/${rawUrl}`
-                        }}
+                        onResolveUrl={resolveImageUrl<never>}
                     />
                 </TabPanel>
                 <TabPanel label={PAGE_PRODUCTS_TAB_DESCRIPTION}>
