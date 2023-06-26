@@ -335,7 +335,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                                     );
                                 },
                             });
-                            return response.data.url;
+                            return response.data.id;
                         }}
                         
                         
