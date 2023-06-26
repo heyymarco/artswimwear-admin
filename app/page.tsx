@@ -58,7 +58,7 @@ export default function Home() {
                                 );
                             },
                         });
-                        return response.data.url;
+                        return response.data.id;
                     }}
                     onUploadingImageProgress={undefined}
                     
@@ -78,6 +78,7 @@ export default function Home() {
                     onResolveUrl={(imageData) => {
                         const rawUrl = ((typeof(imageData) === 'string')) ? imageData : imageData.url;
                         if (rawUrl.includes('/')) return rawUrl;
+                        if (!rawUrl.includes('.')) return `https://drive.google.com/uc?id=${rawUrl}`;
                         return `/products/lorem-img/${rawUrl}`
                     }}
                 />

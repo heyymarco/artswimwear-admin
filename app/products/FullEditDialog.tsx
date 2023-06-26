@@ -353,6 +353,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                         // handlers:
                         onResolveUrl={(rawUrl) => {
                             if (rawUrl.includes('/')) return rawUrl;
+                            if (!rawUrl.includes('.')) return `https://drive.google.com/uc?id=${rawUrl}`;
                             return `/products/${name}/${rawUrl}`
                         }}
                     />
