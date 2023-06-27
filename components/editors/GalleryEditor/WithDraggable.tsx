@@ -175,7 +175,7 @@ const WithDraggable = (props: WithDraggableProps): JSX.Element|null => {
     
     
     // jsx:
-    /* <Image> */
+    /* <Component> */
     return React.cloneElement<React.HTMLAttributes<HTMLElement>>(component,
         // props:
         {
