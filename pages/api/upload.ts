@@ -1,14 +1,10 @@
 
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { createRouter, expressWrapper } from 'next-connect'
+import { createRouter } from 'next-connect'
 
-import { connectDB } from '@/libs/dbConn'
-import { default as Product, ProductSchema } from '@/models/Product'
-import type { HydratedDocument } from 'mongoose'
-import multer, { StorageEngine } from 'multer'
+import multer from 'multer'
 import type { OAuth2Client } from 'google-auth-library'
 import { google } from 'googleapis';
-import stream from 'stream'
 import { createReadStream, unlink } from 'fs'
 
 
@@ -32,25 +28,93 @@ const googleAuth = (): OAuth2Client => {
     googleAuth.setCredentials({ refresh_token: GOOGLE_AUTH_REFRESH_TOKEN });
     return googleAuth; 
 };
-const googleDriveUpload = async (googleAuth: OAuth2Client, file: Express.Multer.File) => {
+
+let syncCreateFolderPromise : Promise<any>|undefined = undefined;
+interface GoogleDriveUploadOptions {
+    folder?: string
+}
+const googleDriveUpload = async (googleAuth: OAuth2Client, file: Express.Multer.File, options?: GoogleDriveUploadOptions) => {
+    // options:
+    const {
+        folder,
+    } = options ?? {};
+    
+    
+    
+    const googleDrive = google.drive({
+        version : 'v3',
+        auth    : googleAuth,
+    });
+    
+    
+    
+    let driveFolderId = GOOGLE_DRIVE_FOLDER_PRODUCT_IMAGES ?? '';
+    if (folder) {
+        for (const subFolder of folder.split('/')) {
+            driveFolderId = (
+                await (async (): Promise<string|null|undefined> => {
+                    do {
+                        const foundSubFolderId = (
+                            (await googleDrive.files.list({
+                                q            : `'${driveFolderId}' in parents and mimeType='application/vnd.google-apps.folder' and name='${subFolder}' and trashed=false`,
+                                fields       : 'files(id)',
+                            }))
+                            .data.files?.[0]?.id
+                        );
+                        if (foundSubFolderId) return foundSubFolderId;
+                    } while(
+                        syncCreateFolderPromise // wait for a folder creation completed (if any)
+                        &&
+                        (await syncCreateFolderPromise || true) // wait until the folder creation finished (no matter the promising result)
+                    );
+                    
+                    return undefined; // not found
+                })()
+                
+                ??
+                
+                await (async (): Promise<string|null|undefined> => {
+                    const createFolderPromise = googleDrive.files.create({
+                        requestBody  : {
+                            mimeType : 'application/vnd.google-apps.folder',
+                            name     : subFolder,
+                            
+                            parents  : [
+                                driveFolderId,
+                            ],
+                        },
+                        fields       : 'id',
+                    });
+                    syncCreateFolderPromise = createFolderPromise;
+                    const result = await createFolderPromise;
+                    syncCreateFolderPromise = undefined;
+                    return result.data.id;
+                })()
+                
+                ??
+                
+                driveFolderId
+            );
+        } // for
+    } // if
+    
+    
+    
     // const bufferStream = new stream.PassThrough();
     // bufferStream.end(file.buffer);
     
     
     
-    const googleDrive = google.drive({
-        version: 'v3',
-        auth: googleAuth,
-    });
     const driveFile = await googleDrive.files.create({
         requestBody  : {
+            mimeType : file.mimetype,
             name     : file.originalname,
+            
             parents  : [
-                GOOGLE_DRIVE_FOLDER_PRODUCT_IMAGES ?? '',
+                driveFolderId,
             ],
         },
         media        : {
-            mimeType : file.mimetype,
             body     : createReadStream(file.path),
         },
         fields       : 'id',
@@ -71,7 +135,7 @@ const upload = multer({
         },
     }),
 });
-const uploadMiddleware = upload.single('testFile');
+const uploadMiddleware = upload.single('image');
 
 const deleteFile = (file: Express.Multer.File) => {
     unlink(file.path, () => {});
@@ -92,10 +156,21 @@ router
     
     
     
+    const {
+        folder,
+    } = req.body;
+    if ((folder !== undefined) && (typeof(folder) !== 'string')) {
+        res.status(400).json({ error: 'invalid parameter(s)' });
+        return;
+    } // if
+    
+    
+    
     try {
         const gAuth = googleAuth();
-        const driveFileId = await googleDriveUpload(gAuth, file);
-        console.log('file created!', driveFileId);
+        const driveFileId = await googleDriveUpload(gAuth, file, {
+            folder,
+        });
         
         
         
