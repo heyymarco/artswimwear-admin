@@ -30,6 +30,10 @@ import {
     // configs:
     basics,
 }                           from '@reusable-ui/basic'           // a base component
+import {
+    // configs:
+    indicators,
+}                           from '@reusable-ui/indicator'       // a base component
 
 
 
@@ -111,6 +115,10 @@ export const [galleryEditors, galleryEditorValues, cssGalleryEditorConfig] = css
     const bases = {
         // animations:
         defaultAnimationDuration : basics.defaultAnimationDuration  as CssKnownProps['animationDuration'],
+        
+        filterDisable        : indicators.filterDisable             as CssKnownProps['filter'           ],
+        animEnable           : indicators.animEnable                as CssKnownProps['animation'        ],
+        animDisable          : indicators.animDisable               as CssKnownProps['animation'        ],
         
         
         

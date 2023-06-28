@@ -25,8 +25,18 @@ import {
     
     
     
+    // animation stuff of UI:
+    usesAnimation,
+    
+    
+    
     // size options of UI:
     usesResizable,
+    
+    
+    
+    // a capability of UI to be disabled:
+    usesDisableable,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -62,6 +72,13 @@ import {
 export const onGalleryEditorStylesChange = watchChanges(onContentStylesChange, cssGalleryEditorConfig.onChange);
 
 export const usesGalleryEditorLayout = () => {
+    // dependencies:
+    
+    // features:
+    const {animationRule , animationVars } = usesAnimation(galleryEditors as any);
+    
+    
+    
     return style({
         // layouts:
         ...usesContentLayout(),
@@ -98,63 +115,77 @@ export const usesGalleryEditorLayout = () => {
                 // rules:
                 ...rule(actionsContainerElm, {
                     // layouts:
-                    display        : 'inline-flex', // make an inline element like <img>
-                    flexDirection  : 'column',      // we'll manipulate the <img> height
-                    justifyContent : 'center',
-                    alignItems     : 'center',
-                    
-                    
-                    
-                    // sizes:
-                    // width          : 'fit-content', // follows the <img> width
-                    width          : '100%',
-                    
-                    
-                    
-                    // children:
-                    ...children(actionsPanelElm, {
+                    ...style({
                         // layouts:
-                        display: 'grid',
-                        gridTemplate : [[
-                            '"delete edit ..." auto',
-                            '"...... .... ..." 1fr',
-                            '/',
-                            ' auto   auto  1fr'
-                        ]],
-                        justifyItems : 'center',
-                        alignItems   : 'center',
+                        display        : 'inline-flex', // make an inline element like <img>
+                        flexDirection  : 'column',      // we'll manipulate the <img> height
+                        justifyContent : 'center',
+                        alignItems     : 'center',
                         
                         
                         
                         // sizes:
-                        // maxWidth     : '100%',
-                        // maxHeight    : '100%',
-                        width        : '100%', // fill the entire <parent>
-                        height       : '100%', // fill the entire <parent>
+                        // width          : 'fit-content', // follows the <img> width
+                        width          : '100%',
+                        
+                        
+                        
+                        // animations:
+                        filter         : animationVars.filter,
+                        anim           : animationVars.anim,
                         
                         
                         
                         // children:
-                        ...children(contentElm, {
-                            // positions:
-                            gridArea  : '1/1/-1/-1',
+                        ...children(actionsPanelElm, {
+                            // layouts:
+                            display: 'grid',
+                            gridTemplate : [[
+                                '"delete edit ..." auto',
+                                '"...... .... ..." 1fr',
+                                '/',
+                                ' auto   auto  1fr'
+                            ]],
+                            justifyItems : 'center',
+                            alignItems   : 'center',
                             
                             
                             
                             // sizes:
-                            maxWidth  : '100%',
-                            maxHeight : '100%',
+                            // maxWidth     : '100%',
+                            // maxHeight    : '100%',
+                            width        : '100%', // fill the entire <parent>
+                            height       : '100%', // fill the entire <parent>
+                            
+                            
+                            
+                            // children:
+                            ...children(contentElm, {
+                                // positions:
+                                gridArea  : '1/1/-1/-1',
+                                
+                                
+                                
+                                // sizes:
+                                maxWidth  : '100%',
+                                maxHeight : '100%',
+                            }),
+                            ...children(actionDeleteElm, {
+                                // positions:
+                                gridArea  : 'delete',
+                            }),
                         }),
-                        ...children(actionDeleteElm, {
-                            // positions:
-                            gridArea  : 'delete',
-                        }),
+                        
+                        
+                        
+                        // customize:
+                        ...usesCssProps(usesPrefixedProps(galleryEditors, 'actions')), // apply config's cssProps starting with actions***
                     }),
                     
                     
                     
-                    // customize:
-                    ...usesCssProps(usesPrefixedProps(galleryEditors, 'actions')), // apply config's cssProps starting with actions***
+                    // features:
+                    ...animationRule(),  // must be placed at the last
                 }),
                 
                 
@@ -240,6 +271,13 @@ export const usesGalleryEditorVariants = () => {
 };
 
 export const usesGalleryEditorStates = () => {
+    // dependencies:
+    
+    // states:
+    const {disableableRule} = usesDisableable(galleryEditors);
+    
+    
+    
     return style({
         // children:
         ...children(imageElm, {
@@ -266,6 +304,14 @@ export const usesGalleryEditorStates = () => {
                     anim : galleryEditors.animShiftedDown,
                 }),
             ]),
+            
+            
+            
+            // rules:
+            ...rule(actionsContainerElm, {
+                // states:
+                ...disableableRule(),
+            }),
         }),
         ...children(uploadImageElm, {
             // states:

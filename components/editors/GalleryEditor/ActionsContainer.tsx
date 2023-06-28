@@ -2,12 +2,33 @@
 import {
     // react:
     default as React,
+    
+    
+    
+    // hooks:
+    useState,
 }                           from 'react'
 
 // reusable-ui core:
 import {
     // react helper hooks:
     useEvent,
+    
+    
+    
+    // an accessibility management system:
+    AccessibilityProvider,
+    
+    
+    
+    // a capability of UI to be disabled:
+    useDisableable,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useMountedFlag,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -33,7 +54,7 @@ export interface ActionsContainerProps
     
     // actions:
     actionDelete          ?: string
-    onActionDelete        ?: (itemIndex: number) => void
+    onActionDelete        ?: (itemIndex: number) => Promise<void>
     
     
     
@@ -70,9 +91,38 @@ const ActionsContainer = (props: ActionsContainerProps): JSX.Element|null => {
     
     
     
+    // states:
+    let   [isEnabled, setIsEnabled] = useState<boolean>(true);
+    const disableableState = useDisableable<HTMLDivElement>({
+        enabled : isEnabled,
+    });
+    
+    
+    
+    // dom effects:
+    const isMounted = useMountedFlag();
+    
+    
+    
     // handlers:
-    const deleteButtonHandleClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
-        onActionDelete?.(itemIndex);
+    const deleteButtonHandleClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async () => {
+        // conditions:
+        if (!isEnabled) return;      // this component is disabled => ignore
+        if (!onActionDelete) return; // the delete handler is not configured => ignore
+        
+        
+        
+        setIsEnabled(isEnabled /* instant update without waiting for (slow|delayed) re-render */ = false);
+        try {
+            await onActionDelete(itemIndex);
+        }
+        catch {
+            // ignore any error
+        }
+        finally {
+            if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
+            setIsEnabled(isEnabled /* instant update without waiting for (slow|delayed) re-render */ = true);
+        } // try
     });
     
     
@@ -82,29 +132,42 @@ const ActionsContainer = (props: ActionsContainerProps): JSX.Element|null => {
         <div
             // other props:
             {...restDivProps}
+            
+            
+            
+            // classes:
+            className={`${props.className} ${disableableState.class || ''}`}
+            
+            
+            
+            // handlers:
+            onAnimationStart = {disableableState.handleAnimationStart}
+            onAnimationEnd   = {disableableState.handleAnimationEnd  }
         >
             <div
                 // classes:
                 className='actionsPanel'
             >
-                {children}
-                {React.cloneElement(deleteButtonComponent,
-                    // props:
-                    {
-                        // classes:
-                        className : 'actionDelete',
-                        
-                        
-                        
-                        // accessibilities:
-                        title     : actionDelete,
-                        
-                        
-                        
-                        // handlers:
-                        onClick   : deleteButtonHandleClick,
-                    },
-                )}
+                <AccessibilityProvider enabled={isEnabled}>
+                    {children}
+                    {React.cloneElement(deleteButtonComponent,
+                        // props:
+                        {
+                            // classes:
+                            className : 'actionDelete',
+                            
+                            
+                            
+                            // accessibilities:
+                            title     : actionDelete,
+                            
+                            
+                            
+                            // handlers:
+                            onClick   : deleteButtonHandleClick,
+                        },
+                    )}
+                </AccessibilityProvider>
             </div>
         </div>
     )
