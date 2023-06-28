@@ -25,6 +25,7 @@ import { StockEditor } from '@/components/editors/StockEditor'
 import { VisibilityEditor } from '@/components/editors/VisibilityEditor'
 import { SimpleEditDialog } from './SimpleEditDialog'
 import { FullEditDialog } from './FullEditDialog'
+import resolveImageUrl from '@/libs/resolveImageUrl'
 
 
 
@@ -88,7 +89,7 @@ const ProductItem = (props: ProductItemProps) => {
                     <Image
                         className='image'
                         alt={name ?? ''}
-                        src={images?.[0] ? `/products/${name}/${images[0]}` : undefined}
+                        src={resolveImageUrl(images?.[0])}
                         sizes={`${imageSize}px`}
                     />
                     <EditButton onClick={() => setEditMode('full')} />
