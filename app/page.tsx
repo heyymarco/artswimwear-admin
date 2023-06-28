@@ -49,7 +49,7 @@ export default function Home() {
                     
                     // actions:
                     onActionDelete={async (imageData) => {
-                        console.log(`onActionDelete: ${imageData}`);
+                        await axios.delete(`/api/upload?imageId=${encodeURIComponent(imageData)}`);
                         return true;
                     }}
                     

@@ -33,7 +33,7 @@ let syncCreateFolderPromise : Promise<any>|undefined = undefined;
 interface GoogleDriveUploadOptions {
     folder?: string
 }
-const googleDriveUpload = async (googleAuth: OAuth2Client, file: Express.Multer.File, options?: GoogleDriveUploadOptions) => {
+const googleDriveUpload = async (googleAuth: OAuth2Client, file: Express.Multer.File, options?: GoogleDriveUploadOptions): Promise<string> => {
     // options:
     const {
         folder,
@@ -121,6 +121,13 @@ const googleDriveUpload = async (googleAuth: OAuth2Client, file: Express.Multer.
     });
     return driveFile.data.id ?? '';
 };
+const googleDriveDelete = async (googleAuth: OAuth2Client, fileId: string): Promise<void> => {
+    const googleDrive = google.drive({
+        version : 'v3',
+        auth    : googleAuth,
+    });
+    await googleDrive.files.delete({ fileId });
+};
 
 
 
@@ -149,20 +156,14 @@ router
 // .use(uploadMiddleware as any)
 .post(uploadMiddleware as any, async (req, res) => {
     const file : Express.Multer.File = (req as any).file;
-    if (!file) {
-        res.status(400).send("No file uploaded.");
-        return;
-    } // if
+    if (!file) return res.status(400).send("No file uploaded.");
     
     
     
     const {
         folder,
     } = req.body;
-    if ((folder !== undefined) && (typeof(folder) !== 'string')) {
-        res.status(400).json({ error: 'invalid parameter(s)' });
-        return;
-    } // if
+    if ((folder !== undefined) && (typeof(folder) !== 'string')) return res.status(400).json({ error: 'invalid parameter(s)' });
     
     
     
@@ -174,10 +175,10 @@ router
         
         
         
-        res.status(200).json({ id: driveFileId });
+        return res.status(200).json({ id: driveFileId });
     }
     catch (error: any) {
-        res.status(500).send(error?.message ?? `${error}`);
+        return res.status(500).send(error?.message ?? `${error}`);
     }
     finally {
         try {
@@ -186,6 +187,27 @@ router
         catch {
             // ignore error
         }
+    } // try
+})
+.delete(async (req, res) => {
+    const {
+        imageId,
+    } = req.query;
+    if (!imageId || (typeof(imageId) !== 'string')) return res.status(400).json({ error: 'invalid parameter(s)' });
+    
+    
+    
+    try {
+        const gAuth = googleAuth();
+        await googleDriveDelete(gAuth, imageId);
+        
+        
+        
+        return res.status(200).json({ id: imageId }); // deleted => success
+    }
+    catch (error: any) {
+        if (error?.code === 404) return res.status(200).json({ id: imageId }); // not found => treat as success
+        return res.status(500).send(error?.message ?? `${error}`);
     } // try
 });
 

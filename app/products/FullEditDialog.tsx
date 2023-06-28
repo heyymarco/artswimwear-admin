@@ -325,6 +325,14 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                         
                         
                         
+                        // actions:
+                        onActionDelete={async (imageData) => {
+                            await axios.delete(`/api/upload?imageId=${encodeURIComponent(imageData)}`);
+                            return true;
+                        }}
+                        
+                        
+                        
                         // upload/uploading activities:
                         onUploadImageStart={async (imageFile, reportProgress, cancelController) => {
                             const formData = new FormData();
