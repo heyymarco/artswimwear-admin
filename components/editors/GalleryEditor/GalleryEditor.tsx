@@ -414,7 +414,14 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         // conditions:
         if (itemIndex >= imagesFn.length) return; // out of range => ignore
         const imageData = imagesFn[itemIndex];
-        if (onActionDelete && (await onActionDelete(imageData) === false)) return; // the delete action was prevented by <parent> => ignore
+        if (onActionDelete) {
+            try {
+                if (await onActionDelete(imageData) === false) return; // the delete action was prevented by <parent> => ignore
+            }
+            catch {
+                return; // error => abort
+            } // try
+        } // if
         
         
         
