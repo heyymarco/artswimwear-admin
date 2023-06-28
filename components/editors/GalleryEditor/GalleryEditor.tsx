@@ -53,6 +53,11 @@ import {
 }                           from './styles/config'
 import {
     // react components:
+    ActionsContainerProps,
+    ActionsContainer,
+}                           from './ActionsContainer'
+import {
+    // react components:
     WithDraggable,
 }                           from './WithDraggable'
 import {
@@ -127,6 +132,24 @@ interface GalleryEditorProps<TElement extends Element = HTMLElement, TValue exte
         >,
         
         // sub components:
+        Omit<ActionsContainerProps,
+            // bases
+            |keyof React.HTMLAttributes<HTMLElement>
+            
+            
+            
+            // positions:
+            |'itemIndex'                  // already handled internally
+            
+            
+            
+            // actions:
+            |'onActionDelete'             // enhanced with return Promise<boolean>
+            
+            
+            // children:
+            |'children'                   // already handled internally
+        >,
         Omit<UploadImageProps,
             // upload activities:
             |'onUploadImageStart'         // enhanced with return Promise<TValue>
@@ -150,6 +173,11 @@ interface GalleryEditorProps<TElement extends Element = HTMLElement, TValue exte
             |'imageComponent'             // already handled internally
         >
 {
+    // actions:
+    onActionDelete     ?: (itemIndex: number) => Promise<boolean>
+    
+    
+    
     // upload activities:
     onUploadImageStart ?: (imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal) => Promise<TValue|null>
     
@@ -178,6 +206,12 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         
         
+        // actions:
+        actionDelete,
+        onActionDelete,
+        
+        
+        
         // upload images:
         uploadImageTitle,
         uploadImageSelectImage,
@@ -202,6 +236,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         // components:
         imageComponent = (<img /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
+        
+        deleteButtonComponent,
         
         uploadImageButtonComponent,
         
@@ -374,7 +410,44 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
     const handleDrop           = handleMoved;
     
     // handlers:
-    const uploadImageHandleUploadImageStart = useEvent((imageFile: File): void => {
+    const actionsContainerHandleActionDelete = useEvent(async (itemIndex: number): Promise<void> => {
+        // conditions:
+        if (onActionDelete && (await onActionDelete(itemIndex) === false)) return; // the delete action was prevented by <parent> => ignore
+        
+        
+        
+        if (itemIndex < imagesFn.length) {
+            // remove an image from collection by its index:
+            const newDraftImages = imagesFn.slice(0); // clone (copy and then modify) the *source of truth* images
+            newDraftImages.splice(itemIndex, 1);
+            
+            
+            
+            // update the preview:
+            if (droppedItemIndex !== -1) handlePreviewMoved(droppedItemIndex);
+            
+            
+            
+            // notify the gallery's images changed:
+            triggerChange(newDraftImages); // then at the *next re-render*, the *controllable* `images` will change and trigger the `handleRevertPreview` and the `droppedItemIndex` will be reset
+            
+            
+            
+            // update:
+            /*
+                uncontrollable:
+                    The `imagesDn` and `imagesFn` has been updated and the `setImagesDn()` has been invoked when the `triggerChange()` called.
+                    Then the *next re-render* will happen shortly (maybe delayed).
+                
+                controllable:
+                    We need to ensure the *next re-render* will happen shortly (maybe delayed) by calling `setImagesDn(force to re-render)`, in case of calling `triggerChange()` won't cause <parent> to update the *controllable* `images` prop.
+                    When the *next re-render* occured, the `imagesFn` will reflect the *controllable* `images`'s value.
+            */
+            imagesFn = newDraftImages; // a temporary update regradless of (/*controllable*/ ?? /*uncontrollable*/), will be re-updated on *next re-render*
+            if (isControllableImages) setImagesDn((current) => current.slice(0)); // force to re-render
+        } // if
+    });
+    const uploadImageHandleUploadImageStart  = useEvent((imageFile: File): void => {
         // conditions:
         if (!onUploadImageStart) return; // the upload image handler is not configured => ignore
         
@@ -535,41 +608,6 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                     
                     
                     
-                    // classes:
-                    className={'image ' + ((): string|undefined => {
-                        // dropped item:
-                        if (itemIndex === droppedItemIndex) return 'dropped';
-                        
-                        
-                        
-                        // shifted item(s):
-                        if ((draggedItemIndex !== -1) && (droppedItemIndex !== -1)) {
-                            if (draggedItemIndex < droppedItemIndex) {
-                                if ((itemIndex >= draggedItemIndex) && (itemIndex <= droppedItemIndex)) return 'shiftedDown';
-                            }
-                            else if (draggedItemIndex > droppedItemIndex) {
-                                if ((itemIndex <= draggedItemIndex) && (itemIndex >= droppedItemIndex)) return 'shiftedUp';
-                            } // if
-                        } // if
-                        
-                        
-                        
-                        // dragged item:
-                        if ((draggedItemIndex !== -1) && (itemIndex === draggedItemIndex)) return 'dragged';
-                        
-                        
-                        
-                        // dropping target:
-                        if ((draggedItemIndex !== -1) && (itemIndex !== draggedItemIndex)) return 'dropTarget';
-                        
-                        
-                        
-                        // unmoved item(s):
-                        return '';
-                    })()}
-                    
-                    
-                    
                     // draggable:
                     dragDataType = {dragDataType   }
                     onDragStart  = {handleDragStart}
@@ -582,15 +620,73 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                     onDragLeave  = {handleDragLeave}
                     onDrop       = {handleDrop     }
                 >
-                    {React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
-                        // props:
-                        {
-                            // images:
-                            alt   : imageComponent.props.alt   ??  resolveAlt(imageData),
-                            src   : imageComponent.props.src   ?? (resolveSrc(imageData, onResolveUrl) || undefined), // convert empty string to undefined
-                            sizes : imageComponent.props.sizes ?? `calc((${gedits.itemMinColumnWidth} * 2) + ${gedits.gapInline})`,
-                        },
-                    )}
+                    <ActionsContainer
+                        // positions:
+                        itemIndex={itemIndex}
+                        
+                        
+                        
+                        // classes:
+                        className={'image actionsContainer ' + ((): string|undefined => {
+                            // dropped item:
+                            if (itemIndex === droppedItemIndex) return 'dropped';
+                            
+                            
+                            
+                            // shifted item(s):
+                            if ((draggedItemIndex !== -1) && (droppedItemIndex !== -1)) {
+                                if (draggedItemIndex < droppedItemIndex) {
+                                    if ((itemIndex >= draggedItemIndex) && (itemIndex <= droppedItemIndex)) return 'shiftedDown';
+                                }
+                                else if (draggedItemIndex > droppedItemIndex) {
+                                    if ((itemIndex <= draggedItemIndex) && (itemIndex >= droppedItemIndex)) return 'shiftedUp';
+                                } // if
+                            } // if
+                            
+                            
+                            
+                            // dragged item:
+                            if ((draggedItemIndex !== -1) && (itemIndex === draggedItemIndex)) return 'dragged';
+                            
+                            
+                            
+                            // dropping target:
+                            if ((draggedItemIndex !== -1) && (itemIndex !== draggedItemIndex)) return 'dropTarget';
+                            
+                            
+                            
+                            // unmoved item(s):
+                            return '';
+                        })()}
+                        
+                        
+                        
+                        {...{
+                            // actions:
+                            actionDelete,
+                            onActionDelete : actionsContainerHandleActionDelete,
+                            
+                            
+                            
+                            // components:
+                            deleteButtonComponent,
+                        }}
+                    >
+                        {React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
+                            // props:
+                            {
+                                // classes:
+                                className : 'content',
+                                
+                                
+                                
+                                // images:
+                                alt       : imageComponent.props.alt   ??  resolveAlt(imageData),
+                                src       : imageComponent.props.src   ?? (resolveSrc(imageData, onResolveUrl) || undefined), // convert empty string to undefined
+                                sizes     : imageComponent.props.sizes ?? `calc((${gedits.itemMinColumnWidth} * 2) + ${gedits.gapInline})`,
+                            },
+                        )}
+                    </ActionsContainer>
                 </WithDraggable>
             )}
             {uploadingImages.map(({file, percentage, uploadError, onRetry, onCancel}, uploadingItemIndex) =>

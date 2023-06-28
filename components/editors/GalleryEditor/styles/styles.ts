@@ -41,6 +41,10 @@ import {
 import {
     // elements:
     imageElm,
+    actionsContainerElm,
+    actionsPanelElm,
+    actionDeleteElm,
+    contentElm,
     uploadingImageElm,
     uploadingImagePreviewElm,
     uploadImageElm,
@@ -88,6 +92,65 @@ export const usesGalleryEditorLayout = () => {
             ...children(imageElm, {
                 // accessibilities:
                 cursor     : 'move',
+                
+                
+                
+                // rules:
+                ...rule(actionsContainerElm, {
+                    // layouts:
+                    display        : 'inline-flex', // make an inline element like <img>
+                    flexDirection  : 'column',      // we'll manipulate the <img> height
+                    justifyContent : 'center',
+                    alignItems     : 'center',
+                    
+                    
+                    
+                    // sizes:
+                    width          : 'fit-content', // follows the <img> width
+                    
+                    
+                    
+                    // children:
+                    ...children(actionsPanelElm, {
+                        // layouts:
+                        display: 'grid',
+                        gridTemplate : [[
+                            '"delete edit ..." auto',
+                            '"...... .... ..." 1fr',
+                            '/',
+                            ' auto   auto  1fr'
+                        ]],
+                        
+                        
+                        
+                        // sizes:
+                        maxWidth  : '100%',
+                        maxHeight : '100%',
+                        
+                        
+                        
+                        // children:
+                        ...children(contentElm, {
+                            // positions:
+                            gridArea  : '1/1/-1/-1',
+                            
+                            
+                            
+                            // sizes:
+                            maxWidth  : '100%',
+                            maxHeight : '100%',
+                        }),
+                        ...children(actionDeleteElm, {
+                            // positions:
+                            gridArea  : 'delete',
+                        }),
+                    }),
+                    
+                    
+                    
+                    // customize:
+                    ...usesCssProps(usesPrefixedProps(gedits, 'actions')), // apply config's cssProps starting with actions***
+                }),
                 
                 
                 

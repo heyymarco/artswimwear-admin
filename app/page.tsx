@@ -47,6 +47,13 @@ export default function Home() {
                     
                     
                     
+                    // actions:
+                    onActionDelete={async (itemIndex) => {
+                        return true;
+                    }}
+                    
+                    
+                    
                     // upload/uploading activities:
                     onUploadImageStart={async (imageFile, reportProgress, cancelController) => {
                         const formData = new FormData();

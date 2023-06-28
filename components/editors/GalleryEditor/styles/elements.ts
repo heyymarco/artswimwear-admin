@@ -1,5 +1,9 @@
 // elements:
 export const imageElm                 = '.image'
+export const actionsContainerElm      = '.actionsContainer'
+export const actionsPanelElm          = '.actionsPanel'
+export const actionDeleteElm          = '.actionDelete'
+export const contentElm               = '.content'
 export const uploadingImageElm        = '.uploadingImage'
 export const uploadingImagePreviewElm = '.uploadingPreview'
 export const uploadImageElm           = '.uploadImage'

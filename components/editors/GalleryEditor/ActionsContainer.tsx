@@ -54,14 +54,14 @@ const ActionsContainer = (props: ActionsContainerProps): JSX.Element|null => {
         
         
         // actions:
-        actionDelete,
+        actionDelete = 'delete',
         onActionDelete,
         
         
         
         // components:
         children,
-        deleteButtonComponent = (<ButtonIcon icon='delete' /> as React.ReactComponentElement<any, ButtonProps>),
+        deleteButtonComponent = (<ButtonIcon icon='clear' size='md' theme='danger' buttonStyle='link' /> as React.ReactComponentElement<any, ButtonProps>),
     ...restDivProps} = props;
     
     
@@ -83,19 +83,29 @@ const ActionsContainer = (props: ActionsContainerProps): JSX.Element|null => {
             // other props:
             {...restDivProps}
         >
-            {children}
-            {React.cloneElement(deleteButtonComponent,
-                // props:
-                {
-                    // handlers:
-                    onClick : deleteButtonHandleClick,
-                },
-                
-                
-                
-                // children:
-                actionDelete,
-            )}
+            <div
+                // classes:
+                className='actionsPanel'
+            >
+                {children}
+                {React.cloneElement(deleteButtonComponent,
+                    // props:
+                    {
+                        // classes:
+                        className : 'actionDelete',
+                        
+                        
+                        
+                        // accessibilities:
+                        title     : actionDelete,
+                        
+                        
+                        
+                        // handlers:
+                        onClick   : deleteButtonHandleClick,
+                    },
+                )}
+            </div>
         </div>
     )
     /* <Children> */
