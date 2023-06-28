@@ -57,7 +57,7 @@ export default function Home() {
                     // upload/uploading activities:
                     onUploadImageStart={async (imageFile, reportProgress, cancelController) => {
                         const formData = new FormData();
-                        formData.append('testFile', imageFile);
+                        formData.append('image', imageFile);
                         const response = await axios.post('/api/upload', formData, {
                             headers          : { 'content-type': 'multipart/form-data' },
                             onUploadProgress : (event) => {
