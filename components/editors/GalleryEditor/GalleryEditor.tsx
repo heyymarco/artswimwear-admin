@@ -32,10 +32,6 @@ import {
     ContentProps,
     Content,
 }                           from '@reusable-ui/components'
-import {
-    // react components:
-    Image,
-}                           from '@heymarco/image'
 
 // internals:
 import type {
