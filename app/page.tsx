@@ -48,7 +48,8 @@ export default function Home() {
                     
                     
                     // actions:
-                    onActionDelete={async (itemIndex) => {
+                    onActionDelete={async (imageData) => {
+                        console.log(`onActionDelete: ${imageData}`);
                         return true;
                     }}
                     

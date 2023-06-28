@@ -174,7 +174,7 @@ interface GalleryEditorProps<TElement extends Element = HTMLElement, TValue exte
         >
 {
     // actions:
-    onActionDelete     ?: (itemIndex: number) => Promise<boolean>
+    onActionDelete     ?: (imageData: TValue) => Promise<boolean>
     
     
     
@@ -412,40 +412,40 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
     // handlers:
     const actionsContainerHandleActionDelete = useEvent(async (itemIndex: number): Promise<void> => {
         // conditions:
-        if (onActionDelete && (await onActionDelete(itemIndex) === false)) return; // the delete action was prevented by <parent> => ignore
+        if (itemIndex >= imagesFn.length) return; // out of range => ignore
+        const imageData = imagesFn[itemIndex];
+        if (onActionDelete && (await onActionDelete(imageData) === false)) return; // the delete action was prevented by <parent> => ignore
         
         
         
-        if (itemIndex < imagesFn.length) {
-            // remove an image from collection by its index:
-            const newDraftImages = imagesFn.slice(0); // clone (copy and then modify) the *source of truth* images
-            newDraftImages.splice(itemIndex, 1);
+        // remove an image from collection by its index:
+        const newDraftImages = imagesFn.slice(0); // clone (copy and then modify) the *source of truth* images
+        newDraftImages.splice(itemIndex, 1);
+        
+        
+        
+        // update the preview:
+        if (droppedItemIndex !== -1) handlePreviewMoved(droppedItemIndex);
+        
+        
+        
+        // notify the gallery's images changed:
+        triggerChange(newDraftImages); // then at the *next re-render*, the *controllable* `images` will change and trigger the `handleRevertPreview` and the `droppedItemIndex` will be reset
+        
+        
+        
+        // update:
+        /*
+            uncontrollable:
+                The `imagesDn` and `imagesFn` has been updated and the `setImagesDn()` has been invoked when the `triggerChange()` called.
+                Then the *next re-render* will happen shortly (maybe delayed).
             
-            
-            
-            // update the preview:
-            if (droppedItemIndex !== -1) handlePreviewMoved(droppedItemIndex);
-            
-            
-            
-            // notify the gallery's images changed:
-            triggerChange(newDraftImages); // then at the *next re-render*, the *controllable* `images` will change and trigger the `handleRevertPreview` and the `droppedItemIndex` will be reset
-            
-            
-            
-            // update:
-            /*
-                uncontrollable:
-                    The `imagesDn` and `imagesFn` has been updated and the `setImagesDn()` has been invoked when the `triggerChange()` called.
-                    Then the *next re-render* will happen shortly (maybe delayed).
-                
-                controllable:
-                    We need to ensure the *next re-render* will happen shortly (maybe delayed) by calling `setImagesDn(force to re-render)`, in case of calling `triggerChange()` won't cause <parent> to update the *controllable* `images` prop.
-                    When the *next re-render* occured, the `imagesFn` will reflect the *controllable* `images`'s value.
-            */
-            imagesFn = newDraftImages; // a temporary update regradless of (/*controllable*/ ?? /*uncontrollable*/), will be re-updated on *next re-render*
-            if (isControllableImages) setImagesDn((current) => current.slice(0)); // force to re-render
-        } // if
+            controllable:
+                We need to ensure the *next re-render* will happen shortly (maybe delayed) by calling `setImagesDn(force to re-render)`, in case of calling `triggerChange()` won't cause <parent> to update the *controllable* `images` prop.
+                When the *next re-render* occured, the `imagesFn` will reflect the *controllable* `images`'s value.
+        */
+        imagesFn = newDraftImages; // a temporary update regradless of (/*controllable*/ ?? /*uncontrollable*/), will be re-updated on *next re-render*
+        if (isControllableImages) setImagesDn((current) => current.slice(0)); // force to re-render
     });
     const uploadImageHandleUploadImageStart  = useEvent((imageFile: File): void => {
         // conditions:
