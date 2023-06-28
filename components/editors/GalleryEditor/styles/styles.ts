@@ -52,14 +52,14 @@ import {
 }                           from './elements'
 import {
     // configs:
-    gedits,
-    cssGeditConfig,
+    galleryEditors,
+    cssGalleryEditorConfig,
 }                           from './config'
 
 
 
 // styles:
-export const onGalleryEditorStylesChange = watchChanges(onContentStylesChange, cssGeditConfig.onChange);
+export const onGalleryEditorStylesChange = watchChanges(onContentStylesChange, cssGalleryEditorConfig.onChange);
 
 export const usesGalleryEditorLayout = () => {
     return style({
@@ -69,8 +69,8 @@ export const usesGalleryEditorLayout = () => {
             // layouts:
             display             : 'grid',        // use css block grid for layouting, the core of our GalleryEditor layout
             gridAutoFlow        : 'row',         // items direction is to inline & wrap's direction is to block
-            gridAutoRows        : gedits.itemRaiseRowHeight,
-            gridTemplateColumns : `repeat(auto-fill, minmax(${gedits.itemMinColumnWidth}, 1fr))`,
+            gridAutoRows        : galleryEditors.itemRaiseRowHeight,
+            gridTemplateColumns : `repeat(auto-fill, minmax(${galleryEditors.itemMinColumnWidth}, 1fr))`,
             gridTemplateRows    : '1fr',         // consistent height for each item
             
             // item default sizes:
@@ -87,7 +87,7 @@ export const usesGalleryEditorLayout = () => {
                 
                 
                 // customize:
-                ...usesCssProps(usesPrefixedProps(gedits, 'item')), // apply config's cssProps starting with item***
+                ...usesCssProps(usesPrefixedProps(galleryEditors, 'item')), // apply config's cssProps starting with item***
             }),
             ...children(imageElm, {
                 // accessibilities:
@@ -106,7 +106,8 @@ export const usesGalleryEditorLayout = () => {
                     
                     
                     // sizes:
-                    width          : 'fit-content', // follows the <img> width
+                    // width          : 'fit-content', // follows the <img> width
+                    width          : '100%',
                     
                     
                     
@@ -120,12 +121,16 @@ export const usesGalleryEditorLayout = () => {
                             '/',
                             ' auto   auto  1fr'
                         ]],
+                        justifyItems : 'center',
+                        alignItems   : 'center',
                         
                         
                         
                         // sizes:
-                        maxWidth  : '100%',
-                        maxHeight : '100%',
+                        // maxWidth     : '100%',
+                        // maxHeight    : '100%',
+                        width        : '100%', // fill the entire <parent>
+                        height       : '100%', // fill the entire <parent>
                         
                         
                         
@@ -149,13 +154,13 @@ export const usesGalleryEditorLayout = () => {
                     
                     
                     // customize:
-                    ...usesCssProps(usesPrefixedProps(gedits, 'actions')), // apply config's cssProps starting with actions***
+                    ...usesCssProps(usesPrefixedProps(galleryEditors, 'actions')), // apply config's cssProps starting with actions***
                 }),
                 
                 
                 
                 // customize:
-                ...usesCssProps(usesPrefixedProps(gedits, 'image')), // apply config's cssProps starting with image***
+                ...usesCssProps(usesPrefixedProps(galleryEditors, 'image')), // apply config's cssProps starting with image***
             }),
             ...children([uploadingImageElm, uploadImageElm], {
                 // layouts:
@@ -190,13 +195,13 @@ export const usesGalleryEditorLayout = () => {
                     
                     
                     // customize:
-                    ...usesCssProps(usesPrefixedProps(gedits, 'preview')), // apply config's cssProps starting with preview***
+                    ...usesCssProps(usesPrefixedProps(galleryEditors, 'preview')), // apply config's cssProps starting with preview***
                 }),
                 
                 
                 
                 // customize:
-                ...usesCssProps(usesPrefixedProps(gedits, 'uploading')), // apply config's cssProps starting with uploading***
+                ...usesCssProps(usesPrefixedProps(galleryEditors, 'uploading')), // apply config's cssProps starting with uploading***
             }),
             ...children(uploadImageElm, {
                 // children:
@@ -208,13 +213,13 @@ export const usesGalleryEditorLayout = () => {
                 
                 
                 // customize:
-                ...usesCssProps(usesPrefixedProps(gedits, 'upload')), // apply config's cssProps starting with upload***
+                ...usesCssProps(usesPrefixedProps(galleryEditors, 'upload')), // apply config's cssProps starting with upload***
             }),
             
             
             
             // customize:
-            ...usesCssProps(gedits), // apply config's cssProps
+            ...usesCssProps(galleryEditors), // apply config's cssProps
         }),
     });
 };
@@ -223,7 +228,7 @@ export const usesGalleryEditorVariants = () => {
     // dependencies:
     
     // variants:
-    const {resizableRule} = usesResizable(gedits);
+    const {resizableRule} = usesResizable(galleryEditors);
     
     
     
@@ -242,23 +247,23 @@ export const usesGalleryEditorStates = () => {
             ...states([
                 rule('.dragged', {
                     // animations:
-                    anim : gedits.animDragged,
+                    anim : galleryEditors.animDragged,
                 }),
                 rule('.dropped', {
                     // animations:
-                    anim : gedits.animDropped,
+                    anim : galleryEditors.animDropped,
                 }),
                 rule('.dropTarget', {
                     // animations:
-                    anim : gedits.animDropTarget,
+                    anim : galleryEditors.animDropTarget,
                 }),
                 rule('.shiftedUp', {
                     // animations:
-                    anim : gedits.animShiftedUp,
+                    anim : galleryEditors.animShiftedUp,
                 }),
                 rule('.shiftedDown', {
                     // animations:
-                    anim : gedits.animShiftedDown,
+                    anim : galleryEditors.animShiftedDown,
                 }),
             ]),
         }),
@@ -267,7 +272,7 @@ export const usesGalleryEditorStates = () => {
             ...states([
                 rule('.dropTarget', {
                     // animations:
-                    anim : gedits.uploadAnimDropTarget,
+                    anim : galleryEditors.uploadAnimDropTarget,
                 }),
             ]),
         }),

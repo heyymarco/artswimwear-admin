@@ -45,7 +45,7 @@ import type {
 }                           from '@/components/editors/Editor'
 import {
     // configs:
-    gedits,
+    galleryEditors,
 }                           from './styles/config'
 import {
     // react components:
@@ -686,7 +686,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                                 // images:
                                 alt       : imageComponent.props.alt   ??  resolveAlt(imageData),
                                 src       : imageComponent.props.src   ?? (resolveSrc(imageData, onResolveUrl) || undefined), // convert empty string to undefined
-                                sizes     : imageComponent.props.sizes ?? `calc((${gedits.itemMinColumnWidth} * 2) + ${gedits.gapInline})`,
+                                sizes     : imageComponent.props.sizes ?? `calc((${galleryEditors.itemMinColumnWidth} * 2) + ${galleryEditors.gapInline})`,
                             },
                         )}
                     </ActionsContainer>
@@ -729,7 +729,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                             {
                                 // images:
                                 alt   : imageComponent.props.alt   ?? 'preview',
-                                sizes : imageComponent.props.sizes ?? `calc((${gedits.itemMinColumnWidth} * 2) + ${gedits.gapInline})`,
+                                sizes : imageComponent.props.sizes ?? `calc((${galleryEditors.itemMinColumnWidth} * 2) + ${galleryEditors.gapInline})`,
                             },
                         ),
                         uploadingImageProgressComponent,

@@ -34,7 +34,7 @@ import {
 
 
 // configs:
-export const [gedits, geditValues, cssGeditConfig] = cssConfig(() => {
+export const [galleryEditors, galleryEditorValues, cssGalleryEditorConfig] = cssConfig(() => {
     //#region keyframes
     const [keyframesDraggedRule, keyframesDragged] = keyframes({
         from  : {

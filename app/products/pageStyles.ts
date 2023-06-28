@@ -1,4 +1,5 @@
 // cssfn:
+import { commerces } from '@/config';
 import {
     children,
     descendants,
@@ -22,6 +23,7 @@ export default () => {
         orientationBlockSelector  : null,
     });
     const {borderVars} = usesBorder();
+    
     
     
     return [
@@ -139,6 +141,15 @@ export default () => {
                 width: '96px',
                 height: 'fit-content',
                 display: 'grid',
+                
+                
+                
+                // sizes:
+                aspectRatio: commerces.defaultProductAspectRatio,
+                
+                
+                
+                // children:
                 ...children('*', {
                     gridArea: '1/1/-1/-1',
                 }),
