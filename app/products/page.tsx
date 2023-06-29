@@ -25,7 +25,7 @@ import { StockEditor } from '@/components/editors/StockEditor'
 import { VisibilityEditor } from '@/components/editors/VisibilityEditor'
 import { SimpleEditDialog } from './SimpleEditDialog'
 import { FullEditDialog } from './FullEditDialog'
-import { resolveMediaUrl } from '@/libs/mediaStorage'
+import { resolveMediaUrl } from '@/libs/mediaStorage.client'
 
 
 

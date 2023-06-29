@@ -9,7 +9,7 @@ import {
     Image,
 }                           from '@heymarco/image'
 import axios from 'axios'
-import { resolveMediaUrl } from '@/libs/mediaStorage'
+import { resolveMediaUrl } from '@/libs/mediaStorage.client'
 
 
 

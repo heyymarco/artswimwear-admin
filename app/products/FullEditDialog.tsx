@@ -22,7 +22,7 @@ import { ProductVisibility, VisibilityEditor } from '@/components/editors/Visibi
 import { Tab, TabPanel } from '@reusable-ui/components'
 import { Image } from '@heymarco/image'
 import axios from 'axios'
-import { resolveMediaUrl } from '@/libs/mediaStorage'
+import { resolveMediaUrl } from '@/libs/mediaStorage.client'
 
 
 
