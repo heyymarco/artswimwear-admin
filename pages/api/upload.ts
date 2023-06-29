@@ -3,131 +3,8 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { createRouter } from 'next-connect'
 
 import multer from 'multer'
-import type { OAuth2Client } from 'google-auth-library'
-import { google } from 'googleapis';
-import { createReadStream, unlink } from 'fs'
-
-
-
-const {
-    GOOGLE_AUTH_CLIENT_ID,
-    GOOGLE_AUTH_CLIENT_SECRET,
-    GOOGLE_AUTH_REDIRECT_URI,
-    GOOGLE_AUTH_REFRESH_TOKEN,
-    GOOGLE_DRIVE_FOLDER_PRODUCT_IMAGES,
-} = process.env;
-
-
-
-const googleAuth = (): OAuth2Client => {
-    const googleAuth = new google.auth.OAuth2(
-        GOOGLE_AUTH_CLIENT_ID,
-        GOOGLE_AUTH_CLIENT_SECRET,
-        GOOGLE_AUTH_REDIRECT_URI
-    );
-    googleAuth.setCredentials({ refresh_token: GOOGLE_AUTH_REFRESH_TOKEN });
-    return googleAuth; 
-};
-
-let syncCreateFolderPromise : Promise<any>|undefined = undefined;
-interface GoogleDriveUploadOptions {
-    folder?: string
-}
-const googleDriveUpload = async (googleAuth: OAuth2Client, file: Express.Multer.File, options?: GoogleDriveUploadOptions): Promise<string> => {
-    // options:
-    const {
-        folder,
-    } = options ?? {};
-    
-    
-    
-    const googleDrive = google.drive({
-        version : 'v3',
-        auth    : googleAuth,
-    });
-    
-    
-    
-    let driveFolderId = GOOGLE_DRIVE_FOLDER_PRODUCT_IMAGES ?? '';
-    if (folder) {
-        for (const subFolder of folder.split('/')) {
-            driveFolderId = (
-                await (async (): Promise<string|null|undefined> => {
-                    do {
-                        const foundSubFolderId = (
-                            (await googleDrive.files.list({
-                                q            : `'${driveFolderId}' in parents and mimeType='application/vnd.google-apps.folder' and name='${subFolder}' and trashed=false`,
-                                fields       : 'files(id)',
-                            }))
-                            .data.files?.[0]?.id
-                        );
-                        if (foundSubFolderId) return foundSubFolderId;
-                    } while(
-                        syncCreateFolderPromise // wait for a folder creation completed (if any)
-                        &&
-                        (await syncCreateFolderPromise || true) // wait until the folder creation finished (no matter the promising result)
-                    );
-                    
-                    return undefined; // not found
-                })()
-                
-                ??
-                
-                await (async (): Promise<string|null|undefined> => {
-                    const createFolderPromise = googleDrive.files.create({
-                        requestBody  : {
-                            mimeType : 'application/vnd.google-apps.folder',
-                            name     : subFolder,
-                            
-                            parents  : [
-                                driveFolderId,
-                            ],
-                        },
-                        fields       : 'id',
-                    });
-                    syncCreateFolderPromise = createFolderPromise;
-                    const result = await createFolderPromise;
-                    syncCreateFolderPromise = undefined;
-                    return result.data.id;
-                })()
-                
-                ??
-                
-                driveFolderId
-            );
-        } // for
-    } // if
-    
-    
-    
-    // const bufferStream = new stream.PassThrough();
-    // bufferStream.end(file.buffer);
-    
-    
-    
-    const driveFile = await googleDrive.files.create({
-        requestBody  : {
-            mimeType : file.mimetype,
-            name     : file.originalname,
-            
-            parents  : [
-                driveFolderId,
-            ],
-        },
-        media        : {
-            body     : createReadStream(file.path),
-        },
-        fields       : 'id',
-    });
-    return driveFile.data.id ?? '';
-};
-const googleDriveDelete = async (googleAuth: OAuth2Client, fileId: string): Promise<void> => {
-    const googleDrive = google.drive({
-        version : 'v3',
-        auth    : googleAuth,
-    });
-    await googleDrive.files.delete({ fileId });
-};
+import { unlink } from 'fs'
+import { uploadMedia, deleteMedia } from '@/libs/mediaStorage.server'
 
 
 
@@ -168,14 +45,12 @@ router
     
     
     try {
-        const gAuth = googleAuth();
-        const driveFileId = await googleDriveUpload(gAuth, file, {
+        const fileId = await uploadMedia(file, {
             folder,
         });
         
         
-        
-        return res.status(200).json({ id: driveFileId });
+        return res.status(200).json({ id: fileId });
     }
     catch (error: any) {
         return res.status(500).send(error?.message ?? `${error}`);
@@ -198,8 +73,7 @@ router
     
     
     try {
-        const gAuth = googleAuth();
-        await googleDriveDelete(gAuth, imageId);
+        await deleteMedia(imageId);
         
         
         

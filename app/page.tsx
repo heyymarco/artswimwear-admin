@@ -9,7 +9,7 @@ import {
     Image,
 }                           from '@heymarco/image'
 import axios from 'axios'
-import resolveImageUrl from '@/libs/resolveImageUrl'
+import { resolveMediaUrl } from '@/libs/mediaStorage'
 
 
 
@@ -84,7 +84,7 @@ export default function Home() {
                     
                     
                     // handlers:
-                    onResolveUrl={resolveImageUrl<never>}
+                    onResolveUrl={resolveMediaUrl<never>}
                 />
             </Section>
         </Main>

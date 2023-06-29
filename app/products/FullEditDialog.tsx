@@ -22,7 +22,7 @@ import { ProductVisibility, VisibilityEditor } from '@/components/editors/Visibi
 import { Tab, TabPanel } from '@reusable-ui/components'
 import { Image } from '@heymarco/image'
 import axios from 'axios'
-import resolveImageUrl from '@/libs/resolveImageUrl'
+import { resolveMediaUrl } from '@/libs/mediaStorage'
 
 
 
@@ -362,7 +362,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                         
                         
                         // handlers:
-                        onResolveUrl={resolveImageUrl<never>}
+                        onResolveUrl={resolveMediaUrl<never>}
                     />
                 </TabPanel>
                 <TabPanel label={PAGE_PRODUCTS_TAB_DESCRIPTION}>
