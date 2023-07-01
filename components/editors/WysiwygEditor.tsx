@@ -15,33 +15,113 @@ import {
     useEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
-// lexical:
+// lexical functions:
 import {
+    // types:
+    EditorThemeClasses,
+    
+    
+    
+    // hooks:
     $getRoot,
     $getSelection,
 }                           from 'lexical'
+
+// texts:
 import {
+    ParagraphNode,
+}                           from 'lexical'
+import {
+    HeadingNode,
+    QuoteNode,
+}                           from '@lexical/rich-text'
+
+// resources:
+import {
+    LinkNode,
+    AutoLinkNode,
+}                           from '@lexical/link'
+
+// layouts:
+import {
+    ListNode,
+    ListItemNode,
+}                           from '@lexical/list'
+import {
+    TableNode,
+    TableRowNode,
+    TableCellNode,
+}                           from '@lexical/table'
+
+// codes:
+import {
+    CodeNode,
+    CodeHighlightNode,
+}                           from '@lexical/code'
+
+// lexical functions:
+import {
+    // types:
     InitialConfigType,
+    
+    
+    
+    // react components:
     LexicalComposer,
 }                           from '@lexical/react/LexicalComposer'
+import {
+    useLexicalComposerContext,
+}                           from '@lexical/react/LexicalComposerContext'
+import {
+    // react components:
+    OnChangePlugin,
+}                           from '@lexical/react/LexicalOnChangePlugin'
+import {
+    // react components:
+    HistoryPlugin,
+}                           from '@lexical/react/LexicalHistoryPlugin'
+
+// behaviors:
+import {
+    AutoFocusPlugin,
+}                           from '@lexical/react/LexicalAutoFocusPlugin'
+
+// UIs:
+import
+    // react components:
+    LexicalErrorBoundary
+                            from '@lexical/react/LexicalErrorBoundary'
+import {
+    // react components:
+    ContentEditable,
+}                           from '@lexical/react/LexicalContentEditable'
+
+// texts:
 import {
     PlainTextPlugin,
 }                           from '@lexical/react/LexicalPlainTextPlugin'
 import {
-    ContentEditable,
-}                           from '@lexical/react/LexicalContentEditable'
+    RichTextPlugin,
+}                           from '@lexical/react/LexicalRichTextPlugin'
+
+// resources:
 import {
-    HistoryPlugin,
-}                           from '@lexical/react/LexicalHistoryPlugin'
+    LinkPlugin,
+}                           from '@lexical/react/LexicalLinkPlugin'
+
+// layouts:
 import {
-    OnChangePlugin,
-}                           from '@lexical/react/LexicalOnChangePlugin'
-import {
-    useLexicalComposerContext,
-}                           from '@lexical/react/LexicalComposerContext'
-import
-    LexicalErrorBoundary
-                            from '@lexical/react/LexicalErrorBoundary'
+    ListPlugin,
+}                           from '@lexical/react/LexicalListPlugin'
+// import
+//     ToolbarPlugin
+//                             from'./plugins/ToolbarPlugin'
+// import
+//     AutoLinkPlugin
+//                             from './plugins/AutoLinkPlugin'
+// import
+//     CodeHighlightPlugin
+//                             from './plugins/CodeHighlightPlugin'
 
 // internals:
 import {
@@ -53,6 +133,26 @@ import {
 
 
 // react components:
+interface PlaceholderProps {
+    // accessibilities:
+    placeholder ?: string
+}
+const Placeholder = (props: PlaceholderProps): JSX.Element|null => {
+    // rest props:
+    const {
+        // accessibilities:
+        placeholder,
+    } = props;
+    
+    
+    
+    // jsx:
+    return (
+        <div>
+            {placeholder}
+        </div>
+    );
+};
 export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
@@ -95,6 +195,7 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
             const selection = $getSelection();
             // onChange?.(value);
             // onChangeAsText?.(value);
+            console.log({root, selection});
         });
     });
     const handleError       = useEvent<InitialConfigType['onError']>((error, editor) => {
@@ -103,12 +204,13 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
     
     
     // configs:
-    const theme = useMemo(() => ({
+    const theme = useMemo<EditorThemeClasses>(() => ({
         ltr                        : 'ltr',
         rtl                        : 'rtl',
         
         placeholder                : 'placeholder',
         
+        // texts:
         text: {
             bold                   : 'textBold',
             italic                 : 'textItalic',
@@ -118,7 +220,8 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
             
             subscript              : 'textSubscript',
             superscript            : 'textSuperscript',
-            code                   : 'textCode',
+            
+            code                   : 'code',
         },
         paragraph                  : 'p',
         heading: {
@@ -129,11 +232,13 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
             h5                     : 'h5',
             h6                     : 'h6',
         },
+        quote                      : 'quote',
         
+        // resources:
         link                       : 'link',
         image                      : 'image',
         
-        quote                      : 'quote',
+        // layouts:
         list: {
             nested: {
                 listitem           : 'nested-listitem',
@@ -144,41 +249,44 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
             listitemChecked        : 'listItemChecked',
             listitemUnchecked      : 'listItemUnchecked',
         },
+        table                      : 'table',
         
+        // identifiers:
         hashtag                    : 'hashtag',
         
-        code                       : 'code',
+        // codes:
+        code                       : 'code block',
         codeHighlight: {
-            atrule                 : 'tokenAttr',
-            attr                   : 'tokenAttr',
-            boolean                : 'tokenProperty',
-            builtin                : 'tokenSelector',
-            cdata                  : 'tokenComment',
-            char                   : 'tokenSelector',
-            class                  : 'tokenFunction',
-            'class-name'           : 'tokenFunction',
-            comment                : 'tokenComment',
-            constant               : 'tokenProperty',
-            deleted                : 'tokenProperty',
-            doctype                : 'tokenComment',
-            entity                 : 'tokenOperator',
-            function               : 'tokenFunction',
-            important              : 'tokenVariable',
-            inserted               : 'tokenSelector',
-            keyword                : 'tokenAttr',
-            namespace              : 'tokenVariable',
-            number                 : 'tokenProperty',
-            operator               : 'tokenOperator',
-            prolog                 : 'tokenComment',
-            property               : 'tokenProperty',
-            punctuation            : 'tokenPunctuation',
-            regex                  : 'tokenVariable',
-            selector               : 'tokenSelector',
-            string                 : 'tokenSelector',
-            symbol                 : 'tokenProperty',
-            tag                    : 'tokenProperty',
-            url                    : 'tokenOperator',
-            variable               : 'tokenVariable',
+            atrule                 : 'codeAttr',
+            attr                   : 'codeAttr',
+            boolean                : 'codeProperty',
+            builtin                : 'codeSelector',
+            cdata                  : 'codeComment',
+            char                   : 'codeSelector',
+            class                  : 'codeFunction',
+            'class-name'           : 'codeFunction',
+            comment                : 'codeComment',
+            constant               : 'codeProperty',
+            deleted                : 'codeProperty',
+            doctype                : 'codeComment',
+            entity                 : 'codeOperator',
+            function               : 'codeFunction',
+            important              : 'codeVariable',
+            inserted               : 'codeSelector',
+            keyword                : 'codeAttr',
+            namespace              : 'codeVariable',
+            number                 : 'codeProperty',
+            operator               : 'codeOperator',
+            prolog                 : 'codeComment',
+            property               : 'codeProperty',
+            punctuation            : 'codePunctuation',
+            regex                  : 'codeVariable',
+            selector               : 'codeSelector',
+            string                 : 'codeSelector',
+            symbol                 : 'codeProperty',
+            tag                    : 'codeProperty',
+            url                    : 'codeOperator',
+            variable               : 'codeVariable',
         },
     }), []);
     
@@ -186,6 +294,31 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         namespace : 'WysiwygEditor', 
         theme,
         onError   : handleError,
+        nodes     : [
+            // texts:
+            ParagraphNode,
+            HeadingNode,
+            QuoteNode,
+            
+            // resources:
+            LinkNode,
+            AutoLinkNode,
+            // ImageNode,
+            
+            // layouts:
+            ListNode,
+            ListItemNode,
+            TableNode,
+            TableRowNode,
+            TableCellNode,
+            
+            // identifiers:
+            // HashTagNode,
+            
+            // codes:
+            CodeNode,
+            CodeHighlightNode,
+        ],
     }), []);
     
     
@@ -200,11 +333,38 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
             
             
             {/* elements: */}
-            <PlainTextPlugin
-                contentEditable={<ContentEditable />}
-                placeholder={<div>{placeholder}</div>}
-                ErrorBoundary={LexicalErrorBoundary}
-            />
+            <div className='editor-container'>
+                {/* <ToolbarPlugin /> */}
+                <div className='editor-inner'>
+                    <AutoFocusPlugin />
+                    
+                    {/* texts: */}
+                    {/* <PlainTextPlugin
+                        // UIs:
+                        ErrorBoundary   = {LexicalErrorBoundary}
+                        contentEditable = {<ContentEditable />}
+                        placeholder     = {<Placeholder placeholder={placeholder} />}
+                    /> */}
+                    <RichTextPlugin
+                        // UIs:
+                        ErrorBoundary   = {LexicalErrorBoundary}
+                        contentEditable = {<ContentEditable className="editor-input" />}
+                        placeholder     = {<Placeholder placeholder={placeholder} />}
+                    />
+                    
+                    {/* resources: */}
+                    <LinkPlugin />
+                    {/* <AutoLinkPlugin /> */}
+                    
+                    {/* layouts: */}
+                    <ListPlugin />
+                    
+                    {/* identifiers: */}
+                    
+                    {/* codes: */}
+                    {/* <CodeHighlightPlugin /> */}
+                </div>
+            </div>
         </LexicalComposer>
     );
 };

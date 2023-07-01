@@ -10,6 +10,7 @@ import {
 }                           from '@heymarco/image'
 import axios from 'axios'
 import { resolveMediaUrl } from '@/libs/mediaStorage.client'
+import WysiwygEditor from '@/components/editors/WysiwygEditor';
 
 
 
@@ -20,19 +21,19 @@ const sleep = (timeout: number) => new Promise<void>((resolve) => {
 
 
 export default function Home() {
-    const [images, setImages] = useState<string[]>(() => [
-        'waves-800x600.jpg',
-        'leaf-800x700.jpg',
-        'building-800x500.jpg',
-        'street-800x800.jpg',
-        'flower-700x400.jpg',
-        'water-500x800.jpg',
-        'wood-700x600.jpg',
-    ]);
+    // const [images, setImages] = useState<string[]>(() => [
+    //     'waves-800x600.jpg',
+    //     'leaf-800x700.jpg',
+    //     'building-800x500.jpg',
+    //     'street-800x800.jpg',
+    //     'flower-700x400.jpg',
+    //     'water-500x800.jpg',
+    //     'wood-700x600.jpg',
+    // ]);
     return (
         <Main nude={true}>
             <Section title='Homepage'>
-                <GalleryEditor<HTMLElement, string>
+                {/* <GalleryEditor<HTMLElement, string>
                     // variants:
                     theme='primary'
                     
@@ -85,6 +86,9 @@ export default function Home() {
                     
                     // handlers:
                     onResolveUrl={resolveMediaUrl<never>}
+                /> */}
+                <WysiwygEditor
+                    placeholder='Type product description here...'
                 />
             </Section>
         </Main>
