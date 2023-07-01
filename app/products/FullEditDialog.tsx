@@ -23,6 +23,7 @@ import { Tab, TabPanel } from '@reusable-ui/components'
 import { Image } from '@heymarco/image'
 import axios from 'axios'
 import { resolveMediaUrl } from '@/libs/mediaStorage.client'
+import { WysiwygEditor } from '@/components/editors/WysiwygEditor';
 
 
 
@@ -366,7 +367,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                     />
                 </TabPanel>
                 <TabPanel label={PAGE_PRODUCTS_TAB_DESCRIPTION}>
-                    <p>Under construction...</p>
+                    <WysiwygEditor />
                 </TabPanel>
             </Tab>
             <CardFooter onKeyDown={handleKeyDown}>
