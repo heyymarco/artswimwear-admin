@@ -382,15 +382,7 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
     
     // jsx:
     return (
-        <LexicalComposer
-            // refs:
-            // ref={undefined}
-            
-            
-            
-            // configs:
-            initialConfig={initialConfig}
-        >
+        <LexicalComposer initialConfig={initialConfig}>
             {/* functions: */}
             
             {/* setups the initial value for the editor. */}
