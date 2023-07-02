@@ -181,6 +181,7 @@ export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
         // components:
         Pick<PlaceholderProps,
             // accessibilities:
+            |'autoFocus'
             |'placeholder'
             
             
@@ -194,6 +195,7 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
     // rest props:
     const {
         // accessibilities:
+        autoFocus,
         placeholder,
         
         
@@ -392,6 +394,7 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
     return (
         <LexicalComposer initialConfig={initialConfig}>
             {/* functions: */}
+            {!!autoFocus ? <AutoFocusPlugin /> : <></>}
             
             {/* setups the initial value for the editor. */}
             <InitialValuePlugin initialValue={value} defaultValue={defaultValue} />
@@ -417,10 +420,6 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
             <div className='editorContainer'>
                 {/* <ToolbarPlugin /> */}
                 <div className='editorInner'>
-                    <AutoFocusPlugin />
-                    
-                    
-                    
                     {/* texts: */}
                     
                     {/* plain text editing, including typing, deletion and copy/pasting. */}
