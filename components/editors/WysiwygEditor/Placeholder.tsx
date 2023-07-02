@@ -4,27 +4,49 @@ import {
     default as React,
 }                           from 'react'
 
+// internals:
+import type {
+    // react components:
+    EditorProps,
+}                           from '@/components/editors/Editor'
+
 
 
 // react components:
-export interface PlaceholderProps {
-    // accessibilities:
-    placeholder ?: string
+export interface PlaceholderProps
+    extends
+        // bases:
+        Pick<EditorProps,
+            // accessibilities:
+            |'placeholder'
+        >
+{
+    // components:
+    placeholderComponent   ?: React.ReactComponentElement<any, {}>
 }
 const Placeholder = (props: PlaceholderProps): JSX.Element|null => {
     // rest props:
     const {
         // accessibilities:
         placeholder,
+        
+        
+        
+        // components:
+        placeholderComponent = (<div /> as React.ReactComponentElement<any, {}>),
     } = props;
     
     
     
     // jsx:
-    return (
-        <div>
-            {placeholder}
-        </div>
+    return React.cloneElement<{}>(placeholderComponent,
+        // props:
+        undefined,
+        
+        
+        
+        // children:
+        placeholder,
     );
 };
 export {

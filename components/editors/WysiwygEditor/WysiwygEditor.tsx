@@ -134,6 +134,7 @@ import {
 }                           from '@/components/editors/Editor'
 import {
     // react components:
+    PlaceholderProps,
     Placeholder,
 }                           from './Placeholder'
 
@@ -160,17 +161,15 @@ export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
         Pick<EditorProps<TElement, string>,
-            // accessibilities:
-            |'placeholder'
-            
-            
-            
             // values:
             |'defaultValue'
             |'value'
             |'onChange'
             |'onChangeAsText'
-        >
+        >,
+        
+        // components:
+        PlaceholderProps
 {
 }
 const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEditorProps<TElement>): JSX.Element|null => {
@@ -186,7 +185,12 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         value,
         onChange,
         onChangeAsText,
-    ...restInputProps} = props;
+        
+        
+        
+        // components:
+        placeholderComponent,
+    ...restEditorProps} = props;
     
     
     
@@ -360,7 +364,17 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
                         // UIs:
                         ErrorBoundary   = {LexicalErrorBoundary}
                         contentEditable = {<ContentEditable />}
-                        placeholder     = {<Placeholder placeholder={placeholder} />}
+                        placeholder     = {
+                            <Placeholder
+                                // accessibilities:
+                                placeholder={placeholder}
+                                
+                                
+                                
+                                // components:
+                                placeholderComponent={placeholderComponent}
+                            />
+                        }
                     /> */}
                     
                     {/* rich text editing, including typing, deletion, copy/pasting, indent/outdent and bold/italic/underline/strikethrough text formatting. */}
@@ -368,7 +382,17 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
                         // UIs:
                         ErrorBoundary   = {LexicalErrorBoundary}
                         contentEditable = {<ContentEditable className="editor-input" />}
-                        placeholder     = {<Placeholder placeholder={placeholder} />}
+                        placeholder     = {
+                            <Placeholder
+                                // accessibilities:
+                                placeholder={placeholder}
+                                
+                                
+                                
+                                // components:
+                                placeholderComponent={placeholderComponent}
+                            />
+                        }
                     />
                     
                     {/* allows tab indentation in combination with `<RichTextPlugin>`. */}
