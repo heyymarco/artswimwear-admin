@@ -7,25 +7,25 @@ import {
     
     // hooks:
     useMemo,
+    useEffect,
+    useRef,
 }                           from 'react'
 
 // reusable-ui core:
 import {
     // react helper hooks:
     useEvent,
+    useMountedFlag,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // lexical functions:
 import {
     // types:
     EditorThemeClasses,
-    
-    
-    
-    // hooks:
-    $getRoot,
-    $getSelection,
 }                           from 'lexical'
+import {
+    $generateHtmlFromNodes,
+}                           from '@lexical/html'
 
 // texts:
 import {
@@ -194,18 +194,43 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
     
     
     
+    // dom effects:
+    const isMounted = useMountedFlag();
+    
+    const prevValueCache = useRef<string>(value ?? defaultValue ?? '');
+    useEffect(() => {
+        // conditions:
+        if (value === undefined) return; // non-*controllable* value => ignore
+        if (prevValueCache.current === value) return; // already the same as prevValue => ignore
+        prevValueCache.current = value; // sync
+        
+        
+        
+        // actions:
+    }, [value]); // (re)run the setups on every time the `value` changes
+    
+    
+    
     // handlers:
-    const handleValueChange = useEvent<Parameters<typeof OnChangePlugin>[0]['onChange']>((editorState) => {
+    const handleValueChange = useEvent<Parameters<typeof OnChangePlugin>[0]['onChange']>((editorState, editor) => {
+        // conditions:
+        if (!onChange) return; // onChange handler is not set => ignore
+        
+        
+        
         editorState.read(() => {
-            // read the contents of the EditorState here
-            const root      = $getRoot();
-            const selection = $getSelection();
-            // onChange?.(value);
-            // onChangeAsText?.(value);
-            console.log({root, selection});
+            // conditions:
+            if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
+            
+            
+            
+            const htmlString = $generateHtmlFromNodes(editor);
+            prevValueCache.current = htmlString; // sync
+            onChange(htmlString);
         });
     });
     const handleError       = useEvent<InitialConfigType['onError']>((error, editor) => {
+        // nothing to handle yet
     });
     
     
@@ -342,7 +367,16 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
             {/* functions: */}
             
             {/* calls onChange whenever Lexical state is updated. */}
-            <OnChangePlugin onChange={handleValueChange} />
+            <OnChangePlugin
+                // behaviors:
+                ignoreHistoryMergeTagChange={true}
+                ignoreSelectionChange={true}
+                
+                
+                
+                // handlers:
+                onChange={handleValueChange}
+            />
             
             {/* adds support for history stack management and undo / redo commands. */}
             <HistoryPlugin />

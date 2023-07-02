@@ -30,6 +30,7 @@ export default function Home() {
     //     'water-500x800.jpg',
     //     'wood-700x600.jpg',
     // ]);
+    const [value, setValue] = useState<string>('');
     return (
         <Main nude={true}>
             <Section title='Homepage'>
@@ -88,8 +89,19 @@ export default function Home() {
                     onResolveUrl={resolveMediaUrl<never>}
                 /> */}
                 <WysiwygEditor
+                    // accessibilities:
                     placeholder='Type product description here...'
+                    
+                    
+                    
+                    // values:
+                    value={value}
+                    onChange={setValue}
                 />
+                <hr />
+                <div>
+                    {value}
+                </div>
             </Section>
         </Main>
     )
