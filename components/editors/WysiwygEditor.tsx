@@ -73,11 +73,11 @@ import {
     useLexicalComposerContext,
 }                           from '@lexical/react/LexicalComposerContext'
 import {
-    // react components:
+    // calls onChange whenever Lexical state is updated.
     OnChangePlugin,
 }                           from '@lexical/react/LexicalOnChangePlugin'
 import {
-    // react components:
+    // adds support for history stack management and undo / redo commands.
     HistoryPlugin,
 }                           from '@lexical/react/LexicalHistoryPlugin'
 
@@ -97,31 +97,34 @@ import {
 }                           from '@lexical/react/LexicalContentEditable'
 
 // texts:
+// import {
+//     // plain text editing, including typing, deletion and copy/pasting.
+//     PlainTextPlugin,
+// }                           from '@lexical/react/LexicalPlainTextPlugin'
 import {
-    PlainTextPlugin,
-}                           from '@lexical/react/LexicalPlainTextPlugin'
-import {
+    // rich text editing, including typing, deletion, copy/pasting, indent/outdent and bold/italic/underline/strikethrough text formatting.
     RichTextPlugin,
 }                           from '@lexical/react/LexicalRichTextPlugin'
+import {
+    // allows tab indentation in combination with `<RichTextPlugin>`.
+    TabIndentationPlugin,
+}                           from '@lexical/react/LexicalTabIndentationPlugin'
 
 // resources:
 import {
+    // adds support for links, including toggleLink command support that toggles link for selected text.
     LinkPlugin,
 }                           from '@lexical/react/LexicalLinkPlugin'
 
 // layouts:
 import {
+    // adds support for lists (ordered and unordered).
     ListPlugin,
 }                           from '@lexical/react/LexicalListPlugin'
-// import
-//     ToolbarPlugin
-//                             from'./plugins/ToolbarPlugin'
-// import
-//     AutoLinkPlugin
-//                             from './plugins/AutoLinkPlugin'
-// import
-//     CodeHighlightPlugin
-//                             from './plugins/CodeHighlightPlugin'
+import {
+    // adds support for tables.
+    TablePlugin,
+}                           from '@lexical/react/LexicalTablePlugin'
 
 // internals:
 import {
@@ -129,6 +132,22 @@ import {
     EditorProps,
     Editor,
 }                           from '@/components/editors/Editor'
+
+// UIs:
+// import
+//     ToolbarPlugin
+//                             from'./plugins/ToolbarPlugin'
+
+// resources:
+// import
+//     // auto converts link-like-texts to links.
+//     AutoLinkPlugin
+//                             from './plugins/AutoLinkPlugin'
+
+// codes:
+// import
+//     CodeHighlightPlugin
+//                             from './plugins/CodeHighlightPlugin'
 
 
 
@@ -300,6 +319,8 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
             HeadingNode,
             QuoteNode,
             
+            
+            
             // resources:
             LinkNode,
             AutoLinkNode,
@@ -312,8 +333,12 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
             TableRowNode,
             TableCellNode,
             
+            
+            
             // identifiers:
             // HashTagNode,
+            
+            
             
             // codes:
             CodeNode,
@@ -327,7 +352,11 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
     return (
         <LexicalComposer initialConfig={initialConfig}>
             {/* functions: */}
+            
+            {/* calls onChange whenever Lexical state is updated. */}
             <OnChangePlugin onChange={handleValueChange} />
+            
+            {/* adds support for history stack management and undo / redo commands. */}
             <HistoryPlugin />
             
             
@@ -338,13 +367,19 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
                 <div className='editor-inner'>
                     <AutoFocusPlugin />
                     
+                    
+                    
                     {/* texts: */}
+                    
+                    {/* plain text editing, including typing, deletion and copy/pasting. */}
                     {/* <PlainTextPlugin
                         // UIs:
                         ErrorBoundary   = {LexicalErrorBoundary}
                         contentEditable = {<ContentEditable />}
                         placeholder     = {<Placeholder placeholder={placeholder} />}
                     /> */}
+                    
+                    {/* rich text editing, including typing, deletion, copy/pasting, indent/outdent and bold/italic/underline/strikethrough text formatting. */}
                     <RichTextPlugin
                         // UIs:
                         ErrorBoundary   = {LexicalErrorBoundary}
@@ -352,12 +387,30 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
                         placeholder     = {<Placeholder placeholder={placeholder} />}
                     />
                     
+                    {/* allows tab indentation in combination with `<RichTextPlugin>`. */}
+                    <TabIndentationPlugin />
+                    
+                    
+                    
                     {/* resources: */}
+                    
+                    {/* adds support for links, including toggleLink command support that toggles link for selected text. */}
                     <LinkPlugin />
+                    
+                    {/* auto converts link-like-texts to links. */}
                     {/* <AutoLinkPlugin /> */}
                     
+                    
+                    
                     {/* layouts: */}
+                    
+                    {/* adds support for lists (ordered and unordered). */}
                     <ListPlugin />
+                    
+                    {/* adds support for tables. */}
+                    <TablePlugin />
+                    
+                    
                     
                     {/* identifiers: */}
                     
