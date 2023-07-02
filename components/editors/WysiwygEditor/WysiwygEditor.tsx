@@ -7,7 +7,6 @@ import {
     
     // hooks:
     useMemo,
-    useEffect,
     useRef,
 }                           from 'react'
 
@@ -133,18 +132,23 @@ import {
 }                           from '@lexical/react/LexicalTablePlugin'
 
 // internals:
-import {
+import type {
     // react components:
     EditorProps,
-    Editor,
 }                           from '@/components/editors/Editor'
+
+// behaviors:
+import {
+    // setups the initial value for the editor.
+    InitialValuePlugin,
+}                           from './plugins/InitialValuePlugin'
+
+// UIs:
 import {
     // react components:
     PlaceholderProps,
     Placeholder,
 }                           from './Placeholder'
-
-// UIs:
 // import
 //     ToolbarPlugin
 //                             from'./plugins/ToolbarPlugin'
@@ -203,24 +207,13 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
     // dom effects:
     const isMounted = useMountedFlag();
     
-    const prevValueCache = useRef<string>(value ?? defaultValue ?? '');
-    useEffect(() => {
-        // conditions:
-        if (value === undefined) return; // non-*controllable* value => ignore
-        if (prevValueCache.current === value) return; // already the same as prevValue => ignore
-        prevValueCache.current = value; // sync
-        
-        
-        
-        // actions:
-    }, [value]); // (re)run the setups on every time the `value` changes
-    
     
     
     // handlers:
+    const prevValueCache = useRef<string|undefined>(undefined);
     const handleValueChange = useEvent<Parameters<typeof OnChangePlugin>[0]['onChange']>((editorState, editor) => {
         // conditions:
-        if (!onChange) return; // onChange handler is not set => ignore
+        if (!onChange && !onChangeAsText) return; // onChange|onChangeAsText handler is not set => ignore
         
         
         
@@ -231,10 +224,13 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
             
             
             // actions:
+            const isInit = (prevValueCache.current === undefined);
             const htmlString = $generateHtmlFromNodes(editor);
             prevValueCache.current = htmlString; // sync
-            onChange(htmlString);
-            console.log('onChange!');
+            if (!isInit) {
+                onChange?.(htmlString);
+                onChangeAsText?.(htmlString);
+            } // if
         });
     });
     const handleError       = useEvent<InitialConfigType['onError']>((error, editor) => {
@@ -334,18 +330,21 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         namespace   : 'WysiwygEditor', 
         theme,
         onError     : handleError,
-        editorState : (editor) => {
-            // conditions:
-            const htmlString = value ?? defaultValue;
-            if (!htmlString) return;
-            
-            
-            
-            // actions:
-            const htmlDom = (new DOMParser()).parseFromString(htmlString, 'text/html');
-            const node    = $generateNodesFromDOM(editor, htmlDom);
-            $getRoot().append(...node);
-        },
+        
+        // causes hydration error:
+        // editorState : (editor) => {
+        //     // conditions:
+        //     const htmlString = value ?? defaultValue;
+        //     if (!htmlString) return;
+        //     
+        //     
+        //     
+        //     // actions:
+        //     const htmlDom = (new DOMParser()).parseFromString(htmlString, 'text/html');
+        //     const node    = $generateNodesFromDOM(editor, htmlDom);
+        //     $getRoot().append(...node);
+        // },
+        
         nodes       : [
             // texts:
             ParagraphNode,
@@ -393,6 +392,9 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
             initialConfig={initialConfig}
         >
             {/* functions: */}
+            
+            {/* setups the initial value for the editor. */}
+            <InitialValuePlugin initialValue={value} defaultValue={defaultValue} />
             
             {/* calls onChange whenever Lexical state is updated. */}
             <OnChangePlugin
