@@ -30,7 +30,7 @@ export default function Home() {
     //     'water-500x800.jpg',
     //     'wood-700x600.jpg',
     // ]);
-    const [value, setValue] = useState<string>('');
+    const [value, setValue] = useState<string>('<p>edit me!</p>');
     return (
         <Main nude={true}>
             <Section title='Homepage'>

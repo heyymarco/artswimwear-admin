@@ -22,9 +22,15 @@ import {
 import {
     // types:
     EditorThemeClasses,
+    
+    
+    
+    // hooks:
+    $getRoot,
 }                           from 'lexical'
 import {
     $generateHtmlFromNodes,
+    $generateNodesFromDOM,
 }                           from '@lexical/html'
 
 // texts:
@@ -224,9 +230,11 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
             
             
             
+            // actions:
             const htmlString = $generateHtmlFromNodes(editor);
             prevValueCache.current = htmlString; // sync
             onChange(htmlString);
+            console.log('onChange!');
         });
     });
     const handleError       = useEvent<InitialConfigType['onError']>((error, editor) => {
@@ -323,10 +331,22 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
     }), []);
     
     const initialConfig : InitialConfigType = useMemo(() => ({
-        namespace : 'WysiwygEditor', 
+        namespace   : 'WysiwygEditor', 
         theme,
-        onError   : handleError,
-        nodes     : [
+        onError     : handleError,
+        editorState : (editor) => {
+            // conditions:
+            const htmlString = value ?? defaultValue;
+            if (!htmlString) return;
+            
+            
+            
+            // actions:
+            const htmlDom = (new DOMParser()).parseFromString(htmlString, 'text/html');
+            const node    = $generateNodesFromDOM(editor, htmlDom);
+            $getRoot().append(...node);
+        },
+        nodes       : [
             // texts:
             ParagraphNode,
             HeadingNode,
@@ -363,7 +383,15 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
     
     // jsx:
     return (
-        <LexicalComposer initialConfig={initialConfig}>
+        <LexicalComposer
+            // refs:
+            // ref={undefined}
+            
+            
+            
+            // configs:
+            initialConfig={initialConfig}
+        >
             {/* functions: */}
             
             {/* calls onChange whenever Lexical state is updated. */}
