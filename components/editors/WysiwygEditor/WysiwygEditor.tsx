@@ -179,7 +179,15 @@ export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
         >,
         
         // components:
-        PlaceholderProps
+        Pick<PlaceholderProps,
+            // accessibilities:
+            |'placeholder'
+            
+            
+            
+            // components:
+            |'placeholderComponent'
+        >
 {
 }
 const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEditorProps<TElement>): JSX.Element|null => {
@@ -406,9 +414,9 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
             
             
             {/* elements: */}
-            <div className='editor-container'>
+            <div className='editorContainer'>
                 {/* <ToolbarPlugin /> */}
-                <div className='editor-inner'>
+                <div className='editorInner'>
                     <AutoFocusPlugin />
                     
                     
@@ -437,9 +445,14 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
                     <RichTextPlugin
                         // UIs:
                         ErrorBoundary   = {LexicalErrorBoundary}
-                        contentEditable = {<ContentEditable className="editor-input" />}
+                        contentEditable = {<ContentEditable className='editorInput' />}
                         placeholder     = {
                             <Placeholder
+                                // classes:
+                                className='editorPlaceholder'
+                                
+                                
+                                
                                 // accessibilities:
                                 placeholder={placeholder}
                                 

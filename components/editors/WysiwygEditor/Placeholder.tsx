@@ -13,18 +13,19 @@ import type {
 
 
 // react components:
-export interface PlaceholderProps
+export interface PlaceholderProps<TElement extends Element = HTMLElement>
     extends
         // bases:
+        React.HTMLAttributes<TElement>,
         Pick<EditorProps,
             // accessibilities:
             |'placeholder'
         >
 {
     // components:
-    placeholderComponent   ?: React.ReactComponentElement<any, {}>
+    placeholderComponent   ?: React.ReactComponentElement<any, React.HTMLAttributes<TElement>>
 }
-const Placeholder = (props: PlaceholderProps): JSX.Element|null => {
+const Placeholder = <TElement extends Element = HTMLElement>(props: PlaceholderProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // accessibilities:
@@ -33,15 +34,19 @@ const Placeholder = (props: PlaceholderProps): JSX.Element|null => {
         
         
         // components:
-        placeholderComponent = (<div /> as React.ReactComponentElement<any, {}>),
-    } = props;
+        placeholderComponent = (<div /> as React.ReactComponentElement<any, React.HTMLAttributes<TElement>>),
+    ...restElementProps} = props;
     
     
     
     // jsx:
-    return React.cloneElement<{}>(placeholderComponent,
+    return React.cloneElement<React.HTMLAttributes<TElement>>(placeholderComponent,
         // props:
-        undefined,
+        {
+            // other props:
+            ...restElementProps,
+            ...placeholderComponent.props, // overwrites restElementProps (if any conflics)
+        },
         
         
         
