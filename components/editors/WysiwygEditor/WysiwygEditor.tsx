@@ -132,6 +132,10 @@ import {
     EditorProps,
     Editor,
 }                           from '@/components/editors/Editor'
+import {
+    // react components:
+    Placeholder,
+}                           from './Placeholder'
 
 // UIs:
 // import
@@ -152,26 +156,6 @@ import {
 
 
 // react components:
-interface PlaceholderProps {
-    // accessibilities:
-    placeholder ?: string
-}
-const Placeholder = (props: PlaceholderProps): JSX.Element|null => {
-    // rest props:
-    const {
-        // accessibilities:
-        placeholder,
-    } = props;
-    
-    
-    
-    // jsx:
-    return (
-        <div>
-            {placeholder}
-        </div>
-    );
-};
 export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
