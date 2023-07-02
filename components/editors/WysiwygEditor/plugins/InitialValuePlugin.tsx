@@ -13,7 +13,6 @@ import {
 import {
     // hooks:
     $getRoot,
-    $insertNodes,
 }                           from 'lexical'
 import {
     $generateNodesFromDOM,
@@ -51,11 +50,9 @@ const InitialValuePlugin = ({initialValue, defaultValue}: InitialValuePluginProp
             const htmlDom = (new DOMParser()).parseFromString(htmlString, 'text/html');
             const nodes   = $generateNodesFromDOM(editor, htmlDom);
             
-            // select the root:
-            $getRoot().select();
-            
-            // insert them at a selection:
-            $insertNodes(nodes);
+            $getRoot()
+            .clear()
+            .append(...nodes);
         });
     }, []); // runs once on startup
     
