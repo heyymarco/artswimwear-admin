@@ -129,10 +129,9 @@ export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
         // bases:
         Omit<BasicProps<TElement>,
             // values:
-            |'defaultValue'   // taken over by EditorProps
-            |'value'          // taken over by EditorProps
-            |'onChange'       // taken over by EditorProps
-            |'onChangeAsText' // taken over by EditorProps
+            |'defaultValue' // taken over by EditorProps
+            |'value'        // taken over by EditorProps
+            |'onChange'     // taken over by EditorProps
         >,
         Pick<EditorProps<TElement, string>,
             // accessibilities:
@@ -141,10 +140,9 @@ export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
             
             
             // values:
-            |'defaultValue'   // take
-            |'value'          // take
-            |'onChange'       // take
-            |'onChangeAsText' // take
+            |'defaultValue' // take
+            |'value'        // take
+            |'onChange'     // take
         >,
         
         // components:
@@ -170,7 +168,6 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         defaultValue,
         value,
         onChange,
-        onChangeAsText,
         
         
         
@@ -195,7 +192,7 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
     const prevValueCache = useRef<string|undefined>(undefined);
     const handleValueChange = useEvent<Parameters<typeof OnChangePlugin>[0]['onChange']>((editorState, editor) => {
         // conditions:
-        if (!onChange && !onChangeAsText) return; // onChange|onChangeAsText handler is not set => ignore
+        if (!onChange) return; // onChange handler is not set => ignore
         
         
         
@@ -210,8 +207,7 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
             const htmlString = $generateHtmlFromNodes(editor);
             prevValueCache.current = htmlString; // sync
             if (!isInit) {
-                onChange?.(htmlString);
-                onChangeAsText?.(htmlString);
+                onChange(htmlString);
             } // if
         });
     });
