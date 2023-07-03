@@ -27,6 +27,7 @@ import {
     // hooks:
     $getSelection,
     $isRangeSelection,
+    $applyNodeReplacement,
     $createParagraphNode,
     $getNodeByKey,
     
@@ -41,6 +42,16 @@ import {
     FORMAT_TEXT_COMMAND,
     FORMAT_ELEMENT_COMMAND,
 }                           from 'lexical'
+import {
+    $isParentElementRTL,
+    $wrapNodes,
+    $isAtNodeEnd
+}                           from '@lexical/selection'
+import {
+    $createHeadingNode,
+    $createQuoteNode,
+    $isHeadingNode
+}                           from '@lexical/rich-text'
 import {
     // hooks:
     $getNearestNodeOfType,
@@ -167,6 +178,23 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
     const handleRedo = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
         editor.dispatchCommand(REDO_COMMAND, undefined);
     });
+    const handleChangeHeading = useEvent<NonNullable<BasicHeadingEditorProps<Element>['onChange']>>((value) => {
+        editor.update(() => {
+            // conditions:
+            const selection = $getSelection();
+            if (!$isRangeSelection(selection)) return;
+            
+            
+            
+            // actions:
+            if (!value) {
+                $wrapNodes(selection, () => $createParagraphNode());
+            }
+            else {
+                $wrapNodes(selection, () => $createHeadingNode(value));
+            } // if
+        });
+    });
     
     
     
@@ -222,6 +250,11 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
             {
                 // basic variant props:
                 ...basicVariantProps,
+                
+                
+                
+                // handlers:
+                onChange : useMergeEvents(headingEditor.props.onChange, handleChangeHeading),
             },
         ),
     );
