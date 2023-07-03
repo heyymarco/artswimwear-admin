@@ -4,26 +4,23 @@ import {
     default as React,
 }                           from 'react'
 
-// internals:
-import type {
-    // react components:
-    EditorProps,
-}                           from '@/components/editors/Editor'
-
 
 
 // react components:
 export interface PlaceholderProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        React.HTMLAttributes<TElement>,
-        Pick<EditorProps,
-            // accessibilities:
-            |'placeholder'
+        Omit<React.HTMLAttributes<TElement>,
+            |'placeholder' // replaced by a more specific type
         >
 {
+    // accessibilities:
+    placeholder          ?: React.ReactNode
+    
+    
+    
     // components:
-    placeholderComponent   ?: React.ReactComponentElement<any, React.HTMLAttributes<TElement>>
+    placeholderComponent ?: React.ReactComponentElement<any, React.HTMLAttributes<TElement>>
 }
 const Placeholder = <TElement extends Element = HTMLElement>(props: PlaceholderProps<TElement>): JSX.Element|null => {
     // rest props:
