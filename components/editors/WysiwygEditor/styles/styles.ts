@@ -39,12 +39,10 @@ import {
 // reusable-ui components:
 import {
     // styles:
-    onContentStylesChange,
-    ContentChildrenMediaOptions,
-    usesContentChildrenMediaOptions,
-    usesContentLayout,
-    usesContentVariants,
-}                           from '@reusable-ui/content'         // a base component
+    onBasicStylesChange,
+    usesBasicLayout,
+    usesBasicVariants,
+}                           from '@reusable-ui/basic'         // a base component
 
 // internals:
 import {
@@ -55,10 +53,10 @@ import {
 
 
 
-export const usesWysiwygEditorLayout = (options?: ContentChildrenMediaOptions) => {
+export const usesWysiwygEditorLayout = () => {
     return style({
         // layouts:
-        ...usesContentLayout(),
+        ...usesBasicLayout(),
         ...style({
             
             
@@ -79,7 +77,7 @@ export const usesWysiwygEditorVariants = () => {
     
     return style({
         // variants:
-        ...usesContentVariants(),
+        ...usesBasicVariants(),
         ...resizableRule(),
     });
 };

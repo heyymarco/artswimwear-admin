@@ -33,8 +33,12 @@ import {
 }                           from '@reusable-ui/basic'           // a base component
 import {
     // react components:
+    Group,
+}                           from '@reusable-ui/group'           // a base component
+import {
+    // react components:
     Content,
-}                           from '@reusable-ui/content'         // a base component
+}                           from '@reusable-ui/content'         // a complement component
 
 // lexical functions:
 import {
@@ -257,7 +261,7 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         
         
         // components:
-        basicComponent       = (<Basic<TElement> /> as React.ReactComponentElement<any, BasicProps<TElement>>),
+        basicComponent       = (<Group<TElement> orientation='block' /> as React.ReactComponentElement<any, BasicProps<TElement>>),
         editorComponent      = (<Content<TElement> /> as React.ReactComponentElement<any, BasicProps<TElement>>),
         placeholderComponent,
         
@@ -481,13 +485,8 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
                     
                     
                     
-                    // variants:
-                    nude      : basicComponent.props.nude      ?? props.nude      ?? true,
-                    
-                    
-                    
                     // classes:
-                    mainClass : basicComponent.props.mainClass ?? props.mainClass ?? styleSheet.main,
+                    // mainClass : basicComponent.props.mainClass ?? props.mainClass ?? styleSheet.main,
                 },
                 
                 
