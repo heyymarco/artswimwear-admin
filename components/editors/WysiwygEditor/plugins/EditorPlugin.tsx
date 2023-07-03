@@ -142,7 +142,7 @@ const EditorPlugin = <TElement extends Element = HTMLElement>(props: EditorPlugi
             
             
             // classes:
-            mainClass : basicComponent.props.mainClass ?? styleSheet.main,
+            mainClass : basicComponent.props.mainClass ?? props.mainClass ?? styleSheet.main,
         },
         
         
@@ -173,11 +173,11 @@ const EditorPlugin = <TElement extends Element = HTMLElement>(props: EditorPlugi
         <RichTextPlugin
             // UIs:
             ErrorBoundary   = {LexicalErrorBoundary}
-            contentEditable = {<ContentEditable className='editorInput' />}
+            contentEditable = {<ContentEditable className='editable' />}
             placeholder     = {
                 <Placeholder
                     // classes:
-                    className='editorPlaceholder'
+                    className='placeholder'
                     
                     
                     

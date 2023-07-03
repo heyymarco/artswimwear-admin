@@ -2,9 +2,11 @@
 import {
     // writes css in javascript:
     rule,
-    fallback,
+    variants,
     children,
     style,
+    scope,
+    mainScope,
     
     
     
@@ -20,15 +22,8 @@ import {
 
 // reusable-ui core:
 import {
-    // removes browser's default stylesheet:
-    stripoutList,
-    stripoutScrollbar,
-    stripoutMedia,
-    
-    
-    
-    // padding (inner spacing) stuff of UI:
-    usesPadding,
+    // border (stroke) stuff of UI:
+    usesBorder,
     
     
     
@@ -40,11 +35,19 @@ import {
 import {
     // styles:
     onContentStylesChange,
+    ContentChildrenMediaOptions,
+    usesContentChildrenMediaOptions,
     usesContentLayout,
     usesContentVariants,
+    usesContentChildren,
 }                           from '@reusable-ui/content'         // a base component
 
 // internals:
+import {
+    // elements:
+    editableElm,
+    placeholderElm,
+}                           from './elements'
 import {
     // configs:
     wysiwygEditors,
@@ -53,21 +56,40 @@ import {
 
 
 
-export const usesWysiwygEditorLayout = () => {
+// styles:
+export const onCarouselStylesChange = watchChanges(onContentStylesChange, cssWysiwygEditorConfig.onChange);
+
+
+
+export const usesEditableLayout = () => {
+    // dependencies:
+    
+    // features:
+    const {borderRule: editableBorderRule} = usesBorder({
+        borderWidth : '0px',
+    });
+    
+    
+    
     return style({
-        // layouts:
-        ...usesContentLayout(),
-        ...style({
+        // children:
+        ...children(editableElm, {
+            // layouts:
+            ...usesContentLayout(),
+            ...style({
+                // customize:
+                ...usesCssProps(wysiwygEditors), // apply config's cssProps
+            }),
             
             
             
-            // customize:
-            ...usesCssProps(wysiwygEditors), // apply config's cssProps
+            // features:
+            ...editableBorderRule(), // must be placed at the last
         }),
     });
 };
 
-export const usesWysiwygEditorVariants = () => {
+export const usesEditableVariants = () => {
     // dependencies:
     
     // variants:
@@ -76,16 +98,32 @@ export const usesWysiwygEditorVariants = () => {
     
     
     return style({
-        // variants:
-        ...usesContentVariants(),
-        ...resizableRule(),
+        // children:
+        ...children(editableElm, {
+            // variants:
+            ...usesContentVariants(),
+            ...resizableRule(),
+        }),
+    });
+};
+
+export const usesEditableChildren = () => {
+    return style({
+        // children:
+        ...children(editableElm, {
+            // children:
+            ...usesContentChildren(),
+        }),
     });
 };
 
 export default () => style({
     // layouts:
-    ...usesWysiwygEditorLayout(),
+    ...usesEditableLayout(),
     
     // variants:
-    ...usesWysiwygEditorVariants(),
+    ...usesEditableVariants(),
+    
+    // children:
+    ...usesEditableChildren(),
 });

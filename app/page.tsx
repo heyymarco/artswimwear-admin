@@ -105,6 +105,17 @@ export default function Home() {
                     />
                 </WysiwygEditor>
                 <hr />
+                <WysiwygEditor
+                    // variants:
+                    theme='primary'
+                >
+                    <ToolbarPlugin />
+                    <EditorPlugin
+                        // accessibilities:
+                        placeholder='Type product description here...'
+                    />
+                </WysiwygEditor>
+                <hr />
                 <div>
                     {value}
                 </div>
