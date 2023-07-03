@@ -1,5 +1,10 @@
 // cssfn:
 import {
+    // cssfn css specific types:
+    CssKnownProps,
+    
+    
+    
     // reads/writes css variables configuration:
     cssConfig,
 }                           from '@cssfn/core'                  // writes css in javascript
@@ -9,6 +14,7 @@ import {
 // configs:
 export const [wysiwygEditors, wysiwygEditorValues, cssWysiwygEditorConfig] = cssConfig(() => {
     return {
-        /* no config props yet */
+        // appearances:
+        placeholderOpacity : 0.5    as CssKnownProps['opacity'],
     };
-}, { prefix: 'crsl' });
+}, { prefix: 'wysiwyg' });
