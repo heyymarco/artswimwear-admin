@@ -70,13 +70,18 @@ import {
     // react components:
     ButtonIcon,
 }                           from '@reusable-ui/button-icon'     // a button component with a nice icon
+import {
+    // react components:
+    GroupProps,
+    Group,
+}                           from '@reusable-ui/group'           // groups a list of components as a single component
 
 // internals:
 import {
     // react components:
-    HeadingOptionsEditorProps,
-    HeadingOptionsEditor,
-}                           from './HeadingOptionsEditor'
+    BasicHeadingEditorProps,
+    HeadingEditor,
+}                           from './HeadingEditor'
 
 
 
@@ -95,16 +100,12 @@ export interface ToolbarPluginProps<TElement extends Element = HTMLElement>
             |'role' // we redefined [role] in <Generic>
         >
 {
-    // accessibilities:
-    labelUndo           ?: string
-    labelRedo           ?: string
-    
-    
-    
     // components:
-    component           ?: React.ReactComponentElement<any, React.HTMLAttributes<TElement>>
-    undoButtonComponent ?: ButtonComponentProps['buttonComponent']
-    redoButtonComponent ?: ButtonComponentProps['buttonComponent']
+    component              ?: React.ReactComponentElement<any, React.HTMLAttributes<TElement>>
+    undoRedoGroupComponent ?: React.ReactComponentElement<any, GroupProps<Element>>
+    undoButtonComponent    ?: ButtonComponentProps['buttonComponent']
+    redoButtonComponent    ?: ButtonComponentProps['buttonComponent']
+    headingEditor          ?: React.ReactComponentElement<any, BasicHeadingEditorProps<Element>>
 }
 const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPluginProps<TElement>): JSX.Element|null => {
     // basic variant props:
@@ -114,16 +115,12 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
     
     // rest props:
     const {
-        // accessibilities:
-        labelUndo,
-        labelRedo,
-        
-        
-        
         // components:
-        component           = (<div /> as React.ReactComponentElement<any, React.HTMLAttributes<TElement>>),
-        undoButtonComponent = (<ButtonIcon icon='undo' /> as React.ReactComponentElement<any, ButtonProps>),
-        redoButtonComponent = (<ButtonIcon icon='redo' /> as React.ReactComponentElement<any, ButtonProps>),
+        component              = (<div />                                 as React.ReactComponentElement<any, React.HTMLAttributes<TElement>>),
+        undoRedoGroupComponent = (<Group />                               as React.ReactComponentElement<any, GroupProps<Element>>),
+        undoButtonComponent    = (<ButtonIcon icon='undo' title='undo' /> as React.ReactComponentElement<any, ButtonProps>),
+        redoButtonComponent    = (<ButtonIcon icon='redo' title='redo' /> as React.ReactComponentElement<any, ButtonProps>),
+        headingEditor          = (<HeadingEditor />                       as React.ReactComponentElement<any, BasicHeadingEditorProps<Element>>),
     ...restElementProps} = props;
     
     
@@ -185,36 +182,48 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
         
         
         // children:
-        React.cloneElement<ButtonProps>(undoButtonComponent,
+        React.cloneElement<GroupProps<Element>>(undoRedoGroupComponent,
             // props:
             {
-                // accessibilities:
-                enabled : undoButtonComponent.props.enabled ?? canUndo,
-                title   : undoButtonComponent.props.title   ?? labelUndo,
-                
-                
-                
-                // handlers:
-                onClick : useMergeEvents(undoButtonComponent.props.onClick, handleUndo),
+                // basic variant props:
+                ...basicVariantProps,
             },
+            
+            
+            
+            // children:
+            React.cloneElement<ButtonProps>(undoButtonComponent,
+                // props:
+                {
+                    // accessibilities:
+                    enabled : undoButtonComponent.props.enabled ?? canUndo,
+                    
+                    
+                    
+                    // handlers:
+                    onClick : useMergeEvents(undoButtonComponent.props.onClick, handleUndo),
+                },
+            ),
+            React.cloneElement<ButtonProps>(redoButtonComponent,
+                // props:
+                {
+                    // accessibilities:
+                    enabled : redoButtonComponent.props.enabled ?? canRedo,
+                    
+                    
+                    
+                    // handlers:
+                    onClick : useMergeEvents(redoButtonComponent.props.onClick, handleRedo),
+                },
+            ),
         ),
-        React.cloneElement<ButtonProps>(redoButtonComponent,
+        React.cloneElement<BasicHeadingEditorProps<Element>>(headingEditor,
             // props:
             {
-                // accessibilities:
-                enabled : redoButtonComponent.props.enabled ?? canRedo,
-                title   : redoButtonComponent.props.title   ?? labelRedo,
-                
-                
-                
-                // handlers:
-                onClick : useMergeEvents(redoButtonComponent.props.onClick, handleRedo),
+                // basic variant props:
+                ...basicVariantProps,
             },
         ),
-        <HeadingOptionsEditor
-            // basic variant props:
-            {...basicVariantProps}
-        />
     );
 };
 export {

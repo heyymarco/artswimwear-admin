@@ -20,6 +20,14 @@ import {
 // reusable-ui components:
 import type {
     // react components:
+    GenericProps,
+}                           from '@reusable-ui/generic'         // an unstyled basic building block of Reusable-UI components
+import type {
+    // react components:
+    BasicProps,
+}                           from '@reusable-ui/basic'           // a styled basic building block of Reusable-UI components
+import type {
+    // react components:
     ButtonProps,
 }                           from '@reusable-ui/button'          // a button component for initiating an action
 import {
@@ -67,7 +75,17 @@ const _defaultValue : BlockOption|null = null;
 
 
 // react components:
-export interface HeadingOptionsEditorProps<TElement extends Element = HTMLElement>
+export type BasicHeadingEditorProps<TElement extends Element = HTMLElement> =
+    &Pick<EditorProps<TElement, BlockOption|null>,
+        // values:
+        |'defaultValue'
+        |'value'
+        |'onChange'
+    >
+    &Omit<BasicProps<TElement>,
+        |keyof GenericProps
+    >
+export interface HeadingEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
         Omit<DropdownListButtonProps,
@@ -76,12 +94,7 @@ export interface HeadingOptionsEditorProps<TElement extends Element = HTMLElemen
             |'value'
             |'onChange'
         >,
-        Pick<EditorProps<TElement, BlockOption|null>,
-            // values:
-            |'defaultValue'
-            |'value'
-            |'onChange'
-        >
+        BasicHeadingEditorProps<TElement>
 {
     // options:
     headingNone ?: string
@@ -92,7 +105,7 @@ export interface HeadingOptionsEditorProps<TElement extends Element = HTMLElemen
     heading5    ?: string
     heading6    ?: string
 }
-const HeadingOptionsEditor = <TElement extends Element = HTMLElement>(props: HeadingOptionsEditorProps<TElement>): JSX.Element|null => {
+const HeadingEditor = <TElement extends Element = HTMLElement>(props: HeadingEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // values:
@@ -206,6 +219,6 @@ const HeadingOptionsEditor = <TElement extends Element = HTMLElement>(props: Hea
     );
 };
 export {
-    HeadingOptionsEditor,
-    HeadingOptionsEditor as default,
+    HeadingEditor,
+    HeadingEditor as default,
 }
