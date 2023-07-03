@@ -39,10 +39,10 @@ import {
 // reusable-ui components:
 import {
     // styles:
-    onBasicStylesChange,
-    usesBasicLayout,
-    usesBasicVariants,
-}                           from '@reusable-ui/basic'         // a base component
+    onContentStylesChange,
+    usesContentLayout,
+    usesContentVariants,
+}                           from '@reusable-ui/content'         // a base component
 
 // internals:
 import {
@@ -56,7 +56,7 @@ import {
 export const usesWysiwygEditorLayout = () => {
     return style({
         // layouts:
-        ...usesBasicLayout(),
+        ...usesContentLayout(),
         ...style({
             
             
@@ -77,7 +77,7 @@ export const usesWysiwygEditorVariants = () => {
     
     return style({
         // variants:
-        ...usesBasicVariants(),
+        ...usesContentVariants(),
         ...resizableRule(),
     });
 };

@@ -10,12 +10,6 @@ import {
     useRef,
 }                           from 'react'
 
-// cssfn:
-import {
-    // style sheets:
-    dynamicStyleSheet,
-}                           from '@cssfn/cssfn-react'           // writes css in react hook
-
 // reusable-ui core:
 import {
     // react helper hooks:
@@ -27,7 +21,6 @@ import {
 import {
     // react components:
     BasicProps,
-    Basic,
     
     BasicComponentProps,
 }                           from '@reusable-ui/basic'           // a base component
@@ -44,15 +37,9 @@ import {
 import {
     // types:
     EditorThemeClasses,
-    
-    
-    
-    // hooks:
-    $getRoot,
 }                           from 'lexical'
 import {
     $generateHtmlFromNodes,
-    $generateNodesFromDOM,
 }                           from '@lexical/html'
 
 // texts:
@@ -98,9 +85,6 @@ import {
     LexicalComposer,
 }                           from '@lexical/react/LexicalComposer'
 import {
-    useLexicalComposerContext,
-}                           from '@lexical/react/LexicalComposerContext'
-import {
     // calls onChange whenever Lexical state is updated.
     OnChangePlugin,
 }                           from '@lexical/react/LexicalOnChangePlugin'
@@ -114,46 +98,6 @@ import {
     AutoFocusPlugin,
 }                           from '@lexical/react/LexicalAutoFocusPlugin'
 
-// UIs:
-import
-    // react components:
-    LexicalErrorBoundary
-                            from '@lexical/react/LexicalErrorBoundary'
-import {
-    // react components:
-    ContentEditable,
-}                           from '@lexical/react/LexicalContentEditable'
-
-// texts:
-// import {
-//     // plain text editing, including typing, deletion and copy/pasting.
-//     PlainTextPlugin,
-// }                           from '@lexical/react/LexicalPlainTextPlugin'
-import {
-    // rich text editing, including typing, deletion, copy/pasting, indent/outdent and bold/italic/underline/strikethrough text formatting.
-    RichTextPlugin,
-}                           from '@lexical/react/LexicalRichTextPlugin'
-import {
-    // allows tab indentation in combination with `<RichTextPlugin>`.
-    TabIndentationPlugin,
-}                           from '@lexical/react/LexicalTabIndentationPlugin'
-
-// resources:
-import {
-    // adds support for links, including toggleLink command support that toggles link for selected text.
-    LinkPlugin,
-}                           from '@lexical/react/LexicalLinkPlugin'
-
-// layouts:
-import {
-    // adds support for lists (ordered and unordered).
-    ListPlugin,
-}                           from '@lexical/react/LexicalListPlugin'
-import {
-    // adds support for tables.
-    TablePlugin,
-}                           from '@lexical/react/LexicalTablePlugin'
-
 // internals:
 import type {
     // react components:
@@ -166,18 +110,6 @@ import {
     InitialValuePlugin,
 }                           from './plugins/InitialValuePlugin'
 
-// UIs:
-import {
-    // react components:
-    PlaceholderProps,
-    Placeholder,
-}                           from './Placeholder'
-import {
-    // react components:
-    ToolbarPluginProps,
-    ToolbarPlugin,
-}                           from'./plugins/ToolbarPlugin'
-
 // resources:
 // import
 //     // auto converts link-like-texts to links.
@@ -188,13 +120,6 @@ import {
 // import
 //     CodeHighlightPlugin
 //                             from './plugins/CodeHighlightPlugin'
-
-
-
-// styles:
-export const useWysiwygEditorStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */ './styles/styles')
-, { id: 't2rmjcho6i' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 
 
 
@@ -210,6 +135,11 @@ export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
             |'onChangeAsText' // taken over by EditorProps
         >,
         Pick<EditorProps<TElement, string>,
+            // accessibilities:
+            |'autoFocus'
+            
+            
+            
             // values:
             |'defaultValue'   // take
             |'value'          // take
@@ -218,37 +148,21 @@ export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
         >,
         
         // components:
-        BasicComponentProps<TElement>,
-        Pick<PlaceholderProps,
-            // accessibilities:
-            |'autoFocus'
-            |'placeholder'
-            
-            
-            
-            // components:
-            |'placeholderComponent'
-        >
+        BasicComponentProps<TElement>
 {
     // components:
     editorComponent ?: BasicComponentProps['basicComponent']
     
     
     
-    // children:
+    // plugins:
     children        ?: React.ReactNode
 }
 const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEditorProps<TElement>): JSX.Element|null => {
-    // styles:
-    const styleSheet = useWysiwygEditorStyleSheet();
-    
-    
-    
     // rest props:
     const {
         // accessibilities:
         autoFocus,
-        placeholder,
         
         
         
@@ -261,14 +175,13 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         
         
         // components:
-        basicComponent       = (<Group<TElement> orientation='block' /> as React.ReactComponentElement<any, BasicProps<TElement>>),
-        editorComponent      = (<Content<TElement> /> as React.ReactComponentElement<any, BasicProps<TElement>>),
-        placeholderComponent,
+        basicComponent  = (<Group<TElement> orientation='block' /> as React.ReactComponentElement<any, BasicProps<TElement>>),
+        editorComponent = (<Content<TElement> /> as React.ReactComponentElement<any, BasicProps<TElement>>),
         
         
         
-        // children:
-        children,
+        // plugins:
+        children : plugins,
     ...restBasicProps} = props;
     
     
@@ -482,100 +395,12 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
                     // other props:
                     ...restBasicProps,
                     ...basicComponent.props, // overwrites restBasicProps (if any conflics)
-                    
-                    
-                    
-                    // classes:
-                    // mainClass : basicComponent.props.mainClass ?? props.mainClass ?? styleSheet.main,
                 },
                 
                 
                 
                 // children:
-                children,
-                React.cloneElement<BasicProps<Element>>(editorComponent,
-                    // props:
-                    {
-                        className : editorComponent.props.className ?? 'editorInner',
-                    },
-                    
-                    
-                    
-                    // children:
-                    
-                    // texts:
-                    
-                    // plain text editing, including typing, deletion and copy/pasting.
-                    /* <PlainTextPlugin
-                        // UIs:
-                        ErrorBoundary   = {LexicalErrorBoundary}
-                        contentEditable = {<ContentEditable />}
-                        placeholder     = {
-                            <Placeholder
-                                // accessibilities:
-                                placeholder={placeholder}
-                                
-                                
-                                
-                                // components:
-                                placeholderComponent={placeholderComponent}
-                            />
-                        }
-                    /> */
-                    
-                    // rich text editing, including typing, deletion, copy/pasting, indent/outdent and bold/italic/underline/strikethrough text formatting.
-                    <RichTextPlugin
-                        // UIs:
-                        ErrorBoundary   = {LexicalErrorBoundary}
-                        contentEditable = {<ContentEditable className='editorInput' />}
-                        placeholder     = {
-                            <Placeholder
-                                // classes:
-                                className='editorPlaceholder'
-                                
-                                
-                                
-                                // accessibilities:
-                                placeholder={placeholder}
-                                
-                                
-                                
-                                // components:
-                                placeholderComponent={placeholderComponent}
-                            />
-                        }
-                    />,
-                    
-                    // allows tab indentation in combination with `<RichTextPlugin>`.
-                    <TabIndentationPlugin />,
-                    
-                    
-                    
-                    // resources:
-                    
-                    // adds support for links, including toggleLink command support that toggles link for selected text.
-                    <LinkPlugin />,
-                    
-                    // auto converts link-like-texts to links.
-                    /* <AutoLinkPlugin />, */
-                    
-                    
-                    
-                    // layouts:
-                    
-                    // adds support for lists (ordered and unordered).
-                    <ListPlugin />,
-                    
-                    // adds support for tables.
-                    <TablePlugin />,
-                    
-                    
-                    
-                    // identifiers:
-                    
-                    // codes:
-                    /* <CodeHighlightPlugin />, */
-                ),
+                plugins,
             )}
         </LexicalComposer>
     );
