@@ -149,9 +149,11 @@ import {
     PlaceholderProps,
     Placeholder,
 }                           from './Placeholder'
-// import
-//     ToolbarPlugin
-//                             from'./plugins/ToolbarPlugin'
+import {
+    // react components:
+    ToolbarPluginProps,
+    ToolbarPlugin,
+}                           from'./plugins/ToolbarPlugin'
 
 // resources:
 // import
@@ -188,6 +190,18 @@ export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
             
             // components:
             |'placeholderComponent'
+        >,
+        Pick<ToolbarPluginProps,
+            // accessibilities:
+            |'labelUndo'
+            |'labelRedo'
+            
+            
+            
+            // components:
+            |'toolbarComponent'
+            |'undoButtonComponent'
+            |'redoButtonComponent'
         >
 {
 }
@@ -197,6 +211,8 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         // accessibilities:
         autoFocus,
         placeholder,
+        labelUndo,
+        labelRedo,
         
         
         
@@ -210,6 +226,9 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         
         // components:
         placeholderComponent,
+        toolbarComponent,
+        undoButtonComponent,
+        redoButtonComponent,
     ...restEditorProps} = props;
     
     
@@ -418,7 +437,20 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
             
             {/* elements: */}
             <div className='editorContainer'>
-                {/* <ToolbarPlugin /> */}
+                
+                <ToolbarPlugin
+                    // accessibilities:
+                    labelUndo={labelUndo}
+                    labelRedo={labelRedo}
+                    
+                    
+                    
+                    // components:
+                    toolbarComponent={toolbarComponent}
+                    undoButtonComponent={undoButtonComponent}
+                    redoButtonComponent={redoButtonComponent}
+                />
+                
                 <div className='editorInner'>
                     {/* texts: */}
                     
