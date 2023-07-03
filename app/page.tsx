@@ -105,7 +105,7 @@ export default function Home() {
                     />
                 </WysiwygEditor>
                 <hr />
-                <WysiwygEditor
+                {/* <WysiwygEditor
                     // variants:
                     theme='primary'
                 >
@@ -114,7 +114,7 @@ export default function Home() {
                         // accessibilities:
                         placeholder='Type product description here...'
                     />
-                </WysiwygEditor>
+                </WysiwygEditor> */}
                 <hr />
                 <div>
                     {value}
