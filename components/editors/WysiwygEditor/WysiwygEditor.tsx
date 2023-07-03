@@ -28,10 +28,6 @@ import {
     // react components:
     Group,
 }                           from '@reusable-ui/group'           // a base component
-import {
-    // react components:
-    Content,
-}                           from '@reusable-ui/content'         // a complement component
 
 // lexical functions:
 import {
@@ -148,13 +144,8 @@ export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
         // components:
         BasicComponentProps<TElement>
 {
-    // components:
-    editorComponent ?: BasicComponentProps['basicComponent']
-    
-    
-    
     // plugins:
-    children        ?: React.ReactNode
+    children ?: React.ReactNode
 }
 const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEditorProps<TElement>): JSX.Element|null => {
     // rest props:
@@ -172,8 +163,7 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         
         
         // components:
-        basicComponent  = (<Group<TElement> orientation='block' /> as React.ReactComponentElement<any, BasicProps<TElement>>),
-        editorComponent = (<Content<TElement> /> as React.ReactComponentElement<any, BasicProps<TElement>>),
+        basicComponent = (<Group<TElement> orientation='block' /> as React.ReactComponentElement<any, BasicProps<TElement>>),
         
         
         
