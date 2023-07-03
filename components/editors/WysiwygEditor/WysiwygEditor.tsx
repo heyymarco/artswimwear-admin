@@ -10,12 +10,31 @@ import {
     useRef,
 }                           from 'react'
 
+// cssfn:
+import {
+    // style sheets:
+    dynamicStyleSheet,
+}                           from '@cssfn/cssfn-react'           // writes css in react hook
+
 // reusable-ui core:
 import {
     // react helper hooks:
     useEvent,
     useMountedFlag,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
+// reusable-ui components:
+import {
+    // react components:
+    BasicProps,
+    Basic,
+    
+    BasicComponentProps,
+}                           from '@reusable-ui/basic'           // a base component
+import {
+    // react components:
+    Content,
+}                           from '@reusable-ui/content'         // a base component
 
 // lexical functions:
 import {
@@ -168,19 +187,34 @@ import {
 
 
 
+// styles:
+export const useWysiwygEditorStyleSheet = dynamicStyleSheet(
+    () => import(/* webpackPrefetch: true */ './styles/styles')
+, { id: 't2rmjcho6i' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
+
+
+
 // react components:
 export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
+        Omit<BasicProps<TElement>,
+            // values:
+            |'defaultValue'   // taken over by EditorProps
+            |'value'          // taken over by EditorProps
+            |'onChange'       // taken over by EditorProps
+            |'onChangeAsText' // taken over by EditorProps
+        >,
         Pick<EditorProps<TElement, string>,
             // values:
-            |'defaultValue'
-            |'value'
-            |'onChange'
-            |'onChangeAsText'
+            |'defaultValue'   // take
+            |'value'          // take
+            |'onChange'       // take
+            |'onChangeAsText' // take
         >,
         
         // components:
+        BasicComponentProps<TElement>,
         Pick<PlaceholderProps,
             // accessibilities:
             |'autoFocus'
@@ -204,8 +238,15 @@ export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
             |'redoButtonComponent'
         >
 {
+    // components:
+    editorComponent ?: BasicComponentProps['basicComponent']
 }
 const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEditorProps<TElement>): JSX.Element|null => {
+    // styles:
+    const styleSheet = useWysiwygEditorStyleSheet();
+    
+    
+    
     // rest props:
     const {
         // accessibilities:
@@ -225,11 +266,13 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         
         
         // components:
+        basicComponent       = (<Basic<TElement> /> as React.ReactComponentElement<any, BasicProps<TElement>>),
+        editorComponent      = (<Content<TElement> /> as React.ReactComponentElement<any, BasicProps<TElement>>),
         placeholderComponent,
         toolbarComponent,
         undoButtonComponent,
         redoButtonComponent,
-    ...restEditorProps} = props;
+    ...restBasicProps} = props;
     
     
     
@@ -436,9 +479,33 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
             
             
             {/* elements: */}
-            <div className='editorContainer'>
+            {React.cloneElement<BasicProps<TElement>>(basicComponent,
+                // props:
+                {
+                    // other props:
+                    ...restBasicProps,
+                    ...basicComponent.props, // overwrites restBasicProps (if any conflics)
+                    
+                    
+                    
+                    // variants:
+                    nude      : basicComponent.props.nude      ?? props.nude      ?? true,
+                    
+                    
+                    
+                    // classes:
+                    mainClass : basicComponent.props.mainClass ?? props.mainClass ?? styleSheet.main,
+                },
                 
+                
+                
+                // children:
                 <ToolbarPlugin
+                    // classes:
+                    className='editorToolbar'
+                    
+                    
+                    
                     // accessibilities:
                     labelUndo={labelUndo}
                     labelRedo={labelRedo}
@@ -449,13 +516,21 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
                     toolbarComponent={toolbarComponent}
                     undoButtonComponent={undoButtonComponent}
                     redoButtonComponent={redoButtonComponent}
-                />
-                
-                <div className='editorInner'>
-                    {/* texts: */}
+                />,
+                React.cloneElement<BasicProps<Element>>(editorComponent,
+                    // props:
+                    {
+                        className : editorComponent.props.className ?? 'editorInner',
+                    },
                     
-                    {/* plain text editing, including typing, deletion and copy/pasting. */}
-                    {/* <PlainTextPlugin
+                    
+                    
+                    // children:
+                    
+                    // texts:
+                    
+                    // plain text editing, including typing, deletion and copy/pasting.
+                    /* <PlainTextPlugin
                         // UIs:
                         ErrorBoundary   = {LexicalErrorBoundary}
                         contentEditable = {<ContentEditable />}
@@ -470,9 +545,9 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
                                 placeholderComponent={placeholderComponent}
                             />
                         }
-                    /> */}
+                    /> */
                     
-                    {/* rich text editing, including typing, deletion, copy/pasting, indent/outdent and bold/italic/underline/strikethrough text formatting. */}
+                    // rich text editing, including typing, deletion, copy/pasting, indent/outdent and bold/italic/underline/strikethrough text formatting.
                     <RichTextPlugin
                         // UIs:
                         ErrorBoundary   = {LexicalErrorBoundary}
@@ -493,39 +568,39 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
                                 placeholderComponent={placeholderComponent}
                             />
                         }
-                    />
+                    />,
                     
-                    {/* allows tab indentation in combination with `<RichTextPlugin>`. */}
-                    <TabIndentationPlugin />
-                    
-                    
-                    
-                    {/* resources: */}
-                    
-                    {/* adds support for links, including toggleLink command support that toggles link for selected text. */}
-                    <LinkPlugin />
-                    
-                    {/* auto converts link-like-texts to links. */}
-                    {/* <AutoLinkPlugin /> */}
+                    // allows tab indentation in combination with `<RichTextPlugin>`.
+                    <TabIndentationPlugin />,
                     
                     
                     
-                    {/* layouts: */}
+                    // resources:
                     
-                    {/* adds support for lists (ordered and unordered). */}
-                    <ListPlugin />
+                    // adds support for links, including toggleLink command support that toggles link for selected text.
+                    <LinkPlugin />,
                     
-                    {/* adds support for tables. */}
-                    <TablePlugin />
+                    // auto converts link-like-texts to links.
+                    /* <AutoLinkPlugin />, */
                     
                     
                     
-                    {/* identifiers: */}
+                    // layouts:
                     
-                    {/* codes: */}
-                    {/* <CodeHighlightPlugin /> */}
-                </div>
-            </div>
+                    // adds support for lists (ordered and unordered).
+                    <ListPlugin />,
+                    
+                    // adds support for tables.
+                    <TablePlugin />,
+                    
+                    
+                    
+                    // identifiers:
+                    
+                    // codes:
+                    /* <CodeHighlightPlugin />, */
+                ),
+            )}
         </LexicalComposer>
     );
 };

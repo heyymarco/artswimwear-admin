@@ -89,6 +89,11 @@ export default function Home() {
                     onResolveUrl={resolveMediaUrl<never>}
                 /> */}
                 <WysiwygEditor
+                    // variants:
+                    theme='primary'
+                    
+                    
+                    
                     // accessibilities:
                     placeholder='Type product description here...'
                     
