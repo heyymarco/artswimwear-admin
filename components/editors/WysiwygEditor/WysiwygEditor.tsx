@@ -15,6 +15,11 @@ import {
     // react helper hooks:
     useEvent,
     useMountedFlag,
+    
+    
+    
+    // basic variants of UI:
+    useBasicVariantProps,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -148,6 +153,11 @@ export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
     children ?: React.ReactNode
 }
 const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEditorProps<TElement>): JSX.Element|null => {
+    // basic variant props:
+    const basicVariantProps = useBasicVariantProps(props);
+    
+    
+    
     // rest props:
     const {
         // accessibilities:
@@ -386,7 +396,25 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
                 
                 
                 // children:
-                plugins,
+                React.Children.map(plugins, (plugin) => {
+                    if (!React.isValidElement(plugin)) return plugin; // not an <element> => no modify
+                    
+                    
+                    
+                    // jsx:
+                    return React.cloneElement(plugin,
+                        // props:
+                        {
+                            // basic variant props:
+                            ...basicVariantProps,
+                            
+                            
+                            
+                            // other props:
+                            ...plugin.props,
+                        },
+                    );
+                }),
             )}
         </LexicalComposer>
     );

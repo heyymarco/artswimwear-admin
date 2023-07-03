@@ -15,6 +15,11 @@ import {
     // react helper hooks:
     useEvent,
     useMergeEvents,
+    
+    
+    
+    // basic variants of UI:
+    useBasicVariantProps,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // lexical functions:
@@ -50,6 +55,11 @@ import {
     useLexicalComposerContext,
 }                           from '@lexical/react/LexicalComposerContext'
 
+// reusable-ui components:
+import {
+    // react components:
+    BasicProps,
+}                           from '@reusable-ui/basic'           // a base component
 import type {
     // react components:
     ButtonProps,
@@ -60,6 +70,13 @@ import {
     // react components:
     ButtonIcon,
 }                           from '@reusable-ui/button-icon'     // a button component with a nice icon
+
+// internals:
+import {
+    // react components:
+    HeadingOptionsEditorProps,
+    HeadingOptionsEditor,
+}                           from './HeadingOptionsEditor'
 
 
 
@@ -72,7 +89,11 @@ const LOW_PRIORITY = 1;
 export interface ToolbarPluginProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        React.HTMLAttributes<TElement>
+        BasicProps<TElement>,
+        Omit<React.HTMLAttributes<TElement>,
+            // semantics:
+            |'role' // we redefined [role] in <Generic>
+        >
 {
     // accessibilities:
     labelUndo           ?: string
@@ -86,6 +107,11 @@ export interface ToolbarPluginProps<TElement extends Element = HTMLElement>
     redoButtonComponent ?: ButtonComponentProps['buttonComponent']
 }
 const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPluginProps<TElement>): JSX.Element|null => {
+    // basic variant props:
+    const basicVariantProps = useBasicVariantProps(props);
+    
+    
+    
     // rest props:
     const {
         // accessibilities:
@@ -185,6 +211,10 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
                 onClick : useMergeEvents(redoButtonComponent.props.onClick, handleRedo),
             },
         ),
+        <HeadingOptionsEditor
+            // basic variant props:
+            {...basicVariantProps}
+        />
     );
 };
 export {
