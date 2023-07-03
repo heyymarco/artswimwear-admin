@@ -224,22 +224,15 @@ export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
             
             // components:
             |'placeholderComponent'
-        >,
-        Pick<ToolbarPluginProps,
-            // accessibilities:
-            |'labelUndo'
-            |'labelRedo'
-            
-            
-            
-            // components:
-            |'toolbarComponent'
-            |'undoButtonComponent'
-            |'redoButtonComponent'
         >
 {
     // components:
     editorComponent ?: BasicComponentProps['basicComponent']
+    
+    
+    
+    // children:
+    children        ?: React.ReactNode
 }
 const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEditorProps<TElement>): JSX.Element|null => {
     // styles:
@@ -252,8 +245,6 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         // accessibilities:
         autoFocus,
         placeholder,
-        labelUndo,
-        labelRedo,
         
         
         
@@ -269,9 +260,11 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         basicComponent       = (<Basic<TElement> /> as React.ReactComponentElement<any, BasicProps<TElement>>),
         editorComponent      = (<Content<TElement> /> as React.ReactComponentElement<any, BasicProps<TElement>>),
         placeholderComponent,
-        toolbarComponent,
-        undoButtonComponent,
-        redoButtonComponent,
+        
+        
+        
+        // children:
+        children,
     ...restBasicProps} = props;
     
     
@@ -500,23 +493,7 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
                 
                 
                 // children:
-                <ToolbarPlugin
-                    // classes:
-                    className='editorToolbar'
-                    
-                    
-                    
-                    // accessibilities:
-                    labelUndo={labelUndo}
-                    labelRedo={labelRedo}
-                    
-                    
-                    
-                    // components:
-                    toolbarComponent={toolbarComponent}
-                    undoButtonComponent={undoButtonComponent}
-                    redoButtonComponent={redoButtonComponent}
-                />,
+                children,
                 React.cloneElement<BasicProps<Element>>(editorComponent,
                     // props:
                     {

@@ -81,9 +81,9 @@ export interface ToolbarPluginProps<TElement extends Element = HTMLElement>
     
     
     // components:
+    component           ?: React.ReactComponentElement<any, React.HTMLAttributes<TElement>>
     undoButtonComponent ?: ButtonComponentProps['buttonComponent']
     redoButtonComponent ?: ButtonComponentProps['buttonComponent']
-    toolbarComponent    ?: React.ReactComponentElement<any, React.HTMLAttributes<TElement>>
 }
 const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPluginProps<TElement>): JSX.Element|null => {
     // rest props:
@@ -95,7 +95,7 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
         
         
         // components:
-        toolbarComponent    = (<div /> as React.ReactComponentElement<any, React.HTMLAttributes<TElement>>),
+        component           = (<div /> as React.ReactComponentElement<any, React.HTMLAttributes<TElement>>),
         undoButtonComponent = (<ButtonIcon icon='undo' /> as React.ReactComponentElement<any, ButtonProps>),
         redoButtonComponent = (<ButtonIcon icon='redo' /> as React.ReactComponentElement<any, ButtonProps>),
     ...restElementProps} = props;
@@ -148,12 +148,12 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
     
     
     // jsx:
-    return React.cloneElement<React.HTMLAttributes<TElement>>(toolbarComponent,
+    return React.cloneElement<React.HTMLAttributes<TElement>>(component,
         // props:
         {
             // other props:
             ...restElementProps,
-            ...toolbarComponent.props, // overwrites restElementProps (if any conflics)
+            ...component.props, // overwrites restElementProps (if any conflics)
         },
         
         

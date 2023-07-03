@@ -10,7 +10,7 @@ import {
 }                           from '@heymarco/image'
 import axios from 'axios'
 import { resolveMediaUrl } from '@/libs/mediaStorage.client'
-import WysiwygEditor from '@/components/editors/WysiwygEditor';
+import {WysiwygEditor, ToolbarPlugin} from '@/components/editors/WysiwygEditor';
 
 
 
@@ -102,7 +102,9 @@ export default function Home() {
                     // values:
                     value={value}
                     onChange={setValue}
-                />
+                >
+                    <ToolbarPlugin />
+                </WysiwygEditor>
                 <hr />
                 <div>
                     {value}
