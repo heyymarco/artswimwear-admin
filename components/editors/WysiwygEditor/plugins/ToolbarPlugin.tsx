@@ -256,10 +256,6 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
         );
     }, [editor]);
     
-    useEffect(() => {
-        console.log({blockType});
-    }, [blockType]);
-    
     
     
     // handlers:
