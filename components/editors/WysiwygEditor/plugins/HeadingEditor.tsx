@@ -6,46 +6,15 @@ import {
     
     
     // hooks:
-    useState,
     useCallback,
 }                           from 'react'
 
-// reusable-ui core:
-import {
-    // react helper hooks:
-    useEvent,
-    useMergeEvents,
-}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
-
-// reusable-ui components:
-import type {
-    // react components:
-    GenericProps,
-}                           from '@reusable-ui/generic'         // an unstyled basic building block of Reusable-UI components
-import type {
-    // react components:
-    IndicatorProps,
-}                           from '@reusable-ui/indicator'       // a base indicator control of Reusable-UI components
-import type {
-    // react components:
-    ButtonProps,
-}                           from '@reusable-ui/button'          // a button component for initiating an action
-import {
-    // react components:
-    ButtonIcon,
-}                           from '@reusable-ui/button-icon'     // a button component with a nice icon
-
 // internals:
-import type {
-    // react components:
-    EditorProps,
-}                           from '@/components/editors/Editor'
 import {
     // react components:
-    DropdownListButtonProps,
-    DropdownListButton,
-    ListItem,
-}                           from '@reusable-ui/dropdown-list-button'
+    SelectEditorProps,
+    SelectEditor,
+}                           from './SelectEditor'
 
 
 
@@ -69,32 +38,15 @@ const possibleValues : (BlockOption|null)[] = [
 
 
 
-// defaults:
-const _defaultValue : BlockOption|null = null;
-
-
-
 // react components:
-export type BasicHeadingEditorProps<TElement extends Element = HTMLElement> =
-    &Pick<EditorProps<TElement, BlockOption|null>,
-        // values:
-        |'defaultValue'
-        |'value'
-        |'onChange'
-    >
-    &Omit<IndicatorProps<TElement>,
-        |keyof GenericProps
-    >
 export interface HeadingEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Omit<DropdownListButtonProps,
+        Omit<SelectEditorProps<TElement, BlockOption>,
             // values:
-            |'defaultValue'
-            |'value'
-            |'onChange'
-        >,
-        BasicHeadingEditorProps<TElement>
+            |'possibleValues' // overriden internally
+            |'valueToText'    // overriden internally
+        >
 {
     // options:
     headingNone ?: string
@@ -108,13 +60,6 @@ export interface HeadingEditorProps<TElement extends Element = HTMLElement>
 const HeadingEditor = <TElement extends Element = HTMLElement>(props: HeadingEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
-        // values:
-        defaultValue,
-        value,
-        onChange,
-        
-        
-        
         // options:
         headingNone = 'Normal',
         heading1    = 'Heading 1',
@@ -123,44 +68,7 @@ const HeadingEditor = <TElement extends Element = HTMLElement>(props: HeadingEdi
         heading4    = 'Heading 4',
         heading5    = 'Heading 5',
         heading6    = 'Heading 6',
-        
-        
-        
-        // components:
-        buttonComponent = (<ButtonIcon icon='view_headline' /> as React.ReactComponentElement<any, ButtonProps>),
-    ...restDropdownListButtonProps} = props;
-    
-    
-    
-    // states:
-    const isControllableValue = (value !== undefined);
-    const [valueDn, setValueDn] = useState<BlockOption|null>(defaultValue ?? _defaultValue);
-    const valueFn : BlockOption|null = ((value !== undefined) /*controllable*/ ? value : valueDn /*uncontrollable*/);
-    
-    
-    
-    // handlers:
-    const handleChangeInternal = useEvent((value: BlockOption|null) => {
-        // update state:
-        if (!isControllableValue) setValueDn(value);
-    });
-    const handleChange         = useMergeEvents(
-        // preserves the original `onChange` from `props`:
-        onChange,
-        
-        
-        
-        // actions:
-        handleChangeInternal,
-    );
-    
-    
-    
-    // events:
-    const triggerChange = useEvent((value: BlockOption|null): void => {
-        // fire `onChange` react event:
-        handleChange?.(value);
-    });
+    ...restSelectEditorProps} = props;
     
     
     
@@ -188,34 +96,16 @@ const HeadingEditor = <TElement extends Element = HTMLElement>(props: HeadingEdi
     
     // jsx:
     return (
-        <DropdownListButton
+        <SelectEditor<TElement, BlockOption>
             // other props:
-            {...restDropdownListButtonProps}
+            {...restSelectEditorProps}
             
             
             
-            // children:
-            buttonChildren={valueToText(valueFn)}
-        >
-            {possibleValues.map((possibleValue, index) =>
-                <ListItem
-                    // identifiers:
-                    key={index}
-                    
-                    
-                    
-                    // accessibilities:
-                    active={(possibleValue === valueFn)}
-                    
-                    
-                    
-                    // handlers:
-                    onClick={() => triggerChange(possibleValue)}
-                >
-                    {valueToText(possibleValue)}
-                </ListItem>
-            )}
-        </DropdownListButton>
+            // values:
+            possibleValues={possibleValues}
+            valueToText={valueToText}
+        />
     );
 };
 export {
