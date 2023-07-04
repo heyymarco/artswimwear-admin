@@ -219,89 +219,89 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
     
     // configs:
     const theme = useMemo<EditorThemeClasses>(() => ({
-        ltr                        : 'ltr',
-        rtl                        : 'rtl',
+     // ltr                        : 'ltr',
+     // rtl                        : 'rtl',
         
-        placeholder                : 'placeholder',
+     // placeholder                : 'placeholder',
         
         // texts:
         text: {
-            bold                   : 'textBold',
-            italic                 : 'textItalic',
-            underline              : 'textUnderline',
-            strikethrough          : 'textStrikethrough',
-            underlineStrikethrough : 'textUnderlineStrikethrough',
+     //     bold                   : 'b',
+     //     italic                 : 'i',
+            underline              : 'insert',
+            strikethrough          : 'delete',
+            underlineStrikethrough : 'insert delete',
             
-            subscript              : 'textSubscript',
-            superscript            : 'textSuperscript',
+            subscript              : 'subscript',   // TODO: update style
+            superscript            : 'superscript', // TODO: update style
             
-            code                   : 'code',
+     //     code                   : 'code',
         },
-        paragraph                  : 'p',
-        heading: {
-            h1                     : 'h1',
-            h2                     : 'h2',
-            h3                     : 'h3',
-            h4                     : 'h4',
-            h5                     : 'h5',
-            h6                     : 'h6',
-        },
-        quote                      : 'quote',
+     // paragraph                  : 'p',
+     // heading: {
+     //     h1                     : 'h1',
+     //     h2                     : 'h2',
+     //     h3                     : 'h3',
+     //     h4                     : 'h4',
+     //     h5                     : 'h5',
+     //     h6                     : 'h6',
+     // },
+     // quote                      : 'quote',
         
         // resources:
-        link                       : 'link',
-        image                      : 'image',
+        link                       : 'link',  // TODO: update style
+        image                      : 'image', // TODO: update style
         
         // layouts:
-        list: {
-            nested: {
-                listitem           : 'nested-listitem',
-            },
-            ol                     : 'list-ol',
-            ul                     : 'list-ul',
-            listitem               : 'listItem',
-            listitemChecked        : 'listItemChecked',
-            listitemUnchecked      : 'listItemUnchecked',
-        },
-        table                      : 'table',
+     // list: {
+     //     nested: {
+     //         listitem           : 'nested-listitem',
+     //     },
+     //     ol                     : 'list-ol',
+     //     ul                     : 'list-ul',
+     //     listitem               : 'listItem',
+     //     listitemChecked        : 'listItemChecked',
+     //     listitemUnchecked      : 'listItemUnchecked',
+     // },
+     // table                      : 'table',
         
         // identifiers:
-        hashtag                    : 'hashtag',
+     // hashtag                    : 'hashtag',
         
         // codes:
-        code                       : 'code block',
-        codeHighlight: {
-            atrule                 : 'codeAttr',
-            attr                   : 'codeAttr',
-            boolean                : 'codeProperty',
-            builtin                : 'codeSelector',
-            cdata                  : 'codeComment',
-            char                   : 'codeSelector',
-            class                  : 'codeFunction',
-            'class-name'           : 'codeFunction',
-            comment                : 'codeComment',
-            constant               : 'codeProperty',
-            deleted                : 'codeProperty',
-            doctype                : 'codeComment',
-            entity                 : 'codeOperator',
-            function               : 'codeFunction',
-            important              : 'codeVariable',
-            inserted               : 'codeSelector',
-            keyword                : 'codeAttr',
-            namespace              : 'codeVariable',
-            number                 : 'codeProperty',
-            operator               : 'codeOperator',
-            prolog                 : 'codeComment',
-            property               : 'codeProperty',
-            punctuation            : 'codePunctuation',
-            regex                  : 'codeVariable',
-            selector               : 'codeSelector',
-            string                 : 'codeSelector',
-            symbol                 : 'codeProperty',
-            tag                    : 'codeProperty',
-            url                    : 'codeOperator',
-            variable               : 'codeVariable',
-        },
+        code                       : 'block',
+     // codeHighlight: {
+     //     atrule                 : 'codeAttr',
+     //     attr                   : 'codeAttr',
+     //     boolean                : 'codeProperty',
+     //     builtin                : 'codeSelector',
+     //     cdata                  : 'codeComment',
+     //     char                   : 'codeSelector',
+     //     class                  : 'codeFunction',
+     //     'class-name'           : 'codeFunction',
+     //     comment                : 'codeComment',
+     //     constant               : 'codeProperty',
+     //     deleted                : 'codeProperty',
+     //     doctype                : 'codeComment',
+     //     entity                 : 'codeOperator',
+     //     function               : 'codeFunction',
+     //     important              : 'codeVariable',
+     //     inserted               : 'codeSelector',
+     //     keyword                : 'codeAttr',
+     //     namespace              : 'codeVariable',
+     //     number                 : 'codeProperty',
+     //     operator               : 'codeOperator',
+     //     prolog                 : 'codeComment',
+     //     property               : 'codeProperty',
+     //     punctuation            : 'codePunctuation',
+     //     regex                  : 'codeVariable',
+     //     selector               : 'codeSelector',
+     //     string                 : 'codeSelector',
+     //     symbol                 : 'codeProperty',
+     //     tag                    : 'codeProperty',
+     //     url                    : 'codeOperator',
+     //     variable               : 'codeVariable',
+     // },
     }), []);
     
     const initialConfig : InitialConfigType = useMemo(() => ({
