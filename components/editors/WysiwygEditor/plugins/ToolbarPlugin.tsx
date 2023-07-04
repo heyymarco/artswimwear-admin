@@ -107,9 +107,16 @@ import {
 }                           from '@reusable-ui/group'           // groups a list of components as a single component
 
 // internals:
+import type {
+    BasicSelectEditorProps,
+}                           from './SelectEditor'
 import {
+    // types:
+    BlockOption,
+    
+    
+    
     // react components:
-    BasicHeadingEditorProps,
     HeadingEditor,
 }                           from './HeadingEditor'
 
@@ -135,7 +142,7 @@ export interface ToolbarPluginProps<TElement extends Element = HTMLElement>
     undoRedoGroupComponent       ?: React.ReactComponentElement<any, GroupProps<Element>>
     undoButtonComponent          ?: ButtonComponentProps['buttonComponent']
     redoButtonComponent          ?: ButtonComponentProps['buttonComponent']
-    headingEditor                ?: React.ReactComponentElement<any, BasicHeadingEditorProps<Element>>
+    headingEditor                ?: React.ReactComponentElement<any, BasicSelectEditorProps<Element, BlockOption>>
     formatGroupComponent         ?: React.ReactComponentElement<any, GroupProps<Element>>
     boldButtonComponent          ?: ButtonComponentProps['buttonComponent']
     italicButtonComponent        ?: ButtonComponentProps['buttonComponent']
@@ -158,7 +165,7 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
         undoRedoGroupComponent       = (<Group />                                                        as React.ReactComponentElement<any, GroupProps<Element>>),
         undoButtonComponent          = (<ButtonIcon icon='undo'                 title='undo' />          as React.ReactComponentElement<any, ButtonProps>),
         redoButtonComponent          = (<ButtonIcon icon='redo'                 title='redo' />          as React.ReactComponentElement<any, ButtonProps>),
-        headingEditor                = (<HeadingEditor />                                                as React.ReactComponentElement<any, BasicHeadingEditorProps<Element>>),
+        headingEditor                = (<HeadingEditor />                                                as React.ReactComponentElement<any, BasicSelectEditorProps<Element, BlockOption>>),
         formatGroupComponent         = (<Group />                                                        as React.ReactComponentElement<any, GroupProps<Element>>),
         boldButtonComponent          = (<ButtonIcon icon='format_bold'          title='bold' />          as React.ReactComponentElement<any, ButtonProps>),
         italicButtonComponent        = (<ButtonIcon icon='format_italic'        title='italic' />        as React.ReactComponentElement<any, ButtonProps>),
@@ -277,7 +284,7 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
     const handleRedo          = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
         editor.dispatchCommand(REDO_COMMAND, undefined);
     });
-    const handleChangeHeading = useEvent<NonNullable<BasicHeadingEditorProps<Element>['onChange']>>((value) => {
+    const handleChangeHeading = useEvent<NonNullable<BasicSelectEditorProps<Element, BlockOption>['onChange']>>((value) => {
         editor.update(() => {
             // conditions:
             const selection = $getSelection();
@@ -286,13 +293,13 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
             
             
             // actions:
-            if (!value) {
-                $wrapNodes(selection, () => $createParagraphNode());
-                setBlockType('paragraph');
-            }
-            else {
+            if (value) {
                 $wrapNodes(selection, () => $createHeadingNode(value));
                 setBlockType(value);
+            }
+            else {
+                $wrapNodes(selection, () => $createParagraphNode());
+                setBlockType('paragraph');
             } // if
         });
     });
@@ -311,17 +318,21 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
     const handleNumbered      = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
         if (blockType !== 'ol') {
             editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
+            setBlockType('ol');
         }
         else {
             editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+            setBlockType('paragraph');
         } // if
     });
     const handleBulleted      = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
         if (blockType !== 'ul') {
             editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
+            setBlockType('ul');
         }
         else {
             editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+            setBlockType('paragraph');
         } // if
     });
     
@@ -374,7 +385,7 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
                 },
             ),
         ),
-        React.cloneElement<BasicHeadingEditorProps<Element>>(headingEditor,
+        React.cloneElement<BasicSelectEditorProps<Element, BlockOption>>(headingEditor,
             // props:
             {
                 // basic variant props:
