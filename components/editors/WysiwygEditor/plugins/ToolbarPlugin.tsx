@@ -161,6 +161,7 @@ export interface ToolbarPluginProps<TElement extends Element = HTMLElement>
     numberedButtonComponent      ?: ButtonComponentProps['buttonComponent']
     bulletedButtonComponent      ?: ButtonComponentProps['buttonComponent']
     alignmentEditor              ?: React.ReactComponentElement<any, BasicSelectEditorProps<Element, AlignmentOption>>
+    quoteButtonComponent         ?: ButtonComponentProps['buttonComponent']
 }
 const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPluginProps<TElement>): JSX.Element|null => {
     // basic variant props:
@@ -182,9 +183,10 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
         underlineButtonComponent     = (<ButtonIcon icon='format_underline'     title='underline' />     as React.ReactComponentElement<any, ButtonProps>),
         strikethroughButtonComponent = (<ButtonIcon icon='format_strikethrough' title='strikethrough' /> as React.ReactComponentElement<any, ButtonProps>),
         listGroupComponent           = (<Group />                                                        as React.ReactComponentElement<any, GroupProps<Element>>),
-        numberedButtonComponent      = (<ButtonIcon icon='format_list_numbered' title='strikethrough' /> as React.ReactComponentElement<any, ButtonProps>),
-        bulletedButtonComponent      = (<ButtonIcon icon='format_list_bulleted' title='strikethrough' /> as React.ReactComponentElement<any, ButtonProps>),
+        numberedButtonComponent      = (<ButtonIcon icon='format_list_numbered' title='numbered' />      as React.ReactComponentElement<any, ButtonProps>),
+        bulletedButtonComponent      = (<ButtonIcon icon='format_list_bulleted' title='bulleted' />      as React.ReactComponentElement<any, ButtonProps>),
         alignmentEditor              = (<AlignmentEditor />                                              as React.ReactComponentElement<any, BasicSelectEditorProps<Element, AlignmentOption>>),
+        quoteButtonComponent         = (<ButtonIcon icon='format_quote'         title='quote' />         as React.ReactComponentElement<any, ButtonProps>),
     ...restElementProps} = props;
     
     
@@ -357,6 +359,25 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
     const handleChangeAlignment = useEvent<NonNullable<BasicSelectEditorProps<Element, AlignmentOption>['onChange']>>((value) => {
         editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, value ?? '');
         setAlignmentType(value ?? 'auto');
+    });
+    const handleQuote           = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
+        editor.update(() => {
+            // conditions:
+            const selection = $getSelection();
+            if (!$isRangeSelection(selection)) return;
+            
+            
+            
+            // actions:
+            if (blockType !== 'quote') {
+                $wrapNodes(selection, () => $createQuoteNode());
+                setBlockType('quote');
+            }
+            else {
+                $wrapNodes(selection, () => $createParagraphNode());
+                setBlockType('paragraph');
+            } // if
+        });
     });
     
     
@@ -536,6 +557,18 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
                 // values:
                 value    : alignmentEditor.props.value ?? alignmentType as any,
                 onChange : useMergeEvents(alignmentEditor.props.onChange, handleChangeAlignment),
+            },
+        ),
+        React.cloneElement<ButtonProps>(quoteButtonComponent,
+            // props:
+            {
+                // accessibilities:
+                active  : quoteButtonComponent.props.active ?? (blockType === 'quote'),
+                
+                
+                
+                // handlers:
+                onClick : useMergeEvents(quoteButtonComponent.props.onClick, handleQuote),
             },
         ),
     );
