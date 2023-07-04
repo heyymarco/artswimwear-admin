@@ -28,16 +28,6 @@ import {
     
     
     
-    // ring (focus indicator) color of UI:
-    usesRing,
-    
-    
-    
-    // animation stuff of UI:
-    usesAnimation,
-    
-    
-    
     // padding (inner spacing) stuff of UI:
     usesPadding,
     
@@ -45,14 +35,16 @@ import {
     
     // size options of UI:
     usesResizable,
-    
-    
-    
-    // a capability of UI to be focused:
-    usesFocusable,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
+import {
+    // styles:
+    onControlStylesChange,
+    usesControlLayout,
+    usesControlVariants,
+    usesControlStates,
+}                           from '@reusable-ui/control'         // a base component
 import {
     // styles:
     onContentStylesChange,
@@ -76,7 +68,7 @@ import {
 
 
 // styles:
-export const onCarouselStylesChange = watchChanges(onContentStylesChange, cssWysiwygEditorConfig.onChange);
+export const onCarouselStylesChange = watchChanges(onControlStylesChange, onContentStylesChange, cssWysiwygEditorConfig.onChange);
 
 
 
@@ -84,15 +76,14 @@ export const usesEditableLayout = () => {
     // dependencies:
     
     // features:
-    const {borderRule    , borderVars   } = usesBorder({ borderWidth: '0px' });
-    const {ringRule                     } = usesRing(wysiwygEditors);
-    const {animationRule , animationVars} = usesAnimation(wysiwygEditors as any);
-    const {                paddingVars  } = usesPadding();
+    const {borderRule, borderVars } = usesBorder({ borderWidth: '0px' });
+    const {            paddingVars} = usesPadding();
     
     
     
     return style({
         // layouts:
+        ...usesControlLayout(),
         ...usesContentLayout(),
         ...style({
             // layouts:
@@ -101,13 +92,6 @@ export const usesEditableLayout = () => {
             // child default sizes:
             justifyItems : 'stretch', // <editable> & <placeholder> fills the entire area's width
             alignItems   : 'stretch', // <editable> & <placeholder> fills the entire area's height
-            
-            
-            
-            // animations:
-            boxShadow     : animationVars.boxShadow,
-            filter        : animationVars.filter,
-            anim          : animationVars.anim,
             
             
             
@@ -180,12 +164,6 @@ export const usesEditableLayout = () => {
                 ...usesCssProps(usesPrefixedProps(wysiwygEditors, 'placeholder')), // apply config's cssProps starting with placeholder***
             }),
         }),
-        
-        
-        
-        // features:
-        ...ringRule(),      // must be placed at the last
-        ...animationRule(), // must be placed at the last
     });
 };
 
@@ -199,21 +177,13 @@ export const usesEditableVariants = () => {
     
     return style({
         // variants:
+        ...usesControlVariants(),
         ...usesContentVariants(),
         ...resizableRule(),
     });
 };
 
-export const usesEditableStates = () => {
-    // dependencies:
-    
-    // states:
-    const {focusableRule} = usesFocusable(wysiwygEditors);
-    return style({
-        // states:
-        ...focusableRule(),
-    });
-};
+export const usesEditableStates = usesControlStates;
 
 export const usesEditableChildren = () => {
     return style({

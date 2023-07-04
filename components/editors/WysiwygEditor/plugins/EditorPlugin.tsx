@@ -10,30 +10,14 @@ import {
     dynamicStyleSheet,
 }                           from '@cssfn/cssfn-react'                   // writes css in react hook
 
-// reusable-ui core:
-import {
-    // react helper hooks:
-    useMergeEvents,
-    useMergeClasses,
-    
-    
-    
-    // a capability of UI to be focused:
-    FocusableProps,
-    useFocusable,
-}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
-
 // reusable-ui components:
 import {
     // react components:
-    BasicProps,
+    ControlProps,
+    Control,
     
-    BasicComponentProps,
-}                           from '@reusable-ui/basic'           // a base component
-import {
-    // react components:
-    Content,
-}                           from '@reusable-ui/content'         // a complement component
+    ControlComponentProps,
+}                           from '@reusable-ui/control'                 // a base component
 
 // UIs:
 import
@@ -106,16 +90,13 @@ export const useEditorPluginStyleSheet = dynamicStyleSheet(
 export interface EditorPluginProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Omit<BasicProps<TElement>,
+        Omit<ControlProps<TElement>,
             // children:
             |'children' // not supported
         >,
         
-        // states:
-        FocusableProps,
-        
         // components:
-        BasicComponentProps<TElement>,
+        ControlComponentProps<TElement>,
         Pick<PlaceholderProps,
             // accessibilities:
             |'placeholder'
@@ -133,19 +114,6 @@ const EditorPlugin = <TElement extends Element = HTMLElement>(props: EditorPlugi
     
     
     
-    // states:
-    const focusableState = useFocusable<TElement>({
-        enabled            : props.enabled,
-        inheritEnabled     : props.inheritEnabled,
-        
-        tabIndex           : props.tabIndex,
-        
-        focused            : props.focused,
-        assertiveFocusable : props.assertiveFocusable ?? true,
-    });
-    
-    
-    
     // rest props:
     const {
         // accessibilities:
@@ -153,138 +121,30 @@ const EditorPlugin = <TElement extends Element = HTMLElement>(props: EditorPlugi
         
         
         
-        // states:
-        focused            : _focused,            // remove
-        assertiveFocusable : _assertiveFocusable, // remove
-        
-        
-        
         // components:
-        basicComponent = (<Content<TElement> /> as React.ReactComponentElement<any, BasicProps<TElement>>),
+        controlComponent = (<Control<TElement> /> as React.ReactComponentElement<any, ControlProps<TElement>>),
         placeholderComponent,
     ...restBasicProps} = props;
     
     
     
-    // classes:
-    const stateClasses = useMergeClasses(
-        // preserves the original `stateClasses` from `basicComponent`:
-        basicComponent.props.stateClasses,
-        
-        
-        
-        // preserves the original `stateClasses` from `props`:
-        props.stateClasses,
-        
-        
-        
-        // states:
-        focusableState.class,
-    );
-    
-    
-    
-    // handlers:
-    const handleFocus          = useMergeEvents(
-        // preserves the original `onFocus` from `basicComponent`:
-        basicComponent.props.onFocus,
-        
-        
-        
-        // preserves the original `onFocus` from `props`:
-        props.onFocus,
-        
-        
-        
-        // states:
-        focusableState.handleFocus,
-    );
-    const handleBlur           = useMergeEvents(
-        // preserves the original `onBlur` from `basicComponent`:
-        basicComponent.props.onBlur,
-        
-        
-        
-        // preserves the original `onBlur` from `props`:
-        props.onBlur,
-        
-        
-        
-        // states:
-        focusableState.handleBlur,
-    );
-    const handleKeyDown        = useMergeEvents(
-        // preserves the original `onKeyDown` from `basicComponent`:
-        basicComponent.props.onKeyDown,
-        
-        
-        
-        // preserves the original `onKeyDown` from `props`:
-        props.onKeyDown,
-        
-        
-        
-        // states:
-        focusableState.handleKeyDown,
-    );
-    const handleAnimationStart = useMergeEvents(
-        // preserves the original `onAnimationStart` from `basicComponent`:
-        basicComponent.props.onAnimationStart,
-        
-        
-        
-        // preserves the original `onAnimationStart` from `props`:
-        props.onAnimationStart,
-        
-        
-        
-        // states:
-        focusableState.handleAnimationStart,
-    );
-    const handleAnimationEnd   = useMergeEvents(
-        // preserves the original `onAnimationEnd` from `basicComponent`:
-        basicComponent.props.onAnimationEnd,
-        
-        
-        
-        // preserves the original `onAnimationEnd` from `props`:
-        props.onAnimationEnd,
-        
-        
-        
-        // states:
-        focusableState.handleAnimationEnd,
-    );
-    
-    
-    
     // jsx:
-    return React.cloneElement<BasicProps<Element>>(basicComponent,
+    return React.cloneElement<ControlProps<Element>>(controlComponent,
         // props:
         {
             // other props:
             ...restBasicProps,
-            ...basicComponent.props, // overwrites restBasicProps (if any conflics)
+            ...controlComponent.props, // overwrites restBasicProps (if any conflics)
+            
+            
+            
+            // variants:
+            mild      : controlComponent.props.mild      ?? props.mild      ?? true,
             
             
             
             // classes:
-            mainClass    : basicComponent.props.mainClass ?? props.mainClass ?? styleSheet.main,
-            stateClasses : stateClasses,
-            
-            
-            
-            // focusable props:
-            ...focusableState.attributes,
-            
-            
-            
-            // handlers:
-            onFocus          : handleFocus,
-            onBlur           : handleBlur,
-            onKeyDown        : handleKeyDown,
-            onAnimationStart : handleAnimationStart,
-            onAnimationEnd   : handleAnimationEnd,
+            mainClass : controlComponent.props.mainClass ?? props.mainClass ?? styleSheet.main,
         },
         
         
