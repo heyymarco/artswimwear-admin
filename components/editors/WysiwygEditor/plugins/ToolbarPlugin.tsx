@@ -34,6 +34,11 @@ import {
     
     
     
+    // nodes:
+    ElementNode,
+    
+    
+    
     // commands:
     CAN_REDO_COMMAND,
     CAN_UNDO_COMMAND,
@@ -136,6 +141,9 @@ export interface ToolbarPluginProps<TElement extends Element = HTMLElement>
     italicButtonComponent        ?: ButtonComponentProps['buttonComponent']
     underlineButtonComponent     ?: ButtonComponentProps['buttonComponent']
     strikethroughButtonComponent ?: ButtonComponentProps['buttonComponent']
+    listGroupComponent           ?: React.ReactComponentElement<any, GroupProps<Element>>
+    numberedButtonComponent      ?: ButtonComponentProps['buttonComponent']
+    bulletedButtonComponent      ?: ButtonComponentProps['buttonComponent']
 }
 const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPluginProps<TElement>): JSX.Element|null => {
     // basic variant props:
@@ -156,6 +164,9 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
         italicButtonComponent        = (<ButtonIcon icon='format_italic'        title='italic' />        as React.ReactComponentElement<any, ButtonProps>),
         underlineButtonComponent     = (<ButtonIcon icon='format_underline'     title='underline' />     as React.ReactComponentElement<any, ButtonProps>),
         strikethroughButtonComponent = (<ButtonIcon icon='format_strikethrough' title='strikethrough' /> as React.ReactComponentElement<any, ButtonProps>),
+        listGroupComponent           = (<Group />                                                        as React.ReactComponentElement<any, GroupProps<Element>>),
+        numberedButtonComponent      = (<ButtonIcon icon='format_list_numbered' title='strikethrough' /> as React.ReactComponentElement<any, ButtonProps>),
+        bulletedButtonComponent      = (<ButtonIcon icon='format_list_bulleted' title='strikethrough' /> as React.ReactComponentElement<any, ButtonProps>),
     ...restElementProps} = props;
     
     
@@ -297,6 +308,22 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
     const handleStrikethrough = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
         editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
     });
+    const handleNumbered      = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
+        if (blockType !== 'ol') {
+            editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
+        }
+        else {
+            editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+        } // if
+    });
+    const handleBulleted      = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
+        if (blockType !== 'ul') {
+            editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
+        }
+        else {
+            editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+        } // if
+    });
     
     
     
@@ -374,7 +401,7 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
                 // props:
                 {
                     // accessibilities:
-                    active : boldButtonComponent.props.active ?? isBold,
+                    active  : boldButtonComponent.props.active ?? isBold,
                     
                     
                     
@@ -386,7 +413,7 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
                 // props:
                 {
                     // accessibilities:
-                    active : italicButtonComponent.props.active ?? isItalic,
+                    active  : italicButtonComponent.props.active ?? isItalic,
                     
                     
                     
@@ -398,7 +425,7 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
                 // props:
                 {
                     // accessibilities:
-                    active : underlineButtonComponent.props.active ?? isUnderline,
+                    active  : underlineButtonComponent.props.active ?? isUnderline,
                     
                     
                     
@@ -410,12 +437,47 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
                 // props:
                 {
                     // accessibilities:
-                    active : strikethroughButtonComponent.props.active ?? isStrikethrough,
+                    active  : strikethroughButtonComponent.props.active ?? isStrikethrough,
                     
                     
                     
                     // handlers:
                     onClick : useMergeEvents(strikethroughButtonComponent.props.onClick, handleStrikethrough),
+                },
+            ),
+        ),
+        React.cloneElement<GroupProps<Element>>(listGroupComponent,
+            // props:
+            {
+                // basic variant props:
+                ...basicVariantProps,
+            },
+            
+            
+            
+            // children:
+            React.cloneElement<ButtonProps>(numberedButtonComponent,
+                // props:
+                {
+                    // accessibilities:
+                    active  : numberedButtonComponent.props.active ?? (blockType === 'ol'),
+                    
+                    
+                    
+                    // handlers:
+                    onClick : useMergeEvents(numberedButtonComponent.props.onClick, handleNumbered),
+                },
+            ),
+            React.cloneElement<ButtonProps>(bulletedButtonComponent,
+                // props:
+                {
+                    // accessibilities:
+                    active  : bulletedButtonComponent.props.active ?? (blockType === 'ul'),
+                    
+                    
+                    
+                    // handlers:
+                    onClick : useMergeEvents(bulletedButtonComponent.props.onClick, handleBulleted),
                 },
             ),
         ),
