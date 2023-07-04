@@ -10,6 +10,12 @@ import {
     useEffect,
 }                           from 'react'
 
+// cssfn:
+import {
+    // style sheets:
+    dynamicStyleSheet,
+}                           from '@cssfn/cssfn-react'                   // writes css in react hook
+
 // reusable-ui core:
 import {
     // react helper hooks:
@@ -132,6 +138,13 @@ import {
 
 
 
+// styles:
+export const useToolbarPluginStyleSheet = dynamicStyleSheet(
+    () => import(/* webpackPrefetch: true */ '../styles/toolbarStyles')
+, { id: 'x92bmveoxb' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
+
+
+
 // constants:
 const LOW_PRIORITY = 1;
 
@@ -165,6 +178,11 @@ export interface ToolbarPluginProps<TElement extends Element = HTMLElement>
     quoteButtonComponent         ?: ButtonComponentProps['buttonComponent']
 }
 const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPluginProps<TElement>): JSX.Element|null => {
+    // styles:
+    const styleSheet = useToolbarPluginStyleSheet();
+    
+    
+    
     // rest props:
     const {
         // variants:
@@ -177,7 +195,7 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
         undoRedoGroupComponent       = (<Group />                                                        as React.ReactComponentElement<any, GroupProps<Element>>),
         undoButtonComponent          = (<ButtonIcon icon='undo'                 title='undo' />          as React.ReactComponentElement<any, ButtonProps>),
         redoButtonComponent          = (<ButtonIcon icon='redo'                 title='redo' />          as React.ReactComponentElement<any, ButtonProps>),
-        headingEditor                = (<HeadingEditor />                                                as React.ReactComponentElement<any, BasicSelectEditorProps<Element, BlockOption>>),
+        headingEditor                = (<HeadingEditor className='headingEditor' />                      as React.ReactComponentElement<any, BasicSelectEditorProps<Element, BlockOption>>),
         formatGroupComponent         = (<Group />                                                        as React.ReactComponentElement<any, GroupProps<Element>>),
         boldButtonComponent          = (<ButtonIcon icon='format_bold'          title='bold' />          as React.ReactComponentElement<any, ButtonProps>),
         italicButtonComponent        = (<ButtonIcon icon='format_italic'        title='italic' />        as React.ReactComponentElement<any, ButtonProps>),
@@ -186,7 +204,7 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
         listGroupComponent           = (<Group />                                                        as React.ReactComponentElement<any, GroupProps<Element>>),
         numberedButtonComponent      = (<ButtonIcon icon='format_list_numbered' title='numbered' />      as React.ReactComponentElement<any, ButtonProps>),
         bulletedButtonComponent      = (<ButtonIcon icon='format_list_bulleted' title='bulleted' />      as React.ReactComponentElement<any, ButtonProps>),
-        alignmentEditor              = (<AlignmentEditor />                                              as React.ReactComponentElement<any, BasicSelectEditorProps<Element, AlignmentOption>>),
+        alignmentEditor              = (<AlignmentEditor className='alignmentEditor' />                  as React.ReactComponentElement<any, BasicSelectEditorProps<Element, AlignmentOption>>),
         quoteButtonComponent         = (<ButtonIcon icon='format_quote'         title='quote' />         as React.ReactComponentElement<any, ButtonProps>),
     ...restElementProps} = props;
     
@@ -245,6 +263,14 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
                     : element.getType();
                 setBlockType(type);
                 
+                
+                
+                // alignments:
+                const textAlignId = element.getFormat() || 0;
+                setAlignmentType(['auto', 'left', 'center', 'right', 'justify']?.[textAlignId] ?? 'auto');
+                
+                
+                
                 // if ($isCodeNode(element)) {
                 //     setCodeLanguage(element.getLanguage() || getDefaultCodeLanguage());
                 // } // if
@@ -258,12 +284,6 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
         setIsItalic(selection.hasFormat('italic'));
         setIsUnderline(selection.hasFormat('underline'));
         setIsStrikethrough(selection.hasFormat('strikethrough'));
-        
-        
-        
-        // alignments:
-        const textAlignId = element.getFormat() || 0;
-        setAlignmentType(['auto', 'left', 'center', 'right', 'justify']?.[textAlignId] ?? 'auto');
     });
     
     useEffect(() => {
@@ -397,7 +417,12 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
             
             
             // variants:
-            mild : component.props.mild ?? mild,
+            mild      : component.props.mild      ?? mild,
+            
+            
+            
+            // classes:
+            mainClass : component.props.mainClass ?? styleSheet.main,
         },
         
         
