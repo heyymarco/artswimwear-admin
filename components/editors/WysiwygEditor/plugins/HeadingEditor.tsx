@@ -24,8 +24,8 @@ import type {
 }                           from '@reusable-ui/generic'         // an unstyled basic building block of Reusable-UI components
 import type {
     // react components:
-    BasicProps,
-}                           from '@reusable-ui/basic'           // a styled basic building block of Reusable-UI components
+    IndicatorProps,
+}                           from '@reusable-ui/indicator'       // a base indicator control of Reusable-UI components
 import type {
     // react components:
     ButtonProps,
@@ -82,7 +82,7 @@ export type BasicHeadingEditorProps<TElement extends Element = HTMLElement> =
         |'value'
         |'onChange'
     >
-    &Omit<BasicProps<TElement>,
+    &Omit<IndicatorProps<TElement>,
         |keyof GenericProps
     >
 export interface HeadingEditorProps<TElement extends Element = HTMLElement>

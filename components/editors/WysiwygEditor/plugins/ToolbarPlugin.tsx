@@ -382,6 +382,11 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
                 
                 
                 
+                // accessibilities:
+                active   : bulletedButtonComponent.props.active ?? (blockType?.[0] === 'h'),
+                
+                
+                
                 // values:
                 value    : headingEditor.props.value ?? blockType as any,
                 onChange : useMergeEvents(headingEditor.props.onChange, handleChangeHeading),
