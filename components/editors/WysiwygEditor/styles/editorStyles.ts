@@ -68,7 +68,7 @@ import {
 
 
 // styles:
-export const onCarouselStylesChange = watchChanges(onControlStylesChange, onContentStylesChange, cssWysiwygEditorConfig.onChange);
+export const onEditableStylesChange = watchChanges(onControlStylesChange, onContentStylesChange, cssWysiwygEditorConfig.onChange);
 
 
 
@@ -150,6 +150,14 @@ export const usesEditableLayout = () => {
                 
                 // layouts:
                 ...style({
+                    // children:
+                    ...children(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'blockquote'], {
+                        // customize:
+                        ...usesCssProps(usesPrefixedProps(wysiwygEditors, 'nodeBlock')), // apply config's cssProps starting with nodeBlock***
+                    }),
+                    
+                    
+                    
                     // customize:
                     ...usesCssProps(wysiwygEditors), // apply config's cssProps
                 }),

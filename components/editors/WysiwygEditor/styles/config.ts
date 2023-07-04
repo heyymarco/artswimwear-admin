@@ -50,6 +50,13 @@ export const [wysiwygEditors, wysiwygEditorValues, cssWysiwygEditorConfig] = css
         // alignmentEditors:
         alignmentEditorBoxSizing     : 'content-box'                                        as CssKnownProps['boxSizing'    ],
         alignmentEditorMinInlineSize : '4.5em'                                              as CssKnownProps['minInlineSize'],
+        
+        
+        
+        // nodeBlocks:
+        nodeBlockBorderStyle         : 'dotted'                                             as CssKnownProps['borderStyle'  ],
+        nodeBlockBorderWidth         : '1px'                                                as CssKnownProps['borderWidth'  ],
+        nodeBlockBorderColor         : 'rgba(0, 0, 0, 0.2)'                                 as CssKnownProps['borderColor'  ],
     };
     
     
