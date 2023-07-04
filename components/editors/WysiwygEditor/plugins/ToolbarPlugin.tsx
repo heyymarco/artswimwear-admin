@@ -89,6 +89,7 @@ import {
 import {
     // react components:
     BasicProps,
+    Basic,
 }                           from '@reusable-ui/basic'           // a base component
 import type {
     // react components:
@@ -147,7 +148,7 @@ export interface ToolbarPluginProps<TElement extends Element = HTMLElement>
         >
 {
     // components:
-    component                    ?: React.ReactComponentElement<any, React.HTMLAttributes<TElement>>
+    component                    ?: React.ReactComponentElement<any, BasicProps<TElement>>
     undoRedoGroupComponent       ?: React.ReactComponentElement<any, GroupProps<Element>>
     undoButtonComponent          ?: ButtonComponentProps['buttonComponent']
     redoButtonComponent          ?: ButtonComponentProps['buttonComponent']
@@ -164,15 +165,15 @@ export interface ToolbarPluginProps<TElement extends Element = HTMLElement>
     quoteButtonComponent         ?: ButtonComponentProps['buttonComponent']
 }
 const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPluginProps<TElement>): JSX.Element|null => {
-    // basic variant props:
-    const basicVariantProps = useBasicVariantProps(props);
-    
-    
-    
     // rest props:
     const {
+        // variants:
+        mild = true,
+        
+        
+        
         // components:
-        component                    = (<div />                                                          as React.ReactComponentElement<any, React.HTMLAttributes<TElement>>),
+        component                    = (<Basic />                                                        as React.ReactComponentElement<any, BasicProps<TElement>>),
         undoRedoGroupComponent       = (<Group />                                                        as React.ReactComponentElement<any, GroupProps<Element>>),
         undoButtonComponent          = (<ButtonIcon icon='undo'                 title='undo' />          as React.ReactComponentElement<any, ButtonProps>),
         redoButtonComponent          = (<ButtonIcon icon='redo'                 title='redo' />          as React.ReactComponentElement<any, ButtonProps>),
@@ -191,24 +192,29 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
     
     
     
+    // basic variant props:
+    const basicVariantProps = useBasicVariantProps(props);
+    basicVariantProps.mild  = mild;
+    
+    
+    
     // contexts:
     const [editor] = useLexicalComposerContext();
     
     
     
     // states:
-    const [canUndo           , setCanUndo           ] = useState<boolean>(false);
-    const [canRedo           , setCanRedo           ] = useState<boolean>(false);
+    const [canUndo        , setCanUndo        ] = useState<boolean>(false);
+    const [canRedo        , setCanRedo        ] = useState<boolean>(false);
     
-    const [blockType         , setBlockType         ] = useState<string>('paragraph');
-    const [selectedElementKey, setSelectedElementKey] = useState<string|null>(null);
+    const [blockType      , setBlockType      ] = useState<string>('paragraph');
     
-    const [isBold            , setIsBold            ] = useState<boolean>(false);
-    const [isItalic          , setIsItalic          ] = useState<boolean>(false);
-    const [isUnderline       , setIsUnderline       ] = useState<boolean>(false);
-    const [isStrikethrough   , setIsStrikethrough   ] = useState<boolean>(false);
+    const [isBold         , setIsBold         ] = useState<boolean>(false);
+    const [isItalic       , setIsItalic       ] = useState<boolean>(false);
+    const [isUnderline    , setIsUnderline    ] = useState<boolean>(false);
+    const [isStrikethrough, setIsStrikethrough] = useState<boolean>(false);
     
-    const [alignmentType     , setAlignmentType     ] = useState<string>('auto');
+    const [alignmentType  , setAlignmentType  ] = useState<string>('auto');
     
     
     
@@ -221,18 +227,16 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
         
         
         const anchorNode = selection.anchor.getNode();
-        const element =
+        const element    =
             anchorNode.getKey() === 'root'
             ? anchorNode
             : anchorNode.getTopLevelElementOrThrow();
         const elementKey = element.getKey();
         const elementDOM = editor.getElementByKey(elementKey);
         if (elementDOM !== null) {
-            setSelectedElementKey(elementKey);
-            
             if ($isListNode(element)) {
                 const parentList = $getNearestNodeOfType(anchorNode, ListNode);
-                const type = parentList ? parentList.getTag() : element.getTag();
+                const type       = parentList ? parentList.getTag() : element.getTag();
                 setBlockType(type);
             }
             else if(!$isRootNode(element)) {
@@ -240,6 +244,7 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
                     ? element.getTag()
                     : element.getType();
                 setBlockType(type);
+                
                 // if ($isCodeNode(element)) {
                 //     setCodeLanguage(element.getLanguage() || getDefaultCodeLanguage());
                 // } // if
@@ -298,7 +303,6 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
     
     
     // handlers:
-    
     const handleUndo            = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
         editor.dispatchCommand(UNDO_COMMAND, undefined);
     });
@@ -383,12 +387,17 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
     
     
     // jsx:
-    return React.cloneElement<React.HTMLAttributes<TElement>>(component,
+    return React.cloneElement<BasicProps<TElement>>(component,
         // props:
         {
             // other props:
             ...restElementProps,
             ...component.props, // overwrites restElementProps (if any conflics)
+            
+            
+            
+            // variants:
+            mild : component.props.mild ?? mild,
         },
         
         
@@ -399,6 +408,7 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
             {
                 // basic variant props:
                 ...basicVariantProps,
+                ...undoRedoGroupComponent.props, // overwrites basicVariantProps (if any conflics)
             },
             
             
@@ -407,6 +417,12 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
             React.cloneElement<ButtonProps>(undoButtonComponent,
                 // props:
                 {
+                    // basic variant props:
+                    ...basicVariantProps,
+                    ...undoButtonComponent.props, // overwrites basicVariantProps (if any conflics)
+                    
+                    
+                    
                     // accessibilities:
                     enabled : undoButtonComponent.props.enabled ?? canUndo,
                     
@@ -419,6 +435,12 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
             React.cloneElement<ButtonProps>(redoButtonComponent,
                 // props:
                 {
+                    // basic variant props:
+                    ...basicVariantProps,
+                    ...redoButtonComponent.props, // overwrites basicVariantProps (if any conflics)
+                    
+                    
+                    
                     // accessibilities:
                     enabled : redoButtonComponent.props.enabled ?? canRedo,
                     
@@ -434,11 +456,12 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
             {
                 // basic variant props:
                 ...basicVariantProps,
+                ...headingEditor.props, // overwrites basicVariantProps (if any conflics)
                 
                 
                 
                 // accessibilities:
-                active   : bulletedButtonComponent.props.active ?? (blockType?.[0] === 'h'),
+                active   : headingEditor.props.active ?? (blockType?.[0] === 'h'),
                 
                 
                 
@@ -452,6 +475,7 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
             {
                 // basic variant props:
                 ...basicVariantProps,
+                ...formatGroupComponent.props, // overwrites basicVariantProps (if any conflics)
             },
             
             
@@ -460,6 +484,12 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
             React.cloneElement<ButtonProps>(boldButtonComponent,
                 // props:
                 {
+                    // basic variant props:
+                    ...basicVariantProps,
+                    ...boldButtonComponent.props, // overwrites basicVariantProps (if any conflics)
+                    
+                    
+                    
                     // accessibilities:
                     active  : boldButtonComponent.props.active ?? isBold,
                     
@@ -472,6 +502,12 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
             React.cloneElement<ButtonProps>(italicButtonComponent,
                 // props:
                 {
+                    // basic variant props:
+                    ...basicVariantProps,
+                    ...italicButtonComponent.props, // overwrites basicVariantProps (if any conflics)
+                    
+                    
+                    
                     // accessibilities:
                     active  : italicButtonComponent.props.active ?? isItalic,
                     
@@ -484,6 +520,12 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
             React.cloneElement<ButtonProps>(underlineButtonComponent,
                 // props:
                 {
+                    // basic variant props:
+                    ...basicVariantProps,
+                    ...underlineButtonComponent.props, // overwrites basicVariantProps (if any conflics)
+                    
+                    
+                    
                     // accessibilities:
                     active  : underlineButtonComponent.props.active ?? isUnderline,
                     
@@ -496,6 +538,12 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
             React.cloneElement<ButtonProps>(strikethroughButtonComponent,
                 // props:
                 {
+                    // basic variant props:
+                    ...basicVariantProps,
+                    ...strikethroughButtonComponent.props, // overwrites basicVariantProps (if any conflics)
+                    
+                    
+                    
                     // accessibilities:
                     active  : strikethroughButtonComponent.props.active ?? isStrikethrough,
                     
@@ -511,6 +559,7 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
             {
                 // basic variant props:
                 ...basicVariantProps,
+                ...listGroupComponent.props, // overwrites basicVariantProps (if any conflics)
             },
             
             
@@ -519,6 +568,12 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
             React.cloneElement<ButtonProps>(numberedButtonComponent,
                 // props:
                 {
+                    // basic variant props:
+                    ...basicVariantProps,
+                    ...numberedButtonComponent.props, // overwrites basicVariantProps (if any conflics)
+                    
+                    
+                    
                     // accessibilities:
                     active  : numberedButtonComponent.props.active ?? (blockType === 'ol'),
                     
@@ -531,6 +586,12 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
             React.cloneElement<ButtonProps>(bulletedButtonComponent,
                 // props:
                 {
+                    // basic variant props:
+                    ...basicVariantProps,
+                    ...bulletedButtonComponent.props, // overwrites basicVariantProps (if any conflics)
+                    
+                    
+                    
                     // accessibilities:
                     active  : bulletedButtonComponent.props.active ?? (blockType === 'ul'),
                     
@@ -546,11 +607,12 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
             {
                 // basic variant props:
                 ...basicVariantProps,
+                ...alignmentEditor.props, // overwrites basicVariantProps (if any conflics)
                 
                 
                 
                 // accessibilities:
-                active   : bulletedButtonComponent.props.active ?? (alignmentType !== 'auto'),
+                active   : alignmentEditor.props.active ?? (alignmentType !== 'auto'),
                 
                 
                 
@@ -562,6 +624,12 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
         React.cloneElement<ButtonProps>(quoteButtonComponent,
             // props:
             {
+                // basic variant props:
+                ...basicVariantProps,
+                ...quoteButtonComponent.props, // overwrites basicVariantProps (if any conflics)
+                
+                
+                
                 // accessibilities:
                 active  : quoteButtonComponent.props.active ?? (blockType === 'quote'),
                 
