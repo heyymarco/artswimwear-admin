@@ -29,7 +29,7 @@ export const [wysiwygEditors, wysiwygEditorValues, cssWysiwygEditorConfig] = css
         toolbarGapInline             : spacers.default                                      as CssKnownProps['gapInline'    ],
         toolbarGapBlock              : spacers.default                                      as CssKnownProps['gapBlock'     ],
         toolbarFilter                : [[
-            'contrast(120%)',
+            'contrast(115%)',
         ]]                                                                                  as CssKnownProps['filter'       ],
         
         toolbarPaddingInlineSm       : spacers.sm                                           as CssKnownProps['paddingInline'],
