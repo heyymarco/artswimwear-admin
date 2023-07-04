@@ -119,6 +119,15 @@ import {
     // react components:
     HeadingEditor,
 }                           from './HeadingEditor'
+import {
+    // types:
+    AlignmentOption,
+    
+    
+    
+    // react components:
+    AlignmentEditor,
+}                           from './AlignmentEditor'
 
 
 
@@ -151,6 +160,7 @@ export interface ToolbarPluginProps<TElement extends Element = HTMLElement>
     listGroupComponent           ?: React.ReactComponentElement<any, GroupProps<Element>>
     numberedButtonComponent      ?: ButtonComponentProps['buttonComponent']
     bulletedButtonComponent      ?: ButtonComponentProps['buttonComponent']
+    alignmentEditor              ?: React.ReactComponentElement<any, BasicSelectEditorProps<Element, AlignmentOption>>
 }
 const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPluginProps<TElement>): JSX.Element|null => {
     // basic variant props:
@@ -174,6 +184,7 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
         listGroupComponent           = (<Group />                                                        as React.ReactComponentElement<any, GroupProps<Element>>),
         numberedButtonComponent      = (<ButtonIcon icon='format_list_numbered' title='strikethrough' /> as React.ReactComponentElement<any, ButtonProps>),
         bulletedButtonComponent      = (<ButtonIcon icon='format_list_bulleted' title='strikethrough' /> as React.ReactComponentElement<any, ButtonProps>),
+        alignmentEditor              = (<AlignmentEditor />                                              as React.ReactComponentElement<any, BasicSelectEditorProps<Element, AlignmentOption>>),
     ...restElementProps} = props;
     
     
@@ -194,6 +205,8 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
     const [isItalic          , setIsItalic          ] = useState<boolean>(false);
     const [isUnderline       , setIsUnderline       ] = useState<boolean>(false);
     const [isStrikethrough   , setIsStrikethrough   ] = useState<boolean>(false);
+    
+    const [alignmentType     , setAlignmentType     ] = useState<string>('auto');
     
     
     
@@ -233,11 +246,17 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
         
         
         
-        // actions:
+        // formats:
         setIsBold(selection.hasFormat('bold'));
         setIsItalic(selection.hasFormat('italic'));
         setIsUnderline(selection.hasFormat('underline'));
         setIsStrikethrough(selection.hasFormat('strikethrough'));
+        
+        
+        
+        // alignments:
+        const textAlignId = element.getFormat() || 0;
+        setAlignmentType(['auto', 'left', 'center', 'right', 'justify']?.[textAlignId] ?? 'auto');
     });
     
     useEffect(() => {
@@ -278,13 +297,13 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
     
     // handlers:
     
-    const handleUndo          = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
+    const handleUndo            = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
         editor.dispatchCommand(UNDO_COMMAND, undefined);
     });
-    const handleRedo          = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
+    const handleRedo            = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
         editor.dispatchCommand(REDO_COMMAND, undefined);
     });
-    const handleChangeHeading = useEvent<NonNullable<BasicSelectEditorProps<Element, BlockOption>['onChange']>>((value) => {
+    const handleChangeHeading   = useEvent<NonNullable<BasicSelectEditorProps<Element, BlockOption>['onChange']>>((value) => {
         editor.update(() => {
             // conditions:
             const selection = $getSelection();
@@ -303,19 +322,19 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
             } // if
         });
     });
-    const handleBold          = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
+    const handleBold            = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
         editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
     });
-    const handleItalic        = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
+    const handleItalic          = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
         editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
     });
-    const handleUnderline     = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
+    const handleUnderline       = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
         editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
     });
-    const handleStrikethrough = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
+    const handleStrikethrough   = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
         editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
     });
-    const handleNumbered      = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
+    const handleNumbered        = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
         if (blockType !== 'ol') {
             editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
             setBlockType('ol');
@@ -325,7 +344,7 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
             setBlockType('paragraph');
         } // if
     });
-    const handleBulleted      = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
+    const handleBulleted        = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
         if (blockType !== 'ul') {
             editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
             setBlockType('ul');
@@ -334,6 +353,10 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
             editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
             setBlockType('paragraph');
         } // if
+    });
+    const handleChangeAlignment = useEvent<NonNullable<BasicSelectEditorProps<Element, AlignmentOption>['onChange']>>((value) => {
+        editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, value ?? '');
+        setAlignmentType(value ?? 'auto');
     });
     
     
@@ -496,6 +519,24 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
                     onClick : useMergeEvents(bulletedButtonComponent.props.onClick, handleBulleted),
                 },
             ),
+        ),
+        React.cloneElement<BasicSelectEditorProps<Element, AlignmentOption>>(alignmentEditor,
+            // props:
+            {
+                // basic variant props:
+                ...basicVariantProps,
+                
+                
+                
+                // accessibilities:
+                active   : bulletedButtonComponent.props.active ?? (alignmentType !== 'auto'),
+                
+                
+                
+                // values:
+                value    : alignmentEditor.props.value ?? alignmentType as any,
+                onChange : useMergeEvents(alignmentEditor.props.onChange, handleChangeAlignment),
+            },
         ),
     );
 };
