@@ -13,6 +13,11 @@ import {
 
 // reusable-ui core:
 import {
+    // padding (inner spacing) stuff of UI:
+    usesPadding,
+    
+    
+    
     // size options of UI:
     usesResizable,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
@@ -39,6 +44,13 @@ import {
 
 // styles:
 export const usesToolbarLayout = () => {
+    // dependencies:
+    
+    // features:
+    const {paddingRule, paddingVars} = usesPadding(usesPrefixedProps(wysiwygEditors, 'toolbar'));
+    
+    
+    
     return style({
         // layouts:
         ...usesBasicLayout(),
@@ -49,6 +61,13 @@ export const usesToolbarLayout = () => {
             justifyContent : 'center', // center items (text, icon, etc) horizontally
             alignItems     : 'center', // center items (text, icon, etc) vertically
             flexWrap       : 'wrap',   // allows the items (text, icon, etc) to wrap to the next row if no sufficient width available
+            
+            
+            
+            // spacings:
+         // padding        : paddingVars.padding,
+            paddingInline  : paddingVars.paddingInline,
+            paddingBlock   : paddingVars.paddingBlock,
             
             
             
@@ -77,6 +96,11 @@ export const usesToolbarLayout = () => {
             // customize:
             ...usesCssProps(usesPrefixedProps(wysiwygEditors, 'toolbar')), // apply config's cssProps starting with toolbar***
         }),
+        
+        
+        
+        // features:
+        ...paddingRule(), // must be placed at the last
     });
 };
 
