@@ -18,17 +18,21 @@ import {
     
     
     
+    // an accessibility management system:
+    usePropEnabled,
+    usePropReadOnly,
+    
+    
+    
     // basic variants of UI:
     useBasicVariantProps,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
-import {
+import type {
     // react components:
-    BasicProps,
-    
-    BasicComponentProps,
-}                           from '@reusable-ui/basic'           // a base component
+    IndicatorProps,
+}                           from '@reusable-ui/indicator'       // a base component
 import {
     // react components:
     Group,
@@ -110,6 +114,10 @@ import {
     // setups the initial value for the editor.
     InitialValuePlugin,
 }                           from './plugins/InitialValuePlugin'
+import {
+    // dynamically setups the editable prop.
+    DynamicEditablePlugin,
+}                           from './plugins/DynamicEditablePlugin'
 
 // resources:
 // import
@@ -128,7 +136,7 @@ import {
 export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Omit<BasicProps<TElement>,
+        Omit<IndicatorProps<TElement>,
             // values:
             |'defaultValue' // taken over by EditorProps
             |'value'        // taken over by EditorProps
@@ -144,10 +152,7 @@ export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
             |'defaultValue' // take
             |'value'        // take
             |'onChange'     // take
-        >,
-        
-        // components:
-        BasicComponentProps<TElement>
+        >
 {
     // plugins:
     children ?: React.ReactNode
@@ -172,14 +177,16 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         
         
         
-        // components:
-        basicComponent = (<Group<TElement> orientation='block' /> as React.ReactComponentElement<any, BasicProps<TElement>>),
-        
-        
-        
         // plugins:
         children : plugins,
-    ...restBasicProps} = props;
+    ...restIndicatorProps} = props;
+    
+    
+    
+    // accessibilities:
+    const propEnabled          = usePropEnabled(props);
+    const propReadOnly         = usePropReadOnly(props);
+    const isDisabledOrReadOnly = (!propEnabled || propReadOnly);
     
     
     
@@ -307,6 +314,7 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
     const initialConfig : InitialConfigType = useMemo(() => ({
         namespace   : 'WysiwygEditor', 
         theme,
+        editable    : !isDisabledOrReadOnly,
         onError     : handleError,
         
         // causes hydration error:
@@ -367,6 +375,9 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
             {/* setups the initial value for the editor. */}
             <InitialValuePlugin initialValue={value} defaultValue={defaultValue} />
             
+            {/* dynamically setups the editable prop. */}
+            <DynamicEditablePlugin editable={!isDisabledOrReadOnly} />
+            
             {/* calls onChange whenever Lexical state is updated. */}
             <OnChangePlugin
                 // behaviors:
@@ -385,18 +396,16 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
             
             
             {/* elements: */}
-            {React.cloneElement<BasicProps<TElement>>(basicComponent,
-                // props:
-                {
-                    // other props:
-                    ...restBasicProps,
-                    ...basicComponent.props, // overwrites restBasicProps (if any conflics)
-                },
+            <Group<TElement>
+                // other props:
+                {...restIndicatorProps}
                 
                 
                 
-                // children:
-                React.Children.map(plugins, (plugin) => {
+                // variants:
+                orientation='block'
+            >
+                {React.Children.map(plugins, (plugin) => {
                     if (!React.isValidElement(plugin)) return plugin; // not an <element> => no modify
                     
                     
@@ -414,8 +423,8 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
                             ...plugin.props,
                         },
                     );
-                }),
-            )}
+                })}
+            </Group>
         </LexicalComposer>
     );
 };

@@ -97,6 +97,8 @@ export default function Home() {
                     // values:
                     value={value}
                     onChange={setValue}
+                    // enabled={false}
+                    // readOnly={true}
                 >
                     <ToolbarPlugin />
                     <EditorPlugin

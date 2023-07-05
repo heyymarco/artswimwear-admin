@@ -24,6 +24,12 @@ import {
     
     
     
+    // an accessibility management system:
+    usePropAccessibility,
+    AccessibilityProvider,
+    
+    
+    
     // basic variants of UI:
     useBasicVariantProps,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
@@ -207,6 +213,12 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
         alignmentEditor              = (<AlignmentEditor className='alignmentEditor' />                  as React.ReactComponentElement<any, BasicSelectEditorProps<Element, AlignmentOption>>),
         quoteButtonComponent         = (<ButtonIcon icon='format_quote'         title='quote' />         as React.ReactComponentElement<any, ButtonProps>),
     ...restElementProps} = props;
+    
+    
+    
+    // accessibilities:
+    const propAccess           = usePropAccessibility({});
+    const isDisabledOrReadOnly = (!propAccess.enabled || propAccess.readOnly);
     
     
     
@@ -407,264 +419,272 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
     
     
     // jsx:
-    return React.cloneElement<BasicProps<TElement>>(component,
-        // props:
-        {
-            // other props:
-            ...restElementProps,
-            ...component.props, // overwrites restElementProps (if any conflics)
-            
-            
-            
-            // variants:
-            mild      : component.props.mild      ?? mild,
-            
-            
-            
-            // classes:
-            mainClass : component.props.mainClass ?? styleSheet.main,
-        },
-        
-        
-        
-        // children:
-        React.cloneElement<GroupProps<Element>>(undoRedoGroupComponent,
-            // props:
-            {
-                // basic variant props:
-                ...basicVariantProps,
-                ...undoRedoGroupComponent.props, // overwrites basicVariantProps (if any conflics)
-            },
-            
-            
-            
-            // children:
-            React.cloneElement<ButtonProps>(undoButtonComponent,
+    return (
+        <AccessibilityProvider
+            // accessibilities:
+            {...propAccess}
+            enabled={!isDisabledOrReadOnly} // disabled if `enabled={false}` or `readOnly={true}`
+        >
+            {React.cloneElement<BasicProps<TElement>>(component,
                 // props:
                 {
-                    // basic variant props:
-                    ...basicVariantProps,
-                    ...undoButtonComponent.props, // overwrites basicVariantProps (if any conflics)
+                    // other props:
+                    ...restElementProps,
+                    ...component.props, // overwrites restElementProps (if any conflics)
                     
                     
                     
-                    // accessibilities:
-                    enabled : undoButtonComponent.props.enabled ?? canUndo,
+                    // variants:
+                    mild      : component.props.mild      ?? mild,
                     
                     
                     
-                    // handlers:
-                    onClick : useMergeEvents(undoButtonComponent.props.onClick, handleUndo),
+                    // classes:
+                    mainClass : component.props.mainClass ?? styleSheet.main,
                 },
-            ),
-            React.cloneElement<ButtonProps>(redoButtonComponent,
-                // props:
-                {
-                    // basic variant props:
-                    ...basicVariantProps,
-                    ...redoButtonComponent.props, // overwrites basicVariantProps (if any conflics)
-                    
-                    
-                    
-                    // accessibilities:
-                    enabled : redoButtonComponent.props.enabled ?? canRedo,
-                    
-                    
-                    
-                    // handlers:
-                    onClick : useMergeEvents(redoButtonComponent.props.onClick, handleRedo),
-                },
-            ),
-        ),
-        React.cloneElement<BasicSelectEditorProps<Element, BlockOption>>(headingEditor,
-            // props:
-            {
-                // basic variant props:
-                ...basicVariantProps,
-                ...headingEditor.props, // overwrites basicVariantProps (if any conflics)
                 
                 
                 
-                // accessibilities:
-                active   : headingEditor.props.active ?? (blockType?.[0] === 'h'),
-                
-                
-                
-                // values:
-                value    : headingEditor.props.value ?? blockType as any,
-                onChange : useMergeEvents(headingEditor.props.onChange, handleChangeHeading),
-            },
-        ),
-        React.cloneElement<GroupProps<Element>>(formatGroupComponent,
-            // props:
-            {
-                // basic variant props:
-                ...basicVariantProps,
-                ...formatGroupComponent.props, // overwrites basicVariantProps (if any conflics)
-            },
-            
-            
-            
-            // children:
-            React.cloneElement<ButtonProps>(boldButtonComponent,
-                // props:
-                {
-                    // basic variant props:
-                    ...basicVariantProps,
-                    ...boldButtonComponent.props, // overwrites basicVariantProps (if any conflics)
+                // children:
+                React.cloneElement<GroupProps<Element>>(undoRedoGroupComponent,
+                    // props:
+                    {
+                        // basic variant props:
+                        ...basicVariantProps,
+                        ...undoRedoGroupComponent.props, // overwrites basicVariantProps (if any conflics)
+                    },
                     
                     
                     
-                    // accessibilities:
-                    active  : boldButtonComponent.props.active ?? isBold,
+                    // children:
+                    React.cloneElement<ButtonProps>(undoButtonComponent,
+                        // props:
+                        {
+                            // basic variant props:
+                            ...basicVariantProps,
+                            ...undoButtonComponent.props, // overwrites basicVariantProps (if any conflics)
+                            
+                            
+                            
+                            // accessibilities:
+                            enabled : undoButtonComponent.props.enabled ?? canUndo,
+                            
+                            
+                            
+                            // handlers:
+                            onClick : useMergeEvents(undoButtonComponent.props.onClick, handleUndo),
+                        },
+                    ),
+                    React.cloneElement<ButtonProps>(redoButtonComponent,
+                        // props:
+                        {
+                            // basic variant props:
+                            ...basicVariantProps,
+                            ...redoButtonComponent.props, // overwrites basicVariantProps (if any conflics)
+                            
+                            
+                            
+                            // accessibilities:
+                            enabled : redoButtonComponent.props.enabled ?? canRedo,
+                            
+                            
+                            
+                            // handlers:
+                            onClick : useMergeEvents(redoButtonComponent.props.onClick, handleRedo),
+                        },
+                    ),
+                ),
+                React.cloneElement<BasicSelectEditorProps<Element, BlockOption>>(headingEditor,
+                    // props:
+                    {
+                        // basic variant props:
+                        ...basicVariantProps,
+                        ...headingEditor.props, // overwrites basicVariantProps (if any conflics)
+                        
+                        
+                        
+                        // accessibilities:
+                        active   : headingEditor.props.active ?? (blockType?.[0] === 'h'),
+                        
+                        
+                        
+                        // values:
+                        value    : headingEditor.props.value ?? blockType as any,
+                        onChange : useMergeEvents(headingEditor.props.onChange, handleChangeHeading),
+                    },
+                ),
+                React.cloneElement<GroupProps<Element>>(formatGroupComponent,
+                    // props:
+                    {
+                        // basic variant props:
+                        ...basicVariantProps,
+                        ...formatGroupComponent.props, // overwrites basicVariantProps (if any conflics)
+                    },
                     
                     
                     
-                    // handlers:
-                    onClick : useMergeEvents(boldButtonComponent.props.onClick, handleBold),
-                },
-            ),
-            React.cloneElement<ButtonProps>(italicButtonComponent,
-                // props:
-                {
-                    // basic variant props:
-                    ...basicVariantProps,
-                    ...italicButtonComponent.props, // overwrites basicVariantProps (if any conflics)
+                    // children:
+                    React.cloneElement<ButtonProps>(boldButtonComponent,
+                        // props:
+                        {
+                            // basic variant props:
+                            ...basicVariantProps,
+                            ...boldButtonComponent.props, // overwrites basicVariantProps (if any conflics)
+                            
+                            
+                            
+                            // accessibilities:
+                            active  : boldButtonComponent.props.active ?? isBold,
+                            
+                            
+                            
+                            // handlers:
+                            onClick : useMergeEvents(boldButtonComponent.props.onClick, handleBold),
+                        },
+                    ),
+                    React.cloneElement<ButtonProps>(italicButtonComponent,
+                        // props:
+                        {
+                            // basic variant props:
+                            ...basicVariantProps,
+                            ...italicButtonComponent.props, // overwrites basicVariantProps (if any conflics)
+                            
+                            
+                            
+                            // accessibilities:
+                            active  : italicButtonComponent.props.active ?? isItalic,
+                            
+                            
+                            
+                            // handlers:
+                            onClick : useMergeEvents(italicButtonComponent.props.onClick, handleItalic),
+                        },
+                    ),
+                    React.cloneElement<ButtonProps>(underlineButtonComponent,
+                        // props:
+                        {
+                            // basic variant props:
+                            ...basicVariantProps,
+                            ...underlineButtonComponent.props, // overwrites basicVariantProps (if any conflics)
+                            
+                            
+                            
+                            // accessibilities:
+                            active  : underlineButtonComponent.props.active ?? isUnderline,
+                            
+                            
+                            
+                            // handlers:
+                            onClick : useMergeEvents(underlineButtonComponent.props.onClick, handleUnderline),
+                        },
+                    ),
+                    React.cloneElement<ButtonProps>(strikethroughButtonComponent,
+                        // props:
+                        {
+                            // basic variant props:
+                            ...basicVariantProps,
+                            ...strikethroughButtonComponent.props, // overwrites basicVariantProps (if any conflics)
+                            
+                            
+                            
+                            // accessibilities:
+                            active  : strikethroughButtonComponent.props.active ?? isStrikethrough,
+                            
+                            
+                            
+                            // handlers:
+                            onClick : useMergeEvents(strikethroughButtonComponent.props.onClick, handleStrikethrough),
+                        },
+                    ),
+                ),
+                React.cloneElement<GroupProps<Element>>(listGroupComponent,
+                    // props:
+                    {
+                        // basic variant props:
+                        ...basicVariantProps,
+                        ...listGroupComponent.props, // overwrites basicVariantProps (if any conflics)
+                    },
                     
                     
                     
-                    // accessibilities:
-                    active  : italicButtonComponent.props.active ?? isItalic,
-                    
-                    
-                    
-                    // handlers:
-                    onClick : useMergeEvents(italicButtonComponent.props.onClick, handleItalic),
-                },
-            ),
-            React.cloneElement<ButtonProps>(underlineButtonComponent,
-                // props:
-                {
-                    // basic variant props:
-                    ...basicVariantProps,
-                    ...underlineButtonComponent.props, // overwrites basicVariantProps (if any conflics)
-                    
-                    
-                    
-                    // accessibilities:
-                    active  : underlineButtonComponent.props.active ?? isUnderline,
-                    
-                    
-                    
-                    // handlers:
-                    onClick : useMergeEvents(underlineButtonComponent.props.onClick, handleUnderline),
-                },
-            ),
-            React.cloneElement<ButtonProps>(strikethroughButtonComponent,
-                // props:
-                {
-                    // basic variant props:
-                    ...basicVariantProps,
-                    ...strikethroughButtonComponent.props, // overwrites basicVariantProps (if any conflics)
-                    
-                    
-                    
-                    // accessibilities:
-                    active  : strikethroughButtonComponent.props.active ?? isStrikethrough,
-                    
-                    
-                    
-                    // handlers:
-                    onClick : useMergeEvents(strikethroughButtonComponent.props.onClick, handleStrikethrough),
-                },
-            ),
-        ),
-        React.cloneElement<GroupProps<Element>>(listGroupComponent,
-            // props:
-            {
-                // basic variant props:
-                ...basicVariantProps,
-                ...listGroupComponent.props, // overwrites basicVariantProps (if any conflics)
-            },
-            
-            
-            
-            // children:
-            React.cloneElement<ButtonProps>(numberedButtonComponent,
-                // props:
-                {
-                    // basic variant props:
-                    ...basicVariantProps,
-                    ...numberedButtonComponent.props, // overwrites basicVariantProps (if any conflics)
-                    
-                    
-                    
-                    // accessibilities:
-                    active  : numberedButtonComponent.props.active ?? (blockType === 'ol'),
-                    
-                    
-                    
-                    // handlers:
-                    onClick : useMergeEvents(numberedButtonComponent.props.onClick, handleNumbered),
-                },
-            ),
-            React.cloneElement<ButtonProps>(bulletedButtonComponent,
-                // props:
-                {
-                    // basic variant props:
-                    ...basicVariantProps,
-                    ...bulletedButtonComponent.props, // overwrites basicVariantProps (if any conflics)
-                    
-                    
-                    
-                    // accessibilities:
-                    active  : bulletedButtonComponent.props.active ?? (blockType === 'ul'),
-                    
-                    
-                    
-                    // handlers:
-                    onClick : useMergeEvents(bulletedButtonComponent.props.onClick, handleBulleted),
-                },
-            ),
-        ),
-        React.cloneElement<BasicSelectEditorProps<Element, AlignmentOption>>(alignmentEditor,
-            // props:
-            {
-                // basic variant props:
-                ...basicVariantProps,
-                ...alignmentEditor.props, // overwrites basicVariantProps (if any conflics)
-                
-                
-                
-                // accessibilities:
-                active   : alignmentEditor.props.active ?? (alignmentType !== 'auto'),
-                
-                
-                
-                // values:
-                value    : alignmentEditor.props.value ?? alignmentType as any,
-                onChange : useMergeEvents(alignmentEditor.props.onChange, handleChangeAlignment),
-            },
-        ),
-        React.cloneElement<ButtonProps>(quoteButtonComponent,
-            // props:
-            {
-                // basic variant props:
-                ...basicVariantProps,
-                ...quoteButtonComponent.props, // overwrites basicVariantProps (if any conflics)
-                
-                
-                
-                // accessibilities:
-                active  : quoteButtonComponent.props.active ?? (blockType === 'quote'),
-                
-                
-                
-                // handlers:
-                onClick : useMergeEvents(quoteButtonComponent.props.onClick, handleQuote),
-            },
-        ),
-    );
+                    // children:
+                    React.cloneElement<ButtonProps>(numberedButtonComponent,
+                        // props:
+                        {
+                            // basic variant props:
+                            ...basicVariantProps,
+                            ...numberedButtonComponent.props, // overwrites basicVariantProps (if any conflics)
+                            
+                            
+                            
+                            // accessibilities:
+                            active  : numberedButtonComponent.props.active ?? (blockType === 'ol'),
+                            
+                            
+                            
+                            // handlers:
+                            onClick : useMergeEvents(numberedButtonComponent.props.onClick, handleNumbered),
+                        },
+                    ),
+                    React.cloneElement<ButtonProps>(bulletedButtonComponent,
+                        // props:
+                        {
+                            // basic variant props:
+                            ...basicVariantProps,
+                            ...bulletedButtonComponent.props, // overwrites basicVariantProps (if any conflics)
+                            
+                            
+                            
+                            // accessibilities:
+                            active  : bulletedButtonComponent.props.active ?? (blockType === 'ul'),
+                            
+                            
+                            
+                            // handlers:
+                            onClick : useMergeEvents(bulletedButtonComponent.props.onClick, handleBulleted),
+                        },
+                    ),
+                ),
+                React.cloneElement<BasicSelectEditorProps<Element, AlignmentOption>>(alignmentEditor,
+                    // props:
+                    {
+                        // basic variant props:
+                        ...basicVariantProps,
+                        ...alignmentEditor.props, // overwrites basicVariantProps (if any conflics)
+                        
+                        
+                        
+                        // accessibilities:
+                        active   : alignmentEditor.props.active ?? (alignmentType !== 'auto'),
+                        
+                        
+                        
+                        // values:
+                        value    : alignmentEditor.props.value ?? alignmentType as any,
+                        onChange : useMergeEvents(alignmentEditor.props.onChange, handleChangeAlignment),
+                    },
+                ),
+                React.cloneElement<ButtonProps>(quoteButtonComponent,
+                    // props:
+                    {
+                        // basic variant props:
+                        ...basicVariantProps,
+                        ...quoteButtonComponent.props, // overwrites basicVariantProps (if any conflics)
+                        
+                        
+                        
+                        // accessibilities:
+                        active  : quoteButtonComponent.props.active ?? (blockType === 'quote'),
+                        
+                        
+                        
+                        // handlers:
+                        onClick : useMergeEvents(quoteButtonComponent.props.onClick, handleQuote),
+                    },
+                ),
+            )}
+            </AccessibilityProvider>
+        );
 };
 export {
     ToolbarPlugin,
