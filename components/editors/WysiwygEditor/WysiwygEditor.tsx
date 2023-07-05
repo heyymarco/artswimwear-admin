@@ -7,14 +7,12 @@ import {
     
     // hooks:
     useMemo,
-    useRef,
 }                           from 'react'
 
 // reusable-ui core:
 import {
     // react helper hooks:
     useEvent,
-    useMountedFlag,
     
     
     
@@ -40,11 +38,6 @@ import {
 
 // lexical functions:
 import {
-    $generateHtmlFromNodes,
-}                           from '@lexical/html'
-
-// lexical functions:
-import {
     // types:
     InitialConfigType,
     
@@ -53,10 +46,6 @@ import {
     // react components:
     LexicalComposer,
 }                           from '@lexical/react/LexicalComposer'
-import {
-    // calls onChange whenever Lexical state is updated.
-    OnChangePlugin,
-}                           from '@lexical/react/LexicalOnChangePlugin'
 import {
     // adds support for history stack management and undo / redo commands.
     HistoryPlugin,
@@ -72,6 +61,10 @@ import type {
     // react components:
     EditorProps,
 }                           from '@/components/editors/Editor'
+import type {
+    // types:
+    WysiwygEditorState,
+}                           from './types'
 
 // theme:
 import {
@@ -87,9 +80,9 @@ import {
 
 // behaviors:
 import {
-    // setups the initial value for the editor.
-    InitialValuePlugin,
-}                           from './plugins/InitialValuePlugin'
+    // updates the state for the editor.
+    UpdateStatePlugin,
+}                           from './plugins/UpdateStatePlugin'
 import {
     // dynamically setups the editable prop.
     DynamicEditablePlugin,
@@ -118,7 +111,7 @@ export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
             |'value'        // taken over by EditorProps
             |'onChange'     // taken over by EditorProps
         >,
-        Pick<EditorProps<TElement, string>,
+        Pick<EditorProps<TElement, WysiwygEditorState|null>,
             // accessibilities:
             |'autoFocus'
             
@@ -166,34 +159,7 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
     
     
     
-    // dom effects:
-    const isMounted = useMountedFlag();
-    
-    
-    
     // handlers:
-    const prevValueCache = useRef<string|undefined>(undefined);
-    const handleValueChange = useEvent<Parameters<typeof OnChangePlugin>[0]['onChange']>((editorState, editor) => {
-        // conditions:
-        if (!onChange) return; // onChange handler is not set => ignore
-        
-        
-        
-        editorState.read(() => {
-            // conditions:
-            if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
-            
-            
-            
-            // actions:
-            const isInit = (prevValueCache.current === undefined);
-            const htmlString = $generateHtmlFromNodes(editor);
-            prevValueCache.current = htmlString; // sync
-            if (!isInit) {
-                onChange(htmlString);
-            } // if
-        });
-    });
     const handleError       = useEvent<InitialConfigType['onError']>((error, editor) => {
         // nothing to handle yet
     });
@@ -207,18 +173,16 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         onError     : handleError,
         
         // causes hydration error:
-        // editorState : (editor) => {
-        //     // conditions:
-        //     const htmlString = value ?? defaultValue;
-        //     if (!htmlString) return;
-        //     
-        //     
-        //     
-        //     // actions:
-        //     const htmlDom = (new DOMParser()).parseFromString(htmlString, 'text/html');
-        //     const node    = $generateNodesFromDOM(editor, htmlDom);
-        //     $getRoot().append(...node);
-        // },
+        editorState : (editor) => {
+            // conditions:
+            const initialState = (value !== undefined) ? value : defaultValue;
+            if (!initialState) return;
+            
+            
+            
+            // actions:
+            editor.setEditorState(initialState);
+        },
         
         theme : defaultTheme(),
         nodes : defaultNodes(),
@@ -232,23 +196,11 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
             {/* functions: */}
             {!!autoFocus ? <AutoFocusPlugin /> : <></>}
             
-            {/* setups the initial value for the editor. */}
-            <InitialValuePlugin initialValue={value} defaultValue={defaultValue} />
+            {/* updates the state for the editor. */}
+            <UpdateStatePlugin value={value} defaultValue={defaultValue} onChange={onChange} />
             
             {/* dynamically setups the editable prop. */}
             <DynamicEditablePlugin editable={!isDisabledOrReadOnly} />
-            
-            {/* calls onChange whenever Lexical state is updated. */}
-            <OnChangePlugin
-                // behaviors:
-                ignoreHistoryMergeTagChange={true}
-                ignoreSelectionChange={true}
-                
-                
-                
-                // handlers:
-                onChange={handleValueChange}
-            />
             
             {/* adds support for history stack management and undo / redo commands. */}
             <HistoryPlugin />

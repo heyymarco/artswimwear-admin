@@ -10,7 +10,7 @@ import {
 }                           from '@heymarco/image'
 import axios from 'axios'
 import { resolveMediaUrl } from '@/libs/mediaStorage.client'
-import {WysiwygEditor, ToolbarPlugin, EditorPlugin} from '@/components/editors/WysiwygEditor';
+import {WysiwygEditorState, WysiwygEditor, ToolbarPlugin, EditorPlugin} from '@/components/editors/WysiwygEditor';
 
 
 
@@ -30,7 +30,7 @@ export default function Home() {
     //     'water-500x800.jpg',
     //     'wood-700x600.jpg',
     // ]);
-    const [value, setValue] = useState<string>('<p>edit me!</p>');
+    const [value, setValue] = useState<WysiwygEditorState|null>(null);
     return (
         <Main nude={true}>
             <Section title='Homepage'>
@@ -107,19 +107,25 @@ export default function Home() {
                     />
                 </WysiwygEditor>
                 <hr />
-                {/* <WysiwygEditor
+                <WysiwygEditor
                     // variants:
-                    theme='primary'
+                    theme='danger'
+                    
+                    
+                    
+                    // values:
+                    value={value}
+                    onChange={setValue}
                 >
                     <ToolbarPlugin />
                     <EditorPlugin
                         // accessibilities:
                         placeholder='Type product description here...'
                     />
-                </WysiwygEditor> */}
+                </WysiwygEditor>
                 <hr />
                 <div>
-                    {value}
+                    {JSON.stringify(value)}
                 </div>
             </Section>
         </Main>
