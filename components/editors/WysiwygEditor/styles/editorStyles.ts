@@ -151,7 +151,7 @@ export const usesEditableLayout = () => {
                 // layouts:
                 ...style({
                     // children:
-                    ...children(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'blockquote'], {
+                    ...children(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'blockquote', '.block'], {
                         // customize:
                         ...usesCssProps(usesPrefixedProps(wysiwygEditors, 'nodeBlock')), // apply config's cssProps starting with nodeBlock***
                     }),
