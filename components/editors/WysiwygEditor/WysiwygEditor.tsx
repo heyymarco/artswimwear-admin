@@ -175,17 +175,16 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         // causes hydration error:
         editorState : (editor) => {
             // conditions:
-            const initialState = (value !== undefined) ? value : defaultValue;
-            if (!initialState) return;
+            const initialValue = ((value !== undefined) ? value : defaultValue) ?? null;
             
             
             
             // actions:
-            editor.setEditorState(initialState);
+            editor.setEditorState(initialValue ?? ({} as any));
         },
         
-        theme : defaultTheme(),
-        nodes : defaultNodes(),
+        theme       : defaultTheme(),
+        nodes       : defaultNodes(),
     }), []);
     
     

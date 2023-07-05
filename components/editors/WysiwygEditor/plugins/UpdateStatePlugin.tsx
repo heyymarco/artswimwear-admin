@@ -54,19 +54,18 @@ const UpdateStatePlugin = ({value, defaultValue, onChange}: UpdateStatePluginPro
     // dom effects:
     const isMounted = useMountedFlag();
     
-    const newValue  = (value !== undefined) ? value : defaultValue ?? null;
+    const newValue  = ((value !== undefined) ? value : defaultValue) ?? null;
     const prevValue = useRef<WysiwygEditorState|null>(newValue);
     useEffect(() => {
         // conditions:
         if (prevValue.current === newValue) return; // no diff => ignore
         prevValue.current = newValue;
-        if (!newValue) return;
         
         
         
         // actions:
         editor.update(() => {
-            editor.setEditorState(newValue);
+            editor.setEditorState(newValue ?? ({} as any));
         });
     }, [newValue]); // (re)run the setups on every time the `newValue` changes
     
