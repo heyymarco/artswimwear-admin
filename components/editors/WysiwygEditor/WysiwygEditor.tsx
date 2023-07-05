@@ -82,8 +82,8 @@ import {
 // theme:
 import {
     // defined supported nodes.
-    nodes,
-}                           from './nodes'
+    defaultNodes,
+}                           from './defaultNodes'
 
 // behaviors:
 import {
@@ -221,7 +221,7 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         // },
         
         theme,
-        nodes,
+        nodes : defaultNodes,
     }), []);
     
     
