@@ -221,7 +221,7 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         // },
         
         theme : defaultTheme(),
-        nodes : defaultNodes,
+        nodes : defaultNodes(),
     }), []);
     
     

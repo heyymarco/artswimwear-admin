@@ -32,7 +32,7 @@ import {
 
 
 
-export const defaultNodes = [
+export const defaultNodes = () => [
     // texts:
     ParagraphNode,
     HeadingNode,
