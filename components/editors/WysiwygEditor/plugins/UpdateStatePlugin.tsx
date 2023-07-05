@@ -98,15 +98,15 @@ const UpdateStatePlugin = ({value, defaultValue, onChange}: UpdateStatePluginPro
     return (
         /* calls onChange whenever Lexical state is updated. */
         <OnChangePlugin
-        // behaviors:
-        ignoreHistoryMergeTagChange={true}
-        ignoreSelectionChange={true}
-        
-        
-        
-        // handlers:
-        onChange={handleValueChange}
-    />
+            // behaviors:
+            ignoreHistoryMergeTagChange={true}
+            ignoreSelectionChange={true}
+            
+            
+            
+            // handlers:
+            onChange={handleValueChange}
+        />
     );
 };
 export {
