@@ -220,7 +220,7 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         //     $getRoot().append(...node);
         // },
         
-        theme : defaultTheme,
+        theme : defaultTheme(),
         nodes : defaultNodes,
     }), []);
     

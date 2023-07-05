@@ -1,4 +1,4 @@
-export const defaultTheme = {
+export const defaultTheme = () => ({
  // ltr                        : 'ltr',
  // rtl                        : 'rtl',
     
@@ -82,4 +82,4 @@ export const defaultTheme = {
  //     url                    : 'codeOperator',
  //     variable               : 'codeVariable',
  // },
-};
+});
