@@ -76,8 +76,8 @@ import type {
 // theme:
 import {
     // defined classes to match Reusable-UI's styles & components.
-    theme,
-}                           from './theme'
+    defaultTheme,
+}                           from './defaultTheme'
 
 // theme:
 import {
@@ -220,7 +220,7 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         //     $getRoot().append(...node);
         // },
         
-        theme,
+        theme : defaultTheme,
         nodes : defaultNodes,
     }), []);
     
