@@ -40,44 +40,8 @@ import {
 
 // lexical functions:
 import {
-    // types:
-    EditorThemeClasses,
-}                           from 'lexical'
-import {
     $generateHtmlFromNodes,
 }                           from '@lexical/html'
-
-// texts:
-import {
-    ParagraphNode,
-}                           from 'lexical'
-import {
-    HeadingNode,
-    QuoteNode,
-}                           from '@lexical/rich-text'
-
-// resources:
-import {
-    LinkNode,
-    AutoLinkNode,
-}                           from '@lexical/link'
-
-// layouts:
-import {
-    ListNode,
-    ListItemNode,
-}                           from '@lexical/list'
-import {
-    TableNode,
-    TableRowNode,
-    TableCellNode,
-}                           from '@lexical/table'
-
-// codes:
-import {
-    CodeNode,
-    CodeHighlightNode,
-}                           from '@lexical/code'
 
 // lexical functions:
 import {
@@ -114,6 +78,12 @@ import {
     // defined classes to match Reusable-UI's styles & components.
     theme,
 }                           from './theme'
+
+// theme:
+import {
+    // defined supported nodes.
+    nodes,
+}                           from './nodes'
 
 // behaviors:
 import {
@@ -233,7 +203,6 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
     // configs:
     const initialConfig : InitialConfigType = useMemo(() => ({
         namespace   : 'WysiwygEditor', 
-        theme,
         editable    : !isDisabledOrReadOnly,
         onError     : handleError,
         
@@ -251,37 +220,8 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         //     $getRoot().append(...node);
         // },
         
-        nodes       : [
-            // texts:
-            ParagraphNode,
-            HeadingNode,
-            QuoteNode,
-            
-            
-            
-            // resources:
-            LinkNode,
-            AutoLinkNode,
-            // ImageNode,
-            
-            // layouts:
-            ListNode,
-            ListItemNode,
-            TableNode,
-            TableRowNode,
-            TableCellNode,
-            
-            
-            
-            // identifiers:
-            // HashTagNode,
-            
-            
-            
-            // codes:
-            CodeNode,
-            CodeHighlightNode,
-        ],
+        theme,
+        nodes,
     }), []);
     
     
