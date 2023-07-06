@@ -57,7 +57,11 @@ import {
 
 
 
-export const defaultPlugins = (placeholder?: Parameters<typeof RichTextPlugin>[0]['placeholder']) => [
+export interface DefaultPluginsOptions {
+    placeholder     ?: Parameters<typeof RichTextPlugin>[0]['placeholder']
+    contentEditable ?: JSX.Element
+}
+export const defaultPlugins = ({placeholder, contentEditable}: DefaultPluginsOptions) => [
     // texts:
     
     // plain text editing, including typing, deletion and copy/pasting.
@@ -82,7 +86,7 @@ export const defaultPlugins = (placeholder?: Parameters<typeof RichTextPlugin>[0
     <RichTextPlugin
         // UIs:
         ErrorBoundary   = {LexicalErrorBoundary}
-        contentEditable = {<ContentEditable className='editable' />}
+        contentEditable = {contentEditable ?? <ContentEditable className='editable' />}
         placeholder     = {placeholder ?? null}
     />,
     

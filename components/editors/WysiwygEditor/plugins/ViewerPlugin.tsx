@@ -9,12 +9,6 @@ import {
     useMemo,
 }                           from 'react'
 
-// cssfn:
-import {
-    // style sheets:
-    dynamicStyleSheet,
-}                           from '@cssfn/cssfn-react'                   // writes css in react hook
-
 // reusable-ui components:
 import {
     // react components:
@@ -22,28 +16,24 @@ import {
     Content,
 }                           from '@reusable-ui/content'                 // a base component
 
+// UIs:
+import {
+    // react components:
+    ContentEditable,
+}                           from '@lexical/react/LexicalContentEditable'
+
 // plugins:
 import {
     defaultPlugins,
 }                           from '../defaultPlugins'
 
-// resources:
-// import
-//     // auto converts link-like-texts to links.
-//     AutoLinkPlugin
-//                             from './plugins/AutoLinkPlugin'
-
-// codes:
-// import
-//     CodeHighlightPlugin
-//                             from './plugins/CodeHighlightPlugin'
-
 
 
 // styles:
-export const useViewerPluginStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */ '../styles/editorStyles')
-, { id: 'ns8sc46yp4' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
+const contentEditableStyle : React.CSSProperties = {
+    // layouts:
+    display : 'contents', // remove layout
+};
 
 
 
@@ -58,28 +48,15 @@ export interface ViewerPluginProps<TElement extends Element = HTMLElement>
 {
 }
 const ViewerPlugin = <TElement extends Element = HTMLElement>(props: ViewerPluginProps<TElement>): JSX.Element|null => {
-    // styles:
-    const styleSheet     = useViewerPluginStyleSheet();
-    
-    
-    
     // jsx:
     return (
         <Content<TElement>
             // other props:
             {...props}
-            
-            
-            
-            // variants:
-            mild={props.mild ?? true}
-            
-            
-            
-            // classes:
-            mainClass={props.mainClass ?? styleSheet.main}
         >
-            {...useMemo(() => React.Children.toArray(defaultPlugins()), [])}
+            {...useMemo(() => React.Children.toArray(defaultPlugins({
+                contentEditable : <ContentEditable className='editable' style={contentEditableStyle} />
+            })), [])}
         </Content>
     );
 };
