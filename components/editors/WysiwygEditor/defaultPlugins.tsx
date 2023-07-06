@@ -44,6 +44,17 @@ import {
     TablePlugin,
 }                           from '@lexical/react/LexicalTablePlugin'
 
+// resources:
+// import
+//     // auto converts link-like-texts to links.
+//     AutoLinkPlugin
+//                             from './plugins/AutoLinkPlugin'
+
+// codes:
+// import
+//     CodeHighlightPlugin
+//                             from './plugins/CodeHighlightPlugin'
+
 
 
 export const defaultPlugins = (placeholder?: Parameters<typeof RichTextPlugin>[0]['placeholder']) => [
