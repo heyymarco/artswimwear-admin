@@ -72,7 +72,7 @@ import {
     defaultTheme,
 }                           from './defaultTheme'
 
-// theme:
+// nodes:
 import {
     // defined supported nodes.
     defaultNodes,
