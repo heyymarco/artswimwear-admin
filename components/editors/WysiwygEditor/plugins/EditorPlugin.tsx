@@ -2,6 +2,11 @@
 import {
     // react:
     default as React,
+    
+    
+    
+    // hooks:
+    useMemo,
 }                           from 'react'
 
 // cssfn:
@@ -15,8 +20,6 @@ import {
     // react components:
     ControlProps,
     Control,
-    
-    ControlComponentProps,
 }                           from '@reusable-ui/control'                 // a base component
 
 // plugins:
@@ -61,7 +64,6 @@ export interface EditorPluginProps<TElement extends Element = HTMLElement>
         >,
         
         // components:
-        ControlComponentProps<TElement>,
         Pick<PlaceholderProps,
             // accessibilities:
             |'placeholder'
@@ -87,50 +89,44 @@ const EditorPlugin = <TElement extends Element = HTMLElement>(props: EditorPlugi
         
         
         // components:
-        controlComponent = (<Control<TElement> /> as React.ReactComponentElement<any, ControlProps<TElement>>),
         placeholderComponent,
     ...restBasicProps} = props;
     
     
     
     // jsx:
-    return React.cloneElement<ControlProps<Element>>(controlComponent,
-        // props:
-        {
+    return (
+        <Control<TElement>
             // other props:
-            ...restBasicProps,
-            ...controlComponent.props, // overwrites restBasicProps (if any conflics)
+            {...restBasicProps}
             
             
             
             // variants:
-            mild      : controlComponent.props.mild      ?? props.mild      ?? true,
+            mild={props.mild ?? true}
             
             
             
             // classes:
-            mainClass : controlComponent.props.mainClass ?? props.mainClass ?? styleSheet.main,
-        },
-        
-        
-        
-        // children:
-        ...defaultPlugins(
-            <Placeholder
-                // classes:
-                className='placeholder'
-                
-                
-                
-                // accessibilities:
-                placeholder={placeholder}
-                
-                
-                
-                // components:
-                placeholderComponent={placeholderComponent}
-            />
-        )
+            mainClass={props.mainClass ?? styleSheet.main}
+        >
+            {...useMemo(() => React.Children.toArray(defaultPlugins(
+                <Placeholder
+                    // classes:
+                    className='placeholder'
+                    
+                    
+                    
+                    // accessibilities:
+                    placeholder={placeholder}
+                    
+                    
+                    
+                    // components:
+                    placeholderComponent={placeholderComponent}
+                />
+            )), [])}
+        </Control>
     );
 };
 export {
