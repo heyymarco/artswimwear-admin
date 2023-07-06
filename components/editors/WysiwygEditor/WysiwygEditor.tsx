@@ -88,17 +88,6 @@ import {
     DynamicEditablePlugin,
 }                           from './plugins/DynamicEditablePlugin'
 
-// resources:
-// import
-//     // auto converts link-like-texts to links.
-//     AutoLinkPlugin
-//                             from './plugins/AutoLinkPlugin'
-
-// codes:
-// import
-//     CodeHighlightPlugin
-//                             from './plugins/CodeHighlightPlugin'
-
 
 
 // react components:
@@ -110,6 +99,11 @@ export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
             |'defaultValue' // taken over by EditorProps
             |'value'        // taken over by EditorProps
             |'onChange'     // taken over by EditorProps
+            
+            
+            
+            // children:
+            |'children'     // not supported
         >,
         Pick<EditorProps<TElement, WysiwygEditorState|null>,
             // accessibilities:
