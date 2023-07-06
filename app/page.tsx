@@ -10,7 +10,7 @@ import {
 }                           from '@heymarco/image'
 import axios from 'axios'
 import { resolveMediaUrl } from '@/libs/mediaStorage.client'
-import {WysiwygEditorState, WysiwygEditor, ToolbarPlugin, EditorPlugin} from '@/components/editors/WysiwygEditor';
+import {WysiwygEditorState, WysiwygEditor, ToolbarPlugin, EditorPlugin, WysiwygViewer} from '@/components/editors/WysiwygEditor';
 
 
 
@@ -107,7 +107,7 @@ export default function Home() {
                     />
                 </WysiwygEditor>
                 <hr />
-                <WysiwygEditor
+                <WysiwygViewer
                     // variants:
                     theme='danger'
                     
@@ -115,14 +115,7 @@ export default function Home() {
                     
                     // values:
                     value={value}
-                    onChange={setValue}
-                >
-                    <ToolbarPlugin />
-                    <EditorPlugin
-                        // accessibilities:
-                        placeholder='Type product description here...'
-                    />
-                </WysiwygEditor>
+                />
                 <hr />
                 <div>
                     {JSON.stringify(value)}
