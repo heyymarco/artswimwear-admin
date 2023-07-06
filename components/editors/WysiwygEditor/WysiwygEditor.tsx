@@ -166,7 +166,6 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         editable    : !isDisabledOrReadOnly,
         onError     : handleError,
         
-        // causes hydration error:
         editorState : (editor) => {
             // conditions:
             const initialValue = ((value !== undefined) ? value : defaultValue) ?? null;

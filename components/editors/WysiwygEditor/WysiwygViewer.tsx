@@ -115,7 +115,6 @@ const WysiwygViewer = <TElement extends Element = HTMLElement>(props: WysiwygVie
         editable    : false,
         onError     : handleError,
         
-        // causes hydration error:
         editorState : (editor) => {
             // actions:
             editor.setEditorState(value ?? ({} as any));
