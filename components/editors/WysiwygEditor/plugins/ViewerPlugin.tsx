@@ -55,7 +55,7 @@ const ViewerPlugin = <TElement extends Element = HTMLElement>(props: ViewerPlugi
             {...props}
         >
             {...useMemo(() => React.Children.toArray(defaultPlugins({
-                contentEditable : <ContentEditable className='editable' style={contentEditableStyle} />
+                contentEditable : <ContentEditable style={contentEditableStyle} />
             })), [])}
         </Content>
     );
