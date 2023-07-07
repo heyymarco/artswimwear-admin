@@ -37,8 +37,8 @@ export const defaultTheme = () => ({
  //     nested: {
  //         listitem           : 'nested-listitem',
  //     },
-        ol                     : 'pList',
-        ul                     : 'pList',
+        ol                     : 'plainList',
+        ul                     : 'plainList',
  //     listitem               : 'listItem',
  //     listitemChecked        : 'listItemChecked',
  //     listitemUnchecked      : 'listItemUnchecked',
