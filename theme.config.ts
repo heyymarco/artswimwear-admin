@@ -1,3 +1,4 @@
+import '@reusable-ui/typos/dist/effects'
 import { defineTheme } from '@reusable-ui/core'
 import { iconConfig } from '@reusable-ui/components'
 import { galleryEditors } from '@/components/editors/GalleryEditor/styles/config';
