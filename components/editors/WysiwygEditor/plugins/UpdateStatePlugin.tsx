@@ -94,7 +94,6 @@ const UpdateStatePlugin = ({value, defaultValue, onChange}: UpdateStatePluginPro
             
             
             // actions:
-            console.log('onChange');
             onChange(editorState);
         });
     });
