@@ -23,7 +23,7 @@ import { Tab, TabPanel } from '@reusable-ui/components'
 import { Image } from '@heymarco/image'
 import axios from 'axios'
 import { resolveMediaUrl } from '@/libs/mediaStorage.client'
-import { WysiwygEditor } from '@/components/editors/WysiwygEditor';
+import { WysiwygEditorState, WysiwygEditor, ToolbarPlugin, EditorPlugin } from '@/components/editors/WysiwygEditor';
 
 
 
@@ -75,7 +75,18 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
     const [shippingWeight  , setShippingWeight  ] = useState<number|null>(product.shippingWeight ?? null);
     const [stock           , setStock           ] = useState<number|null>(product.stock          ?? null);
     const [images          , setImages          ] = useState<string[]>(product.images);
-    const [description     , setDescription     ] = useState<string>(product.description ?? '');
+    const [description     , setDescription     ] = useState<WysiwygEditorState|null>(() => {
+        const description = product.description;
+        if (!description) return null;
+        if (typeof(description) === 'object') return description as any;
+        try {
+            return JSON.parse(description);
+        }
+        catch {
+            return null;
+        } // try
+    });
+    console.log({description});
     
     
     
@@ -132,7 +143,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                 shippingWeight : shippingWeight ?? undefined,
                 stock          : stock          ?? undefined,
                 images,
-                description,
+                description    : description,
             }).unwrap();
             
             onClose();
@@ -367,7 +378,25 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                     />
                 </TabPanel>
                 <TabPanel label={PAGE_PRODUCTS_TAB_DESCRIPTION}>
-                    <WysiwygEditor />
+                    <WysiwygEditor
+                        // classes:
+                        className={styles.editDescription}
+                        
+                        
+                        
+                        // values:
+                        value={description}
+                        onChange={(value) => {
+                            setDescription(value);
+                            setIsModified(true);
+                        }}
+                    >
+                        <ToolbarPlugin className='solid' />
+                        <EditorPlugin
+                            // accessibilities:
+                            placeholder='Type product description here...'
+                        />
+                    </WysiwygEditor>
                 </TabPanel>
             </Tab>
             <CardFooter onKeyDown={handleKeyDown}>

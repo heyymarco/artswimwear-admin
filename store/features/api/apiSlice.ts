@@ -1,6 +1,7 @@
 import type { RootState } from '@/store/store'
 import { createEntityAdapter, EntityState } from '@reduxjs/toolkit'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import type { WysiwygEditorState } from '@/components/editors/WysiwygEditor';
 
 
 
@@ -16,7 +17,7 @@ export interface ProductEntry {
     
     stock          : number|undefined
     
-    description    : string|undefined
+    description    : WysiwygEditorState|null|undefined
     images         : string[]
     path           : string|undefined
 }

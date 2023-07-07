@@ -1,6 +1,7 @@
 // cssfn:
 import {
     // writes css in javascript:
+    fallback,
     children,
     style,
     vars,
@@ -19,6 +20,11 @@ import {
     
     // a responsive management system:
     ifScreenWidthAtLeast,
+    
+    
+    
+    // groups a list of UIs into a single UI:
+    usesGroupable,
 }                           from '@reusable-ui/core'    // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -160,6 +166,67 @@ export const usesPageInfoLayout = () => {
         ...children('.visibility.editor', { gridArea: 'visibility-editor' }),
     });
 };
+export const usesEditDescription = () => {
+    // dependencies:
+    
+    // capabilities:
+    const {groupableRule, groupableVars} = usesGroupable({
+        itemsSelector : '&', // select the <WysiwygEditor> itself
+    });
+    
+    // features:
+    const {borderRule, borderVars } = usesBorder({ borderWidth: '0px' });
+    
+    
+    
+    // spacings:
+    const positivePaddingInline = groupableVars.paddingInline;
+    const positivePaddingBlock  = groupableVars.paddingBlock;
+    const negativePaddingInline = `calc(0px - ${positivePaddingInline})`;
+    const negativePaddingBlock  = `calc(0px - ${positivePaddingBlock })`;
+    
+    
+    
+    return style({
+        // capabilities:
+        ...groupableRule(), // make a nicely rounded corners
+        
+        
+        
+        // layouts:
+        ...style({
+            // sizes:
+            // blockSize     : 'fill-available',
+            ...fallback({
+                blockSize : `calc(100% + (${positivePaddingBlock} * 2))`,
+            }),
+            
+            
+            
+            // borders:
+            // follows <parent>'s borderRadius
+            border                   : borderVars.border,
+         // borderRadius             : borderVars.borderRadius,
+            borderStartStartRadius   : borderVars.borderStartStartRadius,
+            borderStartEndRadius     : borderVars.borderStartEndRadius,
+            borderEndStartRadius     : borderVars.borderEndStartRadius,
+            borderEndEndRadius       : borderVars.borderEndEndRadius,
+            [borderVars.borderWidth] : '0px', // only setup borderRadius, no borderStroke
+            
+            
+            
+            // spacings:
+            // cancel-out parent's padding with negative margin:
+            marginInline : negativePaddingInline,
+            marginBlock  : negativePaddingBlock,
+        }),
+        
+        
+        
+        // features:
+        ...borderRule(), // must be placed at the last
+    });
+};
 
 export default () => [
     scope('cardBody', {
@@ -177,4 +244,8 @@ export default () => [
     scope('pageInfo', {
         ...usesPageInfoLayout(),
     }),
+    
+    scope('editDescription', {
+        ...usesEditDescription(),
+    }, { specificityWeight: 2 }),
 ];
