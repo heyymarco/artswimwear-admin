@@ -110,7 +110,7 @@ const EditorPlugin = <TElement extends Element = HTMLElement>(props: EditorPlugi
             // classes:
             mainClass={props.mainClass ?? styleSheet.main}
         >
-            {...useMemo(() => React.Children.toArray(defaultPlugins({
+            {...useMemo(() => defaultPlugins({
                 placeholder : <Placeholder
                     // classes:
                     className='placeholder'
@@ -125,7 +125,7 @@ const EditorPlugin = <TElement extends Element = HTMLElement>(props: EditorPlugi
                     // components:
                     placeholderComponent={placeholderComponent}
                 />,
-            })), [])}
+            }), [])}
         </Control>
     );
 };

@@ -61,7 +61,7 @@ export interface DefaultPluginsOptions {
     placeholder     ?: Parameters<typeof RichTextPlugin>[0]['placeholder']
     contentEditable ?: JSX.Element
 }
-export const defaultPlugins = ({placeholder, contentEditable}: DefaultPluginsOptions) => [
+export const defaultPlugins = ({placeholder, contentEditable}: DefaultPluginsOptions) => React.Children.toArray([
     // texts:
     
     // plain text editing, including typing, deletion and copy/pasting.
@@ -119,4 +119,4 @@ export const defaultPlugins = ({placeholder, contentEditable}: DefaultPluginsOpt
     
     // codes:
     /* <CodeHighlightPlugin />, */
-];
+]);
