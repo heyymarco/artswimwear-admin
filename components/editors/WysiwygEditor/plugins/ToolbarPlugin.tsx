@@ -683,8 +683,8 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
                     },
                 ),
             )}
-            </AccessibilityProvider>
-        );
+        </AccessibilityProvider>
+    );
 };
 export {
     ToolbarPlugin,
