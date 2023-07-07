@@ -33,16 +33,16 @@ export const defaultTheme = () => ({
     image                      : 'image', // TODO: update style
     
     // layouts:
- // list: {
+    list: {
  //     nested: {
  //         listitem           : 'nested-listitem',
  //     },
- //     ol                     : 'list-ol',
- //     ul                     : 'list-ul',
+        ol                     : 'pList',
+        ul                     : 'pList',
  //     listitem               : 'listItem',
  //     listitemChecked        : 'listItemChecked',
  //     listitemUnchecked      : 'listItemUnchecked',
- // },
+    },
  // table                      : 'table',
     
     // identifiers:
