@@ -30,7 +30,11 @@ export default function Home() {
     //     'water-500x800.jpg',
     //     'wood-700x600.jpg',
     // ]);
-    const [value, setValue] = useState<WysiwygEditorState|null>(null);
+    const [value, setValue] = useState<WysiwygEditorState|null>(
+        JSON.parse(
+            '{"root":{"children":[{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"edit me!","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}'
+        )
+    );
     return (
         <Main nude={true}>
             <Section title='Homepage'>
@@ -120,6 +124,13 @@ export default function Home() {
                 <div>
                     {JSON.stringify(value)}
                 </div>
+                <hr />
+                <button onClick={() => setValue(JSON.parse(
+                    '{"root":{"children":[{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"noooo","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}'
+                ))}>update</button>
+                <button onClick={() => setValue(JSON.parse(
+                    '{"root":{"children":[{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"yesss","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}'
+                ))}>update</button>
             </Section>
         </Main>
     )

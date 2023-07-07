@@ -167,13 +167,20 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         onError     : handleError,
         
         editorState : (editor) => {
-            // conditions:
+            // fn props:
             const initialValue = ((value !== undefined) ? value : defaultValue) ?? null;
+            const editorState = (
+                !initialValue
+                ? null
+                : ('root' in initialValue)
+                    ? editor.parseEditorState(initialValue as any)
+                    : initialValue
+            );
             
             
             
             // actions:
-            editor.setEditorState(initialValue ?? ({} as any));
+            editor.setEditorState(editorState ?? ({} as any));
         },
         
         theme       : defaultTheme(),

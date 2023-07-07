@@ -116,8 +116,20 @@ const WysiwygViewer = <TElement extends Element = HTMLElement>(props: WysiwygVie
         onError     : handleError,
         
         editorState : (editor) => {
+            // fn props:
+            const initialValue = value ?? null;
+            const editorState = (
+                !initialValue
+                ? null
+                : ('root' in initialValue)
+                    ? editor.parseEditorState(initialValue as any)
+                    : initialValue
+            );
+            
+            
+            
             // actions:
-            editor.setEditorState(value ?? ({} as any));
+            editor.setEditorState(editorState ?? ({} as any));
         },
         
         theme       : defaultTheme(),

@@ -59,13 +59,20 @@ const UpdateStatePlugin = ({value, defaultValue, onChange}: UpdateStatePluginPro
     useEffect(() => {
         // conditions:
         if (prevValue.current === newValue) return; // no diff => ignore
-        prevValue.current = newValue;
+        const editorState = (
+            !newValue
+            ? null
+            : ('root' in newValue)
+                ? editor.parseEditorState(newValue as any)
+                : newValue
+        );
+        prevValue.current = editorState; // sync
         
         
         
         // actions:
         editor.update(() => {
-            editor.setEditorState(newValue ?? ({} as any));
+            editor.setEditorState(editorState ?? ({} as any));
         });
     }, [newValue]); // (re)run the setups on every time the `newValue` changes
     
@@ -87,6 +94,7 @@ const UpdateStatePlugin = ({value, defaultValue, onChange}: UpdateStatePluginPro
             
             
             // actions:
+            console.log('onChange');
             onChange(editorState);
         });
     });
