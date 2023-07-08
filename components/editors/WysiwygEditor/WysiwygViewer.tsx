@@ -20,10 +20,6 @@ import type {
     // react components:
     IndicatorProps,
 }                           from '@reusable-ui/indicator'       // a base component
-import {
-    // react components:
-    Group,
-}                           from '@reusable-ui/group'           // a base component
 
 // lexical functions:
 import {
@@ -147,17 +143,10 @@ const WysiwygViewer = <TElement extends Element = HTMLElement>(props: WysiwygVie
             
             
             {/* elements: */}
-            <Group<TElement>
+            <ViewerPlugin
                 // other props:
                 {...restIndicatorProps}
-                
-                
-                
-                // variants:
-                orientation='block'
-            >
-                <ViewerPlugin />
-            </Group>
+            />
         </LexicalComposer>
     );
 };
