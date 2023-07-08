@@ -31,8 +31,6 @@ export default () => {
             display: 'flex',
             flexDirection: 'column',
         }),
-        scope('toolbox', {
-        }, { specificityWeight: 2 }),
         scope('paginationLoading', {
             blockSize: '100%',
         }, { specificityWeight: 2 }),
