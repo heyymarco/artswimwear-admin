@@ -391,7 +391,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                             setIsModified(true);
                         }}
                     >
-                        <ToolbarPlugin className='solid' />
+                        <ToolbarPlugin className='solid' theme='primary' />
                         <EditorPlugin
                             // accessibilities:
                             placeholder='Type product description here...'
