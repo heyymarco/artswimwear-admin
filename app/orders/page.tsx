@@ -23,7 +23,7 @@ import { TextEditor } from '@/components/editors/TextEditor'
 import { CurrencyEditor } from '@/components/editors/CurrencyEditor'
 import { StockEditor } from '@/components/editors/StockEditor'
 import { VisibilityEditor } from '@/components/editors/VisibilityEditor'
-import { SimpleEditDialog } from './SimpleEditDialog'
+import { SimpleEditCustomerDialog } from '@/components/dialogs/SimpleEditCustomerDialog'
 import { FullEditDialog } from './FullEditDialog'
 import { resolveMediaUrl } from '@/libs/mediaStorage.client'
 import type { OrderSchema } from '@/models/Order'
@@ -97,18 +97,7 @@ const OrderItem = (props: OrderItemProps) => {
     
     
     // states:
-    type EditMode =
-        Exclude<keyof OrderDetail,
-            |'_id'
-            |'customer'
-            |'shippingAddress'
-            |'shippingProvider'
-            |'shippingCost'
-        >
-        |'customerName'
-        |'customerEmail'
-        |'shipping'
-        |'full'
+    type EditMode = keyof OrderDetail['customer']|'full'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     
@@ -135,20 +124,20 @@ const OrderItem = (props: OrderItemProps) => {
                 <p className='customer'>
                     <span className='name'>
                         <strong>{customerNickName}</strong>
-                        <EditButton onClick={() => setEditMode('customerName')} />
+                        <EditButton onClick={() => setEditMode('nickName')} />
                     </span>
                     <span className='email'>
                         <em>{customerEmail}</em>
-                        <EditButton onClick={() => setEditMode('customerEmail')} />
+                        <EditButton onClick={() => setEditMode('email')} />
                     </span>
                 </p>
                 <p className='shipping'>
                     {`${shippingAddress}, ${shippingCity}, ${shippingZone} (${shippingZip}), ${countryList?.entities?.[shippingCountry ?? '']?.name}`}
-                    <EditButton onClick={() => setEditMode('shipping')} />
+                    <EditButton onClick={() => setEditMode('full')} />
                 </p>
                 <p className='items'>
                     <strong className='value'>{getTotalQuantity(items)}</strong> items: ...
-                    <EditButton onClick={() => setEditMode('items')} />
+                    <EditButton onClick={() => setEditMode('full')} />
                 </p>
                 <p className='fullEditor'>
                     <EditButton buttonStyle='regular' onClick={() => setEditMode('full')}>
@@ -158,9 +147,9 @@ const OrderItem = (props: OrderItemProps) => {
             </div>
             <ModalStatus theme='primary' viewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
                 {!!editMode && (editMode !== 'full') && <>
-                    {/* {(editMode === 'name'      ) && <SimpleEditDialog order={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor       required={true } />} />} */}
-                    {/* {(editMode === 'stock'     ) && <SimpleEditDialog order={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<StockEditor      theme='secondary' />} />} */}
-                    {/* {(editMode === 'shipping') && <SimpleEditDialog order={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<VisibilityEditor theme='secondary' />} />} */}
+                    {(editMode === 'nickName') && <SimpleEditCustomerDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor type='text'  required minLength={2} maxLength={30} autoCapitalize='words' />} />}
+                    {(editMode === 'email'   ) && <SimpleEditCustomerDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor type='email' required minLength={5} maxLength={50} />} />}
+                    {/* {(editMode === 'shipping') && <SimpleEditCustomerDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<VisibilityEditor theme='secondary' />} />} */}
                 </>}
             </ModalStatus>
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
