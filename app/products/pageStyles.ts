@@ -67,6 +67,9 @@ export default () => {
             justifyContent: 'center',
             [paddingVars.paddingInline] : '0px',
             [paddingVars.paddingBlock ] : '0px',
+            
+            minBlockSize : '150px', // a temporary fix for empty loading appearance
+            
             ...groupableRule(),  // make a nicely rounded corners
         }, { specificityWeight: 2 }),
         scope('productListInner', {

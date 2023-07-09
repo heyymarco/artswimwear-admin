@@ -189,7 +189,7 @@ export default function Products() {
         </Pagination>
     );
     return (
-        <Main className={styles.page} title='Products'>
+        <Main className={styles.page}>
             <Section className={`fill-self ${styles.products}`}>
                 <ProductPagination className={styles.paginTop} />
                 <Basic<HTMLElement> className={styles.productList} theme='primary' mild={true} elmRef={setProductListRef}>
