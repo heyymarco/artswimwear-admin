@@ -2,7 +2,7 @@
 
 import { useEvent } from '@reusable-ui/core'
 
-import { UpdateModelEventHandler, SimpleEditDialogProps, SimpleEditDialog } from '@/components/dialogs/SimpleEditDialog'
+import { InitialValueEventHandler, UpdateModelEventHandler, SimpleEditDialogProps, SimpleEditDialog } from '@/components/dialogs/SimpleEditDialog'
 import { ProductDetail, useUpdateProduct } from '@/store/features/api/apiSlice'
 
 
@@ -13,6 +13,11 @@ export interface SimpleEditProductDialogProps<TValue extends any>
         Omit<SimpleEditDialogProps<TValue, ProductDetail, keyof ProductDetail>,
             // states:
             |'isLoading'
+            
+            
+            
+            // data:
+            |'initialValue'
             
             
             
@@ -28,7 +33,10 @@ export const SimpleEditProductDialog = <TValue extends any>(props: SimpleEditPro
     
     
     // handlers:
-    const handleUpdateModel = useEvent<UpdateModelEventHandler<TValue, ProductDetail, keyof ProductDetail>>(async (value, edit, model) => {
+    const handleInitialValue = useEvent<InitialValueEventHandler<TValue, ProductDetail, keyof ProductDetail>>((edit, model) => {
+        return model[edit] as TValue;
+    });
+    const handleUpdateModel  = useEvent<UpdateModelEventHandler<TValue, ProductDetail, keyof ProductDetail>>(async (value, edit, model) => {
         await updateProduct({
             _id    : model._id,
             
@@ -48,6 +56,11 @@ export const SimpleEditProductDialog = <TValue extends any>(props: SimpleEditPro
             
             // states:
             isLoading={isLoading}
+            
+            
+            
+            // data:
+            initialValue={handleInitialValue}
             
             
             
