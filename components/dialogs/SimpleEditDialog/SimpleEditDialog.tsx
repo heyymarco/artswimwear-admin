@@ -21,8 +21,9 @@ const useSimpleEditDialogStyleSheet = dynamicStyleSheet(
 
 
 // react components:
-export type UpdateModelEventHandler<TValue extends any, TModel extends {}, TEdit extends keyof TModel> = (value: TValue, edit: TEdit, model: TModel) => Promise<void>
-export interface SimpleEditDialogProps<TValue extends any, TModel extends {}, TEdit extends keyof TModel> {
+export type InitialValueEventHandler<TValue extends any, TModel extends {}, TEdit extends string> = (edit: TEdit, model: TModel) => TValue
+export type UpdateModelEventHandler<TValue extends any, TModel extends {}, TEdit extends string> = (value: TValue, edit: TEdit, model: TModel) => Promise<void>
+export interface SimpleEditDialogProps<TValue extends any, TModel extends {}, TEdit extends string> {
     // states:
     isLoading       : boolean
     
@@ -31,6 +32,7 @@ export interface SimpleEditDialogProps<TValue extends any, TModel extends {}, TE
     // data:
     model           : TModel
     edit            : TEdit
+    initialValue    : InitialValueEventHandler<TValue, TModel, TEdit>
     
     
     
@@ -43,7 +45,7 @@ export interface SimpleEditDialogProps<TValue extends any, TModel extends {}, TE
     onClose         : () => void
     onUpdateModel   : UpdateModelEventHandler<TValue, TModel, TEdit>
 }
-export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit extends keyof TModel>(props: SimpleEditDialogProps<TValue, TModel, TEdit>) => {
+export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit extends string>(props: SimpleEditDialogProps<TValue, TModel, TEdit>) => {
     // styles:
     const styles = useSimpleEditDialogStyleSheet();
     
@@ -59,6 +61,7 @@ export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit ex
         // data:
         model,
         edit,
+        initialValue,
         
         
         
@@ -78,7 +81,7 @@ export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit ex
     const [isModified      , setIsModified      ] = useState<boolean>(false);
     
     const [enableValidation, setEnableValidation] = useState<boolean>(false);
-    const [editorValue     , setEditorValue     ] = useState<any>(model[edit]);
+    const [editorValue     , setEditorValue     ] = useState<any>(() => initialValue(edit, model));
     
     
     
