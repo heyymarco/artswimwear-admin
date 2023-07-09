@@ -9,7 +9,7 @@ import type { Metadata } from 'next'
 
 import { Image } from '@heymarco/image'
 import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody } from '@reusable-ui/components';
-import { ProductEntry, useGetProductList } from '@/store/features/api/apiSlice';
+import { ProductDetail, useGetProductList } from '@/store/features/api/apiSlice';
 import { useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
 import { formatCurrency, getCurrencySign } from '@/libs/formatters';
@@ -42,7 +42,7 @@ const usePageStyleSheet = dynamicStyleSheets(
 
 
 interface ProductItemProps extends ListItemProps {
-    product: ProductEntry
+    product: ProductDetail
 }
 const ProductItem = (props: ProductItemProps) => {
     // styles:
@@ -64,7 +64,7 @@ const ProductItem = (props: ProductItemProps) => {
     
     
     // states:
-    type EditMode = Exclude<keyof ProductEntry, '_id'|'image'>|'full'
+    type EditMode = Exclude<keyof ProductDetail, '_id'|'image'>|'full'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     

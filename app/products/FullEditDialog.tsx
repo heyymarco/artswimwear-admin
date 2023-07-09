@@ -4,7 +4,7 @@ import { default as React } from 'react'
 import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 
 import { ButtonIcon, Generic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, List, Carousel, Masonry, masonries } from '@reusable-ui/components';
-import { ProductEntry, useUpdateProduct } from '@/store/features/api/apiSlice';
+import { ProductDetail, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { getCurrencySign } from '@/libs/formatters';
 import { AccessibilityProvider, ValidationProvider, useEvent } from '@reusable-ui/core';
@@ -37,7 +37,7 @@ const useFullEditDialogStyleSheet = dynamicStyleSheets(
 // react components:
 export interface FullEditDialogProps {
     // data:
-    product          : ProductEntry
+    product          : ProductDetail
     
     
     

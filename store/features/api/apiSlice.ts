@@ -1,25 +1,20 @@
 import type { RootState } from '@/store/store'
 import { createEntityAdapter, EntityState } from '@reduxjs/toolkit'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import type { ProductSchema } from '@/models/Product';
-import type { WysiwygEditorState } from '@/components/editors/WysiwygEditor';
+import type { ProductSchema } from '@/models/Product'
+import type { OrderSchema } from '@/models/Order'
+import type { WysiwygEditorState } from '@/components/editors/WysiwygEditor'
+import type { ProductDetail } from '@/pages/api/product'
+export type { ProductDetail } from '@/pages/api/product'
 
 
 
-export interface ProductEntry
-    extends
-        Omit<ProductSchema,
-            |'_id'
-            |'description'
-        >
-{
-    _id         : string
-    description : WysiwygEditorState|null|undefined
-}
-export interface PagedProductEntries {
+// types:
+export interface Pagination<TEntry> {
     total    : number
-    entities : ProductEntry[]
+    entities : TEntry[]
 }
+
 
 
 export const apiSlice = createApi({
@@ -29,7 +24,7 @@ export const apiSlice = createApi({
     }),
     tagTypes: ['Products'],
     endpoints : (builder) => ({
-        getProductList   : builder.query<PagedProductEntries, { page?: number, perPage?: number }>({
+        getProductList   : builder.query<Pagination<ProductDetail>, { page?: number, perPage?: number }>({
             query : ({ page = 1, perPage = 20 }) => `product?page=${page}&perPage=${perPage}`,
             providesTags: (result, error, page)  => {
                 return [
@@ -45,7 +40,7 @@ export const apiSlice = createApi({
                 ];
             },
         }),
-        updateProduct : builder.mutation<ProductEntry, Pick<ProductEntry, '_id'> & Partial<Omit<ProductEntry, '_id'>>>({
+        updateProduct : builder.mutation<ProductDetail, Pick<ProductDetail, '_id'> & Partial<Omit<ProductDetail, '_id'>>>({
             query: (patch) => ({
                 url    : 'product',
                 method : 'PATCH',
@@ -76,7 +71,7 @@ export const apiSlice = createApi({
                         &&
                         (query.endpointName === getProductListName)
                         &&
-                        !!(query.data as PagedProductEntries|undefined)?.entities.some((searchProduct) => (searchProduct._id === updatedProduct._id))
+                        !!(query.data as Pagination<ProductDetail>|undefined)?.entities.some((searchProduct) => (searchProduct._id === updatedProduct._id))
                     )
                     .map((query) => query.originalArgs)
                 );

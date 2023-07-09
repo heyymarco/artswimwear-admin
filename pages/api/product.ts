@@ -5,27 +5,21 @@ import { createRouter, expressWrapper } from 'next-connect'
 import { connectDB } from '@/libs/dbConn'
 import { default as Product, ProductSchema } from '@/models/Product'
 import type { HydratedDocument } from 'mongoose'
+import type { WysiwygEditorState } from '@/components/editors/WysiwygEditor';
 
 
 
 // types:
-export type PreviewProduct  =
-    Required<Pick<ProductSchema, '_id'>>
-    &
-    Pick<ProductSchema,
-        |'visibility'
-        
-        |'name'
-        
-        |'price'
-        |'shippingWeight'
-        
-        |'stock'
-        
-        |'description'
-        |'images'
-        |'path'
-    >
+export interface ProductDetail
+    extends
+        Omit<ProductSchema,
+            |'_id'
+            |'description'
+        >
+{
+    _id         : string
+    description : WysiwygEditorState|null|undefined
+}
 
 
 
@@ -83,7 +77,7 @@ router
     const total = await Product.count();
     return res.json({
         total,
-        entities: (await Product.find<HydratedDocument<PreviewProduct>>({}, {
+        entities: (await Product.find<HydratedDocument<ProductDetail>>({}, {
             _id            : true,
             
             visibility     : true,

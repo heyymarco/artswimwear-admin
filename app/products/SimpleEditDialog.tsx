@@ -4,7 +4,7 @@ import { default as React } from 'react'
 import { dynamicStyleSheet } from '@cssfn/cssfn-react'
 
 import { ButtonIcon, CardBody, CardHeader, CardFooter, Button, CloseButton } from '@reusable-ui/components';
-import { ProductEntry, useUpdateProduct } from '@/store/features/api/apiSlice';
+import { ProductDetail, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { AccessibilityProvider, ValidationProvider, useEvent } from '@reusable-ui/core';
 import { ModalStatus } from '../../components/ModalStatus'
@@ -23,8 +23,8 @@ const useSimpleEditDialogStyleSheet = dynamicStyleSheet(
 // react components:
 export interface SimpleEditDialogProps<TValue> {
     // data:
-    product         : ProductEntry
-    edit            : Exclude<keyof ProductEntry, '_id'>
+    product         : ProductDetail
+    edit            : Exclude<keyof ProductDetail, '_id'>
     
     
     
