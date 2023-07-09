@@ -32,6 +32,7 @@ const SiteNavbarMenu = ({
                 <Nav tag='ul' role='' {...basicVariantProps} orientation={navbarExpanded ? 'inline' : 'block'} listStyle='flat' gradient={navbarExpanded ? 'inherit' : false}>
                     <NavItem><Link href='/'>Home</Link></NavItem>
                     <NavItem><Link href='/products'>Products</Link></NavItem>
+                    <NavItem><Link href='/orders'>Orders</Link></NavItem>
                 </Nav>
             </Collapse>
         </>

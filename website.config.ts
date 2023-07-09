@@ -20,3 +20,6 @@ export const PAGE_PRODUCTS_VISIBILITY_DRAFT          = 'Draft'
 export const PAGE_PRODUCTS_TAB_INFORMATIONS          = 'Informations'
 export const PAGE_PRODUCTS_TAB_IMAGES                = 'Images'
 export const PAGE_PRODUCTS_TAB_DESCRIPTION           = 'Description'
+
+export const PAGE_ORDERS_TITLE                       = `Orders - ${WEBSITE_TITLE}`
+export const PAGE_ORDERS_DESCRIPTION                 = 'Order management.'
