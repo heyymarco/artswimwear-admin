@@ -1,19 +1,7 @@
-import type { RootState } from '@/store/store'
-import { createEntityAdapter, EntityState } from '@reduxjs/toolkit'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import type { ProductSchema } from '@/models/Product'
-import type { OrderSchema } from '@/models/Order'
-import type { WysiwygEditorState } from '@/components/editors/WysiwygEditor'
+import type { Pagination } from '@/libs/types'
 import type { ProductDetail } from '@/pages/api/product'
 export type { ProductDetail } from '@/pages/api/product'
-
-
-
-// types:
-export interface Pagination<TEntry> {
-    total    : number
-    entities : TEntry[]
-}
 
 
 
