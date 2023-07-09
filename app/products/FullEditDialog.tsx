@@ -70,7 +70,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
     const [enableValidation, setEnableValidation] = useState<boolean>(false);
     const [visibility      , setVisibility      ] = useState<ProductVisibility>(product.visibility as ProductVisibility);
     const [name            , setName            ] = useState<string>(product.name);
-    const [path            , setPath            ] = useState<string>(product.path ?? '');
+    const [path            , setPath            ] = useState<string>(product.path);
     const [price           , setPrice           ] = useState<number>(product.price);
     const [shippingWeight  , setShippingWeight  ] = useState<number|null>(product.shippingWeight ?? null);
     const [stock           , setStock           ] = useState<number|null>(product.stock          ?? null);

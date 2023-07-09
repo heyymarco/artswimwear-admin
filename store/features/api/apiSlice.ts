@@ -1,33 +1,25 @@
 import type { RootState } from '@/store/store'
 import { createEntityAdapter, EntityState } from '@reduxjs/toolkit'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import type { ProductSchema } from '@/models/Product';
 import type { WysiwygEditorState } from '@/components/editors/WysiwygEditor';
 
 
 
-export interface ProductEntry {
-    _id            : string
-    
-    visibility     : string
-    
-    name           : string
-    
-    price          : number
-    shippingWeight : number|undefined
-    
-    stock          : number|undefined
-    
-    description    : WysiwygEditorState|null|undefined
-    images         : string[]
-    path           : string|undefined
+export interface ProductEntry
+    extends
+        Omit<ProductSchema,
+            |'_id'
+            |'description'
+        >
+{
+    _id         : string
+    description : WysiwygEditorState|null|undefined
 }
 export interface PagedProductEntries {
     total    : number
     entities : ProductEntry[]
 }
-const productListAdapter = createEntityAdapter<ProductEntry>({
-    selectId : (productEntry) => productEntry._id,
-});
 
 
 export const apiSlice = createApi({
