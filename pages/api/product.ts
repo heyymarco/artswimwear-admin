@@ -1,11 +1,12 @@
 
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { createRouter, expressWrapper } from 'next-connect'
+import { createRouter } from 'next-connect'
 
 import { connectDB } from '@/libs/dbConn'
 import { default as Product, ProductSchema } from '@/models/Product'
 import type { HydratedDocument } from 'mongoose'
-import type { WysiwygEditorState } from '@/components/editors/WysiwygEditor';
+import type { Pagination } from '@/libs/types'
+import type { WysiwygEditorState } from '@/components/editors/WysiwygEditor'
 
 
 
@@ -34,7 +35,13 @@ catch (error) {
 
 
 
-const router = createRouter<NextApiRequest, NextApiResponse>();
+const router = createRouter<
+    NextApiRequest,
+    NextApiResponse<
+        |Pagination<ProductDetail>
+        |{ error: any }
+    >
+>();
 
 
 
