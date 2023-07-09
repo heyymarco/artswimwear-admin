@@ -96,9 +96,12 @@ router
             
             stock          : true,
             
-            description    : true,
-            images         : true,
             path           : true,
+            
+            excerpt        : true,
+            description    : true,
+            
+            images         : true,
         }, {
             skip  : (page - 1) * perPage, // note: not scaleable but works in small commerce app -- will be fixed in the future
             limit : perPage,
@@ -158,9 +161,12 @@ router
         
         stock          : true,
         
-        description    : true,
-        images         : true,
         path           : true,
+        
+        excerpt        : true,
+        description    : true,
+        
+        images         : true,
     });
     if (!product) return res.status(400).json({ error: 'invalid ID' });
     //#endregion validating request
