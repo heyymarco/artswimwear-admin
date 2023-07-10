@@ -156,11 +156,13 @@ const OrderItem = (props: OrderItemProps) => {
                 {!!editMode && (editMode !== 'full') && <>
                     {(editMode === 'nickName'       ) && <SimpleEditCustomerDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor type='text'  required minLength={2} maxLength={30} autoCapitalize='words' />} />}
                     {(editMode === 'email'          ) && <SimpleEditCustomerDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor type='email' required minLength={5} maxLength={50} />} />}
-                    {(editMode === 'shippingAddress') && <SimpleEditAddressDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<AddressEditor />} />}
                 </>}
             </ModalStatus>
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {/* {!!editMode && (editMode === 'full') && <FullEditDialog order={order} onClose={handleEditDialogClose} />} */}
+                {!!editMode && ((editMode === 'full') || (editMode === 'shippingAddress')) && <>
+                    {(editMode === 'shippingAddress') && <SimpleEditAddressDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<AddressEditor />} />}
+                    {/* {(editMode === 'full'           ) && <FullEditDialog order={order} onClose={handleEditDialogClose} />} */}
+                </>}
             </ModalStatus>
         </ListItem>
     );
