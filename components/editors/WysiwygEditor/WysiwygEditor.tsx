@@ -94,6 +94,17 @@ import {
 export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
+        Pick<EditorProps<TElement, WysiwygEditorState|null>,
+            // accessibilities:
+            |'autoFocus'    // supported
+            
+            
+            
+            // values:
+            |'defaultValue' // supported
+            |'value'        // supported
+            |'onChange'     // supported
+        >,
         Omit<IndicatorProps<TElement>,
             // values:
             |'defaultValue' // taken over by EditorProps
@@ -104,17 +115,6 @@ export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
             
             // children:
             |'children'     // not supported
-        >,
-        Pick<EditorProps<TElement, WysiwygEditorState|null>,
-            // accessibilities:
-            |'autoFocus'
-            
-            
-            
-            // values:
-            |'defaultValue' // take
-            |'value'        // take
-            |'onChange'     // take
         >
 {
     // plugins:
