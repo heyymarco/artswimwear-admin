@@ -12,7 +12,7 @@ const router = createRouter<NextApiRequest, NextApiResponse>();
 
 const upload = multer({
     storage: multer.diskStorage({
-        destination: './tmp',
+        destination: '/tmp',
         filename: (req, file, cb) => {
             cb(null, file.originalname);
             (req as any).originalname = file.originalname;
