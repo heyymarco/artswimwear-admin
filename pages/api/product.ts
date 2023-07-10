@@ -146,6 +146,8 @@ router
     if ((typeof(_id) !== 'string') || (_id.length < 1)
         ||
         ((name !== undefined) && ((typeof(name) !== 'string') || (name.length < 1)))
+        
+        // TODO: validating data type & constraints
     ) {
         return res.status(400).json({ error: 'invalid data' });
     } // if
