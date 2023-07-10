@@ -11,15 +11,48 @@ import {
     useEffect,
 }                           from 'react'
 
+// cssfn:
+import {
+    // style sheets:
+    dynamicStyleSheet,
+}                           from '@cssfn/cssfn-react'           // writes css in react hook
+
+// reusable-ui components:
+import {
+    // react components:
+    IndicatorProps,
+    Indicator,
+}                           from '@reusable-ui/indicator'       // a base component
+
 // internals:
 import type {
     // react components:
     EditorProps,
 }                           from '@/components/editors/Editor'
 
-import { AddressFieldsProps, AddressFields } from '@heymarco/address-fields'
-import type { AddressSchema } from '@/models/Address'
-import { countryList } from '@/libs/countryList'
+import {
+    // react components:
+    AddressFieldsProps,
+    AddressFields,
+}                           from '@heymarco/address-fields'
+
+// models:
+import type {
+    // types:
+    AddressSchema,
+}                           from '@/models/Address'
+
+// libs:
+import {
+    countryList,
+}                           from '@/libs/countryList'
+
+
+
+// styles:
+export const useAddressEditorStyleSheet = dynamicStyleSheet(
+    () => import(/* webpackPrefetch: true */ './styles/styles')
+, { id: 'fceq62seui' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 
 
 
@@ -28,24 +61,35 @@ export type AddressValue = Omit<AddressSchema, '_id'>
 export interface AddressEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Omit<EditorProps<TElement, AddressValue|null>,
-            // validations:
-            |'minLength'|'maxLength' // not supported
-            |'pattern'               // not supported
-            |'min'|'max'|'step'      // not supported
-            
-            // formats:
-            |'type'                  // not supported
-            |'autoCapitalize'        // not supported
-            |'inputMode'             // not supported
+        Pick<EditorProps<TElement, AddressValue|null>,
+            // values:
+            |'defaultValue' // supported
+            |'value'        // supported
+            |'onChange'     // supported
         >,
         Pick<AddressFieldsProps,
             // formats:
             |'addressType'
+        >,
+        Omit<IndicatorProps<TElement>,
+            // values:
+            |'defaultValue' // taken over by EditorProps
+            |'value'        // taken over by EditorProps
+            |'onChange'     // taken over by EditorProps
+            
+            
+            
+            // children:
+            |'children'     // not supported
         >
 {
 }
 const AddressEditor = <TElement extends Element = HTMLElement>(props: AddressEditorProps<TElement>): JSX.Element|null => {
+    // styles:
+    const styleSheet = useAddressEditorStyleSheet();
+    
+    
+    
     // rest props:
     const {
         // values:
@@ -57,7 +101,7 @@ const AddressEditor = <TElement extends Element = HTMLElement>(props: AddressEdi
         
         // formats:
         addressType,
-    ...restAddressFieldsProps} = props;
+    ...restIndicatorProps} = props;
     
     
     
@@ -78,30 +122,38 @@ const AddressEditor = <TElement extends Element = HTMLElement>(props: AddressEdi
     
     // jsx:
     return (
-        <div>
+        <Indicator<TElement>
+            // other props:
+            {...restIndicatorProps}
+            
+            
+            
+            // variants:
+            nude={props.nude ?? true}
+            
+            
+            
+            // classes:
+            mainClass={props.mainClass ?? styleSheet.main}
+        >
             <AddressFields
-                // other props:
-                {...restAddressFieldsProps}
-                
-                
-                
                 // types:
                 addressType       = {addressType}
                 
                 
                 
                 // values:
-                firstName         = {valueFn?.firstName ?? ''}
-                lastName          = {valueFn?.lastName  ?? ''}
+                firstName         = {valueFn?.firstName}
+                lastName          = {valueFn?.lastName }
                 
-                phone             = {valueFn?.phone     ?? ''}
+                phone             = {valueFn?.phone    }
                 
-                address           = {valueFn?.address   ?? ''}
-                city              = {valueFn?.city      ?? ''}
-                zone              = {valueFn?.zone      ?? ''}
-                zip               = {valueFn?.zip       ?? ''}
-                country           = {valueFn?.country   ?? ''}
-                countryList       = {countryList}
+                address           = {valueFn?.address  }
+                city              = {valueFn?.city     }
+                zone              = {valueFn?.zone     }
+                zip               = {valueFn?.zip      }
+                country           = {valueFn?.country  }
+                countryList       = {countryList       }
                 
                 
                 
@@ -117,7 +169,7 @@ const AddressEditor = <TElement extends Element = HTMLElement>(props: AddressEdi
                 onZipChange       = {({target:{value}}) => setValueDn((current) => ({ ...current, zip       : value }) as any)}
                 onCountryChange   = {({target:{value}}) => setValueDn((current) => ({ ...current, country   : value }) as any)}
             />
-        </div>
+        </Indicator>
     );
 };
 export {
