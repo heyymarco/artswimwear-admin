@@ -18,7 +18,6 @@ import { CurrencyEditor } from '@/components/editors/CurrencyEditor'
 import { ShippingWeightEditor } from '@/components/editors/ShippingWeightEditor'
 import { StockEditor } from '@/components/editors/StockEditor'
 import { GalleryEditor } from '@/components/editors/GalleryEditor/GalleryEditor'
-import { OrderVisibility, VisibilityEditor } from '@/components/editors/VisibilityEditor'
 import { Tab, TabPanel } from '@reusable-ui/components'
 import { Image } from '@heymarco/image'
 import axios from 'axios'
@@ -262,9 +261,6 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                             
                             <span className='stock label'>Stock:</span>
                             <StockEditor          className='stock editor'      value={stock}          onChange={(value) => { setStock(value)     ; setIsModified(true); }} theme='secondary' />
-                            
-                            <span className='visibility label'>Visibility:</span>
-                            <VisibilityEditor     className='visibility editor' value={visibility}     onChange={(value) => { setVisibility(value); setIsModified(true); }} theme='secondary' />
                         </ValidationProvider>
                     </AccessibilityProvider>
                     <ModalStatus
