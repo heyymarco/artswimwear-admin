@@ -7,8 +7,6 @@ import {
     
     // hooks:
     useState,
-    useRef,
-    useEffect,
 }                           from 'react'
 
 // cssfn:
@@ -16,6 +14,12 @@ import {
     // style sheets:
     dynamicStyleSheet,
 }                           from '@cssfn/cssfn-react'           // writes css in react hook
+
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useEvent,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
 import {
@@ -26,6 +30,11 @@ import {
 
 // internals:
 import type {
+    // types:
+    EditorChangeEventHandler,
+    
+    
+    
     // react components:
     EditorProps,
 }                           from '@/components/editors/Editor'
@@ -56,12 +65,28 @@ export const useAddressEditorStyleSheet = dynamicStyleSheet(
 
 
 
+// utilities:
+const emptyAddressValue : AddressValue = {
+    firstName : '',
+    lastName  : '',
+    
+    phone     : '',
+    
+    address   : '',
+    city      : '',
+    zone      : '',
+    zip       : '',
+    country   : '',
+};
+
+
+
 // react components:
 export type AddressValue = Omit<AddressSchema, '_id'>
 export interface AddressEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Pick<EditorProps<TElement, AddressValue|null>,
+        Pick<EditorProps<TElement, AddressValue>,
             // values:
             |'defaultValue' // supported
             |'value'        // supported
@@ -106,17 +131,73 @@ const AddressEditor = <TElement extends Element = HTMLElement>(props: AddressEdi
     
     
     // states:
-    const [valueDn, setValueDn] = useState<AddressValue|null>((value !== undefined) ? value : ((defaultValue !== undefined) ? defaultValue : null));
-    const prevValueDn = useRef<AddressValue|null>(valueDn);
-    useEffect(() => {
-        if (valueDn === prevValueDn.current) return;
-        onChange?.(valueDn);
-    }, [valueDn]);
+    const [valueDn, setValueDn] = useState<AddressValue>((value !== undefined) ? value : ((defaultValue !== undefined) ? defaultValue : emptyAddressValue));
     
     
     
-    // fn states:
-    const valueFn = (value !== undefined) ? value /*controllable*/ : valueDn /*uncontrollable*/;
+    /*
+     * value state is based on [controllable value] (if set) and fallback to [uncontrollable value]
+     */
+    const valueFn : AddressValue = (value !== undefined) ? value /*controllable*/ : valueDn /*uncontrollable*/;
+    
+    
+    
+    // events:
+    /*
+          controllable : setValue(new) => update state(old => old) => trigger Event(new)
+        uncontrollable : setValue(new) => update state(old => new) => trigger Event(new)
+    */
+    const triggerValueChange = useEvent<EditorChangeEventHandler<AddressValue>>((value) => {
+        if (onChange) {
+            // fire `onChange` react event:
+            onChange(value);
+        };
+    });
+    
+    
+    
+    // callbacks:
+    const setValue = useEvent<React.Dispatch<React.SetStateAction<AddressValue>>>((value) => {
+        // conditions:
+        const newValue = (typeof(value) === 'function') ? value(valueFn) : value;
+        if (newValue === valueFn) return; // still the same => nothing to update
+        
+        
+        
+        // update:
+        setValueDn(newValue);
+        triggerValueChange(newValue);
+    }); // a stable callback, the `setValue` guaranteed to never change
+    
+    
+    
+    // handlers:
+    const handleFirstNameChange = useEvent<React.ChangeEventHandler<HTMLInputElement>>(({target:{value}}) => {
+        setValue((current) => ({ ...current, firstName : value }));
+    });
+    const handleLastNameChange  = useEvent<React.ChangeEventHandler<HTMLInputElement>>(({target:{value}}) => {
+        setValue((current) => ({ ...current, lastName  : value }));
+    });
+    
+    const handlePhoneChange     = useEvent<React.ChangeEventHandler<HTMLInputElement>>(({target:{value}}) => {
+        setValue((current) => ({ ...current, phone     : value }));
+    });
+    
+    const handleAddressChange   = useEvent<React.ChangeEventHandler<HTMLInputElement>>(({target:{value}}) => {
+        setValue((current) => ({ ...current, address   : value }));
+    });
+    const handleCityChange      = useEvent<React.ChangeEventHandler<HTMLInputElement>>(({target:{value}}) => {
+        setValue((current) => ({ ...current, city      : value }));
+    });
+    const handleZoneChange      = useEvent<React.ChangeEventHandler<HTMLInputElement>>(({target:{value}}) => {
+        setValue((current) => ({ ...current, zone      : value }));
+    });
+    const handleZipChange       = useEvent<React.ChangeEventHandler<HTMLInputElement>>(({target:{value}}) => {
+        setValue((current) => ({ ...current, zip       : value }));
+    });
+    const handleCountryChange   = useEvent<React.ChangeEventHandler<HTMLInputElement>>(({target:{value}}) => {
+        setValue((current) => ({ ...current, country   : value }));
+    });
     
     
     
@@ -158,16 +239,16 @@ const AddressEditor = <TElement extends Element = HTMLElement>(props: AddressEdi
                 
                 
                 // events:
-                onFirstNameChange = {({target:{value}}) => setValueDn((current) => ({ ...current, firstName : value }) as any)}
-                onLastNameChange  = {({target:{value}}) => setValueDn((current) => ({ ...current, lastName  : value }) as any)}
+                onFirstNameChange = {handleFirstNameChange}
+                onLastNameChange  = {handleLastNameChange }
                 
-                onPhoneChange     = {({target:{value}}) => setValueDn((current) => ({ ...current, phone     : value }) as any)}
+                onPhoneChange     = {handlePhoneChange    }
                 
-                onAddressChange   = {({target:{value}}) => setValueDn((current) => ({ ...current, address   : value }) as any)}
-                onCityChange      = {({target:{value}}) => setValueDn((current) => ({ ...current, city      : value }) as any)}
-                onZoneChange      = {({target:{value}}) => setValueDn((current) => ({ ...current, zone      : value }) as any)}
-                onZipChange       = {({target:{value}}) => setValueDn((current) => ({ ...current, zip       : value }) as any)}
-                onCountryChange   = {({target:{value}}) => setValueDn((current) => ({ ...current, country   : value }) as any)}
+                onAddressChange   = {handleAddressChange  }
+                onCityChange      = {handleCityChange     }
+                onZoneChange      = {handleZoneChange     }
+                onZipChange       = {handleZipChange      }
+                onCountryChange   = {handleCountryChange  }
             />
         </Indicator>
     );
