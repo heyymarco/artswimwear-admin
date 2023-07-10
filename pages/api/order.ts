@@ -119,17 +119,17 @@ router
     const {
         _id,
         
-        visibility,
+        customer,
         
-        name,
+        items,
         
-        price,
-        shippingWeight,
+        shippingAddress,
+        shippingProvider,
+        shippingCost,
         
-        stock,
+        billingAddress,
         
-        images,
-        path,
+        paymentMethod,
     } = req.body;
     //#endregion parsing request
     
@@ -138,27 +138,30 @@ router
     //#region validating request
     if ((typeof(_id) !== 'string') || (_id.length < 1)
         ||
-        ((name !== undefined) && ((typeof(name) !== 'string') || (name.length < 1)))
+        ((customer !== undefined) && ((typeof(customer) !== 'object') || Object.keys(customer).some((prop) => !['nickName', 'email'].includes(prop))))
+        ||
+        ((customer.nickName !== undefined) && ((typeof(customer.nickName) !== 'string') || (customer.nickName.length < 2) || (customer.nickName.length > 30)))
+        ||
+        ((customer.email    !== undefined) && ((typeof(customer.email)    !== 'string') || (customer.email.length    < 5) || (customer.email.length    > 50)))
+        
+        // TODO: validating data type & constraints
     ) {
         return res.status(400).json({ error: 'invalid data' });
     } // if
     const order = await Order.findById(_id, {
-        _id            : true,
+        _id              : true,
         
-        visibility     : true,
+        customer         : true,
         
-        name           : true,
+        items            : true,
         
-        price          : true,
-        shippingWeight : true,
+        shippingAddress  : true,
+        shippingProvider : true,
+        shippingCost     : true,
         
-        stock          : true,
+        billingAddress   : true,
         
-        path           : true,
-        
-        excerpt        : true,
-        
-        images         : true,
+        paymentMethod    : true,
     });
     if (!order) return res.status(400).json({ error: 'invalid ID' });
     //#endregion validating request
@@ -166,17 +169,18 @@ router
     
     
     //#region save changes
-    if (visibility     !== undefined) order.visibility     = visibility;
+    if (customer         !== undefined) Object.assign(order.customer       , customer);
     
-    if (name           !== undefined) order.name           = name;
+    if (items            !== undefined) Object.assign(order.items          , items);
     
-    if (price          !== undefined) order.price          = price;
-    if (shippingWeight !== undefined) order.shippingWeight = shippingWeight;
+    if (shippingAddress  !== undefined) Object.assign(order.shippingAddress, shippingAddress);
     
-    if (stock          !== undefined) order.stock          = stock;
+    if (shippingProvider !== undefined) order.shippingProvider = shippingProvider;
+    if (shippingCost     !== undefined) order.shippingCost     = shippingCost;
     
-    if (images         !== undefined) order.images         = images;
-    if (path           !== undefined) order.path           = path;
+    if (billingAddress   !== undefined) Object.assign(order.billingAddress , billingAddress);
+    
+    if (paymentMethod    !== undefined) Object.assign(order.paymentMethod , paymentMethod);
     
     try {
         await order.save();
