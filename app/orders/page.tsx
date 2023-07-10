@@ -48,7 +48,7 @@ const usePageStyleSheet = dynamicStyleSheets(
 
 
 // utilities:
-export const getTotalQuantity = (items: OrderSchema['items']): number => {
+const getTotalQuantity = (items: OrderSchema['items']): number => {
     return items.reduce((counter, item) => {
         return counter + item.quantity;
     }, 0);
