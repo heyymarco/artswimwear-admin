@@ -12,6 +12,7 @@
     "@cssfn/core": "^3.0.0",
     "@cssfn/cssfn-dom": "^3.0.0",
     "@cssfn/cssfn-react": "^3.0.1",
+    "@heymarco/address-fields": "^3.0.4",
     "@heymarco/image": "^3.0.6",
     "@heymarco/loading-bar": "^3.0.4",
     "@heymarco/quantity-input": "^3.0.4",

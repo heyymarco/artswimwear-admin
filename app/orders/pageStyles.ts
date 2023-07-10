@@ -143,6 +143,9 @@ export default () => {
             }),
             ...children('.shipping', {
                 gridArea: 'shipping',
+                ...children(['.contact', '.phone', '.address'], {
+                    display: 'block',
+                }),
             }),
             ...children('.items', {
                 gridArea: 'items',

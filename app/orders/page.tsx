@@ -24,11 +24,14 @@ import { CurrencyEditor } from '@/components/editors/CurrencyEditor'
 import { StockEditor } from '@/components/editors/StockEditor'
 import { VisibilityEditor } from '@/components/editors/VisibilityEditor'
 import { SimpleEditCustomerDialog } from '@/components/dialogs/SimpleEditCustomerDialog'
-import { FullEditDialog } from './FullEditDialog'
+// import { FullEditDialog } from './FullEditDialog'
 import { resolveMediaUrl } from '@/libs/mediaStorage.client'
 import type { OrderSchema } from '@/models/Order'
 import defaultCountries from '@/libs/defaultCountries'
 import { createEntityAdapter } from '@reduxjs/toolkit'
+import { countryList } from '@/libs/countryList'
+import { SimpleEditAddressDialog } from '@/components/dialogs/SimpleEditAddressDialog'
+import { AddressEditor } from '@/components/editors/AddressEditor'
 
 
 
@@ -50,15 +53,6 @@ export const getTotalQuantity = (items: OrderSchema['items']): number => {
         return counter + item.quantity;
     }, 0);
 };
-
-export interface CountryEntry {
-    code : string
-    name : string
-}
-const countryListAdapter = createEntityAdapter<CountryEntry>({
-    selectId : (countryEntry) => countryEntry.code,
-});
-const countryList = countryListAdapter.addMany(countryListAdapter.getInitialState(), defaultCountries);
 
 
 
@@ -82,11 +76,16 @@ const OrderItem = (props: OrderItemProps) => {
         },
         items,
         shippingAddress : {
-            address : shippingAddress,
-            city    : shippingCity,
-            zone    : shippingZone,
-            zip     : shippingZip,  
-            country : shippingCountry,
+            firstName : shippingFirstName,
+            
+            lastName  : shippingLastName,
+            phone     : shippingPhone,
+            
+            address   : shippingAddress,
+            city      : shippingCity,
+            zone      : shippingZone,
+            zip       : shippingZip,  
+            country   : shippingCountry,
         },
         // visibility,
         // name,
@@ -97,7 +96,7 @@ const OrderItem = (props: OrderItemProps) => {
     
     
     // states:
-    type EditMode = keyof OrderDetail['customer']|'full'
+    type EditMode = keyof OrderDetail['customer']|'shippingAddress'|'full'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     
@@ -132,8 +131,16 @@ const OrderItem = (props: OrderItemProps) => {
                     </span>
                 </p>
                 <p className='shipping'>
-                    {`${shippingAddress}, ${shippingCity}, ${shippingZone} (${shippingZip}), ${countryList?.entities?.[shippingCountry ?? '']?.name}`}
-                    <EditButton onClick={() => setEditMode('full')} />
+                    <span className='contact'>
+                        {shippingFirstName} {shippingLastName}
+                        <EditButton onClick={() => setEditMode('shippingAddress')} />
+                    </span>
+                    <span className='phone'>
+                        {shippingPhone}
+                    </span>
+                    <span className='address'>
+                        {`${shippingAddress}, ${shippingCity}, ${shippingZone} (${shippingZip}), ${countryList?.entities?.[shippingCountry ?? '']?.name}`}
+                    </span>
                 </p>
                 <p className='items'>
                     <strong className='value'>{getTotalQuantity(items)}</strong> items: ...
@@ -147,13 +154,13 @@ const OrderItem = (props: OrderItemProps) => {
             </div>
             <ModalStatus theme='primary' viewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
                 {!!editMode && (editMode !== 'full') && <>
-                    {(editMode === 'nickName') && <SimpleEditCustomerDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor type='text'  required minLength={2} maxLength={30} autoCapitalize='words' />} />}
-                    {(editMode === 'email'   ) && <SimpleEditCustomerDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor type='email' required minLength={5} maxLength={50} />} />}
-                    {/* {(editMode === 'shipping') && <SimpleEditCustomerDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<VisibilityEditor theme='secondary' />} />} */}
+                    {(editMode === 'nickName'       ) && <SimpleEditCustomerDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor type='text'  required minLength={2} maxLength={30} autoCapitalize='words' />} />}
+                    {(editMode === 'email'          ) && <SimpleEditCustomerDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor type='email' required minLength={5} maxLength={50} />} />}
+                    {(editMode === 'shippingAddress') && <SimpleEditAddressDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<AddressEditor />} />}
                 </>}
             </ModalStatus>
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {!!editMode && (editMode === 'full') && <FullEditDialog order={order} onClose={handleEditDialogClose} />}
+                {/* {!!editMode && (editMode === 'full') && <FullEditDialog order={order} onClose={handleEditDialogClose} />} */}
             </ModalStatus>
         </ListItem>
     );

@@ -140,9 +140,9 @@ router
         ||
         ((customer !== undefined) && ((typeof(customer) !== 'object') || Object.keys(customer).some((prop) => !['nickName', 'email'].includes(prop))))
         ||
-        ((customer.nickName !== undefined) && ((typeof(customer.nickName) !== 'string') || (customer.nickName.length < 2) || (customer.nickName.length > 30)))
+        ((customer?.nickName !== undefined) && ((typeof(customer.nickName) !== 'string') || (customer.nickName.length < 2) || (customer.nickName.length > 30)))
         ||
-        ((customer.email    !== undefined) && ((typeof(customer.email)    !== 'string') || (customer.email.length    < 5) || (customer.email.length    > 50)))
+        ((customer?.email    !== undefined) && ((typeof(customer.email)    !== 'string') || (customer.email.length    < 5) || (customer.email.length    > 50)))
         
         // TODO: validating data type & constraints
     ) {

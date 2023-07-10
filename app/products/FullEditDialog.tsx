@@ -86,7 +86,6 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
             return null;
         } // try
     });
-    console.log({description});
     
     
     
