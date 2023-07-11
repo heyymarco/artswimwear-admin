@@ -34,17 +34,6 @@ import {
     Placeholder,
 }                           from './Placeholder'
 
-// resources:
-// import
-//     // auto converts link-like-texts to links.
-//     AutoLinkPlugin
-//                             from './plugins/AutoLinkPlugin'
-
-// codes:
-// import
-//     CodeHighlightPlugin
-//                             from './plugins/CodeHighlightPlugin'
-
 
 
 // styles:
