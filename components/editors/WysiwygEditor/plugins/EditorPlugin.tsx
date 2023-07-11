@@ -90,7 +90,7 @@ const EditorPlugin = <TElement extends Element = HTMLElement>(props: EditorPlugi
         
         // components:
         placeholderComponent,
-    ...restBasicProps} = props;
+    ...restControlProps} = props;
     
     
     
@@ -98,7 +98,7 @@ const EditorPlugin = <TElement extends Element = HTMLElement>(props: EditorPlugi
     return (
         <Control<TElement>
             // other props:
-            {...restBasicProps}
+            {...restControlProps}
             
             
             
