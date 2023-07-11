@@ -52,11 +52,6 @@ import type {
     AddressSchema,
 }                           from '@/models/Address'
 
-// libs:
-import {
-    countryList,
-}                           from '@/libs/countryList'
-
 
 
 // styles:
@@ -95,6 +90,16 @@ export interface AddressEditorProps<TElement extends Element = HTMLElement>
             |'onChange'     // supported
         >,
         Pick<AddressFieldsProps,
+            // refs:
+            |'addressRef'
+            
+            
+            
+            // values:
+            |'countryList'  // supported
+            
+            
+            
             // formats:
             |'addressType'
         >,
@@ -119,10 +124,16 @@ const AddressEditor = <TElement extends Element = HTMLElement>(props: AddressEdi
     
     // rest props:
     const {
+        // refs:
+        addressRef,
+        
+        
+        
         // values:
         defaultValue,
         value,
         onChange,
+        countryList,
         
         
         
@@ -133,7 +144,7 @@ const AddressEditor = <TElement extends Element = HTMLElement>(props: AddressEdi
     
     
     // states:
-    const [valueDn, setValueDn] = useState<AddressValue>((value !== undefined) ? value : ((defaultValue !== undefined) ? defaultValue : emptyAddressValue));
+    const [valueDn, setValueDn] = useState<AddressValue>(((value !== undefined) ? value : defaultValue) ?? emptyAddressValue);
     
     
     
@@ -220,6 +231,11 @@ const AddressEditor = <TElement extends Element = HTMLElement>(props: AddressEdi
             mainClass={props.mainClass ?? styleSheet.main}
         >
             <AddressFields
+                // refs:
+                addressRef        = {addressRef}
+                
+                
+                
                 // types:
                 addressType       = {addressType}
                 

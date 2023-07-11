@@ -25,10 +25,7 @@ import { StockEditor } from '@/components/editors/StockEditor'
 import { VisibilityEditor } from '@/components/editors/VisibilityEditor'
 import { SimpleEditCustomerDialog } from '@/components/dialogs/SimpleEditCustomerDialog'
 // import { FullEditDialog } from './FullEditDialog'
-import { resolveMediaUrl } from '@/libs/mediaStorage.client'
 import type { OrderSchema } from '@/models/Order'
-import defaultCountries from '@/libs/defaultCountries'
-import { createEntityAdapter } from '@reduxjs/toolkit'
 import { countryList } from '@/libs/countryList'
 import { SimpleEditAddressDialog } from '@/components/dialogs/SimpleEditAddressDialog'
 import { AddressEditor } from '@/components/editors/AddressEditor'
@@ -160,7 +157,7 @@ const OrderItem = (props: OrderItemProps) => {
             </ModalStatus>
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
                 {!!editMode && ((editMode === 'full') || (editMode === 'shippingAddress')) && <>
-                    {(editMode === 'shippingAddress') && <SimpleEditAddressDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<AddressEditor />} />}
+                    {(editMode === 'shippingAddress') && <SimpleEditAddressDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<AddressEditor countryList={countryList} />} />}
                     {/* {(editMode === 'full'           ) && <FullEditDialog order={order} onClose={handleEditDialogClose} />} */}
                 </>}
             </ModalStatus>
