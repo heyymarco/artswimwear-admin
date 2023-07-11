@@ -1,9 +1,18 @@
+import { createEntityAdapter, EntityState } from '@reduxjs/toolkit'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import type { Pagination } from '@/libs/types'
 import type { ProductDetail } from '@/pages/api/product'
 export type { ProductDetail } from '@/pages/api/product'
 import type { OrderDetail } from '@/pages/api/order'
 export type { OrderDetail } from '@/pages/api/order'
+import { ShippingPreview } from '@/pages/api/shipping'
+export type { ShippingPreview } from '@/pages/api/shipping'
+
+
+
+const shippingListAdapter = createEntityAdapter<ShippingPreview>({
+    selectId : (shippingPreview) => shippingPreview._id,
+});
 
 
 
@@ -14,7 +23,7 @@ export const apiSlice = createApi({
     }),
     tagTypes: ['Products', 'Orders'],
     endpoints : (builder) => ({
-        getProductList : builder.query<Pagination<ProductDetail>, { page?: number, perPage?: number }>({
+        getProductList  : builder.query<Pagination<ProductDetail>, { page?: number, perPage?: number }>({
             query : ({ page = 1, perPage = 20 }) => `product?page=${page}&perPage=${perPage}`,
             providesTags: (result, error, page)  => {
                 return [
@@ -30,7 +39,7 @@ export const apiSlice = createApi({
                 ];
             },
         }),
-        updateProduct  : builder.mutation<ProductDetail, Pick<ProductDetail, '_id'> & Partial<Omit<ProductDetail, '_id'>>>({
+        updateProduct   : builder.mutation<ProductDetail, Pick<ProductDetail, '_id'> & Partial<Omit<ProductDetail, '_id'>>>({
             query: (patch) => ({
                 url    : 'product',
                 method : 'PATCH',
@@ -79,7 +88,7 @@ export const apiSlice = createApi({
             },
         }),
         
-        getOrderList   : builder.query<Pagination<OrderDetail>, { page?: number, perPage?: number }>({
+        getOrderList    : builder.query<Pagination<OrderDetail>, { page?: number, perPage?: number }>({
             query : ({ page = 1, perPage = 20 }) => `order?page=${page}&perPage=${perPage}`,
             providesTags: (result, error, page)  => {
                 return [
@@ -95,7 +104,7 @@ export const apiSlice = createApi({
                 ];
             },
         }),
-        updateOrder    : builder.mutation<OrderDetail, Pick<OrderDetail, '_id'> & Partial<Omit<OrderDetail, '_id'>>>({
+        updateOrder     : builder.mutation<OrderDetail, Pick<OrderDetail, '_id'> & Partial<Omit<OrderDetail, '_id'>>>({
             query: (patch) => ({
                 url    : 'order',
                 method : 'PATCH',
@@ -143,6 +152,13 @@ export const apiSlice = createApi({
                 } // for
             },
         }),
+        
+        getShippingList : builder.query<EntityState<ShippingPreview>, void>({
+            query : () => 'shipping',
+            transformResponse(response: ShippingPreview[]) {
+                return shippingListAdapter.addMany(shippingListAdapter.getInitialState(), response);
+            },
+        }),
     }),
 });
 
@@ -154,4 +170,6 @@ export const {
     
     useGetOrderListQuery     : useGetOrderList,
     useUpdateOrderMutation   : useUpdateOrder,
+    
+    useGetShippingListQuery  : useGetShippingList,
 } = apiSlice;

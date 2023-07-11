@@ -4,13 +4,13 @@ import { default as React } from 'react'
 import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 
 import { ButtonIcon, Generic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, List, Carousel, Masonry, masonries } from '@reusable-ui/components';
-import { OrderDetail, useUpdateOrder } from '@/store/features/api/apiSlice';
+import { OrderDetail, ShippingPreview, useUpdateOrder, useGetShippingList } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { getCurrencySign } from '@/libs/formatters';
 import { AccessibilityProvider, ValidationProvider, useEvent } from '@reusable-ui/core';
 import { ModalStatus } from '../../components/ModalStatus'
 
-import { STORE_WEBSITE_URL, PAGE_PRODUCTS_TAB_INFORMATIONS, PAGE_PRODUCTS_TAB_DESCRIPTION, PAGE_PRODUCTS_TAB_IMAGES } from '@/website.config'
+import { STORE_WEBSITE_URL, PAGE_ORDERS_TAB_ORDERS_N_SHIPPING, PAGE_ORDERS_TAB_PAYMENT } from '@/website.config'
 import { COMMERCE_CURRENCY_FRACTION_MAX } from '@/commerce.config'
 import { TextEditor } from '@/components/editors/TextEditor'
 import { PathEditor } from '@/components/editors/PathEditor'
@@ -23,6 +23,7 @@ import { Image } from '@heymarco/image'
 import axios from 'axios'
 import { resolveMediaUrl } from '@/libs/mediaStorage.client'
 import { WysiwygEditorState, WysiwygEditor, ToolbarPlugin, EditorPlugin } from '@/components/editors/WysiwygEditor';
+import { countryList } from '@/libs/countryList'
 
 
 
@@ -49,6 +50,11 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
     
     
     
+    // stores:
+    const {data: shippingList, isLoading: isLoadingShipping, isError: isErrorShipping } = useGetShippingList();
+    
+    
+    
     // rest props:
     const {
         // data:
@@ -61,6 +67,17 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
     } = props;
     const {
         _id,
+        shippingAddress: {
+            firstName : shippingFirstName,
+            lastName  : shippingLastName,
+            phone     : shippingPhone,
+            address   : shippingAddress,
+            city      : shippingCity,
+            zone      : shippingZone,
+            zip       : shippingZip,
+            country   : shippingCountry,
+        },
+        shippingProvider,
     } = order;
     
     
@@ -150,7 +167,65 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                 // handlers:
                 onKeyDown={handleKeyDown}
             >
-                <TabPanel label={PAGE_PRODUCTS_TAB_INFORMATIONS} panelComponent={<Generic className={styles.pageInfo} />}>
+                <TabPanel label={PAGE_ORDERS_TAB_ORDERS_N_SHIPPING} panelComponent={<Generic className={styles.pageInfo} />}>
+                    <article>
+                        <section>
+                            <h3>Order List</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th colSpan={6}>
+                                            Order List
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            No
+                                        </th>
+                                        <th>
+                                            SKU
+                                        </th>
+                                        <th>
+                                            Product
+                                        </th>
+                                        <th>
+                                            Qty
+                                        </th>
+                                        <th>
+                                            Unit Price
+                                        </th>
+                                        <th>
+                                            Total Price
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    //
+                                </tbody>
+                            </table>
+                        </section>
+                        <section>
+                            <h3>Deliver To</h3>
+                            <strong>{
+                                isLoadingShipping
+                                ? 'Loading...'
+                                : isErrorShipping
+                                    ? 'Error getting shipping data'
+                                    : (shippingList?.entities?.[shippingProvider ?? '']?.name ?? 'UNKNOWN SHIPPING PROVIDER')
+                            }</strong>
+                            <strong>{shippingFirstName} {shippingLastName}</strong>
+                            <p>
+                                {`${shippingAddress}, ${shippingCity}, ${shippingZone} (${shippingZip}), ${countryList?.entities?.[shippingCountry ?? '']?.name}`}
+                            </p>
+                            <p>
+                                Phone: {shippingPhone}
+                            </p>
+                        </section>
+                    </article>
+                    <article>
+                    </article>
+                </TabPanel>
+                <TabPanel label={PAGE_ORDERS_TAB_PAYMENT} panelComponent={<Generic className={styles.pageInfo} />}>
                     blah blah...
                 </TabPanel>
             </Tab>

@@ -24,7 +24,7 @@ import { CurrencyEditor } from '@/components/editors/CurrencyEditor'
 import { StockEditor } from '@/components/editors/StockEditor'
 import { VisibilityEditor } from '@/components/editors/VisibilityEditor'
 import { SimpleEditCustomerDialog } from '@/components/dialogs/SimpleEditCustomerDialog'
-// import { FullEditDialog } from './FullEditDialog'
+import { FullEditDialog } from './FullEditDialog'
 import type { OrderSchema } from '@/models/Order'
 import { countryList } from '@/libs/countryList'
 import { SimpleEditAddressDialog } from '@/components/dialogs/SimpleEditAddressDialog'
@@ -158,7 +158,7 @@ const OrderItem = (props: OrderItemProps) => {
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
                 {!!editMode && ((editMode === 'full') || (editMode === 'shippingAddress')) && <>
                     {(editMode === 'shippingAddress') && <SimpleEditAddressDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<AddressEditor countryList={countryList} />} />}
-                    {/* {(editMode === 'full'           ) && <FullEditDialog order={order} onClose={handleEditDialogClose} />} */}
+                    {(editMode === 'full'           ) && <FullEditDialog order={order} onClose={handleEditDialogClose} />}
                 </>}
             </ModalStatus>
         </ListItem>

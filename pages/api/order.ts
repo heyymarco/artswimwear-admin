@@ -15,9 +15,11 @@ export interface OrderDetail
     extends
         Omit<OrderSchema,
             |'_id'
+            |'shippingProvider'
         >
 {
-    _id         : string
+    _id              : string
+    shippingProvider : string
 }
 
 
