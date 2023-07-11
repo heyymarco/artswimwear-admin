@@ -28,6 +28,13 @@ import {
     Indicator,
 }                           from '@reusable-ui/indicator'       // a base component
 
+// heymarco components:
+import {
+    // react components:
+    AddressFieldsProps,
+    AddressFields,
+}                           from '@heymarco/address-fields'
+
 // internals:
 import type {
     // types:
@@ -38,12 +45,6 @@ import type {
     // react components:
     EditorProps,
 }                           from '@/components/editors/Editor'
-
-import {
-    // react components:
-    AddressFieldsProps,
-    AddressFields,
-}                           from '@heymarco/address-fields'
 
 // models:
 import type {
@@ -78,6 +79,7 @@ const emptyAddressValue : AddressValue = {
     zip       : '',
     country   : '',
 };
+Object.freeze(emptyAddressValue);
 
 
 
