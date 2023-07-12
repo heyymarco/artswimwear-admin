@@ -73,17 +73,22 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
         items,
         
         shippingAddress: {
-            firstName : shippingFirstName,
-            lastName  : shippingLastName,
-            phone     : shippingPhone,
-            address   : shippingAddress,
-            city      : shippingCity,
-            zone      : shippingZone,
-            zip       : shippingZip,
-            country   : shippingCountry,
+            firstName    : shippingFirstName,
+            lastName     : shippingLastName,
+            phone        : shippingPhone,
+            address      : shippingAddress,
+            city         : shippingCity,
+            zone         : shippingZone,
+            zip          : shippingZip,
+            country      : shippingCountry,
         },
         shippingProvider : shippingProviderId,
         shippingCost     : totalShippingCosts,
+        paymentMethod    : {
+            type         : paymentType,
+            brand        : paymentBrand,
+            identifier   : paymentIdentifier,
+        },
     } = order;
     
     const shippingProvider = shippingList?.entities?.[shippingProviderId ?? ''];
@@ -287,7 +292,33 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                     </article>
                 </TabPanel>
                 <TabPanel label={PAGE_ORDERS_TAB_PAYMENT} panelComponent={<Generic className={styles.pageInfo} />}>
-                    blah blah...
+                    <article>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Payment method
+                                    </td>
+                                    <td>
+                                        <strong>
+                                            {paymentType?.toUpperCase() ?? paymentType}
+                                        </strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Payment brand
+                                    </td>
+                                    <td>
+                                        {!!paymentBrand && <strong>
+                                            <Image alt={paymentBrand} src={`/brands/${paymentBrand}.svg`} width={42} height={26} />
+                                        </strong>}
+                                        {!!paymentIdentifier && <>&nbsp;({paymentIdentifier})</>}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </article>
                 </TabPanel>
             </Tab>
             <CardFooter onKeyDown={handleKeyDown}>
