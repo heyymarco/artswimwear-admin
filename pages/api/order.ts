@@ -86,6 +86,7 @@ router
         total,
         entities: (await Order.find<HydratedDocument<OrderDetail>>({}, {
             _id              : true,
+            orderId          : true,
             
             customer         : true,
             
@@ -99,6 +100,7 @@ router
             
             paymentMethod    : true,
         }, {
+            sort  : { _id: -1 },
             skip  : (page - 1) * perPage, // note: not scaleable but works in small commerce app -- will be fixed in the future
             limit : perPage,
         }))

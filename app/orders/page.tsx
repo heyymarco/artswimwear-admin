@@ -67,6 +67,8 @@ const OrderItem = (props: OrderItemProps) => {
     ...restListItem} = props;
     const {
         _id,
+        orderId = _id,
+        
         customer : {
             nickName : customerNickName,
             email    : customerEmail,
@@ -115,7 +117,7 @@ const OrderItem = (props: OrderItemProps) => {
         <ListItem {...restListItem} elmRef={listItemRef} className={styles.orderItem}>
             <div className={styles.orderItemLayout}>
                 <h3 className='orderId'>
-                    #ORDER-{_id}
+                    #ORDER-{orderId}
                 </h3>
                 <p className='customer'>
                     <span className='name'>
