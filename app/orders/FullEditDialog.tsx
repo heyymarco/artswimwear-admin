@@ -80,6 +80,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
             country   : shippingCountry,
         },
         shippingProvider,
+        shippingCost,
     } = order;
     
     
@@ -211,7 +212,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                                         
                                         // jsx:
                                         return (
-                                            <tr>
+                                            <tr key={index}>
                                                 <td>{index + 1}</td>
                                                 <td>SKU-123</td>
                                                 <td>{
