@@ -74,22 +74,6 @@ const OrderItem = (props: OrderItemProps) => {
             email    : customerEmail,
         },
         items,
-        shippingAddress : {
-            firstName : shippingFirstName,
-            
-            lastName  : shippingLastName,
-            phone     : shippingPhone,
-            
-            address   : shippingAddress,
-            city      : shippingCity,
-            zone      : shippingZone,
-            zip       : shippingZip,  
-            country   : shippingCountry,
-        },
-        // visibility,
-        // name,
-        // images,
-        // stock,
     } = order;
     
     
@@ -127,18 +111,6 @@ const OrderItem = (props: OrderItemProps) => {
                     <span className='email'>
                         <em>{customerEmail}</em>
                         <EditButton onClick={() => setEditMode('email')} />
-                    </span>
-                </p>
-                <p className='shipping'>
-                    <span className='contact'>
-                        {shippingFirstName} {shippingLastName}
-                        <EditButton onClick={() => setEditMode('shippingAddress')} />
-                    </span>
-                    <span className='phone'>
-                        {shippingPhone}
-                    </span>
-                    <span className='address'>
-                        {`${shippingAddress}, ${shippingCity}, ${shippingZone} (${shippingZip}), ${countryList?.entities?.[shippingCountry ?? '']?.name}`}
                     </span>
                 </p>
                 <p className='items'>
