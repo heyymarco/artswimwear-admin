@@ -9,7 +9,7 @@ import type { Metadata } from 'next'
 
 import { Image } from '@heymarco/image'
 import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody } from '@reusable-ui/components';
-import { ProductDetail, useGetProductList } from '@/store/features/api/apiSlice';
+import { ProductDetail, useGetProductPage } from '@/store/features/api/apiSlice';
 import { useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
 import { formatCurrency, getCurrencySign } from '@/libs/formatters';
@@ -140,7 +140,7 @@ export default function Products() {
     // stores:
     const [page, setPage] = useState<number>(1);
     const [perPage, setPerPage] = useState<number>(5);
-    const {data: products, isLoading, isFetching, isError, refetch } = useGetProductList({ page, perPage });
+    const {data: products, isLoading, isFetching, isError, refetch } = useGetProductPage({ page, perPage });
     const isErrorNoData  = isError && !products;
     const pages = Math.ceil((products?.total ?? 0) / perPage);
     

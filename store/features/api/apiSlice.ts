@@ -23,8 +23,12 @@ export const apiSlice = createApi({
     }),
     tagTypes: ['Products', 'Orders'],
     endpoints : (builder) => ({
-        getProductList  : builder.query<Pagination<ProductDetail>, { page?: number, perPage?: number }>({
-            query : ({ page = 1, perPage = 20 }) => `product?page=${page}&perPage=${perPage}`,
+        getProductPage  : builder.query<Pagination<ProductDetail>, { page?: number, perPage?: number }>({
+            query : (params) => ({
+                url    : 'product',
+                method : 'POST',
+                body   : params,
+            }),
             providesTags: (result, error, page)  => {
                 return [
                     ...(result?.entities ?? []).map((product): { type: 'Products', id: string } => ({
@@ -62,13 +66,13 @@ export const apiSlice = createApi({
                 // find obsolete product data(s):
                 const state = api.getState();
                 const queries = state.api.queries;
-                const getProductListName = apiSlice.endpoints.getProductList.name;
+                const getProductPageName = apiSlice.endpoints.getProductPage.name;
                 const obsoleteQueryArgs = (
                     Object.values(queries)
                     .filter((query): query is Exclude<typeof query, undefined> =>
                         !!query
                         &&
-                        (query.endpointName === getProductListName)
+                        (query.endpointName === getProductPageName)
                         &&
                         !!(query.data as Pagination<ProductDetail>|undefined)?.entities.some((searchProduct) => (searchProduct._id === updatedProduct._id))
                     )
@@ -78,7 +82,7 @@ export const apiSlice = createApi({
                 // synch the obsolete product data(s) to the updated one:
                 for (const obsoleteQueryArg of obsoleteQueryArgs) {
                     api.dispatch(
-                        apiSlice.util.updateQueryData('getProductList', obsoleteQueryArg as any, (draft) => {
+                        apiSlice.util.updateQueryData('getProductPage', obsoleteQueryArg as any, (draft) => {
                             const obsoleteProductIndex = draft.entities.findIndex((searchProduct) => (searchProduct._id === updatedProduct._id));
                             if (obsoleteProductIndex < 0) return;
                             draft.entities[obsoleteProductIndex] = updatedProduct; // sync
@@ -165,7 +169,7 @@ export const apiSlice = createApi({
 
 
 export const {
-    useGetProductListQuery   : useGetProductList,
+    useGetProductPageQuery   : useGetProductPage,
     useUpdateProductMutation : useUpdateProduct,
     
     useGetOrderListQuery     : useGetOrderList,
