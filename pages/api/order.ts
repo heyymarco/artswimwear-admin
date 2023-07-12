@@ -48,7 +48,7 @@ const router = createRouter<
 router
 // Use express middleware in next-connect with expressWrapper function
 // .use(expressWrapper(passport.session()))
-.get(async (req, res) => {
+.post(async (req, res) => {
     if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
         await new Promise<void>((resolve) => {
             setTimeout(() => {
@@ -63,7 +63,7 @@ router
     const {
         page    : pageStr    = 1,
         perPage : perPageStr = 20,
-    } = req.query;
+    } = req.body;
     const page = Number.parseInt(pageStr as string);
     const perPage = Number.parseInt(perPageStr as string);
     //#endregion parsing request

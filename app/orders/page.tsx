@@ -9,7 +9,7 @@ import type { Metadata } from 'next'
 
 import { Image } from '@heymarco/image'
 import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody } from '@reusable-ui/components';
-import { OrderDetail, useGetOrderList } from '@/store/features/api/apiSlice';
+import { OrderDetail, useGetOrderPage } from '@/store/features/api/apiSlice';
 import { useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
 import { formatCurrency, getCurrencySign } from '@/libs/formatters';
@@ -173,7 +173,7 @@ export default function Orders() {
     // stores:
     const [page, setPage] = useState<number>(1);
     const [perPage, setPerPage] = useState<number>(5);
-    const {data: orders, isLoading, isFetching, isError, refetch } = useGetOrderList({ page, perPage });
+    const {data: orders, isLoading, isFetching, isError, refetch } = useGetOrderPage({ page, perPage });
     const isErrorNoData  = isError && !orders;
     const pages = Math.ceil((orders?.total ?? 0) / perPage);
     

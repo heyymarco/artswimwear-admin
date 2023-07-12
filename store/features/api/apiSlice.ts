@@ -92,8 +92,12 @@ export const apiSlice = createApi({
             },
         }),
         
-        getOrderList    : builder.query<Pagination<OrderDetail>, { page?: number, perPage?: number }>({
-            query : ({ page = 1, perPage = 20 }) => `order?page=${page}&perPage=${perPage}`,
+        getOrderPage    : builder.query<Pagination<OrderDetail>, { page?: number, perPage?: number }>({
+            query : (params) => ({
+                url    : 'order',
+                method : 'POST',
+                body   : params,
+            }),
             providesTags: (result, error, page)  => {
                 return [
                     ...(result?.entities ?? []).map((order): { type: 'Orders', id: string } => ({
@@ -131,13 +135,13 @@ export const apiSlice = createApi({
                 // find obsolete order data(s):
                 const state = api.getState();
                 const queries = state.api.queries;
-                const getOrderListName = apiSlice.endpoints.getOrderList.name;
+                const getOrderPageName = apiSlice.endpoints.getOrderPage.name;
                 const obsoleteQueryArgs = (
                     Object.values(queries)
                     .filter((query): query is Exclude<typeof query, undefined> =>
                         !!query
                         &&
-                        (query.endpointName === getOrderListName)
+                        (query.endpointName === getOrderPageName)
                         &&
                         !!(query.data as Pagination<OrderDetail>|undefined)?.entities.some((searchOrder) => (searchOrder._id === updatedOrder._id))
                     )
@@ -147,7 +151,7 @@ export const apiSlice = createApi({
                 // synch the obsolete order data(s) to the updated one:
                 for (const obsoleteQueryArg of obsoleteQueryArgs) {
                     api.dispatch(
-                        apiSlice.util.updateQueryData('getOrderList', obsoleteQueryArg as any, (draft) => {
+                        apiSlice.util.updateQueryData('getOrderPage', obsoleteQueryArg as any, (draft) => {
                             const obsoleteOrderIndex = draft.entities.findIndex((searchOrder) => (searchOrder._id === updatedOrder._id));
                             if (obsoleteOrderIndex < 0) return;
                             draft.entities[obsoleteOrderIndex] = updatedOrder; // sync
@@ -172,7 +176,7 @@ export const {
     useGetProductPageQuery   : useGetProductPage,
     useUpdateProductMutation : useUpdateProduct,
     
-    useGetOrderListQuery     : useGetOrderList,
+    useGetOrderPageQuery     : useGetOrderPage,
     useUpdateOrderMutation   : useUpdateOrder,
     
     useGetShippingListQuery  : useGetShippingList,
