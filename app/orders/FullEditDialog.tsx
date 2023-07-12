@@ -3,10 +3,10 @@
 import { default as React } from 'react'
 import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 
-import { ButtonIcon, Generic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, List, Carousel, Masonry, masonries } from '@reusable-ui/components';
-import { OrderDetail, ShippingPreview, useUpdateOrder, useGetShippingList } from '@/store/features/api/apiSlice';
+import { ButtonIcon, Generic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, List, Carousel, Masonry, masonries, Busy } from '@reusable-ui/components';
+import { OrderDetail, ShippingPreview, useUpdateOrder, useGetShippingList, useGetProductList } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
-import { getCurrencySign } from '@/libs/formatters';
+import { formatCurrency, getCurrencySign } from '@/libs/formatters';
 import { AccessibilityProvider, ValidationProvider, useEvent } from '@reusable-ui/core';
 import { ModalStatus } from '../../components/ModalStatus'
 
@@ -52,6 +52,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
     
     // stores:
     const {data: shippingList, isLoading: isLoadingShipping, isError: isErrorShipping } = useGetShippingList();
+    const {data: productList, isLoading: isLoadingProduct, isError: isErrorProduct } = useGetProductList();
     
     
     
@@ -67,6 +68,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
     } = props;
     const {
         _id,
+        items,
         shippingAddress: {
             firstName : shippingFirstName,
             lastName  : shippingLastName,
@@ -200,7 +202,31 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    //
+                                    {items.map((item, index) => {
+                                        const quantity   = item.quantity;
+                                        const unitPrice  = item.price;
+                                        const totalPrice = quantity * unitPrice;
+                                        
+                                        
+                                        
+                                        // jsx:
+                                        return (
+                                            <tr>
+                                                <td>{index + 1}</td>
+                                                <td>SKU-123</td>
+                                                <td>{
+                                                    isLoadingProduct
+                                                    ? <Busy />
+                                                    : isErrorProduct
+                                                        ? 'Error getting product data'
+                                                        : (productList?.entities?.[`${item.product}` || '']?.name ?? 'DELETED PRODUCT')
+                                                }</td>
+                                                <td>{quantity}</td>
+                                                <td>{formatCurrency(unitPrice)}</td>
+                                                <td>{formatCurrency(totalPrice)}</td>
+                                            </tr>
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                         </section>
@@ -208,10 +234,10 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                             <h3>Deliver To</h3>
                             <strong>{
                                 isLoadingShipping
-                                ? 'Loading...'
+                                ? <Busy />
                                 : isErrorShipping
                                     ? 'Error getting shipping data'
-                                    : (shippingList?.entities?.[shippingProvider ?? '']?.name ?? 'UNKNOWN SHIPPING PROVIDER')
+                                    : (shippingList?.entities?.[shippingProvider ?? '']?.name ?? 'DELETED SHIPPING PROVIDER')
                             }</strong>
                             <strong>{shippingFirstName} {shippingLastName}</strong>
                             <p>

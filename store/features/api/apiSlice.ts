@@ -1,17 +1,20 @@
 import { createEntityAdapter, EntityState } from '@reduxjs/toolkit'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import type { Pagination } from '@/libs/types'
-import type { ProductDetail } from '@/pages/api/product'
-export type { ProductDetail } from '@/pages/api/product'
+import type { ProductPreview, ProductDetail } from '@/pages/api/product'
+export type { ProductPreview, ProductDetail } from '@/pages/api/product'
 import type { OrderDetail } from '@/pages/api/order'
 export type { OrderDetail } from '@/pages/api/order'
-import { ShippingPreview } from '@/pages/api/shipping'
+import type { ShippingPreview } from '@/pages/api/shipping'
 export type { ShippingPreview } from '@/pages/api/shipping'
 
 
 
 const shippingListAdapter = createEntityAdapter<ShippingPreview>({
     selectId : (shippingPreview) => shippingPreview._id,
+});
+const productListAdapter = createEntityAdapter<ProductPreview>({
+    selectId : (productPreview) => productPreview._id,
 });
 
 
@@ -23,6 +26,12 @@ export const apiSlice = createApi({
     }),
     tagTypes: ['Products', 'Orders'],
     endpoints : (builder) => ({
+        getProductList  : builder.query<EntityState<ProductPreview>, void>({
+            query : () => 'product',
+            transformResponse(response: ProductPreview[]) {
+                return productListAdapter.addMany(productListAdapter.getInitialState(), response);
+            },
+        }),
         getProductPage  : builder.query<Pagination<ProductDetail>, { page?: number, perPage?: number }>({
             query : (params) => ({
                 url    : 'product',
@@ -173,6 +182,7 @@ export const apiSlice = createApi({
 
 
 export const {
+    useGetProductListQuery   : useGetProductList,
     useGetProductPageQuery   : useGetProductPage,
     useUpdateProductMutation : useUpdateProduct,
     

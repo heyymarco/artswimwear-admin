@@ -11,6 +11,14 @@ import type { WysiwygEditorState } from '@/components/editors/WysiwygEditor'
 
 
 // types:
+export interface ProductPreview
+    extends
+        Pick<ProductSchema,
+            |'name'
+        >
+{
+    _id         : string
+}
 export interface ProductDetail
     extends
         Omit<ProductSchema,
@@ -38,6 +46,7 @@ catch (error) {
 const router = createRouter<
     NextApiRequest,
     NextApiResponse<
+        |ProductPreview[]
         |Pagination<ProductDetail>
         |{ error: any }
     >
@@ -48,6 +57,14 @@ const router = createRouter<
 router
 // Use express middleware in next-connect with expressWrapper function
 // .use(expressWrapper(passport.session()))
+.get(async (req, res) => {
+    return res.json(
+        await Product.find<HydratedDocument<ProductPreview>>({}, {
+            _id            : true,
+            name           : true,
+        })
+    );
+})
 .post(async (req, res) => {
     if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
         await new Promise<void>((resolve) => {
