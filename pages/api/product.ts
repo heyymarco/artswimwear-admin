@@ -32,9 +32,9 @@ export interface ProductDetail
 {
     _id            : string
     
-    shippingWeight : number|null
+    shippingWeight : number|null|undefined
     
-    stock          : number|null
+    stock          : number|null|undefined
     
     description    : WysiwygEditorState|null|undefined
 }
