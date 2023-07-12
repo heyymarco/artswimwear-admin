@@ -138,9 +138,9 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                 visibility,
                 name,
                 path,
-                price          : price          ?? undefined,
-                shippingWeight : shippingWeight ?? undefined,
-                stock          : stock          ?? undefined,
+                price          : price,
+                shippingWeight : shippingWeight,
+                stock          : stock,
                 images,
                 description    : description,
             }).unwrap();

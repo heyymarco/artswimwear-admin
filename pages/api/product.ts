@@ -25,11 +25,18 @@ export interface ProductDetail
     extends
         Omit<ProductSchema,
             |'_id'
+            |'shippingWeight'
+            |'stock'
             |'description'
         >
 {
-    _id         : string
-    description : WysiwygEditorState|null|undefined
+    _id            : string
+    
+    shippingWeight : number|null
+    
+    stock          : number|null
+    
+    description    : WysiwygEditorState|null|undefined
 }
 
 
@@ -202,9 +209,9 @@ router
     if (name           !== undefined) product.name           = name;
     
     if (price          !== undefined) product.price          = price;
-    if (shippingWeight !== undefined) product.shippingWeight = shippingWeight;
+    if (shippingWeight !== undefined) product.shippingWeight = shippingWeight ?? undefined;
     
-    if (stock          !== undefined) product.stock          = stock;
+    if (stock          !== undefined) product.stock          = stock          ?? undefined;
     
     if (description    !== undefined) product.description    = description;
     if (images         !== undefined) product.images         = images;
