@@ -297,23 +297,55 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                             <tbody>
                                 <tr>
                                     <td>
-                                        Payment method
+                                        Method
+                                    </td>
+                                    <td>
+                                        <span>
+                                            {paymentType?.toUpperCase() ?? paymentType}
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Provider
+                                    </td>
+                                    <td>
+                                        <span>
+                                            {!!paymentBrand ? <Image alt={paymentBrand} src={`/brands/${paymentBrand}.svg`} width={42} height={26} /> : '-'}
+                                        </span>
+                                        <span>
+                                            {!!paymentIdentifier && <>&nbsp;({paymentIdentifier})</>}
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Amount
                                     </td>
                                     <td>
                                         <strong>
-                                            {paymentType?.toUpperCase() ?? paymentType}
+                                            {formatCurrency(123)}
                                         </strong>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        Payment brand
+                                        Fee
                                     </td>
                                     <td>
-                                        {!!paymentBrand && <strong>
-                                            <Image alt={paymentBrand} src={`/brands/${paymentBrand}.svg`} width={42} height={26} />
-                                        </strong>}
-                                        {!!paymentIdentifier && <>&nbsp;({paymentIdentifier})</>}
+                                        <span>
+                                            {formatCurrency(123)}
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Net
+                                    </td>
+                                    <td>
+                                        <strong>
+                                            {formatCurrency(123)}
+                                        </strong>
                                     </td>
                                 </tr>
                             </tbody>
