@@ -68,7 +68,10 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
     const {data: productList, isLoading: isLoadingProduct, isError: isErrorProduct } = useGetProductList();
     const {
         _id,
+        orderId = _id,
+        
         items,
+        
         shippingAddress: {
             firstName : shippingFirstName,
             lastName  : shippingLastName,
@@ -155,7 +158,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                 // handlers:
                 onKeyDown={handleKeyDown}
             >
-                {_id}
+                #ORDER-{orderId}
                 <CloseButton onClick={handleClosing} />
             </CardHeader>
             <Tab
