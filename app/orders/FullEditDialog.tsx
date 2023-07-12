@@ -50,12 +50,6 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
     
     
     
-    // stores:
-    const {data: shippingList, isLoading: isLoadingShipping, isError: isErrorShipping } = useGetShippingList();
-    const {data: productList, isLoading: isLoadingProduct, isError: isErrorProduct } = useGetProductList();
-    
-    
-    
     // rest props:
     const {
         // data:
@@ -66,6 +60,12 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
         // handlers:
         onClose,
     } = props;
+    
+    
+    
+    // stores:
+    const {data: shippingList, isLoading: isLoadingShipping, isError: isErrorShipping } = useGetShippingList();
+    const {data: productList, isLoading: isLoadingProduct, isError: isErrorProduct } = useGetProductList();
     const {
         _id,
         items,
@@ -79,9 +79,17 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
             zip       : shippingZip,
             country   : shippingCountry,
         },
-        shippingProvider,
-        shippingCost,
+        shippingProvider : shippingProviderId,
+        shippingCost     : totalShippingCosts,
     } = order;
+    
+    const shippingProvider = shippingList?.entities?.[shippingProviderId ?? ''];
+    
+    const totalProductPrices  = items.reduce((accum, item) => {
+        const productUnitPrice = productList?.entities?.[`${item.product}` || '']?.price;
+        if (!productUnitPrice) return accum;
+        return accum + (productUnitPrice * item.quantity);
+    }, 0);
     
     
     
@@ -229,6 +237,29 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                                         );
                                     })}
                                 </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colSpan={6}>
+                                            Subtotal products: <span className='currency'>
+                                                {formatCurrency(totalProductPrices)}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colSpan={6}>
+                                            Shipping: <span className='currency'>
+                                                {formatCurrency(totalShippingCosts)}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colSpan={6}>
+                                            Total: <span className='currency'>
+                                                {formatCurrency(totalProductPrices + totalShippingCosts)}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </section>
                         <section>
@@ -238,7 +269,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                                 ? <Busy />
                                 : isErrorShipping
                                     ? 'Error getting shipping data'
-                                    : (shippingList?.entities?.[shippingProvider ?? '']?.name ?? 'DELETED SHIPPING PROVIDER')
+                                    : (shippingProvider?.name ?? 'DELETED SHIPPING PROVIDER')
                             }</strong>
                             <strong>{shippingFirstName} {shippingLastName}</strong>
                             <p>

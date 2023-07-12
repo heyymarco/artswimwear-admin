@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createRouter } from 'next-connect'
 
+import type { HydratedDocument } from 'mongoose'
 import { connectDB } from '@/libs/dbConn'
 import { default as Shipping, ShippingSchema } from '@/models/Shipping'
 
@@ -42,7 +43,7 @@ const router = createRouter<
 router
 .get(async (req, res) => {
     return res.json(
-        await Shipping.find<Required<Pick<ShippingPreview, '_id'|'name'>>>({}, {
+        await Shipping.find<HydratedDocument<ShippingPreview>>({}, {
             _id  : true,
             
             name : true,

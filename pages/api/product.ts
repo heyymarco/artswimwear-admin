@@ -15,6 +15,8 @@ export interface ProductPreview
     extends
         Pick<ProductSchema,
             |'name'
+            |'price'
+            |'shippingWeight'
         >
 {
     _id         : string
@@ -62,6 +64,8 @@ router
         await Product.find<HydratedDocument<ProductPreview>>({}, {
             _id            : true,
             name           : true,
+            price          : true,
+            shippingWeight : true,
         })
     );
 })
