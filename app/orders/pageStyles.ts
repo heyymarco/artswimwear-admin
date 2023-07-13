@@ -7,6 +7,7 @@ import {
     scope,
     style,
 }                           from '@cssfn/core'          // writes css in javascript
+import { basics } from '@reusable-ui/components';
 import { typos, usesBorder, usesGroupable, usesPadding } from '@reusable-ui/core';
 
 
@@ -118,6 +119,7 @@ const usesOrderItemLayout = () => { // the <div> of the <ListItem> of order list
                 [borderVars.borderEndStartRadius  ] : groupableVars.borderEndStartRadius,
                 [borderVars.borderEndEndRadius    ] : '0px',
                 [borderVars.borderWidth           ] : '0px', // only setup borderRadius, no borderStroke
+                borderInlineEndWidth : basics.borderWidth,
                 
                 
                 

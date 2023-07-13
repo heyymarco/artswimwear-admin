@@ -8,12 +8,12 @@ import { Section, Main } from '@heymarco/section'
 import type { Metadata } from 'next'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody, Carousel, Navscroll, Badge } from '@reusable-ui/components';
-import { OrderDetail, useGetOrderPage, useGetProductList } from '@/store/features/api/apiSlice';
+import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody, Carousel, Navscroll, Badge, CarouselProps, ButtonProps } from '@reusable-ui/components';
+import { OrderDetail, ProductPreview, useGetOrderPage, useGetProductList } from '@/store/features/api/apiSlice';
 import { useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
 import { formatCurrency, getCurrencySign } from '@/libs/formatters';
-import { useEvent } from '@reusable-ui/core';
+import { useEvent, useIsRtl, useMergeRefs } from '@reusable-ui/core';
 import { ModalStatus } from '../../components/ModalStatus'
 
 import { PAGE_ORDERS_TITLE, PAGE_ORDERS_DESCRIPTION } from '@/website.config'
@@ -30,6 +30,7 @@ import { countryList } from '@/libs/countryList'
 import { SimpleEditAddressDialog } from '@/components/dialogs/SimpleEditAddressDialog'
 import { AddressEditor } from '@/components/editors/AddressEditor'
 import { resolveMediaUrl } from '@/libs/mediaStorage.client'
+import type { EntityState } from '@reduxjs/toolkit'
 
 
 
@@ -51,6 +52,120 @@ const getTotalQuantity = (items: OrderSchema['items']): number => {
         return counter + item.quantity;
     }, 0);
 };
+
+
+
+interface MiniCarouselProps
+    extends
+        CarouselProps
+{
+    // data:
+    items       : OrderDetail['items']
+    productList : EntityState<ProductPreview>|undefined
+}
+const MiniCarousel = (props: MiniCarouselProps) => {
+    // cultures:
+    const [isRtl, setCarouselElmRef] = useIsRtl();
+    
+    
+    
+    // rest props:
+    const {
+        // refs:
+        elmRef,
+        
+        
+        
+        // data:
+        items,
+        productList,
+        
+        
+        
+        // components:
+        prevButtonComponent = (<ButtonIcon iconPosition='start' icon={isRtl ? 'navright' : 'navleft' } size='xs' /> as React.ReactComponentElement<any, ButtonProps>),
+        nextButtonComponent = (<ButtonIcon iconPosition='end'   icon={isRtl ? 'navleft'  : 'navright'} size='xs' /> as React.ReactComponentElement<any, ButtonProps>),
+    ...restCarouselProps} = props;
+    
+    
+    
+    // refs:
+    const mergedListRef = useMergeRefs<HTMLElement>(
+        // preserves the original `elmRef`:
+        elmRef,
+        
+        
+        
+        setCarouselElmRef,
+    );
+    
+    
+    
+    // jsx:
+    return (
+        <Carousel
+            // other props:
+            {...restCarouselProps}
+            
+            
+            
+            // refs:
+            elmRef={mergedListRef}
+            
+            
+            
+            // components:
+            prevButtonComponent={prevButtonComponent}
+            nextButtonComponent={nextButtonComponent}
+            navscrollComponent={
+                <Navscroll
+                    // variants:
+                    size='sm'
+                    theme='danger'
+                >
+                    {items.map(({quantity}, index: number) =>
+                        <ListItem
+                            // identifiers:
+                            key={index}
+                            
+                            
+                            
+                            // semantics:
+                            tag='button'
+                            
+                            
+                            
+                            // variants:
+                            size='sm'
+                        >
+                            {quantity}
+                        </ListItem>
+                    )}
+                </Navscroll>
+            }
+        >
+            {items.map(({product: productId}, index: number) => {
+                const product = productList?.entities?.[`${productId}`];
+                const image   = product?.image;
+                
+                
+                
+                // jsx:
+                return (
+                    <Image
+                        key={index}
+                        
+                        alt={`image #${index + 1} of ${product?.name ?? 'unknown product'}`}
+                        src={resolveMediaUrl(image)}
+                        sizes={`${imageSize}px`}
+                        
+                        priority={true}
+                    />
+                );
+            })}
+        </Carousel>
+    )
+}
 
 
 
@@ -120,53 +235,14 @@ const OrderItem = (props: OrderItemProps) => {
                         <EditButton onClick={() => setEditMode('email')} />
                     </span>
                 </p>
-                <Carousel
+                <MiniCarousel
                     elmRef={carouselRef}
                     className='items'
                     // infiniteLoop={true}
                     // scrollMargin={1}
-                    navscrollComponent={
-                        <Navscroll
-                            // variants:
-                            size='sm'
-                            theme='danger'
-                        >
-                            {items.map(({quantity}, index: number) =>
-                                <ListItem
-                                    // identifiers:
-                                    key={index}
-                                    
-                                    
-                                    
-                                    // semantics:
-                                    tag='button'
-                                >
-                                    {quantity}
-                                </ListItem>
-                            )}
-                        </Navscroll>
-                    }
-                >
-                    {items.map(({product: productId}, index: number) => {
-                        const product = productList?.entities?.[`${productId}`];
-                        const image   = product?.image;
-                        
-                        
-                        
-                        // jsx:
-                        return (
-                            <Image
-                                key={index}
-                                
-                                alt={`image #${index + 1} of ${product?.name ?? 'unknown product'}`}
-                                src={resolveMediaUrl(image)}
-                                sizes={`${imageSize}px`}
-                                
-                                priority={true}
-                            />
-                        );
-                    })}
-                </Carousel>
+                    items={items}
+                    productList={productList}
+                />
                 <Badge
                     // variants:
                     theme='danger'
