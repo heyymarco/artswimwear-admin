@@ -34,7 +34,7 @@ import { resolveMediaUrl } from '@/libs/mediaStorage.client'
 
 
 // defaults:
-const imageSize = 96;  // 96px
+const imageSize = 128;  // 128px
 
 
 
@@ -160,7 +160,7 @@ const OrderItem = (props: OrderItemProps) => {
                                 
                                 alt={`image #${index + 1} of ${product?.name ?? 'unknown product'}`}
                                 src={resolveMediaUrl(image)}
-                                sizes='96px'
+                                sizes={`${imageSize}px`}
                                 
                                 priority={true}
                             />
@@ -172,8 +172,8 @@ const OrderItem = (props: OrderItemProps) => {
                     theme='danger'
                     floatingOn={carouselRef}
                     floatingPlacement='left-start'
-                    floatingShift={5}
-                    floatingOffset={-30}
+                    floatingShift={10}
+                    floatingOffset={-40}
                 >
                     {getTotalQuantity(items)} Item(s)
                 </Badge>

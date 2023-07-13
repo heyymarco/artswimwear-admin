@@ -177,8 +177,6 @@ export const usesEditDescription = () => {
     // features:
     const {borderRule, borderVars } = usesBorder({ borderWidth: '0px' });
     
-    
-    
     // spacings:
     const positivePaddingInline = groupableVars.paddingInline;
     const positivePaddingBlock  = groupableVars.paddingBlock;
