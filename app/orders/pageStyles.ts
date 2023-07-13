@@ -112,6 +112,11 @@ const usesOrderItemLayout = () => { // the <div> of the <ListItem> of order list
                 
                 
                 
+                // sizes:
+                aspectRatio: commerces.defaultProductAspectRatio,
+                
+                
+                
                 // borders:
                 // follows <parent>'s borderRadius
                 [borderVars.borderStartStartRadius] : groupableVars.borderStartStartRadius,

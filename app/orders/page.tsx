@@ -8,7 +8,7 @@ import { Section, Main } from '@heymarco/section'
 import type { Metadata } from 'next'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody, Carousel, Navscroll, Badge, CarouselProps, ButtonProps } from '@reusable-ui/components';
+import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody, Carousel, Navscroll, Badge, CarouselProps, ButtonProps, NavscrollProps } from '@reusable-ui/components';
 import { OrderDetail, ProductPreview, useGetOrderPage, useGetProductList } from '@/store/features/api/apiSlice';
 import { useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
@@ -85,6 +85,30 @@ const MiniCarousel = (props: MiniCarouselProps) => {
         // components:
         prevButtonComponent = (<ButtonIcon iconPosition='start' icon={isRtl ? 'navright' : 'navleft' } size='xs' /> as React.ReactComponentElement<any, ButtonProps>),
         nextButtonComponent = (<ButtonIcon iconPosition='end'   icon={isRtl ? 'navleft'  : 'navright'} size='xs' /> as React.ReactComponentElement<any, ButtonProps>),
+        navscrollComponent  = (<Navscroll<Element>
+            // variants:
+            size='sm'
+            theme='danger'
+        >
+            {items.map(({quantity}, index: number) =>
+                <ListItem
+                    // identifiers:
+                    key={index}
+                    
+                    
+                    
+                    // semantics:
+                    tag='button'
+                    
+                    
+                    
+                    // variants:
+                    size='sm'
+                >
+                    {quantity}
+                </ListItem>
+            )}
+        </Navscroll> as React.ReactComponentElement<any, NavscrollProps<Element>>),
     ...restCarouselProps} = props;
     
     
@@ -117,32 +141,7 @@ const MiniCarousel = (props: MiniCarouselProps) => {
             // components:
             prevButtonComponent={prevButtonComponent}
             nextButtonComponent={nextButtonComponent}
-            navscrollComponent={
-                <Navscroll
-                    // variants:
-                    size='sm'
-                    theme='danger'
-                >
-                    {items.map(({quantity}, index: number) =>
-                        <ListItem
-                            // identifiers:
-                            key={index}
-                            
-                            
-                            
-                            // semantics:
-                            tag='button'
-                            
-                            
-                            
-                            // variants:
-                            size='sm'
-                        >
-                            {quantity}
-                        </ListItem>
-                    )}
-                </Navscroll>
-            }
+            navscrollComponent ={navscrollComponent }
         >
             {items.map(({product: productId}, index: number) => {
                 const product = productList?.entities?.[`${productId}`];
