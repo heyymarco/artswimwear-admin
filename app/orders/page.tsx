@@ -8,8 +8,8 @@ import { Section, Main } from '@heymarco/section'
 import type { Metadata } from 'next'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody } from '@reusable-ui/components';
-import { OrderDetail, useGetOrderPage } from '@/store/features/api/apiSlice';
+import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody, Carousel, Navscroll, Badge } from '@reusable-ui/components';
+import { OrderDetail, useGetOrderPage, useGetProductList } from '@/store/features/api/apiSlice';
 import { useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
 import { formatCurrency, getCurrencySign } from '@/libs/formatters';
@@ -29,6 +29,7 @@ import type { OrderSchema } from '@/models/Order'
 import { countryList } from '@/libs/countryList'
 import { SimpleEditAddressDialog } from '@/components/dialogs/SimpleEditAddressDialog'
 import { AddressEditor } from '@/components/editors/AddressEditor'
+import { resolveMediaUrl } from '@/libs/mediaStorage.client'
 
 
 
@@ -78,6 +79,11 @@ const OrderItem = (props: OrderItemProps) => {
     
     
     
+    // stores:
+    const {data: productList, isLoading: isLoadingProduct, isError: isErrorProduct } = useGetProductList();
+    
+    
+    
     // states:
     type EditMode = keyof OrderDetail['customer']|'shippingAddress'|'full'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
@@ -86,6 +92,7 @@ const OrderItem = (props: OrderItemProps) => {
     
     // refs:
     const listItemRef = useRef<HTMLElement|null>(null);
+    const carouselRef = useRef<HTMLElement|null>(null);
     
     
     
@@ -113,13 +120,66 @@ const OrderItem = (props: OrderItemProps) => {
                         <EditButton onClick={() => setEditMode('email')} />
                     </span>
                 </p>
-                <p className='items'>
-                    <strong className='value'>{getTotalQuantity(items)}</strong> items: ...
-                    <EditButton onClick={() => setEditMode('full')} />
-                </p>
+                <Carousel
+                    elmRef={carouselRef}
+                    className='items'
+                    // infiniteLoop={true}
+                    // scrollMargin={1}
+                    navscrollComponent={
+                        <Navscroll
+                            // variants:
+                            size='sm'
+                            theme='danger'
+                        >
+                            {items.map(({quantity}, index: number) =>
+                                <ListItem
+                                    // identifiers:
+                                    key={index}
+                                    
+                                    
+                                    
+                                    // semantics:
+                                    tag='button'
+                                >
+                                    {quantity}
+                                </ListItem>
+                            )}
+                        </Navscroll>
+                    }
+                >
+                    {items.map(({product: productId}, index: number) => {
+                        const product = productList?.entities?.[`${productId}`];
+                        const image   = product?.image;
+                        
+                        
+                        
+                        // jsx:
+                        return (
+                            <Image
+                                key={index}
+                                
+                                alt={`image #${index + 1} of ${product?.name ?? 'unknown product'}`}
+                                src={resolveMediaUrl(image)}
+                                sizes='96px'
+                                
+                                priority={true}
+                            />
+                        );
+                    })}
+                </Carousel>
+                <Badge
+                    // variants:
+                    theme='danger'
+                    floatingOn={carouselRef}
+                    floatingPlacement='left-start'
+                    floatingShift={5}
+                    floatingOffset={-30}
+                >
+                    {getTotalQuantity(items)} Item(s)
+                </Badge>
                 <p className='fullEditor'>
-                    <EditButton buttonStyle='regular' onClick={() => setEditMode('full')}>
-                        Open full editor
+                    <EditButton icon='table_view' buttonStyle='regular' onClick={() => setEditMode('full')}>
+                        View Details
                     </EditButton>
                 </p>
             </div>

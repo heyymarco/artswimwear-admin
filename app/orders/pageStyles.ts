@@ -11,6 +11,7 @@ import { typos, usesBorder, usesGroupable, usesPadding } from '@reusable-ui/core
 
 
 // styles:
+const imageSize = 96;  // 96px
 export default () => {
     const {paddingVars} = usesPadding();
     const {groupableRule, groupableVars} = usesGroupable({
@@ -103,22 +104,17 @@ export default () => {
         scope('orderItemLayout', {
             display: 'grid',
             gridTemplate: [[
-                '"orderId   "', 'auto',
-                '"customer  "', 'auto',
-                '"shipping  "', 'auto',
-                '"items     "', 'auto',
-                '"fullEditor"', 'auto',
+                '"items orderId   "', 'auto',
+                '"items customer  "', 'auto',
+                '"items fullEditor"', 'auto',
                 '/',
-                '1fr',
+                `${imageSize}px 1fr`,
             ]],
             padding: '1rem',
             gapInline: '1rem',
             gapBlock: '0.5rem',
             ...descendants(['.orderId', 'p'], {
                 margin: 0,
-            }),
-            ...descendants('.value', {
-                fontWeight: typos.fontWeightSemibold,
             }),
             ...descendants('.edit', {
                 marginInlineStart: '0.25em',
@@ -138,12 +134,6 @@ export default () => {
             ...children('.customer', {
                 gridArea: 'customer',
                 ...children(['.name', '.email'], {
-                    display: 'block',
-                }),
-            }),
-            ...children('.shipping', {
-                gridArea: 'shipping',
-                ...children(['.contact', '.phone', '.address'], {
                     display: 'block',
                 }),
             }),

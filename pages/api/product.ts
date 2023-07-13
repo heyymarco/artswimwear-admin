@@ -20,6 +20,7 @@ export interface ProductPreview
         >
 {
     _id         : string
+    image       : Required<ProductSchema>['images'][number]
 }
 export interface ProductDetail
     extends
@@ -73,6 +74,7 @@ router
             name           : true,
             price          : true,
             shippingWeight : true,
+            image          : { $first: "$images" },
         })
     );
 })
