@@ -113,7 +113,7 @@ const ProductItem = (props: ProductItemProps) => {
                 </p>
                 <p className='fullEditor'>
                     <EditButton buttonStyle='regular' onClick={() => setEditMode('full')}>
-                        Open full editor
+                        Open Full Editor
                     </EditButton>
                 </p>
             </div>
