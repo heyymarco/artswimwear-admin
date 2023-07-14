@@ -66,7 +66,7 @@ const ProductItem = (props: ProductItemProps) => {
     
     
     // states:
-    type EditMode = Exclude<keyof ProductDetail, '_id'|'image'>|'full'
+    type EditMode = Exclude<keyof ProductDetail, '_id'>|'images'|'full'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     
@@ -102,7 +102,7 @@ const ProductItem = (props: ProductItemProps) => {
                             floatingShift={10}
                             floatingOffset={-30}
                         >
-                            <EditButton onClick={() => setEditMode('full')} />
+                            <EditButton onClick={() => setEditMode('images')} />
                         </Badge>
                     }
                 >
@@ -159,7 +159,7 @@ const ProductItem = (props: ProductItemProps) => {
                 </p>
             </div>
             <ModalStatus theme='primary' viewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {!!editMode && (editMode !== 'full') && <>
+                {!!editMode && (editMode !== 'images') && (editMode !== 'full') && <>
                     {(editMode === 'name'      ) && <SimpleEditProductDialog model={product} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor       type='text' required={true } />} />}
                     {(editMode === 'price'     ) && <SimpleEditProductDialog model={product} edit={editMode} onClose={handleEditDialogClose} editorComponent={<CurrencyEditor   currencySign={getCurrencySign()} currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX} />} />}
                     {(editMode === 'stock'     ) && <SimpleEditProductDialog model={product} edit={editMode} onClose={handleEditDialogClose} editorComponent={<StockEditor      theme='secondary' />} />}
@@ -167,7 +167,7 @@ const ProductItem = (props: ProductItemProps) => {
                 </>}
             </ModalStatus>
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {!!editMode && (editMode === 'full') && <FullEditDialog product={product} onClose={handleEditDialogClose} />}
+                {!!editMode && ((editMode === 'images') || (editMode === 'full')) && <FullEditDialog product={product} onClose={handleEditDialogClose} defaultExpandedTabIndex={(editMode === 'images') ? 1 : undefined} />}
             </ModalStatus>
         </ListItem>
     );

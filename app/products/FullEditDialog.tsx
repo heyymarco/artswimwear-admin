@@ -37,12 +37,13 @@ const useFullEditDialogStyleSheet = dynamicStyleSheets(
 // react components:
 export interface FullEditDialogProps {
     // data:
-    product          : ProductDetail
+    product                  : ProductDetail
+    defaultExpandedTabIndex ?: number
     
     
     
     // handlers:
-    onClose          : () => void
+    onClose                  : () => void
 }
 export const FullEditDialog = (props: FullEditDialogProps) => {
     // styles:
@@ -54,6 +55,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
     const {
         // data:
         product,
+        defaultExpandedTabIndex,
         
         
         
@@ -238,6 +240,11 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                     
                     // states:
                     enabled={!isLoading}
+                    
+                    
+                    
+                    // values:
+                    defaultExpandedTabIndex={defaultExpandedTabIndex}
                     
                     
                     
