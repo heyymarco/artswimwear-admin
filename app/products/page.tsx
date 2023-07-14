@@ -87,7 +87,7 @@ const ProductItem = (props: ProductItemProps) => {
             <div className={styles.productItemWrapper}>
                 <div className='prodImg'>
                     <Image
-                        className='image'
+                        className='images'
                         alt={name ?? ''}
                         src={resolveMediaUrl(images?.[0])}
                         sizes={`${imageSize}px`}

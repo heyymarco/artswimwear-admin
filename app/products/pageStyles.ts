@@ -135,11 +135,11 @@ const usesProductItemWrapperLayout = () => { // the <div> of the <ListItem> of p
             // layouts:
             display: 'grid',
             gridTemplate: [[
-                '"image      name "', 'auto',
-                '"image      price"', 'auto',
-                '"image      stock"', 'auto',
-                '"image visibility"', 'auto',
-                '"image fullEditor"', 'auto',
+                '"images      name "', 'auto',
+                '"images      price"', 'auto',
+                '"images      stock"', 'auto',
+                '"images visibility"', 'auto',
+                '"images fullEditor"', 'auto',
                 '/',
                 `${imageSize}px`, 'auto',
             ]],
@@ -187,7 +187,7 @@ const usesProductItemWrapperLayout = () => { // the <div> of the <ListItem> of p
                 }),
             }),
             ...children('.prodImg', {
-                gridArea: 'image',
+                gridArea: 'images',
                 alignSelf: 'center',
                 width: '96px',
                 height: 'fit-content',
@@ -204,7 +204,7 @@ const usesProductItemWrapperLayout = () => { // the <div> of the <ListItem> of p
                 ...children('*', {
                     gridArea: '1/1/-1/-1',
                 }),
-                ...children('.image', {
+                ...children('.images', {
                     width: '100%',
                     minHeight: `${imageSize}px`,
                 }),
