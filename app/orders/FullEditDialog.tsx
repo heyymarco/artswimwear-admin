@@ -27,6 +27,11 @@ import { countryList } from '@/libs/countryList'
 
 
 
+// defaults:
+const imageSize = 48;  // 48px
+
+
+
 // styles:
 const useFullEditDialogStyleSheet = dynamicStyleSheets(
     () => import(/* webpackPrefetch: true */'./FullEditDialogStyles')
@@ -202,7 +207,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                                             No
                                         </th>
                                         <th>
-                                            SKU
+                                            Image
                                         </th>
                                         <th>
                                             Product
@@ -219,10 +224,8 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {items.map((item, index) => {
-                                        const quantity   = item.quantity;
-                                        const unitPrice  = item.price;
-                                        const totalPrice = quantity * unitPrice;
+                                    {items.map(({quantity, price: unitPrice, product: productId}, index) => {
+                                        const product = productList?.entities?.[`${productId}`];
                                         
                                         
                                         
@@ -230,17 +233,25 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                                         return (
                                             <tr key={index}>
                                                 <td>{index + 1}</td>
-                                                <td>SKU-123</td>
+                                                <td>
+                                                    <Image
+                                                        alt={`image #${index + 1} of ${product?.name ?? 'unknown product'}`}
+                                                        src={resolveMediaUrl(product?.image)}
+                                                        sizes={`${imageSize}px`}
+                                                        
+                                                        priority={true}
+                                                    />
+                                                </td>
                                                 <td>{
                                                     isLoadingProduct
                                                     ? <Busy />
                                                     : isErrorProduct
                                                         ? 'Error getting product data'
-                                                        : (productList?.entities?.[`${item.product}` || '']?.name ?? 'DELETED PRODUCT')
+                                                        : (product?.name ?? 'DELETED PRODUCT')
                                                 }</td>
                                                 <td>{quantity}</td>
                                                 <td>{formatCurrency(unitPrice)}</td>
-                                                <td>{formatCurrency(totalPrice)}</td>
+                                                <td>{formatCurrency(quantity * unitPrice)}</td>
                                             </tr>
                                         );
                                     })}

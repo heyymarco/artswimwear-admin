@@ -143,7 +143,6 @@ const OrderItem = (props: OrderItemProps) => {
                     >
                         {items.map(({quantity, product: productId}, index: number) => {
                             const product = productList?.entities?.[`${productId}`];
-                            const image   = product?.image;
                             
                             
                             
@@ -175,7 +174,7 @@ const OrderItem = (props: OrderItemProps) => {
                                 >
                                     <Image
                                         alt={`image #${index + 1} of ${product?.name ?? 'unknown product'}`}
-                                        src={resolveMediaUrl(image)}
+                                        src={resolveMediaUrl(product?.image)}
                                         sizes={`${imageSize}px`}
                                         
                                         priority={true}
