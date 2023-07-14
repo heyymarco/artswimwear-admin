@@ -193,7 +193,7 @@ export default () => {
             
             justifySelf: 'center',
         }),
-        scope('orderList', { // section of order list
+        scope('orderList', { // the <section> of order list
             gridArea: 'orderList',
             
             display: 'flex',

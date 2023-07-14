@@ -5,24 +5,16 @@ import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 
 import { Section, Main } from '@heymarco/section'
 
-import type { Metadata } from 'next'
-
 import { Image } from '@heymarco/image'
-import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody, Carousel, Navscroll, Badge, CarouselProps, ButtonProps, NavscrollProps, ImperativeScroll, BadgeProps, GenericProps, Generic } from '@reusable-ui/components';
-import { OrderDetail, ProductPreview, useGetOrderPage, useGetProductList } from '@/store/features/api/apiSlice';
+import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody, Carousel, Navscroll, Badge, CarouselProps, ButtonProps, NavscrollProps, ImperativeScroll } from '@reusable-ui/components';
+import { OrderDetail, useGetOrderPage, useGetProductList } from '@/store/features/api/apiSlice';
 import { useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
-import { formatCurrency, getCurrencySign } from '@/libs/formatters';
 import { useEvent, useIsRtl, useMergeRefs } from '@reusable-ui/core';
 import { ModalStatus } from '../../components/ModalStatus'
 
-import { PAGE_ORDERS_TITLE, PAGE_ORDERS_DESCRIPTION } from '@/website.config'
-import { COMMERCE_CURRENCY_FRACTION_MAX } from '@/commerce.config'
 import { EditButton } from '@/components/EditButton'
 import { TextEditor } from '@/components/editors/TextEditor'
-import { CurrencyEditor } from '@/components/editors/CurrencyEditor'
-import { StockEditor } from '@/components/editors/StockEditor'
-import { VisibilityEditor } from '@/components/editors/VisibilityEditor'
 import { SimpleEditCustomerDialog } from '@/components/dialogs/SimpleEditCustomerDialog'
 import { FullEditDialog } from './FullEditDialog'
 import type { OrderSchema } from '@/models/Order'
@@ -30,7 +22,7 @@ import { countryList } from '@/libs/countryList'
 import { SimpleEditAddressDialog } from '@/components/dialogs/SimpleEditAddressDialog'
 import { AddressEditor } from '@/components/editors/AddressEditor'
 import { resolveMediaUrl } from '@/libs/mediaStorage.client'
-import type { EntityState } from '@reduxjs/toolkit'
+import { WithBadge } from '@/components/WithBadge'
 
 
 
@@ -167,69 +159,6 @@ const MiniCarousel = (props: CarouselProps) => {
             {...childrenArray}
         </Carousel>
     )
-};
-
-
-
-interface WithBadgeProps<TElement extends Element = HTMLElement>
-{
-    // components:
-    wrapperComponent ?: React.ReactComponentElement<any, GenericProps<TElement>>
-    badgeComponent    : React.ReactComponentElement<any, BadgeProps<Element>>
-    children          : React.ReactComponentElement<any, GenericProps<Element>>
-}
-const WithBadge = <TElement extends Element = HTMLElement>(props: WithBadgeProps<TElement>) => {
-    // rest props:
-    const {
-        // components:
-        wrapperComponent = (<Generic<TElement> /> as React.ReactComponentElement<any, GenericProps<TElement>>),
-        badgeComponent,
-        children : component,
-    ...restGenericProps} = props;
-    
-    
-    
-    // refs:
-    const componentRefInternal = useRef<Element|null>(null);
-    const mergedComponentRef = useMergeRefs<Element>(
-        // preserves the original `elmRef` from `component`:
-        component.props.elmRef,
-        
-        
-        
-        componentRefInternal,
-    );
-    
-    
-    
-    // jsx:
-    return React.cloneElement<GenericProps<TElement>>(wrapperComponent,
-        // props:
-        {
-            // other props:
-            ...restGenericProps,
-            ...wrapperComponent.props, // overwrites restGenericProps (if any conflics)
-        },
-        
-        
-        
-        // children:
-        /* <Component> */
-        React.cloneElement<GenericProps<Element>>(component,
-            // props:
-            {
-                // refs:
-                elmRef : mergedComponentRef,
-            },
-        ),
-        /* <Badge> */
-        React.cloneElement<BadgeProps<Element>>(badgeComponent,
-            // props:
-            {
-                floatingOn : badgeComponent.props.floatingOn ?? componentRefInternal,
-            },
-        ),
-    );
 };
 
 
