@@ -8,7 +8,7 @@ import { Section, Main } from '@heymarco/section'
 import type { Metadata } from 'next'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody, Carousel, Navscroll, Badge, CarouselProps, ButtonProps, NavscrollProps } from '@reusable-ui/components';
+import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody, Carousel, Navscroll, Badge, CarouselProps, ButtonProps, NavscrollProps, ImperativeScroll } from '@reusable-ui/components';
 import { OrderDetail, ProductPreview, useGetOrderPage, useGetProductList } from '@/store/features/api/apiSlice';
 import { useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
@@ -55,17 +55,14 @@ const getTotalQuantity = (items: OrderSchema['items']): number => {
 
 
 
-interface MiniCarouselProps
-    extends
-        CarouselProps
-{
-    // data:
-    items       : OrderDetail['items']
-    productList : EntityState<ProductPreview>|undefined
-}
-const MiniCarousel = (props: MiniCarouselProps) => {
+const MiniCarousel = (props: CarouselProps) => {
     // cultures:
     const [isRtl, setCarouselElmRef] = useIsRtl();
+    
+    
+    
+    // children:
+    const childrenArray = React.Children.toArray(props.children)
     
     
     
@@ -73,12 +70,7 @@ const MiniCarousel = (props: MiniCarouselProps) => {
     const {
         // refs:
         elmRef,
-        
-        
-        
-        // data:
-        items,
-        productList,
+        scrollRef,
         
         
         
@@ -88,9 +80,27 @@ const MiniCarousel = (props: MiniCarouselProps) => {
         navscrollComponent  = (<Navscroll<Element>
             // variants:
             size='sm'
-            theme='danger'
+            
+            
+            
+            // components:
+            navComponent={
+                <Pagination
+                    itemsLimit={3}
+                    prevItems={
+                        <NavPrevItem
+                            onClick={() => scrollRefInternal.current?.scrollPrev()}
+                        />
+                    }
+                    nextItems={
+                        <NavNextItem
+                            onClick={() => scrollRefInternal.current?.scrollNext()}
+                        />
+                    }
+                />
+            }
         >
-            {items.map(({quantity}, index: number) =>
+            {childrenArray.map((child, index: number) =>
                 <ListItem
                     // identifiers:
                     key={index}
@@ -105,7 +115,7 @@ const MiniCarousel = (props: MiniCarouselProps) => {
                     // variants:
                     size='sm'
                 >
-                    {quantity}
+                    {index + 1}
                 </ListItem>
             )}
         </Navscroll> as React.ReactComponentElement<any, NavscrollProps<Element>>),
@@ -114,13 +124,23 @@ const MiniCarousel = (props: MiniCarouselProps) => {
     
     
     // refs:
-    const mergedListRef = useMergeRefs<HTMLElement>(
+    const mergedCarouselRef = useMergeRefs<HTMLElement>(
         // preserves the original `elmRef`:
         elmRef,
         
         
         
         setCarouselElmRef,
+    );
+    
+    const scrollRefInternal = useRef<(HTMLElement & ImperativeScroll)|null>(null);
+    const mergedScrollRef = useMergeRefs<HTMLElement>(
+        // preserves the original `scrollRef`:
+        scrollRef,
+        
+        
+        
+        scrollRefInternal,
     );
     
     
@@ -134,7 +154,8 @@ const MiniCarousel = (props: MiniCarouselProps) => {
             
             
             // refs:
-            elmRef={mergedListRef}
+            elmRef={mergedCarouselRef}
+            scrollRef={mergedScrollRef}
             
             
             
@@ -143,25 +164,7 @@ const MiniCarousel = (props: MiniCarouselProps) => {
             nextButtonComponent={nextButtonComponent}
             navscrollComponent ={navscrollComponent }
         >
-            {items.map(({product: productId}, index: number) => {
-                const product = productList?.entities?.[`${productId}`];
-                const image   = product?.image;
-                
-                
-                
-                // jsx:
-                return (
-                    <Image
-                        key={index}
-                        
-                        alt={`image #${index + 1} of ${product?.name ?? 'unknown product'}`}
-                        src={resolveMediaUrl(image)}
-                        sizes={`${imageSize}px`}
-                        
-                        priority={true}
-                    />
-                );
-            })}
+            {...childrenArray}
         </Carousel>
     )
 }
@@ -235,13 +238,39 @@ const OrderItem = (props: OrderItemProps) => {
                     </span>
                 </p>
                 <MiniCarousel
+                    // refs:
                     elmRef={carouselRef}
+                    
+                    
+                    
+                    // variants:
+                    theme='danger'
+                    
+                    
+                    
+                    // classes:
                     className='items'
-                    // infiniteLoop={true}
-                    // scrollMargin={1}
-                    items={items}
-                    productList={productList}
-                />
+                >
+                    {items.map(({product: productId}, index: number) => {
+                        const product = productList?.entities?.[`${productId}`];
+                        const image   = product?.image;
+                        
+                        
+                        
+                        // jsx:
+                        return (
+                            <Image
+                                key={index}
+                                
+                                alt={`image #${index + 1} of ${product?.name ?? 'unknown product'}`}
+                                src={resolveMediaUrl(image)}
+                                sizes={`${imageSize}px`}
+                                
+                                priority={true}
+                            />
+                        );
+                    })}
+                </MiniCarousel>
                 <Badge
                     // variants:
                     theme='danger'
