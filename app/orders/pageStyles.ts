@@ -105,9 +105,9 @@ const usesOrderItemWrapperLayout = () => { // the <div> of the <ListItem> of ord
     
     // capabilities:
     const {groupableRule, groupableVars} = usesGroupable({
-        orientationInlineSelector : null,     // craft the <Carousel>'s borderRadius manually
-        orientationBlockSelector  : null,     // craft the <Carousel>'s borderRadius manually
-        itemsSelector             : '.items', // select the <Carousel>
+        orientationInlineSelector : null,      // craft the <Carousel>'s borderRadius manually
+        orientationBlockSelector  : null,      // craft the <Carousel>'s borderRadius manually
+        itemsSelector             : '.images', // select the <Carousel>
     });
     
     // features:
@@ -136,9 +136,9 @@ const usesOrderItemWrapperLayout = () => { // the <div> of the <ListItem> of ord
             // layouts:
             display: 'grid',
             gridTemplate: [[
-                '"items orderId   "', 'auto',
-                '"items customer  "', 'auto',
-                '"items fullEditor"', 'auto',
+                '"images orderId   "', 'auto',
+                '"images customer  "', 'auto',
+                '"images fullEditor"', 'auto',
                 '/',
                 `calc(${imageSize}px - ${paddingVars.paddingInline}) 1fr`,
             ]],
@@ -192,9 +192,9 @@ const usesOrderItemWrapperLayout = () => { // the <div> of the <ListItem> of ord
                     display: 'block',
                 }),
             }),
-            ...children('.items', {
+            ...children('.images', {
                 // layouts:
-                gridArea: 'items',
+                gridArea: 'images',
                 
                 
                 

@@ -134,7 +134,7 @@ const OrderItem = (props: OrderItemProps) => {
                         
                         
                         // classes:
-                        className='items'
+                        className='images'
                         
                         
                         
