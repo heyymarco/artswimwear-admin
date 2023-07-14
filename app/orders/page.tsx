@@ -8,7 +8,7 @@ import { Section, Main } from '@heymarco/section'
 import type { Metadata } from 'next'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody, Carousel, Navscroll, Badge, CarouselProps, ButtonProps, NavscrollProps, ImperativeScroll } from '@reusable-ui/components';
+import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody, Carousel, Navscroll, Badge, CarouselProps, ButtonProps, NavscrollProps, ImperativeScroll, BadgeProps, GenericProps, Generic } from '@reusable-ui/components';
 import { OrderDetail, ProductPreview, useGetOrderPage, useGetProductList } from '@/store/features/api/apiSlice';
 import { useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
@@ -167,7 +167,70 @@ const MiniCarousel = (props: CarouselProps) => {
             {...childrenArray}
         </Carousel>
     )
+};
+
+
+
+interface WithBadgeProps<TElement extends Element = HTMLElement>
+{
+    // components:
+    wrapperComponent ?: React.ReactComponentElement<any, GenericProps<TElement>>
+    badgeComponent    : React.ReactComponentElement<any, BadgeProps<Element>>
+    children          : React.ReactComponentElement<any, GenericProps<Element>>
 }
+const WithBadge = <TElement extends Element = HTMLElement>(props: WithBadgeProps<TElement>) => {
+    // rest props:
+    const {
+        // components:
+        wrapperComponent = (<Generic<TElement> /> as React.ReactComponentElement<any, GenericProps<TElement>>),
+        badgeComponent,
+        children : component,
+    ...restGenericProps} = props;
+    
+    
+    
+    // refs:
+    const componentRefInternal = useRef<Element|null>(null);
+    const mergedComponentRef = useMergeRefs<Element>(
+        // preserves the original `elmRef` from `component`:
+        component.props.elmRef,
+        
+        
+        
+        componentRefInternal,
+    );
+    
+    
+    
+    // jsx:
+    return React.cloneElement<GenericProps<TElement>>(wrapperComponent,
+        // props:
+        {
+            // other props:
+            ...restGenericProps,
+            ...wrapperComponent.props, // overwrites restGenericProps (if any conflics)
+        },
+        
+        
+        
+        // children:
+        /* <Component> */
+        React.cloneElement<GenericProps<Element>>(component,
+            // props:
+            {
+                // refs:
+                elmRef : mergedComponentRef,
+            },
+        ),
+        /* <Badge> */
+        React.cloneElement<BadgeProps<Element>>(badgeComponent,
+            // props:
+            {
+                floatingOn : badgeComponent.props.floatingOn ?? componentRefInternal,
+            },
+        ),
+    );
+};
 
 
 
@@ -209,7 +272,6 @@ const OrderItem = (props: OrderItemProps) => {
     
     // refs:
     const listItemRef = useRef<HTMLElement|null>(null);
-    const carouselRef = useRef<HTMLElement|null>(null);
     
     
     
@@ -237,50 +299,64 @@ const OrderItem = (props: OrderItemProps) => {
                         <EditButton onClick={() => setEditMode('email')} />
                     </span>
                 </p>
-                <MiniCarousel
-                    // refs:
-                    elmRef={carouselRef}
-                    
-                    
-                    
-                    // variants:
-                    theme='danger'
-                    
-                    
-                    
-                    // classes:
-                    className='items'
+                <WithBadge
+                    // components:
+                    wrapperComponent={<React.Fragment />}
+                    badgeComponent={
+                        <Badge
+                            // variants:
+                            floatingPlacement='left-start'
+                            floatingShift={10}
+                            floatingOffset={-40}
+                        >
+                            {getTotalQuantity(items)} Item(s)
+                        </Badge>
+                    }
                 >
-                    {items.map(({product: productId}, index: number) => {
-                        const product = productList?.entities?.[`${productId}`];
-                        const image   = product?.image;
+                    <MiniCarousel
+                        // variants:
+                        theme='danger'
                         
                         
                         
-                        // jsx:
-                        return (
-                            <Image
-                                key={index}
-                                
-                                alt={`image #${index + 1} of ${product?.name ?? 'unknown product'}`}
-                                src={resolveMediaUrl(image)}
-                                sizes={`${imageSize}px`}
-                                
-                                priority={true}
-                            />
-                        );
-                    })}
-                </MiniCarousel>
-                <Badge
-                    // variants:
-                    theme='danger'
-                    floatingOn={carouselRef}
-                    floatingPlacement='left-start'
-                    floatingShift={10}
-                    floatingOffset={-40}
-                >
-                    {getTotalQuantity(items)} Item(s)
-                </Badge>
+                        // classes:
+                        className='items'
+                    >
+                        {items.map(({quantity, product: productId}, index: number) => {
+                            const product = productList?.entities?.[`${productId}`];
+                            const image   = product?.image;
+                            
+                            
+                            
+                            // jsx:
+                            return (
+                                <WithBadge
+                                    // components:
+                                    badgeComponent={
+                                        <Badge
+                                            // variants:
+                                            floatingPlacement='right-start'
+                                            floatingShift={10}
+                                            floatingOffset={-40}
+                                        >
+                                            {quantity}x
+                                        </Badge>
+                                    }
+                                >
+                                    <Image
+                                        key={index}
+                                        
+                                        alt={`image #${index + 1} of ${product?.name ?? 'unknown product'}`}
+                                        src={resolveMediaUrl(image)}
+                                        sizes={`${imageSize}px`}
+                                        
+                                        priority={true}
+                                    />
+                                </WithBadge>
+                            );
+                        })}
+                    </MiniCarousel>
+                </WithBadge>
                 <p className='fullEditor'>
                     <EditButton icon='table_view' buttonStyle='regular' onClick={() => setEditMode('full')}>
                         View Details
