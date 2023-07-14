@@ -19,8 +19,8 @@ const usesOrderListLayout = () => { // the <section> of order list
     
     // capabilities:
     const {groupableRule} = usesGroupable({
-        orientationInlineSelector : null,
-        orientationBlockSelector  : null,
+        orientationInlineSelector : null, // craft the <List>'s borderRadius manually, uncraft the other <portal><ModalBackdrop><ModalDialog>
+        orientationBlockSelector  : null, // craft the <List>'s borderRadius manually, uncraft the other <portal><ModalBackdrop><ModalDialog>
     });
     
     // features:
