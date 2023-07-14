@@ -119,11 +119,6 @@ const OrderItem = (props: OrderItemProps) => {
                     badgeComponent={
                         <Badge
                             // variants:
-                            theme='danger'
-                            
-                            
-                            
-                            // variants:
                             floatingPlacement='left-start'
                             floatingShift={10}
                             floatingOffset={-40}
