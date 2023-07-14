@@ -84,7 +84,7 @@ const ProductItem = (props: ProductItemProps) => {
     // jsx:
     return (
         <ListItem {...restListItem} elmRef={listItemRef} className={styles.productItem}>
-            <div className={styles.productItemLayout}>
+            <div className={styles.productItemWrapper}>
                 <div className='prodImg'>
                     <Image
                         className='image'

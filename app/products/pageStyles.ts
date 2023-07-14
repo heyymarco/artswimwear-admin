@@ -5,6 +5,7 @@ import {
     descendants,
     rule,
     scope,
+    style,
 }                           from '@cssfn/core'          // writes css in javascript
 import { typos, usesBorder, usesGroupable, usesPadding } from '@reusable-ui/core';
 
@@ -12,100 +13,126 @@ import { typos, usesBorder, usesGroupable, usesPadding } from '@reusable-ui/core
 
 // defaults:
 const imageSize = 96;  // 96px
-
-
-
-// styles:
-export default () => {
-    const {paddingVars} = usesPadding();
-    const {groupableRule, groupableVars} = usesGroupable({
-        orientationInlineSelector : null,
-        orientationBlockSelector  : null,
+const usesProductListLayout = () => { // the <section> of product list
+    // dependencies:
+    
+    // capabilities:
+    const {groupableRule} = usesGroupable({
+        orientationInlineSelector : null, // craft the <List>'s borderRadius manually, uncraft the other <portal><ModalBackdrop><ModalDialog>
+        orientationBlockSelector  : null, // craft the <List>'s borderRadius manually, uncraft the other <portal><ModalBackdrop><ModalDialog>
     });
-    const {borderVars} = usesBorder();
+    
+    // features:
+    const {paddingVars} = usesPadding();
     
     
     
-    return [
-        scope('page', {
-            display: 'flex',
-            flexDirection: 'column',
-        }),
-        scope('paginationLoading', {
-            blockSize: '100%',
-        }, { specificityWeight: 2 }),
-        scope('products', {
-            flexGrow: 1,
-            
-            display: 'flex',
-            flexDirection: 'column',
-            ...children('article', {
-                flexGrow: 1,
-                
-                display: 'grid',
-                gridTemplate: [[
-                    '"paginTop"',    'auto',
-                    '"productList"', '1fr',
-                    '"paginBtm"',    'auto',
-                    '/',
-                    'auto',
-                ]],
-                gapInline: '1rem',
-                gapBlock: '1rem',
-            }),
-        }, { specificityWeight: 2 }),
-        scope('paginTop', {
-            gridArea: 'paginTop',
-            
-            justifySelf: 'center',
-        }),
-        scope('productList', {
+    return style({
+        // capabilities:
+        ...groupableRule(),  // make a nicely rounded corners
+        
+        
+        
+        // layouts:
+        ...style({
+            // positions:
             gridArea: 'productList',
             
+            
+            
+            // layouts:
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
-            [paddingVars.paddingInline] : '0px',
-            [paddingVars.paddingBlock ] : '0px',
             
+            
+            
+            // sizes:
             minBlockSize : '150px', // a temporary fix for empty loading appearance
             
-            ...groupableRule(),  // make a nicely rounded corners
-        }, { specificityWeight: 2 }),
-        scope('productListInner', {
-            [groupableVars.borderStartStartRadius] : 'inherit !important', // reads parent's prop
-            [groupableVars.borderStartEndRadius  ] : 'inherit !important', // reads parent's prop
-            [groupableVars.borderEndStartRadius  ] : 'inherit !important', // reads parent's prop
-            [groupableVars.borderEndEndRadius    ] : 'inherit !important', // reads parent's prop
             
-            [borderVars.borderStartStartRadius] : groupableVars.borderStartStartRadius,
-            [borderVars.borderStartEndRadius  ] : groupableVars.borderStartEndRadius,
-            [borderVars.borderEndStartRadius  ] : groupableVars.borderEndStartRadius,
-            [borderVars.borderEndEndRadius    ] : groupableVars.borderEndEndRadius,
-        }, { specificityWeight: 2 }),
-        scope('paginBtm', {
-            gridArea: 'paginBtm',
             
-            justifySelf: 'center',
+            // spacings:
+            [paddingVars.paddingInline] : '0px',
+            [paddingVars.paddingBlock ] : '0px',
         }),
-        scope('productFetching', {
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            ...children('.loadingBar', {
-                alignSelf: 'stretch',
-            }),
-        }, { specificityWeight: 2 }),
-        scope('productItem', {
-            display: 'flex',
-            flexDirection: 'column',
-            padding: 0,
-            ...descendants('[role="dialog"]', {
-                [paddingVars.paddingInline] : '0px',
-                [paddingVars.paddingBlock ] : '0px',
-            }),
-        }, { specificityWeight: 2 }),
-        scope('productItemLayout', {
+    });
+};
+const usesProductListInnerLayout = () => { // the <List> of product list
+    // dependencies:
+    
+    // capabilities:
+    const {groupableVars} = usesGroupable();
+    
+    // features:
+    const {borderVars } = usesBorder();
+    
+    
+    
+    return style({
+        [groupableVars.borderStartStartRadius] : 'inherit !important', // reads parent's prop
+        [groupableVars.borderStartEndRadius  ] : 'inherit !important', // reads parent's prop
+        [groupableVars.borderEndStartRadius  ] : 'inherit !important', // reads parent's prop
+        [groupableVars.borderEndEndRadius    ] : 'inherit !important', // reads parent's prop
+        
+        [borderVars.borderStartStartRadius] : groupableVars.borderStartStartRadius,
+        [borderVars.borderStartEndRadius  ] : groupableVars.borderStartEndRadius,
+        [borderVars.borderEndStartRadius  ] : groupableVars.borderEndStartRadius,
+        [borderVars.borderEndEndRadius    ] : groupableVars.borderEndEndRadius,
+    });
+};
+const usesProductItemLayout = () => { // the <ListItem> of product list
+    // dependencies:
+    
+    // features:
+    const {paddingVars} = usesPadding();
+    
+    
+    
+    return style({
+        display: 'flex',
+        flexDirection: 'column',
+        padding: 0,
+        ...descendants('[role="dialog"]', {
+            [paddingVars.paddingInline] : '0px',
+            [paddingVars.paddingBlock ] : '0px',
+        }),
+    });
+};
+const usesProductItemWrapperLayout = () => { // the <div> of the <ListItem> of product list
+    // dependencies:
+    
+    // capabilities:
+    const {groupableRule, groupableVars} = usesGroupable({
+        orientationInlineSelector : null,     // craft the <Carousel>'s borderRadius manually
+        orientationBlockSelector  : null,     // craft the <Carousel>'s borderRadius manually
+        itemsSelector             : '.items', // select the <Carousel>
+    });
+    
+    // features:
+    const {borderRule , borderVars } = usesBorder({ borderWidth: '0px' });
+    const {paddingRule, paddingVars} = usesPadding({
+        paddingInline : '1rem',
+        paddingBlock  : '1rem',
+    });
+    
+    // spacings:
+    const positivePaddingInline = groupableVars.paddingInline;
+    const positivePaddingBlock  = groupableVars.paddingBlock;
+    const negativePaddingInline = `calc(0px - ${positivePaddingInline})`;
+    const negativePaddingBlock  = `calc(0px - ${positivePaddingBlock })`;
+    
+    
+    
+    return style({
+        // capabilities:
+        ...groupableRule(), // make a nicely rounded corners
+        
+        
+        
+        // layouts:
+        ...style({
+            // layouts:
             display: 'grid',
             gridTemplate: [[
                 '"image      name "', 'auto',
@@ -116,9 +143,32 @@ export default () => {
                 '/',
                 `${imageSize}px`, 'auto',
             ]],
-            padding: '1rem',
-            gapInline: '1rem',
-            gapBlock: '0.5rem',
+            
+            
+            
+            // borders:
+            // follows <parent>'s borderRadius
+            border                   : borderVars.border,
+         // borderRadius             : borderVars.borderRadius,
+            borderStartStartRadius   : borderVars.borderStartStartRadius,
+            borderStartEndRadius     : borderVars.borderStartEndRadius,
+            borderEndStartRadius     : borderVars.borderEndStartRadius,
+            borderEndEndRadius       : borderVars.borderEndEndRadius,
+            [borderVars.borderWidth] : '0px', // only setup borderRadius, no borderStroke
+            
+            
+            
+            // spacings:
+         // padding       : paddingVars.padding,
+            paddingInline : paddingVars.paddingInline,
+            paddingBlock  : paddingVars.paddingBlock,
+            
+            gapInline     : '1rem',
+            gapBlock      : '0.5rem',
+            
+            
+            
+            // children:
             ...descendants(['.name', 'p'], {
                 margin: 0,
             }),
@@ -180,6 +230,75 @@ export default () => {
             ...children('.fullEditor', {
                 gridArea: 'fullEditor',
             }),
-        }, { specificityWeight: 2 }),
-    ];
-}
+        }),
+        
+        
+        
+        // features:
+        ...borderRule(),  // must be placed at the last
+        ...paddingRule(), // must be placed at the last
+    });
+};
+
+
+
+// styles:
+export default () => [
+    scope('page', {
+        display: 'flex',
+        flexDirection: 'column',
+    }),
+    scope('paginationLoading', {
+        blockSize: '100%',
+    }, { specificityWeight: 2 }),
+    scope('products', {
+        flexGrow: 1,
+        
+        display: 'flex',
+        flexDirection: 'column',
+        ...children('article', {
+            flexGrow: 1,
+            
+            display: 'grid',
+            gridTemplate: [[
+                '"paginTop"',    'auto',
+                '"productList"', '1fr',
+                '"paginBtm"',    'auto',
+                '/',
+                'auto',
+            ]],
+            gapInline: '1rem',
+            gapBlock: '1rem',
+        }),
+    }, { specificityWeight: 2 }),
+    scope('paginTop', {
+        gridArea: 'paginTop',
+        
+        justifySelf: 'center',
+    }),
+    scope('productList', { // the <section> of product list
+        ...usesProductListLayout(),
+    }, { specificityWeight: 2 }),
+    scope('productListInner', { // the <List> of product list
+        ...usesProductListInnerLayout(),
+    }, { specificityWeight: 2 }),
+    scope('paginBtm', {
+        gridArea: 'paginBtm',
+        
+        justifySelf: 'center',
+    }),
+    scope('productFetching', {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        ...children('.loadingBar', {
+            alignSelf: 'stretch',
+        }),
+    }, { specificityWeight: 2 }),
+    scope('productItem', { // the <ListItem> of product list
+        ...usesProductItemLayout(),
+    }, { specificityWeight: 2 }),
+    scope('productItemWrapper', { // the <div> of the <ListItem> of product list
+        ...usesProductItemWrapperLayout(),
+    }, { specificityWeight: 2 }),
+];
