@@ -63,10 +63,7 @@ const usesOrderListInnerLayout = () => { // the <List> of order list
     // dependencies:
     
     // capabilities:
-    const {groupableVars} = usesGroupable({
-        orientationInlineSelector : null,
-        orientationBlockSelector  : null,
-    });
+    const {groupableVars} = usesGroupable();
     
     // features:
     const {borderVars } = usesBorder();
