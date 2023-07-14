@@ -118,7 +118,7 @@ const OrderItem = (props: OrderItemProps) => {
                     wrapperComponent={<React.Fragment />}
                     badgeComponent={
                         <Badge
-                            // variants:
+                            // floatable:
                             floatingPlacement='left-start'
                             floatingShift={10}
                             floatingOffset={-40}
