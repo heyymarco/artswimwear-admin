@@ -1,5 +1,4 @@
 // cssfn:
-import { commerces } from '@/config';
 import {
     children,
     descendants,
@@ -194,12 +193,12 @@ const usesOrderItemWrapperLayout = () => { // the <div> of the <ListItem> of ord
             }),
             ...children('.images', {
                 // layouts:
-                gridArea: 'images',
+                gridArea    : 'images',
                 
                 
                 
                 // sizes:
-                aspectRatio: commerces.defaultProductAspectRatio,
+                alignSelf   : 'stretch',
                 
                 
                 

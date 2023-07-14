@@ -1,5 +1,4 @@
 // cssfn:
-import { commerces } from '@/config';
 import {
     children,
     descendants,
@@ -193,7 +192,7 @@ const usesProductItemWrapperLayout = () => { // the <div> of the <ListItem> of p
                 
                 
                 // sizes:
-                aspectRatio : commerces.defaultProductAspectRatio,
+                alignSelf   : 'stretch',
                 
                 
                 
