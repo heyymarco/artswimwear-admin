@@ -99,7 +99,7 @@ const OrderItem = (props: OrderItemProps) => {
     // jsx:
     return (
         <ListItem {...restListItem} elmRef={listItemRef} className={styles.orderItem}>
-            <div className={styles.orderItemLayout}>
+            <div className={styles.orderItemWrapper}>
                 <h3 className='orderId'>
                     #ORDER-{orderId}
                 </h3>
@@ -156,6 +156,7 @@ const OrderItem = (props: OrderItemProps) => {
                                     
                                     
                                     // components:
+                                    wrapperComponent={<React.Fragment />}
                                     badgeComponent={
                                         <Badge
                                             // variants:
