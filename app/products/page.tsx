@@ -8,7 +8,7 @@ import { Section, Main } from '@heymarco/section'
 import type { Metadata } from 'next'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody } from '@reusable-ui/components';
+import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody, Badge, Content } from '@reusable-ui/components';
 import { ProductDetail, useGetProductPage } from '@/store/features/api/apiSlice';
 import { useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
@@ -26,11 +26,13 @@ import { VisibilityEditor } from '@/components/editors/VisibilityEditor'
 import { SimpleEditProductDialog } from '@/components/dialogs/SimpleEditProductDialog'
 import { FullEditDialog } from './FullEditDialog'
 import { resolveMediaUrl } from '@/libs/mediaStorage.client'
+import { WithBadge } from '@/components/WithBadge'
+import { MiniCarousel } from '@/components/MiniCarousel'
 
 
 
 // defaults:
-const imageSize = 96;  // 96px
+const imageSize = 128;  // 128px
 
 
 
@@ -85,15 +87,54 @@ const ProductItem = (props: ProductItemProps) => {
     return (
         <ListItem {...restListItem} elmRef={listItemRef} className={styles.productItem}>
             <div className={styles.productItemWrapper}>
-                <div className='prodImg'>
-                    <Image
+                <WithBadge
+                    // components:
+                    wrapperComponent={<React.Fragment />}
+                    badgeComponent={
+                        <Badge
+                            // variants:
+                            nude={true}
+                            
+                            
+                            
+                            // floatable:
+                            floatingPlacement='left-start'
+                            floatingShift={10}
+                            floatingOffset={-30}
+                        >
+                            <EditButton onClick={() => setEditMode('full')} />
+                        </Badge>
+                    }
+                >
+                    <MiniCarousel
+                        // variants:
+                        theme='danger'
+                        
+                        
+                        
+                        // classes:
                         className='images'
-                        alt={name ?? ''}
-                        src={resolveMediaUrl(images?.[0])}
-                        sizes={`${imageSize}px`}
-                    />
-                    <EditButton onClick={() => setEditMode('full')} />
-                </div>
+                        
+                        
+                        
+                        // components:
+                        basicComponent={<Content theme='primary' />}
+                    >
+                        {images.map((image, index) =>
+                            <Image
+                                // identifiers:
+                                key={index}
+                                
+                                
+                                
+                                className='images'
+                                alt={name ?? ''}
+                                src={resolveMediaUrl(image)}
+                                sizes={`${imageSize}px`}
+                            />
+                        )}
+                    </MiniCarousel>
+                </WithBadge>
                 
                 <h3 className='name'>
                     {name}

@@ -7,12 +7,13 @@ import {
     scope,
     style,
 }                           from '@cssfn/core'          // writes css in javascript
+import { basics } from '@reusable-ui/components';
 import { typos, usesBorder, usesGroupable, usesPadding } from '@reusable-ui/core';
 
 
 
 // defaults:
-const imageSize = 96;  // 96px
+const imageSize = 128;  // 128px
 const usesProductListLayout = () => { // the <section> of product list
     // dependencies:
     
@@ -141,7 +142,7 @@ const usesProductItemWrapperLayout = () => { // the <div> of the <ListItem> of p
                 '"images visibility"', 'auto',
                 '"images fullEditor"', 'auto',
                 '/',
-                `${imageSize}px`, 'auto',
+                `calc(${imageSize}px - ${paddingVars.paddingInline}) 1fr`,
             ]],
             
             
@@ -186,33 +187,31 @@ const usesProductItemWrapperLayout = () => { // the <div> of the <ListItem> of p
                     transform: 'scale(105%)',
                 }),
             }),
-            ...children('.prodImg', {
-                gridArea: 'images',
-                alignSelf: 'center',
-                width: '96px',
-                height: 'fit-content',
-                display: 'grid',
+            ...children('.images', {
+                gridArea    : 'images',
                 
                 
                 
                 // sizes:
-                aspectRatio: commerces.defaultProductAspectRatio,
+                aspectRatio : commerces.defaultProductAspectRatio,
                 
                 
                 
-                // children:
-                ...children('*', {
-                    gridArea: '1/1/-1/-1',
-                }),
-                ...children('.images', {
-                    width: '100%',
-                    minHeight: `${imageSize}px`,
-                }),
-                ...children('.edit', {
-                    justifySelf: 'start',
-                    alignSelf: 'start',
-                    margin: 0,
-                }),
+                // borders:
+                // follows <parent>'s borderRadius
+                [borderVars.borderStartStartRadius] : groupableVars.borderStartStartRadius,
+                [borderVars.borderStartEndRadius  ] : '0px',
+                [borderVars.borderEndStartRadius  ] : groupableVars.borderEndStartRadius,
+                [borderVars.borderEndEndRadius    ] : '0px',
+                [borderVars.borderWidth           ] : '0px', // only setup borderRadius, no borderStroke
+                borderInlineEndWidth : basics.borderWidth,
+                
+                
+                
+                // spacings:
+                // cancel-out parent's padding with negative margin:
+                marginInlineStart : negativePaddingInline,
+                marginBlock       : negativePaddingBlock,
             }),
             ...children('.name', {
                 gridArea: 'name',
