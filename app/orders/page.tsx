@@ -150,6 +150,11 @@ const OrderItem = (props: OrderItemProps) => {
                             // jsx:
                             return (
                                 <WithBadge
+                                    // identifiers:
+                                    key={index}
+                                    
+                                    
+                                    
                                     // components:
                                     badgeComponent={
                                         <Badge
@@ -168,8 +173,6 @@ const OrderItem = (props: OrderItemProps) => {
                                     }
                                 >
                                     <Image
-                                        key={index}
-                                        
                                         alt={`image #${index + 1} of ${product?.name ?? 'unknown product'}`}
                                         src={resolveMediaUrl(image)}
                                         sizes={`${imageSize}px`}
