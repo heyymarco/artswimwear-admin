@@ -14,7 +14,96 @@ import { typos, usesBorder, usesGroupable, usesPadding } from '@reusable-ui/core
 
 // styles:
 const imageSize = 128;  // 128px
-const usesOrderItemLayout = () => { // the <div> of the <ListItem> of order list
+const usesOrderListLayout = () => { // the <section> of order list
+    // dependencies:
+    
+    // capabilities:
+    const {groupableRule} = usesGroupable({
+        orientationInlineSelector : null,
+        orientationBlockSelector  : null,
+    });
+    
+    // features:
+    const {paddingVars} = usesPadding();
+    
+    
+    
+    return style({
+        // capabilities:
+        ...groupableRule(),  // make a nicely rounded corners
+        
+        
+        
+        // layouts:
+        ...style({
+            // positions:
+            gridArea: 'orderList',
+            
+            
+            
+            // layouts:
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            
+            
+            
+            // sizes:
+            minBlockSize : '150px', // a temporary fix for empty loading appearance
+            
+            
+            
+            // spacings:
+            [paddingVars.paddingInline] : '0px',
+            [paddingVars.paddingBlock ] : '0px',
+        }),
+    });
+};
+const usesOrderListInnerLayout = () => { // the <List> of order list
+    // dependencies:
+    
+    // capabilities:
+    const {groupableVars} = usesGroupable({
+        orientationInlineSelector : null,
+        orientationBlockSelector  : null,
+    });
+    
+    // features:
+    const {borderVars } = usesBorder();
+    
+    
+    
+    return style({
+        [groupableVars.borderStartStartRadius] : 'inherit !important', // reads parent's prop
+        [groupableVars.borderStartEndRadius  ] : 'inherit !important', // reads parent's prop
+        [groupableVars.borderEndStartRadius  ] : 'inherit !important', // reads parent's prop
+        [groupableVars.borderEndEndRadius    ] : 'inherit !important', // reads parent's prop
+        
+        [borderVars.borderStartStartRadius] : groupableVars.borderStartStartRadius,
+        [borderVars.borderStartEndRadius  ] : groupableVars.borderStartEndRadius,
+        [borderVars.borderEndStartRadius  ] : groupableVars.borderEndStartRadius,
+        [borderVars.borderEndEndRadius    ] : groupableVars.borderEndEndRadius,
+    });
+};
+const usesOrderItemLayout = () => { // the <ListItem> of order list
+    // dependencies:
+    
+    // features:
+    const {paddingVars} = usesPadding();
+    
+    
+    
+    return style({
+        display: 'flex',
+        flexDirection: 'column',
+        padding: 0,
+        ...descendants('[role="dialog"]', {
+            [paddingVars.paddingInline] : '0px',
+            [paddingVars.paddingBlock ] : '0px',
+        }),
+    });
+};
+const usesOrderItemWrapperLayout = () => { // the <div> of the <ListItem> of order list
     // dependencies:
     
     // capabilities:
@@ -145,102 +234,62 @@ const usesOrderItemLayout = () => { // the <div> of the <ListItem> of order list
         ...paddingRule(), // must be placed at the last
     });
 };
-export default () => {
-    // dependencies:
-    
-    // capabilities:
-    const {groupableRule, groupableVars} = usesGroupable({
-        orientationInlineSelector : null,
-        orientationBlockSelector  : null,
-    });
-    
-    // features:
-    const {borderVars } = usesBorder();
-    const {paddingVars} = usesPadding();
-    
-    
-    
-    return [
-        scope('page', {
-            display: 'flex',
-            flexDirection: 'column',
-        }),
-        scope('paginationLoading', {
-            blockSize: '100%',
-        }, { specificityWeight: 2 }),
-        scope('orders', {
+export default () => [
+    scope('page', {
+        display: 'flex',
+        flexDirection: 'column',
+    }),
+    scope('paginationLoading', {
+        blockSize: '100%',
+    }, { specificityWeight: 2 }),
+    scope('orders', {
+        flexGrow: 1,
+        
+        display: 'flex',
+        flexDirection: 'column',
+        ...children('article', {
             flexGrow: 1,
             
-            display: 'flex',
-            flexDirection: 'column',
-            ...children('article', {
-                flexGrow: 1,
-                
-                display: 'grid',
-                gridTemplate: [[
-                    '"paginTop"',  'auto',
-                    '"orderList"', '1fr',
-                    '"paginBtm"',  'auto',
-                    '/',
-                    'auto',
-                ]],
-                gapInline: '1rem',
-                gapBlock: '1rem',
-            }),
-        }, { specificityWeight: 2 }),
-        scope('paginTop', {
-            gridArea: 'paginTop',
-            
-            justifySelf: 'center',
+            display: 'grid',
+            gridTemplate: [[
+                '"paginTop"',  'auto',
+                '"orderList"', '1fr',
+                '"paginBtm"',  'auto',
+                '/',
+                'auto',
+            ]],
+            gapInline: '1rem',
+            gapBlock: '1rem',
         }),
-        scope('orderList', { // the <section> of order list
-            gridArea: 'orderList',
-            
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            [paddingVars.paddingInline] : '0px',
-            [paddingVars.paddingBlock ] : '0px',
-            
-            minBlockSize : '150px', // a temporary fix for empty loading appearance
-            
-            ...groupableRule(),  // make a nicely rounded corners
-        }, { specificityWeight: 2 }),
-        scope('orderListInner', { // the <List> of order list
-            [groupableVars.borderStartStartRadius] : 'inherit !important', // reads parent's prop
-            [groupableVars.borderStartEndRadius  ] : 'inherit !important', // reads parent's prop
-            [groupableVars.borderEndStartRadius  ] : 'inherit !important', // reads parent's prop
-            [groupableVars.borderEndEndRadius    ] : 'inherit !important', // reads parent's prop
-            
-            [borderVars.borderStartStartRadius] : groupableVars.borderStartStartRadius,
-            [borderVars.borderStartEndRadius  ] : groupableVars.borderStartEndRadius,
-            [borderVars.borderEndStartRadius  ] : groupableVars.borderEndStartRadius,
-            [borderVars.borderEndEndRadius    ] : groupableVars.borderEndEndRadius,
-        }, { specificityWeight: 2 }),
-        scope('paginBtm', {
-            gridArea: 'paginBtm',
-            
-            justifySelf: 'center',
+    }, { specificityWeight: 2 }),
+    scope('paginTop', {
+        gridArea: 'paginTop',
+        
+        justifySelf: 'center',
+    }),
+    scope('orderList', { // the <section> of order list
+        ...usesOrderListLayout(),
+    }, { specificityWeight: 2 }),
+    scope('orderListInner', { // the <List> of order list
+        ...usesOrderListInnerLayout(),
+    }, { specificityWeight: 2 }),
+    scope('paginBtm', {
+        gridArea: 'paginBtm',
+        
+        justifySelf: 'center',
+    }),
+    scope('orderFetching', {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        ...children('.loadingBar', {
+            alignSelf: 'stretch',
         }),
-        scope('orderFetching', {
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            ...children('.loadingBar', {
-                alignSelf: 'stretch',
-            }),
-        }, { specificityWeight: 2 }),
-        scope('orderItem', { // the <ListItem> of order list
-            display: 'flex',
-            flexDirection: 'column',
-            padding: 0,
-            ...descendants('[role="dialog"]', {
-                [paddingVars.paddingInline] : '0px',
-                [paddingVars.paddingBlock ] : '0px',
-            }),
-        }, { specificityWeight: 2 }),
-        scope('orderItemLayout', // the <div> of the <ListItem> of order list
-            usesOrderItemLayout
-        , { specificityWeight: 2 }),
-    ];
-}
+    }, { specificityWeight: 2 }),
+    scope('orderItem', { // the <ListItem> of order list
+        ...usesOrderItemLayout(),
+    }, { specificityWeight: 2 }),
+    scope('orderItemWrapper', { // the <div> of the <ListItem> of order list
+        ...usesOrderItemWrapperLayout(),
+    }, { specificityWeight: 2 }),
+];
