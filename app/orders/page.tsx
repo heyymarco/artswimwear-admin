@@ -6,11 +6,11 @@ import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 import { Section, Main } from '@heymarco/section'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody, Carousel, Navscroll, Badge, CarouselProps, ButtonProps, NavscrollProps, ImperativeScroll } from '@reusable-ui/components';
+import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody, Badge, Content } from '@reusable-ui/components';
 import { OrderDetail, useGetOrderPage, useGetProductList } from '@/store/features/api/apiSlice';
 import { useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
-import { useEvent, useIsRtl, useMergeRefs } from '@reusable-ui/core';
+import { useEvent } from '@reusable-ui/core';
 import { ModalStatus } from '../../components/ModalStatus'
 
 import { EditButton } from '@/components/EditButton'
@@ -23,6 +23,7 @@ import { SimpleEditAddressDialog } from '@/components/dialogs/SimpleEditAddressD
 import { AddressEditor } from '@/components/editors/AddressEditor'
 import { resolveMediaUrl } from '@/libs/mediaStorage.client'
 import { WithBadge } from '@/components/WithBadge'
+import { MiniCarousel } from '@/components/MiniCarousel'
 
 
 
@@ -43,122 +44,6 @@ const getTotalQuantity = (items: OrderSchema['items']): number => {
     return items.reduce((counter, item) => {
         return counter + item.quantity;
     }, 0);
-};
-
-
-
-const MiniCarousel = (props: CarouselProps) => {
-    // cultures:
-    const [isRtl, setCarouselElmRef] = useIsRtl();
-    
-    
-    
-    // children:
-    const childrenArray = React.Children.toArray(props.children)
-    
-    
-    
-    // rest props:
-    const {
-        // refs:
-        elmRef,
-        scrollRef,
-        
-        
-        
-        // components:
-        prevButtonComponent = (<ButtonIcon iconPosition='start' icon={isRtl ? 'navright' : 'navleft' } size='xs' /> as React.ReactComponentElement<any, ButtonProps>),
-        nextButtonComponent = (<ButtonIcon iconPosition='end'   icon={isRtl ? 'navleft'  : 'navright'} size='xs' /> as React.ReactComponentElement<any, ButtonProps>),
-        navscrollComponent  = (<Navscroll<Element>
-            // variants:
-            size='sm'
-            
-            
-            
-            // components:
-            navComponent={
-                <Pagination
-                    itemsLimit={3}
-                    prevItems={
-                        <NavPrevItem
-                            onClick={() => scrollRefInternal.current?.scrollPrev()}
-                        />
-                    }
-                    nextItems={
-                        <NavNextItem
-                            onClick={() => scrollRefInternal.current?.scrollNext()}
-                        />
-                    }
-                />
-            }
-        >
-            {childrenArray.map((child, index: number) =>
-                <ListItem
-                    // identifiers:
-                    key={index}
-                    
-                    
-                    
-                    // semantics:
-                    tag='button'
-                    
-                    
-                    
-                    // variants:
-                    size='sm'
-                >
-                    {index + 1}
-                </ListItem>
-            )}
-        </Navscroll> as React.ReactComponentElement<any, NavscrollProps<Element>>),
-    ...restCarouselProps} = props;
-    
-    
-    
-    // refs:
-    const mergedCarouselRef = useMergeRefs<HTMLElement>(
-        // preserves the original `elmRef`:
-        elmRef,
-        
-        
-        
-        setCarouselElmRef,
-    );
-    
-    const scrollRefInternal = useRef<(HTMLElement & ImperativeScroll)|null>(null);
-    const mergedScrollRef = useMergeRefs<HTMLElement>(
-        // preserves the original `scrollRef`:
-        scrollRef,
-        
-        
-        
-        scrollRefInternal,
-    );
-    
-    
-    
-    // jsx:
-    return (
-        <Carousel
-            // other props:
-            {...restCarouselProps}
-            
-            
-            
-            // refs:
-            elmRef={mergedCarouselRef}
-            scrollRef={mergedScrollRef}
-            
-            
-            
-            // components:
-            prevButtonComponent={prevButtonComponent}
-            nextButtonComponent={nextButtonComponent}
-            navscrollComponent ={navscrollComponent }
-        >
-            {...childrenArray}
-        </Carousel>
-    )
 };
 
 
@@ -234,6 +119,11 @@ const OrderItem = (props: OrderItemProps) => {
                     badgeComponent={
                         <Badge
                             // variants:
+                            theme='danger'
+                            
+                            
+                            
+                            // variants:
                             floatingPlacement='left-start'
                             floatingShift={10}
                             floatingOffset={-40}
@@ -250,6 +140,11 @@ const OrderItem = (props: OrderItemProps) => {
                         
                         // classes:
                         className='items'
+                        
+                        
+                        
+                        // components:
+                        basicComponent={<Content theme='primary' />}
                     >
                         {items.map(({quantity, product: productId}, index: number) => {
                             const product = productList?.entities?.[`${productId}`];
@@ -263,6 +158,11 @@ const OrderItem = (props: OrderItemProps) => {
                                     // components:
                                     badgeComponent={
                                         <Badge
+                                            // variants:
+                                            theme='danger'
+                                            
+                                            
+                                            
                                             // variants:
                                             floatingPlacement='right-start'
                                             floatingShift={10}
