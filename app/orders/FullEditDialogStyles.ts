@@ -28,6 +28,7 @@ import {
     // groups a list of UIs into a single UI:
     usesGroupable,
     typos,
+    usesPadding,
 }                           from '@reusable-ui/core'    // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -94,13 +95,20 @@ const usesTabBodyLayout = () => {
     // dependencies:
     
     // features:
-    const {borderVars} = usesBorder();
+    const {borderVars } = usesBorder();
+    const {paddingVars} = usesPadding();
     
     
     
     return style({
         // borders:
         [borderVars.borderWidth]: '0px',
+        
+        
+        
+        // spacings:
+        [paddingVars.paddingInline]: '0px',
+        [paddingVars.paddingBlock ]: '0px',
         
         
         
@@ -126,76 +134,20 @@ const usesTabBodyLayout = () => {
         }),
     });
 };
-const usesOrderShippingInfoLayout = () => {
+const usesOrderShippingTabLayout = () => {
     return style({
         // layouts:
-        display          : 'grid',
-        alignContent     : 'start',
-        gridTemplate     : [[
-            '"name-label       "', 'auto',
-            '"name-editor      "', 'auto',
-            '"................."', spacers.sm,
-            '"path-label       "', 'auto',
-            '"path-editor      "', 'auto',
-            '"................."', spacers.sm,
-            '"price-label      "', 'auto',
-            '"price-editor     "', 'auto',
-            '"................."', spacers.sm,
-            '"sWeight-label    "', 'auto',
-            '"sWeight-editor   "', 'auto',
-            '"................."', spacers.sm,
-            '"stock-label      "', 'auto',
-            '"stock-editor     "', 'auto',
-            '"................."', spacers.sm,
-            '"visibility-label "', 'auto',
-            '"visibility-editor"', 'auto',
-            '/',
-            '1fr'
-        ]],
-        ...ifScreenWidthAtLeast('lg', {
-            gridTemplate : [[
-                '"name-label               name-label"', 'auto',
-                '"name-editor             name-editor"', 'auto',
-                '"................. ................."', spacers.sm,
-                '"path-label               path-label"', 'auto',
-                '"path-editor             path-editor"', 'auto',
-                '"................. ................."', spacers.sm,
-                '"price-label           sWeight-label"', 'auto',
-                '"price-editor         sWeight-editor"', 'auto',
-                '"................. ................."', spacers.sm,
-                '"stock-label        visibility-label"', 'auto',
-                '"stock-editor      visibility-editor"', 'auto',
-                '/',
-                '1fr', '1fr'
-            ]],
-        }),
+        display        : 'flex',
+        flexDirection  : 'column',
+        justifyContent : 'start',       // if items are not growable, the excess space (if any) placed at the end, and if no sufficient space available => the first item should be visible first
+        alignItems     : 'stretch',     // items width are 100% of the parent (for variant `.block`) or height (for variant `.inline`)
+        flexWrap       : 'nowrap',      // no wrapping
         
         
         
-        // spacings:
-        gapInline : spacers.default,
-        gapBlock  : spacers.xs,
-        
-        
-        
-        // children:
-        ...children('.name.label'       , { gridArea: 'name-label'        }),
-        ...children('.name.editor'      , { gridArea: 'name-editor'       }),
-        
-        ...children('.path.label'       , { gridArea: 'path-label'        }),
-        ...children('.path.editor'      , { gridArea: 'path-editor'       }),
-        
-        ...children('.price.label'      , { gridArea: 'price-label'       }),
-        ...children('.price.editor'     , { gridArea: 'price-editor'      }),
-        
-        ...children('.sWeight.label'    , { gridArea: 'sWeight-label'     }),
-        ...children('.sWeight.editor'   , { gridArea: 'sWeight-editor'    }),
-        
-        ...children('.stock.label'      , { gridArea: 'stock-label'       }),
-        ...children('.stock.editor'     , { gridArea: 'stock-editor'      }),
-        
-        ...children('.visibility.label' , { gridArea: 'visibility-label'  }),
-        ...children('.visibility.editor', { gridArea: 'visibility-editor' }),
+        // sizes:
+        boxSizing      : 'content-box',
+        minInlineSize  : '32rem',
     });
 };
 const usesOrderListLayout = () => {
@@ -207,7 +159,8 @@ const usesOrderListLayout = () => {
 const usesProductPreviewLayout = () => {
     return style({
         // positions:
-        gridArea: 'orderSummary',
+        position : 'relative',
+        gridArea : 'orderSummary',
         
         
         
@@ -281,17 +234,32 @@ export default () => [
         ...usesTabBodyLayout(),
     }, { specificityWeight: 2 }),
     
-    scope('orderShippingInfo', {
-        ...usesOrderShippingInfoLayout(),
+    scope('orderShippingTab', {
+        ...usesOrderShippingTabLayout(),
     }),
-    
+    scope('orderShippingSection', {
+        // children:
+        ...children('article', {
+            ...children('h3', {
+                textAlign: 'center',
+            }),
+        }),
+    }),
     scope('orderList', {
         ...usesOrderListLayout(),
     }, { specificityWeight: 2 }),
     scope('productPreview', {
         ...usesProductPreviewLayout(),
     }, { specificityWeight: 2 }),
+    scope('orderDeliverySection', {
+        // children:
+        ...children('article', {
+            ...children('h3', {
+                textAlign: 'center',
+            }),
+        }),
+    }),
     
-    scope('paymentInfo', {
+    scope('paymentTab', {
     }),
 ];

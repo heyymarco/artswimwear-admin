@@ -25,6 +25,7 @@ import { resolveMediaUrl } from '@/libs/mediaStorage.client'
 import { WysiwygEditorState, WysiwygEditor, ToolbarPlugin, EditorPlugin } from '@/components/editors/WysiwygEditor';
 import { countryList } from '@/libs/countryList'
 import { WithBadge } from '@/components/WithBadge';
+import { Section } from '@heymarco/section';
 
 
 
@@ -160,6 +161,26 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
         };
     }, []);
     
+    // a fix for <Badge>'s position:
+    const [showBadge, setShowBadge] = useState<boolean>(false);
+    useEffect(() => {
+        // setups:
+        let cancelTimeout = setTimeout(() => {
+            cancelTimeout = setTimeout(() => {
+                cancelTimeout = setTimeout(() => {
+                    setShowBadge(true);
+                }, 0);
+            }, 0);
+        }, 0);
+        
+        
+        
+        // cleanups:
+        return () => {
+            clearTimeout(cancelTimeout);
+        }
+    }, []);
+    
     
     
     // jsx:
@@ -192,106 +213,107 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                 // handlers:
                 onKeyDown={handleKeyDown}
             >
-                <TabPanel label={PAGE_ORDERS_TAB_ORDERS_N_SHIPPING} panelComponent={<Generic className={styles.orderShippingInfo} />}>
-                    <article>
-                        <section>
-                            <h3>Order List</h3>
-                            <List className={styles.orderList} listStyle='flat'>
-                                {items.map(({quantity, price: unitPrice, product: productId}, index) => {
-                                    const product = productList?.entities?.[`${productId}`];
-                                    
-                                    
-                                    
-                                    // jsx:
-                                    return (
-                                        <ListItem key={`${productId}`} className={styles.productPreview}>
-                                            <h3 className='title h6'>{
-                                                isLoadingProduct
-                                                ? <Busy />
-                                                : isErrorProduct
-                                                    ? 'Error getting product data'
-                                                    : (product?.name ?? 'DELETED PRODUCT')
-                                            }</h3>
-                                            <WithBadge
-                                                // components:
-                                                wrapperComponent={<React.Fragment />}
-                                                badgeComponent={
-                                                    <Badge
-                                                        // variants:
-                                                        theme='danger'
-                                                        
-                                                        
-                                                        
-                                                        // floatable:
-                                                        floatingPlacement='right-start'
-                                                        floatingShift={-3}
-                                                        floatingOffset={-20}
-                                                    >
-                                                        {quantity}x
-                                                    </Badge>
-                                                }
-                                            >
-                                                <Image
-                                                    className='image'
+                <TabPanel label={PAGE_ORDERS_TAB_ORDERS_N_SHIPPING} panelComponent={<Generic className={styles.orderShippingTab} />}>
+                    <Section title='Order List' className={styles.orderShippingSection}>
+                        <List className={styles.orderList} listStyle='flat'>
+                            {items.map(({quantity, price: unitPrice, product: productId}, index) => {
+                                const product = productList?.entities?.[`${productId}`];
+                                
+                                
+                                
+                                // jsx:
+                                return (
+                                    <ListItem key={`${productId}`} className={styles.productPreview}>
+                                        <h3 className='title h6'>{
+                                            isLoadingProduct
+                                            ? <Busy />
+                                            : isErrorProduct
+                                                ? 'Error getting product data'
+                                                : (product?.name ?? 'DELETED PRODUCT')
+                                        }</h3>
+                                        <WithBadge
+                                            // components:
+                                            wrapperComponent={<React.Fragment />}
+                                            badgeComponent={
+                                                <Badge
+                                                    // variants:
+                                                    theme='danger'
                                                     
-                                                    alt={`image #${index + 1} of ${product?.name ?? 'unknown product'}`}
-                                                    src={resolveMediaUrl(product?.image)}
-                                                    sizes={`${imageSize}px`}
                                                     
-                                                    priority={true}
-                                                />
-                                            </WithBadge>
-                                            <p className='unitPrice'>
-                                                @ <span className='currency secondary'>{formatCurrency(unitPrice)}</span>
-                                            </p>
-                                            <p className='subPrice currencyBlock'>
-                                                <span className='currency'>{formatCurrency(quantity * unitPrice)}</span>
-                                            </p>
-                                        </ListItem>
-                                    );
-                                })}
-                            </List>
-                            <hr />
-                            <p className='currencyBlock'>
-                                Subtotal products: <span className='currency'>
-                                    {formatCurrency(totalProductPrices)}
-                                </span>
-                            </p>
-                            <p className='currencyBlock'>
-                                Shipping: <span className='currency'>
-                                    {formatCurrency(totalShippingCosts)}
-                                </span>
-                            </p>
-                            <hr />
-                            <p className='currencyBlock totalCost'>
-                                Total: <span className='currency'>
-                                    {formatCurrency(totalProductPrices + totalShippingCosts)}
-                                </span>
-                            </p>
-                        </section>
-                        <section>
-                            <h3>Deliver To</h3>
-                            <strong>{
-                                isLoadingShipping
-                                ? <Busy />
-                                : isErrorShipping
-                                    ? 'Error getting shipping data'
-                                    : (shippingProvider?.name ?? 'DELETED SHIPPING PROVIDER')
-                            }</strong>
-                            <strong>{shippingFirstName} {shippingLastName}</strong>
-                            <p>
-                                {`${shippingAddress}, ${shippingCity}, ${shippingZone} (${shippingZip}), ${countryList?.entities?.[shippingCountry ?? '']?.name}`}
-                            </p>
-                            <p>
-                                Phone: {shippingPhone}
-                            </p>
-                        </section>
-                    </article>
-                    <article>
-                    </article>
+                                                    
+                                                    // states:
+                                                    expanded={showBadge}
+                                                    
+                                                    
+                                                    
+                                                    // floatable:
+                                                    floatingPlacement='right-start'
+                                                    floatingShift={-3}
+                                                    floatingOffset={-20}
+                                                >
+                                                    {quantity}x
+                                                </Badge>
+                                            }
+                                        >
+                                            <Image
+                                                className='image'
+                                                
+                                                alt={`image #${index + 1} of ${product?.name ?? 'unknown product'}`}
+                                                src={resolveMediaUrl(product?.image)}
+                                                sizes={`${imageSize}px`}
+                                                
+                                                priority={true}
+                                            />
+                                        </WithBadge>
+                                        <p className='unitPrice'>
+                                            @ <span className='currency secondary'>{formatCurrency(unitPrice)}</span>
+                                        </p>
+                                        <p className='subPrice currencyBlock'>
+                                            <span className='currency'>{formatCurrency(quantity * unitPrice)}</span>
+                                        </p>
+                                    </ListItem>
+                                );
+                            })}
+                        </List>
+                        <hr />
+                        <p className='currencyBlock'>
+                            Subtotal products: <span className='currency'>
+                                {formatCurrency(totalProductPrices)}
+                            </span>
+                        </p>
+                        <p className='currencyBlock'>
+                            Shipping: <span className='currency'>
+                                {formatCurrency(totalShippingCosts)}
+                            </span>
+                        </p>
+                        <hr />
+                        <p className='currencyBlock totalCost'>
+                            Total: <span className='currency'>
+                                {formatCurrency(totalProductPrices + totalShippingCosts)}
+                            </span>
+                        </p>
+                    </Section>
+                    <Section title='Deliver To' theme='secondary' className={styles.orderDeliverySection}>
+                        <strong>{
+                            isLoadingShipping
+                            ? <Busy />
+                            : isErrorShipping
+                                ? 'Error getting shipping data'
+                                : (shippingProvider?.name ?? 'DELETED SHIPPING PROVIDER')
+                        }</strong>
+                        <strong>{shippingFirstName} {shippingLastName}</strong>
+                        <p>
+                            {shippingAddress}
+                            <br />
+                            {`${shippingCity}, ${shippingZone} (${shippingZip}), ${countryList?.entities?.[shippingCountry ?? '']?.name}`}
+                        </p>
+                        <p>
+                            Phone: {shippingPhone}
+                        </p>
+                    </Section>
                 </TabPanel>
-                <TabPanel label={PAGE_ORDERS_TAB_PAYMENT} panelComponent={<Generic className={styles.paymentInfo} />}>
-                    <article>
+                <TabPanel label={PAGE_ORDERS_TAB_PAYMENT} panelComponent={<Generic className={styles.paymentTab} />}>
+                    <Section>
                         <table>
                             <tbody>
                                 <tr>
@@ -349,7 +371,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                                 </tr>
                             </tbody>
                         </table>
-                    </article>
+                    </Section>
                 </TabPanel>
             </Tab>
             <CardFooter onKeyDown={handleKeyDown}>
