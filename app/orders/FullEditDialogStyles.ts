@@ -29,6 +29,7 @@ import {
     usesGroupable,
     typos,
     usesPadding,
+    usesThemeable,
 }                           from '@reusable-ui/core'    // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -150,6 +151,16 @@ const usesOrderShippingTabLayout = () => {
         minInlineSize  : '32rem',
     });
 };
+const usesOrderShippingSectionLayout = () => {
+    return style({
+        // children:
+        ...children('article', {
+            ...children('h3', {
+                textAlign: 'center',
+            }),
+        }),
+    });
+};
 const usesOrderListLayout = () => {
     return style({
         // spacings:
@@ -159,8 +170,7 @@ const usesOrderListLayout = () => {
 const usesProductPreviewLayout = () => {
     return style({
         // positions:
-        position : 'relative',
-        gridArea : 'orderSummary',
+        gridArea: 'orderSummary',
         
         
         
@@ -220,6 +230,54 @@ const usesProductPreviewLayout = () => {
         }),
     });
 };
+const usesOrderDeliverySectionLayout = () => {
+    const {themeableVars} = usesThemeable();
+    
+    
+    
+    return style({
+        // children:
+        ...children('article', {
+            ...children('h3', {
+                textAlign: 'center',
+            }),
+            ...children('.shippingProvider', {
+                // positions:
+                position         : 'absolute',
+                insetInlineStart : '0',
+                insetBlockStart  : 0,
+                
+                
+                
+                // layouts:
+                display: 'inline-block',
+                
+                
+                
+                // sizes:
+                boxSizing     : 'content-box',
+                minInlineSize : '4em',
+                
+                
+                
+                // borders:
+                borderWidth  : 0,
+                borderRadius : 0,
+                
+                
+                
+                // spacings:
+                padding: spacers.sm,
+                
+                
+                
+                // typos:
+                fontWeight : typos.fontWeightSemibold,
+                textAlign  : 'center',
+            })
+        }),
+    });
+};
 
 export default () => [
     scope('cardBody', {
@@ -238,12 +296,7 @@ export default () => [
         ...usesOrderShippingTabLayout(),
     }),
     scope('orderShippingSection', {
-        // children:
-        ...children('article', {
-            ...children('h3', {
-                textAlign: 'center',
-            }),
-        }),
+        ...usesOrderShippingSectionLayout(),
     }),
     scope('orderList', {
         ...usesOrderListLayout(),
@@ -252,12 +305,7 @@ export default () => [
         ...usesProductPreviewLayout(),
     }, { specificityWeight: 2 }),
     scope('orderDeliverySection', {
-        // children:
-        ...children('article', {
-            ...children('h3', {
-                textAlign: 'center',
-            }),
-        }),
+        ...usesOrderDeliverySectionLayout(),
     }),
     
     scope('paymentTab', {

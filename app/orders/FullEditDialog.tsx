@@ -3,7 +3,7 @@
 import { default as React } from 'react'
 import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 
-import { ButtonIcon, Generic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, List, Carousel, Masonry, masonries, Busy, ListItem, Badge } from '@reusable-ui/components';
+import { ButtonIcon, Generic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, List, Carousel, Masonry, masonries, Busy, ListItem, Badge, Basic } from '@reusable-ui/components';
 import { OrderDetail, ShippingPreview, useUpdateOrder, useGetShippingList, useGetProductList } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { formatCurrency, getCurrencySign } from '@/libs/formatters';
@@ -294,13 +294,13 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                         </p>
                     </Section>
                     <Section title='Deliver To' theme='secondary' className={styles.orderDeliverySection}>
-                        <strong>{
+                        <Basic tag='strong' className='shippingProvider'>{
                             isLoadingShipping
                             ? <Busy />
                             : isErrorShipping
                                 ? 'Error getting shipping data'
                                 : (shippingProvider?.name ?? 'DELETED SHIPPING PROVIDER')
-                        }</strong>
+                        }</Basic>
                         <strong>{shippingFirstName} {shippingLastName}</strong>
                         <p>
                             {shippingAddress}
