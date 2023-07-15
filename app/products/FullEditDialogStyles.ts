@@ -94,7 +94,7 @@ export const usesTabBodyLayout = () => {
         [borderVars.borderWidth]: '0px',
     });
 };
-export const usesPageInfoLayout = () => {
+export const usesInfoTabLayout = () => {
     return style({
         // layouts:
         display          : 'grid',
@@ -239,8 +239,8 @@ export default () => [
         ...usesTabBodyLayout(),
     }, { specificityWeight: 2 }),
     
-    scope('pageInfo', {
-        ...usesPageInfoLayout(),
+    scope('infoTab', {
+        ...usesInfoTabLayout(),
     }),
     
     scope('editDescription', {

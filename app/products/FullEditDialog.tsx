@@ -257,7 +257,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                     // handlers:
                     onKeyDown={handleKeyDown}
                 >
-                    <TabPanel label={PAGE_PRODUCTS_TAB_INFORMATIONS} panelComponent={<Generic className={styles.pageInfo} />}>
+                    <TabPanel label={PAGE_PRODUCTS_TAB_INFORMATIONS} panelComponent={<Generic className={styles.infoTab} />}>
                         <span className='name label'>Name:</span>
                         <TextEditor           className='name editor'       value={name}           onChange={(value) => { setName(value); setIsModified(true); handleNameChange(value); }} />
                         
