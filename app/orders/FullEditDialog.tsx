@@ -3,7 +3,7 @@
 import { default as React } from 'react'
 import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 
-import { ButtonIcon, Generic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, List, Carousel, Masonry, masonries, Busy } from '@reusable-ui/components';
+import { ButtonIcon, Generic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, List, Carousel, Masonry, masonries, Busy, ListItem, Badge } from '@reusable-ui/components';
 import { OrderDetail, ShippingPreview, useUpdateOrder, useGetShippingList, useGetProductList } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { formatCurrency, getCurrencySign } from '@/libs/formatters';
@@ -24,6 +24,7 @@ import axios from 'axios'
 import { resolveMediaUrl } from '@/libs/mediaStorage.client'
 import { WysiwygEditorState, WysiwygEditor, ToolbarPlugin, EditorPlugin } from '@/components/editors/WysiwygEditor';
 import { countryList } from '@/libs/countryList'
+import { WithBadge } from '@/components/WithBadge';
 
 
 
@@ -191,95 +192,82 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                 // handlers:
                 onKeyDown={handleKeyDown}
             >
-                <TabPanel label={PAGE_ORDERS_TAB_ORDERS_N_SHIPPING} panelComponent={<Generic className={styles.pageInfo} />}>
+                <TabPanel label={PAGE_ORDERS_TAB_ORDERS_N_SHIPPING} panelComponent={<Generic className={styles.orderShippingInfo} />}>
                     <article>
                         <section>
                             <h3>Order List</h3>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th colSpan={6}>
-                                            Order List
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <th>
-                                            No
-                                        </th>
-                                        <th>
-                                            Image
-                                        </th>
-                                        <th>
-                                            Product
-                                        </th>
-                                        <th>
-                                            Qty
-                                        </th>
-                                        <th>
-                                            Unit Price
-                                        </th>
-                                        <th>
-                                            Total Price
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {items.map(({quantity, price: unitPrice, product: productId}, index) => {
-                                        const product = productList?.entities?.[`${productId}`];
-                                        
-                                        
-                                        
-                                        // jsx:
-                                        return (
-                                            <tr key={index}>
-                                                <td>{index + 1}</td>
-                                                <td>
-                                                    <Image
-                                                        alt={`image #${index + 1} of ${product?.name ?? 'unknown product'}`}
-                                                        src={resolveMediaUrl(product?.image)}
-                                                        sizes={`${imageSize}px`}
+                            <List className='orderList' listStyle='flat'>
+                                {items.map(({quantity, price: unitPrice, product: productId}, index) => {
+                                    const product = productList?.entities?.[`${productId}`];
+                                    
+                                    
+                                    
+                                    // jsx:
+                                    return (
+                                        <ListItem key={`${productId}`} className={styles.productPreview}>
+                                            <h3 className='title h6'>{
+                                                isLoadingProduct
+                                                ? <Busy />
+                                                : isErrorProduct
+                                                    ? 'Error getting product data'
+                                                    : (product?.name ?? 'DELETED PRODUCT')
+                                            }</h3>
+                                            <WithBadge
+                                                // components:
+                                                wrapperComponent={<React.Fragment />}
+                                                badgeComponent={
+                                                    <Badge
+                                                        // variants:
+                                                        theme='danger'
                                                         
-                                                        priority={true}
-                                                    />
-                                                </td>
-                                                <td>{
-                                                    isLoadingProduct
-                                                    ? <Busy />
-                                                    : isErrorProduct
-                                                        ? 'Error getting product data'
-                                                        : (product?.name ?? 'DELETED PRODUCT')
-                                                }</td>
-                                                <td>{quantity}</td>
-                                                <td>{formatCurrency(unitPrice)}</td>
-                                                <td>{formatCurrency(quantity * unitPrice)}</td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td colSpan={6}>
-                                            Subtotal products: <span className='currency'>
-                                                {formatCurrency(totalProductPrices)}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colSpan={6}>
-                                            Shipping: <span className='currency'>
-                                                {formatCurrency(totalShippingCosts)}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colSpan={6}>
-                                            Total: <span className='currency'>
-                                                {formatCurrency(totalProductPrices + totalShippingCosts)}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                </tfoot>
-                            </table>
+                                                        
+                                                        
+                                                        // floatable:
+                                                        floatingPlacement='right-start'
+                                                        floatingShift={-3}
+                                                        floatingOffset={-20}
+                                                    >
+                                                        {quantity}x
+                                                    </Badge>
+                                                }
+                                            >
+                                                <Image
+                                                    className='image'
+                                                    
+                                                    alt={`image #${index + 1} of ${product?.name ?? 'unknown product'}`}
+                                                    src={resolveMediaUrl(product?.image)}
+                                                    sizes={`${imageSize}px`}
+                                                    
+                                                    priority={true}
+                                                />
+                                            </WithBadge>
+                                            <p className='unitPrice'>
+                                                @ <span className='currency secondary'>{formatCurrency(unitPrice)}</span>
+                                            </p>
+                                            <p className='subPrice currencyBlock'>
+                                                <span className='currency'>{formatCurrency(quantity * unitPrice)}</span>
+                                            </p>
+                                        </ListItem>
+                                    );
+                                })}
+                            </List>
+                            <hr />
+                            <p className='currencyBlock'>
+                                Subtotal products: <span className='currency'>
+                                    {formatCurrency(totalProductPrices)}
+                                </span>
+                            </p>
+                            <p className='currencyBlock'>
+                                Shipping: <span className='currency'>
+                                    {formatCurrency(totalShippingCosts)}
+                                </span>
+                            </p>
+                            <hr />
+                            <p className='currencyBlock totalCost'>
+                                Total: <span className='currency'>
+                                    {formatCurrency(totalProductPrices + totalShippingCosts)}
+                                </span>
+                            </p>
                         </section>
                         <section>
                             <h3>Deliver To</h3>
@@ -302,7 +290,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                     <article>
                     </article>
                 </TabPanel>
-                <TabPanel label={PAGE_ORDERS_TAB_PAYMENT} panelComponent={<Generic className={styles.pageInfo} />}>
+                <TabPanel label={PAGE_ORDERS_TAB_PAYMENT} panelComponent={<Generic className={styles.paymentInfo} />}>
                     <article>
                         <table>
                             <tbody>

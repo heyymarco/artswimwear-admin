@@ -1,7 +1,9 @@
 // cssfn:
 import {
     // writes css in javascript:
+    rule,
     fallback,
+    descendants,
     children,
     style,
     vars,
@@ -25,6 +27,7 @@ import {
     
     // groups a list of UIs into a single UI:
     usesGroupable,
+    typos,
 }                           from '@reusable-ui/core'    // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -32,11 +35,17 @@ import {
     // configs:
     lists,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
+import { commerces } from '@/config';
+
+
+
+// defaults:
+const imageSize = 48;  // 48px
 
 
 
 // styles:
-export const usesCardBodyLayout = () => {
+const usesCardBodyLayout = () => {
     // dependencies:
     
     // features:
@@ -75,13 +84,13 @@ export const usesCardBodyLayout = () => {
         }),
     });
 };
-export const usesTabListLayout = () => {
+const usesTabListLayout = () => {
     return vars({
         // configs:
         [lists.borderRadius] : '0px',
     });
 };
-export const usesTabBodyLayout = () => {
+const usesTabBodyLayout = () => {
     // dependencies:
     
     // features:
@@ -92,9 +101,32 @@ export const usesTabBodyLayout = () => {
     return style({
         // borders:
         [borderVars.borderWidth]: '0px',
+        
+        
+        
+        // children:
+        ...descendants('.currencyBlock', {
+            display: 'flex',
+            
+            ...rule('.totalCost', {
+                ...descendants(['&', '.currency'], {
+                    fontSize: typos.fontSizeLg,
+                    fontWeight: typos.fontWeightSemibold,
+                }),
+            })
+        }),
+        ...descendants('.currency', {
+            marginInlineStart: 'auto',
+            fontSize: typos.fontSizeMd,
+            fontWeight: typos.fontWeightSemibold,
+            ...rule('.secondary', {
+                fontSize: typos.fontSizeSm,
+                fontWeight: typos.fontWeightLight,
+            }),
+        }),
     });
 };
-export const usesPageInfoLayout = () => {
+const usesOrderShippingInfoLayout = () => {
     return style({
         // layouts:
         display          : 'grid',
@@ -166,65 +198,67 @@ export const usesPageInfoLayout = () => {
         ...children('.visibility.editor', { gridArea: 'visibility-editor' }),
     });
 };
-export const usesEditDescription = () => {
-    // dependencies:
-    
-    // capabilities:
-    const {groupableRule, groupableVars} = usesGroupable({
-        itemsSelector : '&', // select the <WysiwygEditor> itself
-    });
-    
-    // features:
-    const {borderRule, borderVars } = usesBorder({ borderWidth: '0px' });
-    
-    
-    
-    // spacings:
-    const positivePaddingInline = groupableVars.paddingInline;
-    const positivePaddingBlock  = groupableVars.paddingBlock;
-    const negativePaddingInline = `calc(0px - ${positivePaddingInline})`;
-    const negativePaddingBlock  = `calc(0px - ${positivePaddingBlock })`;
-    
-    
-    
+const usesProductPreviewLayout = () => {
     return style({
-        // capabilities:
-        ...groupableRule(), // make a nicely rounded corners
+        // positions:
+        gridArea: 'orderSummary',
         
         
         
         // layouts:
-        ...style({
-            // sizes:
-            // blockSize     : 'fill-available',
-            ...fallback({
-                blockSize : `calc(100% + (${positivePaddingBlock} * 2))`,
-            }),
+        display: 'grid',
+        gridTemplate: [[
+            '"image     title" max-content',
+            '"image unitPrice" max-content',
+            '"image  subPrice" max-content',
+            '"image  ........" auto',
+            '/',
+            `${imageSize}px auto`,
+        ]],
+        
+        
+        
+        // spacings:
+        gapInline: '1rem',
+        gapBlock: '0.25rem',
+        padding: 0,
+        
+        
+        
+        // children:
+        ...children('.image', {
+            gridArea    : 'image',
+            alignSelf   : 'center',
             
-            
-            
-            // borders:
-            // follows <parent>'s borderRadius
-            border                   : borderVars.border,
-         // borderRadius             : borderVars.borderRadius,
-            borderStartStartRadius   : borderVars.borderStartStartRadius,
-            borderStartEndRadius     : borderVars.borderStartEndRadius,
-            borderEndStartRadius     : borderVars.borderEndStartRadius,
-            borderEndEndRadius       : borderVars.borderEndEndRadius,
-            [borderVars.borderWidth] : '0px', // only setup borderRadius, no borderStroke
-            
-            
-            
-            // spacings:
-            // cancel-out parent's padding with negative margin:
-            marginInline : negativePaddingInline,
-            marginBlock  : negativePaddingBlock,
+            background  : 'white',
+            width       : `${imageSize}px`,
+            aspectRatio : commerces.defaultProductAspectRatio,
         }),
-        
-        
-        
-        // features:
-        ...borderRule(), // must be placed at the last
+        ...children('.title', {
+            gridArea: 'title',
+            
+            fontWeight: typos.fontWeightNormal,
+            margin: 0,
+            // maxInlineSize: '15em',
+            whiteSpace: 'normal',
+            textOverflow : 'ellipsis', // long text...
+            wordBreak    : 'break-word',
+            overflowWrap : 'break-word',
+            // overflow: 'hidden',
+        }),
+        ...children('.unitPrice', {
+            gridArea: 'unitPrice',
+            
+            margin: 0,
+            
+            fontSize: typos.fontSizeSm,
+            fontWeight: typos.fontWeightLight,
+        }),
+        ...children('.subPrice', {
+            gridArea: 'subPrice',
+            
+            margin: 0,
+        }),
     });
 };
 
@@ -241,11 +275,14 @@ export default () => [
         ...usesTabBodyLayout(),
     }, { specificityWeight: 2 }),
     
-    scope('pageInfo', {
-        ...usesPageInfoLayout(),
+    scope('orderShippingInfo', {
+        ...usesOrderShippingInfoLayout(),
     }),
     
-    scope('editDescription', {
-        ...usesEditDescription(),
+    scope('productPreview', {
+        ...usesProductPreviewLayout(),
     }, { specificityWeight: 2 }),
+    
+    scope('paymentInfo', {
+    }),
 ];
