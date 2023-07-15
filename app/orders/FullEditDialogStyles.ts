@@ -10,26 +10,23 @@ import {
     scope,
 }                           from '@cssfn/core'          // writes css in javascript
 import {
-    // border (stroke) stuff of UI:
-    usesBorder,
-    
-    
-    
     // a spacer (gap) management system:
     spacers,
     
     
     
-    // a responsive management system:
-    ifScreenWidthAtLeast,
-    
-    
-    
-    // groups a list of UIs into a single UI:
-    usesGroupable,
+    // a typography management system:
     typos,
+    
+    
+    
+    // border (stroke) stuff of UI:
+    usesBorder,
+    
+    
+    
+    // padding (inner spacing) stuff of UI:
     usesPadding,
-    usesThemeable,
 }                           from '@reusable-ui/core'    // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -167,7 +164,7 @@ const usesOrderListLayout = () => {
         gap: '0.5rem',
     });
 }
-const usesProductPreviewLayout = () => {
+const usesProductItemLayout = () => {
     return style({
         // positions:
         gridArea: 'orderSummary',
@@ -177,12 +174,12 @@ const usesProductPreviewLayout = () => {
         // layouts:
         display: 'grid',
         gridTemplate: [[
-            '"image     title" max-content',
-            '"image unitPrice" max-content',
-            '"image  subPrice" max-content',
-            '"image  ........" auto',
+            '"num image     title" max-content',
+            '"num image unitPrice" max-content',
+            '"num image  subPrice" max-content',
+            '"num image  ........" auto',
             '/',
-            `${imageSize}px auto`,
+            `1.25rem ${imageSize}px auto`,
         ]],
         
         
@@ -195,6 +192,10 @@ const usesProductPreviewLayout = () => {
         
         
         // children:
+        ...children('::before', {
+            gridArea    : 'num',
+            textAlign   : 'end',
+        }),
         ...children('.image', {
             gridArea    : 'image',
             alignSelf   : 'center',
@@ -231,10 +232,6 @@ const usesProductPreviewLayout = () => {
     });
 };
 const usesOrderDeliverySectionLayout = () => {
-    const {themeableVars} = usesThemeable();
-    
-    
-    
     return style({
         // children:
         ...children('article', {
@@ -301,8 +298,8 @@ export default () => [
     scope('orderList', {
         ...usesOrderListLayout(),
     }, { specificityWeight: 2 }),
-    scope('productPreview', {
-        ...usesProductPreviewLayout(),
+    scope('productItem', {
+        ...usesProductItemLayout(),
     }, { specificityWeight: 2 }),
     scope('orderDeliverySection', {
         ...usesOrderDeliverySectionLayout(),

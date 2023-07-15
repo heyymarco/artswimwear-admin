@@ -215,7 +215,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
             >
                 <TabPanel label={PAGE_ORDERS_TAB_ORDERS_N_SHIPPING} panelComponent={<Generic className={styles.orderShippingTab} />}>
                     <Section title='Order List' className={styles.orderShippingSection}>
-                        <List className={styles.orderList} listStyle='flat'>
+                        <List className={styles.orderList} listStyle={['flat', 'numbered']}>
                             {items.map(({quantity, price: unitPrice, product: productId}, index) => {
                                 const product = productList?.entities?.[`${productId}`];
                                 
@@ -223,7 +223,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                                 
                                 // jsx:
                                 return (
-                                    <ListItem key={`${productId}`} className={styles.productPreview}>
+                                    <ListItem key={`${productId}`} className={styles.productItem}>
                                         <h3 className='title h6'>{
                                             isLoadingProduct
                                             ? <Busy />
