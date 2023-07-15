@@ -313,13 +313,13 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                     </Section>
                 </TabPanel>
                 <TabPanel label={PAGE_ORDERS_TAB_PAYMENT} panelComponent={<Generic className={styles.paymentTab} />}>
-                    <Section>
+                    <Section className={styles.paymentSection}>
                         <table>
                             <tbody>
                                 <tr>
-                                    <td>
+                                    <th>
                                         Method
-                                    </td>
+                                    </th>
                                     <td>
                                         <span>
                                             {paymentType?.toUpperCase() ?? paymentType}
@@ -327,22 +327,20 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
+                                    <th>
                                         Provider
-                                    </td>
+                                    </th>
                                     <td>
-                                        <span>
-                                            {!!paymentBrand ? <Image alt={paymentBrand} src={`/brands/${paymentBrand}.svg`} width={42} height={26} /> : '-'}
-                                        </span>
-                                        <span>
+                                        {!!paymentBrand ? <Image className='paymentProvider' alt={paymentBrand} src={`/brands/${paymentBrand}.svg`} width={42} height={26} /> : '-'}
+                                        <span className='paymentIdentifier'>
                                             {!!paymentIdentifier && <>&nbsp;({paymentIdentifier})</>}
                                         </span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
+                                    <th>
                                         Amount
-                                    </td>
+                                    </th>
                                     <td>
                                         <strong>
                                             {formatCurrency(123)}
@@ -350,9 +348,9 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
+                                    <th>
                                         Fee
-                                    </td>
+                                    </th>
                                     <td>
                                         <span>
                                             {formatCurrency(123)}
@@ -360,9 +358,9 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
+                                    <th>
                                         Net
-                                    </td>
+                                    </th>
                                     <td>
                                         <strong>
                                             {formatCurrency(123)}

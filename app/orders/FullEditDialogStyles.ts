@@ -10,8 +10,18 @@ import {
     scope,
 }                           from '@cssfn/core'          // writes css in javascript
 import {
+    // a border (stroke) management system:
+    borders,
+    
+    
+    
     // a spacer (gap) management system:
     spacers,
+    
+    
+    
+    // a responsive management system
+    ifScreenWidthSmallerThan,
     
     
     
@@ -275,6 +285,130 @@ const usesOrderDeliverySectionLayout = () => {
         }),
     });
 };
+const usesPaymentTabLayout = () => {
+    return style({
+        // layouts:
+        display        : 'flex',
+        flexDirection  : 'column',
+        justifyContent : 'start',       // if items are not growable, the excess space (if any) placed at the end, and if no sufficient space available => the first item should be visible first
+        alignItems     : 'stretch',     // items width are 100% of the parent (for variant `.block`) or height (for variant `.inline`)
+        flexWrap       : 'nowrap',      // no wrapping
+    });
+};
+const usesPaymentSectionLayout = () => {
+    // dependencies:
+    
+    // features:
+    const {borderVars} = usesBorder();
+    
+    
+    
+    return style({
+        // children:
+        ...children('article', {
+            // layouts:
+            display        : 'flex',
+            flexDirection  : 'column',
+            justifyContent : 'start',       // if items are not growable, the excess space (if any) placed at the end, and if no sufficient space available => the first item should be visible first
+            alignItems     : 'stretch',     // items width are 100% of the parent (for variant `.block`) or height (for variant `.inline`)
+            flexWrap       : 'nowrap',      // no wrapping
+            
+            
+            
+            // children:
+            ...children('table', {
+                // positions:
+                alignSelf      : 'center',
+                
+                
+                
+                // layouts:
+                borderCollapse : 'collapse',
+                tableLayout    : 'auto',
+                // tableLayout : 'fixed',
+                
+                
+                
+                // borders:
+                border         : borderVars.border,
+                borderWidth    : borders.defaultWidth,
+                
+                
+                
+                // children:
+                ...children('tbody', {
+                    ...children('tr', {
+                        borderBlockEnd      : borderVars.border,
+                        borderBlockEndWidth : borders.defaultWidth,
+                        
+                        
+                        
+                        // children:
+                        ...children(['th', 'td'], {
+                            padding: '0.75rem',
+                        }),
+                        ...children('th', {
+                            textAlign: 'end',
+                            ...ifScreenWidthSmallerThan('sm', {
+                                textAlign: 'center',
+                            }),
+                        }),
+                        ...children('td', {
+                            textAlign: 'start',
+                            ...ifScreenWidthSmallerThan('sm', {
+                                textAlign: 'center',
+                            }),
+                        }),
+                        
+                        ...children('th', {
+                            fontWeight : typos.fontWeightSemibold,
+                            textAlign  : 'end',
+                        }),
+                        ...children('td', {
+                            ...children('.paymentProvider', {
+                                width         : '42px',
+                                verticalAlign : 'middle',
+                            }),
+                            ...children('.paymentIdentifier', {
+                                // positions:
+                                verticalAlign     : 'middle',
+                                
+                                
+                                
+                                // layouts:
+                                display           : 'inline-block',
+                                
+                                
+                                
+                                // sizes:
+                                boxSizing         : 'content-box',
+                                maxInlineSize     : '25em',
+                                
+                                
+                                
+                                // scrolls:
+                                overflow          : 'hidden',   // hide the rest text if overflowed
+                                whiteSpace        : 'nowrap',   // do not break word on [space]
+                                overflowWrap      : 'normal',   // do not break word for long_word
+                                textOverflow      : 'ellipsis', // put triple_dot after long_word...
+                                
+                                
+                                
+                                // spacings:
+                                marginInlineStart : '0.5em',
+                                
+                                
+                                
+                                // typos:
+                                fontSize          : typos.fontSizeSm,
+                            }),
+                        }),
+                    }),
+                }),
+            }),
+        }),
+    });
+};
 
 export default () => [
     scope('cardBody', {
@@ -306,5 +440,9 @@ export default () => [
     }),
     
     scope('paymentTab', {
+        ...usesPaymentTabLayout(),
+    }),
+    scope('paymentSection', {
+        ...usesPaymentSectionLayout(),
     }),
 ];
