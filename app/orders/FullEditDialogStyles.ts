@@ -198,6 +198,12 @@ const usesOrderShippingInfoLayout = () => {
         ...children('.visibility.editor', { gridArea: 'visibility-editor' }),
     });
 };
+const usesOrderListLayout = () => {
+    return style({
+        // spacings:
+        gap: '0.5rem',
+    });
+}
 const usesProductPreviewLayout = () => {
     return style({
         // positions:
@@ -279,6 +285,9 @@ export default () => [
         ...usesOrderShippingInfoLayout(),
     }),
     
+    scope('orderList', {
+        ...usesOrderListLayout(),
+    }, { specificityWeight: 2 }),
     scope('productPreview', {
         ...usesProductPreviewLayout(),
     }, { specificityWeight: 2 }),

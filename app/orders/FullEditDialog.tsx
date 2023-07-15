@@ -196,7 +196,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                     <article>
                         <section>
                             <h3>Order List</h3>
-                            <List className='orderList' listStyle='flat'>
+                            <List className={styles.orderList} listStyle='flat'>
                                 {items.map(({quantity, price: unitPrice, product: productId}, index) => {
                                     const product = productList?.entities?.[`${productId}`];
                                     
