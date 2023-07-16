@@ -377,6 +377,9 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                                 </>}
                             </tbody>
                         </table>
+                        {!isPaid && <ButtonIcon icon='payment' size='lg' gradient={true}>
+                            Confirm Payment
+                        </ButtonIcon>}
                     </Section>
                 </TabPanel>
             </Tab>

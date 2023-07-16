@@ -276,18 +276,18 @@ const usesPaymentSectionLayout = () => {
             display        : 'flex',
             flexDirection  : 'column',
             justifyContent : 'start',       // if items are not growable, the excess space (if any) placed at the end, and if no sufficient space available => the first item should be visible first
-            alignItems     : 'stretch',     // items width are 100% of the parent (for variant `.block`) or height (for variant `.inline`)
+            alignItems     : 'center',      // center item(s) horizonally
             flexWrap       : 'nowrap',      // no wrapping
+            
+            
+            
+            // spacings:
+            gap : spacers.lg,
             
             
             
             // children:
             ...children('table', {
-                // positions:
-                alignSelf      : 'center',
-                
-                
-                
                 // layouts:
                 borderCollapse : 'collapse',
                 tableLayout    : 'auto',
