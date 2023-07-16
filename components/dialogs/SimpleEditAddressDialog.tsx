@@ -4,13 +4,14 @@ import { useEvent } from '@reusable-ui/core'
 
 import { InitialValueEventHandler, UpdateModelEventHandler, SimpleEditDialogProps, SimpleEditDialog } from '@/components/dialogs/SimpleEditDialog'
 import { OrderDetail, useUpdateOrder } from '@/store/features/api/apiSlice'
+import type { AddressValue } from '../editors/AddressEditor/AddressEditor';
 
 
 
 // react components:
-export interface SimpleEditAddressDialogProps<TValue extends any>
+export interface SimpleEditAddressDialogProps
     extends
-        Omit<SimpleEditDialogProps<TValue, OrderDetail, 'shippingAddress'|'billingAddress'>,
+        Omit<SimpleEditDialogProps<AddressValue, OrderDetail, 'shippingAddress'|'billingAddress'>,
             // states:
             |'isLoading'
             
@@ -26,17 +27,17 @@ export interface SimpleEditAddressDialogProps<TValue extends any>
         >
 {
 }
-export const SimpleEditAddressDialog = <TValue extends any>(props: SimpleEditAddressDialogProps<TValue>) => {
+export const SimpleEditAddressDialog = (props: SimpleEditAddressDialogProps) => {
     // stores:
     const [updateOrder, {isLoading}] = useUpdateOrder();
     
     
     
     // handlers:
-    const handleInitialValue = useEvent<InitialValueEventHandler<TValue, OrderDetail, 'shippingAddress'|'billingAddress'>>((edit, model) => {
-        return model[edit] as TValue;
+    const handleInitialValue = useEvent<InitialValueEventHandler<AddressValue, OrderDetail, 'shippingAddress'|'billingAddress'>>((edit, model) => {
+        return model[edit];
     });
-    const handleUpdateModel  = useEvent<UpdateModelEventHandler<TValue, OrderDetail, 'shippingAddress'|'billingAddress'>>(async (value, edit, model) => {
+    const handleUpdateModel  = useEvent<UpdateModelEventHandler<AddressValue, OrderDetail, 'shippingAddress'|'billingAddress'>>(async (value, edit, model) => {
         await updateOrder({
             _id    : model._id,
             
@@ -48,7 +49,7 @@ export const SimpleEditAddressDialog = <TValue extends any>(props: SimpleEditAdd
     
     // jsx:
     return (
-        <SimpleEditDialog<TValue, OrderDetail, 'shippingAddress'|'billingAddress'>
+        <SimpleEditDialog<AddressValue, OrderDetail, 'shippingAddress'|'billingAddress'>
             // other props:
             {...props}
             
