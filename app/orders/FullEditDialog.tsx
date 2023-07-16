@@ -29,6 +29,8 @@ import { Section } from '@heymarco/section';
 import { SimpleEditAddressDialog } from '@/components/dialogs/SimpleEditAddressDialog';
 import { AddressEditor } from '@/components/editors/AddressEditor';
 import { EditButton } from '@/components/EditButton';
+import { SimpleEditPaymentDialog } from '@/components/dialogs/SimpleEditPaymentDialog';
+import { PaymentEditor } from '@/components/editors/PaymentEditor';
 
 
 
@@ -117,7 +119,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
     
     
     // states:
-    type EditMode = 'shippingAddress'
+    type EditMode = 'shippingAddress'|'paymentMethod'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     
@@ -394,7 +396,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                                 </>}
                             </tbody>
                         </table>
-                        {!isPaid && <ButtonIcon icon='payment' size='lg' gradient={true}>
+                        {!isPaid && <ButtonIcon icon='payment' size='lg' gradient={true} onClick={() => setEditMode('paymentMethod')}>
                             Confirm Payment
                         </ButtonIcon>}
                     </Section>
@@ -423,8 +425,9 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                 </>}
             </ModalStatus>
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {!!editMode && (editMode === 'shippingAddress') && <>
+                {!!editMode && <>
                     {(editMode === 'shippingAddress') && <SimpleEditAddressDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<AddressEditor countryList={countryList} />} />}
+                    {(editMode === 'paymentMethod'  ) && <SimpleEditPaymentDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<PaymentEditor />} />}
                 </>}
             </ModalStatus>
         </>

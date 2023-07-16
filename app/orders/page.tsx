@@ -194,7 +194,7 @@ const OrderItem = (props: OrderItemProps) => {
                 </>}
             </ModalStatus>
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {!!editMode && (editMode === 'full') && <FullEditDialog order={order} onClose={handleEditDialogClose} />}
+                {(editMode === 'full') && <FullEditDialog order={order} onClose={handleEditDialogClose} />}
             </ModalStatus>
         </ListItem>
     );
