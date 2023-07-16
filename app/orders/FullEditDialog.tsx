@@ -95,6 +95,9 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
             type         : paymentType,
             brand        : paymentBrand,
             identifier   : paymentIdentifier,
+            
+            amount       : paymentAmount,
+            fee          : paymentFee,
         },
     } = order;
     
@@ -343,7 +346,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                                     </th>
                                     <td>
                                         <strong>
-                                            {formatCurrency(123)}
+                                            {formatCurrency(paymentAmount)}
                                         </strong>
                                     </td>
                                 </tr>
@@ -353,7 +356,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                                     </th>
                                     <td>
                                         <span>
-                                            {formatCurrency(123)}
+                                            {formatCurrency(paymentFee)}
                                         </span>
                                     </td>
                                 </tr>
@@ -363,7 +366,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                                     </th>
                                     <td>
                                         <strong>
-                                            {formatCurrency(123)}
+                                            {formatCurrency(paymentAmount - paymentFee)}
                                         </strong>
                                     </td>
                                 </tr>
