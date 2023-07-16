@@ -411,6 +411,19 @@ const usesBadgeLayout = () => {
         textAlign  : 'center',
     });
 };
+const usesEditShippingAddressLayout = () => {
+    return style({
+        // positions:
+        position        : 'absolute',
+        insetInlineEnd  : '0',
+        insetBlockStart : 0,
+        
+        
+        
+        // spacings:
+        margin: spacers.sm,
+    });
+};
 
 export default () => [
     scope('cardBody', {
@@ -450,5 +463,9 @@ export default () => [
     
     scope('badge', {
         ...usesBadgeLayout(),
+    }, { specificityWeight: 2 }),
+    
+    scope('editShippingAddress', {
+        ...usesEditShippingAddressLayout(),
     }, { specificityWeight: 2 }),
 ];

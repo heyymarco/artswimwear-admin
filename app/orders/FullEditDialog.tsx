@@ -26,6 +26,9 @@ import { WysiwygEditorState, WysiwygEditor, ToolbarPlugin, EditorPlugin } from '
 import { countryList } from '@/libs/countryList'
 import { WithBadge } from '@/components/WithBadge';
 import { Section } from '@heymarco/section';
+import { SimpleEditAddressDialog } from '@/components/dialogs/SimpleEditAddressDialog';
+import { AddressEditor } from '@/components/editors/AddressEditor';
+import { EditButton } from '@/components/EditButton';
 
 
 
@@ -113,6 +116,12 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
     
     
     
+    // states:
+    type EditMode = 'shippingAddress'
+    const [editMode, setEditMode] = useState<EditMode|null>(null);
+    
+    
+    
     // refs:
     const firstEditorRef     = useRef<HTMLInputElement|null>(null); // TODO: finish this
     const editorContainerRef = useRef<HTMLElement|null>(null); // TODO: finish this
@@ -140,6 +149,9 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                 // handleClosing();
                 break;
         } // switch
+    });
+    const handleEditDialogClose = useEvent((): void => {
+        setEditMode(null);
     });
     
     
@@ -307,6 +319,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                                 ? 'Error getting shipping data'
                                 : (shippingProvider?.name ?? 'DELETED SHIPPING PROVIDER')
                         }</Basic>
+                        <EditButton className={styles.editShippingAddress} onClick={() => setEditMode('shippingAddress')} />
                         <strong>{shippingFirstName} {shippingLastName}</strong>
                         <p>
                             {shippingAddress}
@@ -403,6 +416,11 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                             Okay
                         </Button>
                     </CardFooter>
+                </>}
+            </ModalStatus>
+            <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
+                {!!editMode && (editMode === 'shippingAddress') && <>
+                    {(editMode === 'shippingAddress') && <SimpleEditAddressDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<AddressEditor countryList={countryList} />} />}
                 </>}
             </ModalStatus>
         </>

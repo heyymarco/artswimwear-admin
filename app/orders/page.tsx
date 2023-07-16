@@ -18,9 +18,6 @@ import { TextEditor } from '@/components/editors/TextEditor'
 import { SimpleEditCustomerDialog } from '@/components/dialogs/SimpleEditCustomerDialog'
 import { FullEditDialog } from './FullEditDialog'
 import type { OrderSchema } from '@/models/Order'
-import { countryList } from '@/libs/countryList'
-import { SimpleEditAddressDialog } from '@/components/dialogs/SimpleEditAddressDialog'
-import { AddressEditor } from '@/components/editors/AddressEditor'
 import { resolveMediaUrl } from '@/libs/mediaStorage.client'
 import { WithBadge } from '@/components/WithBadge'
 import { MiniCarousel } from '@/components/MiniCarousel'
@@ -79,7 +76,7 @@ const OrderItem = (props: OrderItemProps) => {
     
     
     // states:
-    type EditMode = keyof OrderDetail['customer']|'shippingAddress'|'full'
+    type EditMode = keyof OrderDetail['customer']|'full'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     
@@ -197,10 +194,7 @@ const OrderItem = (props: OrderItemProps) => {
                 </>}
             </ModalStatus>
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {!!editMode && ((editMode === 'full') || (editMode === 'shippingAddress')) && <>
-                    {(editMode === 'shippingAddress') && <SimpleEditAddressDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<AddressEditor countryList={countryList} />} />}
-                    {(editMode === 'full'           ) && <FullEditDialog order={order} onClose={handleEditDialogClose} />}
-                </>}
+                {!!editMode && (editMode === 'full') && <FullEditDialog order={order} onClose={handleEditDialogClose} />}
             </ModalStatus>
         </ListItem>
     );
