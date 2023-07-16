@@ -21,7 +21,7 @@ export const PAGE_PRODUCTS_TAB_INFORMATIONS          = 'Informations'
 export const PAGE_PRODUCTS_TAB_IMAGES                = 'Images'
 export const PAGE_PRODUCTS_TAB_DESCRIPTION           = 'Description'
 
-export const PAGE_ORDERS_TAB_ORDERS_N_SHIPPING       = 'Orders & Shipping'
+export const PAGE_ORDERS_TAB_ORDER_N_SHIPPING        = 'Order & Shipping'
 export const PAGE_ORDERS_TAB_PAYMENT                 = 'Payment'
 
 export const PAGE_ORDERS_TITLE                       = `Orders - ${WEBSITE_TITLE}`

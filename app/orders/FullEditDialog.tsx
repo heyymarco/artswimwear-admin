@@ -10,7 +10,7 @@ import { formatCurrency, getCurrencySign } from '@/libs/formatters';
 import { AccessibilityProvider, ValidationProvider, useEvent } from '@reusable-ui/core';
 import { ModalStatus } from '../../components/ModalStatus'
 
-import { STORE_WEBSITE_URL, PAGE_ORDERS_TAB_ORDERS_N_SHIPPING, PAGE_ORDERS_TAB_PAYMENT } from '@/website.config'
+import { STORE_WEBSITE_URL, PAGE_ORDERS_TAB_ORDER_N_SHIPPING, PAGE_ORDERS_TAB_PAYMENT } from '@/website.config'
 import { COMMERCE_CURRENCY_FRACTION_MAX } from '@/commerce.config'
 import { TextEditor } from '@/components/editors/TextEditor'
 import { PathEditor } from '@/components/editors/PathEditor'
@@ -214,7 +214,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                 // handlers:
                 onKeyDown={handleKeyDown}
             >
-                <TabPanel label={PAGE_ORDERS_TAB_ORDERS_N_SHIPPING} panelComponent={<Generic className={styles.orderShippingTab} />}>
+                <TabPanel label={PAGE_ORDERS_TAB_ORDER_N_SHIPPING} panelComponent={<Generic className={styles.orderShippingTab} />}>
                     <Section title='Order List' className={styles.orderShippingSection}>
                         <Basic tag='strong' theme={isPaid ? 'success' : 'danger'} className={styles.badge}>{
                             isPaid
