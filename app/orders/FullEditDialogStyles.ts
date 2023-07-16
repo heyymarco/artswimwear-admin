@@ -411,6 +411,12 @@ const usesBadgeLayout = () => {
         textAlign  : 'center',
     });
 };
+const usesShippingAddressLayout = () => {
+    return style({
+        // positions:
+        position        : 'relative',
+    });
+};
 const usesEditShippingAddressLayout = () => {
     return style({
         // positions:
@@ -465,6 +471,9 @@ export default () => [
         ...usesBadgeLayout(),
     }, { specificityWeight: 2 }),
     
+    scope('shippingAddress', {
+        ...usesShippingAddressLayout(),
+    }),
     scope('editShippingAddress', {
         ...usesEditShippingAddressLayout(),
     }, { specificityWeight: 2 }),

@@ -319,16 +319,20 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                                 ? 'Error getting shipping data'
                                 : (shippingProvider?.name ?? 'DELETED SHIPPING PROVIDER')
                         }</Basic>
-                        <EditButton className={styles.editShippingAddress} onClick={() => setEditMode('shippingAddress')} />
-                        <strong>{shippingFirstName} {shippingLastName}</strong>
-                        <p>
-                            {shippingAddress}
-                            <br />
-                            {`${shippingCity}, ${shippingZone} (${shippingZip}), ${countryList?.entities?.[shippingCountry ?? '']?.name}`}
-                        </p>
-                        <p>
-                            Phone: {shippingPhone}
-                        </p>
+                        <div className={styles.shippingAddress}>
+                            <EditButton className={styles.editShippingAddress} onClick={() => setEditMode('shippingAddress')} />
+                            <p>
+                                <strong>{shippingFirstName} {shippingLastName}</strong>
+                            </p>
+                            <p>
+                                {shippingAddress}
+                                <br />
+                                {`${shippingCity}, ${shippingZone} (${shippingZip}), ${countryList?.entities?.[shippingCountry ?? '']?.name}`}
+                            </p>
+                            <p>
+                                Phone: {shippingPhone}
+                            </p>
+                        </div>
                     </Section>
                 </TabPanel>
                 <TabPanel label={PAGE_ORDERS_TAB_PAYMENT} panelComponent={<Generic className={styles.paymentTab} />}>
