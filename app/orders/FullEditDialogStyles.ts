@@ -248,40 +248,6 @@ const usesOrderDeliverySectionLayout = () => {
             ...children('h3', {
                 textAlign: 'center',
             }),
-            ...children('.shippingProvider', {
-                // positions:
-                position         : 'absolute',
-                insetInlineStart : '0',
-                insetBlockStart  : 0,
-                
-                
-                
-                // layouts:
-                display: 'inline-block',
-                
-                
-                
-                // sizes:
-                boxSizing     : 'content-box',
-                minInlineSize : '4em',
-                
-                
-                
-                // borders:
-                borderWidth  : 0,
-                borderRadius : 0,
-                
-                
-                
-                // spacings:
-                padding: spacers.sm,
-                
-                
-                
-                // typos:
-                fontWeight : typos.fontWeightSemibold,
-                textAlign  : 'center',
-            })
         }),
     });
 };
@@ -409,6 +375,42 @@ const usesPaymentSectionLayout = () => {
         }),
     });
 };
+const usesBadgeLayout = () => {
+    return style({
+        // positions:
+        position         : 'absolute',
+        insetInlineStart : '0',
+        insetBlockStart  : 0,
+        
+        
+        
+        // layouts:
+        display: 'inline-block',
+        
+        
+        
+        // sizes:
+        boxSizing     : 'content-box',
+        minInlineSize : '6em',
+        
+        
+        
+        // borders:
+        borderWidth  : 0,
+        borderRadius : 0,
+        
+        
+        
+        // spacings:
+        padding: spacers.sm,
+        
+        
+        
+        // typos:
+        fontWeight : typos.fontWeightSemibold,
+        textAlign  : 'center',
+    });
+};
 
 export default () => [
     scope('cardBody', {
@@ -445,4 +447,8 @@ export default () => [
     scope('paymentSection', {
         ...usesPaymentSectionLayout(),
     }),
+    
+    scope('badge', {
+        ...usesBadgeLayout(),
+    }, { specificityWeight: 2 }),
 ];

@@ -109,6 +109,8 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
         return accum + (productUnitPrice * item.quantity);
     }, 0);
     
+    const isPaid = (paymentType && (paymentType.toUpperCase() !== 'MANUAL'));
+    
     
     
     // refs:
@@ -218,6 +220,11 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
             >
                 <TabPanel label={PAGE_ORDERS_TAB_ORDERS_N_SHIPPING} panelComponent={<Generic className={styles.orderShippingTab} />}>
                     <Section title='Order List' className={styles.orderShippingSection}>
+                        <Basic tag='strong' theme={isPaid ? 'success' : 'danger'} className={styles.badge}>{
+                            isPaid
+                            ? 'PAID'
+                            : 'UNPAID'
+                        }</Basic>
                         <List className={styles.orderList} listStyle={['flat', 'numbered']}>
                             {items.map(({quantity, price: unitPrice, product: productId}, index) => {
                                 const product = productList?.entities?.[`${productId}`];
@@ -297,7 +304,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                         </p>
                     </Section>
                     <Section title='Deliver To' theme='secondary' className={styles.orderDeliverySection}>
-                        <Basic tag='strong' className='shippingProvider'>{
+                        <Basic tag='strong' className={styles.badge}>{
                             isLoadingShipping
                             ? <Busy />
                             : isErrorShipping
@@ -329,47 +336,49 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                                         </span>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <th>
-                                        Provider
-                                    </th>
-                                    <td>
-                                        {!!paymentBrand ? <Image className='paymentProvider' alt={paymentBrand} src={`/brands/${paymentBrand}.svg`} width={42} height={26} /> : '-'}
-                                        <span className='paymentIdentifier'>
-                                            {!!paymentIdentifier && <>&nbsp;({paymentIdentifier})</>}
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        Amount
-                                    </th>
-                                    <td>
-                                        <strong>
-                                            {formatCurrency(paymentAmount)}
-                                        </strong>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        Fee
-                                    </th>
-                                    <td>
-                                        <span>
-                                            {formatCurrency(paymentFee)}
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        Net
-                                    </th>
-                                    <td>
-                                        <strong>
-                                            {formatCurrency(paymentAmount - paymentFee)}
-                                        </strong>
-                                    </td>
-                                </tr>
+                                {isPaid && <>
+                                    <tr>
+                                        <th>
+                                            Provider
+                                        </th>
+                                        <td>
+                                            {!!paymentBrand ? <Image className='paymentProvider' alt={paymentBrand} src={`/brands/${paymentBrand}.svg`} width={42} height={26} /> : '-'}
+                                            <span className='paymentIdentifier'>
+                                                {!!paymentIdentifier && <>&nbsp;({paymentIdentifier})</>}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            Amount
+                                        </th>
+                                        <td>
+                                            <strong>
+                                                {formatCurrency(paymentAmount)}
+                                            </strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            Fee
+                                        </th>
+                                        <td>
+                                            <span>
+                                                {formatCurrency(paymentFee)}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            Net
+                                        </th>
+                                        <td>
+                                            <strong>
+                                                {formatCurrency(paymentAmount - paymentFee)}
+                                            </strong>
+                                        </td>
+                                    </tr>
+                                </>}
                             </tbody>
                         </table>
                     </Section>
