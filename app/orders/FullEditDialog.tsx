@@ -170,13 +170,9 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
     const [showBadge, setShowBadge] = useState<boolean>(false);
     useEffect(() => {
         // setups:
-        let cancelTimeout = setTimeout(() => {
-            cancelTimeout = setTimeout(() => {
-                cancelTimeout = setTimeout(() => {
-                    setShowBadge(true);
-                }, 0);
-            }, 0);
-        }, 0);
+        const cancelTimeout = setTimeout(() => {
+            setShowBadge(true);
+        }, 250);
         
         
         
