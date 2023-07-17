@@ -35,6 +35,15 @@ const usePrintDialogLayout = () => {
         
         
         
+        // layouts:
+        display        : 'flex',
+        flexDirection  : 'column',
+        justifyContent : 'start',   // if items are not growable, the excess space (if any) placed at the end, and if no sufficient space available => the first item should be visible first
+        alignItems     : 'stretch', // items width are 100% of the parent (for variant `.block`) or height (for variant `.inline`)
+        flexWrap       : 'nowrap',  // no wrapping
+        
+        
+        
         // scrolls:
         ...rule('@media not print', {
             overflow : 'auto',
