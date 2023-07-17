@@ -19,6 +19,11 @@ import {
 import {
     // react helper hooks:
     useEvent,
+    
+    
+    
+    // an accessibility management system:
+    AccessibilityProvider,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -31,7 +36,6 @@ import {
     // simple-components:
     Icon,
     Label,
-    FormProps,
     Form,
     
     
@@ -76,8 +80,15 @@ import type {
     PaymentMethodSchema,
 }                           from '@/models/Order'
 
-import { getCurrencySign } from '@/libs/formatters'
-import { COMMERCE_CURRENCY_FRACTION_MAX } from '@/commerce.config'
+// libs:
+import {
+    getCurrencySign,
+}                           from '@/libs/formatters'
+
+// configs:
+import {
+    COMMERCE_CURRENCY_FRACTION_MAX,
+}                           from '@/commerce.config'
 
 
 
@@ -130,7 +141,7 @@ export interface PaymentEditorProps
         >
 {
     // refs:
-    paymentRef ?: React.Ref<HTMLInputElement> // setter ref
+    paymentRef ?: React.Ref<HTMLButtonElement> // setter ref
 }
 const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     // styles:
@@ -152,15 +163,15 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     ...restIndicatorProps} = props;
     
     const {
-        // states:
-        enabled         : _enabled,         // remove
-        inheritEnabled  : _inheritEnabled,  // remove
+        // accessibilities:
+        enabled,         // take
+        inheritEnabled,  // take
         
-        active          : _active,          // remove
-        inheritActive   : _inheritActive,   // remove
+        active,          // take
+        inheritActive,   // take
         
-        readOnly        : _readOnly,        // remove
-        inheritReadOnly : _inheritReadOnly, // remove
+        readOnly,        // take
+        inheritReadOnly, // take
     ...restFormProps} = restIndicatorProps;
     
     
@@ -238,57 +249,128 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
             // classes:
             mainClass={props.mainClass ?? styleSheet.main}
         >
-            <Group className='provider'>
-                <Label theme='secondary' mild={false} className='solid'>
-                    <Icon icon='flag' theme='primary' mild={true} />
-                </Label>
-                <DropdownListButton
-                    buttonChildren={brand || 'Payment Type'}
-                    buttonComponent={<EditableButton isValid={!!brand} assertiveFocusable={true} />}
-                    
-                    theme='primary'
-                    mild={true}
-                    
-                    aria-label='Payment Type'
-                >
-                    {['BANK_TRANSFER', 'CHECK', 'OTHER'].map((provider, index) =>
-                        <ListItem
-                            key={index}
+            <AccessibilityProvider
+                // accessibilities:
+                enabled         = {enabled        }
+                inheritEnabled  = {inheritEnabled }
+                
+                active          = {active         }
+                inheritActive   = {inheritActive  }
+                
+                readOnly        = {readOnly       }
+                inheritReadOnly = {inheritReadOnly}
+            >
+                <Group className='provider'>
+                    <Label theme='secondary' mild={false} className='solid'>
+                        <Icon
+                            // appearances:
+                            icon='flag'
                             
-                            active={brand === provider}
-                            onClick={() => handleProviderChange(provider)}
-                        >
-                            {provider}
-                        </ListItem>
-                    )}
-                </DropdownListButton>
-            </Group>
-            
-            <CurrencyEditor
-                className='amount'
+                            
+                            
+                            // variants:
+                            theme='primary'
+                            mild={true}
+                        />
+                    </Label>
+                    <DropdownListButton
+                        // variants:
+                        theme='primary'
+                        mild={true}
+                        
+                        
+                        
+                        // accessibilities:
+                        aria-label='Payment Type'
+                        
+                        
+                        
+                        // components:
+                        buttonComponent={
+                            <EditableButton
+                                // refs:
+                                elmRef={paymentRef}
+                                
+                                
+                                
+                                // validations:
+                                isValid={!!brand}
+                                assertiveFocusable={true}
+                            />
+                        }
+                        
+                        
+                        
+                        // children:
+                        buttonChildren={brand || 'Payment Type'}
+                    >
+                        {['BANK_TRANSFER', 'CHECK', 'OTHER'].map((provider, index) =>
+                            <ListItem
+                                // identifiers:
+                                key={index}
+                                
+                                
+                                
+                                // accessibilities:
+                                active={brand === provider}
+                                
+                                
+                                
+                                // handlers:
+                                onClick={() => handleProviderChange(provider)}
+                            >
+                                {provider}
+                            </ListItem>
+                        )}
+                    </DropdownListButton>
+                </Group>
                 
-                placeholder='Amount'
+                <CurrencyEditor
+                    // classes:
+                    className='amount'
+                    
+                    
+                    
+                    // values:
+                    value={amount}
+                    onChange={handleAmountChange}
+                    currencySign={getCurrencySign()}
+                    currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX}
+                    
+                    
+                    
+                    // validations:
+                    required={true}
+                    
+                    
+                    
+                    // formats:
+                    placeholder='Amount'
+                />
                 
-                value={amount}
-                onChange={handleAmountChange}
-                currencySign={getCurrencySign()}
-                currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX}
-                
-                required={true}
-            />
-            
-            <CurrencyEditor
-                className='fee'
-                
-                placeholder='Fee (if any)'
-                
-                value={fee}
-                onChange={handleFeeChange}
-                currencySign={getCurrencySign()}
-                currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX}
-                
-                required={false}
-            />
+                <CurrencyEditor
+                    // classes:
+                    className='fee'
+                    
+                    
+                    
+                    // values:
+                    value={fee}
+                    onChange={handleFeeChange}
+                    currencySign={getCurrencySign()}
+                    currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX}
+                    
+                    
+                    
+                    // validations:
+                    required={false}
+                    
+                    
+                    
+                    // formats:
+                    placeholder='Fee (if any)'
+                />
+            </AccessibilityProvider>
         </Form>
     );
 };
