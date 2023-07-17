@@ -2,6 +2,7 @@
 import {
     // writes css in javascript:
     fallback,
+    descendants,
     children,
     style,
     vars,
@@ -76,9 +77,19 @@ export const usesCardBodyLayout = () => {
     });
 };
 export const usesTabListLayout = () => {
-    return vars({
+    return style({
+        // layouts:
+        ...style({
+            // positions:
+            zIndex: 1, // a draggable fix for Chrome
+        }),
+        
+        
+        
         // configs:
-        [lists.borderRadius] : '0px',
+        ...vars({
+            [lists.borderRadius] : '0px',
+        }),
     });
 };
 export const usesTabBodyLayout = () => {
@@ -97,9 +108,9 @@ export const usesTabBodyLayout = () => {
 export const usesInfoTabLayout = () => {
     return style({
         // layouts:
-        display          : 'grid',
-        alignContent     : 'start',
-        gridTemplate     : [[
+        display            : 'grid',
+        alignContent       : 'start',
+        gridTemplate       : [[
             '"name-label       "', 'auto',
             '"name-editor      "', 'auto',
             '"................."', spacers.sm,
@@ -121,7 +132,7 @@ export const usesInfoTabLayout = () => {
             '1fr'
         ]],
         ...ifScreenWidthAtLeast('lg', {
-            gridTemplate : [[
+            gridTemplate   : [[
                 '"name-label               name-label"', 'auto',
                 '"name-editor             name-editor"', 'auto',
                 '"................. ................."', spacers.sm,
@@ -140,9 +151,14 @@ export const usesInfoTabLayout = () => {
         
         
         
+        // scrolls:
+        overscrollBehavior : 'none',
+        
+        
+        
         // spacings:
-        gapInline : spacers.default,
-        gapBlock  : spacers.xs,
+        gapInline          : spacers.default,
+        gapBlock           : spacers.xs,
         
         
         
@@ -164,6 +180,18 @@ export const usesInfoTabLayout = () => {
         
         ...children('.visibility.label' , { gridArea: 'visibility-label'  }),
         ...children('.visibility.editor', { gridArea: 'visibility-editor' }),
+    });
+};
+export const usesImagesTabLayout = () => {
+    return style({
+        // scrolls:
+        overscrollBehavior : 'none',
+    });
+};
+export const usesDescriptionTabLayout = () => {
+    return style({
+        // scrolls:
+        overscrollBehavior : 'none',
     });
 };
 export const usesEditDescription = () => {
@@ -242,7 +270,12 @@ export default () => [
     scope('infoTab', {
         ...usesInfoTabLayout(),
     }),
-    
+    scope('imagesTab', {
+        ...usesImagesTabLayout(),
+    }),
+    scope('descriptionTab', {
+        ...usesDescriptionTabLayout(),
+    }),
     scope('editDescription', {
         ...usesEditDescription(),
     }, { specificityWeight: 2 }),

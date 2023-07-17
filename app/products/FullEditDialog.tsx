@@ -276,7 +276,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                         <span className='visibility label'>Visibility:</span>
                         <VisibilityEditor     className='visibility editor' value={visibility}     onChange={(value) => { setVisibility(value); setIsModified(true); }} theme='secondary' />
                     </TabPanel>
-                    <TabPanel label={PAGE_PRODUCTS_TAB_IMAGES}>
+                    <TabPanel label={PAGE_PRODUCTS_TAB_IMAGES}       panelComponent={<Generic className={styles.imagesTab} />}>
                         <GalleryEditor<HTMLElement, string>
                             // values:
                             value={images}
@@ -327,7 +327,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                             onResolveUrl={resolveMediaUrl<never>}
                         />
                     </TabPanel>
-                    <TabPanel label={PAGE_PRODUCTS_TAB_DESCRIPTION}>
+                    <TabPanel label={PAGE_PRODUCTS_TAB_DESCRIPTION}  panelComponent={<Generic className={styles.descriptionTab} />}>
                         <WysiwygEditor
                             // classes:
                             className={styles.editDescription}

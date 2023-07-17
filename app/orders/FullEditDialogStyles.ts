@@ -145,17 +145,22 @@ const usesTabBodyLayout = () => {
 const usesOrderShippingTabLayout = () => {
     return style({
         // layouts:
-        display        : 'flex',
-        flexDirection  : 'column',
-        justifyContent : 'start',       // if items are not growable, the excess space (if any) placed at the end, and if no sufficient space available => the first item should be visible first
-        alignItems     : 'stretch',     // items width are 100% of the parent (for variant `.block`) or height (for variant `.inline`)
-        flexWrap       : 'nowrap',      // no wrapping
+        display            : 'flex',
+        flexDirection      : 'column',
+        justifyContent     : 'start',   // if items are not growable, the excess space (if any) placed at the end, and if no sufficient space available => the first item should be visible first
+        alignItems         : 'stretch', // items width are 100% of the parent (for variant `.block`) or height (for variant `.inline`)
+        flexWrap           : 'nowrap',  // no wrapping
+        
+        
+        
+        // scrolls:
+        overscrollBehavior : 'none',
         
         
         
         // sizes:
-        boxSizing      : 'content-box',
-        minInlineSize  : '32rem',
+        boxSizing          : 'content-box',
+        minInlineSize      : '32rem',
     });
 };
 const usesOrderShippingSectionLayout = () => {
@@ -254,11 +259,16 @@ const usesOrderDeliverySectionLayout = () => {
 const usesPaymentTabLayout = () => {
     return style({
         // layouts:
-        display        : 'flex',
-        flexDirection  : 'column',
-        justifyContent : 'start',       // if items are not growable, the excess space (if any) placed at the end, and if no sufficient space available => the first item should be visible first
-        alignItems     : 'stretch',     // items width are 100% of the parent (for variant `.block`) or height (for variant `.inline`)
-        flexWrap       : 'nowrap',      // no wrapping
+        display            : 'flex',
+        flexDirection      : 'column',
+        justifyContent     : 'start',   // if items are not growable, the excess space (if any) placed at the end, and if no sufficient space available => the first item should be visible first
+        alignItems         : 'stretch', // items width are 100% of the parent (for variant `.block`) or height (for variant `.inline`)
+        flexWrap           : 'nowrap',  // no wrapping
+        
+        
+        
+        // scrolls:
+        overscrollBehavior : 'none',
     });
 };
 const usesPaymentSectionLayout = () => {
