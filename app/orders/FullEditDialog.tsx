@@ -114,7 +114,9 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
         return accum + (productUnitPrice * item.quantity);
     }, 0);
     
-    const isPaid = (paymentType && (paymentType.toUpperCase() !== 'MANUAL'));
+    const paymentTypeUppercased = paymentType.toUpperCase();
+    const isPaid                = (paymentTypeUppercased !== 'MANUAL');
+    const isManualPaid          = (paymentTypeUppercased === 'MANUAL_PAID')
     
     
     
@@ -347,17 +349,21 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                                     </th>
                                     <td>
                                         <span>
-                                            {paymentType?.toUpperCase() ?? paymentType}
+                                            {paymentTypeUppercased}
                                         </span>
                                     </td>
                                 </tr>
                                 {isPaid && <>
                                     <tr>
                                         <th>
-                                            Provider
+                                            {isManualPaid ? 'Type' : 'Provider'}
                                         </th>
                                         <td>
-                                            {!!paymentBrand ? <Image className='paymentProvider' alt={paymentBrand} src={`/brands/${paymentBrand}.svg`} width={42} height={26} /> : '-'}
+                                            {
+                                                !!paymentBrand
+                                                ? (isManualPaid ? paymentBrand : <Image className='paymentProvider' alt={paymentBrand} src={`/brands/${paymentBrand}.svg`} width={42} height={26} />)
+                                                : '-'
+                                            }
                                             <span className='paymentIdentifier'>
                                                 {!!paymentIdentifier && <>&nbsp;({paymentIdentifier})</>}
                                             </span>
