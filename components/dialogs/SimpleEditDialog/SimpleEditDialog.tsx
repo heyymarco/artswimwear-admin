@@ -106,7 +106,14 @@ export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit ex
                 }, 0);
             }, 0);
         });
-        if (editorRef.current?.parentElement?.matches(':is(.invalidating, .invalidated)')) return;
+        const editorElm = editorRef.current;
+        if (
+            // for <Form>:
+            editorElm?.matches(':is(.invalidating, .invalidated)')
+            ||
+            // for <Input>:
+            editorElm?.parentElement?.matches(':is(.invalidating, .invalidated)')
+        ) return;
         
         
         
