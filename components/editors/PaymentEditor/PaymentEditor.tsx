@@ -25,15 +25,14 @@ import {
 import {
     // base-components:
     IndicatorProps,
-    Indicator,
     
     
     
     // simple-components:
     Icon,
     Label,
-    TextInput,
-    TelInput,
+    FormProps,
+    Form,
     
     
     
@@ -95,25 +94,30 @@ const emptyPaymentValue : PaymentValue = {
     brand      : '',
     identifier : '',
     
-    amount     : NaN,
-    fee        : NaN,
+    amount     : null,
+    fee        : null,
 };
 Object.freeze(emptyPaymentValue);
 
 
 
 // react components:
-export type PaymentValue = Omit<PaymentMethodSchema, '_id'>
-export interface PaymentEditorProps<TElement extends Element = HTMLElement>
+export type PaymentValue =
+    Omit<PaymentMethodSchema, '_id'|'amount'|'fee'>
+    & {
+        amount : number|null
+        fee    : number|null
+    }
+export interface PaymentEditorProps
     extends
         // bases:
-        Pick<EditorProps<TElement, PaymentValue>,
+        Pick<EditorProps<HTMLElement, PaymentValue>,
             // values:
             |'defaultValue' // supported
             |'value'        // supported
             |'onChange'     // supported
         >,
-        Omit<IndicatorProps<TElement>,
+        Omit<IndicatorProps<HTMLFormElement>,
             // values:
             |'defaultValue' // taken over by EditorProps
             |'value'        // taken over by EditorProps
@@ -128,7 +132,7 @@ export interface PaymentEditorProps<TElement extends Element = HTMLElement>
     // refs:
     paymentRef ?: React.Ref<HTMLInputElement> // setter ref
 }
-const PaymentEditor = <TElement extends Element = HTMLElement>(props: PaymentEditorProps<TElement>): JSX.Element|null => {
+const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     // styles:
     const styleSheet = usePaymentEditorStyleSheet();
     
@@ -147,6 +151,18 @@ const PaymentEditor = <TElement extends Element = HTMLElement>(props: PaymentEdi
         onChange,
     ...restIndicatorProps} = props;
     
+    const {
+        // states:
+        enabled         : _enabled,         // remove
+        inheritEnabled  : _inheritEnabled,  // remove
+        
+        active          : _active,          // remove
+        inheritActive   : _inheritActive,   // remove
+        
+        readOnly        : _readOnly,        // remove
+        inheritReadOnly : _inheritReadOnly, // remove
+    ...restFormProps} = restIndicatorProps;
+    
     
     
     // states:
@@ -158,6 +174,9 @@ const PaymentEditor = <TElement extends Element = HTMLElement>(props: PaymentEdi
      * value state is based on [controllable value] (if set) and fallback to [uncontrollable value]
      */
     const valueFn : PaymentValue = (value !== undefined) ? value /*controllable*/ : valueDn /*uncontrollable*/;
+    const brand  = valueFn.brand;
+    const amount = valueFn.amount || null;
+    const fee    = valueFn.fee    || null;
     
     
     
@@ -192,22 +211,22 @@ const PaymentEditor = <TElement extends Element = HTMLElement>(props: PaymentEdi
     
     // handlers:
     const handleProviderChange = useEvent((value: string) => {
-        setValue((current) => ({ ...current, brand  : value }));
+        setValue((current) => ({ ...current, type: emptyPaymentValue.type, brand  : value }));
     });
     const handleAmountChange   = useEvent<EditorChangeEventHandler<number|null>>((value) => {
-        setValue((current) => ({ ...current, amount : value ?? 0 }));
+        setValue((current) => ({ ...current, type: emptyPaymentValue.type, amount : value }));
     });
     const handleFeeChange      = useEvent<EditorChangeEventHandler<number|null>>((value) => {
-        setValue((current) => ({ ...current, fee    : value ?? 0 }));
+        setValue((current) => ({ ...current, type: emptyPaymentValue.type, fee    : value }));
     });
     
     
     
     // jsx:
     return (
-        <Indicator<TElement>
+        <Form
             // other props:
-            {...restIndicatorProps}
+            {...restFormProps}
             
             
             
@@ -224,8 +243,8 @@ const PaymentEditor = <TElement extends Element = HTMLElement>(props: PaymentEdi
                     <Icon icon='flag' theme='primary' mild={true} />
                 </Label>
                 <DropdownListButton
-                    buttonChildren={valueFn.brand || 'Payment Type'}
-                    buttonComponent={<EditableButton isValid={!!valueFn.brand} assertiveFocusable={true} />}
+                    buttonChildren={brand || 'Payment Type'}
+                    buttonComponent={<EditableButton isValid={!!brand} assertiveFocusable={true} />}
                     
                     theme='primary'
                     mild={true}
@@ -236,7 +255,7 @@ const PaymentEditor = <TElement extends Element = HTMLElement>(props: PaymentEdi
                         <ListItem
                             key={index}
                             
-                            active={valueFn.brand === provider}
+                            active={brand === provider}
                             onClick={() => handleProviderChange(provider)}
                         >
                             {provider}
@@ -250,7 +269,7 @@ const PaymentEditor = <TElement extends Element = HTMLElement>(props: PaymentEdi
                 
                 placeholder='Amount'
                 
-                value={valueFn.amount}
+                value={amount}
                 onChange={handleAmountChange}
                 currencySign={getCurrencySign()}
                 currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX}
@@ -263,14 +282,14 @@ const PaymentEditor = <TElement extends Element = HTMLElement>(props: PaymentEdi
                 
                 placeholder='Fee (if any)'
                 
-                value={valueFn.fee}
+                value={fee}
                 onChange={handleFeeChange}
                 currencySign={getCurrencySign()}
                 currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX}
                 
                 required={false}
             />
-        </Indicator>
+        </Form>
     );
 };
 export {

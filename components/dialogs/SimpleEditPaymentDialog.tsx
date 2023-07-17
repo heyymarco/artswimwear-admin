@@ -41,7 +41,12 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
         await updateOrder({
             _id    : model._id,
             
-            [edit] : value,
+            [edit] : {
+                // original:
+                ...value,
+                amount : value.amount ?? 0,
+                fee    : value.fee    ?? 0,
+            },
         }).unwrap();
     });
     
