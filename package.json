@@ -16,7 +16,7 @@
     "@heymarco/editable-button": "^3.0.7",
     "@heymarco/image": "^3.0.7",
     "@heymarco/loading-bar": "^3.0.7",
-    "@heymarco/quantity-input": "^3.0.7",
+    "@heymarco/quantity-input": "^3.0.8",
     "@heymarco/section": "^3.0.7",
     "@lexical/react": "^0.11.1",
     "@reduxjs/toolkit": "^1.9.3",
