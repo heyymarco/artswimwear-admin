@@ -2,7 +2,6 @@
 import {
     // writes css in javascript:
     rule,
-    fallback,
     descendants,
     children,
     style,
@@ -117,9 +116,10 @@ const usesTabBodyLayout = () => {
         // spacings:
         [paddingVars.paddingInline]: '0px',
         [paddingVars.paddingBlock ]: '0px',
-        
-        
-        
+    });
+};
+const usesTyposLayout = () => {
+    return style({
         // children:
         ...descendants('.currencyBlock', {
             display: 'flex',
@@ -253,6 +253,24 @@ const usesOrderDeliverySectionLayout = () => {
             ...children('h3', {
                 textAlign: 'center',
             }),
+        }),
+    });
+};
+const usesActionSectionLayout = () => {
+    return style({
+        // children:
+        ...children('article', {
+            // layouts:
+            display            : 'flex',
+            flexDirection      : 'column',
+            justifyContent     : 'start',   // if items are not growable, the excess space (if any) placed at the end, and if no sufficient space available => the first item should be visible first
+            alignItems         : 'stretch', // items width are 100% of the parent (for variant `.block`) or height (for variant `.inline`)
+            flexWrap           : 'nowrap',  // no wrapping
+            
+            
+            
+            // spacings:
+            gap : spacers.default,
         }),
     });
 };
@@ -440,6 +458,46 @@ const usesEditShippingAddressLayout = () => {
         margin: spacers.sm,
     });
 };
+const usesPrintSpacerLayout = () => {
+    return style({
+        // layouts:
+        display: 'grid', // hide the <Content> if [screen mode]
+        gridTemplate: [[
+            '"scissors line" auto',
+            '/',
+            'auto 1fr',
+        ]],
+        alignItems: 'center', // center vertically
+        
+        
+        
+        // spacings:
+        paddingBlock : spacers.lg,
+        
+        
+        
+        // children:
+        ...children('.scissors', {
+            // positions:
+            gridArea: 'scissors',
+        }),
+        ...children('.line', {
+            // positions:
+            gridArea: 'line',
+            
+            
+            
+            // borders:
+            borderBlockStartStyle: 'dashed',
+            borderBlockStartWidth : borders.thin,
+            
+            
+            
+            // spacings:
+            margin: 0,
+        }),
+    });
+};
 
 export default () => [
     scope('cardBody', {
@@ -453,6 +511,9 @@ export default () => [
     scope('tabBody', {
         ...usesTabBodyLayout(),
     }, { specificityWeight: 2 }),
+    scope('typos', {
+        ...usesTyposLayout(),
+    }),
     
     scope('orderShippingTab', {
         ...usesOrderShippingTabLayout(),
@@ -468,6 +529,9 @@ export default () => [
     }, { specificityWeight: 2 }),
     scope('orderDeliverySection', {
         ...usesOrderDeliverySectionLayout(),
+    }),
+    scope('actionSection', {
+        ...usesActionSectionLayout(),
     }),
     
     scope('paymentTab', {
@@ -486,5 +550,9 @@ export default () => [
     }),
     scope('editShippingAddress', {
         ...usesEditShippingAddressLayout(),
+    }, { specificityWeight: 2 }),
+    
+    scope('printSpacer', {
+        ...usesPrintSpacerLayout(),
     }, { specificityWeight: 2 }),
 ];

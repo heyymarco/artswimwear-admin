@@ -30,7 +30,7 @@ import { WysiwygEditorState, WysiwygEditor, ToolbarPlugin, EditorPlugin } from '
 // styles:
 const useFullEditDialogStyleSheet = dynamicStyleSheets(
     () => import(/* webpackPrefetch: true */'./FullEditDialogStyles')
-, { id: 'pkeb1tledn' }); // need 3 degrees to overwrite `.cardClass.body`
+, { id: 'pkeb1tledn' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 
 
 
