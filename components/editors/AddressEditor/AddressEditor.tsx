@@ -19,14 +19,23 @@ import {
 import {
     // react helper hooks:
     useEvent,
+    
+    
+    
+    // an accessibility management system:
+    AccessibilityProvider,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
 import {
     // react components:
     IndicatorProps,
-    Indicator,
-}                           from '@reusable-ui/indicator'       // a base component
+    
+    
+    
+    // simple-components:
+    Form,
+}                           from '@reusable-ui/components'  // a set of official Reusable-UI components
 
 // heymarco components:
 import {
@@ -80,21 +89,16 @@ Object.freeze(emptyAddressValue);
 
 // react components:
 export type AddressValue = Omit<AddressSchema, '_id'>
-export interface AddressEditorProps<TElement extends Element = HTMLElement>
+export interface AddressEditorProps
     extends
         // bases:
-        Pick<EditorProps<TElement, AddressValue>,
+        Pick<EditorProps<HTMLElement, AddressValue>,
             // values:
             |'defaultValue' // supported
             |'value'        // supported
             |'onChange'     // supported
         >,
         Pick<AddressFieldsProps,
-            // refs:
-            |'addressRef'
-            
-            
-            
             // values:
             |'countryList'  // supported
             
@@ -103,7 +107,7 @@ export interface AddressEditorProps<TElement extends Element = HTMLElement>
             // formats:
             |'addressType'
         >,
-        Omit<IndicatorProps<TElement>,
+        Omit<IndicatorProps<HTMLFormElement>,
             // values:
             |'defaultValue' // taken over by EditorProps
             |'value'        // taken over by EditorProps
@@ -116,7 +120,7 @@ export interface AddressEditorProps<TElement extends Element = HTMLElement>
         >
 {
 }
-const AddressEditor = <TElement extends Element = HTMLElement>(props: AddressEditorProps<TElement>): JSX.Element|null => {
+const AddressEditor = (props: AddressEditorProps): JSX.Element|null => {
     // styles:
     const styleSheet = useAddressEditorStyleSheet();
     
@@ -124,11 +128,6 @@ const AddressEditor = <TElement extends Element = HTMLElement>(props: AddressEdi
     
     // rest props:
     const {
-        // refs:
-        addressRef,
-        
-        
-        
         // values:
         defaultValue,
         value,
@@ -140,6 +139,18 @@ const AddressEditor = <TElement extends Element = HTMLElement>(props: AddressEdi
         // formats:
         addressType,
     ...restIndicatorProps} = props;
+    
+    const {
+        // accessibilities:
+        enabled,         // take
+        inheritEnabled,  // take
+        
+        active,          // take
+        inheritActive,   // take
+        
+        readOnly,        // take
+        inheritReadOnly, // take
+    ...restFormProps} = restIndicatorProps;
     
     
     
@@ -216,9 +227,9 @@ const AddressEditor = <TElement extends Element = HTMLElement>(props: AddressEdi
     
     // jsx:
     return (
-        <Indicator<TElement>
+        <Form
             // other props:
-            {...restIndicatorProps}
+            {...restFormProps}
             
             
             
@@ -230,45 +241,52 @@ const AddressEditor = <TElement extends Element = HTMLElement>(props: AddressEdi
             // classes:
             mainClass={props.mainClass ?? styleSheet.main}
         >
-            <AddressFields
-                // refs:
-                addressRef        = {addressRef}
+            <AccessibilityProvider
+                // accessibilities:
+                enabled         = {enabled        }
+                inheritEnabled  = {inheritEnabled }
                 
+                active          = {active         }
+                inheritActive   = {inheritActive  }
                 
-                
-                // types:
-                addressType       = {addressType}
-                
-                
-                
-                // values:
-                firstName         = {valueFn?.firstName}
-                lastName          = {valueFn?.lastName }
-                
-                phone             = {valueFn?.phone    }
-                
-                address           = {valueFn?.address  }
-                city              = {valueFn?.city     }
-                zone              = {valueFn?.zone     }
-                zip               = {valueFn?.zip      }
-                country           = {valueFn?.country  }
-                countryList       = {countryList       }
-                
-                
-                
-                // events:
-                onFirstNameChange = {handleFirstNameChange}
-                onLastNameChange  = {handleLastNameChange }
-                
-                onPhoneChange     = {handlePhoneChange    }
-                
-                onAddressChange   = {handleAddressChange  }
-                onCityChange      = {handleCityChange     }
-                onZoneChange      = {handleZoneChange     }
-                onZipChange       = {handleZipChange      }
-                onCountryChange   = {handleCountryChange  }
-            />
-        </Indicator>
+                readOnly        = {readOnly       }
+                inheritReadOnly = {inheritReadOnly}
+            >
+                <AddressFields
+                    // types:
+                    addressType       = {addressType}
+                    
+                    
+                    
+                    // values:
+                    firstName         = {valueFn?.firstName}
+                    lastName          = {valueFn?.lastName }
+                    
+                    phone             = {valueFn?.phone    }
+                    
+                    address           = {valueFn?.address  }
+                    city              = {valueFn?.city     }
+                    zone              = {valueFn?.zone     }
+                    zip               = {valueFn?.zip      }
+                    country           = {valueFn?.country  }
+                    countryList       = {countryList       }
+                    
+                    
+                    
+                    // handlers:
+                    onFirstNameChange = {handleFirstNameChange}
+                    onLastNameChange  = {handleLastNameChange }
+                    
+                    onPhoneChange     = {handlePhoneChange    }
+                    
+                    onAddressChange   = {handleAddressChange  }
+                    onCityChange      = {handleCityChange     }
+                    onZoneChange      = {handleZoneChange     }
+                    onZipChange       = {handleZipChange      }
+                    onCountryChange   = {handleCountryChange  }
+                />
+            </AccessibilityProvider>
+        </Form>
     );
 };
 export {
