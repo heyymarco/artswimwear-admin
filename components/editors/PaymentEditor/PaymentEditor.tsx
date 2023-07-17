@@ -140,8 +140,6 @@ export interface PaymentEditorProps
             |'children'     // not supported
         >
 {
-    // refs:
-    paymentRef ?: React.Ref<HTMLButtonElement> // setter ref
 }
 const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     // styles:
@@ -151,11 +149,6 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     
     // rest props:
     const {
-        // refs:
-        paymentRef,
-        
-        
-        
         // values:
         defaultValue,
         value,
@@ -288,11 +281,6 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                         // components:
                         buttonComponent={
                             <EditableButton
-                                // refs:
-                                elmRef={paymentRef}
-                                
-                                
-                                
                                 // validations:
                                 isValid={!!brand}
                                 assertiveFocusable={true}
