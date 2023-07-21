@@ -2,7 +2,7 @@
 
 import { styleSheets } from '@cssfn/core'
 
-import './StylesCSR'                    // client_side_rendering CSS (required)
+import { StylesCSR } from './StylesCSR' // client_side_rendering CSS (required)
 import { StylesSSR } from './StylesSSR' // server_side_rendering CSS (optional)
 
 import '@/theme.config'
@@ -41,6 +41,7 @@ export default function RootLayout({
     return (
         <html lang={WEBSITE_LANGUAGE}>
             <head>
+                <StylesCSR />
                 <StylesSSR />
             </head>
             <body>
