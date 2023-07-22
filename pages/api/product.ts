@@ -2,54 +2,32 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createRouter } from 'next-connect'
 
-import { connectDB } from '@/libs/dbConn'
-import { default as Product, ProductSchema } from '@/models/Product'
-import type { HydratedDocument } from 'mongoose'
+import { prisma } from '@/libs/prisma.server'
+import type { Product } from '@/libs/prisma.models'
 import type { Pagination } from '@/libs/types'
-import type { WysiwygEditorState } from '@/components/editors/WysiwygEditor'
 
 
 
 // types:
 export interface ProductPreview
     extends
-        Pick<ProductSchema,
+        Pick<Product,
+            |'id'
             |'name'
             |'price'
             |'shippingWeight'
         >
 {
-    _id         : string
-    image       : Required<ProductSchema>['images'][number]
+    image       : Required<Product>['images'][number]|undefined
 }
 export interface ProductDetail
     extends
-        Omit<ProductSchema,
-            |'_id'
-            |'shippingWeight'
-            |'stock'
-            |'description'
+        Omit<Product,
+            |'createdAt'
+            |'updatedAt'
         >
 {
-    _id            : string
-    
-    shippingWeight : number|null|undefined
-    
-    stock          : number|null|undefined
-    
-    description    : WysiwygEditorState|null|undefined
 }
-
-
-
-try {
-    await connectDB(); // top level await
-    console.log('connected to mongoDB!');
-}
-catch (error) {
-    console.log('FAILED to connect mongoDB!');
-    throw error;
-} // try
 
 
 
@@ -58,6 +36,7 @@ const router = createRouter<
     NextApiResponse<
         |ProductPreview[]
         |Pagination<ProductDetail>
+        |ProductDetail
         |{ error: any }
     >
 >();
@@ -69,12 +48,23 @@ router
 // .use(expressWrapper(passport.session()))
 .get(async (req, res) => {
     return res.json(
-        await Product.find<HydratedDocument<ProductPreview>>({}, {
-            _id            : true,
-            name           : true,
-            price          : true,
-            shippingWeight : true,
-            image          : { $first: "$images" },
+        (await prisma.product.findMany({
+            select: {
+                id             : true,
+                name           : true,
+                price          : true,
+                shippingWeight : true,
+                images         : true,
+            },
+        }))
+        .map((product) => {
+            const {
+                images, // take
+            ...restProduct} = product;
+            return {
+                ...restProduct,
+                image : images?.[0]
+            };
         })
     );
 })
@@ -111,32 +101,34 @@ router
     
     
     
-    const total = await Product.count();
     return res.json({
-        total,
-        entities: (await Product.find<HydratedDocument<ProductDetail>>({}, {
-            _id            : true,
-            
-            visibility     : true,
-            
-            name           : true,
-            
-            price          : true,
-            shippingWeight : true,
-            
-            stock          : true,
-            
-            path           : true,
-            
-            excerpt        : true,
-            description    : true,
-            
-            images         : true,
-        }, {
-            sort  : { _id: -1 },
-            skip  : (page - 1) * perPage, // note: not scaleable but works in small commerce app -- will be fixed in the future
-            limit : perPage,
-        }))
+        total    : await prisma.product.count(),
+        entities : await prisma.product.findMany({
+            select: {
+                id             : true,
+                
+                visibility     : true,
+                
+                name           : true,
+                
+                price          : true,
+                shippingWeight : true,
+                
+                stock          : true,
+                
+                path           : true,
+                
+                excerpt        : true,
+                description    : true,
+                
+                images         : true,
+            },
+            orderBy : {
+                id: 'desc',
+            },
+            skip    : (page - 1) * perPage, // note: not scaleable but works in small commerce app -- will be fixed in the future
+            take    : perPage,
+        })
     });
 })
 .patch(async (req, res) => {
@@ -154,7 +146,7 @@ router
     
     //#region parsing request
     const {
-        _id,
+        id,
         
         visibility,
         
@@ -165,16 +157,21 @@ router
         
         stock,
         
-        description,
-        images,
         path,
+        
+        excerpt,
+        description,
+        
+        images,
     } = req.body;
     //#endregion parsing request
     
     
     
     //#region validating request
-    if ((typeof(_id) !== 'string') || (_id.length < 1)
+    if (
+        // (typeof(id) !== 'string') || (id.length < 1)
+        (typeof(id) !== 'string')
         ||
         ((name !== undefined) && ((typeof(name) !== 'string') || (name.length < 1)))
         
@@ -182,52 +179,65 @@ router
     ) {
         return res.status(400).json({ error: 'invalid data' });
     } // if
-    const product = await Product.findById(_id, {
-        _id            : true,
-        
-        visibility     : true,
-        
-        name           : true,
-        
-        price          : true,
-        shippingWeight : true,
-        
-        stock          : true,
-        
-        path           : true,
-        
-        excerpt        : true,
-        description    : true,
-        
-        images         : true,
-    });
-    if (!product) return res.status(400).json({ error: 'invalid ID' });
-    //#endregion validating request
-    
-    
-    
-    //#region save changes
-    if (visibility     !== undefined) product.visibility     = visibility;
-    
-    if (name           !== undefined) product.name           = name;
-    
-    if (price          !== undefined) product.price          = price;
-    if (shippingWeight !== undefined) product.shippingWeight = shippingWeight ?? undefined;
-    
-    if (stock          !== undefined) product.stock          = stock          ?? undefined;
-    
-    if (description    !== undefined) product.description    = description;
-    if (images         !== undefined) product.images         = images;
-    if (path           !== undefined) product.path           = path;
-    
     try {
-        await product.save();
-        res.status(200).json(product);
+        const data = {
+            visibility,
+            
+            name,
+            
+            price,
+            shippingWeight,
+            
+            stock,
+            
+            path,
+            
+            excerpt,
+            description,
+            
+            images,
+        };
+        const select = {
+            id             : true,
+            
+            visibility     : true,
+            
+            name           : true,
+            
+            price          : true,
+            shippingWeight : true,
+            
+            stock          : true,
+            
+            path           : true,
+            
+            excerpt        : true,
+            description    : true,
+            
+            images         : true,
+        };
+        const product = (
+            !id
+            ? await prisma.product.create({
+                data   : data,
+                select : select,
+            })
+            : await prisma.product.update({
+                where  : {
+                    id : id,
+                },
+                data   : data,
+                select : select,
+            })
+        );
+        return res.status(200).json(product);
     }
-    catch (error) {
-        res.status(500).json({ error: error });
+    catch (error: any) {
+        console.log('ERROR: ', error);
+        // if (error instanceof RecordNotFound) return res.status(400).json({ error: 'invalid ID' });
+        return res.status(500).json({ error: error });
     } // try
-    //#endregion save changes
+    //#endregion validating request
 });
 
 

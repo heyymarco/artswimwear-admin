@@ -40,8 +40,32 @@ const imageSize = 128;  // 128px
 const usePageStyleSheet = dynamicStyleSheets(
     () => import(/* webpackPrefetch: true */'./pageStyles')
 , { id: 'products-pcyfaeow8d' });
+import './pageStyles';
 
 
+
+const ProductCreate = () => {
+    // styles:
+    const styles = usePageStyleSheet();
+    
+    
+    
+    // states:
+    const [showAddNew, setShowAddNew] = useState<boolean>(false);
+    
+    
+    
+    return (
+        <ListItem className={styles.productCreate}>
+            <ButtonIcon icon='create' onClick={() => setShowAddNew(true)}>
+                Add New Product
+            </ButtonIcon>
+            <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setShowAddNew(false)}>
+                {showAddNew && <FullEditDialog product={undefined} onClose={() => setShowAddNew(false)} />}
+            </ModalStatus>
+        </ListItem>
+    );
+};
 
 interface ProductItemProps extends ListItemProps {
     product: ProductDetail
@@ -66,7 +90,7 @@ const ProductItem = (props: ProductItemProps) => {
     
     
     // states:
-    type EditMode = Exclude<keyof ProductDetail, '_id'>|'images'|'full'
+    type EditMode = Exclude<keyof ProductDetail, 'id'>|'images'|'full'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     
@@ -252,8 +276,9 @@ export default function Products() {
                     </ModalStatus>
                     
                     {!!products && <List listStyle='flush' className={styles.productListInner}>
+                        <ProductCreate />
                         {Object.values(products?.entities).filter((product): product is Exclude<typeof product, undefined> => !!product).map((product, index) =>
-                            <ProductItem key={product._id ?? (`${page}-${index}`)} product={product} />
+                            <ProductItem key={product.id ?? (`${page}-${index}`)} product={product} />
                         )}
                     </List>}
                 </Basic>

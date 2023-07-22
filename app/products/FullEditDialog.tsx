@@ -3,7 +3,7 @@
 import { default as React } from 'react'
 import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 
-import { ButtonIcon, Generic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, List, Carousel, Masonry, masonries } from '@reusable-ui/components';
+import { ButtonIcon, Generic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, List, Carousel, Masonry, masonries, Form } from '@reusable-ui/components';
 import { ProductDetail, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { getCurrencySign } from '@/libs/formatters';
@@ -18,12 +18,13 @@ import { CurrencyEditor } from '@/components/editors/CurrencyEditor'
 import { ShippingWeightEditor } from '@/components/editors/ShippingWeightEditor'
 import { StockEditor } from '@/components/editors/StockEditor'
 import { GalleryEditor } from '@/components/editors/GalleryEditor/GalleryEditor'
-import { ProductVisibility, VisibilityEditor } from '@/components/editors/VisibilityEditor'
+import { VisibilityEditor } from '@/components/editors/VisibilityEditor'
 import { Tab, TabPanel } from '@reusable-ui/components'
 import { Image } from '@heymarco/image'
 import axios from 'axios'
 import { resolveMediaUrl } from '@/libs/mediaStorage.client'
-import { WysiwygEditorState, WysiwygEditor, ToolbarPlugin, EditorPlugin } from '@/components/editors/WysiwygEditor';
+import { WysiwygEditorState, WysiwygEditor, ToolbarPlugin, EditorPlugin } from '@/components/editors/WysiwygEditor'
+import type { ProductVisibility } from '@/libs/prisma.models'
 
 
 
@@ -34,10 +35,33 @@ const useFullEditDialogStyleSheet = dynamicStyleSheets(
 
 
 
+// utilities:
+const emptyProduct : ProductDetail = {
+    id             : '',
+    
+    visibility     : 'DRAFT',
+    
+    name           : '',
+    
+    price          : 0,
+    shippingWeight : null,
+    
+    stock          : null,
+    
+    path           : '',
+    
+    excerpt        : null,
+    description    : null,
+    
+    images         : [],
+};
+
+
+
 // react components:
 export interface FullEditDialogProps {
     // data:
-    product                  : ProductDetail
+    product                 ?: ProductDetail
     defaultExpandedTabIndex ?: number
     
     
@@ -54,7 +78,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
     // rest props:
     const {
         // data:
-        product,
+        product = emptyProduct,
         defaultExpandedTabIndex,
         
         
@@ -82,7 +106,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
         if (!description) return null;
         if (typeof(description) === 'object') return description as any;
         try {
-            return JSON.parse(description);
+            return JSON.parse(description.toString());
         }
         catch {
             return null;
@@ -98,7 +122,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
     
     // refs:
     const firstEditorRef     = useRef<HTMLInputElement|null>(null); // TODO: finish this
-    const editorContainerRef = useRef<HTMLElement|null>(null); // TODO: finish this
+    const editorContainerRef = useRef<HTMLFormElement|null>(null); // TODO: finish this
     
     
     
@@ -135,7 +159,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
         
         try {
             await updateProduct({
-                _id    : product._id,
+                id             : product.id,
                 
                 visibility,
                 name,
@@ -144,12 +168,13 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                 shippingWeight : shippingWeight,
                 stock          : stock,
                 images,
-                description    : description,
+                description    : (description?.toJSON?.() ?? description) as any,
             }).unwrap();
             
             onClose();
         }
         catch (error: any) {
+            console.log('error: ', error);
             const errorStatus = error?.status;
             setErrorMessage(<>
                 <p>Oops, an error occured!</p>
@@ -258,23 +283,25 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                     onKeyDown={handleKeyDown}
                 >
                     <TabPanel label={PAGE_PRODUCTS_TAB_INFORMATIONS} panelComponent={<Generic className={styles.infoTab} />}>
-                        <span className='name label'>Name:</span>
-                        <TextEditor           className='name editor'       value={name}           onChange={(value) => { setName(value); setIsModified(true); handleNameChange(value); }} />
-                        
-                        <span className='path label'>Path:</span>
-                        <PathEditor           className='path editor'       value={path}           onChange={(value) => { setPath(value); setIsPathModified(true); }} homeUrl={STORE_WEBSITE_URL} />
-                        
-                        <span className='price label'>Price:</span>
-                        <CurrencyEditor       className='price editor'      value={price}          onChange={(value) => { setPrice(value ?? 0); setIsModified(true); }} currencySign={getCurrencySign()} currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX} />
-                        
-                        <span className='sWeight label'>Shipping Weight:</span>
-                        <ShippingWeightEditor className='sWeight editor'    value={shippingWeight} onChange={(value) => { setShippingWeight(value); setIsModified(true); }} />
-                        
-                        <span className='stock label'>Stock:</span>
-                        <StockEditor          className='stock editor'      value={stock}          onChange={(value) => { setStock(value)     ; setIsModified(true); }} theme='secondary' />
-                        
-                        <span className='visibility label'>Visibility:</span>
-                        <VisibilityEditor     className='visibility editor' value={visibility}     onChange={(value) => { setVisibility(value); setIsModified(true); }} theme='secondary' />
+                        <form ref={editorContainerRef}>
+                            <span className='name label'>Name:</span>
+                            <TextEditor           className='name editor'       required={true}  value={name}           onChange={(value) => { setName(value); setIsModified(true); handleNameChange(value); }} />
+                            
+                            <span className='path label'>Path:</span>
+                            <PathEditor           className='path editor'       required={true}  value={path}           onChange={(value) => { setPath(value); setIsPathModified(true); }} homeUrl={STORE_WEBSITE_URL} isValid={!!path} />
+                            
+                            <span className='price label'>Price:</span>
+                            <CurrencyEditor       className='price editor'      required={true}  value={price}          onChange={(value) => { setPrice(value ?? 0); setIsModified(true); }} currencySign={getCurrencySign()} currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX} />
+                            
+                            <span className='sWeight label'>Shipping Weight:</span>
+                            <ShippingWeightEditor className='sWeight editor'    required={false} value={shippingWeight} onChange={(value) => { setShippingWeight(value); setIsModified(true); }} />
+                            
+                            <span className='stock label'>Stock:</span>
+                            <StockEditor          className='stock editor'                       value={stock}          onChange={(value) => { setStock(value)     ; setIsModified(true); }} theme='secondary' />
+                            
+                            <span className='visibility label'>Visibility:</span>
+                            <VisibilityEditor     className='visibility editor'                  value={visibility}     onChange={(value) => { setVisibility(value); setIsModified(true); }} theme='secondary' />
+                        </form>
                     </TabPanel>
                     <TabPanel label={PAGE_PRODUCTS_TAB_IMAGES}       panelComponent={<Generic className={styles.imagesTab} />}>
                         <GalleryEditor<HTMLElement, string>

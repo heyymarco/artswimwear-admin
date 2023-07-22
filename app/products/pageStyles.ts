@@ -36,19 +36,20 @@ const usesProductListLayout = () => { // the <section> of product list
         // layouts:
         ...style({
             // positions:
-            gridArea: 'productList',
+            gridArea  : 'productList',
+            alignSelf : 'start',
             
             
             
             // layouts:
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'center',
+            justifyContent: 'start',
             
             
             
-            // sizes:
-            minBlockSize : '150px', // a temporary fix for empty loading appearance
+            // // sizes:
+            // minBlockSize : '150px', // a temporary fix for empty loading appearance
             
             
             
@@ -70,6 +71,7 @@ const usesProductListInnerLayout = () => { // the <List> of product list
     
     
     return style({
+        // borders:
         [groupableVars.borderStartStartRadius] : 'inherit !important', // reads parent's prop
         [groupableVars.borderStartEndRadius  ] : 'inherit !important', // reads parent's prop
         [groupableVars.borderEndStartRadius  ] : 'inherit !important', // reads parent's prop
@@ -79,6 +81,12 @@ const usesProductListInnerLayout = () => { // the <List> of product list
         [borderVars.borderStartEndRadius  ] : groupableVars.borderStartEndRadius,
         [borderVars.borderEndStartRadius  ] : groupableVars.borderEndStartRadius,
         [borderVars.borderEndEndRadius    ] : groupableVars.borderEndEndRadius,
+    });
+};
+const usesProductCreateLayout = () => { // the <ListItem> of product add_new
+    return style({
+        display: 'flex',
+        flexDirection: 'column',
     });
 };
 const usesProductItemLayout = () => { // the <ListItem> of product list
@@ -293,6 +301,9 @@ export default () => [
             alignSelf: 'stretch',
         }),
     }, { specificityWeight: 2 }),
+    scope('productCreate', { // the <ListItem> of product add_new
+        ...usesProductCreateLayout(),
+    }),
     scope('productItem', { // the <ListItem> of product list
         ...usesProductItemLayout(),
     }, { specificityWeight: 2 }),

@@ -31,11 +31,15 @@ import {
     PAGE_PRODUCTS_VISIBILITY_DRAFT,
 }                           from '@/website.config'
 
+// models:
+import {
+    ProductVisibility,
+}                           from '@/libs/prisma.models'
+
 
 
 // types:
-export type ProductVisibility = 'published'|'hidden'|'draft'
-const possibleValues : ProductVisibility[] = ['published', 'hidden', 'draft'];
+const possibleValues : ProductVisibility[] = ['PUBLISHED', 'HIDDEN', 'DRAFT'];
 
 
 
@@ -89,7 +93,7 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
             
             
             // states:
-            defaultExpandedTabIndex={possibleValues.findIndex((possibleValue) => (possibleValue === (value ?? defaultValue)))}
+            defaultExpandedTabIndex={possibleValues.findIndex((possibleValue) => (possibleValue.toUpperCase() === (value ?? defaultValue)?.toUpperCase()))}
             onExpandedChange={handleExpandedChange}
         >
             <TabPanel label={PAGE_PRODUCTS_VISIBILITY_PUBLISHED}>

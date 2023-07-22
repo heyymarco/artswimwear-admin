@@ -36,7 +36,8 @@ const usesOrderListLayout = () => { // the <section> of order list
         // layouts:
         ...style({
             // positions:
-            gridArea: 'orderList',
+            gridArea  : 'orderList',
+            alignSelf : 'start',
             
             
             

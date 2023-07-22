@@ -14,7 +14,7 @@ const shippingListAdapter = createEntityAdapter<ShippingPreview>({
     selectId : (shippingPreview) => shippingPreview._id,
 });
 const productListAdapter = createEntityAdapter<ProductPreview>({
-    selectId : (productPreview) => productPreview._id,
+    selectId : (productPreview) => productPreview.id,
 });
 
 
@@ -42,7 +42,7 @@ export const apiSlice = createApi({
                 return [
                     ...(result?.entities ?? []).map((product): { type: 'Products', id: string } => ({
                         type : 'Products',
-                        id   : product._id,
+                        id   : product.id,
                     })),
                     
                     {
@@ -52,7 +52,7 @@ export const apiSlice = createApi({
                 ];
             },
         }),
-        updateProduct   : builder.mutation<ProductDetail, Pick<ProductDetail, '_id'> & Partial<Omit<ProductDetail, '_id'>>>({
+        updateProduct   : builder.mutation<ProductDetail, Pick<ProductDetail, 'id'> & Partial<Omit<ProductDetail, 'id'>>>({
             query: (patch) => ({
                 url    : 'product',
                 method : 'PATCH',
@@ -63,7 +63,7 @@ export const apiSlice = createApi({
             // invalidatesTags: (result, error, page) => [
             //     ...((!result ? [] : [{
             //         type : 'Products',
-            //         id   : result._id,
+            //         id   : result.id,
             //     }]) as Array<{ type: 'Products', id: string }>),
             // ],
             
@@ -76,14 +76,25 @@ export const apiSlice = createApi({
                 const state = api.getState();
                 const queries = state.api.queries;
                 const getProductPageName = apiSlice.endpoints.getProductPage.name;
-                const obsoleteQueryArgs = (
+                const matchingQueryArgs = (
                     Object.values(queries)
                     .filter((query): query is Exclude<typeof query, undefined> =>
                         !!query
                         &&
                         (query.endpointName === getProductPageName)
-                        &&
-                        !!(query.data as Pagination<ProductDetail>|undefined)?.entities.some((searchProduct) => (searchProduct._id === updatedProduct._id))
+                    )
+                );
+                const obsoleteQueryArgs = (
+                    matchingQueryArgs
+                    .filter((query) =>
+                        /*found id: */ !!(query.data as Pagination<ProductDetail>|undefined)?.entities.some((searchProduct) => (searchProduct.id === updatedProduct.id))
+                    )
+                    .map((query) => query.originalArgs)
+                );
+                const missingQueryArgs = (
+                    matchingQueryArgs
+                    .filter((query) =>
+                        /*missing id: */ !(query.data as Pagination<ProductDetail>|undefined)?.entities.some((searchProduct) => (searchProduct.id === updatedProduct.id))
                     )
                     .map((query) => query.originalArgs)
                 );
@@ -92,9 +103,17 @@ export const apiSlice = createApi({
                 for (const obsoleteQueryArg of obsoleteQueryArgs) {
                     api.dispatch(
                         apiSlice.util.updateQueryData('getProductPage', obsoleteQueryArg as any, (draft) => {
-                            const obsoleteProductIndex = draft.entities.findIndex((searchProduct) => (searchProduct._id === updatedProduct._id));
+                            const obsoleteProductIndex = draft.entities.findIndex((searchProduct) => (searchProduct.id === updatedProduct.id));
                             if (obsoleteProductIndex < 0) return;
                             draft.entities[obsoleteProductIndex] = updatedProduct; // sync
+                        })
+                    );
+                } // for
+                for (const missingQueryArg of missingQueryArgs) {
+                    api.dispatch(
+                        apiSlice.util.updateQueryData('getProductPage', missingQueryArg as any, (draft) => {
+                            draft.entities.unshift(updatedProduct); // append at index 0
+                            console.log('added: ', draft.entities, 'missingQueryArg: ', missingQueryArg, 'matchingQueryArgs: ', matchingQueryArgs);
                         })
                     );
                 } // for

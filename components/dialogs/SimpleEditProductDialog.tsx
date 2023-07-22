@@ -38,7 +38,7 @@ export const SimpleEditProductDialog = <TValue extends any>(props: SimpleEditPro
     });
     const handleUpdateModel  = useEvent<UpdateModelEventHandler<TValue, ProductDetail, keyof ProductDetail>>(async (value, edit, model) => {
         await updateProduct({
-            _id    : model._id,
+            id     : model.id,
             
             [edit] : value,
         }).unwrap();
