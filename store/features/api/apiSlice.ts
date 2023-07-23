@@ -75,8 +75,8 @@ export const apiSlice = createApi({
                 // find obsolete product data(s):
                 const state = api.getState();
                 const queries = state.api.queries;
-                const getProductPageName = apiSlice.endpoints.getProductPage.name;
-                const matchingQueryArgs = (
+                const getProductPageName  = apiSlice.endpoints.getProductPage.name;
+                const getProductPageQueries = (
                     Object.values(queries)
                     .filter((query): query is Exclude<typeof query, undefined> =>
                         !!query
@@ -84,39 +84,85 @@ export const apiSlice = createApi({
                         (query.endpointName === getProductPageName)
                     )
                 );
-                const obsoleteQueryArgs = (
-                    matchingQueryArgs
+                const obsoleteQueries = (
+                    getProductPageQueries
                     .filter((query) =>
                         /*found id: */ !!(query.data as Pagination<ProductDetail>|undefined)?.entities.some((searchProduct) => (searchProduct.id === updatedProduct.id))
                     )
-                    .map((query) => query.originalArgs)
                 );
-                const missingQueryArgs = (
-                    matchingQueryArgs
+                const missingQueries = (
+                    getProductPageQueries
                     .filter((query) =>
                         /*missing id: */ !(query.data as Pagination<ProductDetail>|undefined)?.entities.some((searchProduct) => (searchProduct.id === updatedProduct.id))
                     )
-                    .map((query) => query.originalArgs)
                 );
                 
                 // synch the obsolete product data(s) to the updated one:
-                for (const obsoleteQueryArg of obsoleteQueryArgs) {
-                    api.dispatch(
-                        apiSlice.util.updateQueryData('getProductPage', obsoleteQueryArg as any, (draft) => {
-                            const obsoleteProductIndex = draft.entities.findIndex((searchProduct) => (searchProduct.id === updatedProduct.id));
-                            if (obsoleteProductIndex < 0) return;
-                            draft.entities[obsoleteProductIndex] = updatedProduct; // sync
-                        })
-                    );
-                } // for
-                for (const missingQueryArg of missingQueryArgs) {
-                    api.dispatch(
-                        apiSlice.util.updateQueryData('getProductPage', missingQueryArg as any, (draft) => {
-                            draft.entities.unshift(updatedProduct); // append at index 0
-                            console.log('added: ', draft.entities, 'missingQueryArg: ', missingQueryArg, 'matchingQueryArgs: ', matchingQueryArgs);
-                        })
-                    );
-                } // for
+                if (obsoleteQueries.length) {
+                    for (const obsoleteQuery of obsoleteQueries) {
+                        api.dispatch(
+                            apiSlice.util.updateQueryData('getProductPage', obsoleteQuery.originalArgs as any, (draft) => {
+                                const obsoleteProductIndex = draft.entities.findIndex((searchProduct) => (searchProduct.id === updatedProduct.id));
+                                if (obsoleteProductIndex < 0) return;
+                                draft.entities[obsoleteProductIndex] = updatedProduct; // sync
+                            })
+                        );
+                    } // for
+                } // if
+                if (missingQueries.length) {
+                    const shiftedDataMap : ProductDetail[] = [updatedProduct];
+                    for (const getProductPageQuery of getProductPageQueries) {
+                        const {
+                            page    = 1,
+                            perPage = 1,
+                        } = getProductPageQuery.originalArgs as { page?: number, perPage?: number };
+                        
+                        const baseIndex  = (page - 1) * perPage;
+                        let   subIndex   = 0;
+                        const shiftCount = 1;
+                        for (const productDetail of (getProductPageQuery.data as Pagination<ProductDetail>).entities) {
+                            shiftedDataMap[baseIndex + (subIndex++) + shiftCount] = productDetail;
+                        } // for
+                    } // for
+                    
+                    let tailPaginationTotal : number = 0;
+                    for (const missingQuery of missingQueries) {
+                        api.dispatch(
+                            apiSlice.util.updateQueryData('getProductPage', missingQuery.originalArgs as any, (draft) => {
+                                const {
+                                    page    = 1,
+                                    perPage = 1,
+                                } = missingQuery.originalArgs as { page?: number, perPage?: number };
+                                
+                                const baseIndex  = (page - 1) * perPage;
+                                const insertedProduct : ProductDetail|undefined = shiftedDataMap?.[baseIndex];
+                                if (insertedProduct) {
+                                    draft.entities.unshift(insertedProduct); // append at first index
+                                    tailPaginationTotal = (draft.entities.length > perPage) ? (++draft.total) : 0;
+                                    if (tailPaginationTotal) draft.entities.pop(); // remove at last index
+                                }
+                                else {
+                                    tailPaginationTotal = 0;
+                                } // if
+                            })
+                        );
+                    } // for
+                    if (tailPaginationTotal && shiftedDataMap.length) {
+                        const lastPagination : Pagination<ProductDetail> = {
+                            total    : tailPaginationTotal,
+                            entities : [
+                                shiftedDataMap[shiftedDataMap.length - 1] // take the last
+                            ],
+                        };
+                        const perPage = (missingQueries?.[0]?.originalArgs as ({ page?: number, perPage?: number }|undefined))?.perPage ?? 1;
+                        api.dispatch(
+                            apiSlice.util.upsertQueryData('getProductPage', {
+                                page    : Math.ceil(tailPaginationTotal / perPage),
+                                perPage : perPage
+                            }, lastPagination)
+                        );
+                    } // if
+                } // if
             },
         }),
         

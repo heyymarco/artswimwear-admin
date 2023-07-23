@@ -204,7 +204,7 @@ export default function Products() {
     
     // stores:
     const [page, setPage] = useState<number>(1);
-    const [perPage, setPerPage] = useState<number>(5);
+    const [perPage, setPerPage] = useState<number>(10);
     const {data: products, isLoading, isFetching, isError, refetch } = useGetProductPage({ page, perPage });
     const isErrorNoData  = isError && !products;
     const pages = Math.ceil((products?.total ?? 0) / perPage);
