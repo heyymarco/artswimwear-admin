@@ -37,7 +37,7 @@ model Product {
     
     images              String[]
     
-    orders              ProductsOnOrders[]
+    orders              OrdersOnProducts[]
 }
 
 
@@ -106,7 +106,7 @@ model Customer {
 
 
 
-model ProductsOnOrders {
+model OrdersOnProducts { // one Product can have many Order[] AND one Order can have many Product[]
     // @@id([productId, orderId])
     id                  String              @id @default(auto()) @map("_id") @db.ObjectId
     
@@ -152,7 +152,7 @@ model Order {
     updatedAt           DateTime            @updatedAt
     orderId             String              @unique // a secondary id for public identifier
     
-    items               ProductsOnOrders[]
+    items               OrdersOnProducts[]
     
     customerId          String              @db.ObjectId
     customer            Customer            @relation(fields: [customerId], references: [id], "OrdersOnCustomer") // one Customer can have many Order[] BUT one Order cannot have many Customer[]
