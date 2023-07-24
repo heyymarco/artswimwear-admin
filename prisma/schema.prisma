@@ -86,7 +86,7 @@ model ShippingProvider {
     useSpecificArea     Boolean?
     countries           CoverageCountry[]
     
-    orders              Order[]             @relation("OrdersOnShipping") // one Shipping can handle many Order[] BUT one Order cannot handle many Shipping[]
+    orders              Order[]             @relation("OrdersOnShipping") // one Shipping can have many Order[] BUT one Order cannot have many Shipping[]
 }
 
 
@@ -160,7 +160,7 @@ model Order {
     shippingAddress     Address?
     shippingCost        Float?              // min: 0
     shippingId          String              @db.ObjectId
-    shippingProvider    ShippingProvider    @relation(fields: [shippingId], references: [id], "OrdersOnShipping") // one Shipping can handle many Order[] BUT one Order cannot handle many Shipping[]
+    shippingProvider    ShippingProvider    @relation(fields: [shippingId], references: [id], "OrdersOnShipping") // one Shipping can have many Order[] BUT one Order cannot have many Shipping[]
     
     billingAddress      Address?
     paymentMethod       PaymentMethod
