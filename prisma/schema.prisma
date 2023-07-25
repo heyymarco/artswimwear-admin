@@ -38,6 +38,7 @@ model Product {
     images              String[]
     
     orders              OrdersOnProducts[]
+    draftOrders         DraftOrdersOnProducts[]
 }
 
 
@@ -87,6 +88,7 @@ model ShippingProvider {
     countries           CoverageCountry[]
     
     orders              Order[]             @relation("OrdersOnShipping") // one Shipping can have many Order[] BUT one Order cannot have many Shipping[]
+    draftOrders         DraftOrder[]        @relation("DraftOrdersOnShipping") // one Shipping can have many DraftOrder[] BUT one DraftOrder cannot have many Shipping[]
 }
 
 
@@ -106,20 +108,6 @@ model Customer {
 
 
 
-model OrdersOnProducts { // one Product can have many Order[] AND one Order can have many Product[]
-    // @@id([productId, orderId])
-    id                  String              @id @default(auto()) @map("_id") @db.ObjectId
-    
-    orderId             String              @db.ObjectId
-    order               Order               @relation(fields: [orderId]  , references: [id], onDelete: Cascade, onUpdate: Cascade)
-    
-    productId           String?             @db.ObjectId
-    product             Product?            @relation(fields: [productId], references: [id], onDelete: SetNull, onUpdate: Cascade)
-    
-    price               Float               // min: 0
-    shippingWeight      Float?              // min: 0
-    quantity            Int                 // min: 1
-}
 type Address {
     firstName           String              // minLength: 2 , maxLength: 30
     lastName            String              // minLength: 1 , maxLength: 30
@@ -164,4 +152,46 @@ model Order {
     
     billingAddress      Address?
     paymentMethod       PaymentMethod
+}
+model OrdersOnProducts { // one Product can have many Order[] AND one Order can have many Product[]
+    // @@id([productId, orderId])
+    id                  String              @id @default(auto()) @map("_id") @db.ObjectId
+    
+    orderId             String              @db.ObjectId
+    order               Order               @relation(fields: [orderId]  , references: [id], onDelete: Cascade, onUpdate: Cascade)
+    
+    productId           String?             @db.ObjectId
+    product             Product?            @relation(fields: [productId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+    
+    price               Float               // min: 0
+    shippingWeight      Float?              // min: 0
+    quantity            Int                 // min: 1
+}
+model DraftOrder {
+    id                  String              @id @default(auto()) @map("_id") @db.ObjectId
+    createdAt           DateTime            @default(now())
+    expiresAt           DateTime
+    orderId             String              @unique // a secondary id for public identifier
+    paypalOrderId       String?             @unique // a secondary id for public identifier
+    
+    items               DraftOrdersOnProducts[]
+    
+    shippingAddress     Address?
+    shippingCost        Float?              // min: 0
+    shippingId          String?             @db.ObjectId
+    shippingProvider    ShippingProvider?   @relation(fields: [shippingId], references: [id], "DraftOrdersOnShipping", onDelete: SetNull, onUpdate: Cascade) // one Shipping can have many DraftOrder[] BUT one DraftOrder cannot have many Shipping[]
+}
+model DraftOrdersOnProducts { // one Product can have many DraftOrder[] AND one DraftOrder can have many Product[]
+    // @@id([productId, draftOrderId])
+    id                  String              @id @default(auto()) @map("_id") @db.ObjectId
+    
+    draftOrderId        String              @db.ObjectId
+    draftOrder          DraftOrder          @relation(fields: [draftOrderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    
+    productId           String?             @db.ObjectId
+    product             Product?            @relation(fields: [productId]   , references: [id], onDelete: SetNull, onUpdate: Cascade)
+    
+    price               Float               // min: 0
+    shippingWeight      Float?              // min: 0
+    quantity            Int                 // min: 1
 }
