@@ -1,13 +1,19 @@
 import { createEntityAdapter, EntityState } from '@reduxjs/toolkit'
 import { BaseQueryFn, createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import type { Pagination } from '@/libs/types'
-import type { ProductPreview, ProductDetail } from '@/pages/api/product'
-export type { ProductPreview, ProductDetail } from '@/pages/api/product'
-import type { OrderDetail } from '@/pages/api/order'
-export type { OrderDetail } from '@/pages/api/order'
-import type { ShippingPreview } from '@/pages/api/shipping'
 import type { MutationCacheLifecycleApi } from '@reduxjs/toolkit/dist/query/endpointDefinitions'
-export type { ShippingPreview } from '@/pages/api/shipping'
+
+// types:
+import type {
+    Pagination,
+}                           from '@/libs/types'
+
+// apis:
+import type { ProductPreview, ProductDetail }   from '@/pages/api/product'
+export type { ProductPreview, ProductDetail }   from '@/pages/api/product'
+import type { OrderDetail }                     from '@/pages/api/order'
+export type { OrderDetail }                     from '@/pages/api/order'
+import type { ShippingPreview }                 from '@/pages/api/shipping'
+export type { ShippingPreview }                 from '@/pages/api/shipping'
 
 
 
