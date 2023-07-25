@@ -12,7 +12,7 @@ export type { ShippingPreview } from '@/pages/api/shipping'
 
 
 const shippingListAdapter = createEntityAdapter<ShippingPreview>({
-    selectId : (shippingPreview) => shippingPreview._id,
+    selectId : (shippingPreview) => shippingPreview.id,
 });
 const productListAdapter = createEntityAdapter<ProductPreview>({
     selectId : (productPreview) => productPreview.id,

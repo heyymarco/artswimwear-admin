@@ -1,32 +1,27 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createRouter } from 'next-connect'
 
-import type { HydratedDocument } from 'mongoose'
-import { connectDB } from '@/libs/dbConn'
-import { default as Shipping, ShippingSchema } from '@/models/Shipping'
+// models:
+import type {
+    ShippingProvider,
+}                           from '@prisma/client'
+
+// ORMs:
+import {
+    prisma,
+}                           from '@/libs/prisma.server'
 
 
 
 // types:
 export interface ShippingPreview
     extends
-        Pick<ShippingSchema,
+        Pick<ShippingProvider,
+            |'id'
             |'name'
         >
 {
-    _id : string
 }
-
-
-
-try {
-    await connectDB(); // top level await
-    console.log('connected to mongoDB!');
-}
-catch (error) {
-    console.log('FAILED to connect mongoDB!');
-    throw error;
-} // try
 
 
 
@@ -43,10 +38,12 @@ const router = createRouter<
 router
 .get(async (req, res) => {
     return res.json(
-        await Shipping.find<HydratedDocument<ShippingPreview>>({}, {
-            _id  : true,
-            
-            name : true,
+        await prisma.shippingProvider.findMany({
+            select: {
+                id   : true,
+                
+                name : true,
+            },
         }) // get all shippings including the disabled ones
     );
 });
