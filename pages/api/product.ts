@@ -190,6 +190,11 @@ router
     ) {
         return res.status(400).json({ error: 'invalid data' });
     } // if
+    //#endregion validating request
+    
+    
+    
+    //#region save changes
     try {
         const data = {
             visibility,
@@ -248,7 +253,7 @@ router
         // if (error instanceof RecordNotFound) return res.status(400).json({ error: 'invalid ID' });
         return res.status(500).json({ error: error });
     } // try
-    //#endregion validating request
+    //#endregion save changes
 });
 
 
