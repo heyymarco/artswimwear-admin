@@ -135,7 +135,7 @@ router
                 images         : true,
             },
             orderBy : {
-                id: 'desc',
+                createdAt: 'desc',
             },
             skip    : (page - 1) * perPage, // note: not scaleable but works in small commerce app -- will be fixed in the future
             take    : perPage,
@@ -143,13 +143,13 @@ router
     });
 })
 .patch(async (req, res) => {
-    // if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
+    if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
         await new Promise<void>((resolve) => {
             setTimeout(() => {
                 resolve();
             }, 2000);
         });
-    // } // if
+    } // if
     
     // throw '';
     // return res.status(400).json({ message: 'not found' });
