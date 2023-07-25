@@ -24,7 +24,11 @@ import { Image } from '@heymarco/image'
 import axios from 'axios'
 import { resolveMediaUrl } from '@/libs/mediaStorage.client'
 import { WysiwygEditorState, WysiwygEditor, ToolbarPlugin, EditorPlugin } from '@/components/editors/WysiwygEditor'
-import type { ProductVisibility } from '@/libs/prisma.models'
+
+// models:
+import type {
+    ProductVisibility,
+}                           from '@prisma/client'
 
 
 

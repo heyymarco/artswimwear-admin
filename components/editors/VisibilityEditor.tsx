@@ -32,9 +32,9 @@ import {
 }                           from '@/website.config'
 
 // models:
-import {
+import type {
     ProductVisibility,
-}                           from '@/libs/prisma.models'
+}                           from '@prisma/client'
 
 
 

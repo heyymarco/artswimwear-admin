@@ -2,9 +2,20 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createRouter } from 'next-connect'
 
-import { prisma } from '@/libs/prisma.server'
-import type { Product } from '@/libs/prisma.models'
-import type { Pagination } from '@/libs/types'
+// types:
+import type {
+    Pagination,
+}                           from '@/libs/types'
+
+// models:
+import type {
+    Product,
+}                           from '@prisma/client'
+
+// ORMs:
+import {
+    prisma,
+}                           from '@/libs/prisma.server'
 
 
 
