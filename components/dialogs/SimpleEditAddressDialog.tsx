@@ -4,7 +4,7 @@ import { useEvent } from '@reusable-ui/core'
 
 import { InitialValueEventHandler, UpdateModelEventHandler, SimpleEditDialogProps, SimpleEditDialog } from '@/components/dialogs/SimpleEditDialog'
 import { OrderDetail, useUpdateOrder } from '@/store/features/api/apiSlice'
-import type { AddressValue } from '../editors/AddressEditor/AddressEditor';
+import { emptyAddressValue, type AddressValue } from '../editors/AddressEditor/AddressEditor';
 
 
 
@@ -35,11 +35,11 @@ export const SimpleEditAddressDialog = (props: SimpleEditAddressDialogProps) => 
     
     // handlers:
     const handleInitialValue = useEvent<InitialValueEventHandler<AddressValue, OrderDetail, 'shippingAddress'|'billingAddress'>>((edit, model) => {
-        return model[edit];
+        return model[edit] ?? emptyAddressValue;
     });
     const handleUpdateModel  = useEvent<UpdateModelEventHandler<AddressValue, OrderDetail, 'shippingAddress'|'billingAddress'>>(async (value, edit, model) => {
         await updateOrder({
-            _id    : model._id,
+            id     : model.id,
             
             [edit] : value,
         }).unwrap();

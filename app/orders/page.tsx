@@ -17,7 +17,6 @@ import { EditButton } from '@/components/EditButton'
 import { TextEditor } from '@/components/editors/TextEditor'
 import { SimpleEditCustomerDialog } from '@/components/dialogs/SimpleEditCustomerDialog'
 import { FullEditDialog } from './FullEditDialog'
-import type { OrderSchema } from '@/models/Order'
 import { resolveMediaUrl } from '@/libs/mediaStorage.client'
 import { WithBadge } from '@/components/WithBadge'
 import { MiniCarousel } from '@/components/MiniCarousel'
@@ -37,7 +36,7 @@ const usePageStyleSheet = dynamicStyleSheets(
 
 
 // utilities:
-const getTotalQuantity = (items: OrderSchema['items']): number => {
+const getTotalQuantity = (items: OrderDetail['items']): number => {
     return items.reduce((counter, item) => {
         return counter + item.quantity;
     }, 0);
@@ -58,15 +57,15 @@ const OrderItem = (props: OrderItemProps) => {
         order,
     ...restListItem} = props;
     const {
-        _id,
-        orderId = _id,
+        orderId,
         
-        customer : {
-            nickName : customerNickName,
-            email    : customerEmail,
-        },
+        customer : customerDetail,
         items,
     } = order;
+    const {
+        nickName : customerNickName,
+        email    : customerEmail,
+    } = customerDetail ?? {};
     
     
     
@@ -76,7 +75,7 @@ const OrderItem = (props: OrderItemProps) => {
     
     
     // states:
-    type EditMode = keyof OrderDetail['customer']|'full'
+    type EditMode = keyof NonNullable<OrderDetail['customer']>|'full'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     
@@ -138,7 +137,7 @@ const OrderItem = (props: OrderItemProps) => {
                         // components:
                         basicComponent={<Content theme='primary' />}
                     >
-                        {items.map(({quantity, product: productId}, index: number) => {
+                        {items.map(({quantity, productId}, index: number) => {
                             const product = productList?.entities?.[`${productId}`];
                             
                             
@@ -280,7 +279,7 @@ export default function Orders() {
                     
                     {!!orders && <List listStyle='flush' className={styles.orderListInner}>
                         {Object.values(orders?.entities).filter((order): order is Exclude<typeof order, undefined> => !!order).map((order, index) =>
-                            <OrderItem key={order._id ?? (`${page}-${index}`)} order={order} />
+                            <OrderItem key={order.id ?? (`${page}-${index}`)} order={order} />
                         )}
                     </List>}
                 </Basic>

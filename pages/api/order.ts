@@ -2,36 +2,45 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createRouter } from 'next-connect'
 
-import { connectDB } from '@/libs/dbConn'
-import { default as Order, OrderSchema } from '@/models/Order'
-import type { HydratedDocument } from 'mongoose'
-import type { Pagination } from '@/libs/types'
-import type { WysiwygEditorState } from '@/components/editors/WysiwygEditor'
+// types:
+import type {
+    Pagination,
+}                           from '@/libs/types'
+
+// models:
+import type {
+    Customer,
+    Order,
+    OrdersOnProducts,
+}                           from '@prisma/client'
+
+// ORMs:
+import {
+    prisma,
+}                           from '@/libs/prisma.server'
 
 
 
 // types:
 export interface OrderDetail
     extends
-        Omit<OrderSchema,
-            |'_id'
-            |'shippingProvider'
+        Omit<Order,
+            |'createdAt'
+            |'updatedAt'
+            
+            |'customerId'
         >
 {
-    _id              : string
-    shippingProvider : string
+    // relations:
+    items    : Omit<OrdersOnProducts,
+        |'id'
+        |'orderId'
+    >[],
+    customer : null|Omit<Customer,
+        |'createdAt'
+        |'updatedAt'
+    >
 }
-
-
-
-try {
-    await connectDB(); // top level await
-    console.log('connected to mongoDB!');
-}
-catch (error) {
-    console.log('FAILED to connect mongoDB!');
-    throw error;
-} // try
 
 
 
@@ -39,6 +48,7 @@ const router = createRouter<
     NextApiRequest,
     NextApiResponse<
         |Pagination<OrderDetail>
+        |OrderDetail
         |{ error: any }
     >
 >();
@@ -81,39 +91,58 @@ router
     
     
     
-    const total = await Order.count();
+    const total = await prisma.order.count();
     return res.json({
         total,
-        entities: (await Order.find<HydratedDocument<OrderDetail>>({}, {
-            _id              : true,
-            orderId          : true,
-            
-            customer         : true,
-            
-            items            : true,
-            
-            shippingAddress  : true,
-            shippingProvider : true,
-            shippingCost     : true,
-            
-            billingAddress   : true,
-            
-            paymentMethod    : true,
-        }, {
-            sort  : { _id: -1 },
-            skip  : (page - 1) * perPage, // note: not scaleable but works in small commerce app -- will be fixed in the future
-            limit : perPage,
+        entities: (await prisma.order.findMany({
+            select : {
+                id                     : true,
+                orderId                : true,
+                
+                items                  : {
+                    select: {
+                        productId      : true,
+                        
+                        price          : true,
+                        shippingWeight : true,
+                        quantity       : true,
+                    },
+                },
+                
+                customer               : {
+                    select: {
+                        id             : true,
+                        
+                        marketingOpt   : true,
+                        
+                        nickName       : true,
+                        email          : true,
+                    },
+                },
+                
+                shippingAddress        : true,
+                shippingCost           : true,
+                shippingProviderId     : true,
+                
+                billingAddress         : true,
+                paymentMethod          : true,
+            },
+            orderBy : {
+                createdAt: 'desc',
+            },
+            skip    : (page - 1) * perPage, // note: not scaleable but works in small commerce app -- will be fixed in the future
+            take    : perPage,
         }))
     });
 })
 .patch(async (req, res) => {
-    // if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
+    if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
         await new Promise<void>((resolve) => {
             setTimeout(() => {
                 resolve();
             }, 2000);
         });
-    // } // if
+    } // if
     
     // throw '';
     // return res.status(400).json({ message: 'not found' });
@@ -121,18 +150,17 @@ router
     
     //#region parsing request
     const {
-        _id,
-        
-        customer,
+        id,
         
         items,
         
+        customer,
+        
         shippingAddress,
-        shippingProvider,
         shippingCost,
+        shippingProviderId,
         
         billingAddress,
-        
         paymentMethod,
     } = req.body;
     //#endregion parsing request
@@ -140,32 +168,56 @@ router
     
     
     //#region validating request
-    if ((typeof(_id) !== 'string') || (_id.length < 1)
+    if ((typeof(id) !== 'string') || (id.length < 1)
         ||
         ((customer !== undefined) && ((typeof(customer) !== 'object') || Object.keys(customer).some((prop) => !['nickName', 'email'].includes(prop))))
         ||
-        ((customer?.nickName !== undefined) && ((typeof(customer.nickName) !== 'string') || (customer.nickName.length < 2) || (customer.nickName.length > 30)))
+        ((customer?.marketingOpt !== undefined) && ((typeof(customer.marketingOpt) !== 'boolean')))
         ||
-        ((customer?.email    !== undefined) && ((typeof(customer.email)    !== 'string') || (customer.email.length    < 5) || (customer.email.length    > 50)))
+        ((customer?.nickName     !== undefined) && ((typeof(customer.nickName)     !== 'string') || (customer.nickName.length < 2) || (customer.nickName.length > 30)))
+        ||
+        ((customer?.email        !== undefined) && ((typeof(customer.email)        !== 'string') || (customer.email.length    < 5) || (customer.email.length    > 50)))
         
         // TODO: validating data type & constraints
     ) {
         return res.status(400).json({ error: 'invalid data' });
     } // if
-    const order = await Order.findById(_id, {
-        _id              : true,
-        
-        customer         : true,
-        
-        items            : true,
-        
-        shippingAddress  : true,
-        shippingProvider : true,
-        shippingCost     : true,
-        
-        billingAddress   : true,
-        
-        paymentMethod    : true,
+    const order = await prisma.order.findUnique({
+        where  : {
+            id: id,
+        },
+            select : {
+                id                     : true,
+                orderId                : true,
+                
+                items                  : {
+                    select: {
+                        productId      : true,
+                        
+                        price          : true,
+                        shippingWeight : true,
+                        quantity       : true,
+                    },
+                },
+                
+                customer               : {
+                    select: {
+                        id             : true,
+                        
+                        marketingOpt   : true,
+                        
+                        nickName       : true,
+                        email          : true,
+                    },
+                },
+                
+                shippingAddress        : true,
+                shippingCost           : true,
+                shippingProviderId     : true,
+                
+                billingAddress         : true,
+                paymentMethod          : true,
+            },
     });
     if (!order) return res.status(400).json({ error: 'invalid ID' });
     //#endregion validating request
@@ -173,25 +225,77 @@ router
     
     
     //#region save changes
-    if (customer         !== undefined) Object.assign(order.customer       , customer);
-    
-    if (items            !== undefined) Object.assign(order.items          , items);
-    
-    if (shippingAddress  !== undefined) Object.assign(order.shippingAddress, shippingAddress);
-    
-    if (shippingProvider !== undefined) order.shippingProvider = shippingProvider;
-    if (shippingCost     !== undefined) order.shippingCost     = shippingCost;
-    
-    if (billingAddress   !== undefined) Object.assign(order.billingAddress , billingAddress);
-    
-    if (paymentMethod    !== undefined) Object.assign(order.paymentMethod , paymentMethod);
-    
     try {
-        await order.save();
-        res.status(200).json(order);
+        const order = await prisma.order.update({
+            where  : {
+                id : id,
+            },
+            data   : {
+                // items    : {
+                //     update : {
+                //         data : {
+                //             //
+                //         },
+                //     },
+                // },
+                
+                customer : {
+                    update : {
+                        data : {
+                            marketingOpt : customer?.marketingOpt,
+                            
+                            nickName     : customer?.nickName,
+                            email        : customer?.email,
+                        },
+                    },
+                },
+                
+                shippingAddress,
+                shippingCost,
+                shippingProviderId,
+                
+                billingAddress,
+                paymentMethod,
+            },
+            select : {
+                id                     : true,
+                orderId                : true,
+                
+                items                  : {
+                    select: {
+                        productId      : true,
+                        
+                        price          : true,
+                        shippingWeight : true,
+                        quantity       : true,
+                    },
+                },
+                
+                customer               : {
+                    select: {
+                        id             : true,
+                        
+                        marketingOpt   : true,
+                        
+                        nickName       : true,
+                        email          : true,
+                    },
+                },
+                
+                shippingAddress        : true,
+                shippingCost           : true,
+                shippingProviderId     : true,
+                
+                billingAddress         : true,
+                paymentMethod          : true,
+            },
+        });
+        return res.status(200).json(order);
     }
-    catch (error) {
-        res.status(500).json({ error: error });
+    catch (error: any) {
+        console.log('ERROR: ', error);
+        // if (error instanceof RecordNotFound) return res.status(400).json({ error: 'invalid ID' });
+        return res.status(500).json({ error: error });
     } // try
     //#endregion save changes
 });

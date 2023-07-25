@@ -10,7 +10,7 @@ import { OrderDetail, useUpdateOrder } from '@/store/features/api/apiSlice'
 // react components:
 export interface SimpleEditCustomerDialogProps<TValue extends any>
     extends
-        Omit<SimpleEditDialogProps<TValue, OrderDetail, keyof OrderDetail['customer']>,
+        Omit<SimpleEditDialogProps<TValue, OrderDetail, keyof NonNullable<OrderDetail['customer']>>,
             // states:
             |'isLoading'
             
@@ -33,12 +33,12 @@ export const SimpleEditCustomerDialog = <TValue extends any>(props: SimpleEditCu
     
     
     // handlers:
-    const handleInitialValue = useEvent<InitialValueEventHandler<TValue, OrderDetail, keyof OrderDetail['customer']>>((edit, model) => {
-        return model.customer[edit] as TValue;
+    const handleInitialValue = useEvent<InitialValueEventHandler<TValue, OrderDetail, keyof NonNullable<OrderDetail['customer']>>>((edit, model) => {
+        return model.customer?.[edit] as TValue;
     });
-    const handleUpdateModel  = useEvent<UpdateModelEventHandler<TValue, OrderDetail, keyof OrderDetail['customer']>>(async (value, edit, model) => {
+    const handleUpdateModel  = useEvent<UpdateModelEventHandler<TValue, OrderDetail, keyof NonNullable<OrderDetail['customer']>>>(async (value, edit, model) => {
         await updateOrder({
-            _id        : model._id,
+            id         : model.id,
             
             customer   : {
                 [edit] : value,
@@ -50,7 +50,7 @@ export const SimpleEditCustomerDialog = <TValue extends any>(props: SimpleEditCu
     
     // jsx:
     return (
-        <SimpleEditDialog<TValue, OrderDetail, keyof OrderDetail['customer']>
+        <SimpleEditDialog<TValue, OrderDetail, keyof NonNullable<OrderDetail['customer']>>
             // other props:
             {...props}
             

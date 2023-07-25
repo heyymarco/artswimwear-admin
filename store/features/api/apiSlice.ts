@@ -84,7 +84,7 @@ export const apiSlice = createApi({
                 return [
                     ...(result?.entities ?? []).map((order): { type: 'Orders', id: string } => ({
                         type : 'Orders',
-                        id   : order._id,
+                        id   : order.id,
                     })),
                     
                     {
@@ -94,7 +94,7 @@ export const apiSlice = createApi({
                 ];
             },
         }),
-        updateOrder     : builder.mutation<OrderDetail, Pick<OrderDetail, '_id'> & Partial<Omit<OrderDetail, '_id'>>>({
+        updateOrder     : builder.mutation<OrderDetail, Pick<OrderDetail, 'id'> & Partial<Omit<OrderDetail, 'id'>>>({
             query: (patch) => ({
                 url    : 'order',
                 method : 'PATCH',
@@ -105,41 +105,13 @@ export const apiSlice = createApi({
             // invalidatesTags: (result, error, page) => [
             //     ...((!result ? [] : [{
             //         type : 'Orders',
-            //         id   : result._id,
+            //         id   : result.id,
             //     }]) as Array<{ type: 'Orders', id: string }>),
             // ],
             
             // more efficient:
             onCacheEntryAdded: async (arg, api) => {
-                // updated order data:
-                const { data: updatedOrder } = await api.cacheDataLoaded;
-                
-                // find obsolete order data(s):
-                const state = api.getState();
-                const queries = state.api.queries;
-                const getOrderPageName = apiSlice.endpoints.getOrderPage.name;
-                const obsoleteQueryArgs = (
-                    Object.values(queries)
-                    .filter((query): query is Exclude<typeof query, undefined> =>
-                        !!query
-                        &&
-                        (query.endpointName === getOrderPageName)
-                        &&
-                        !!(query.data as Pagination<OrderDetail>|undefined)?.entities.some((searchOrder) => (searchOrder._id === updatedOrder._id))
-                    )
-                    .map((query) => query.originalArgs)
-                );
-                
-                // synch the obsolete order data(s) to the updated one:
-                for (const obsoleteQueryArg of obsoleteQueryArgs) {
-                    api.dispatch(
-                        apiSlice.util.updateQueryData('getOrderPage', obsoleteQueryArg as any, (draft) => {
-                            const obsoleteOrderIndex = draft.entities.findIndex((searchOrder) => (searchOrder._id === updatedOrder._id));
-                            if (obsoleteOrderIndex < 0) return;
-                            draft.entities[obsoleteOrderIndex] = updatedOrder; // sync
-                        })
-                    );
-                } // for
+                await handleCumulativeUpdateCacheEntry('getOrderPage', (arg.id !== ''), api);
             },
         }),
         
@@ -154,7 +126,7 @@ export const apiSlice = createApi({
 
 
 
-const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, QueryArg, BaseQuery extends BaseQueryFn>(endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'>, isUpdating: boolean, api: MutationCacheLifecycleApi<QueryArg, BaseQuery, TEntry, 'api'>) => {
+const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, QueryArg, BaseQuery extends BaseQueryFn>(endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'>, isUpdating: boolean, api: MutationCacheLifecycleApi<QueryArg, BaseQuery, TEntry, 'api'>) => {
     // updated TEntry data:
     const { data: entry } = await api.cacheDataLoaded;
     const { id } = entry;

@@ -39,7 +39,7 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
     });
     const handleUpdateModel  = useEvent<UpdateModelEventHandler<PaymentValue, OrderDetail, 'paymentMethod'>>(async (value, edit, model) => {
         await updateOrder({
-            _id    : model._id,
+            id     : model.id,
             
             [edit] : {
                 // original:

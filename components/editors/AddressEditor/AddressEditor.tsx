@@ -57,9 +57,8 @@ import type {
 
 // models:
 import type {
-    // types:
-    AddressSchema,
-}                           from '@/models/Address'
+    Address,
+}                           from '@prisma/client'
 
 
 
@@ -71,7 +70,7 @@ export const useAddressEditorStyleSheet = dynamicStyleSheet(
 
 
 // utilities:
-const emptyAddressValue : AddressValue = {
+export const emptyAddressValue : AddressValue = {
     firstName : '',
     lastName  : '',
     
@@ -88,7 +87,7 @@ Object.freeze(emptyAddressValue);
 
 
 // react components:
-export type AddressValue = Omit<AddressSchema, '_id'>
+export type AddressValue = Omit<Address, 'id'>
 export interface AddressEditorProps
     extends
         // bases:
@@ -267,7 +266,7 @@ const AddressEditor = (props: AddressEditorProps): JSX.Element|null => {
                     address           = {valueFn?.address  }
                     city              = {valueFn?.city     }
                     zone              = {valueFn?.zone     }
-                    zip               = {valueFn?.zip      }
+                    zip               = {valueFn?.zip ?? undefined }
                     country           = {valueFn?.country  }
                     countryList       = {countryList       }
                     

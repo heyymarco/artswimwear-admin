@@ -80,37 +80,37 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
     const {data: shippingList, isLoading: isLoadingShipping, isError: isErrorShipping } = useGetShippingList();
     const {data: productList, isLoading: isLoadingProduct, isError: isErrorProduct } = useGetProductList();
     const {
-        _id,
-        orderId = _id,
+        orderId,
         
         items,
         
-        shippingAddress: {
-            firstName    : shippingFirstName,
-            lastName     : shippingLastName,
-            phone        : shippingPhone,
-            address      : shippingAddress,
-            city         : shippingCity,
-            zone         : shippingZone,
-            zip          : shippingZip,
-            country      : shippingCountry,
-        },
-        shippingProvider : shippingProviderId,
-        shippingCost     : totalShippingCosts,
-        paymentMethod    : {
-            type         : paymentType,
-            brand        : paymentBrand,
-            identifier   : paymentIdentifier,
+        shippingAddress    : shippingAddressDetail,
+        shippingProviderId : shippingProviderId,
+        shippingCost       : totalShippingCosts,
+        paymentMethod      : {
+            type           : paymentType,
+            brand          : paymentBrand,
+            identifier     : paymentIdentifier,
             
-            amount       : paymentAmount,
-            fee          : paymentFee,
+            amount         : paymentAmount,
+            fee            : paymentFee,
         },
     } = order;
+    const {
+        firstName      : shippingFirstName,
+        lastName       : shippingLastName,
+        phone          : shippingPhone,
+        address        : shippingAddress,
+        city           : shippingCity,
+        zone           : shippingZone,
+        zip            : shippingZip,
+        country        : shippingCountry,
+    } = shippingAddressDetail ?? {};
     
     const shippingProvider = shippingList?.entities?.[shippingProviderId ?? ''];
     
     const totalProductPrices  = items.reduce((accum, item) => {
-        const productUnitPrice = productList?.entities?.[`${item.product}` || '']?.price;
+        const productUnitPrice = productList?.entities?.[`${item.productId}` || '']?.price;
         if (!productUnitPrice) return accum;
         return accum + (productUnitPrice * item.quantity);
     }, 0);
@@ -230,7 +230,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                         : 'UNPAID'
                     }</Basic>
                     <List className={styles.orderList} listStyle={['flat', 'numbered']}>
-                        {items.map(({quantity, price: unitPrice, product: productId}, index) => {
+                        {items.map(({quantity, price: unitPrice, productId}, index) => {
                             const product = productList?.entities?.[`${productId}`];
                             
                             
@@ -303,7 +303,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                     <hr />
                     <p className='currencyBlock totalCost'>
                         Total: <span className='currency'>
-                            {formatCurrency(totalProductPrices + totalShippingCosts)}
+                            {formatCurrency(totalProductPrices + (totalShippingCosts ?? 0))}
                         </span>
                     </p>
                 </Section>

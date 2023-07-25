@@ -76,9 +76,8 @@ import {
 
 // models:
 import type {
-    // types:
-    PaymentMethodSchema,
-}                           from '@/models/Order'
+    PaymentMethod,
+}                           from '@prisma/client'
 
 // libs:
 import {
@@ -114,7 +113,7 @@ Object.freeze(emptyPaymentValue);
 
 // react components:
 export type PaymentValue =
-    Omit<PaymentMethodSchema, '_id'|'amount'|'fee'>
+    Omit<PaymentMethod, 'id'|'amount'|'fee'>
     & {
         amount : number|null
         fee    : number|null
