@@ -29,7 +29,7 @@ export interface ProductPreview
             |'shippingWeight'
         >
 {
-    image       : Required<Product>['images'][number]|undefined
+    image: Required<Product>['images'][number]|undefined
 }
 export interface ProductDetail
     extends
