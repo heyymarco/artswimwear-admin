@@ -108,6 +108,18 @@ model Customer {
 
 
 
+model Country {
+    id                  String              @id @default(auto()) @map("_id") @db.ObjectId
+    
+    enabled             Boolean
+    name                String
+    
+    code                String              // minLength: 2 , maxLength:  3
+    dialCode            String
+}
+
+
+
 type Address {
     firstName           String              // minLength: 2 , maxLength: 30
     lastName            String              // minLength: 1 , maxLength: 30
