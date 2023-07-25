@@ -138,6 +138,7 @@ model Order {
     id                  String              @id @default(auto()) @map("_id") @db.ObjectId
     createdAt           DateTime            @default(now())
     updatedAt           DateTime            @updatedAt
+    
     orderId             String              @unique // a secondary id for public identifier
     
     items               OrdersOnProducts[]
@@ -171,6 +172,7 @@ model DraftOrder {
     id                  String              @id @default(auto()) @map("_id") @db.ObjectId
     createdAt           DateTime            @default(now())
     expiresAt           DateTime
+    
     orderId             String              @unique // a secondary id for public identifier
     paypalOrderId       String?             @unique // a secondary id for public identifier
     
