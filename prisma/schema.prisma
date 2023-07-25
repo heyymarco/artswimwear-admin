@@ -148,8 +148,8 @@ model Order {
     
     shippingAddress     Address?
     shippingCost        Float?              // min: 0
-    shippingId          String?             @db.ObjectId
-    shippingProvider    ShippingProvider?   @relation(fields: [shippingId], references: [id], "OrdersOnShipping", onDelete: SetNull, onUpdate: Cascade) // one Shipping can have many Order[] BUT one Order cannot have many Shipping[]
+    shippingProviderId  String?             @db.ObjectId
+    shippingProvider    ShippingProvider?   @relation(fields: [shippingProviderId], references: [id], "OrdersOnShipping", onDelete: SetNull, onUpdate: Cascade) // one Shipping can have many Order[] BUT one Order cannot have many Shipping[]
     
     billingAddress      Address?
     paymentMethod       PaymentMethod
@@ -180,8 +180,8 @@ model DraftOrder {
     
     shippingAddress     Address?
     shippingCost        Float?              // min: 0
-    shippingId          String?             @db.ObjectId
-    shippingProvider    ShippingProvider?   @relation(fields: [shippingId], references: [id], "DraftOrdersOnShipping", onDelete: SetNull, onUpdate: Cascade) // one Shipping can have many DraftOrder[] BUT one DraftOrder cannot have many Shipping[]
+    shippingProviderId  String?             @db.ObjectId
+    shippingProvider    ShippingProvider?   @relation(fields: [shippingProviderId], references: [id], "DraftOrdersOnShipping", onDelete: SetNull, onUpdate: Cascade) // one Shipping can have many DraftOrder[] BUT one DraftOrder cannot have many Shipping[]
 }
 model DraftOrdersOnProducts { // one Product can have many DraftOrder[] AND one DraftOrder can have many Product[]
     // @@id([productId, draftOrderId])
