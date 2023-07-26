@@ -112,9 +112,9 @@ router
     
     
     
-    return res.json({
-        total    : await prisma.product.count(),
-        entities : await prisma.product.findMany({
+    const [total, paged] = await prisma.$transaction([
+        prisma.product.count(),
+        prisma.product.findMany({
             select: {
                 id             : true,
                 
@@ -140,6 +140,10 @@ router
             skip    : (page - 1) * perPage, // note: not scaleable but works in small commerce app -- will be fixed in the future
             take    : perPage,
         })
+    ]);
+    return res.json({
+        total    : total,
+        entities : paged,
     });
 })
 .patch(async (req, res) => {
