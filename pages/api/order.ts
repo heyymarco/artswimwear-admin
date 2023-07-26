@@ -131,7 +131,7 @@ router
             },
             skip    : (page - 1) * perPage, // note: not scaleable but works in small commerce app -- will be fixed in the future
             take    : perPage,
-        })
+        }),
     ]);
     return res.json({
         total    : total,
