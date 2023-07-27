@@ -169,6 +169,8 @@ const OrderItem = (props: OrderItemProps) => {
                                     }
                                 >
                                     <Image
+                                        className='prodImg'
+                                        
                                         alt={`image #${index + 1} of ${product?.name ?? 'unknown product'}`}
                                         src={resolveMediaUrl(product?.image)}
                                         sizes={`${imageSize}px`}

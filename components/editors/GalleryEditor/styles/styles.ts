@@ -174,12 +174,17 @@ export const usesGalleryEditorLayout = () => {
                                 // positions:
                                 gridArea  : 'delete',
                             }),
+                            
+                            
+                            
+                            // customize:
+                            ...usesCssProps(usesPrefixedProps(galleryEditors, 'panel')), // apply config's cssProps starting with panel***
                         }),
                         
                         
                         
                         // customize:
-                        ...usesCssProps(usesPrefixedProps(galleryEditors, 'actions')), // apply config's cssProps starting with actions***
+                        ...usesCssProps(usesPrefixedProps(galleryEditors, 'action')), // apply config's cssProps starting with action***
                     }),
                     
                     

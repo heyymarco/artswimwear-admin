@@ -1,8 +1,10 @@
 import '@reusable-ui/typos/dist/effects'
 import { defineTheme } from '@reusable-ui/core'
 import { iconConfig } from '@reusable-ui/components'
-import { galleryEditors } from '@/components/editors/GalleryEditor/styles/config';
-import { commerces } from '@/config';
+import { galleryEditors } from '@/components/editors/GalleryEditor/styles/config'
+import { commerces } from '@/config'
+import { imageValues } from '@heymarco/image'
+import { carouselValues } from '@reusable-ui/components'
 
 
 
@@ -22,3 +24,7 @@ iconConfig.image.files.push(
 
 // gallery editors:
 galleryEditors.itemAspectRatio = commerces.defaultProductAspectRatio;
+
+imageValues.objectFit = 'cover';
+
+carouselValues.mediaFlex = [[1, 1, 'auto']]; // growable, shrinkable, initial from it's height

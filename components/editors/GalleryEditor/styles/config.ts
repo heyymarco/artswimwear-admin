@@ -141,6 +141,19 @@ export const [galleryEditors, galleryEditorValues, cssGalleryEditorConfig] = css
         
         
         
+        // panels:
+        panelJustifyItems    : 'stretch'                            as CssKnownProps['justifyItems'     ],
+        panelAlignItems      : 'stretch'                            as CssKnownProps['alignItems'       ],
+        
+        
+        
+        // actions:
+        
+        
+        // images:
+        
+        
+        
         // uploads:
         uploadBorderStyle    : 'dashed'                             as CssKnownProps['borderStyle'      ],
         

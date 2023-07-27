@@ -151,7 +151,8 @@ const ProductItem = (props: ProductItemProps) => {
                                 
                                 
                                 
-                                className='images'
+                                className='prodImg'
+                                
                                 alt={name ?? ''}
                                 src={resolveMediaUrl(image)}
                                 sizes={`${imageSize}px`}
