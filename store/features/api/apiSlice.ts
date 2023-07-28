@@ -1,9 +1,11 @@
-import { createEntityAdapter, EntityState } from '@reduxjs/toolkit'
-import { BaseQueryFn, createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import type { MutationCacheLifecycleApi } from '@reduxjs/toolkit/dist/query/endpointDefinitions'
+import { createEntityAdapter, EntityState }                         from '@reduxjs/toolkit'
+import { BaseQueryFn, createApi, fetchBaseQuery }                   from '@reduxjs/toolkit/query/react'
+import type { QuerySubState }                                       from '@reduxjs/toolkit/dist/query/core/apiState'
+import type { BaseEndpointDefinition, MutationCacheLifecycleApi }   from '@reduxjs/toolkit/dist/query/endpointDefinitions'
 
 // types:
 import type {
+    PaginationArgs,
     Pagination,
 }                           from '@/libs/types'
 
@@ -39,7 +41,7 @@ export const apiSlice = createApi({
                 return productListAdapter.addMany(productListAdapter.getInitialState(), response);
             },
         }),
-        getProductPage  : builder.query<Pagination<ProductDetail>, { page?: number, perPage?: number }>({
+        getProductPage  : builder.query<Pagination<ProductDetail>, PaginationArgs>({
             query : (params) => ({
                 url    : 'product',
                 method : 'POST',
@@ -80,7 +82,7 @@ export const apiSlice = createApi({
             },
         }),
         
-        getOrderPage    : builder.query<Pagination<OrderDetail>, { page?: number, perPage?: number }>({
+        getOrderPage    : builder.query<Pagination<OrderDetail>, PaginationArgs>({
             query : (params) => ({
                 url    : 'order',
                 method : 'POST',
@@ -140,35 +142,35 @@ const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, Q
     
     
     // find related TEntry data(s):
-    const state      = api.getState();
-    const allQueries = state.api.queries;
-    const queries    = (
-        Object.values(allQueries)
-        .filter((query): query is Exclude<typeof query, undefined> =>
-            !!query
+    const state                 = api.getState();
+    const allQueryCaches        = state.api.queries;
+    const paginationQueryCaches = (
+        Object.values(allQueryCaches)
+        .filter((allQueryCache): allQueryCache is QuerySubState<BaseEndpointDefinition<QueryArg, BaseQuery, Pagination<TEntry>>> =>
+            !!allQueryCache
             &&
-            (query.endpointName === endpointName)
+            (allQueryCache.endpointName === endpointName)
         )
     );
     if (!isUpdating) { // add new data:
-        const missingQueries = (
-            queries
-            .filter((query) =>
-                /*missing id: */ !(query.data as Pagination<TEntry>|undefined)?.entities.some((searchEntry) => (searchEntry.id === id))
+        const missingPaginationQueryCaches = (
+            paginationQueryCaches
+            .filter((paginationQueryCache) =>
+                /*missing id: */ !paginationQueryCache.data?.entities.some((searchEntry) => (searchEntry.id === id))
             )
         );
-        if (missingQueries.length) {
+        if (missingPaginationQueryCaches.length) {
             const shiftedDataMap : TEntry[] = [entry];
-            for (const query of queries) {
+            for (const paginationQueryCache of paginationQueryCaches) {
                 const {
                     page    = 1,
                     perPage = 1,
-                } = query.originalArgs as { page?: number, perPage?: number };
+                } = paginationQueryCache.originalArgs as PaginationArgs;
                 
                 const baseIndex  = (page - 1) * perPage;
                 let   subIndex   = 0;
                 const shiftCount = 1;
-                for (const entry of (query.data as Pagination<TEntry>).entities) {
+                for (const entry of (paginationQueryCache.data as Pagination<TEntry>).entities) {
                     shiftedDataMap[baseIndex + (subIndex++) + shiftCount] = entry;
                 } // for
             } // for
@@ -176,19 +178,20 @@ const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, Q
             
             
             let tailPaginationTotal : number = 0;
-            for (const missingQuery of missingQueries) {
+            for (const missingPaginationQueryCache of missingPaginationQueryCaches) {
                 const {
                     page    = 1,
                     perPage = 1,
-                } = missingQuery.originalArgs as { page?: number, perPage?: number };
+                } = missingPaginationQueryCache.originalArgs as PaginationArgs;
                 const baseIndex  = (page - 1) * perPage;
                 
                 
                 
                 const insertedEntry : TEntry|undefined = shiftedDataMap?.[baseIndex];
                 if (insertedEntry) {
+                    // update cache:
                     api.dispatch(
-                        apiSlice.util.updateQueryData(endpointName, missingQuery.originalArgs as any, (draft) => {
+                        apiSlice.util.updateQueryData(endpointName, missingPaginationQueryCache.originalArgs as any, (draft) => {
                             draft.entities.unshift((insertedEntry as any)); // append at first index
                             tailPaginationTotal = (draft.entities.length > perPage) ? (++draft.total) : 0;
                             if (tailPaginationTotal) draft.entities.pop(); // remove at last index
@@ -209,7 +212,8 @@ const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, Q
                         shiftedDataMap[shiftedDataMap.length - 1] // take the last
                     ],
                 };
-                const perPage = (missingQueries?.[0]?.originalArgs as ({ page?: number, perPage?: number }|undefined))?.perPage ?? 1;
+                const perPage = (paginationQueryCaches?.[paginationQueryCaches.length - 1]?.originalArgs as (PaginationArgs|undefined))?.perPage ?? 1;
+                // append cache:
                 api.dispatch(
                     apiSlice.util.upsertQueryData(endpointName, {
                         page    : Math.ceil(tailPaginationTotal / perPage),
@@ -220,16 +224,17 @@ const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, Q
         } // if
     }
     else { // update existing data:
-        const obsoleteQueries = (
-            queries
-            .filter((query) =>
-                /*found id: */ !!(query.data as Pagination<TEntry>|undefined)?.entities.some((searchEntry) => (searchEntry.id === id))
+        const obsoletePaginationQueryCaches = (
+            paginationQueryCaches
+            .filter((paginationQueryCache) =>
+                /*found id: */ !!paginationQueryCache.data?.entities.some((searchEntry) => (searchEntry.id === id))
             )
         );
-        if (obsoleteQueries.length) {
-            for (const obsoleteQuery of obsoleteQueries) {
+        if (obsoletePaginationQueryCaches.length) {
+            for (const obsoletePaginationQueryCache of obsoletePaginationQueryCaches) {
+                // update cache:
                 api.dispatch(
-                    apiSlice.util.updateQueryData(endpointName, obsoleteQuery.originalArgs as any, (draft) => {
+                    apiSlice.util.updateQueryData(endpointName, obsoletePaginationQueryCache.originalArgs as any, (draft) => {
                         const obsoleteEntryIndex = draft.entities.findIndex((searchEntry) => (searchEntry.id === id));
                         if (obsoleteEntryIndex < 0) return;
                         draft.entities[obsoleteEntryIndex] = (entry as any); // update existing data
