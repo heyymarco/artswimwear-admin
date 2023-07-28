@@ -191,10 +191,10 @@ const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, Q
                 if (insertedEntry) {
                     // update cache:
                     api.dispatch(
-                        apiSlice.util.updateQueryData(endpointName, missingPaginationQueryCache.originalArgs as any, (draft) => {
-                            draft.entities.unshift((insertedEntry as any)); // append at first index
-                            tailPaginationTotal = (draft.entities.length > perPage) ? (++draft.total) : 0;
-                            if (tailPaginationTotal) draft.entities.pop(); // remove at last index
+                        apiSlice.util.updateQueryData(endpointName, missingPaginationQueryCache.originalArgs as any, (paginationCache) => {
+                            paginationCache.entities.unshift((insertedEntry as any)); // append at first index
+                            tailPaginationTotal = (paginationCache.entities.length > perPage) ? (++paginationCache.total) : 0;
+                            if (tailPaginationTotal) paginationCache.entities.pop(); // remove at last index
                         })
                     );
                 }
@@ -234,10 +234,10 @@ const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, Q
             for (const obsoletePaginationQueryCache of obsoletePaginationQueryCaches) {
                 // update cache:
                 api.dispatch(
-                    apiSlice.util.updateQueryData(endpointName, obsoletePaginationQueryCache.originalArgs as any, (draft) => {
-                        const obsoleteEntryIndex = draft.entities.findIndex((searchEntry) => (searchEntry.id === id));
+                    apiSlice.util.updateQueryData(endpointName, obsoletePaginationQueryCache.originalArgs as any, (paginationCache) => {
+                        const obsoleteEntryIndex = paginationCache.entities.findIndex((searchEntry) => (searchEntry.id === id));
                         if (obsoleteEntryIndex < 0) return;
-                        draft.entities[obsoleteEntryIndex] = (entry as any); // update existing data
+                        paginationCache.entities[obsoleteEntryIndex] = (entry as any); // update existing data
                     })
                 );
             } // for
