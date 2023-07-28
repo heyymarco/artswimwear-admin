@@ -7,6 +7,8 @@ import type { BaseEndpointDefinition, MutationCacheLifecycleApi }   from '@redux
 import type {
     PaginationArgs,
     Pagination,
+    
+    MutationArgs,
 }                           from '@/libs/types'
 
 // apis:
@@ -61,7 +63,7 @@ export const apiSlice = createApi({
                 ];
             },
         }),
-        updateProduct   : builder.mutation<ProductDetail, Pick<ProductDetail, 'id'> & Partial<Omit<ProductDetail, 'id'>>>({
+        updateProduct   : builder.mutation<ProductDetail, MutationArgs<ProductDetail>>({
             query: (patch) => ({
                 url    : 'product',
                 method : 'PATCH',
@@ -69,10 +71,10 @@ export const apiSlice = createApi({
             }),
             
             // inefficient:
-            // invalidatesTags: (result, error, page) => [
-            //     ...((!result ? [] : [{
+            // invalidatesTags: (product, error, arg) => [
+            //     ...((!product ? [] : [{
             //         type : 'Products',
-            //         id   : result.id,
+            //         id   : product.id,
             //     }]) as Array<{ type: 'Products', id: string }>),
             // ],
             
@@ -102,7 +104,7 @@ export const apiSlice = createApi({
                 ];
             },
         }),
-        updateOrder     : builder.mutation<OrderDetail, Pick<OrderDetail, 'id'> & Partial<Omit<OrderDetail, 'id'>>>({
+        updateOrder     : builder.mutation<OrderDetail, MutationArgs<OrderDetail>>({
             query: (patch) => ({
                 url    : 'order',
                 method : 'PATCH',
@@ -110,10 +112,10 @@ export const apiSlice = createApi({
             }),
             
             // inefficient:
-            // invalidatesTags: (result, error, page) => [
-            //     ...((!result ? [] : [{
+            // invalidatesTags: (order, error, arg) => [
+            //     ...((!order ? [] : [{
             //         type : 'Orders',
-            //         id   : result.id,
+            //         id   : order.id,
             //     }]) as Array<{ type: 'Orders', id: string }>),
             // ],
             
