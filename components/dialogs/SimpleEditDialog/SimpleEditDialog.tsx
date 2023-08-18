@@ -9,7 +9,13 @@ import { AccessibilityProvider, ValidationProvider, useEvent } from '@reusable-u
 import { ButtonIcon, CardBody, CardHeader, CardFooter, Button, CloseButton } from '@reusable-ui/components'
 
 import type { EditorProps } from '@/components/editors/Editor'
-import { ModalStatus } from '@/components/ModalStatus'
+import { ModalStatus } from '@heymarco/modal-status'
+
+// heymarco components:
+import {
+    // dialogs:
+    useDialogMessage,
+}                           from '@heymarco/dialog-message'
 
 
 
@@ -91,7 +97,9 @@ export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit ex
     
     
     // dialogs:
-    const [errorMessage   , setErrorMessage   ] = useState<React.ReactNode>(undefined);
+    const {
+        showMessageFetchError,
+    } = useDialogMessage();
     const [showWarnUnsaved, setShowWarnUnsaved] = useState<boolean>(false);
     
     
@@ -123,22 +131,7 @@ export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit ex
             onClose();
         }
         catch (error: any) {
-            const errorStatus = error?.status;
-            setErrorMessage(<>
-                <p>Oops, an error occured!</p>
-                <p>We were unable to save data to the server.</p>
-                {(errorStatus >= 400) && (errorStatus <= 499) && <p>
-                    There was a <strong>problem contacting our server</strong>.<br />
-                    Make sure your internet connection is available.
-                </p>}
-                {(errorStatus >= 500) && (errorStatus <= 599) && <p>
-                    There was a <strong>problem on our server</strong>.<br />
-                    The server may be busy or currently under maintenance.
-                </p>}
-                <p>
-                    Please try again in a few minutes.
-                </p>
-            </>);
+            showMessageFetchError(error);
         } // try
     });
     const handleClosing = useEvent(() => {
@@ -225,25 +218,6 @@ export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit ex
                 <ButtonIcon className='btnSave' icon={isLoading ? 'busy' : 'save'} theme='success' size='sm' onClick={handleSave}>Save</ButtonIcon>
                 <ButtonIcon className='btnCancel' icon='cancel' theme='danger' size='sm' onClick={handleClosing}>Cancel</ButtonIcon>
             </AccessibilityProvider>
-            <ModalStatus
-                theme='danger'
-                backdropStyle='static'
-            >
-                {!!errorMessage && <>
-                    <CardHeader>
-                        Error Saving Data
-                        <CloseButton onClick={() => setErrorMessage(undefined)} />
-                    </CardHeader>
-                    <CardBody>
-                        {errorMessage}
-                    </CardBody>
-                    <CardFooter>
-                        <Button onClick={() => setErrorMessage(undefined)}>
-                            Okay
-                        </Button>
-                    </CardFooter>
-                </>}
-            </ModalStatus>
             <ModalStatus
                 theme='warning'
                 backdropStyle='static'

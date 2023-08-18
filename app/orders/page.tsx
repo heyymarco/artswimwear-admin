@@ -11,7 +11,7 @@ import { OrderDetail, useGetOrderPage, useGetProductList } from '@/store/feature
 import { useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
 import { useEvent } from '@reusable-ui/core';
-import { ModalStatus } from '../../components/ModalStatus'
+import { ModalStatus } from '@heymarco/modal-status'
 
 import { EditButton } from '@/components/EditButton'
 import { TextEditor } from '@/components/editors/TextEditor'

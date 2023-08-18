@@ -8,7 +8,7 @@ import { OrderDetail, ShippingPreview, useUpdateOrder, useGetShippingList, useGe
 import { useEffect, useRef, useState } from 'react';
 import { formatCurrency, getCurrencySign } from '@/libs/formatters';
 import { AccessibilityProvider, ValidationProvider, useEvent } from '@reusable-ui/core';
-import { ModalStatus } from '../../components/ModalStatus'
+import { ModalStatus } from '@heymarco/modal-status'
 
 import { STORE_WEBSITE_URL, PAGE_ORDERS_TAB_ORDER_N_SHIPPING, PAGE_ORDERS_TAB_PAYMENT } from '@/website.config'
 import { COMMERCE_CURRENCY_FRACTION_MAX } from '@/commerce.config'
@@ -134,7 +134,6 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
     
     
     // dialogs:
-    const [errorMessage   , setErrorMessage   ] = useState<React.ReactNode>(undefined);
     const [showPrintDialog, setShowPrintDialog] = useState<boolean>(false);
     
     
@@ -456,25 +455,6 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
             <CardFooter onKeyDown={handleKeyDown}>
                 <ButtonIcon className='btnClose' icon='close' theme='primary' onClick={handleClosing}>Close</ButtonIcon>
             </CardFooter>
-            <ModalStatus
-                theme='danger'
-                backdropStyle='static'
-            >
-                {!!errorMessage && <>
-                    <CardHeader>
-                        Error Saving Data
-                        <CloseButton onClick={() => setErrorMessage(undefined)} />
-                    </CardHeader>
-                    <CardBody>
-                        {errorMessage}
-                    </CardBody>
-                    <CardFooter>
-                        <Button onClick={() => setErrorMessage(undefined)}>
-                            Okay
-                        </Button>
-                    </CardFooter>
-                </>}
-            </ModalStatus>
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
                 {!!editMode && <>
                     {(editMode === 'shippingAddress') && <SimpleEditAddressDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<AddressEditor countryList={countryList} />} />}

@@ -8,7 +8,7 @@ import { ProductDetail, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { getCurrencySign } from '@/libs/formatters';
 import { AccessibilityProvider, ValidationProvider, useEvent } from '@reusable-ui/core';
-import { ModalStatus } from '../../components/ModalStatus'
+import { ModalStatus } from '@heymarco/modal-status'
 
 import { STORE_WEBSITE_URL, PAGE_PRODUCTS_TAB_INFORMATIONS, PAGE_PRODUCTS_TAB_DESCRIPTION, PAGE_PRODUCTS_TAB_IMAGES } from '@/website.config'
 import { COMMERCE_CURRENCY_FRACTION_MAX } from '@/commerce.config'
@@ -24,6 +24,12 @@ import { Image } from '@heymarco/image'
 import axios from 'axios'
 import { resolveMediaUrl } from '@/libs/mediaStorage.client'
 import { WysiwygEditorState, WysiwygEditor, ToolbarPlugin, EditorPlugin } from '@/components/editors/WysiwygEditor'
+
+// heymarco components:
+import {
+    // dialogs:
+    useDialogMessage,
+}                           from '@heymarco/dialog-message'
 
 // models:
 import type {
@@ -131,7 +137,9 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
     
     
     // dialogs:
-    const [errorMessage   , setErrorMessage   ] = useState<React.ReactNode>(undefined);
+    const {
+        showMessageFetchError,
+    } = useDialogMessage();
     const [showWarnUnsaved, setShowWarnUnsaved] = useState<boolean>(false);
     
     
@@ -178,23 +186,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
             onClose();
         }
         catch (error: any) {
-            console.log('error: ', error);
-            const errorStatus = error?.status;
-            setErrorMessage(<>
-                <p>Oops, an error occured!</p>
-                <p>We were unable to save data to the server.</p>
-                {(errorStatus >= 400) && (errorStatus <= 499) && <p>
-                    There was a <strong>problem contacting our server</strong>.<br />
-                    Make sure your internet connection is available.
-                </p>}
-                {(errorStatus >= 500) && (errorStatus <= 599) && <p>
-                    There was a <strong>problem on our server</strong>.<br />
-                    The server may be busy or currently under maintenance.
-                </p>}
-                <p>
-                    Please try again in a few minutes.
-                </p>
-            </>);
+            showMessageFetchError(error);
         } // try
     });
     const handleClosing = useEvent(() => {
@@ -385,25 +377,6 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                 <ButtonIcon className='btnSave' icon={isLoading ? 'busy' : 'save'} theme='success' onClick={handleSave}>Save</ButtonIcon>
                 <ButtonIcon className='btnCancel' icon='cancel' theme='danger' onClick={handleClosing}>Cancel</ButtonIcon>
             </CardFooter>
-            <ModalStatus
-                theme='danger'
-                backdropStyle='static'
-            >
-                {!!errorMessage && <>
-                    <CardHeader>
-                        Error Saving Data
-                        <CloseButton onClick={() => setErrorMessage(undefined)} />
-                    </CardHeader>
-                    <CardBody>
-                        {errorMessage}
-                    </CardBody>
-                    <CardFooter>
-                        <Button onClick={() => setErrorMessage(undefined)}>
-                            Okay
-                        </Button>
-                    </CardFooter>
-                </>}
-            </ModalStatus>
             <ModalStatus
                 theme='warning'
                 backdropStyle='static'

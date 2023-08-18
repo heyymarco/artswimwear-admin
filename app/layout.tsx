@@ -15,6 +15,17 @@ import { Footer } from './Footer'
 import { store } from '@/store/store'
 import { Provider } from 'react-redux'
 
+// heymarco components:
+import {
+    // types:
+    FetchErrorMessage,
+    
+    
+    
+    // react components:
+    DialogMessageProvider,
+}                           from '@heymarco/dialog-message'
+
 import { WEBSITE_LANGUAGE } from '@/website.config'
 
 
@@ -33,11 +44,43 @@ styleSheets(
 
 
 
+// handlers:
+const handleFetchErrorMessage : FetchErrorMessage = ({isRequestError, isClientError: _isClientError, isServerError}) => {
+    // jsx:
+    return (
+        <>
+            <p>
+                Oops, there was an error saving your data.
+                <br />
+                We were unable to save data to the server.
+            </p>
+            {isRequestError && <p>
+                There was a <strong>problem contacting our server</strong>.
+                <br />
+                Make sure your internet connection is available.
+            </p>}
+            {isServerError && <p>
+                There was a <strong>problem on our server</strong>.
+                <br />
+                The server may be busy or currently under maintenance.
+            </p>}
+            {isServerError && <p>
+                Please try again in a few minutes.
+                <br />
+                If the problem still persists, please contact our technical support.
+            </p>}
+        </>
+    );
+};
+
+
+
 export default function RootLayout({
     children,
 }: {
     children: React.ReactNode
 }) {
+    // jsx:
     return (
         <html lang={WEBSITE_LANGUAGE}>
             <head>
@@ -47,7 +90,11 @@ export default function RootLayout({
             <body>
                 <Header />
                 <Provider store={store}>
-                    {children}
+                    <DialogMessageProvider
+                        fetchErrorMessageDefault={handleFetchErrorMessage}
+                    >
+                        {children}
+                    </DialogMessageProvider>
                 </Provider>
                 <Footer />
             </body>

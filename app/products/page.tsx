@@ -14,7 +14,7 @@ import { useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
 import { formatCurrency, getCurrencySign } from '@/libs/formatters';
 import { useEvent } from '@reusable-ui/core';
-import { ModalStatus } from '../../components/ModalStatus'
+import { ModalStatus } from '@heymarco/modal-status'
 
 import { PAGE_PRODUCTS_TITLE, PAGE_PRODUCTS_DESCRIPTION } from '@/website.config'
 import { COMMERCE_CURRENCY_FRACTION_MAX } from '@/commerce.config'
