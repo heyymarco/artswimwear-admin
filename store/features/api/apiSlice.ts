@@ -38,7 +38,10 @@ export const apiSlice = createApi({
     tagTypes: ['Products', 'Orders'],
     endpoints : (builder) => ({
         getProductList  : builder.query<EntityState<ProductPreview>, void>({
-            query : () => 'product',
+            query : () => ({
+                url    : 'product',
+                method : 'GET',
+            }),
             transformResponse(response: ProductPreview[]) {
                 return productListAdapter.addMany(productListAdapter.getInitialState(), response);
             },
@@ -126,7 +129,10 @@ export const apiSlice = createApi({
         }),
         
         getShippingList : builder.query<EntityState<ShippingPreview>, void>({
-            query : () => 'shipping',
+            query : () => ({
+                url    : 'shipping',
+                method : 'GET',
+            }),
             transformResponse(response: ShippingPreview[]) {
                 return shippingListAdapter.addMany(shippingListAdapter.getInitialState(), response);
             },
