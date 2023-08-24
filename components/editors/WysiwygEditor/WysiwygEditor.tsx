@@ -216,7 +216,7 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
                 // variants:
                 orientation='block'
             >
-                {React.Children.map(plugins, (plugin) => {
+                {React.Children.map<React.ReactNode, React.ReactNode>(plugins, (plugin) => {
                     if (!React.isValidElement(plugin)) return plugin; // not an <element> => no modify
                     
                     
