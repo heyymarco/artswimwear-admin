@@ -48,7 +48,7 @@ const WithBadge = <TElement extends Element = HTMLElement>(props: WithBadgeProps
     
     // refs:
     const componentRefInternal = useRef<Element|null>(null);
-    const mergedComponentRef = useMergeRefs<Element>(
+    const mergedComponentRef   = useMergeRefs(
         // preserves the original `elmRef` from `component`:
         component.props.elmRef,
         
