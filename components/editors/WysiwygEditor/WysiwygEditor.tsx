@@ -29,6 +29,10 @@ import {
 // reusable-ui components:
 import type {
     // react components:
+    BasicProps,
+}                           from '@reusable-ui/basic'           // a styled basic building block of Reusable-UI components
+import type {
+    // react components:
     IndicatorProps,
 }                           from '@reusable-ui/indicator'       // a base component
 import {
@@ -217,12 +221,12 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
                 orientation='block'
             >
                 {React.Children.map<React.ReactNode, React.ReactNode>(plugins, (plugin) => {
-                    if (!React.isValidElement(plugin)) return plugin; // not an <element> => no modify
+                    if (!React.isValidElement<BasicProps<Element>>(plugin)) return plugin; // not an <element> => no modify
                     
                     
                     
                     // jsx:
-                    return React.cloneElement(plugin,
+                    return React.cloneElement<BasicProps<Element>>(plugin,
                         // props:
                         {
                             // basic variant props:
