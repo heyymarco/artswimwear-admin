@@ -26,7 +26,7 @@ import { VisibilityEditor } from '@/components/editors/VisibilityEditor'
 import { SimpleEditProductDialog } from '@/components/dialogs/SimpleEditProductDialog'
 import { FullEditDialog } from './FullEditDialog'
 import { resolveMediaUrl } from '@/libs/mediaStorage.client'
-import { WithBadge } from '@/components/WithBadge'
+import { CompoundWithBadge } from '@/components/CompoundWithBadge'
 import { MiniCarousel } from '@/components/MiniCarousel'
 
 
@@ -111,7 +111,8 @@ const ProductItem = (props: ProductItemProps) => {
     return (
         <ListItem {...restListItem} elmRef={listItemRef} className={styles.productItem}>
             <div className={styles.productItemWrapper}>
-                <WithBadge
+                {/* carousel + edit button */}
+                <CompoundWithBadge
                     // components:
                     wrapperComponent={<React.Fragment />}
                     badgeComponent={
@@ -129,37 +130,38 @@ const ProductItem = (props: ProductItemProps) => {
                             <EditButton onClick={() => setEditMode('images')} />
                         </Badge>
                     }
-                >
-                    <MiniCarousel
-                        // variants:
-                        theme='danger'
-                        
-                        
-                        
-                        // classes:
-                        className='images'
-                        
-                        
-                        
-                        // components:
-                        basicComponent={<Content theme='primary' />}
-                    >
-                        {images.map((image, index) =>
-                            <Image
-                                // identifiers:
-                                key={index}
-                                
-                                
-                                
-                                className='prodImg'
-                                
-                                alt={name ?? ''}
-                                src={resolveMediaUrl(image)}
-                                sizes={`${imageSize}px`}
-                            />
-                        )}
-                    </MiniCarousel>
-                </WithBadge>
+                    elementComponent={
+                        <MiniCarousel
+                            // variants:
+                            theme='danger'
+                            
+                            
+                            
+                            // classes:
+                            className='images'
+                            
+                            
+                            
+                            // components:
+                            basicComponent={<Content theme='primary' />}
+                        >
+                            {images.map((image, index) =>
+                                <Image
+                                    // identifiers:
+                                    key={index}
+                                    
+                                    
+                                    
+                                    className='prodImg'
+                                    
+                                    alt={name ?? ''}
+                                    src={resolveMediaUrl(image)}
+                                    sizes={`${imageSize}px`}
+                                />
+                            )}
+                        </MiniCarousel>
+                    }
+                />
                 
                 <h3 className='name'>
                     {name}

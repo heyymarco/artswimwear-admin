@@ -24,7 +24,7 @@ import axios from 'axios'
 import { resolveMediaUrl } from '@/libs/mediaStorage.client'
 import { WysiwygEditorState, WysiwygEditor, ToolbarPlugin, EditorPlugin } from '@/components/editors/WysiwygEditor';
 import { countryList } from '@/libs/countryList'
-import { WithBadge } from '@/components/WithBadge';
+import { CompoundWithBadge } from '@/components/CompoundWithBadge';
 import { Section } from '@heymarco/section';
 import { SimpleEditAddressDialog } from '@/components/dialogs/SimpleEditAddressDialog';
 import { AddressEditor } from '@/components/editors/AddressEditor';
@@ -244,7 +244,9 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                                             ? 'Error getting product data'
                                             : (product?.name ?? 'DELETED PRODUCT')
                                     }</h3>
-                                    <WithBadge
+                                    
+                                    {/* image + quantity */}
+                                    <CompoundWithBadge
                                         // components:
                                         wrapperComponent={<React.Fragment />}
                                         badgeComponent={
@@ -267,17 +269,18 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                                                 {quantity}x
                                             </Badge>
                                         }
-                                    >
-                                        <Image
-                                            className='image'
-                                            
-                                            alt={`image #${index + 1} of ${product?.name ?? 'unknown product'}`}
-                                            src={resolveMediaUrl(product?.image)}
-                                            sizes={`${imageSize}px`}
-                                            
-                                            priority={true}
-                                        />
-                                    </WithBadge>
+                                        elementComponent={
+                                            <Image
+                                                className='image'
+                                                
+                                                alt={`image #${index + 1} of ${product?.name ?? 'unknown product'}`}
+                                                src={resolveMediaUrl(product?.image)}
+                                                sizes={`${imageSize}px`}
+                                                
+                                                priority={true}
+                                            />
+                                        }
+                                    />
                                     <p className='unitPrice'>
                                         @ <span className='currency secondary'>{formatCurrency(unitPrice)}</span>
                                     </p>

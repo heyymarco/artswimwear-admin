@@ -28,20 +28,20 @@ import type {
 
 
 
-export interface WithBadgeProps<TElement extends Element = HTMLElement>
+export interface CompoundWithBadgeProps<TElement extends Element = HTMLElement>
 {
     // components:
     wrapperComponent ?: React.ReactComponentElement<any, GenericProps<TElement>>
     badgeComponent    : React.ReactComponentElement<any, BadgeProps<Element>>
-    children          : React.ReactComponentElement<any, GenericProps<Element>>
+    elementComponent  : React.ReactComponentElement<any, GenericProps<Element>>
 }
-const WithBadge = <TElement extends Element = HTMLElement>(props: WithBadgeProps<TElement>) => {
+const CompoundWithBadge = <TElement extends Element = HTMLElement>(props: CompoundWithBadgeProps<TElement>) => {
     // rest props:
     const {
         // components:
         wrapperComponent = (<Generic<TElement> /> as React.ReactComponentElement<any, GenericProps<TElement>>),
         badgeComponent,
-        children : component,
+        elementComponent,
     ...restGenericProps} = props;
     
     
@@ -49,8 +49,8 @@ const WithBadge = <TElement extends Element = HTMLElement>(props: WithBadgeProps
     // refs:
     const componentRefInternal = useRef<Element|null>(null);
     const mergedComponentRef   = useMergeRefs(
-        // preserves the original `elmRef` from `component`:
-        component.props.elmRef,
+        // preserves the original `elmRef` from `elementComponent`:
+        elementComponent.props.elmRef,
         
         
         
@@ -72,7 +72,7 @@ const WithBadge = <TElement extends Element = HTMLElement>(props: WithBadgeProps
         
         // children:
         /* <Component> */
-        React.cloneElement<GenericProps<Element>>(component,
+        React.cloneElement<GenericProps<Element>>(elementComponent,
             // props:
             {
                 // refs:
@@ -89,6 +89,6 @@ const WithBadge = <TElement extends Element = HTMLElement>(props: WithBadgeProps
     );
 };
 export {
-    WithBadge,
-    WithBadge as default,
+    CompoundWithBadge,
+    CompoundWithBadge as default,
 }

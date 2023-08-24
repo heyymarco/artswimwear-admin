@@ -18,7 +18,7 @@ import { TextEditor } from '@/components/editors/TextEditor'
 import { SimpleEditCustomerDialog } from '@/components/dialogs/SimpleEditCustomerDialog'
 import { FullEditDialog } from './FullEditDialog'
 import { resolveMediaUrl } from '@/libs/mediaStorage.client'
-import { WithBadge } from '@/components/WithBadge'
+import { CompoundWithBadge } from '@/components/CompoundWithBadge'
 import { MiniCarousel } from '@/components/MiniCarousel'
 
 
@@ -109,7 +109,9 @@ const OrderItem = (props: OrderItemProps) => {
                         <EditButton onClick={() => setEditMode('email')} />
                     </span>
                 </p>
-                <WithBadge
+                
+                {/* carousel + total quantity */}
+                <CompoundWithBadge
                     // components:
                     wrapperComponent={<React.Fragment />}
                     badgeComponent={
@@ -122,66 +124,69 @@ const OrderItem = (props: OrderItemProps) => {
                             {getTotalQuantity(items)} Item(s)
                         </Badge>
                     }
-                >
-                    <MiniCarousel
-                        // variants:
-                        theme='danger'
-                        
-                        
-                        
-                        // classes:
-                        className='images'
-                        
-                        
-                        
-                        // components:
-                        basicComponent={<Content theme='primary' />}
-                    >
-                        {items.map(({quantity, productId}, index: number) => {
-                            const product = productList?.entities?.[`${productId}`];
+                    elementComponent={
+                        <MiniCarousel
+                            // variants:
+                            theme='danger'
                             
                             
                             
-                            // jsx:
-                            return (
-                                <WithBadge
-                                    // identifiers:
-                                    key={index}
-                                    
-                                    
-                                    
-                                    // components:
-                                    wrapperComponent={<React.Fragment />}
-                                    badgeComponent={
-                                        <Badge
-                                            // variants:
-                                            theme='danger'
-                                            
-                                            
-                                            
-                                            // variants:
-                                            floatingPlacement='right-start'
-                                            floatingShift={10}
-                                            floatingOffset={-40}
-                                        >
-                                            {quantity}x
-                                        </Badge>
-                                    }
-                                >
-                                    <Image
-                                        className='prodImg'
+                            // classes:
+                            className='images'
+                            
+                            
+                            
+                            // components:
+                            basicComponent={<Content theme='primary' />}
+                        >
+                            {items.map(({quantity, productId}, index: number) => {
+                                const product = productList?.entities?.[`${productId}`];
+                                
+                                
+                                
+                                // jsx:
+                                return (
+                                    /* image + quantity */
+                                    <CompoundWithBadge
+                                        // identifiers:
+                                        key={index}
                                         
-                                        alt={`image #${index + 1} of ${product?.name ?? 'unknown product'}`}
-                                        src={resolveMediaUrl(product?.image)}
-                                        sizes={`${imageSize}px`}
                                         
-                                        priority={true}
+                                        
+                                        // components:
+                                        wrapperComponent={<React.Fragment />}
+                                        badgeComponent={
+                                            <Badge
+                                                // variants:
+                                                theme='danger'
+                                                
+                                                
+                                                
+                                                // variants:
+                                                floatingPlacement='right-start'
+                                                floatingShift={10}
+                                                floatingOffset={-40}
+                                            >
+                                                {quantity}x
+                                            </Badge>
+                                        }
+                                        elementComponent={
+                                            <Image
+                                                className='prodImg'
+                                                
+                                                alt={`image #${index + 1} of ${product?.name ?? 'unknown product'}`}
+                                                src={resolveMediaUrl(product?.image)}
+                                                sizes={`${imageSize}px`}
+                                                
+                                                priority={true}
+                                            />
+                                        }
                                     />
-                                </WithBadge>
-                            );
-                        })}
-                    </MiniCarousel>
-                </WithBadge>
+                                );
+                            })}
+                        </MiniCarousel>
+                    }
+                />
                 <p className='fullEditor'>
                     <EditButton icon='table_view' buttonStyle='regular' onClick={() => setEditMode('full')}>
                         View Details
