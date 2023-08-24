@@ -54,8 +54,8 @@ import {
 }                           from './ActionsContainer'
 import {
     // react components:
-    WithDraggable,
-}                           from './WithDraggable'
+    ElementWithDraggable,
+}                           from './ElementWithDraggable'
 import {
     // react components:
     UploadImageProps,
@@ -600,7 +600,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
             mainClass={props.mainClass ?? styleSheet.main}
         >
             {draftImages.map((imageData, itemIndex) =>
-                <WithDraggable
+                <ElementWithDraggable
                     // identifiers:
                     key={`img:${itemIndex}`}
                     
@@ -622,75 +622,80 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                     onDragEnter  = {handleDragEnter}
                     onDragLeave  = {handleDragLeave}
                     onDrop       = {handleDrop     }
-                >
-                    <ActionsContainer
-                        // positions:
-                        itemIndex={itemIndex}
-                        
-                        
-                        
-                        // classes:
-                        className={'image actionsContainer ' + ((): string|undefined => {
-                            // dropped item:
-                            if (itemIndex === droppedItemIndex) return 'dropped';
+                    
+                    
+                    
+                    // components:
+                    elementComponent={
+                        <ActionsContainer
+                            // positions:
+                            itemIndex={itemIndex}
                             
                             
                             
-                            // shifted item(s):
-                            if ((draggedItemIndex !== -1) && (droppedItemIndex !== -1)) {
-                                if (draggedItemIndex < droppedItemIndex) {
-                                    if ((itemIndex >= draggedItemIndex) && (itemIndex <= droppedItemIndex)) return 'shiftedDown';
-                                }
-                                else if (draggedItemIndex > droppedItemIndex) {
-                                    if ((itemIndex <= draggedItemIndex) && (itemIndex >= droppedItemIndex)) return 'shiftedUp';
+                            // classes:
+                            className={'image actionsContainer ' + ((): string|undefined => {
+                                // dropped item:
+                                if (itemIndex === droppedItemIndex) return 'dropped';
+                                
+                                
+                                
+                                // shifted item(s):
+                                if ((draggedItemIndex !== -1) && (droppedItemIndex !== -1)) {
+                                    if (draggedItemIndex < droppedItemIndex) {
+                                        if ((itemIndex >= draggedItemIndex) && (itemIndex <= droppedItemIndex)) return 'shiftedDown';
+                                    }
+                                    else if (draggedItemIndex > droppedItemIndex) {
+                                        if ((itemIndex <= draggedItemIndex) && (itemIndex >= droppedItemIndex)) return 'shiftedUp';
+                                    } // if
                                 } // if
-                            } // if
-                            
-                            
-                            
-                            // dragged item:
-                            if ((draggedItemIndex !== -1) && (itemIndex === draggedItemIndex)) return 'dragged';
-                            
-                            
-                            
-                            // dropping target:
-                            if ((draggedItemIndex !== -1) && (itemIndex !== draggedItemIndex)) return 'dropTarget';
-                            
-                            
-                            
-                            // unmoved item(s):
-                            return '';
-                        })()}
-                        
-                        
-                        
-                        {...{
-                            // actions:
-                            actionDelete,
-                            onActionDelete : actionsContainerHandleActionDelete,
-                            
-                            
-                            
-                            // components:
-                            deleteButtonComponent,
-                        }}
-                    >
-                        {React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
-                            // props:
-                            {
-                                // classes:
-                                className : 'content',
                                 
                                 
                                 
-                                // images:
-                                alt       : imageComponent.props.alt   ??  resolveAlt(imageData),
-                                src       : imageComponent.props.src   ?? (resolveSrc(imageData, onResolveUrl) || undefined), // convert empty string to undefined
-                                sizes     : imageComponent.props.sizes ?? `calc((${galleryEditors.itemMinColumnWidth} * 2) + ${galleryEditors.gapInline})`,
-                            },
-                        )}
-                    </ActionsContainer>
-                </WithDraggable>
+                                // dragged item:
+                                if ((draggedItemIndex !== -1) && (itemIndex === draggedItemIndex)) return 'dragged';
+                                
+                                
+                                
+                                // dropping target:
+                                if ((draggedItemIndex !== -1) && (itemIndex !== draggedItemIndex)) return 'dropTarget';
+                                
+                                
+                                
+                                // unmoved item(s):
+                                return '';
+                            })()}
+                            
+                            
+                            
+                            {...{
+                                // actions:
+                                actionDelete,
+                                onActionDelete : actionsContainerHandleActionDelete,
+                                
+                                
+                                
+                                // components:
+                                deleteButtonComponent,
+                            }}
+                        >
+                            {React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
+                                // props:
+                                {
+                                    // classes:
+                                    className : 'content',
+                                    
+                                    
+                                    
+                                    // images:
+                                    alt       : imageComponent.props.alt   ??  resolveAlt(imageData),
+                                    src       : imageComponent.props.src   ?? (resolveSrc(imageData, onResolveUrl) || undefined), // convert empty string to undefined
+                                    sizes     : imageComponent.props.sizes ?? `calc((${galleryEditors.itemMinColumnWidth} * 2) + ${galleryEditors.gapInline})`,
+                                },
+                            )}
+                        </ActionsContainer>
+                    }
+                />
             )}
             {uploadingImages.map(({file, percentage, uploadError, onRetry, onCancel}, uploadingItemIndex) =>
                 <UploadingImage

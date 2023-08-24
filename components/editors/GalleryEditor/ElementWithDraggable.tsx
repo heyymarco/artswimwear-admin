@@ -18,10 +18,10 @@ import {
 
 
 // react components:
-export interface WithDraggableProps
+export interface ElementWithDraggableProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Omit<React.HTMLAttributes<HTMLElement>,
+        Omit<React.HTMLAttributes<TElement>,
             // draggable:
             |'draggable'   // already implemented internally
             |'onDragStart' // already implemented internally
@@ -34,32 +34,37 @@ export interface WithDraggableProps
             |'onDragOver'  // already implemented internally
             |'onDragLeave' // already implemented internally
             |'onDrop'      // already implemented internally
+            
+            
+            
+            // children:
+            |'children' // no nested children
         >
 {
     // positions:
-    itemIndex      : number
+    itemIndex        : number
     
     
     
     // draggable:
-    dragDataType   : string
-    onDragStart   ?: (itemIndex: number) => void
-    onDragEnd     ?: (itemIndex: number) => void
+    dragDataType     : string
+    onDragStart     ?: (itemIndex: number) => void
+    onDragEnd       ?: (itemIndex: number) => void
     
     
     
     // droppable:
-    onDragEnter   ?: (itemIndex: number) => void
-    onDragOver    ?: (itemIndex: number) => void
-    onDragLeave   ?: (itemIndex: number) => void
-    onDrop        ?: (itemIndex: number) => void
+    onDragEnter     ?: (itemIndex: number) => void
+    onDragOver      ?: (itemIndex: number) => void
+    onDragLeave     ?: (itemIndex: number) => void
+    onDrop          ?: (itemIndex: number) => void
     
     
     
     // components:
-    children       : React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
+    elementComponent : React.ReactComponentElement<any, React.HTMLAttributes<TElement>>
 }
-const WithDraggable = (props: WithDraggableProps): JSX.Element|null => {
+const ElementWithDraggable = <TElement extends Element = HTMLElement>(props: ElementWithDraggableProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // positions:
@@ -83,8 +88,8 @@ const WithDraggable = (props: WithDraggableProps): JSX.Element|null => {
         
         
         // components:
-        children: component,
-    ...restComponentProps} = props;
+        elementComponent,
+    ...restElementProps} = props;
     
     
     
@@ -94,7 +99,7 @@ const WithDraggable = (props: WithDraggableProps): JSX.Element|null => {
     
     
     // draggable handlers:
-    const handleDragStart   = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
+    const handleDragStart   = useEvent<React.DragEventHandler<TElement>>((event) => {
         // events:
         event.dataTransfer.effectAllowed = 'move';
         event.dataTransfer.clearData();
@@ -109,7 +114,7 @@ const WithDraggable = (props: WithDraggableProps): JSX.Element|null => {
         // callback:
         onDragStart?.(itemIndex);                     // rather, we store the data at the <parent>'s state
     });
-    const handleDragEnd     = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
+    const handleDragEnd     = useEvent<React.DragEventHandler<TElement>>((event) => {
         // callback:
         onDragEnd?.(itemIndex);
     });
@@ -117,7 +122,7 @@ const WithDraggable = (props: WithDraggableProps): JSX.Element|null => {
     
     
     // droppable handlers:
-    const handleDragEnter   = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
+    const handleDragEnter   = useEvent<React.DragEventHandler<TElement>>((event) => {
         // conditions:
         const isValidDragObject = event.dataTransfer.types.includes(dragDataType);
         if (!isValidDragObject) return; // unknown drag object => ignore
@@ -128,7 +133,7 @@ const WithDraggable = (props: WithDraggableProps): JSX.Element|null => {
         dragEnterCounter.current++;
         if (dragEnterCounter.current === 1) onDragEnter?.(itemIndex);
     });
-    const handleDragOver    = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
+    const handleDragOver    = useEvent<React.DragEventHandler<TElement>>((event) => {
         // conditions:
         const isValidDragObject = event.dataTransfer.types.includes(dragDataType);
         if (!isValidDragObject) return; // unknown drag object => ignore
@@ -144,14 +149,14 @@ const WithDraggable = (props: WithDraggableProps): JSX.Element|null => {
         // callback:
         onDragOver?.(itemIndex);
     });
-    const handleDragLeave   = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
+    const handleDragLeave   = useEvent<React.DragEventHandler<TElement>>((event) => {
         // callback:
         if (dragEnterCounter.current >= 1) {
             dragEnterCounter.current--;
             if (dragEnterCounter.current === 0) onDragLeave?.(itemIndex);
         } // if
     });
-    const handleDrop        = useEvent<React.DragEventHandler<HTMLElement>>((event) => {
+    const handleDrop        = useEvent<React.DragEventHandler<TElement>>((event) => {
         // conditions:
         const isValidDragObject = event.dataTransfer.types.includes(dragDataType);
         if (!isValidDragObject) return; // unknown drag object => ignore
@@ -176,12 +181,12 @@ const WithDraggable = (props: WithDraggableProps): JSX.Element|null => {
     
     // jsx:
     /* <Component> */
-    return React.cloneElement<React.HTMLAttributes<HTMLElement>>(component,
+    return React.cloneElement<React.HTMLAttributes<TElement>>(elementComponent,
         // props:
         {
             // other props:
-            ...restComponentProps,
-            ...component.props, // overwrites restComponentProps (if any conflics)
+            ...restElementProps,
+            ...elementComponent.props, // overwrites restElementProps (if any conflics)
             
             
             
@@ -201,6 +206,6 @@ const WithDraggable = (props: WithDraggableProps): JSX.Element|null => {
     );
 };
 export {
-    WithDraggable,
-    WithDraggable as default,
+    ElementWithDraggable,
+    ElementWithDraggable as default,
 }
