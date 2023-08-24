@@ -195,7 +195,7 @@ export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit ex
         <CardBody className={styles.main} onKeyDown={handleKeyDown}>
             <AccessibilityProvider enabled={!isLoading}>
                 <ValidationProvider enableValidation={enableValidation}>
-                    {React.cloneElement(editorComponent,
+                    {React.cloneElement<EditorProps<Element, TValue>>(editorComponent,
                         // props:
                         {
                             elmRef    : editorRef,
