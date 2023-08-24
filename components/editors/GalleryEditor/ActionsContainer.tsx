@@ -150,7 +150,7 @@ const ActionsContainer = (props: ActionsContainerProps): JSX.Element|null => {
             >
                 <AccessibilityProvider enabled={isEnabled}>
                     {children}
-                    {React.cloneElement(deleteButtonComponent,
+                    {React.cloneElement<ButtonProps>(deleteButtonComponent,
                         // props:
                         {
                             // classes:

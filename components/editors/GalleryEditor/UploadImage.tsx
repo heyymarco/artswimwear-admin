@@ -199,7 +199,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
             >
                 {uploadImageTitle}
             </h6>
-            {React.cloneElement(uploadImageButtonComponent,
+            {React.cloneElement<ButtonProps>(uploadImageButtonComponent,
                 // props:
                 {
                     // handlers:
