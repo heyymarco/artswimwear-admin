@@ -7,7 +7,7 @@ import { ButtonIcon, Generic, Content, CardHeader, CardFooter, CloseButton, List
 import { ProductDetail, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { getCurrencySign } from '@/libs/formatters';
-import { ValidationProvider, useEvent } from '@reusable-ui/core';
+import { ValidationProvider, useEvent, useMountedFlag } from '@reusable-ui/core';
 
 import { STORE_WEBSITE_URL, PAGE_PRODUCTS_TAB_INFORMATIONS, PAGE_PRODUCTS_TAB_DESCRIPTION, PAGE_PRODUCTS_TAB_IMAGES } from '@/website.config'
 import { COMMERCE_CURRENCY_FRACTION_MAX } from '@/commerce.config'
@@ -129,6 +129,11 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
     
     
     
+    // dom effects:
+    const isMounted = useMountedFlag();
+    
+    
+    
     // dialogs:
     const {
         showMessage,
@@ -198,6 +203,11 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                 },
                 backdropStyle : 'static',
             });
+            if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
+            
+            
+            
+            // actions:
             switch (answer) {
                 case 'save':
                     // then do a save (it will automatically close the editor after successfully saving):

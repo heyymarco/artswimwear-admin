@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import { dynamicStyleSheet } from '@cssfn/cssfn-react'
 
-import { AccessibilityProvider, ValidationProvider, useEvent } from '@reusable-ui/core'
+import { AccessibilityProvider, ValidationProvider, useEvent, useMountedFlag } from '@reusable-ui/core'
 import { ButtonIcon, CardBody, useDialogMessage } from '@reusable-ui/components'
 
 import type { EditorProps } from '@/components/editors/Editor'
@@ -89,6 +89,11 @@ export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit ex
     
     
     
+    // dom effects:
+    const isMounted = useMountedFlag();
+    
+    
+    
     // dialogs:
     const {
         showMessage,
@@ -143,6 +148,11 @@ export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit ex
                 },
                 backdropStyle : 'static',
             });
+            if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
+            
+            
+            
+            // actions:
             switch (answer) {
                 case 'save':
                     // then do a save (it will automatically close the editor after successfully saving):
