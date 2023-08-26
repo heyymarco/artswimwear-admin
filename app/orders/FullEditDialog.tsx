@@ -3,12 +3,11 @@
 import { default as React } from 'react'
 import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 
-import { ButtonIcon, Generic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, List, Carousel, Masonry, masonries, Busy, ListItem, Badge, Basic, Icon } from '@reusable-ui/components';
+import { ButtonIcon, Generic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, List, Carousel, Masonry, masonries, Busy, ListItem, Badge, Basic, Icon, ModalStatus } from '@reusable-ui/components';
 import { OrderDetail, ShippingPreview, useUpdateOrder, useGetShippingList, useGetProductList } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { formatCurrency, getCurrencySign } from '@/libs/formatters';
 import { AccessibilityProvider, ValidationProvider, useEvent } from '@reusable-ui/core';
-import { ModalStatus } from '@heymarco/modal-status'
 
 import { STORE_WEBSITE_URL, PAGE_ORDERS_TAB_ORDER_N_SHIPPING, PAGE_ORDERS_TAB_PAYMENT } from '@/website.config'
 import { COMMERCE_CURRENCY_FRACTION_MAX } from '@/commerce.config'
@@ -215,9 +214,6 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
     
     
     // jsx:
-    interface OrderAndShippingProps {
-        printMode ?: boolean
-    }
     const OrderAndShipping = ({printMode = false}): JSX.Element|null => {
         // jsx:
         return (
@@ -458,6 +454,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
             <CardFooter onKeyDown={handleKeyDown}>
                 <ButtonIcon className='btnClose' icon='close' theme='primary' onClick={handleClosing}>Close</ButtonIcon>
             </CardFooter>
+            {/* edit dialog: */}
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
                 {!!editMode && <>
                     {(editMode === 'shippingAddress') && <SimpleEditAddressDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<AddressEditor countryList={countryList} />} />}

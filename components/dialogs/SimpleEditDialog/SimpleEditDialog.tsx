@@ -6,16 +6,9 @@ import { useEffect, useRef, useState } from 'react'
 import { dynamicStyleSheet } from '@cssfn/cssfn-react'
 
 import { AccessibilityProvider, ValidationProvider, useEvent } from '@reusable-ui/core'
-import { ButtonIcon, CardBody, CardHeader, CardFooter, Button, CloseButton } from '@reusable-ui/components'
+import { ButtonIcon, CardBody, useDialogMessage } from '@reusable-ui/components'
 
 import type { EditorProps } from '@/components/editors/Editor'
-import { ModalStatus } from '@heymarco/modal-status'
-
-// heymarco components:
-import {
-    // dialogs:
-    useDialogMessage,
-}                           from '@heymarco/dialog-message'
 
 
 
@@ -98,9 +91,9 @@ export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit ex
     
     // dialogs:
     const {
+        showMessage,
         showMessageFetchError,
     } = useDialogMessage();
-    const [showWarnUnsaved, setShowWarnUnsaved] = useState<boolean>(false);
     
     
     
@@ -134,9 +127,35 @@ export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit ex
             showMessageFetchError(error);
         } // try
     });
-    const handleClosing = useEvent(() => {
+    const handleClosing = useEvent(async () => {
         if (isModified) {
-            setShowWarnUnsaved(true);
+            // conditions:
+            const answer = await showMessage<'save'|'dontSave'|'continue'>({
+                theme         : 'warning',
+                title         : <h1>Unsaved Data</h1>,
+                message       : <p>
+                    Do you want to save the changes?
+                </p>,
+                options       : {
+                    save      : <ButtonIcon icon='save'   theme='success' autoFocus={true}>Save</ButtonIcon>,
+                    dontSave  : <ButtonIcon icon='cancel' theme='danger' >Don&apos;t Save</ButtonIcon>,
+                    continue  : <ButtonIcon icon='edit'   theme='secondary'>Continue Editing</ButtonIcon>,
+                },
+                backdropStyle : 'static',
+            });
+            switch (answer) {
+                case 'save':
+                    // then do a save (it will automatically close the editor after successfully saving):
+                    handleSave();
+                    break;
+                case 'dontSave':
+                    // then close the editor (without saving):
+                    onClose();
+                    break;
+                default:
+                    // do nothing (continue editing)
+                    break;
+            } // switch
         }
         else {
             onClose();
@@ -218,45 +237,6 @@ export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit ex
                 <ButtonIcon className='btnSave' icon={isLoading ? 'busy' : 'save'} theme='success' size='sm' onClick={handleSave}>Save</ButtonIcon>
                 <ButtonIcon className='btnCancel' icon='cancel' theme='danger' size='sm' onClick={handleClosing}>Cancel</ButtonIcon>
             </AccessibilityProvider>
-            <ModalStatus
-                theme='warning'
-                backdropStyle='static'
-            >
-                {showWarnUnsaved && <>
-                    <CardHeader>
-                        Unsaved Data
-                    </CardHeader>
-                    <CardBody>
-                        <p>
-                            Do you want to save the changes?
-                        </p>
-                    </CardBody>
-                    <CardFooter>
-                        <ButtonIcon theme='success' icon='save' onClick={() => {
-                            // close the dialog first:
-                            setShowWarnUnsaved(false);
-                            // then do a save (it will automatically close the editor after successfully saving):
-                            handleSave();
-                        }}>
-                            Save
-                        </ButtonIcon>
-                        <ButtonIcon theme='danger' icon='cancel' onClick={() => {
-                            // close the dialog first:
-                            setShowWarnUnsaved(false);
-                            // then close the editor (without saving):
-                            onClose();
-                        }}>
-                            Don&apos;t Save
-                        </ButtonIcon>
-                        <ButtonIcon theme='secondary' icon='edit' onClick={() => {
-                            // close the dialog:
-                            setShowWarnUnsaved(false);
-                        }}>
-                            Continue Editing
-                        </ButtonIcon>
-                    </CardFooter>
-                </>}
-            </ModalStatus>
         </CardBody>
     );
 }

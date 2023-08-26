@@ -6,12 +6,11 @@ import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 import { Section, Main } from '@heymarco/section'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody, Badge, Content } from '@reusable-ui/components';
+import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody, Badge, Content, ModalStatus } from '@reusable-ui/components';
 import { OrderDetail, useGetOrderPage, useGetProductList } from '@/store/features/api/apiSlice';
 import { useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
 import { useEvent } from '@reusable-ui/core';
-import { ModalStatus } from '@heymarco/modal-status'
 
 import { EditButton } from '@/components/EditButton'
 import { TextEditor } from '@/components/editors/TextEditor'
@@ -193,6 +192,7 @@ const OrderItem = (props: OrderItemProps) => {
                     </EditButton>
                 </p>
             </div>
+            {/* edit dialog: */}
             <ModalStatus theme='primary' viewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
                 {!!editMode && (editMode !== 'full') && <>
                     {(editMode === 'nickName'       ) && <SimpleEditCustomerDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor type='text'  required minLength={2} maxLength={30} autoCapitalize='words' />} />}
@@ -267,6 +267,7 @@ export default function Orders() {
             <Section className={`fill-self ${styles.orders}`}>
                 <OrderPagination className={styles.paginTop} />
                 <Basic<HTMLElement> className={styles.orderList} theme='primary' mild={true} elmRef={setOrderListRef}>
+                    {/* loading|error dialog: */}
                     <ModalStatus className={styles.orderFetching} viewport={orderListRef}>
                         {(isFetching || isError) && <CardBody>
                             {isFetching && <>

@@ -3,12 +3,11 @@
 import { default as React } from 'react'
 import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 
-import { ButtonIcon, Generic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, List, Carousel, Masonry, masonries, Form } from '@reusable-ui/components';
+import { ButtonIcon, Generic, Content, CardHeader, CardFooter, CloseButton, List, useDialogMessage } from '@reusable-ui/components';
 import { ProductDetail, useUpdateProduct } from '@/store/features/api/apiSlice';
 import { useEffect, useRef, useState } from 'react';
 import { getCurrencySign } from '@/libs/formatters';
-import { AccessibilityProvider, ValidationProvider, useEvent } from '@reusable-ui/core';
-import { ModalStatus } from '@heymarco/modal-status'
+import { ValidationProvider, useEvent } from '@reusable-ui/core';
 
 import { STORE_WEBSITE_URL, PAGE_PRODUCTS_TAB_INFORMATIONS, PAGE_PRODUCTS_TAB_DESCRIPTION, PAGE_PRODUCTS_TAB_IMAGES } from '@/website.config'
 import { COMMERCE_CURRENCY_FRACTION_MAX } from '@/commerce.config'
@@ -24,12 +23,6 @@ import { Image } from '@heymarco/image'
 import axios from 'axios'
 import { resolveMediaUrl } from '@/libs/mediaStorage.client'
 import { WysiwygEditorState, WysiwygEditor, ToolbarPlugin, EditorPlugin } from '@/components/editors/WysiwygEditor'
-
-// heymarco components:
-import {
-    // dialogs:
-    useDialogMessage,
-}                           from '@heymarco/dialog-message'
 
 // models:
 import type {
@@ -138,9 +131,9 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
     
     // dialogs:
     const {
+        showMessage,
         showMessageFetchError,
     } = useDialogMessage();
-    const [showWarnUnsaved, setShowWarnUnsaved] = useState<boolean>(false);
     
     
     
@@ -189,9 +182,35 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
             showMessageFetchError(error);
         } // try
     });
-    const handleClosing = useEvent(() => {
+    const handleClosing = useEvent(async () => {
         if (isModified || isPathModified) {
-            setShowWarnUnsaved(true);
+            // conditions:
+            const answer = await showMessage<'save'|'dontSave'|'continue'>({
+                theme         : 'warning',
+                title         : <h1>Unsaved Data</h1>,
+                message       : <p>
+                    Do you want to save the changes?
+                </p>,
+                options       : {
+                    save      : <ButtonIcon icon='save'   theme='success' autoFocus={true}>Save</ButtonIcon>,
+                    dontSave  : <ButtonIcon icon='cancel' theme='danger' >Don&apos;t Save</ButtonIcon>,
+                    continue  : <ButtonIcon icon='edit'   theme='secondary'>Continue Editing</ButtonIcon>,
+                },
+                backdropStyle : 'static',
+            });
+            switch (answer) {
+                case 'save':
+                    // then do a save (it will automatically close the editor after successfully saving):
+                    handleSave();
+                    break;
+                case 'dontSave':
+                    // then close the editor (without saving):
+                    onClose();
+                    break;
+                default:
+                    // do nothing (continue editing)
+                    break;
+            } // switch
         }
         else {
             onClose();
@@ -377,45 +396,6 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                 <ButtonIcon className='btnSave' icon={isLoading ? 'busy' : 'save'} theme='success' onClick={handleSave}>Save</ButtonIcon>
                 <ButtonIcon className='btnCancel' icon='cancel' theme='danger' onClick={handleClosing}>Cancel</ButtonIcon>
             </CardFooter>
-            <ModalStatus
-                theme='warning'
-                backdropStyle='static'
-            >
-                {showWarnUnsaved && <>
-                    <CardHeader>
-                        Unsaved Data
-                    </CardHeader>
-                    <CardBody>
-                        <p>
-                            Do you want to save the changes?
-                        </p>
-                    </CardBody>
-                    <CardFooter>
-                        <ButtonIcon theme='success' icon='save' onClick={() => {
-                            // close the dialog first:
-                            setShowWarnUnsaved(false);
-                            // then do a save (it will automatically close the editor after successfully saving):
-                            handleSave();
-                        }}>
-                            Save
-                        </ButtonIcon>
-                        <ButtonIcon theme='danger' icon='cancel' onClick={() => {
-                            // close the dialog first:
-                            setShowWarnUnsaved(false);
-                            // then close the editor (without saving):
-                            onClose();
-                        }}>
-                            Don&apos;t Save
-                        </ButtonIcon>
-                        <ButtonIcon theme='secondary' icon='edit' onClick={() => {
-                            // close the dialog:
-                            setShowWarnUnsaved(false);
-                        }}>
-                            Continue Editing
-                        </ButtonIcon>
-                    </CardFooter>
-                </>}
-            </ModalStatus>
         </>
     );
 }

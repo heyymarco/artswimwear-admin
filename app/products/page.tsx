@@ -8,13 +8,12 @@ import { Section, Main } from '@heymarco/section'
 import type { Metadata } from 'next'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody, Badge, Content } from '@reusable-ui/components';
+import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody, Badge, Content, ModalStatus } from '@reusable-ui/components';
 import { ProductDetail, useGetProductPage } from '@/store/features/api/apiSlice';
 import { useRef, useState } from 'react';
 import { LoadingBar } from '@heymarco/loading-bar'
 import { formatCurrency, getCurrencySign } from '@/libs/formatters';
 import { useEvent } from '@reusable-ui/core';
-import { ModalStatus } from '@heymarco/modal-status'
 
 import { PAGE_PRODUCTS_TITLE, PAGE_PRODUCTS_DESCRIPTION } from '@/website.config'
 import { COMMERCE_CURRENCY_FRACTION_MAX } from '@/commerce.config'
@@ -60,6 +59,7 @@ const ProductCreate = () => {
             <ButtonIcon icon='create' onClick={() => setShowAddNew(true)}>
                 Add New Product
             </ButtonIcon>
+            {/* add_new_product dialog: */}
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setShowAddNew(false)}>
                 {showAddNew && <FullEditDialog product={undefined} onClose={() => setShowAddNew(false)} />}
             </ModalStatus>
@@ -185,6 +185,7 @@ const ProductItem = (props: ProductItemProps) => {
                     </EditButton>
                 </p>
             </div>
+            {/* edit dialog: */}
             <ModalStatus theme='primary' viewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
                 {!!editMode && (editMode !== 'images') && (editMode !== 'full') && <>
                     {(editMode === 'name'      ) && <SimpleEditProductDialog model={product} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor       type='text' required={true } />} />}
@@ -261,6 +262,7 @@ export default function Products() {
             <Section className={`fill-self ${styles.products}`}>
                 <ProductPagination className={styles.paginTop} />
                 <Basic<HTMLElement> className={styles.productList} theme='primary' mild={true} elmRef={setProductListRef}>
+                    {/* loading|error dialog: */}
                     <ModalStatus className={styles.productFetching} viewport={productListRef}>
                         {(isFetching || isError) && <CardBody>
                             {isFetching && <>

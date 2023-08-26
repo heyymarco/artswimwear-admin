@@ -15,18 +15,8 @@ import { Footer } from './Footer'
 import { store } from '@/store/store'
 import { Provider } from 'react-redux'
 
-// heymarco components:
-import {
-    // types:
-    FetchErrorMessage,
-    
-    
-    
-    // react components:
-    DialogMessageProvider,
-}                           from '@heymarco/dialog-message'
-
 import { WEBSITE_LANGUAGE } from '@/website.config'
+import { FetchErrorMessage, DialogMessageProvider } from '@reusable-ui/components'
 
 
 
@@ -45,7 +35,7 @@ styleSheets(
 
 
 // handlers:
-const handleFetchErrorMessage : FetchErrorMessage = ({isRequestError, isClientError: _isClientError, isServerError}) => {
+const fetchErrorMessageDefault : FetchErrorMessage = ({isRequestError, isClientError: _isClientError, isServerError}) => {
     // jsx:
     return (
         <>
@@ -91,7 +81,7 @@ export default function RootLayout({
                 <Header />
                 <Provider store={store}>
                     <DialogMessageProvider
-                        fetchErrorMessageDefault={handleFetchErrorMessage}
+                        fetchErrorMessageDefault={fetchErrorMessageDefault}
                     >
                         {children}
                     </DialogMessageProvider>
