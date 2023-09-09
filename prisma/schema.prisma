@@ -183,7 +183,7 @@ model Order {
     items                   OrdersOnProducts[]      // some Product(s) may have some related Order(s)  // many to many
     
     customerId              String?
-    customer                Customer?               @relation(fields: [customerId]         , references: [id], "OrdersOnCustomer", onDelete: SetNull, onUpdate: Cascade) // one Customer may have some related Order(s)  // one  to many
+    customer                Customer?               @relation(fields: [customerId]         , references: [id], "OrdersOnCustomer", onDelete: SetNull) // preserve the related Order(s) if the Customer deleted
     
     shippingProviderId      String?
     shippingProvider        ShippingProvider?       @relation(fields: [shippingProviderId] , references: [id], "OrdersOnShipping", onDelete: SetNull) // preserve the related Order(s) if the ShippingProvider deleted
