@@ -200,10 +200,10 @@ model OrdersOnProducts {
     
     // relations:
     orderId                 String
-    order                   Order                   @relation(fields: [orderId]     , references: [id], onDelete: Cascade, onUpdate: Cascade) // some Product(s) may have some related Order(s)  // many to many
+    order                   Order                   @relation(fields: [orderId]     , references: [id], onDelete: Cascade) // delete the related OrdersOnProducts(s) if the Order deleted
     
     productId               String?
-    product                 Product?                @relation(fields: [productId]   , references: [id], onDelete: SetNull, onUpdate: Cascade) // some Product(s) may have some related Order(s)  // many to many
+    product                 Product?                @relation(fields: [productId]   , references: [id], onDelete: SetNull) // preserve the related Order(s) if the Product deleted
 }
 model DraftOrder {
     // records:
@@ -236,8 +236,8 @@ model DraftOrdersOnProducts {
     
     // relations:
     draftOrderId            String
-    draftOrder              DraftOrder              @relation(fields: [draftOrderId], references: [id], onDelete: Cascade, onUpdate: Cascade) // some Product(s) may have some related DraftOrder(s)  // many to many
+    draftOrder              DraftOrder              @relation(fields: [draftOrderId], references: [id], onDelete: Cascade) // delete the related DraftOrdersOnProducts(s) if the DraftOrder deleted
     
     productId               String?
-    product                 Product?                @relation(fields: [productId]   , references: [id], onDelete: SetNull, onUpdate: Cascade) // some Product(s) may have some related DraftOrder(s)  // many to many
+    product                 Product?                @relation(fields: [productId]   , references: [id], onDelete: SetNull) // preserve the related DraftOrder(s) if the Product deleted
 }
