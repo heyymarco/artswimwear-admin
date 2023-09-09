@@ -186,7 +186,7 @@ model Order {
     customer                Customer?               @relation(fields: [customerId]         , references: [id], "OrdersOnCustomer", onDelete: SetNull, onUpdate: Cascade) // one Customer may have some related Order(s)  // one  to many
     
     shippingProviderId      String?
-    shippingProvider        ShippingProvider?       @relation(fields: [shippingProviderId] , references: [id], "OrdersOnShipping", onDelete: SetNull, onUpdate: Cascade) // one ShippingProvider may have some related Order(s)  // one  to many
+    shippingProvider        ShippingProvider?       @relation(fields: [shippingProviderId] , references: [id], "OrdersOnShipping", onDelete: SetNull) // preserve the related Order(s) if the ShippingProvider deleted
 }
 model OrdersOnProducts {
     // records:
@@ -222,7 +222,7 @@ model DraftOrder {
     items                   DraftOrdersOnProducts[] // some Product(s) may have some related DraftOrder(s)  // many to many
     
     shippingProviderId      String?
-    shippingProvider        ShippingProvider?       @relation(fields: [shippingProviderId] , references: [id], "DraftOrdersOnShipping", onDelete: SetNull, onUpdate: Cascade) // one ShippingProvider may have some related DraftOrder(s)  // one  to many
+    shippingProvider        ShippingProvider?       @relation(fields: [shippingProviderId] , references: [id], "DraftOrdersOnShipping", onDelete: SetNull) // preserve the related DraftOrder(s) if the ShippingProvider deleted
 }
 model DraftOrdersOnProducts {
     // records:
