@@ -38,11 +38,12 @@ export const PageLoading = () => {
     
     
     
+    // jsx:
     return (
         <Main key='main-loading' className={styleSheet.main}>
             <GenericSection key='section-loading' className='fill-self'>
                 <Busy key='busy-loading' size='lg' />
             </GenericSection>
         </Main>
-    );;
+    );
 }

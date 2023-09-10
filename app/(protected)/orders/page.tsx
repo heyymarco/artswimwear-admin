@@ -24,6 +24,9 @@ import { MiniCarousel } from '@/components/MiniCarousel'
 import {
     PageLoading,
 }                           from '@/components/PageLoading'
+import {
+    PageError,
+}                           from '@/components/PageError'
 
 
 
@@ -232,6 +235,7 @@ export default function Orders() {
     
     // jsx:
     if (isLoading) return <PageLoading />;
+    if (isErrorAndNoData) return <PageError onRetry={refetch} />;
     const OrderPagination = (props: PaginationProps) => (
         <Pagination
             {...props}
