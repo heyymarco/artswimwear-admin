@@ -245,7 +245,7 @@ export default function Products() {
                 />
             }
         >
-            {!products && <ListItem nude={true}><LoadingBar className={styles.paginationLoading}
+            {!products && <ListItem actionCtrl={false} nude={true}><LoadingBar className={styles.paginationLoading}
                 nude={true}
                 running={isFetching}
                 theme={isError ? 'danger' : undefined}
@@ -269,8 +269,8 @@ export default function Products() {
                 <ProductPagination className={styles.paginTop} />
                 <Basic<HTMLElement> className={styles.productList} theme='primary' mild={true} elmRef={setProductListRef}>
                     {/* loading|error dialog: */}
-                    <ModalStatus className={styles.productFetching} viewport={productListRef}>
-                        {(isFetching || isError) && <CardBody>
+                    <ModalStatus viewport={productListRef}>
+                        {(isFetching || isError) && <CardBody className={styles.productFetching}>
                             {isFetching && <>
                                 <p>Retrieving data from the server. Please wait...</p>
                                 <LoadingBar className='loadingBar' />
@@ -279,7 +279,7 @@ export default function Products() {
                             {isError && <>
                                 <h3>Oops, an error occured!</h3>
                                 <p>We were unable to retrieve data from the server.</p>
-                                <ButtonIcon icon='refresh' onClick={refetch}>
+                                <ButtonIcon icon='refresh' theme='success' onClick={refetch}>
                                     Retry
                                 </ButtonIcon>
                             </>}

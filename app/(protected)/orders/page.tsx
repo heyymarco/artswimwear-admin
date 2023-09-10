@@ -250,7 +250,7 @@ export default function Orders() {
                 />
             }
         >
-            {!orders && <ListItem nude={true}><LoadingBar className={styles.paginationLoading}
+            {!orders && <ListItem actionCtrl={false} nude={true}><LoadingBar className={styles.paginationLoading}
                 nude={true}
                 running={isFetching}
                 theme={isError ? 'danger' : undefined}
@@ -274,8 +274,8 @@ export default function Orders() {
                 <OrderPagination className={styles.paginTop} />
                 <Basic<HTMLElement> className={styles.orderList} theme='primary' mild={true} elmRef={setOrderListRef}>
                     {/* loading|error dialog: */}
-                    <ModalStatus className={styles.orderFetching} viewport={orderListRef}>
-                        {(isFetching || isError) && <CardBody>
+                    <ModalStatus viewport={orderListRef}>
+                        {(isFetching || isError) && <CardBody className={styles.orderFetching}>
                             {isFetching && <>
                                 <p>Retrieving data from the server. Please wait...</p>
                                 <LoadingBar className='loadingBar' />
@@ -284,7 +284,7 @@ export default function Orders() {
                             {isError && <>
                                 <h3>Oops, an error occured!</h3>
                                 <p>We were unable to retrieve data from the server.</p>
-                                <ButtonIcon icon='refresh' onClick={refetch}>
+                                <ButtonIcon icon='refresh' theme='success' onClick={refetch}>
                                     Retry
                                 </ButtonIcon>
                             </>}
