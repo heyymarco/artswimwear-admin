@@ -241,3 +241,127 @@ model DraftOrdersOnProducts {
     productId               String?
     product                 Product?                @relation(fields: [productId]   , references: [id], onDelete: SetNull) // preserve the related DraftOrder(s) if the Product deleted
 }
+
+
+
+// auth models --------------------------------------------------------------------------------
+
+
+
+model Account {
+    // records:
+    id                      String                  @id @default(cuid()) @map("_id")
+    
+    // provider types:
+    type                    String
+    provider                String
+    providerAccountId       String
+    @@unique([provider, providerAccountId])
+    
+    // jwt sessions:
+    refresh_token           String?
+    access_token            String?
+    expires_at              Int?
+    
+    // jwt meta:
+    token_type              String?
+    scope                   String?
+    id_token                String?
+    session_state           String?
+    
+    // relations:
+    userId                  String
+    user                    User                    @relation(fields: [userId], references: [id], onDelete: Cascade) // delete the related Account(s) if the User deleted
+}
+
+model Session {
+    // records:
+    id                      String                  @id @default(cuid()) @map("_id")
+    expires                 DateTime
+    
+    // data:
+    sessionToken            String                  @unique
+    
+    // relations:
+    userId                  String
+    user                    User                    @relation(fields: [userId], references: [id], onDelete: Cascade) // delete the related Session(s) if the User deleted
+}
+
+model User {
+    // records:
+    id                      String                  @id @default(cuid()) @map("_id")
+    createdAt               DateTime                @default(now())
+    updatedAt               DateTime                @updatedAt
+    
+    // data:
+    name                    String
+    email                   String                  @unique
+    emailVerified           DateTime?
+    image                   String?
+    
+    // relations:
+    accounts                Account[]               // a User may have some related Account(s)              // one  to many
+    sessions                Session[]               // a User may have some related Session(s)              // one  to many
+    credentials             Credentials?            // a User may have one  related Credentials             // one  to one
+    resetPasswordToken      ResetPasswordToken?     // a User may have one  related ResetPasswordToken      // one  to one
+    emailConfirmationToken  EmailConfirmationToken? // a User may have one  related EmailConfirmationToken  // one  to one
+    
+    roleId                  String?
+    role                    Role?                   @relation(fields: [roleId], references: [id], onDelete: SetNull) // preserve the related User(s) if the Role deleted
+}
+
+model Credentials {
+    // records:
+    id                      String                  @id @default(cuid()) @map("_id")
+    
+    // data:
+    failuresAttemps         Int?
+    lockedAt                DateTime?
+    username                String?                 @unique
+    password                String?
+    
+    // relations:
+    userId                  String                  @unique
+    user                    User                    @relation(fields: [userId], references: [id], onDelete: Cascade) // delete the related Credentials if the User deleted
+}
+
+model ResetPasswordToken {
+    // records:
+    id                      String                  @id @default(cuid()) @map("_id")
+    updatedAt               DateTime                @updatedAt
+    expiresAt               DateTime
+    
+    // data:
+    token                   String                  @unique
+    
+    // relations:
+    userId                  String                  @unique
+    user                    User                    @relation(fields: [userId], references: [id], onDelete: Cascade) // delete the related ResetPasswordToken if the User deleted
+}
+
+model EmailConfirmationToken {
+    // records:
+    id                      String                  @id @default(cuid()) @map("_id")
+    
+    // data:
+    token                   String                  @unique
+    
+    // relations:
+    userId                  String                  @unique
+    user                    User                    @relation(fields: [userId], references: [id], onDelete: Cascade) // delete the related EmailConfirmationToken if the User deleted
+}
+
+model Role {
+    // records:
+    id                      String                  @id @default(cuid()) @map("_id")
+    
+    // data:
+    name                    String                  @unique
+    product_r               Boolean
+    product_c               Boolean
+    product_u               Boolean
+    product_d               Boolean
+    
+    // relations:
+    users                   User[]                  // a Role may have some related Users(s)  // one  to many
+}

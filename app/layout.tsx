@@ -17,6 +17,7 @@ import { Provider } from 'react-redux'
 
 import { WEBSITE_LANGUAGE } from '@/website.config'
 import { FetchErrorMessage, DialogMessageProvider } from '@reusable-ui/components'
+import { NextAuthSessionProvider } from './NextAuthSessionProvider'
 
 
 
@@ -78,15 +79,17 @@ export default function RootLayout({
                 <StylesSSR />
             </head>
             <body>
-                <Header />
-                <Provider store={store}>
-                    <DialogMessageProvider
-                        fetchErrorMessageDefault={fetchErrorMessageDefault}
-                    >
-                        {children}
-                    </DialogMessageProvider>
-                </Provider>
-                <Footer />
+                <NextAuthSessionProvider>
+                    <Header />
+                    <Provider store={store}>
+                        <DialogMessageProvider
+                            fetchErrorMessageDefault={fetchErrorMessageDefault}
+                        >
+                            {children}
+                        </DialogMessageProvider>
+                    </Provider>
+                    <Footer />
+                </NextAuthSessionProvider>
             </body>
         </html>
     )
