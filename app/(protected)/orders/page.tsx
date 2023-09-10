@@ -222,7 +222,7 @@ export default function Orders() {
     // stores:
     const [page, setPage] = useState<number>(1);
     const [perPage, setPerPage] = useState<number>(10);
-    const {data: orders, isLoading, isFetching, isError, refetch } = useGetOrderPage({ page, perPage });
+    const {data: orders, isLoading: isLoadingAndNoData, isFetching, isError, refetch } = useGetOrderPage({ page, perPage });
     const isErrorAndNoData = isError && !orders;
     const pages = Math.ceil((orders?.total ?? 0) / perPage);
     
@@ -234,8 +234,8 @@ export default function Orders() {
     
     
     // jsx:
-    if (isLoading) return <PageLoading />;
-    if (isErrorAndNoData) return <PageError onRetry={refetch} />;
+    if (isLoadingAndNoData) return <PageLoading />;
+    if (isErrorAndNoData  ) return <PageError onRetry={refetch} />;
     const OrderPagination = (props: PaginationProps) => (
         <Pagination
             {...props}

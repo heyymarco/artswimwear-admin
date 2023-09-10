@@ -217,7 +217,7 @@ export default function Products() {
     // stores:
     const [page, setPage] = useState<number>(1);
     const [perPage, setPerPage] = useState<number>(10);
-    const {data: products, isLoading, isFetching, isError, refetch } = useGetProductPage({ page, perPage });
+    const {data: products, isLoading: isLoadingAndNoData, isFetching, isError, refetch } = useGetProductPage({ page, perPage });
     const isErrorAndNoData = isError && !products;
     const pages = Math.ceil((products?.total ?? 0) / perPage);
     
@@ -229,8 +229,8 @@ export default function Products() {
     
     
     // jsx:
-    if (isLoading) return <PageLoading />;
-    if (isErrorAndNoData) return <PageError onRetry={refetch} />;
+    if (isLoadingAndNoData) return <PageLoading />;
+    if (isErrorAndNoData  ) return <PageError onRetry={refetch} />;
     const ProductPagination = (props: PaginationProps) => (
         <Pagination
             {...props}
