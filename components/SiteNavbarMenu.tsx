@@ -25,7 +25,6 @@ const SiteNavbarMenu = ({
     
     
     // jsx:
-    console.log({status})
     return (
         <>
             <SiteLogo />
