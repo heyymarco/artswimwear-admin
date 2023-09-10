@@ -48,8 +48,8 @@ const usesProductListLayout = () => { // the <section> of product list
             
             
             
-            // // sizes:
-            // minBlockSize : '150px', // a temporary fix for empty loading appearance
+            // sizes:
+            minBlockSize : '100%', // fill the page height if there is no_data or few_data
             
             
             

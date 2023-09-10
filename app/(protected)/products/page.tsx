@@ -269,7 +269,7 @@ export default function Products() {
                 <ProductPagination className={styles.paginTop} />
                 <Basic<HTMLElement> className={styles.productList} theme='primary' mild={true} elmRef={setProductListRef}>
                     {/* loading|error dialog: */}
-                    <ModalStatus viewport={productListRef}>
+                    <ModalStatus viewport={productListRef} theme={isError ? 'danger' : undefined}>
                         {(isFetching || isError) && <CardBody className={styles.productFetching}>
                             {isFetching && <>
                                 <p>Retrieving data from the server. Please wait...</p>

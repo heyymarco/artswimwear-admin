@@ -274,7 +274,7 @@ export default function Orders() {
                 <OrderPagination className={styles.paginTop} />
                 <Basic<HTMLElement> className={styles.orderList} theme='primary' mild={true} elmRef={setOrderListRef}>
                     {/* loading|error dialog: */}
-                    <ModalStatus viewport={orderListRef}>
+                    <ModalStatus viewport={orderListRef} theme={isError ? 'danger' : undefined}>
                         {(isFetching || isError) && <CardBody className={styles.orderFetching}>
                             {isFetching && <>
                                 <p>Retrieving data from the server. Please wait...</p>
