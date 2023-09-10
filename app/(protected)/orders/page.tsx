@@ -250,7 +250,7 @@ export default function Orders() {
                 />
             }
         >
-            {(isFetching || isErrorAndNoData) && <ListItem nude={true}><LoadingBar className={styles.paginationLoading}
+            {!orders && <ListItem nude={true}><LoadingBar className={styles.paginationLoading}
                 nude={true}
                 running={isFetching}
                 theme={isError ? 'danger' : undefined}

@@ -245,7 +245,7 @@ export default function Products() {
                 />
             }
         >
-            {(isFetching || isErrorAndNoData) && <ListItem nude={true}><LoadingBar className={styles.paginationLoading}
+            {!products && <ListItem nude={true}><LoadingBar className={styles.paginationLoading}
                 nude={true}
                 running={isFetching}
                 theme={isError ? 'danger' : undefined}
