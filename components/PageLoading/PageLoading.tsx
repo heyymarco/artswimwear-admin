@@ -39,9 +39,9 @@ export const PageLoading = () => {
     
     
     return (
-        <Main className={styleSheet.main}>
-            <GenericSection className='fill-self'>
-                <Busy size='lg' />
+        <Main key='main-loading' className={styleSheet.main}>
+            <GenericSection key='section-loading' className='fill-self'>
+                <Busy key='busy-loading' size='lg' />
             </GenericSection>
         </Main>
     );;

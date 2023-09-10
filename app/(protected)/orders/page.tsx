@@ -20,6 +20,11 @@ import { resolveMediaUrl } from '@/libs/mediaStorage.client'
 import { CompoundWithBadge } from '@/components/CompoundWithBadge'
 import { MiniCarousel } from '@/components/MiniCarousel'
 
+// internal components:
+import {
+    PageLoading,
+}                           from '@/components/PageLoading'
+
 
 
 // defaults:
@@ -215,7 +220,7 @@ export default function Orders() {
     const [page, setPage] = useState<number>(1);
     const [perPage, setPerPage] = useState<number>(10);
     const {data: orders, isLoading, isFetching, isError, refetch } = useGetOrderPage({ page, perPage });
-    const isErrorNoData  = isError && !orders;
+    const isErrorAndNoData = isError && !orders;
     const pages = Math.ceil((orders?.total ?? 0) / perPage);
     
     
@@ -226,6 +231,7 @@ export default function Orders() {
     
     
     // jsx:
+    if (isLoading) return <PageLoading />;
     const OrderPagination = (props: PaginationProps) => (
         <Pagination
             {...props}
@@ -244,10 +250,10 @@ export default function Orders() {
                 />
             }
         >
-            {(isLoading || isErrorNoData) && <ListItem nude={true}><LoadingBar className={styles.paginationLoading}
+            {(isFetching || isErrorAndNoData) && <ListItem nude={true}><LoadingBar className={styles.paginationLoading}
                 nude={true}
-                running={isLoading}
-                theme={isErrorNoData ? 'danger' : undefined}
+                running={isFetching}
+                theme={isError ? 'danger' : undefined}
             /></ListItem>}
             
             {[...Array(pages)].map((_, index) =>

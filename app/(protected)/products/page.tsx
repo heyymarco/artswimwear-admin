@@ -28,6 +28,11 @@ import { resolveMediaUrl } from '@/libs/mediaStorage.client'
 import { CompoundWithBadge } from '@/components/CompoundWithBadge'
 import { MiniCarousel } from '@/components/MiniCarousel'
 
+// internal components:
+import {
+    PageLoading,
+}                           from '@/components/PageLoading'
+
 
 
 // defaults:
@@ -210,7 +215,7 @@ export default function Products() {
     const [page, setPage] = useState<number>(1);
     const [perPage, setPerPage] = useState<number>(10);
     const {data: products, isLoading, isFetching, isError, refetch } = useGetProductPage({ page, perPage });
-    const isErrorNoData  = isError && !products;
+    const isErrorAndNoData = isError && !products;
     const pages = Math.ceil((products?.total ?? 0) / perPage);
     
     
@@ -221,6 +226,7 @@ export default function Products() {
     
     
     // jsx:
+    if (isLoading) return <PageLoading />;
     const ProductPagination = (props: PaginationProps) => (
         <Pagination
             {...props}
@@ -239,10 +245,10 @@ export default function Products() {
                 />
             }
         >
-            {(isLoading || isErrorNoData) && <ListItem nude={true}><LoadingBar className={styles.paginationLoading}
+            {(isFetching || isErrorAndNoData) && <ListItem nude={true}><LoadingBar className={styles.paginationLoading}
                 nude={true}
-                running={isLoading}
-                theme={isErrorNoData ? 'danger' : undefined}
+                running={isFetching}
+                theme={isError ? 'danger' : undefined}
             /></ListItem>}
             
             {[...Array(pages)].map((_, index) =>
