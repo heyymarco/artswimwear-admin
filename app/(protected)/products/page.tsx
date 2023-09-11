@@ -3,15 +3,14 @@
 import { default as React } from 'react'
 import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 
-import { Section, Main } from '@heymarco/section'
+import { Main } from '@heymarco/section'
 
 import type { Metadata } from 'next'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody, Badge, Content, ModalStatus } from '@reusable-ui/components';
+import { ListItem, ListItemProps, Badge, Content, ModalStatus } from '@reusable-ui/components';
 import { ProductDetail, useGetProductPage } from '@/store/features/api/apiSlice';
 import { useRef, useState } from 'react';
-import { LoadingBar } from '@heymarco/loading-bar'
 import { formatCurrency, getCurrencySign } from '@/libs/formatters';
 import { useEvent } from '@reusable-ui/core';
 
@@ -35,6 +34,10 @@ import {
 import {
     PageError,
 }                           from '@/components/PageError'
+import {
+    CreateItemUiProps,
+    SectionDataList,
+}                           from '@/components/SectionDataList'
 
 
 
@@ -51,32 +54,16 @@ import './pageStyles';
 
 
 
-const ProductCreate = () => {
-    // styles:
-    const styles = usePageStyleSheet();
-    
-    
-    
-    // states:
-    const [showAddNew, setShowAddNew] = useState<boolean>(false);
-    
-    
-    
+interface CreateProductProps extends CreateItemUiProps {}
+const CreateProduct = (props: CreateProductProps) => {
+    // jsx:
     return (
-        <ListItem className={styles.productCreate}>
-            <ButtonIcon icon='create' onClick={() => setShowAddNew(true)}>
-                Add New Product
-            </ButtonIcon>
-            {/* add_new_product dialog: */}
-            <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setShowAddNew(false)}>
-                {showAddNew && <FullEditDialog product={undefined} onClose={() => setShowAddNew(false)} />}
-            </ModalStatus>
-        </ListItem>
+        <FullEditDialog product={undefined} onClose={props.onClose} />
     );
 };
 
 interface ProductItemProps extends ListItemProps {
-    product: ProductDetail
+    itemData: ProductDetail
 }
 const ProductItem = (props: ProductItemProps) => {
     // styles:
@@ -85,7 +72,7 @@ const ProductItem = (props: ProductItemProps) => {
     
     
     const {
-        product,
+        itemData,
     ...restListItem} = props;
     const {
         visibility,
@@ -93,7 +80,7 @@ const ProductItem = (props: ProductItemProps) => {
         images,
         price,
         stock,
-    } = product;
+    } = itemData;
     
     
     
@@ -196,109 +183,64 @@ const ProductItem = (props: ProductItemProps) => {
             {/* edit dialog: */}
             <ModalStatus theme='primary' viewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
                 {!!editMode && (editMode !== 'images') && (editMode !== 'full') && <>
-                    {(editMode === 'name'      ) && <SimpleEditProductDialog model={product} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor       type='text' required={true } />} />}
-                    {(editMode === 'price'     ) && <SimpleEditProductDialog model={product} edit={editMode} onClose={handleEditDialogClose} editorComponent={<CurrencyEditor   currencySign={getCurrencySign()} currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX} />} />}
-                    {(editMode === 'stock'     ) && <SimpleEditProductDialog model={product} edit={editMode} onClose={handleEditDialogClose} editorComponent={<StockEditor      theme='secondary' />} />}
-                    {(editMode === 'visibility') && <SimpleEditProductDialog model={product} edit={editMode} onClose={handleEditDialogClose} editorComponent={<VisibilityEditor theme='secondary' />} />}
+                    {(editMode === 'name'      ) && <SimpleEditProductDialog model={itemData} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor       type='text' required={true } />} />}
+                    {(editMode === 'price'     ) && <SimpleEditProductDialog model={itemData} edit={editMode} onClose={handleEditDialogClose} editorComponent={<CurrencyEditor   currencySign={getCurrencySign()} currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX} />} />}
+                    {(editMode === 'stock'     ) && <SimpleEditProductDialog model={itemData} edit={editMode} onClose={handleEditDialogClose} editorComponent={<StockEditor      theme='secondary' />} />}
+                    {(editMode === 'visibility') && <SimpleEditProductDialog model={itemData} edit={editMode} onClose={handleEditDialogClose} editorComponent={<VisibilityEditor theme='secondary' />} />}
                 </>}
             </ModalStatus>
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {!!editMode && ((editMode === 'images') || (editMode === 'full')) && <FullEditDialog product={product} onClose={handleEditDialogClose} defaultExpandedTabIndex={(editMode === 'images') ? 1 : undefined} />}
+                {!!editMode && ((editMode === 'images') || (editMode === 'full')) && <FullEditDialog product={itemData} onClose={handleEditDialogClose} defaultExpandedTabIndex={(editMode === 'images') ? 1 : undefined} />}
             </ModalStatus>
         </ListItem>
     );
 }
-export default function Products() {
+
+
+
+export default function ProductPage() {
     // styles:
     const styles = usePageStyleSheet();
     
     
     
-    // stores:
-    const [page, setPage] = useState<number>(1);
+    // states:
+    const [page   , setPage   ] = useState<number>(1);
     const [perPage, setPerPage] = useState<number>(10);
-    const {data: products, isLoading: isLoadingAndNoData, isFetching, isError, refetch } = useGetProductPage({ page, perPage });
-    const isErrorAndNoData = isError && !products;
-    const pages = Math.ceil((products?.total ?? 0) / perPage);
-    
-    
-    
-    // refs:
-    const productListRef = useRef<HTMLElement|null>(null);
+    const dataSource            = useGetProductPage({ page, perPage });
+    const {data, isLoading: isLoadingAndNoData, isError, refetch } = dataSource;
+    const isErrorAndNoData = isError && !data;
     
     
     
     // jsx:
     if (isLoadingAndNoData) return <PageLoading />;
     if (isErrorAndNoData  ) return <PageError onRetry={refetch} />;
-    const ProductPagination = (props: PaginationProps) => (
-        <Pagination
-            {...props}
-            theme={props.theme ?? 'primary'}
-            size={props.size ?? 'sm'}
-            itemsLimit={props.itemsLimit ?? 20}
-            
-            prevItems={
-                <NavPrevItem
-                    onClick={() => setPage(1)}
-                />
-            }
-            nextItems={
-                <NavNextItem
-                    onClick={() => setPage(pages)}
-                />
-            }
-        >
-            {!products && <ListItem actionCtrl={false} nude={true}><LoadingBar className={styles.paginationLoading}
-                nude={true}
-                running={isFetching}
-                theme={isError ? 'danger' : undefined}
-            /></ListItem>}
-            
-            {[...Array(pages)].map((_, index) =>
-                <ListItem
-                    key={index}
-                    
-                    active={(index + 1) === page}
-                    onClick={() => setPage(index + 1)}
-                >
-                    {index + 1}
-                </ListItem>
-            )}
-        </Pagination>
-    );
     return (
         <Main className={styles.page}>
-            <Section className={`fill-self ${styles.products}`}>
-                <ProductPagination className={styles.paginTop} />
-                <Basic<HTMLElement> className={styles.productList} theme='primary' mild={true} elmRef={productListRef}>
-                    {/* loading|error dialog: */}
-                    <ModalStatus viewport={productListRef} theme={isError ? 'danger' : undefined}>
-                        {(isFetching || isError) && <CardBody className={styles.productFetching}>
-                            {isFetching && <>
-                                <p>Retrieving data from the server. Please wait...</p>
-                                <LoadingBar className='loadingBar' />
-                            </>}
-                            
-                            {isError && <>
-                                <h3>Oops, an error occured!</h3>
-                                <p>We were unable to retrieve data from the server.</p>
-                                <ButtonIcon icon='refresh' theme='success' onClick={refetch}>
-                                    Retry
-                                </ButtonIcon>
-                            </>}
-                        </CardBody>}
-                    </ModalStatus>
-                    
-                    {!!products && <List listStyle='flush' className={styles.productListInner}>
-                        <ProductCreate />
-                        {Object.values(products?.entities).filter((product): product is Exclude<typeof product, undefined> => !!product).map((product, index) =>
-                            <ProductItem key={product.id ?? (`${page}-${index}`)} product={product} />
-                        )}
-                    </List>}
-                </Basic>
-                <ProductPagination className={styles.paginBtm} />
-            </Section>
+            <SectionDataList<ProductDetail>
+                // accessibilities:
+                createItemText='Add New Product'
+                
+                
+                
+                // data:
+                page={page}
+                perPage={perPage}
+                setPage={setPage}
+                setPerPage={setPerPage}
+                dataSource={dataSource}
+                
+                
+                
+                // components:
+                itemDataComponent={
+                    <ProductItem itemData={undefined as any} />
+                }
+                createItemUiComponent={
+                    <CreateProduct onClose={undefined as any} />
+                }
+            />
         </Main>
     )
 }

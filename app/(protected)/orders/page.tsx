@@ -3,13 +3,12 @@
 import { default as React } from 'react'
 import { dynamicStyleSheets } from '@cssfn/cssfn-react'
 
-import { Section, Main } from '@heymarco/section'
+import { Main } from '@heymarco/section'
 
 import { Image } from '@heymarco/image'
-import { ButtonIcon, List, ListItem, ListItemProps, NavNextItem, NavPrevItem, Pagination, PaginationProps, Basic, CardBody, Badge, Content, ModalStatus } from '@reusable-ui/components';
+import { ListItem, ListItemProps, Badge, Content, ModalStatus } from '@reusable-ui/components';
 import { OrderDetail, useGetOrderPage, useGetProductList } from '@/store/features/api/apiSlice';
 import { useRef, useState } from 'react';
-import { LoadingBar } from '@heymarco/loading-bar'
 import { useEvent } from '@reusable-ui/core';
 
 import { EditButton } from '@/components/EditButton'
@@ -27,6 +26,9 @@ import {
 import {
     PageError,
 }                           from '@/components/PageError'
+import {
+    SectionDataList,
+}                           from '@/components/SectionDataList'
 
 
 
@@ -52,7 +54,7 @@ const getTotalQuantity = (items: OrderDetail['items']): number => {
 
 
 interface OrderItemProps extends ListItemProps {
-    order: OrderDetail
+    itemData: OrderDetail
 }
 const OrderItem = (props: OrderItemProps) => {
     // styles:
@@ -61,14 +63,14 @@ const OrderItem = (props: OrderItemProps) => {
     
     
     const {
-        order,
+        itemData,
     ...restListItem} = props;
     const {
         orderId,
         
         customer : customerDetail,
         items,
-    } = order;
+    } = itemData;
     const {
         nickName : customerNickName,
         email    : customerEmail,
@@ -203,106 +205,51 @@ const OrderItem = (props: OrderItemProps) => {
             {/* edit dialog: */}
             <ModalStatus theme='primary' viewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
                 {!!editMode && (editMode !== 'full') && <>
-                    {(editMode === 'nickName'       ) && <SimpleEditCustomerDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor type='text'  required minLength={2} maxLength={30} autoCapitalize='words' />} />}
-                    {(editMode === 'email'          ) && <SimpleEditCustomerDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor type='email' required minLength={5} maxLength={50} />} />}
+                    {(editMode === 'nickName'       ) && <SimpleEditCustomerDialog model={itemData} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor type='text'  required minLength={2} maxLength={30} autoCapitalize='words' />} />}
+                    {(editMode === 'email'          ) && <SimpleEditCustomerDialog model={itemData} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor type='email' required minLength={5} maxLength={50} />} />}
                 </>}
             </ModalStatus>
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {(editMode === 'full') && <FullEditDialog order={order} onClose={handleEditDialogClose} />}
+                {(editMode === 'full') && <FullEditDialog order={itemData} onClose={handleEditDialogClose} />}
             </ModalStatus>
         </ListItem>
     );
 }
-export default function Orders() {
+export default function OrderPage() {
     // styles:
     const styles = usePageStyleSheet();
     
     
     
     // stores:
-    const [page, setPage] = useState<number>(1);
+    const [page   , setPage   ] = useState<number>(1);
     const [perPage, setPerPage] = useState<number>(10);
-    const {data: orders, isLoading: isLoadingAndNoData, isFetching, isError, refetch } = useGetOrderPage({ page, perPage });
-    const isErrorAndNoData = isError && !orders;
-    const pages = Math.ceil((orders?.total ?? 0) / perPage);
-    
-    
-    
-    // refs:
-    const orderListRef = useRef<HTMLElement|null>(null);
+    const dataSource            = useGetOrderPage({ page, perPage });
+    const {data, isLoading: isLoadingAndNoData, isError, refetch } = dataSource;
+    const isErrorAndNoData = isError && !data;
     
     
     
     // jsx:
     if (isLoadingAndNoData) return <PageLoading />;
     if (isErrorAndNoData  ) return <PageError onRetry={refetch} />;
-    const OrderPagination = (props: PaginationProps) => (
-        <Pagination
-            {...props}
-            theme={props.theme ?? 'primary'}
-            size={props.size ?? 'sm'}
-            itemsLimit={props.itemsLimit ?? 20}
-            
-            prevItems={
-                <NavPrevItem
-                    onClick={() => setPage(1)}
-                />
-            }
-            nextItems={
-                <NavNextItem
-                    onClick={() => setPage(pages)}
-                />
-            }
-        >
-            {!orders && <ListItem actionCtrl={false} nude={true}><LoadingBar className={styles.paginationLoading}
-                nude={true}
-                running={isFetching}
-                theme={isError ? 'danger' : undefined}
-            /></ListItem>}
-            
-            {[...Array(pages)].map((_, index) =>
-                <ListItem
-                    key={index}
-                    
-                    active={(index + 1) === page}
-                    onClick={() => setPage(index + 1)}
-                >
-                    {index + 1}
-                </ListItem>
-            )}
-        </Pagination>
-    );
     return (
         <Main className={styles.page}>
-            <Section className={`fill-self ${styles.orders}`}>
-                <OrderPagination className={styles.paginTop} />
-                <Basic<HTMLElement> className={styles.orderList} theme='primary' mild={true} elmRef={orderListRef}>
-                    {/* loading|error dialog: */}
-                    <ModalStatus viewport={orderListRef} theme={isError ? 'danger' : undefined}>
-                        {(isFetching || isError) && <CardBody className={styles.orderFetching}>
-                            {isFetching && <>
-                                <p>Retrieving data from the server. Please wait...</p>
-                                <LoadingBar className='loadingBar' />
-                            </>}
-                            
-                            {isError && <>
-                                <h3>Oops, an error occured!</h3>
-                                <p>We were unable to retrieve data from the server.</p>
-                                <ButtonIcon icon='refresh' theme='success' onClick={refetch}>
-                                    Retry
-                                </ButtonIcon>
-                            </>}
-                        </CardBody>}
-                    </ModalStatus>
-                    
-                    {!!orders && <List listStyle='flush' className={styles.orderListInner}>
-                        {Object.values(orders?.entities).filter((order): order is Exclude<typeof order, undefined> => !!order).map((order, index) =>
-                            <OrderItem key={order.id ?? (`${page}-${index}`)} order={order} />
-                        )}
-                    </List>}
-                </Basic>
-                <OrderPagination className={styles.paginBtm} />
-            </Section>
+            <SectionDataList<OrderDetail>
+                // data:
+                page={page}
+                perPage={perPage}
+                setPage={setPage}
+                setPerPage={setPerPage}
+                dataSource={dataSource}
+                
+                
+                
+                // components:
+                itemDataComponent={
+                    <OrderItem itemData={undefined as any} />
+                }
+            />
         </Main>
     )
 }
