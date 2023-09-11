@@ -103,7 +103,10 @@ export const ModalLoadingError = <TElement extends Element = HTMLElement, TModal
             // auto focusable:
             autoFocusOn={props.autoFocusOn ?? (isError ? buttonRetryRef : undefined)}
         >
-            <CardBody className={styles.main}>
+            <CardBody
+                // classes:
+                className={styles.main}
+            >
                 {isFetching && <MessageLoading />}
                 
                 {isError    && <MessageError buttonRetryRef={buttonRetryRef} onRetry={refetch} />}

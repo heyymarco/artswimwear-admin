@@ -29,6 +29,7 @@ import {
 
 // heymarco components:
 import {
+    MainProps,
     Main,
     GenericSection,
 }                           from '@heymarco/section'
@@ -47,7 +48,7 @@ export const usePageErrorStyleSheet = dynamicStyleSheets(
 
 
 
-export interface PageErrorProps {
+export interface PageErrorProps extends MainProps {
     // handlers:
     onRetry ?: () => void
 }
@@ -56,7 +57,7 @@ export const PageError = (props: PageErrorProps): JSX.Element|null => {
     const {
         // handlers:
         onRetry,
-    } = props;
+    ...restMainProps} = props;
     
     
     
@@ -73,11 +74,62 @@ export const PageError = (props: PageErrorProps): JSX.Element|null => {
     
     // jsx:
     return (
-        <Main key='main-error' className={styleSheet.main}>
-            <GenericSection key='section-error' className='fill-self' elmRef={sectionRef}>
-                <ModalCard theme='danger' expanded={true} viewport={sectionRef} backdropStyle='static' autoFocusOn={buttonRetryRef}>
-                    <CardBody className={styleSheet.modalError}>
-                        <MessageError buttonRetryRef={buttonRetryRef} onRetry={onRetry} />
+        <Main
+            // other props:
+            {...restMainProps}
+            
+            
+            
+            // variants:
+            theme={props.theme ?? 'primary'}
+            
+            
+            
+            // classes:
+            className={styleSheet.main}
+        >
+            <GenericSection
+                // refs:
+                elmRef={sectionRef}
+                
+                
+                
+                // classes:
+                className='fill-self'
+            >
+                <ModalCard
+                    // variants:
+                    theme='danger'
+                    backdropStyle='static'
+                    
+                    
+                    
+                    // states:
+                    expanded={true}
+                    
+                    
+                    
+                    // global stackable:
+                    viewport={sectionRef}
+                    
+                    
+                    
+                    // auto focusable:
+                    autoFocusOn={buttonRetryRef} // TODO: doesn't work
+                >
+                    <CardBody
+                        // classes:
+                        className={styleSheet.modalError}
+                    >
+                        <MessageError
+                            // refs:
+                            buttonRetryRef={buttonRetryRef}
+                            
+                            
+                            
+                            // handlers:
+                            onRetry={onRetry}
+                        />
                     </CardBody>
                 </ModalCard>
             </GenericSection>

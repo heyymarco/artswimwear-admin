@@ -19,6 +19,7 @@ import {
 
 // heymarco components:
 import {
+    MainProps,
     Main,
     GenericSection,
 }                           from '@heymarco/section'
@@ -32,7 +33,8 @@ export const usePageLoadingStyleSheet = dynamicStyleSheet(
 
 
 
-export const PageLoading = (): JSX.Element|null => {
+export interface PageLoadingProps extends MainProps {}
+export const PageLoading = (props: PageLoadingProps): JSX.Element|null => {
     // styles:
     const styleSheet = usePageLoadingStyleSheet();
     
@@ -40,9 +42,43 @@ export const PageLoading = (): JSX.Element|null => {
     
     // jsx:
     return (
-        <Main key='main-loading' className={styleSheet.main}>
-            <GenericSection key='section-loading' className='fill-self'>
-                <Busy key='busy-loading' size='lg' />
+        <Main
+            // other props:
+            {...props}
+            
+            
+            
+            // identifiers:
+            key='main-loading'
+            
+            
+            
+            // variants:
+            theme={props.theme ?? 'primary'}
+            
+            
+            
+            // classes:
+            className={styleSheet.main}
+        >
+            <GenericSection
+                // identifiers:
+                key='section-loading'
+                
+                
+                
+                // classes:
+                className='fill-self'
+            >
+                <Busy
+                    // identifiers:
+                    key='busy-loading'
+                    
+                    
+                    
+                    // variants:
+                    size='lg'
+                />
             </GenericSection>
         </Main>
     );

@@ -86,7 +86,10 @@ export const ModalDataEmpty = <TModel extends Model, TElement extends Element = 
             // states:
             expanded={props.expanded ?? true}
         >
-            <CardBody className={styles.main}>
+            <CardBody
+                // classes:
+                className={styles.main}
+            >
                 <MessageDataEmpty />
             </CardBody>
         </ModalCard>
