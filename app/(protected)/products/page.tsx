@@ -224,7 +224,7 @@ export default function Products() {
     
     
     // refs:
-    const [productListRef, setProductListRef] = useState<HTMLElement|null>(null);
+    const productListRef = useRef<HTMLElement|null>(null);
     
     
     
@@ -271,7 +271,7 @@ export default function Products() {
         <Main className={styles.page}>
             <Section className={`fill-self ${styles.products}`}>
                 <ProductPagination className={styles.paginTop} />
-                <Basic<HTMLElement> className={styles.productList} theme='primary' mild={true} elmRef={setProductListRef}>
+                <Basic<HTMLElement> className={styles.productList} theme='primary' mild={true} elmRef={productListRef}>
                     {/* loading|error dialog: */}
                     <ModalStatus viewport={productListRef} theme={isError ? 'danger' : undefined}>
                         {(isFetching || isError) && <CardBody className={styles.productFetching}>

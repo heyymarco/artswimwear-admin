@@ -229,7 +229,7 @@ export default function Orders() {
     
     
     // refs:
-    const [orderListRef, setOrderListRef] = useState<HTMLElement|null>(null);
+    const orderListRef = useRef<HTMLElement|null>(null);
     
     
     
@@ -276,7 +276,7 @@ export default function Orders() {
         <Main className={styles.page}>
             <Section className={`fill-self ${styles.orders}`}>
                 <OrderPagination className={styles.paginTop} />
-                <Basic<HTMLElement> className={styles.orderList} theme='primary' mild={true} elmRef={setOrderListRef}>
+                <Basic<HTMLElement> className={styles.orderList} theme='primary' mild={true} elmRef={orderListRef}>
                     {/* loading|error dialog: */}
                     <ModalStatus viewport={orderListRef} theme={isError ? 'danger' : undefined}>
                         {(isFetching || isError) && <CardBody className={styles.orderFetching}>
