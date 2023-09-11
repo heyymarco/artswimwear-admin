@@ -32,7 +32,7 @@ export const usePageLoadingStyleSheet = dynamicStyleSheet(
 
 
 
-export const PageLoading = () => {
+export const PageLoading = (): JSX.Element|null => {
     // styles:
     const styleSheet = usePageLoadingStyleSheet();
     

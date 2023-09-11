@@ -41,7 +41,6 @@ import {
     ListItemProps,
     ListItem,
     List,
-    CardBody,
     
     
     
@@ -53,9 +52,6 @@ import {
 import {
     Section,
 }                           from '@heymarco/section'
-import {
-    LoadingBar,
-}                           from '@heymarco/loading-bar'
 
 // internals components:
 import {
@@ -79,6 +75,9 @@ import {
     PaginationDataStateProps,
     PaginationDataStateProvider,
 }                           from './states/paginationDataState'
+import {
+    ModalLoadingError,
+}                           from '@/components/ModalLoadingError'
 
 
 
@@ -298,23 +297,22 @@ const SectionDataListInternal = <TModel extends Model>(props: SectionDataListInt
     // jsx:
     return (
         <Basic className={styles.listData} theme='primary' mild={true} elmRef={dataListRef}>
-            {/* loading|error dialog: */}
-            <ModalStatus viewport={dataListRef} theme={isError ? 'danger' : undefined}>
-                {(isFetching || isError) && <CardBody className={styles.dataFetchingStatus}>
-                    {isFetching && <>
-                        <p>Retrieving data from the server. Please wait...</p>
-                        <LoadingBar className='loadingBar' />
-                    </>}
-                    
-                    {isError && <>
-                        <h3>Oops, an error occured!</h3>
-                        <p>We were unable to retrieve data from the server.</p>
-                        <ButtonIcon icon='refresh' theme='success' onClick={refetch}>
-                            Retry
-                        </ButtonIcon>
-                    </>}
-                </CardBody>}
-            </ModalStatus>
+            <ModalLoadingError
+                // data:
+                isFetching={isFetching}
+                isError={isError}
+                refetch={refetch}
+                
+                
+                
+                // variants:
+                theme={isError ? 'danger' : undefined}
+                
+                
+                
+                // global stackable:
+                viewport={dataListRef}
+            />
             
             {!!data && <List listStyle='flush' className={styles.listDataInner}>
                 {/* <CreateData> */}

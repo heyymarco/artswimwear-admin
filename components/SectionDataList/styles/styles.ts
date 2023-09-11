@@ -136,14 +136,6 @@ export default () => [
         
         justifySelf: 'center',
     }),
-    scope('dataFetchingStatus', {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        ...children('.loadingBar', {
-            alignSelf: 'stretch',
-        }),
-    }, { specificityWeight: 2 }),
     scope('listDataInner', { // the <List> of data
         ...usesDataListInnerLayout(),
     }, { specificityWeight: 2 }),

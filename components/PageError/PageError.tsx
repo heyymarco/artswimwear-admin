@@ -19,11 +19,6 @@ import {
 
 // reusable-ui components:
 import {
-    // simple-components:
-    ButtonIcon,
-    
-    
-    
     CardBody,
     
     
@@ -38,6 +33,11 @@ import {
     GenericSection,
 }                           from '@heymarco/section'
 
+// internals:
+import {
+    MessageError,
+}                           from '@/components/MessageError'
+
 
 
 // styles:
@@ -51,7 +51,7 @@ export interface PageErrorProps {
     // handlers:
     onRetry ?: () => void
 }
-export const PageError = (props: PageErrorProps) => {
+export const PageError = (props: PageErrorProps): JSX.Element|null => {
     // rest props:
     const {
         // handlers:
@@ -66,7 +66,8 @@ export const PageError = (props: PageErrorProps) => {
     
     
     // refs:
-    const sectionRef = useRef<HTMLElement|null>(null);
+    const sectionRef     = useRef<HTMLElement|null>(null);
+    const buttonRetryRef = useRef<HTMLButtonElement|null>(null);
     
     
     
@@ -74,17 +75,9 @@ export const PageError = (props: PageErrorProps) => {
     return (
         <Main key='main-error' className={styleSheet.main}>
             <GenericSection key='section-error' className='fill-self' elmRef={sectionRef}>
-                <ModalCard theme='danger' expanded={true} viewport={sectionRef} backdropStyle='static'>
+                <ModalCard theme='danger' expanded={true} viewport={sectionRef} backdropStyle='static' autoFocusOn={buttonRetryRef}>
                     <CardBody className={styleSheet.modalError}>
-                        <h3>
-                            Oops, an error occured!
-                        </h3>
-                        <p>
-                            We were unable to retrieve data from the server.
-                        </p>
-                        {!!onRetry && <ButtonIcon icon='refresh' theme='success' onClick={onRetry}>
-                            Retry
-                        </ButtonIcon>}
+                        <MessageError buttonRetryRef={buttonRetryRef} onRetry={onRetry} />
                     </CardBody>
                 </ModalCard>
             </GenericSection>
