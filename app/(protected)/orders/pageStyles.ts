@@ -13,75 +13,6 @@ import { typos, usesBorder, usesGroupable, usesPadding } from '@reusable-ui/core
 
 // styles:
 const imageSize = 128;  // 128px
-const usesOrderListLayout = () => { // the <section> of order list
-    // dependencies:
-    
-    // capabilities:
-    const {groupableRule} = usesGroupable({
-        orientationInlineSelector : null, // craft the <List>'s borderRadius manually, uncraft the other <portal><ModalBackdrop><ModalDialog>
-        orientationBlockSelector  : null, // craft the <List>'s borderRadius manually, uncraft the other <portal><ModalBackdrop><ModalDialog>
-    });
-    
-    // features:
-    const {paddingVars} = usesPadding();
-    
-    
-    
-    return style({
-        // capabilities:
-        ...groupableRule(),  // make a nicely rounded corners
-        
-        
-        
-        // layouts:
-        ...style({
-            // positions:
-            gridArea  : 'orderList',
-            alignSelf : 'start',
-            
-            
-            
-            // layouts:
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            
-            
-            
-            // sizes:
-            minBlockSize : '100%', // fill the page height if there is no_data or few_data
-            
-            
-            
-            // spacings:
-            [paddingVars.paddingInline] : '0px',
-            [paddingVars.paddingBlock ] : '0px',
-        }),
-    });
-};
-const usesOrderListInnerLayout = () => { // the <List> of order list
-    // dependencies:
-    
-    // capabilities:
-    const {groupableVars} = usesGroupable();
-    
-    // features:
-    const {borderVars } = usesBorder();
-    
-    
-    
-    return style({
-        [groupableVars.borderStartStartRadius] : 'inherit !important', // reads parent's prop
-        [groupableVars.borderStartEndRadius  ] : 'inherit !important', // reads parent's prop
-        [groupableVars.borderEndStartRadius  ] : 'inherit !important', // reads parent's prop
-        [groupableVars.borderEndEndRadius    ] : 'inherit !important', // reads parent's prop
-        
-        [borderVars.borderStartStartRadius] : groupableVars.borderStartStartRadius,
-        [borderVars.borderStartEndRadius  ] : groupableVars.borderStartEndRadius,
-        [borderVars.borderEndStartRadius  ] : groupableVars.borderEndStartRadius,
-        [borderVars.borderEndEndRadius    ] : groupableVars.borderEndEndRadius,
-    });
-};
 const usesOrderItemLayout = () => { // the <ListItem> of order list
     // dependencies:
     
@@ -231,58 +162,12 @@ const usesOrderItemWrapperLayout = () => { // the <div> of the <ListItem> of ord
         ...paddingRule(), // must be placed at the last
     });
 };
+
 export default () => [
     scope('page', {
         display: 'flex',
         flexDirection: 'column',
     }),
-    scope('paginationLoading', {
-        blockSize: '100%',
-    }, { specificityWeight: 2 }),
-    scope('orders', {
-        flexGrow: 1,
-        
-        display: 'flex',
-        flexDirection: 'column',
-        ...children('article', {
-            flexGrow: 1,
-            
-            display: 'grid',
-            gridTemplate: [[
-                '"paginTop"',  'auto',
-                '"orderList"', '1fr',
-                '"paginBtm"',  'auto',
-                '/',
-                'auto',
-            ]],
-            gapInline: '1rem',
-            gapBlock: '1rem',
-        }),
-    }, { specificityWeight: 2 }),
-    scope('paginTop', {
-        gridArea: 'paginTop',
-        
-        justifySelf: 'center',
-    }),
-    scope('orderList', { // the <section> of order list
-        ...usesOrderListLayout(),
-    }, { specificityWeight: 2 }),
-    scope('orderListInner', { // the <List> of order list
-        ...usesOrderListInnerLayout(),
-    }, { specificityWeight: 2 }),
-    scope('paginBtm', {
-        gridArea: 'paginBtm',
-        
-        justifySelf: 'center',
-    }),
-    scope('orderFetching', {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        ...children('.loadingBar', {
-            alignSelf: 'stretch',
-        }),
-    }, { specificityWeight: 2 }),
     scope('orderItem', { // the <ListItem> of order list
         ...usesOrderItemLayout(),
     }, { specificityWeight: 2 }),
