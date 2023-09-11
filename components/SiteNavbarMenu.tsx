@@ -1,8 +1,55 @@
 'use client'
 
-import { Busy, Collapse, HamburgerMenuButton, Icon, Nav, NavbarParams, NavItem } from '@reusable-ui/components'
-import Link from '@reusable-ui/next-compat-link';
-import { signIn, signOut, useSession } from 'next-auth/react'
+// react:
+import {
+    // react:
+    default as React,
+    
+    
+    
+    // hooks:
+    useState,
+}                           from 'react'
+
+// next-auth:
+import {
+    useSession,
+    signOut,
+}                           from 'next-auth/react'
+
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useEvent,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
+// reusable-ui components:
+import {
+    // simple-components:
+    Icon,
+    HamburgerMenuButton,
+    
+    
+    
+    // status-components:
+    Busy,
+    
+    
+    
+    // menu-components:
+    Collapse,
+    
+    
+    
+    // composite-components:
+    NavItem,
+    Nav,
+    NavbarParams,
+}                           from '@reusable-ui/components'          // a set of official Reusable-UI components
+import {
+    // simple-components:
+    Link,
+}                           from '@reusable-ui/next-compat-link'
 
 
 
@@ -20,7 +67,23 @@ const SiteNavbarMenu = ({
         listExpanded,
         handleClickToToggleList,
     } : NavbarParams) => {
-    const { data: session, status } = useSession();
+    const { data, status } = useSession();
+    
+    
+    
+    // states:
+    const [isSigningOut, setIsSigningOut] = useState<boolean>(false);
+    const isFullySignedIn  = !isSigningOut && (status === 'authenticated')   && !!data;
+    const isFullySignedOut = !isSigningOut && (status === 'unauthenticated') &&  !data;
+    const isBusy           =  isSigningOut || (status === 'loading');
+    
+    
+    
+    // handlers:
+    const handleSignOut = useEvent((): void => {
+        setIsSigningOut(true);
+        signOut();
+    });
     
     
     
@@ -33,18 +96,23 @@ const SiteNavbarMenu = ({
             
             <Collapse className='list' mainClass={navbarExpanded ? '' : undefined} expanded={listExpanded}>
                 <Nav tag='ul' role='' {...basicVariantProps} orientation={navbarExpanded ? 'inline' : 'block'} listStyle='flat' gradient={navbarExpanded ? 'inherit' : false}>
-                    <NavItem><Link href='/'>Home</Link></NavItem>
-                    <NavItem><Link href='/products'>Products</Link></NavItem>
-                    <NavItem><Link href='/orders'>Orders</Link></NavItem>
-                    {(status === 'loading') && <NavItem>
+                    {isFullySignedIn && <NavItem><Link href='/'>Dashboard</Link></NavItem>}
+                    {isFullySignedIn && <NavItem><Link href='/products'>Products</Link></NavItem>}
+                    {isFullySignedIn && <NavItem><Link href='/orders'>Orders</Link></NavItem>}
+                    
+                    {isBusy && <NavItem active={true}>
                         <Busy theme='secondary' size='lg' />
+                        &nbsp;
+                        {(isSigningOut || data) ? 'Signing out...' : 'Loading...'}
                     </NavItem>}
-                    {(status === 'unauthenticated' && <NavItem>
+                    
+                    {isFullySignedOut && <NavItem>
                         <Link href='/signin'>Sign In</Link>
-                    </NavItem>)}
-                    {(status === 'authenticated' && <NavItem onClick={() => signOut()}>
+                    </NavItem>}
+                    
+                    {isFullySignedIn  && <NavItem onClick={handleSignOut}>
                         Sign Out
-                    </NavItem>)}
+                    </NavItem>}
                 </Nav>
             </Collapse>
         </>
