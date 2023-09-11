@@ -16,10 +16,8 @@ import {
 
 // internals:
 import type {
-    Model,
-}                           from '../types'
-import type {
     Pagination,
+    Model,
 }                           from '@/libs/types'
 
 

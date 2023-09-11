@@ -40,7 +40,7 @@ import {
 // internals:
 import type {
     Model,
-}                           from './types'
+}                           from '@/libs/types'
 // internals:
 import {
     // states:
@@ -98,7 +98,8 @@ const PaginationDataList = <TModel extends Model, TElement extends Element = HTM
         isFetching,
         isError,
     } = usePaginationDataState<TModel>();
-    const pages = Math.ceil((data?.total ?? 0) / perPage);
+    const pages       = Math.ceil((data?.total ?? 0) / perPage);
+    const isDataEmpty = !!data && !data.total;
     
     
     
@@ -128,6 +129,11 @@ const PaginationDataList = <TModel extends Model, TElement extends Element = HTM
             // variants:
             size={props.size ?? 'sm'}
             theme={props.theme ?? 'primary'}
+            
+            
+            
+            // accessibilities:
+            enabled={props.enabled ?? !isDataEmpty}
             
             
             

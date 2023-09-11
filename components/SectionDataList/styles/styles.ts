@@ -1,5 +1,6 @@
 // cssfn:
 import {
+    // writes css in javascript:
     children,
     scope,
     style,
@@ -54,9 +55,9 @@ const usesListDataLayout = () => {
             
             
             // layouts:
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'start',
+            display            : 'flex',
+            flexDirection      : 'column',
+            justifyContent     : 'start', // align to top
             
             
             

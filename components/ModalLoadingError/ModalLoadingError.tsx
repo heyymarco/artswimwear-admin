@@ -27,12 +27,8 @@ import {
     
     // dialog-components:
     ModalExpandedChangeEvent,
-    
-    
-    
-    // utility-components:
-    ModalStatusProps,
-    ModalStatus,
+    ModalCardProps,
+    ModalCard,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // internals:
@@ -56,7 +52,7 @@ export const useModalLoadingErrorStyleSheet = dynamicStyleSheet(
 export interface ModalLoadingErrorProps<TElement extends Element = HTMLElement, TModalExpandedChangeEvent extends ModalExpandedChangeEvent = ModalExpandedChangeEvent>
     extends
         // bases:
-        ModalStatusProps<TElement, TModalExpandedChangeEvent>
+        ModalCardProps<TElement, TModalExpandedChangeEvent>
 {
     // data:
     isFetching : boolean
@@ -75,7 +71,7 @@ export const ModalLoadingError = <TElement extends Element = HTMLElement, TModal
         isFetching,
         isError,
         refetch,
-    ...restModalStatusProps} = props;
+    ...restModalCardProps} = props;
     
     
     
@@ -87,26 +83,31 @@ export const ModalLoadingError = <TElement extends Element = HTMLElement, TModal
     // jsx:
     if (!isFetching && !isError) return null;
     return (
-        <ModalStatus<TElement, TModalExpandedChangeEvent>
+        <ModalCard<TElement, TModalExpandedChangeEvent>
             // other props:
-            {...restModalStatusProps}
+            {...restModalCardProps}
             
             
             
             // variants:
             theme={props.theme ?? (isError ? 'danger' : undefined)}
-            backdropStyle={props.backdropStyle ?? 'static'}
+            backdropStyle={props.backdropStyle ?? 'interactive'}
+            
+            
+            
+            // states:
+            expanded={props.expanded ?? true}
             
             
             
             // auto focusable:
             autoFocusOn={props.autoFocusOn ?? (isError ? buttonRetryRef : undefined)}
         >
-            {(isFetching || isError) && <CardBody className={styles.main}>
+            <CardBody className={styles.main}>
                 {isFetching && <MessageLoading />}
                 
                 {isError    && <MessageError buttonRetryRef={buttonRetryRef} onRetry={refetch} />}
-            </CardBody>}
-        </ModalStatus>
+            </CardBody>
+        </ModalCard>
     );
 };

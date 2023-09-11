@@ -60,10 +60,8 @@ import {
 
 // internals:
 import type {
-    Model,
-}                           from './types'
-import type {
     Pagination,
+    Model,
 }                           from '@/libs/types'
 import {
     // states:
@@ -78,6 +76,9 @@ import {
 import {
     ModalLoadingError,
 }                           from '@/components/ModalLoadingError'
+import {
+    ModalDataEmpty,
+}                           from '@/components/ModalDataEmpty'
 
 
 
@@ -286,6 +287,7 @@ const SectionDataListInternal = <TModel extends Model>(props: SectionDataListInt
         isError,
         refetch,
     } = usePaginationDataState<TModel>();
+    const isDataEmpty = !!data && !data.total;
     
     
     
@@ -305,8 +307,13 @@ const SectionDataListInternal = <TModel extends Model>(props: SectionDataListInt
                 
                 
                 
-                // variants:
-                theme={isError ? 'danger' : undefined}
+                // global stackable:
+                viewport={dataListRef}
+            />
+            
+            <ModalDataEmpty
+                // data:
+                data={data}
                 
                 
                 
