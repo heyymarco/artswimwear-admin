@@ -24,9 +24,11 @@ export const usesSignInPageLayout = () => {
             
             // children:
             ...children('*>*', {
-                position: 'relative',
+                // positions:
+                position         : 'relative',
                 insetInlineStart : '50%',
-                translate: '-50%',
+                translate        : '-50%',
+                transition       : 'none',
             }),
         }),
     });
