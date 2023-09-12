@@ -50,15 +50,15 @@ import {
 
 
 // styles:
-export const usePaginationDataListStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */ './styles/paginationDataListStyles')
+export const usePaginationModelListStyleSheet = dynamicStyleSheet(
+    () => import(/* webpackPrefetch: true */ './styles/paginationModelListStyles')
 , { id: 'k1h5chza4a' });
-import './styles/paginationDataListStyles';
+import './styles/paginationModelListStyles';
 
 
 
 // react components:
-export interface PaginationDataListProps<TElement extends Element = HTMLElement>
+export interface PaginationModelListProps<TElement extends Element = HTMLElement>
     extends
         PaginationProps<TElement>
 {
@@ -71,9 +71,9 @@ export interface PaginationDataListProps<TElement extends Element = HTMLElement>
     // handlers:
     onNavigateTo   : (page: number) => void
 }
-const PaginationDataList = <TModel extends Model, TElement extends Element = HTMLElement>(props: PaginationDataListProps<TElement>): JSX.Element|null => {
+const PaginationModelList = <TModel extends Model, TElement extends Element = HTMLElement>(props: PaginationModelListProps<TElement>): JSX.Element|null => {
     // styles:
-    const styles = usePaginationDataListStyleSheet();
+    const styles = usePaginationModelListStyleSheet();
     
     
     
@@ -169,6 +169,6 @@ const PaginationDataList = <TModel extends Model, TElement extends Element = HTM
     );
 };
 export {
-    PaginationDataList,
-    PaginationDataList as default,
+    PaginationModelList,
+    PaginationModelList as default,
 }
