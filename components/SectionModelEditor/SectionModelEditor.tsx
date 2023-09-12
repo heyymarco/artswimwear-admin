@@ -83,7 +83,7 @@ import {
 
 
 // styles:
-export const useSectionDataListStyleSheet = dynamicStyleSheets(
+export const useSectionModelEditorStyleSheet = dynamicStyleSheets(
     () => import(/* webpackPrefetch: true */ './styles/styles')
 , { id: 'lm1zazz2r7' });
 import './styles/styles';
@@ -107,7 +107,7 @@ export interface CreateDataProps {
 }
 const CreateData = (props: CreateDataProps) => {
     // styles:
-    const styles = useSectionDataListStyleSheet();
+    const styles = useSectionModelEditorStyleSheet();
     
     
     
@@ -174,10 +174,10 @@ export interface ItemDataProps<TModel extends Model, TElement extends Element = 
     // data:
     itemData : Pagination<TModel>['entities'][number]
 }
-export interface SectionDataListProps<TModel extends Model>
+export interface SectionModelEditorProps<TModel extends Model>
     extends
         // bases:
-        SectionDataListInternalProps<TModel>
+        SectionModelEditorInternalProps<TModel>
 {
     // data:
     page       : number
@@ -186,9 +186,9 @@ export interface SectionDataListProps<TModel extends Model>
     setPerPage : (perPage: number) => void
     dataSource : PaginationDataStateProps<TModel>['dataSource']
 }
-const SectionDataList         = <TModel extends Model>(props: SectionDataListProps<TModel>): JSX.Element|null => {
+const SectionModelEditor         = <TModel extends Model>(props: SectionModelEditorProps<TModel>): JSX.Element|null => {
     // styles:
-    const styles = useSectionDataListStyleSheet();
+    const styles = useSectionModelEditorStyleSheet();
     
     
     
@@ -200,7 +200,7 @@ const SectionDataList         = <TModel extends Model>(props: SectionDataListPro
         setPage,
         setPerPage,
         dataSource,
-    ...restSectionDataListProps} = props;
+    ...restSectionModelEditorProps} = props;
     
     
     
@@ -230,7 +230,7 @@ const SectionDataList         = <TModel extends Model>(props: SectionDataListPro
                     // handlers:
                     onNavigateTo={handleNavigateTo}
                 />
-                <SectionDataListInternal<TModel> {...restSectionDataListProps} />
+                <SectionModelEditorInternal<TModel> {...restSectionModelEditorProps} />
                 <PaginationDataList<TModel>
                     // paginations:
                     page={page}
@@ -251,7 +251,7 @@ const SectionDataList         = <TModel extends Model>(props: SectionDataListPro
     );
 }
 
-interface SectionDataListInternalProps<TModel extends Model>
+interface SectionModelEditorInternalProps<TModel extends Model>
     extends
         // data:
         Partial<CreateDataProps>
@@ -259,9 +259,9 @@ interface SectionDataListInternalProps<TModel extends Model>
     // components:
     itemDataComponent : React.ReactComponentElement<any, ItemDataProps<TModel, Element>>
 }
-const SectionDataListInternal = <TModel extends Model>(props: SectionDataListInternalProps<TModel>): JSX.Element|null => {
+const SectionModelEditorInternal = <TModel extends Model>(props: SectionModelEditorInternalProps<TModel>): JSX.Element|null => {
     // styles:
-    const styles = useSectionDataListStyleSheet();
+    const styles = useSectionModelEditorStyleSheet();
     
     
     
@@ -345,6 +345,6 @@ const SectionDataListInternal = <TModel extends Model>(props: SectionDataListInt
     );
 };
 export {
-    SectionDataList,
-    SectionDataList as default,
+    SectionModelEditor,
+    SectionModelEditor as default,
 }

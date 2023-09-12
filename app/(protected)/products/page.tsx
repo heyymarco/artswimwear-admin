@@ -36,8 +36,8 @@ import {
 }                           from '@/components/PageError'
 import {
     CreateItemUiProps,
-    SectionDataList,
-}                           from '@/components/SectionDataList'
+    SectionModelEditor,
+}                           from '@/components/SectionModelEditor'
 
 
 
@@ -218,7 +218,7 @@ export default function ProductPage() {
     if (isErrorAndNoData  ) return <PageError onRetry={refetch} />;
     return (
         <Main className={styles.page}>
-            <SectionDataList<ProductDetail>
+            <SectionModelEditor<ProductDetail>
                 // accessibilities:
                 createItemText='Add New Product'
                 

@@ -27,8 +27,8 @@ import {
     PageError,
 }                           from '@/components/PageError'
 import {
-    SectionDataList,
-}                           from '@/components/SectionDataList'
+    SectionModelEditor,
+}                           from '@/components/SectionModelEditor'
 
 
 
@@ -235,7 +235,7 @@ export default function OrderPage() {
     if (isErrorAndNoData  ) return <PageError onRetry={refetch} />;
     return (
         <Main className={styles.page}>
-            <SectionDataList<OrderDetail>
+            <SectionModelEditor<OrderDetail>
                 // data:
                 page={page}
                 perPage={perPage}
