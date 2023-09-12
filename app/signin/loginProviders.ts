@@ -9,5 +9,5 @@ import type {
 export const loginProviders : BuiltInProviderType[] = [
     'google',
     'facebook',
-    'instagram',
+    // 'instagram',
 ];
