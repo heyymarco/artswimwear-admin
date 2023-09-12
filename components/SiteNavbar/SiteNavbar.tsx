@@ -8,9 +8,6 @@ import {
 
 // reusable-ui components:
 import {
-    basics,
-    
-    navbarValues,
     Navbar,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
@@ -18,18 +15,6 @@ import {
 import {
     SiteNavbarMenu,
 }                           from './SiteNavbarMenu'
-
-
-
-navbarValues.boxSizing = 'border-box';
-navbarValues.blockSize = '4rem';
-
-navbarValues.extraMarginInline = 'unset';
-navbarValues.extraMarginBlock  = [[
-    'calc(0px - ', basics.paddingBlock, ')',
-]];
-navbarValues.extraJustifySelf  = 'stretch';
-navbarValues.extraAlignSelf    = 'stretch';
 
 
 

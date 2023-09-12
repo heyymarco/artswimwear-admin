@@ -1,6 +1,6 @@
 import '@reusable-ui/typos/effects'
-import { defineTheme, colorValues } from '@reusable-ui/core'
-import { iconConfig } from '@reusable-ui/components'
+import { defineTheme, colorValues, breakpoints } from '@reusable-ui/core'
+import { iconConfig, navbarValues } from '@reusable-ui/components'
 import { galleryEditors } from '@/components/editors/GalleryEditor/styles/config'
 import { commerces } from '@/config'
 import { basicValues } from '@reusable-ui/components'
@@ -9,9 +9,11 @@ import { carouselValues } from '@reusable-ui/components'
 
 // other libs:
 import Color                from 'color'                // color utilities
+import { signIns } from '@heymarco/next-auth'
 
 
 
+// Theme:
 // light theme
 colorValues.backg = colorValues.light;
 colorValues.foreg = colorValues.dark;
@@ -33,6 +35,8 @@ colorValues.secondaryMild = secondaryCol.lighten(1);
 // colorValues.light = primaryCol.darken(0.5);
 
 
+
+// <Basic>:
 basicValues.backgGrad = [
     ['linear-gradient(180deg, transparent, rgba(100, 100, 100, 1)) border-box'],
 ];
@@ -40,7 +44,7 @@ basicValues.backgroundBlendMode = 'saturation';
 
 
 
-// icons:
+// <Icon>:
 iconConfig.image.files.push(
     { name: 'artswimwear.svg', ratio: '48/40' },
     { name: 'scrolldown.svg', ratio: '20/40' },
@@ -48,7 +52,18 @@ iconConfig.image.files.push(
 
 
 
-// gallery editors:
+// <Navbar>:
+navbarValues.boxSizing = 'border-box';
+navbarValues.blockSize = '4rem';
+
+
+
+// <SignIn>
+(signIns as any).maxInlineSize = `${breakpoints.md}px`;
+
+
+
+// <GalleryEditor>:
 galleryEditors.itemAspectRatio = commerces.defaultProductAspectRatio;
 
 imageValues.objectFit = 'cover';
