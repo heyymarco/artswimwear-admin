@@ -44,8 +44,8 @@ import type {
 // internals:
 import {
     // states:
-    usePaginationDataState,
-}                           from './states/paginationDataState'
+    usePaginationModelState,
+}                           from './states/paginationModelState'
 
 
 
@@ -97,7 +97,7 @@ const PaginationDataList = <TModel extends Model, TElement extends Element = HTM
         data,
         isFetching,
         isError,
-    } = usePaginationDataState<TModel>();
+    } = usePaginationModelState<TModel>();
     const pages       = Math.ceil((data?.total ?? 0) / perPage);
     const isDataEmpty = !!data && !data.total;
     

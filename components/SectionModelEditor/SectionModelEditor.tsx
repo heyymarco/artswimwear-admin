@@ -65,14 +65,14 @@ import type {
 }                           from '@/libs/types'
 import {
     // states:
-    usePaginationDataState,
+    usePaginationModelState,
     
     
     
     // react components:
-    PaginationDataStateProps,
-    PaginationDataStateProvider,
-}                           from './states/paginationDataState'
+    PaginationModelStateProps,
+    PaginationModelStateProvider,
+}                           from './states/paginationModelState'
 import {
     ModalLoadingError,
 }                           from '@/components/ModalLoadingError'
@@ -184,7 +184,7 @@ export interface SectionModelEditorProps<TModel extends Model>
     perPage    : number
     setPage    : (page: number) => void
     setPerPage : (perPage: number) => void
-    dataSource : PaginationDataStateProps<TModel>['dataSource']
+    dataSource : PaginationModelStateProps<TModel>['dataSource']
 }
 const SectionModelEditor         = <TModel extends Model>(props: SectionModelEditorProps<TModel>): JSX.Element|null => {
     // styles:
@@ -213,7 +213,7 @@ const SectionModelEditor         = <TModel extends Model>(props: SectionModelEdi
     
     // jsx:
     return (
-        <PaginationDataStateProvider dataSource={dataSource}>
+        <PaginationModelStateProvider dataSource={dataSource}>
             <Section className={`fill-self ${styles.sectionData}`}>
                 <PaginationDataList<TModel>
                     // paginations:
@@ -247,7 +247,7 @@ const SectionModelEditor         = <TModel extends Model>(props: SectionModelEdi
                     onNavigateTo={handleNavigateTo}
                 />
             </Section>
-        </PaginationDataStateProvider>
+        </PaginationModelStateProvider>
     );
 }
 
@@ -286,8 +286,7 @@ const SectionModelEditorInternal = <TModel extends Model>(props: SectionModelEdi
         isFetching,
         isError,
         refetch,
-    } = usePaginationDataState<TModel>();
-    const isDataEmpty = !!data && !data.total;
+    } = usePaginationModelState<TModel>();
     
     
     
@@ -325,18 +324,18 @@ const SectionModelEditorInternal = <TModel extends Model>(props: SectionModelEdi
                 {/* <CreateData> */}
                 {!!createItemUiComponent && <CreateData createItemText={createItemText} createItemUiComponent={createItemUiComponent} />}
                 
-                {!!itemDataComponent && Object.values(data?.entities).filter((itemData): itemData is Exclude<typeof itemData, undefined> => !!itemData).map((itemData, index) =>
+                {!!itemDataComponent && Object.values(data?.entities).filter((itemData): itemData is Exclude<typeof itemData, undefined> => !!itemData).map((model, index) =>
                     /* <ItemData> */
                     React.cloneElement<ItemDataProps<TModel, Element>>(itemDataComponent,
                         // props:
                         {
                             // identifiers:
-                            key      : itemDataComponent.key            ?? itemData.id,
+                            key      : itemDataComponent.key            ?? model.id,
                             
                             
                             
                             // data:
-                            itemData : itemDataComponent.props.itemData ?? itemData,
+                            itemData : itemDataComponent.props.itemData ?? model,
                         },
                     )
                 )}
