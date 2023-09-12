@@ -166,14 +166,6 @@ const CreateData = (props: CreateDataProps) => {
     );
 };
 
-export interface ItemDataProps<TModel extends Model, TElement extends Element = HTMLElement>
-    extends
-        // bases:
-        ListItemProps<TElement>
-{
-    // data:
-    itemData : Pagination<TModel>['entities'][number]
-}
 export interface SectionModelEditorProps<TModel extends Model>
     extends
         // bases:
@@ -251,13 +243,21 @@ const SectionModelEditor         = <TModel extends Model>(props: SectionModelEdi
     );
 }
 
+export interface ModelPreviewProps<TModel extends Model, TElement extends Element = HTMLElement>
+    extends
+        // bases:
+        ListItemProps<TElement>
+{
+    // data:
+    model : Pagination<TModel>['entities'][number]
+}
 interface SectionModelEditorInternalProps<TModel extends Model>
     extends
         // data:
         Partial<CreateDataProps>
 {
     // components:
-    itemDataComponent : React.ReactComponentElement<any, ItemDataProps<TModel, Element>>
+    modelPreviewComponent : React.ReactComponentElement<any, ModelPreviewProps<TModel, Element>>
 }
 const SectionModelEditorInternal = <TModel extends Model>(props: SectionModelEditorInternalProps<TModel>): JSX.Element|null => {
     // styles:
@@ -274,7 +274,7 @@ const SectionModelEditorInternal = <TModel extends Model>(props: SectionModelEdi
         
         // components:
         createItemUiComponent,
-        itemDataComponent,
+        modelPreviewComponent,
     } = props;
     
     
@@ -324,18 +324,18 @@ const SectionModelEditorInternal = <TModel extends Model>(props: SectionModelEdi
                 {/* <CreateData> */}
                 {!!createItemUiComponent && <CreateData createItemText={createItemText} createItemUiComponent={createItemUiComponent} />}
                 
-                {!!itemDataComponent && Object.values(data?.entities).filter((itemData): itemData is Exclude<typeof itemData, undefined> => !!itemData).map((model, index) =>
-                    /* <ItemData> */
-                    React.cloneElement<ItemDataProps<TModel, Element>>(itemDataComponent,
+                {!!modelPreviewComponent && Object.values(data?.entities).filter((model): model is Exclude<typeof model, undefined> => !!model).map((model, index) =>
+                    /* <ModelPreview> */
+                    React.cloneElement<ModelPreviewProps<TModel, Element>>(modelPreviewComponent,
                         // props:
                         {
                             // identifiers:
-                            key      : itemDataComponent.key            ?? model.id,
+                            key   : modelPreviewComponent.key         ?? model.id,
                             
                             
                             
                             // data:
-                            itemData : itemDataComponent.props.itemData ?? model,
+                            model : modelPreviewComponent.props.model ?? model,
                         },
                     )
                 )}

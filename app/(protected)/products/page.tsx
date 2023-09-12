@@ -62,17 +62,17 @@ const CreateProduct = (props: CreateProductProps) => {
     );
 };
 
-interface ProductItemProps extends ListItemProps {
-    itemData: ProductDetail
+interface ProductPreviewProps extends ListItemProps {
+    model: ProductDetail
 }
-const ProductItem = (props: ProductItemProps) => {
+const ProductPreview = (props: ProductPreviewProps) => {
     // styles:
     const styles = usePageStyleSheet();
     
     
     
     const {
-        itemData,
+        model,
     ...restListItem} = props;
     const {
         visibility,
@@ -80,7 +80,7 @@ const ProductItem = (props: ProductItemProps) => {
         images,
         price,
         stock,
-    } = itemData;
+    } = model;
     
     
     
@@ -183,14 +183,14 @@ const ProductItem = (props: ProductItemProps) => {
             {/* edit dialog: */}
             <ModalStatus theme='primary' viewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
                 {!!editMode && (editMode !== 'images') && (editMode !== 'full') && <>
-                    {(editMode === 'name'      ) && <SimpleEditProductDialog model={itemData} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor       type='text' required={true } />} />}
-                    {(editMode === 'price'     ) && <SimpleEditProductDialog model={itemData} edit={editMode} onClose={handleEditDialogClose} editorComponent={<CurrencyEditor   currencySign={getCurrencySign()} currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX} />} />}
-                    {(editMode === 'stock'     ) && <SimpleEditProductDialog model={itemData} edit={editMode} onClose={handleEditDialogClose} editorComponent={<StockEditor      theme='secondary' />} />}
-                    {(editMode === 'visibility') && <SimpleEditProductDialog model={itemData} edit={editMode} onClose={handleEditDialogClose} editorComponent={<VisibilityEditor theme='secondary' />} />}
+                    {(editMode === 'name'      ) && <SimpleEditProductDialog model={model} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor       type='text' required={true } />} />}
+                    {(editMode === 'price'     ) && <SimpleEditProductDialog model={model} edit={editMode} onClose={handleEditDialogClose} editorComponent={<CurrencyEditor   currencySign={getCurrencySign()} currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX} />} />}
+                    {(editMode === 'stock'     ) && <SimpleEditProductDialog model={model} edit={editMode} onClose={handleEditDialogClose} editorComponent={<StockEditor      theme='secondary' />} />}
+                    {(editMode === 'visibility') && <SimpleEditProductDialog model={model} edit={editMode} onClose={handleEditDialogClose} editorComponent={<VisibilityEditor theme='secondary' />} />}
                 </>}
             </ModalStatus>
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {!!editMode && ((editMode === 'images') || (editMode === 'full')) && <FullEditDialog product={itemData} onClose={handleEditDialogClose} defaultExpandedTabIndex={(editMode === 'images') ? 1 : undefined} />}
+                {!!editMode && ((editMode === 'images') || (editMode === 'full')) && <FullEditDialog product={model} onClose={handleEditDialogClose} defaultExpandedTabIndex={(editMode === 'images') ? 1 : undefined} />}
             </ModalStatus>
         </ListItem>
     );
@@ -234,8 +234,8 @@ export default function ProductPage() {
                 
                 
                 // components:
-                itemDataComponent={
-                    <ProductItem itemData={undefined as any} />
+                modelPreviewComponent={
+                    <ProductPreview model={undefined as any} />
                 }
                 createItemUiComponent={
                     <CreateProduct onClose={undefined as any} />

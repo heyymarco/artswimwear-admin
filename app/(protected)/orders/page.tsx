@@ -53,24 +53,24 @@ const getTotalQuantity = (items: OrderDetail['items']): number => {
 
 
 
-interface OrderItemProps extends ListItemProps {
-    itemData: OrderDetail
+interface OrderPreviewProps extends ListItemProps {
+    model: OrderDetail
 }
-const OrderItem = (props: OrderItemProps) => {
+const OrderPreview = (props: OrderPreviewProps) => {
     // styles:
     const styles = usePageStyleSheet();
     
     
     
     const {
-        itemData,
+        model,
     ...restListItem} = props;
     const {
         orderId,
         
         customer : customerDetail,
         items,
-    } = itemData;
+    } = model;
     const {
         nickName : customerNickName,
         email    : customerEmail,
@@ -205,12 +205,12 @@ const OrderItem = (props: OrderItemProps) => {
             {/* edit dialog: */}
             <ModalStatus theme='primary' viewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
                 {!!editMode && (editMode !== 'full') && <>
-                    {(editMode === 'nickName'       ) && <SimpleEditCustomerDialog model={itemData} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor type='text'  required minLength={2} maxLength={30} autoCapitalize='words' />} />}
-                    {(editMode === 'email'          ) && <SimpleEditCustomerDialog model={itemData} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor type='email' required minLength={5} maxLength={50} />} />}
+                    {(editMode === 'nickName'       ) && <SimpleEditCustomerDialog model={model} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor type='text'  required minLength={2} maxLength={30} autoCapitalize='words' />} />}
+                    {(editMode === 'email'          ) && <SimpleEditCustomerDialog model={model} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor type='email' required minLength={5} maxLength={50} />} />}
                 </>}
             </ModalStatus>
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {(editMode === 'full') && <FullEditDialog order={itemData} onClose={handleEditDialogClose} />}
+                {(editMode === 'full') && <FullEditDialog order={model} onClose={handleEditDialogClose} />}
             </ModalStatus>
         </ListItem>
     );
@@ -246,8 +246,8 @@ export default function OrderPage() {
                 
                 
                 // components:
-                itemDataComponent={
-                    <OrderItem itemData={undefined as any} />
+                modelPreviewComponent={
+                    <OrderPreview model={undefined as any} />
                 }
             />
         </Main>
