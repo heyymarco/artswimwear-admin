@@ -10,6 +10,7 @@ import {
     // hooks:
     useState,
     useCallback,
+    useInsertionEffect,
 }                           from 'react'
 
 // next-auth:
@@ -27,7 +28,6 @@ import {
 // reusable-ui components:
 import {
     // simple-components:
-    Icon,
     ButtonProps,
     ToggleButton,
     ButtonIcon,
@@ -48,6 +48,7 @@ import {
     // composite-components:
     NavItem,
     Nav,
+    navbars,
     NavbarParams,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 import {
@@ -55,15 +56,15 @@ import {
     Link,
 }                           from '@reusable-ui/next-compat-link'
 
+// internal components:
+import {
+    SiteLogo,
+}                           from './SiteLogo'
+import {
+    ProfileMenu,
+}                           from './ProfileMenu'
 
 
-const SiteLogo = () => {
-    return (
-        <Link href='/'>
-            <Icon icon='artswimwear' size='xl' />
-        </Link>
-    );
-}
 
 const SiteNavbarMenu = ({
         basicVariantProps,
@@ -71,14 +72,11 @@ const SiteNavbarMenu = ({
         listExpanded,
         handleClickToToggleList,
     } : NavbarParams) => {
-    const { data, status } = useSession();
-    
-    
-    
     // states:
+    const { data: session, status } = useSession();
     const [isSigningOut, setIsSigningOut] = useState<boolean>(false);
-    const isFullySignedIn  = !isSigningOut && (status === 'authenticated')   && !!data;
-    const isFullySignedOut = !isSigningOut && (status === 'unauthenticated') &&  !data;
+    const isFullySignedIn  = !isSigningOut && (status === 'authenticated')   && !!session;
+    const isFullySignedOut = !isSigningOut && (status === 'unauthenticated') &&  !session;
     const isBusy           =  isSigningOut || (status === 'loading');
     
     
@@ -88,6 +86,14 @@ const SiteNavbarMenu = ({
         setIsSigningOut(true);
         signOut();
     });
+    
+    
+    
+    // dom effects:
+    const hasUser = !!session?.user;
+    useInsertionEffect(() => {
+        navbars.listGridAreaCollapse = (!hasUser ? '2/1/2/3' : '2/1/2/4') as any;
+    }, [hasUser]);
     
     
     
@@ -103,10 +109,12 @@ const SiteNavbarMenu = ({
         <>
             <SiteLogo />
             
+            {hasUser && <ProfileMenu {...basicVariantProps} listStyle='flat' gradient='inherit' />}
+            
             {!navbarExpanded && <MenuButton {...basicVariantProps} className='toggler' active={listExpanded} onClick={handleClickToToggleList} />}
             
             <Collapse className='list' mainClass={navbarExpanded ? '' : undefined} expanded={listExpanded}>
-                <Nav tag='ul' role='' {...basicVariantProps} orientation={navbarExpanded ? 'inline' : 'block'} listStyle='flat' gradient={navbarExpanded ? 'inherit' : false}>
+                <Nav tag='ul' role='' {...basicVariantProps} listStyle='flat' gradient={navbarExpanded ? 'inherit' : false} orientation={navbarExpanded ? 'inline' : 'block'}>
                     {isFullySignedIn && <NavItem><Link href='/'>Dashboard</Link></NavItem>}
                     {isFullySignedIn && <NavItem><Link href='/products'>Products</Link></NavItem>}
                     {isFullySignedIn && <NavItem><Link href='/orders'>Orders</Link></NavItem>}
@@ -114,7 +122,7 @@ const SiteNavbarMenu = ({
                     {isBusy && <NavItem active={true}>
                         <Busy theme='secondary' size='lg' />
                         &nbsp;
-                        {(isSigningOut || data) ? 'Signing out...' : 'Loading...'}
+                        {(isSigningOut || session) ? 'Signing out...' : 'Loading...'}
                     </NavItem>}
                     
                     {isFullySignedOut && <NavItem>
