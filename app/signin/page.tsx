@@ -1,16 +1,35 @@
 'use client'
 
-import { SignIn } from '@heymarco/next-auth'
-
-import { credentialsConfig } from '@/credentials.config'
-import { loginProviders } from './loginProviders'
-import { Main, Section } from '@heymarco/section'
+// react:
+import {
+    // react:
+    default as React,
+}                           from 'react'
 
 // cssfn:
 import {
     // style sheets:
     dynamicStyleSheet,
 }                           from '@cssfn/cssfn-react'               // writes css in react hook
+
+// heymarco components:
+import {
+    Main,
+    Section,
+}                           from '@heymarco/section'
+import {
+    SignIn,
+}                           from '@heymarco/next-auth'
+
+// configs:
+import {
+    credentialsConfig,
+}                           from '@/credentials.config'
+
+// internals:
+import {
+    loginProviders,
+}                           from './loginProviders'
 
 
 
