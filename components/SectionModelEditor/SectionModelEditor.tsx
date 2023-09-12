@@ -96,16 +96,16 @@ export interface CreateItemUiProps {
     // handlers:
     onClose : CloseEventHandler
 }
-export interface CreateDataProps {
+export interface ModelCreateProps {
     // accessibilities:
-    createItemText        ?: React.ReactNode
+    createItemText       ?: React.ReactNode
     
     
     
     // components:
-    createItemUiComponent  : React.ReactComponentElement<any, CreateItemUiProps>
+    modelCreateComponent  : React.ReactComponentElement<any, CreateItemUiProps>
 }
-const CreateData = (props: CreateDataProps) => {
+const ModelCreate = (props: ModelCreateProps) => {
     // styles:
     const styles = useSectionModelEditorStyleSheet();
     
@@ -119,7 +119,7 @@ const CreateData = (props: CreateDataProps) => {
         
         
         // components:
-        createItemUiComponent,
+        modelCreateComponent,
     } = props;
     
     
@@ -135,8 +135,8 @@ const CreateData = (props: CreateDataProps) => {
         setShowAddNew(false);
     });
     const handleClose         = useMergeEvents<void>(
-        // preserves the original `onClose` from `createItemUiComponent`:
-        createItemUiComponent.props.onClose,
+        // preserves the original `onClose` from `modelCreateComponent`:
+        modelCreateComponent.props.onClose,
         
         
         
@@ -154,7 +154,7 @@ const CreateData = (props: CreateDataProps) => {
             </ButtonIcon>
             {/* add_new_data dialog: */}
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setShowAddNew(false)}>
-                {showAddNew && React.cloneElement<CreateItemUiProps>(createItemUiComponent,
+                {showAddNew && React.cloneElement<CreateItemUiProps>(modelCreateComponent,
                     // props:
                     {
                         // handlers:
@@ -254,7 +254,7 @@ export interface ModelPreviewProps<TModel extends Model, TElement extends Elemen
 interface SectionModelEditorInternalProps<TModel extends Model>
     extends
         // data:
-        Partial<CreateDataProps>
+        Partial<ModelCreateProps>
 {
     // components:
     modelPreviewComponent : React.ReactComponentElement<any, ModelPreviewProps<TModel, Element>>
@@ -273,7 +273,7 @@ const SectionModelEditorInternal = <TModel extends Model>(props: SectionModelEdi
         
         
         // components:
-        createItemUiComponent,
+        modelCreateComponent,
         modelPreviewComponent,
     } = props;
     
@@ -321,8 +321,8 @@ const SectionModelEditorInternal = <TModel extends Model>(props: SectionModelEdi
             />
             
             {!!data && <List listStyle='flush' className={styles.listDataInner}>
-                {/* <CreateData> */}
-                {!!createItemUiComponent && <CreateData createItemText={createItemText} createItemUiComponent={createItemUiComponent} />}
+                {/* <ModelCreate> */}
+                {!!modelCreateComponent && <ModelCreate createItemText={createItemText} modelCreateComponent={modelCreateComponent} />}
                 
                 {!!modelPreviewComponent && Object.values(data?.entities).filter((model): model is Exclude<typeof model, undefined> => !!model).map((model, index) =>
                     /* <ModelPreview> */

@@ -54,8 +54,8 @@ import './pageStyles';
 
 
 
-interface CreateProductProps extends CreateItemUiProps {}
-const CreateProduct = (props: CreateProductProps) => {
+interface ProductCreateProps extends CreateItemUiProps {}
+const ProductCreate = (props: ProductCreateProps) => {
     // jsx:
     return (
         <FullEditDialog product={undefined} onClose={props.onClose} />
@@ -237,8 +237,8 @@ export default function ProductPage() {
                 modelPreviewComponent={
                     <ProductPreview model={undefined as any} />
                 }
-                createItemUiComponent={
-                    <CreateProduct onClose={undefined as any} />
+                modelCreateComponent={
+                    <ProductCreate onClose={undefined as any} />
                 }
             />
         </Main>
