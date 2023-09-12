@@ -9,6 +9,7 @@ import {
     
     // hooks:
     useState,
+    useCallback,
 }                           from 'react'
 
 // next-auth:
@@ -27,6 +28,9 @@ import {
 import {
     // simple-components:
     Icon,
+    ButtonProps,
+    ToggleButton,
+    ButtonIcon,
     HamburgerMenuButton,
     
     
@@ -88,11 +92,18 @@ const SiteNavbarMenu = ({
     
     
     // jsx:
+    const MenuButton = useCallback((props: ButtonProps) => {
+        return (
+            !isBusy
+            ? <HamburgerMenuButton                                       key='menuButton' {...props} />
+            : <ToggleButton buttonComponent={<ButtonIcon icon='busy' />} key='menuButton' {...props} />
+        );
+    }, [isBusy]);
     return (
         <>
             <SiteLogo />
             
-            {!navbarExpanded && <HamburgerMenuButton {...basicVariantProps} className='toggler' active={listExpanded} onClick={handleClickToToggleList} />}
+            {!navbarExpanded && <MenuButton {...basicVariantProps} className='toggler' active={listExpanded} onClick={handleClickToToggleList} />}
             
             <Collapse className='list' mainClass={navbarExpanded ? '' : undefined} expanded={listExpanded}>
                 <Nav tag='ul' role='' {...basicVariantProps} orientation={navbarExpanded ? 'inline' : 'block'} listStyle='flat' gradient={navbarExpanded ? 'inherit' : false}>
