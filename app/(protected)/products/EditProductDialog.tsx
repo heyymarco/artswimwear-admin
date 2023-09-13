@@ -385,7 +385,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                 // handlers:
                 onKeyDown={handleKeyDown}
             >
-                {name}
+                <h1>{name || ((product === emptyProduct) ? 'Create New Product' : 'Edit Product')}</h1>
                 <CloseButton onClick={handleClosing} />
             </CardHeader>
             <ValidationProvider enableValidation={enableValidation}>
