@@ -1,33 +1,145 @@
 'use client'
 
-import { default as React } from 'react'
-import { dynamicStyleSheets } from '@cssfn/cssfn-react'
+// react:
+import {
+    // react:
+    default as React,
+    
+    
+    
+    // hooks:
+    useRef,
+    useState,
+    useEffect,
+}                           from 'react'
 
-import { ButtonIcon, Generic, Content, CardHeader, CardFooter, CloseButton, List, useDialogMessage } from '@reusable-ui/components';
-import { ProductDetail, useUpdateProduct } from '@/store/features/api/apiSlice';
-import { useEffect, useRef, useState } from 'react';
-import { getCurrencySign } from '@/libs/formatters';
-import { ValidationProvider, useEvent, useMountedFlag } from '@reusable-ui/core';
+// cssfn:
+import {
+    // style sheets:
+    dynamicStyleSheets,
+}                           from '@cssfn/cssfn-react'               // writes css in react hook
 
-import { STORE_WEBSITE_URL, PAGE_PRODUCTS_TAB_INFORMATIONS, PAGE_PRODUCTS_TAB_DESCRIPTION, PAGE_PRODUCTS_TAB_IMAGES } from '@/website.config'
-import { COMMERCE_CURRENCY_FRACTION_MAX } from '@/commerce.config'
-import { TextEditor } from '@/components/editors/TextEditor'
-import { PathEditor } from '@/components/editors/PathEditor'
-import { CurrencyEditor } from '@/components/editors/CurrencyEditor'
-import { ShippingWeightEditor } from '@/components/editors/ShippingWeightEditor'
-import { StockEditor } from '@/components/editors/StockEditor'
-import { GalleryEditor } from '@/components/editors/GalleryEditor/GalleryEditor'
-import { VisibilityEditor } from '@/components/editors/VisibilityEditor'
-import { Tab, TabPanel } from '@reusable-ui/components'
-import { Image } from '@heymarco/image'
-import axios from 'axios'
-import { resolveMediaUrl } from '@/libs/mediaStorage.client'
-import { WysiwygEditorState, WysiwygEditor, ToolbarPlugin, EditorPlugin } from '@/components/editors/WysiwygEditor'
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useEvent,
+    useMountedFlag,
+    
+    
+    
+    // a validation management system:
+    ValidationProvider,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
+// reusable-ui components:
+import {
+    // base-components:
+    Generic,
+    
+    
+    
+    // base-content-components:
+    Content,
+    
+    
+    
+    // simple-components:
+    ButtonIcon,
+    CloseButton,
+    
+    
+    
+    // layout-components:
+    List,
+    CardHeader,
+    CardFooter,
+    
+    
+    
+    // composite-components:
+    TabPanel,
+    Tab,
+    
+    
+    
+    // utility-components:
+    useDialogMessage,
+}                           from '@reusable-ui/components'          // a set of official Reusable-UI components
+
+// heymarco components:
+import {
+    Image,
+}                           from '@heymarco/image'
+
+// internal components:
+import {
+    TextEditor,
+}                           from '@/components/editors/TextEditor'
+import {
+    PathEditor,
+}                           from '@/components/editors/PathEditor'
+import {
+    CurrencyEditor,
+}                           from '@/components/editors/CurrencyEditor'
+import {
+    ShippingWeightEditor,
+}                           from '@/components/editors/ShippingWeightEditor'
+import {
+    StockEditor,
+}                           from '@/components/editors/StockEditor'
+import {
+    VisibilityEditor,
+}                           from '@/components/editors/VisibilityEditor'
+import {
+    GalleryEditor,
+}                           from '@/components/editors/GalleryEditor'
+import {
+    WysiwygEditorState,
+    ToolbarPlugin,
+    EditorPlugin,
+    WysiwygEditor,
+}                           from '@/components/editors/WysiwygEditor'
 
 // models:
 import type {
     ProductVisibility,
 }                           from '@prisma/client'
+
+// stores:
+import {
+    // types:
+    ProductDetail,
+    
+    
+    
+    // hooks:
+    useUpdateProduct,
+}                           from '@/store/features/api/apiSlice'
+
+// internals:
+import {
+    getCurrencySign,
+}                           from '@/libs/formatters'
+import {
+    resolveMediaUrl,
+}                           from '@/libs/mediaStorage.client'
+
+// other libs:
+import {
+    default as axios,
+}                           from 'axios'
+
+// configs:
+import {
+    STORE_WEBSITE_URL,
+    
+    PAGE_PRODUCT_TAB_INFORMATIONS,
+    PAGE_PRODUCT_TAB_IMAGES,
+    PAGE_PRODUCT_TAB_DESCRIPTION,
+}                           from '@/website.config'
+import {
+    COMMERCE_CURRENCY_FRACTION_MAX,
+}                           from '@/commerce.config'
 
 
 
@@ -72,7 +184,7 @@ export interface FullEditDialogProps {
     // handlers:
     onClose                  : () => void
 }
-export const FullEditDialog = (props: FullEditDialogProps) => {
+export const FullEditDialog = (props: FullEditDialogProps): JSX.Element|null => {
     // styles:
     const styles = useFullEditDialogStyleSheet();
     
@@ -307,7 +419,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                     // handlers:
                     onKeyDown={handleKeyDown}
                 >
-                    <TabPanel label={PAGE_PRODUCTS_TAB_INFORMATIONS} panelComponent={<Generic className={styles.infoTab} />}>
+                    <TabPanel label={PAGE_PRODUCT_TAB_INFORMATIONS} panelComponent={<Generic className={styles.infoTab} />}>
                         <form ref={editorContainerRef}>
                             <span className='name label'>Name:</span>
                             <TextEditor           className='name editor'       required={true}  value={name}           onChange={(value) => { setName(value); setIsModified(true); handleNameChange(value); }} />
@@ -328,7 +440,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                             <VisibilityEditor     className='visibility editor'                  value={visibility}     onChange={(value) => { setVisibility(value); setIsModified(true); }} theme='secondary' />
                         </form>
                     </TabPanel>
-                    <TabPanel label={PAGE_PRODUCTS_TAB_IMAGES}       panelComponent={<Generic className={styles.imagesTab} />}>
+                    <TabPanel label={PAGE_PRODUCT_TAB_IMAGES}       panelComponent={<Generic className={styles.imagesTab} />}>
                         <GalleryEditor<HTMLElement, string>
                             // values:
                             value={images}
@@ -379,7 +491,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                             onResolveUrl={resolveMediaUrl<never>}
                         />
                     </TabPanel>
-                    <TabPanel label={PAGE_PRODUCTS_TAB_DESCRIPTION}  panelComponent={<Generic className={styles.descriptionTab} />}>
+                    <TabPanel label={PAGE_PRODUCT_TAB_DESCRIPTION}  panelComponent={<Generic className={styles.descriptionTab} />}>
                         <WysiwygEditor
                             // classes:
                             className={styles.editDescription}

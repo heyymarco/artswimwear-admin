@@ -52,11 +52,11 @@ import {
 
 // heymarco components:
 import {
-    Main,
-}                           from '@heymarco/section'
-import {
     Image,
 }                           from '@heymarco/image'
+import {
+    Main,
+}                           from '@heymarco/section'
 
 // internal components:
 import {
@@ -115,15 +115,15 @@ import {
 import {
     formatCurrency,
     getCurrencySign,
-}                           from '@/libs/formatters';
+}                           from '@/libs/formatters'
 import {
     resolveMediaUrl,
 }                           from '@/libs/mediaStorage.client'
 
 // configs:
 import {
-    PAGE_PRODUCTS_TITLE,
-    PAGE_PRODUCTS_DESCRIPTION,
+    PAGE_PRODUCT_TITLE,
+    PAGE_PRODUCT_DESCRIPTION,
 }                           from '@/website.config' // TODO: will be used soon
 import {
     COMMERCE_CURRENCY_FRACTION_MAX,
@@ -147,7 +147,7 @@ const usePageStyleSheet = dynamicStyleSheets(
 
 /* <ProductCreate> */
 interface ProductCreateProps extends ModelCreateProps {}
-const ProductCreate = (props: ProductCreateProps) => {
+const ProductCreate = (props: ProductCreateProps): JSX.Element|null => {
     // jsx:
     return (
         <FullEditDialog product={undefined} onClose={props.onClose} />
@@ -156,7 +156,7 @@ const ProductCreate = (props: ProductCreateProps) => {
 
 /* <ProductPreview> */
 interface ProductPreviewProps extends ModelPreviewProps<ProductDetail> {}
-const ProductPreview = (props: ProductPreviewProps) => {
+const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
     // styles:
     const styles = usePageStyleSheet();
     
@@ -301,7 +301,7 @@ const ProductPreview = (props: ProductPreviewProps) => {
 }
 
 /* <ProductPage> */
-export default function ProductPage() {
+export default function ProductPage(): JSX.Element|null {
     // styles:
     const styles = usePageStyleSheet();
     
@@ -351,6 +351,6 @@ export default function ProductPage() {
 
 
 // export const metadata : Metadata = {
-//     title       : PAGE_PRODUCTS_TITLE,
-//     description : PAGE_PRODUCTS_DESCRIPTION,
+//     title       : PAGE_PRODUCT_TITLE,
+//     description : PAGE_PRODUCT_DESCRIPTION,
 // };

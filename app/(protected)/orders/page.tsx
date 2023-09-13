@@ -109,8 +109,8 @@ import {
 
 // configs:
 import {
-    PAGE_ORDERS_TITLE,
-    PAGE_ORDERS_DESCRIPTION,
+    PAGE_ORDER_TITLE,
+    PAGE_ORDER_DESCRIPTION,
 }                           from '@/website.config' // TODO: will be used soon
 
 
@@ -140,7 +140,7 @@ const usePageStyleSheet = dynamicStyleSheets(
 
 /* <OrderPreview> */
 interface OrderPreviewProps extends ModelPreviewProps<OrderDetail> {}
-const OrderPreview = (props: OrderPreviewProps) => {
+const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
     // styles:
     const styles = usePageStyleSheet();
     
@@ -314,7 +314,7 @@ const OrderPreview = (props: OrderPreviewProps) => {
 }
 
 /* <OrderPage> */
-export default function OrderPage() {
+export default function OrderPage(): JSX.Element|null {
     // styles:
     const styles = usePageStyleSheet();
     
@@ -356,6 +356,6 @@ export default function OrderPage() {
 
 
 // export const metadata : Metadata = {
-//     title       : PAGE_ORDERS_TITLE,
-//     description : PAGE_ORDERS_DESCRIPTION,
+//     title       : PAGE_ORDER_TITLE,
+//     description : PAGE_ORDER_DESCRIPTION,
 // };

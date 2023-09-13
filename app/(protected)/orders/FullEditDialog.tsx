@@ -1,36 +1,136 @@
 'use client'
 
-import { default as React } from 'react'
-import { dynamicStyleSheets } from '@cssfn/cssfn-react'
+// react:
+import {
+    // react:
+    default as React,
+    
+    
+    
+    // hooks:
+    useRef,
+    useState,
+    useEffect,
+}                           from 'react'
 
-import { ButtonIcon, Generic, Content, CardBody, CardHeader, CardFooter, Button, CloseButton, List, Carousel, Masonry, masonries, Busy, ListItem, Badge, Basic, Icon, ModalStatus } from '@reusable-ui/components';
-import { OrderDetail, ShippingPreview, useUpdateOrder, useGetShippingList, useGetProductList } from '@/store/features/api/apiSlice';
-import { useEffect, useRef, useState } from 'react';
-import { formatCurrency, getCurrencySign } from '@/libs/formatters';
-import { AccessibilityProvider, ValidationProvider, useEvent } from '@reusable-ui/core';
+// cssfn:
+import {
+    // style sheets:
+    dynamicStyleSheets,
+}                           from '@cssfn/cssfn-react'               // writes css in react hook
 
-import { STORE_WEBSITE_URL, PAGE_ORDERS_TAB_ORDER_N_SHIPPING, PAGE_ORDERS_TAB_PAYMENT } from '@/website.config'
-import { COMMERCE_CURRENCY_FRACTION_MAX } from '@/commerce.config'
-import { TextEditor } from '@/components/editors/TextEditor'
-import { PathEditor } from '@/components/editors/PathEditor'
-import { CurrencyEditor } from '@/components/editors/CurrencyEditor'
-import { ShippingWeightEditor } from '@/components/editors/ShippingWeightEditor'
-import { StockEditor } from '@/components/editors/StockEditor'
-import { GalleryEditor } from '@/components/editors/GalleryEditor/GalleryEditor'
-import { Tab, TabPanel } from '@reusable-ui/components'
-import { Image } from '@heymarco/image'
-import axios from 'axios'
-import { resolveMediaUrl } from '@/libs/mediaStorage.client'
-import { WysiwygEditorState, WysiwygEditor, ToolbarPlugin, EditorPlugin } from '@/components/editors/WysiwygEditor';
-import { countryList } from '@/libs/countryList'
-import { CompoundWithBadge } from '@/components/CompoundWithBadge';
-import { Section } from '@heymarco/section';
-import { SimpleEditAddressDialog } from '@/components/dialogs/SimpleEditAddressDialog';
-import { AddressEditor } from '@/components/editors/AddressEditor';
-import { EditButton } from '@/components/EditButton';
-import { SimpleEditPaymentDialog } from '@/components/dialogs/SimpleEditPaymentDialog';
-import { PaymentEditor } from '@/components/editors/PaymentEditor';
-import { PrintDialog } from './PrintDialog';
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useEvent,
+    useMountedFlag,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
+// reusable-ui components:
+import {
+    // base-components:
+    Generic,
+    Basic,
+    
+    
+    
+    // base-content-components:
+    Content,
+    
+    
+    
+    // simple-components:
+    Icon,
+    ButtonIcon,
+    CloseButton,
+    
+    
+    
+    // layout-components:
+    ListItem,
+    List,
+    CardHeader,
+    CardFooter,
+    
+    
+    
+    // status-components:
+    Badge,
+    Busy,
+    
+    
+    
+    // composite-components:
+    TabPanel,
+    Tab,
+    
+    
+    
+    // utility-components:
+    ModalStatus,
+}                           from '@reusable-ui/components'          // a set of official Reusable-UI components
+
+// heymarco components:
+import {
+    Image,
+}                           from '@heymarco/image'
+import {
+    Section,
+}                           from '@heymarco/section'
+
+// internal components:
+import {
+    EditButton,
+}                           from '@/components/EditButton'
+import {
+    CompoundWithBadge,
+}                           from '@/components/CompoundWithBadge'
+import {
+    AddressEditor,
+}                           from '@/components/editors/AddressEditor'
+import {
+    PaymentEditor,
+}                           from '@/components/editors/PaymentEditor'
+import {
+    SimpleEditAddressDialog,
+}                           from '@/components/dialogs/SimpleEditAddressDialog'
+import {
+    SimpleEditPaymentDialog,
+}                           from '@/components/dialogs/SimpleEditPaymentDialog'
+
+// private components:
+import {
+    PrintDialog,
+}                           from './PrintDialog'
+
+// stores:
+import {
+    // types:
+    OrderDetail,
+    
+    
+    
+    // hooks:
+    useGetProductList,
+    useGetShippingList,
+}                           from '@/store/features/api/apiSlice'
+
+// internals:
+import {
+    formatCurrency,
+}                           from '@/libs/formatters'
+import {
+    resolveMediaUrl,
+}                           from '@/libs/mediaStorage.client'
+import {
+    countryList,
+}                           from '@/libs/countryList'
+
+// configs:
+import {
+    PAGE_ORDER_TAB_ORDER_N_SHIPPING,
+    PAGE_ORDER_TAB_PAYMENT,
+}                           from '@/website.config'
 
 
 
@@ -56,7 +156,7 @@ export interface FullEditDialogProps {
     // handlers:
     onClose          : () => void
 }
-export const FullEditDialog = (props: FullEditDialogProps) => {
+export const FullEditDialog = (props: FullEditDialogProps): JSX.Element|null => {
     // styles:
     const styles = useFullEditDialogStyleSheet();
     
@@ -368,7 +468,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                 // handlers:
                 onKeyDown={handleKeyDown}
             >
-                <TabPanel label={PAGE_ORDERS_TAB_ORDER_N_SHIPPING} panelComponent={<Generic className={styles.orderShippingTab} />}>
+                <TabPanel label={PAGE_ORDER_TAB_ORDER_N_SHIPPING} panelComponent={<Generic className={styles.orderShippingTab} />}>
                     <OrderAndShipping />
                     <Section theme='primary' className={styles.actionSection}>
                         <ButtonIcon className='btnPrint' icon='print' theme='primary' onClick={handlePrint}>
@@ -382,7 +482,7 @@ export const FullEditDialog = (props: FullEditDialogProps) => {
                         </ButtonIcon>
                     </Section>
                 </TabPanel>
-                <TabPanel label={PAGE_ORDERS_TAB_PAYMENT} panelComponent={<Generic className={styles.paymentTab} />}>
+                <TabPanel label={PAGE_ORDER_TAB_PAYMENT} panelComponent={<Generic className={styles.paymentTab} />}>
                     <Section className={styles.paymentSection}>
                         <table>
                             <tbody>
