@@ -1,6 +1,13 @@
+// next-js:
+import {
+    NextRequest,
+    NextResponse,
+}                           from 'next/server'
 
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { createRouter } from 'next-connect'
+// next-connect:
+import {
+    createEdgeRouter,
+}                           from 'next-connect'
 
 // types:
 import type {
@@ -23,42 +30,44 @@ import {
 
 // types:
 export interface OrderDetail
-    extends
-        Omit<Order,
-            |'createdAt'
-            |'updatedAt'
-            
-            |'customerId'
-        >
-{
-    // relations:
-    items    : Omit<OrdersOnProducts,
-        |'id'
-        |'orderId'
-    >[],
-    customer : null|Omit<Customer,
+extends
+    Omit<Order,
         |'createdAt'
         |'updatedAt'
+        
+        |'customerId'
     >
+{
+// relations:
+items    : Omit<OrdersOnProducts,
+    |'id'
+    |'orderId'
+>[],
+customer : null|Omit<Customer,
+    |'createdAt'
+    |'updatedAt'
+>
 }
 
 
 
-const router = createRouter<
-    NextApiRequest,
-    NextApiResponse<
-        |Pagination<OrderDetail>
-        |OrderDetail
-        |{ error: any }
-    >
->();
-
-
+// routers:
+interface RequestContext {
+    params: {
+        /* no params yet */
+    }
+}
+const router  = createEdgeRouter<NextRequest, RequestContext>();
+const handler = async (req: NextRequest, ctx: RequestContext) => router.run(req, ctx);
+export {
+    handler as GET,
+    handler as POST,
+    handler as PATCH,
+    handler as PUT,
+}
 
 router
-// Use express middleware in next-connect with expressWrapper function
-// .use(expressWrapper(passport.session()))
-.post(async (req, res) => {
+.post(async (req) => {
     if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
         await new Promise<void>((resolve) => {
             setTimeout(() => {
@@ -73,7 +82,7 @@ router
     const {
         page    : pageStr    = 1,
         perPage : perPageStr = 20,
-    } = req.body;
+    } = await req.json();
     const page = Number.parseInt(pageStr as string);
     const perPage = Number.parseInt(perPageStr as string);
     //#endregion parsing request
@@ -85,7 +94,9 @@ router
         ||
         (typeof(perPage) !== 'number') || !isFinite(perPage) || (perPage < 1)
     ) {
-        return res.status(400).json({ error: 'invalid parameter(s)' });
+        return NextResponse.json({
+            error: 'Invalid parameter(s).',
+        }, { status: 400 }); // handled with error
     } // if
     //#endregion validating request
     
@@ -133,12 +144,13 @@ router
             take    : perPage,
         }),
     ]);
-    return res.json({
+    const paginationOrderDetail : Pagination<OrderDetail> = {
         total    : total,
         entities : paged,
-    });
+    };
+    return NextResponse.json(paginationOrderDetail); // handled with success
 })
-.patch(async (req, res) => {
+.patch(async (req) => {
     if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
         await new Promise<void>((resolve) => {
             setTimeout(() => {
@@ -148,14 +160,14 @@ router
     } // if
     
     // throw '';
-    // return res.status(400).json({ message: 'not found' });
-    // return res.status(500).json({ message: 'server error' });
+    // return NextResponse.json({ message: 'not found'    }, { status: 400 }); // handled with error
+    // return NextResponse.json({ message: 'server error' }, { status: 500 }); // handled with error
     
     //#region parsing request
     const {
         id,
         
-        items,
+     // items,
         
         customer,
         
@@ -165,7 +177,7 @@ router
         
         billingAddress,
         paymentMethod,
-    } = req.body;
+    } = await req.json();
     //#endregion parsing request
     
     
@@ -183,7 +195,9 @@ router
         
         // TODO: validating data type & constraints
     ) {
-        return res.status(400).json({ error: 'invalid data' });
+        return NextResponse.json({
+            error: 'Invalid data.',
+        }, { status: 400 }); // handled with error
     } // if
     const order = await prisma.order.findUnique({
         where  : {
@@ -222,14 +236,18 @@ router
                 paymentMethod          : true,
             },
     });
-    if (!order) return res.status(400).json({ error: 'invalid ID' });
+    if (!order) {
+        return NextResponse.json({
+            error: 'Invalid ID.',
+        }, { status: 400 }); // handled with error
+    } // if
     //#endregion validating request
     
     
     
     //#region save changes
     try {
-        const order = await prisma.order.update({
+        const orderDetail : OrderDetail = await prisma.order.update({
             where  : {
                 id : id,
             },
@@ -293,24 +311,12 @@ router
                 paymentMethod          : true,
             },
         });
-        return res.status(200).json(order);
+        return NextResponse.json(orderDetail); // handled with success
     }
     catch (error: any) {
         console.log('ERROR: ', error);
-        // if (error instanceof RecordNotFound) return res.status(400).json({ error: 'invalid ID' });
-        return res.status(500).json({ error: error });
+        // if (error instanceof RecordNotFound) return NextResponse.json({ error: 'invalid ID' }, { status: 400 }); // handled with error
+        return NextResponse.json({ error: error }, { status: 500 }); // handled with error
     } // try
     //#endregion save changes
-});
-
-
-
-export default router.handler({
-    onError: (err: any, req, res) => {
-        console.error(err.stack);
-        res.status(err.statusCode || 500).end(err.message);
-    },
-    onNoMatch: (req, res) => {
-        res.status(404).json({ error: 'Page is not found' });
-    },
 });
