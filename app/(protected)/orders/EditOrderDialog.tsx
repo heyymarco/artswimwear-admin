@@ -8,7 +8,6 @@ import {
     
     
     // hooks:
-    useRef,
     useState,
     useEffect,
 }                           from 'react'
@@ -226,11 +225,6 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
     
     
     
-    // refs:
-    const firstEditorRef     = useRef<HTMLInputElement|null>(null); // TODO: finish this
-    
-    
-    
     // dialogs:
     const [showPrintDialog, setShowPrintDialog] = useState<boolean>(false);
     
@@ -271,28 +265,6 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
     });
     
     
-    
-    // dom effects:
-    useEffect(() => {
-        // setups:
-        const cancelFocus = setTimeout(() => {
-            // conditions:
-            const firstEditorElm = firstEditorRef.current;
-            if (!firstEditorElm) return;
-            
-            
-            
-            firstEditorElm.setSelectionRange(0, -1);
-            firstEditorElm.focus({ preventScroll: true });
-        }, 0);
-        
-        
-        
-        // cleanups:
-        return () => {
-            clearTimeout(cancelFocus);
-        };
-    }, []);
     
     // a fix for <Badge>'s position:
     const [showBadge, setShowBadge] = useState<boolean>(false);
