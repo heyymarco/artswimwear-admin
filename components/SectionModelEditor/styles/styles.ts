@@ -9,6 +9,11 @@ import {
 
 // reusable-ui core:
 import {
+    // a responsive management system:
+    breakpoints,
+    
+    
+    
     // border (stroke) stuff of UI:
     usesBorder,
     
@@ -63,7 +68,6 @@ const usesListDataLayout = () => {
             
             
             // sizes:
-            minBlockSize : '100%', // fill the page height if there is no_data or few_data
             ...rule('.empty', {
                 blockSize : '100%', // if data empty => fill the entire available page height
                 overflow  : 'hidden', // a fix for <Backdrop>'s borderRadius // TODO: fix reusable-ui's <ModalBackdrop>
@@ -116,24 +120,34 @@ const usesCreateDataLayout = () => { // the <ListItem> of data add_new
 };
 
 export default () => [
-    scope('sectionData', {
+    scope('sectionModel', {
         flexGrow: 1,
         
         display: 'flex',
         flexDirection: 'column',
         ...children('article', {
-            flexGrow: 1,
-            
-            display: 'grid',
-            gridTemplate: [[
+            // layouts:
+            display      : 'grid',
+            gridTemplate : [[
                 '"paginTop"', 'auto',
                 '"dataList"', '1fr',
                 '"paginBtm"', 'auto',
                 '/',
                 'auto',
             ]],
-            gapInline: '1rem',
-            gapBlock: '1rem',
+            
+            
+            
+            // spacings:
+            gapInline : '1rem',
+            gapBlock  : '1rem',
+            
+            
+            
+            // sizes:
+            flexGrow      : 1,
+            maxInlineSize : `${breakpoints.xxxl}px`,
+            alignSelf     : 'center',
         }),
     }, { specificityWeight: 2 }),
     scope('paginTop', {

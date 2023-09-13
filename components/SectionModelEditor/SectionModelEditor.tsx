@@ -254,7 +254,7 @@ const SectionModelEditor         = <TModel extends Model>(props: SectionModelEdi
             // data:
             getModelPaginationApi={getModelPaginationApi}
         >
-            <Section className={`fill-self ${styles.sectionData}`}>
+            <Section className={`fill-self ${styles.sectionModel}`}>
                 <ModelPagination<TModel>
                     // paginations:
                     page={page}
