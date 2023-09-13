@@ -4,6 +4,11 @@ import {
     NextResponse,
 }                           from 'next/server'
 
+// next-next:
+import {
+    getServerSession,
+}                           from 'next-auth'
+
 // next-connect:
 import {
     createEdgeRouter,
@@ -23,8 +28,14 @@ import {
     deleteMedia
 }                           from '@/libs/mediaStorage.server'
 
+// internal auth:
+import {
+    authOptions,
+}                           from '@/app/api/auth/[...nextauth]/route'
 
 
+
+// file processors:
 const upload = multer({
     storage: multer.diskStorage({
         destination: '/tmp',
@@ -58,6 +69,16 @@ export {
 }
 
 router
+.use(async (req, ctx, next) => {
+    // conditions:
+    const session = await getServerSession(authOptions);
+    if (!session) return NextResponse.json({ error: 'Please sign in.' }, { status: 401 }); // handled with error: unauthorized
+    
+    
+    
+    // authorized => next:
+    return next();
+})
 .post(uploadMiddleware as any, async (req) => {
     const file : Express.Multer.File = (req as any).file;
     if (!file) {

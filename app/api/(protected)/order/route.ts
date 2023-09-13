@@ -4,6 +4,11 @@ import {
     NextResponse,
 }                           from 'next/server'
 
+// next-next:
+import {
+    getServerSession,
+}                           from 'next-auth'
+
 // next-connect:
 import {
     createEdgeRouter,
@@ -25,6 +30,11 @@ import type {
 import {
     prisma,
 }                           from '@/libs/prisma.server'
+
+// internal auth:
+import {
+    authOptions,
+}                           from '@/app/api/auth/[...nextauth]/route'
 
 
 
@@ -67,6 +77,16 @@ export {
 }
 
 router
+.use(async (req, ctx, next) => {
+    // conditions:
+    const session = await getServerSession(authOptions);
+    if (!session) return NextResponse.json({ error: 'Please sign in.' }, { status: 401 }); // handled with error: unauthorized
+    
+    
+    
+    // authorized => next:
+    return next();
+})
 .post(async (req) => {
     if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
         await new Promise<void>((resolve) => {

@@ -23,10 +23,12 @@ const authRouteHandler = createAuthRouteHandler({
     adapter           : PrismaAdapterWithCredentials(prisma),
     authConfig        : authConfig,
     credentialsConfig : credentialsConfig,
-})
+});
+const authOptions = authRouteHandler.authOptions;
 export {
     authRouteHandler as GET,
     authRouteHandler as POST,
     authRouteHandler as PATCH,
     authRouteHandler as PUT,
+    authOptions,
 };
