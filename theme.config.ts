@@ -59,7 +59,7 @@ navbarValues.blockSize = '4rem';
 
 
 // <SignIn>
-(signIns as any).maxInlineSize = `${breakpoints.md}px`;
+(signIns as any).maxInlineSize = `${breakpoints.sm}px`;
 
 
 
