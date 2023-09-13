@@ -6,7 +6,7 @@ import {
 
 
 // styles:
-export const usesPaginationModelListLayout = () => {
+export const usesModelPaginationLayout = () => {
     return style({
         // sizes:
         blockSize: '100%',
@@ -15,5 +15,5 @@ export const usesPaginationModelListLayout = () => {
 
 export default () => style({
     // layouts:
-    ...usesPaginationModelListLayout(),
+    ...usesModelPaginationLayout(),
 });

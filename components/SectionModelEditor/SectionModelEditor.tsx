@@ -55,8 +55,8 @@ import {
 
 // internals components:
 import {
-    PaginationModelList,
-}                           from './PaginationModelList'
+    ModelPagination,
+}                           from './ModelPagination'
 
 // internals:
 import type {
@@ -255,7 +255,7 @@ const SectionModelEditor         = <TModel extends Model>(props: SectionModelEdi
             getModelPaginationApi={getModelPaginationApi}
         >
             <Section className={`fill-self ${styles.sectionData}`}>
-                <PaginationModelList<TModel>
+                <ModelPagination<TModel>
                     // paginations:
                     page={page}
                     perPage={perPage}
@@ -271,7 +271,7 @@ const SectionModelEditor         = <TModel extends Model>(props: SectionModelEdi
                     onNavigateTo={handleNavigateTo}
                 />
                 <SectionModelEditorInternal<TModel> {...restSectionModelEditorProps} />
-                <PaginationModelList<TModel>
+                <ModelPagination<TModel>
                     // paginations:
                     page={page}
                     perPage={perPage}

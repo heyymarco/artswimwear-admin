@@ -49,15 +49,15 @@ import {
 
 
 // styles:
-export const usePaginationModelListStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */ './styles/paginationModelListStyles')
+export const useModelPaginationStyleSheet = dynamicStyleSheet(
+    () => import(/* webpackPrefetch: true */ './styles/modelPaginationStyles')
 , { id: 'k1h5chza4a' });
-import './styles/paginationModelListStyles';
+import './styles/modelPaginationStyles';
 
 
 
 // react components:
-export interface PaginationModelListProps<TElement extends Element = HTMLElement>
+export interface ModelPaginationProps<TElement extends Element = HTMLElement>
     extends
         PaginationProps<TElement>
 {
@@ -70,9 +70,9 @@ export interface PaginationModelListProps<TElement extends Element = HTMLElement
     // handlers:
     onNavigateTo   : (page: number) => void
 }
-const PaginationModelList = <TModel extends Model, TElement extends Element = HTMLElement>(props: PaginationModelListProps<TElement>): JSX.Element|null => {
+const ModelPagination = <TModel extends Model, TElement extends Element = HTMLElement>(props: ModelPaginationProps<TElement>): JSX.Element|null => {
     // styles:
-    const styles = usePaginationModelListStyleSheet();
+    const styles = useModelPaginationStyleSheet();
     
     
     
@@ -168,6 +168,6 @@ const PaginationModelList = <TModel extends Model, TElement extends Element = HT
     );
 };
 export {
-    PaginationModelList,
-    PaginationModelList as default,
+    ModelPagination,
+    ModelPagination as default,
 }
