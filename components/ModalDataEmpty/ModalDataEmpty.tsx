@@ -51,7 +51,7 @@ export interface ModalDataEmptyProps<TModel extends Model, TElement extends Elem
         ModalCardProps<TElement, TModalExpandedChangeEvent>
 {
     // data:
-    data: Pagination<TModel>|undefined
+    data ?: Pagination<TModel>|undefined
 }
 export const ModalDataEmpty = <TModel extends Model, TElement extends Element = HTMLElement, TModalExpandedChangeEvent extends ModalExpandedChangeEvent = ModalExpandedChangeEvent>(props: ModalDataEmptyProps<TModel, TElement, TModalExpandedChangeEvent>): JSX.Element|null => {
     // styles:
@@ -64,7 +64,7 @@ export const ModalDataEmpty = <TModel extends Model, TElement extends Element = 
         // data:
         data,
     ...restModalCardProps} = props;
-    const isDataEmpty = !!data && !data.total;
+    const isDataEmpty = (data === undefined) || (!!data && !data.total);
     
     
     

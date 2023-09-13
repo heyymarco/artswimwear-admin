@@ -27,6 +27,7 @@ import {
     PageError,
 }                           from '@/components/PageError'
 import {
+    ModelPreviewProps,
     SectionModelEditor,
 }                           from '@/components/SectionModelEditor'
 
@@ -34,13 +35,6 @@ import {
 
 // defaults:
 const imageSize = 128;  // 128px
-
-
-
-// styles:
-const usePageStyleSheet = dynamicStyleSheets(
-    () => import(/* webpackPrefetch: true */'./pageStyles')
-, { id: 'orders-nxhip40jm2' });
 
 
 
@@ -53,9 +47,16 @@ const getTotalQuantity = (items: OrderDetail['items']): number => {
 
 
 
-interface OrderPreviewProps extends ListItemProps {
-    model: OrderDetail
-}
+// styles:
+const usePageStyleSheet = dynamicStyleSheets(
+    () => import(/* webpackPrefetch: true */'./pageStyles')
+, { id: 'orders-nxhip40jm2' });
+
+
+
+// react components:
+
+interface OrderPreviewProps extends ModelPreviewProps<OrderDetail> {}
 const OrderPreview = (props: OrderPreviewProps) => {
     // styles:
     const styles = usePageStyleSheet();
@@ -215,6 +216,7 @@ const OrderPreview = (props: OrderPreviewProps) => {
         </ListItem>
     );
 }
+
 export default function OrderPage() {
     // styles:
     const styles = usePageStyleSheet();

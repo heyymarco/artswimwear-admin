@@ -35,7 +35,8 @@ import {
     PageError,
 }                           from '@/components/PageError'
 import {
-    CreateItemUiProps,
+    ModelCreateProps,
+    ModelPreviewProps,
     SectionModelEditor,
 }                           from '@/components/SectionModelEditor'
 
@@ -54,7 +55,9 @@ import './pageStyles';
 
 
 
-interface ProductCreateProps extends CreateItemUiProps {}
+// react components:
+
+interface ProductCreateProps extends ModelCreateProps {}
 const ProductCreate = (props: ProductCreateProps) => {
     // jsx:
     return (
@@ -62,9 +65,7 @@ const ProductCreate = (props: ProductCreateProps) => {
     );
 };
 
-interface ProductPreviewProps extends ListItemProps {
-    model: ProductDetail
-}
+interface ProductPreviewProps extends ModelPreviewProps<ProductDetail> {}
 const ProductPreview = (props: ProductPreviewProps) => {
     // styles:
     const styles = usePageStyleSheet();
@@ -195,8 +196,6 @@ const ProductPreview = (props: ProductPreviewProps) => {
         </ListItem>
     );
 }
-
-
 
 export default function ProductPage() {
     // styles:

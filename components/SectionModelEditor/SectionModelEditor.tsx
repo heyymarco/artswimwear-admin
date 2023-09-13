@@ -91,21 +91,29 @@ import './styles/styles';
 
 
 // react components:
+
+/* <ModelCreate> */
 export type CloseEventHandler = () => void
-export interface CreateItemUiProps {
+export interface ModelCreateProps {
     // handlers:
     onClose : CloseEventHandler
 }
-export interface ModelCreateProps {
+
+/* <ModelCreateOuter> */
+export interface ModelCreateOuterProps
+    extends
+        // bases:
+        ListItemProps
+{
     // accessibilities:
     createItemText       ?: React.ReactNode
     
     
     
     // components:
-    modelCreateComponent  : React.ReactComponentElement<any, CreateItemUiProps>
+    modelCreateComponent  : React.ReactComponentElement<any, ModelCreateProps>
 }
-const ModelCreate = (props: ModelCreateProps) => {
+const ModelCreateOuter = (props: ModelCreateOuterProps) => {
     // styles:
     const styles = useSectionModelEditorStyleSheet();
     
@@ -120,7 +128,7 @@ const ModelCreate = (props: ModelCreateProps) => {
         
         // components:
         modelCreateComponent,
-    } = props;
+    ...restListItemProps} = props;
     
     
     
@@ -148,13 +156,21 @@ const ModelCreate = (props: ModelCreateProps) => {
     
     // jsx:
     return (
-        <ListItem className={styles.createData}>
+        <ListItem
+            // other props:
+            {...restListItemProps}
+            
+            
+            
+            // classes:
+            className={`${styles.createData} ${props.className}`}
+        >
             <ButtonIcon icon='create' onClick={() => setShowAddNew(true)}>
                 {createItemText ?? 'Add New Item'}
             </ButtonIcon>
             {/* add_new_data dialog: */}
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setShowAddNew(false)}>
-                {showAddNew && React.cloneElement<CreateItemUiProps>(modelCreateComponent,
+                {showAddNew && React.cloneElement<ModelCreateProps>(modelCreateComponent,
                     // props:
                     {
                         // handlers:
@@ -166,6 +182,35 @@ const ModelCreate = (props: ModelCreateProps) => {
     );
 };
 
+/* <ModelPreview> */
+export interface ModelPreviewProps<TModel extends Model, TElement extends Element = HTMLElement>
+    extends
+        // bases:
+        ListItemProps<TElement>
+{
+    // data:
+    model : Pagination<TModel>['entities'][number]
+}
+
+/* <ModelEmpty> */
+const ModelEmpty = () => {
+    // refs:
+    const statusEmptyListRef = useRef<HTMLElement|null>(null);
+    
+    
+    
+    // jsx:
+    return (
+        <ListItem elmRef={statusEmptyListRef} className='statusEmpty'>
+            <ModalDataEmpty
+                // global stackable:
+                viewport={statusEmptyListRef}
+            />
+        </ListItem>
+    );
+};
+
+/* <SectionModelEditor> */
 export interface SectionModelEditorProps<TModel extends Model>
     extends
         // bases:
@@ -241,20 +286,17 @@ const SectionModelEditor         = <TModel extends Model>(props: SectionModelEdi
             </Section>
         </PaginationModelStateProvider>
     );
+};
+export {
+    SectionModelEditor,
+    SectionModelEditor as default,
 }
 
-export interface ModelPreviewProps<TModel extends Model, TElement extends Element = HTMLElement>
-    extends
-        // bases:
-        ListItemProps<TElement>
-{
-    // data:
-    model : Pagination<TModel>['entities'][number]
-}
+/* <SectionModelEditorInternal> */
 interface SectionModelEditorInternalProps<TModel extends Model>
     extends
         // data:
-        Partial<ModelCreateProps>
+        Partial<ModelCreateOuterProps>
 {
     // components:
     modelPreviewComponent : React.ReactComponentElement<any, ModelPreviewProps<TModel, Element>>
@@ -287,6 +329,7 @@ const SectionModelEditorInternal = <TModel extends Model>(props: SectionModelEdi
         isError,
         refetch,
     } = usePaginationModelState<TModel>();
+    const isDataEmpty = !!data && !data.total;
     
     
     
@@ -297,7 +340,7 @@ const SectionModelEditorInternal = <TModel extends Model>(props: SectionModelEdi
     
     // jsx:
     return (
-        <Basic className={styles.listData} theme='primary' mild={true} elmRef={dataListRef}>
+        <Basic className={`${styles.listData}${isDataEmpty ? ' empty' : ''}`} theme='primary' mild={true} elmRef={dataListRef}>
             <ModalLoadingError
                 // data:
                 isFetching={isFetching}
@@ -310,21 +353,13 @@ const SectionModelEditorInternal = <TModel extends Model>(props: SectionModelEdi
                 viewport={dataListRef}
             />
             
-            <ModalDataEmpty
-                // data:
-                data={data}
-                
-                
-                
-                // global stackable:
-                viewport={dataListRef}
-            />
-            
-            {!!data && <List listStyle='flush' className={styles.listDataInner}>
+            <List listStyle='flush' className={styles.listDataInner}>
                 {/* <ModelCreate> */}
-                {!!modelCreateComponent && <ModelCreate createItemText={createItemText} modelCreateComponent={modelCreateComponent} />}
+                {!!modelCreateComponent  && <ModelCreateOuter className='solid' createItemText={createItemText} modelCreateComponent={modelCreateComponent} />}
                 
-                {!!modelPreviewComponent && Object.values(data?.entities).filter((model): model is Exclude<typeof model, undefined> => !!model).map((model, index) =>
+                {!!data && !data.total && <ModelEmpty />}
+                
+                {!!data?.total && Object.values(data?.entities).filter((model): model is Exclude<typeof model, undefined> => !!model).map((model, index) =>
                     /* <ModelPreview> */
                     React.cloneElement<ModelPreviewProps<TModel, Element>>(modelPreviewComponent,
                         // props:
@@ -339,11 +374,7 @@ const SectionModelEditorInternal = <TModel extends Model>(props: SectionModelEdi
                         },
                     )
                 )}
-            </List>}
+            </List>
         </Basic>
     );
 };
-export {
-    SectionModelEditor,
-    SectionModelEditor as default,
-}

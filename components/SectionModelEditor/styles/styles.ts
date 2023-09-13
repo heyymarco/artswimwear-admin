@@ -1,6 +1,7 @@
 // cssfn:
 import {
     // writes css in javascript:
+    rule,
     children,
     scope,
     style,
@@ -63,6 +64,10 @@ const usesListDataLayout = () => {
             
             // sizes:
             minBlockSize : '100%', // fill the page height if there is no_data or few_data
+            ...rule('.empty', {
+                blockSize : '100%', // if data empty => fill the entire available page height
+                overflow  : 'hidden', // a fix for <Backdrop>'s borderRadius // TODO: fix reusable-ui's <ModalBackdrop>
+            }),
             
             
             
@@ -84,6 +89,11 @@ const usesDataListInnerLayout = () => { // the <List> of data
     
     
     return style({
+        // sizes:
+        blockSize: '100%', // fill the entire <Outer>
+        
+        
+        
         // borders:
         [groupableVars.borderStartStartRadius] : 'inherit !important', // reads parent's prop
         [groupableVars.borderStartEndRadius  ] : 'inherit !important', // reads parent's prop
@@ -96,8 +106,10 @@ const usesDataListInnerLayout = () => { // the <List> of data
         [borderVars.borderEndEndRadius    ] : groupableVars.borderEndEndRadius,
     });
 };
+
 const usesCreateDataLayout = () => { // the <ListItem> of data add_new
     return style({
+        // layouts:
         display: 'flex',
         flexDirection: 'column',
     });
