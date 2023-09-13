@@ -43,10 +43,10 @@ import {
     QuantityEditor,
 }                           from '@/components/editors/QuantityEditor'
 
-// app configs:
+// configs:
 import {
-    PAGE_PRODUCTS_STOCK_UNLIMITED,
-    PAGE_PRODUCTS_STOCK_LIMITED,
+    PAGE_PRODUCT_STOCK_UNLIMITED,
+    PAGE_PRODUCT_STOCK_LIMITED,
 }                           from '@/website.config'
 
 
@@ -223,12 +223,12 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
             expandedTabIndex={selectedTabLimited ? 1 : 0}
             onExpandedChange={handleExpandedChange}
         >
-            <TabPanel label={PAGE_PRODUCTS_STOCK_UNLIMITED}>
+            <TabPanel label={PAGE_PRODUCT_STOCK_UNLIMITED}>
                 <p>
                     The product stock is <em>always available</em>.
                 </p>
             </TabPanel>
-            <TabPanel label={PAGE_PRODUCTS_STOCK_LIMITED}>
+            <TabPanel label={PAGE_PRODUCT_STOCK_LIMITED}>
                 <Group
                     // variants:
                     {...basicVariantProps}

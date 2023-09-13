@@ -24,11 +24,11 @@ import {
     TabPanel,
 }                           from '@reusable-ui/components'
 
-// app configs:
+// configs:
 import {
-    PAGE_PRODUCTS_VISIBILITY_PUBLISHED,
-    PAGE_PRODUCTS_VISIBILITY_HIDDEN,
-    PAGE_PRODUCTS_VISIBILITY_DRAFT,
+    PAGE_PRODUCT_VISIBILITY_PUBLISHED,
+    PAGE_PRODUCT_VISIBILITY_HIDDEN,
+    PAGE_PRODUCT_VISIBILITY_DRAFT,
 }                           from '@/website.config'
 
 // models:
@@ -96,17 +96,17 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
             defaultExpandedTabIndex={possibleValues.findIndex((possibleValue) => (possibleValue.toUpperCase() === (value ?? defaultValue)?.toUpperCase()))}
             onExpandedChange={handleExpandedChange}
         >
-            <TabPanel label={PAGE_PRODUCTS_VISIBILITY_PUBLISHED}>
+            <TabPanel label={PAGE_PRODUCT_VISIBILITY_PUBLISHED}>
                 <p>
                     The product is <em>shown</em> on the webiste.
                 </p>
             </TabPanel>
-            <TabPanel label={PAGE_PRODUCTS_VISIBILITY_HIDDEN}>
+            <TabPanel label={PAGE_PRODUCT_VISIBILITY_HIDDEN}>
                 <p>
                     The product can only be viewed via <em>a (bookmarked) link</em>.
                 </p>
             </TabPanel>
-            <TabPanel label={PAGE_PRODUCTS_VISIBILITY_DRAFT}>
+            <TabPanel label={PAGE_PRODUCT_VISIBILITY_DRAFT}>
                 <p>
                     The product <em>cannot be viewed</em> on the entire website.
                 </p>
