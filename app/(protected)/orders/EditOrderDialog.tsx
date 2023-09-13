@@ -416,7 +416,7 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
                 // handlers:
                 onKeyDown={handleKeyDown}
             >
-                #ORDER-{orderId}
+                <h1>#ORDER-{orderId}</h1>
                 <CloseButton onClick={handleClosing} />
             </CardHeader>
             <Tab
