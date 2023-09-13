@@ -131,7 +131,6 @@ import {
 
 
 
-
 // defaults:
 const imageSize = 128;  // 128px
 
@@ -140,8 +139,7 @@ const imageSize = 128;  // 128px
 // styles:
 const usePageStyleSheet = dynamicStyleSheets(
     () => import(/* webpackPrefetch: true */'./pageStyles')
-, { id: 'products-pcyfaeow8d' });
-import './pageStyles';
+, { id: 'pcyfaeow8d' });
 
 
 

@@ -132,7 +132,7 @@ const getTotalQuantity = (items: OrderDetail['items']): number => {
 // styles:
 const usePageStyleSheet = dynamicStyleSheets(
     () => import(/* webpackPrefetch: true */'./pageStyles')
-, { id: 'orders-nxhip40jm2' });
+, { id: 'nxhip40jm2' });
 
 
 
