@@ -35,7 +35,7 @@ import type {
 
 
 // types:
-export type UseUpdateModelApi<TModel extends Model> = readonly [
+export type UpdateModelApi<TModel extends Model> = readonly [
     MutationTrigger<MutationDefinition<MutationArgs<TModel>, BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError, {}, FetchBaseQueryMeta>, string, TModel>>,
     {
         isLoading   : boolean
@@ -63,19 +63,19 @@ export interface SimpleEditModelDialogProps<TModel extends Model>
         >
 {
     // data:
-    useUpdateModelApi : () => UseUpdateModelApi<TModel>
+    updateModelApi : UpdateModelApi<TModel> | (() => UpdateModelApi<TModel>)
 }
 export const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialogProps<TModel>) => {
     // rest props:
     const {
         // data:
-        useUpdateModelApi,
+        updateModelApi,
     ...restSimpleEditDialogProps} = props;
     
     
     
     // stores:
-    const [updateModel, {isLoading}] = useUpdateModelApi();
+    const [updateModel, {isLoading}] = (typeof(updateModelApi) === 'function') ? updateModelApi() : updateModelApi;
     
     
     

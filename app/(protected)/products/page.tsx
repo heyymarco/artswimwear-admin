@@ -288,10 +288,10 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
             {/* edit dialog: */}
             <ModalStatus theme='primary' viewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
                 {!!editMode && (editMode !== 'images') && (editMode !== 'full') && <>
-                    {(editMode === 'name'      ) && <SimpleEditModelDialog<ProductDetail> model={model} useUpdateModelApi={useUpdateProduct} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor       type='text' required={true } />} />}
-                    {(editMode === 'price'     ) && <SimpleEditModelDialog<ProductDetail> model={model} useUpdateModelApi={useUpdateProduct} edit={editMode} onClose={handleEditDialogClose} editorComponent={<CurrencyEditor   currencySign={getCurrencySign()} currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX} />} />}
-                    {(editMode === 'stock'     ) && <SimpleEditModelDialog<ProductDetail> model={model} useUpdateModelApi={useUpdateProduct} edit={editMode} onClose={handleEditDialogClose} editorComponent={<StockEditor      theme='secondary' />} />}
-                    {(editMode === 'visibility') && <SimpleEditModelDialog<ProductDetail> model={model} useUpdateModelApi={useUpdateProduct} edit={editMode} onClose={handleEditDialogClose} editorComponent={<VisibilityEditor theme='secondary' />} />}
+                    {(editMode === 'name'      ) && <SimpleEditModelDialog<ProductDetail> model={model} updateModelApi={useUpdateProduct} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor       type='text' required={true } />} />}
+                    {(editMode === 'price'     ) && <SimpleEditModelDialog<ProductDetail> model={model} updateModelApi={useUpdateProduct} edit={editMode} onClose={handleEditDialogClose} editorComponent={<CurrencyEditor   currencySign={getCurrencySign()} currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX} />} />}
+                    {(editMode === 'stock'     ) && <SimpleEditModelDialog<ProductDetail> model={model} updateModelApi={useUpdateProduct} edit={editMode} onClose={handleEditDialogClose} editorComponent={<StockEditor      theme='secondary' />} />}
+                    {(editMode === 'visibility') && <SimpleEditModelDialog<ProductDetail> model={model} updateModelApi={useUpdateProduct} edit={editMode} onClose={handleEditDialogClose} editorComponent={<VisibilityEditor theme='secondary' />} />}
                 </>}
             </ModalStatus>
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
