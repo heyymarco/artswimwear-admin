@@ -27,6 +27,8 @@ import type {
 // states:
 
 //#region paginationModelState
+
+// contexts:
 export interface PaginationModelState<TModel extends Model>
 {
     // data:

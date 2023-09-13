@@ -72,7 +72,7 @@ import {
     // react components:
     PaginationModelStateProps,
     PaginationModelStateProvider,
-}                           from './states/paginationModelState'
+}                           from '@/states/paginationModelState'
 import {
     ModalLoadingError,
 }                           from '@/components/ModalLoadingError'

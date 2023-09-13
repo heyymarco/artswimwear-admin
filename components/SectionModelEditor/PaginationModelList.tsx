@@ -45,7 +45,7 @@ import type {
 import {
     // states:
     usePaginationModelState,
-}                           from './states/paginationModelState'
+}                           from '@/states/paginationModelState'
 
 
 
