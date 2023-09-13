@@ -144,8 +144,8 @@ import {
 
 
 // styles:
-const useFullEditDialogStyleSheet = dynamicStyleSheets(
-    () => import(/* webpackPrefetch: true */'./FullEditDialogStyles')
+const useEditProductDialogStyleSheet = dynamicStyleSheets(
+    () => import(/* webpackPrefetch: true */'./EditProductDialogStyles')
 , { id: 'pkeb1tledn' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 
 
@@ -174,7 +174,7 @@ const emptyProduct : ProductDetail = {
 
 
 // react components:
-export interface FullEditDialogProps {
+export interface EditProductDialogProps {
     // data:
     product                 ?: ProductDetail
     defaultExpandedTabIndex ?: number
@@ -184,9 +184,9 @@ export interface FullEditDialogProps {
     // handlers:
     onClose                  : () => void
 }
-export const FullEditDialog = (props: FullEditDialogProps): JSX.Element|null => {
+export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     // styles:
-    const styles = useFullEditDialogStyleSheet();
+    const styles = useEditProductDialogStyleSheet();
     
     
     
@@ -236,8 +236,8 @@ export const FullEditDialog = (props: FullEditDialogProps): JSX.Element|null => 
     
     
     // refs:
-    const firstEditorRef     = useRef<HTMLInputElement|null>(null); // TODO: finish this
-    const editorContainerRef = useRef<HTMLFormElement|null>(null); // TODO: finish this
+    const firstEditorRef = useRef<HTMLInputElement|null>(null); // TODO: finish this
+    const editorFormRef  = useRef<HTMLFormElement|null>(null);
     
     
     
@@ -275,7 +275,7 @@ export const FullEditDialog = (props: FullEditDialogProps): JSX.Element|null => 
                 }, 0);
             }, 0);
         });
-        if (editorContainerRef.current?.querySelector(':is(.invalidating, .invalidated)')) return;
+        if (editorFormRef.current?.querySelector(':is(.invalidating, .invalidated)')) return;
         
         
         
@@ -366,7 +366,7 @@ export const FullEditDialog = (props: FullEditDialogProps): JSX.Element|null => 
             
             firstEditorElm.setSelectionRange(0, -1);
             firstEditorElm.focus({ preventScroll: true });
-        }, 0);
+        }, 100);
         
         
         
@@ -420,9 +420,9 @@ export const FullEditDialog = (props: FullEditDialogProps): JSX.Element|null => 
                     onKeyDown={handleKeyDown}
                 >
                     <TabPanel label={PAGE_PRODUCT_TAB_INFORMATIONS} panelComponent={<Generic className={styles.infoTab} />}>
-                        <form ref={editorContainerRef}>
+                        <form ref={editorFormRef}>
                             <span className='name label'>Name:</span>
-                            <TextEditor           className='name editor'       required={true}  value={name}           onChange={(value) => { setName(value); setIsModified(true); handleNameChange(value); }} />
+                            <TextEditor           className='name editor'       required={true}  value={name}           onChange={(value) => { setName(value); setIsModified(true); handleNameChange(value); }} elmRef={((defaultExpandedTabIndex ?? 0) === 0) ? firstEditorRef : undefined} />
                             
                             <span className='path label'>Path:</span>
                             <PathEditor           className='path editor'       required={true}  value={path}           onChange={(value) => { setPath(value); setIsPathModified(true); }} homeUrl={STORE_WEBSITE_URL} isValid={!!path} />
@@ -493,6 +493,11 @@ export const FullEditDialog = (props: FullEditDialogProps): JSX.Element|null => 
                     </TabPanel>
                     <TabPanel label={PAGE_PRODUCT_TAB_DESCRIPTION}  panelComponent={<Generic className={styles.descriptionTab} />}>
                         <WysiwygEditor
+                            // refs:
+                            elmRef={((defaultExpandedTabIndex ?? 0) === 2) ? firstEditorRef : undefined}
+                            
+                            
+                            
                             // classes:
                             className={styles.editDescription}
                             

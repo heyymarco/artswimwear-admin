@@ -97,8 +97,8 @@ import {
 
 // private components:
 import {
-    FullEditDialog,
-}                           from './FullEditDialog'
+    EditProductDialog,
+}                           from './EditProductDialog'
 
 // stores:
 import {
@@ -150,7 +150,7 @@ interface ProductCreateProps extends ModelCreateProps {}
 const ProductCreate = (props: ProductCreateProps): JSX.Element|null => {
     // jsx:
     return (
-        <FullEditDialog product={undefined} onClose={props.onClose} />
+        <EditProductDialog product={undefined} onClose={props.onClose} />
     );
 };
 
@@ -294,7 +294,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                 </>}
             </ModalStatus>
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {!!editMode && ((editMode === 'images') || (editMode === 'full')) && <FullEditDialog product={model} onClose={handleEditDialogClose} defaultExpandedTabIndex={(editMode === 'images') ? 1 : undefined} />}
+                {!!editMode && ((editMode === 'images') || (editMode === 'full')) && <EditProductDialog product={model} onClose={handleEditDialogClose} defaultExpandedTabIndex={(editMode === 'images') ? 1 : undefined} />}
             </ModalStatus>
         </ListItem>
     );
