@@ -229,7 +229,7 @@ export const usesEditDescription = () => {
         // layouts:
         ...style({
             // sizes:
-            contain       : 'inline-size', // do not influences the <parent>'s width
+            contain       : 'inline-size', // ignores the inline-size of the children
          // blockSize     : 'fill-available',
             ...fallback({
                 blockSize : `calc(100% + (${positivePaddingBlock} * 2))`,
