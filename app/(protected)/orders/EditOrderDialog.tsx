@@ -140,14 +140,14 @@ const imageSize = 48;  // 48px
 
 
 // styles:
-const useFullEditDialogStyleSheet = dynamicStyleSheets(
-    () => import(/* webpackPrefetch: true */'./FullEditDialogStyles')
+const useEditOrderDialogStyleSheet = dynamicStyleSheets(
+    () => import(/* webpackPrefetch: true */'./EditOrderDialogStyles')
 , { id: 'wz8sbhtojl' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names`
 
 
 
 // react components:
-export interface FullEditDialogProps {
+export interface EditOrderDialogProps {
     // data:
     order            : OrderDetail
     
@@ -156,9 +156,9 @@ export interface FullEditDialogProps {
     // handlers:
     onClose          : () => void
 }
-export const FullEditDialog = (props: FullEditDialogProps): JSX.Element|null => {
+export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     // styles:
-    const styles = useFullEditDialogStyleSheet();
+    const styles = useEditOrderDialogStyleSheet();
     
     
     
@@ -228,7 +228,6 @@ export const FullEditDialog = (props: FullEditDialogProps): JSX.Element|null => 
     
     // refs:
     const firstEditorRef     = useRef<HTMLInputElement|null>(null); // TODO: finish this
-    const editorContainerRef = useRef<HTMLElement|null>(null); // TODO: finish this
     
     
     

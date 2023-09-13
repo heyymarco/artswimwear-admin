@@ -87,8 +87,8 @@ import {
 
 // private components:
 import {
-    FullEditDialog,
-}                           from './FullEditDialog'
+    EditOrderDialog,
+}                           from './EditOrderDialog'
 
 // stores:
 import {
@@ -307,7 +307,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                 </>}
             </ModalStatus>
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {(editMode === 'full') && <FullEditDialog order={model} onClose={handleEditDialogClose} />}
+                {(editMode === 'full') && <EditOrderDialog order={model} onClose={handleEditDialogClose} />}
             </ModalStatus>
         </ListItem>
     );
