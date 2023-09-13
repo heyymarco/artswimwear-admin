@@ -311,8 +311,8 @@ export default function ProductPage(): JSX.Element|null {
     // states:
     const [page   , setPage   ] = useState<number>(1);
     const [perPage, setPerPage] = useState<number>(10);
-    const dataSource            = useGetProductPage({ page, perPage });
-    const {data, isLoading: isLoadingAndNoData, isError, refetch } = dataSource;
+    const getModelPaginationApi = useGetProductPage({ page, perPage });
+    const {data, isLoading: isLoadingAndNoData, isError, refetch } = getModelPaginationApi;
     const isErrorAndNoData = isError && !data;
     
     
@@ -333,7 +333,7 @@ export default function ProductPage(): JSX.Element|null {
                 perPage={perPage}
                 setPage={setPage}
                 setPerPage={setPerPage}
-                dataSource={dataSource}
+                getModelPaginationApi={getModelPaginationApi}
                 
                 
                 

@@ -323,8 +323,8 @@ export default function OrderPage(): JSX.Element|null {
     // stores:
     const [page   , setPage   ] = useState<number>(1);
     const [perPage, setPerPage] = useState<number>(10);
-    const dataSource            = useGetOrderPage({ page, perPage });
-    const {data, isLoading: isLoadingAndNoData, isError, refetch } = dataSource;
+    const getModelPaginationApi = useGetOrderPage({ page, perPage });
+    const {data, isLoading: isLoadingAndNoData, isError, refetch } = getModelPaginationApi;
     const isErrorAndNoData = isError && !data;
     
     
@@ -340,7 +340,7 @@ export default function OrderPage(): JSX.Element|null {
                 perPage={perPage}
                 setPage={setPage}
                 setPerPage={setPerPage}
-                dataSource={dataSource}
+                getModelPaginationApi={getModelPaginationApi}
                 
                 
                 

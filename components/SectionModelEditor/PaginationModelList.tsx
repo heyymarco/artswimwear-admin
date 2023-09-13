@@ -43,8 +43,8 @@ import type {
 }                           from '@/libs/types'
 import {
     // states:
-    usePaginationModelState,
-}                           from '@/states/paginationModelState'
+    useModelPaginationState,
+}                           from '@/states/modelPaginationState'
 
 
 
@@ -96,7 +96,7 @@ const PaginationModelList = <TModel extends Model, TElement extends Element = HT
         data,
         isFetching,
         isError,
-    } = usePaginationModelState<TModel>();
+    } = useModelPaginationState<TModel>();
     const pages       = Math.ceil((data?.total ?? 0) / perPage);
     const isDataEmpty = !!data && !data.total;
     

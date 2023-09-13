@@ -65,14 +65,14 @@ import type {
 }                           from '@/libs/types'
 import {
     // states:
-    usePaginationModelState,
+    useModelPaginationState,
     
     
     
     // react components:
-    PaginationModelStateProps,
-    PaginationModelStateProvider,
-}                           from '@/states/paginationModelState'
+    ModelPaginationStateProps,
+    ModelPaginationStateProvider,
+}                           from '@/states/modelPaginationState'
 import {
     ModalLoadingError,
 }                           from '@/components/ModalLoadingError'
@@ -217,11 +217,11 @@ export interface SectionModelEditorProps<TModel extends Model>
         SectionModelEditorInternalProps<TModel>
 {
     // data:
-    page       : number
-    perPage    : number
-    setPage    : (page: number) => void
-    setPerPage : (perPage: number) => void
-    dataSource : PaginationModelStateProps<TModel>['dataSource']
+    page                  : number
+    perPage               : number
+    setPage               : (page: number) => void
+    setPerPage            : (perPage: number) => void
+    getModelPaginationApi : ModelPaginationStateProps<TModel>['getModelPaginationApi']
 }
 const SectionModelEditor         = <TModel extends Model>(props: SectionModelEditorProps<TModel>): JSX.Element|null => {
     // styles:
@@ -236,7 +236,7 @@ const SectionModelEditor         = <TModel extends Model>(props: SectionModelEdi
         perPage,
         setPage,
         setPerPage,
-        dataSource,
+        getModelPaginationApi,
     ...restSectionModelEditorProps} = props;
     
     
@@ -250,7 +250,10 @@ const SectionModelEditor         = <TModel extends Model>(props: SectionModelEdi
     
     // jsx:
     return (
-        <PaginationModelStateProvider dataSource={dataSource}>
+        <ModelPaginationStateProvider
+            // data:
+            getModelPaginationApi={getModelPaginationApi}
+        >
             <Section className={`fill-self ${styles.sectionData}`}>
                 <PaginationModelList<TModel>
                     // paginations:
@@ -284,7 +287,7 @@ const SectionModelEditor         = <TModel extends Model>(props: SectionModelEdi
                     onNavigateTo={handleNavigateTo}
                 />
             </Section>
-        </PaginationModelStateProvider>
+        </ModelPaginationStateProvider>
     );
 };
 export {
@@ -328,7 +331,7 @@ const SectionModelEditorInternal = <TModel extends Model>(props: SectionModelEdi
         isFetching,
         isError,
         refetch,
-    } = usePaginationModelState<TModel>();
+    } = useModelPaginationState<TModel>();
     const isDataEmpty = !!data && !data.total;
     
     
