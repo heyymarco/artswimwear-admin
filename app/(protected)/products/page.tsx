@@ -57,6 +57,7 @@ import './pageStyles';
 
 // react components:
 
+/* <ProductCreate> */
 interface ProductCreateProps extends ModelCreateProps {}
 const ProductCreate = (props: ProductCreateProps) => {
     // jsx:
@@ -65,6 +66,7 @@ const ProductCreate = (props: ProductCreateProps) => {
     );
 };
 
+/* <ProductPreview> */
 interface ProductPreviewProps extends ModelPreviewProps<ProductDetail> {}
 const ProductPreview = (props: ProductPreviewProps) => {
     // styles:
@@ -197,6 +199,7 @@ const ProductPreview = (props: ProductPreviewProps) => {
     );
 }
 
+/* <ProductPage> */
 export default function ProductPage() {
     // styles:
     const styles = usePageStyleSheet();

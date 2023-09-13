@@ -56,6 +56,7 @@ const usePageStyleSheet = dynamicStyleSheets(
 
 // react components:
 
+/* <OrderPreview> */
 interface OrderPreviewProps extends ModelPreviewProps<OrderDetail> {}
 const OrderPreview = (props: OrderPreviewProps) => {
     // styles:
@@ -217,6 +218,7 @@ const OrderPreview = (props: OrderPreviewProps) => {
     );
 }
 
+/* <OrderPage> */
 export default function OrderPage() {
     // styles:
     const styles = usePageStyleSheet();
