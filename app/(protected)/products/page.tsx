@@ -1,31 +1,62 @@
 'use client'
 
-import { default as React } from 'react'
-import { dynamicStyleSheets } from '@cssfn/cssfn-react'
+// react:
+import {
+    // react:
+    default as React,
+    
+    
+    
+    // hooks:
+    useRef,
+    useState,
+}                           from 'react'
 
-import { Main } from '@heymarco/section'
+// next-js:
+import type {
+    Metadata,
+}                           from 'next'
 
-import type { Metadata } from 'next'
+// cssfn:
+import {
+    // style sheets:
+    dynamicStyleSheets,
+}                           from '@cssfn/cssfn-react'               // writes css in react hook
 
-import { Image } from '@heymarco/image'
-import { ListItem, ListItemProps, Badge, Content, ModalStatus } from '@reusable-ui/components';
-import { ProductDetail, useGetProductPage } from '@/store/features/api/apiSlice';
-import { useRef, useState } from 'react';
-import { formatCurrency, getCurrencySign } from '@/libs/formatters';
-import { useEvent } from '@reusable-ui/core';
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useEvent,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
-import { PAGE_PRODUCTS_TITLE, PAGE_PRODUCTS_DESCRIPTION } from '@/website.config'
-import { COMMERCE_CURRENCY_FRACTION_MAX } from '@/commerce.config'
-import { EditButton } from '@/components/EditButton'
-import { TextEditor } from '@/components/editors/TextEditor'
-import { CurrencyEditor } from '@/components/editors/CurrencyEditor'
-import { StockEditor } from '@/components/editors/StockEditor'
-import { VisibilityEditor } from '@/components/editors/VisibilityEditor'
-import { SimpleEditProductDialog } from '@/components/dialogs/SimpleEditProductDialog'
-import { FullEditDialog } from './FullEditDialog'
-import { resolveMediaUrl } from '@/libs/mediaStorage.client'
-import { CompoundWithBadge } from '@/components/CompoundWithBadge'
-import { MiniCarousel } from '@/components/MiniCarousel'
+// reusable-ui components:
+import {
+    // base-content-components:
+    Content,
+    
+    
+    
+    // layout-components:
+    ListItem,
+    
+    
+    
+    // status-components:
+    Badge,
+    
+    
+    
+    // utility-components:
+    ModalStatus,
+}                           from '@reusable-ui/components'          // a set of official Reusable-UI components
+
+// heymarco components:
+import {
+    Main,
+}                           from '@heymarco/section'
+import {
+    Image,
+}                           from '@heymarco/image'
 
 // internal components:
 import {
@@ -39,6 +70,65 @@ import {
     ModelPreviewProps,
     SectionModelEditor,
 }                           from '@/components/SectionModelEditor'
+import {
+    EditButton,
+}                           from '@/components/EditButton'
+import {
+    TextEditor,
+}                           from '@/components/editors/TextEditor'
+import {
+    CurrencyEditor,
+}                           from '@/components/editors/CurrencyEditor'
+import {
+    StockEditor,
+}                           from '@/components/editors/StockEditor'
+import {
+    VisibilityEditor,
+}                           from '@/components/editors/VisibilityEditor'
+import {
+    CompoundWithBadge,
+}                           from '@/components/CompoundWithBadge'
+import {
+    MiniCarousel,
+}                           from '@/components/MiniCarousel'
+import {
+    SimpleEditProductDialog,
+}                           from '@/components/dialogs/SimpleEditProductDialog'
+
+// private components:
+import {
+    FullEditDialog,
+}                           from './FullEditDialog'
+
+// stores:
+import {
+    // types:
+    ProductDetail,
+    
+    
+    
+    // hooks:
+    useGetProductPage,
+}                           from '@/store/features/api/apiSlice'
+
+// internals:
+import {
+    formatCurrency,
+    getCurrencySign,
+}                           from '@/libs/formatters';
+import {
+    resolveMediaUrl,
+}                           from '@/libs/mediaStorage.client'
+
+// configs:
+import {
+    PAGE_PRODUCTS_TITLE,
+    PAGE_PRODUCTS_DESCRIPTION,
+}                           from '@/website.config' // TODO: will be used soon
+import {
+    COMMERCE_CURRENCY_FRACTION_MAX,
+}                           from '@/commerce.config'
+
 
 
 
@@ -76,7 +166,7 @@ const ProductPreview = (props: ProductPreviewProps) => {
     
     const {
         model,
-    ...restListItem} = props;
+    ...restListItemProps} = props;
     const {
         visibility,
         name,
@@ -107,7 +197,20 @@ const ProductPreview = (props: ProductPreviewProps) => {
     
     // jsx:
     return (
-        <ListItem {...restListItem} elmRef={listItemRef} className={styles.productItem}>
+        <ListItem
+            // other props:
+            {...restListItemProps}
+            
+            
+            
+            // refs:
+            elmRef={listItemRef}
+            
+            
+            
+            // classes:
+            className={styles.productItem}
+        >
             <div className={styles.productItemWrapper}>
                 {/* carousel + edit button */}
                 <CompoundWithBadge
