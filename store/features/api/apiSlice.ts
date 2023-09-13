@@ -12,12 +12,12 @@ import type {
 }                           from '@/libs/types'
 
 // apis:
-import type { ProductPreview, ProductDetail }   from '@/pages/api/product'
-export type { ProductPreview, ProductDetail }   from '@/pages/api/product'
-import type { OrderDetail }                     from '@/pages/api/order'
-export type { OrderDetail }                     from '@/pages/api/order'
-import type { ShippingPreview }                 from '@/pages/api/shipping'
-export type { ShippingPreview }                 from '@/pages/api/shipping'
+import type { ProductPreview, ProductDetail }   from '@/app/api/(protected)/product/route'
+export type { ProductPreview, ProductDetail }   from '@/app/api/(protected)/product/route'
+import type { OrderDetail }                     from '@/app/api/(protected)/order/route'
+export type { OrderDetail }                     from '@/app/api/(protected)/order/route'
+import type { ShippingPreview }                 from '@/app/api/(protected)/shipping/route'
+export type { ShippingPreview }                 from '@/app/api/(protected)/shipping/route'
 
 
 
