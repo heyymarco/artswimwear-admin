@@ -235,7 +235,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         deleteButtonComponent,
         
-        uploadImageButtonComponent,
+        uploadImageSelectButtonComponent,
         
         uploadingImageProgressComponent,
         uploadingImageProgressBarComponent,
@@ -760,7 +760,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                     
                     
                     // components:
-                    uploadImageButtonComponent,
+                    uploadImageSelectButtonComponent,
                 }}
             />
         </Content>

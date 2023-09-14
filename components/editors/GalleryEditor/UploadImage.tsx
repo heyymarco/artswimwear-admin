@@ -37,20 +37,20 @@ import {
 export interface UploadImageProps
 {
     // upload images:
-    uploadImageTitle           ?: string
-    uploadImageSelectImage     ?: string
-    uploadImageDropImage       ?: string
-    uploadImageType            ?: string
+    uploadImageTitle                 ?: string
+    uploadImageSelectImage           ?: string
+    uploadImageDropImage             ?: string
+    uploadImageType                  ?: string
     
     
     
     // upload activities:
-    onUploadImageStart         ?: (imageFile: File) => void
+    onUploadImageStart               ?: (imageFile: File) => void
     
     
     
     // components:
-    uploadImageButtonComponent ?: React.ReactComponentElement<any, ButtonProps>
+    uploadImageSelectButtonComponent ?: React.ReactComponentElement<any, ButtonProps>
 }
 const UploadImage = (props: UploadImageProps): JSX.Element|null => {
     // rest props:
@@ -69,7 +69,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         
         
         // components:
-        uploadImageButtonComponent = (<ButtonIcon icon='upload_file' /> as React.ReactComponentElement<any, ButtonProps>),
+        uploadImageSelectButtonComponent = (<ButtonIcon icon='upload_file' /> as React.ReactComponentElement<any, ButtonProps>),
     } = props;
     
     
@@ -199,7 +199,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
             >
                 {uploadImageTitle}
             </h6>
-            {React.cloneElement<ButtonProps>(uploadImageButtonComponent,
+            {React.cloneElement<ButtonProps>(uploadImageSelectButtonComponent,
                 // props:
                 {
                     // handlers:
