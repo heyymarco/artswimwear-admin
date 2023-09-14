@@ -18,6 +18,8 @@ import type { OrderDetail }                     from '@/app/api/(protected)/orde
 export type { OrderDetail }                     from '@/app/api/(protected)/order/route'
 import type { ShippingPreview }                 from '@/app/api/(protected)/shipping/route'
 export type { ShippingPreview }                 from '@/app/api/(protected)/shipping/route'
+import type { UserDetail }                      from '@/app/api/(protected)/user/route'
+export type { UserDetail }                      from '@/app/api/(protected)/user/route'
 
 
 
@@ -35,7 +37,7 @@ export const apiSlice = createApi({
     baseQuery : fetchBaseQuery({
         baseUrl: '/api'
     }),
-    tagTypes: ['Products', 'Orders'],
+    tagTypes: ['Products', 'Orders', 'Users'],
     endpoints : (builder) => ({
         getProductList  : builder.query<EntityState<ProductPreview>, void>({
             query : () => ({
@@ -137,12 +139,53 @@ export const apiSlice = createApi({
                 return shippingListAdapter.addMany(shippingListAdapter.getInitialState(), response);
             },
         }),
+        
+        getUserPage  : builder.query<Pagination<UserDetail>, PaginationArgs>({
+            query : (params) => ({
+                url    : 'user',
+                method : 'POST',
+                body   : params,
+            }),
+            providesTags: (result, error, page)  => {
+                return [
+                    ...(result?.entities ?? []).map((user): { type: 'Users', id: string } => ({
+                        type : 'Users',
+                        id   : user.id,
+                    })),
+                    
+                    {
+                        type : 'Users',
+                        id   : 'ORDER_LIST',
+                    },
+                ];
+            },
+        }),
+        updateUser   : builder.mutation<UserDetail, MutationArgs<UserDetail>>({
+            query: (patch) => ({
+                url    : 'user',
+                method : 'PATCH',
+                body   : patch
+            }),
+            
+            // inefficient:
+            // invalidatesTags: (user, error, arg) => [
+            //     ...((!user ? [] : [{
+            //         type : 'Users',
+            //         id   : user.id,
+            //     }]) as Array<{ type: 'Users', id: string }>),
+            // ],
+            
+            // more efficient:
+            onCacheEntryAdded: async (arg, api) => {
+                await handleCumulativeUpdateCacheEntry('getUserPage', (arg.id !== ''), api);
+            },
+        }),
     }),
 });
 
 
 
-const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, QueryArg, BaseQuery extends BaseQueryFn>(endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'>, isUpdating: boolean, api: MutationCacheLifecycleApi<QueryArg, BaseQuery, TEntry, 'api'>) => {
+const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, QueryArg, BaseQuery extends BaseQueryFn>(endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getUserPage'>, isUpdating: boolean, api: MutationCacheLifecycleApi<QueryArg, BaseQuery, TEntry, 'api'>) => {
     // updated TEntry data:
     const { data: entry } = await api.cacheDataLoaded;
     const { id } = entry;
@@ -264,4 +307,7 @@ export const {
     useUpdateOrderMutation   : useUpdateOrder,
     
     useGetShippingListQuery  : useGetShippingList,
+    
+    useGetUserPageQuery      : useGetUserPage,
+    useUpdateUserMutation    : useUpdateUser,
 } = apiSlice;

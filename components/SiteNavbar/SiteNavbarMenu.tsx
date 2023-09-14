@@ -118,6 +118,7 @@ const SiteNavbarMenu = ({
                     {isFullySignedIn && <NavItem><Link href='/'>Dashboard</Link></NavItem>}
                     {isFullySignedIn && <NavItem><Link href='/products'>Products</Link></NavItem>}
                     {isFullySignedIn && <NavItem><Link href='/orders'>Orders</Link></NavItem>}
+                    {isFullySignedIn && <NavItem><Link href='/users'>Users</Link></NavItem>}
                     
                     {isBusy && <NavItem active={true}>
                         <Busy theme='secondary' size='lg' />
