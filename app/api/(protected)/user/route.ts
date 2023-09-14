@@ -174,6 +174,8 @@ router
         image,
         
         roleId,
+        
+        username,
     } = await req.json();
     //#endregion parsing request
     
@@ -185,6 +187,12 @@ router
         (typeof(id) !== 'string')
         ||
         ((name !== undefined) && ((typeof(name) !== 'string') || (name.length < 1)))
+        ||
+        ((email !== undefined) && ((typeof(email) !== 'string') || (email.length < 5)))
+        ||
+        ((image !== undefined) && ((typeof(image) !== 'string') || (image.length < 1)))
+        ||
+        ((username !== undefined) && ((typeof(username) !== 'string') || (username.length < 1)))
         
         // TODO: validating data type & constraints
     ) {
@@ -240,14 +248,38 @@ router
         const {credentials, ...restUser} = (
             !id
             ? await prisma.user.create({
-                data   : data,
+                data   : {
+                    ...data,
+                    credentials : {
+                        create : {
+                            username,
+                        },
+                    },
+                },
                 select : select,
             })
             : await prisma.user.update({
                 where  : {
                     id : id,
                 },
-                data   : data,
+                data   : {
+                    ...data,
+                    credentials : {
+                        connectOrCreate : {
+                            where  : {
+                                userId : id,
+                            },
+                            create : {
+                                username,
+                            },
+                        },
+                        update : {
+                            data : {
+                                username,
+                            },
+                        },
+                    },
+                },
                 select : select,
             })
         );
