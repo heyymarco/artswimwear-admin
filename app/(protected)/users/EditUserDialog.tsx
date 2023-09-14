@@ -151,6 +151,8 @@ const emptyUser : UserDetail = {
     image          : null,
     
     roleId         : null,
+    
+    username       : null,
 };
 
 

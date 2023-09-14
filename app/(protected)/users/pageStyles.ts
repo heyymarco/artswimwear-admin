@@ -68,6 +68,7 @@ const usesUserItemWrapperLayout = () => { // the <div> of the <ListItem> of user
             display: 'grid',
             gridTemplate: [[
                 '"userImg      name "', 'auto',
+                '"userImg  username "', 'auto',
                 '"userImg     email "', 'auto',
                 '"userImg      role "', 'auto',
                 '"userImg fullEditor"', 'auto',
@@ -160,6 +161,9 @@ const usesUserItemWrapperLayout = () => { // the <div> of the <ListItem> of user
             ...children('.name', {
                 gridArea: 'name',
                 fontSize: typos.fontSizeXl,
+            }),
+            ...children('.username', {
+                gridArea: 'username',
             }),
             ...children('.email', {
                 gridArea: 'email',

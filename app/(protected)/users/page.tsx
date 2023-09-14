@@ -192,6 +192,8 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
         image,
         
         roleId,
+        
+        username,
     } = model;
     
     
@@ -280,6 +282,10 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
                     {name}
                     <EditButton onClick={() => setEditMode('name')} />
                 </h3>
+                <p className='username'>
+                    {username || <span className='noValue'>No Username</span>}
+                    <EditButton onClick={() => setEditMode('username')} />
+                </p>
                 <p className='email'>
                     {email}
                     <EditButton onClick={() => setEditMode('email')} />
@@ -303,7 +309,7 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
                 </>}
             </ModalStatus>
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {!!editMode && ((editMode === 'image') || (editMode === 'roleId') || (editMode === 'full')) && <EditUserDialog user={model} onClose={handleEditDialogClose} defaultExpandedTabIndex={(editMode === 'roleId') ? 1 : undefined} />}
+                {!!editMode && ((editMode === 'image') || (editMode === 'roleId') || (editMode === 'username') || (editMode === 'full')) && <EditUserDialog user={model} onClose={handleEditDialogClose} defaultExpandedTabIndex={(editMode === 'roleId') ? 1 : undefined} />}
             </ModalStatus>
         </ListItem>
     );

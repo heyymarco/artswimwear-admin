@@ -46,6 +46,7 @@ export interface UserDetail
             |'emailVerified'
         >
 {
+    username : string|null
 }
 
 
@@ -115,13 +116,19 @@ router
         prisma.user.count(),
         prisma.user.findMany({
             select: {
-                id     : true,
+                id               : true,
                 
-                name   : true,
-                email  : true,
-                image  : true,
+                name             : true,
+                email            : true,
+                image            : true,
                 
-                roleId : true,
+                roleId           : true,
+                
+                credentials : {
+                    select : {
+                        username : true,
+                    },
+                },
             },
             orderBy : {
                 createdAt: 'desc',
@@ -132,7 +139,16 @@ router
     ]);
     const paginationUserDetail : Pagination<UserDetail> = {
         total    : total,
-        entities : paged,
+        entities : paged.map((user) => {
+            const {
+                credentials,
+            ...restUser} = user;
+            
+            return {
+                ...restUser,
+                username : credentials?.username ?? null,
+            };
+        }),
     };
     return NextResponse.json(paginationUserDetail); // handled with success
 })
@@ -207,15 +223,21 @@ router
             roleId,
         };
         const select = {
-            id     : true,
+            id               : true,
             
-            name   : true,
-            email  : true,
-            image  : true,
+            name             : true,
+            email            : true,
+            image            : true,
             
-            roleId : true,
+            roleId           : true,
+            
+            credentials : {
+                select : {
+                    username : true,
+                },
+            },
         };
-        const userDetail : UserDetail = (
+        const {credentials, ...restUser} = (
             !id
             ? await prisma.user.create({
                 data   : data,
@@ -229,6 +251,10 @@ router
                 select : select,
             })
         );
+        const userDetail : UserDetail = {
+            ...restUser,
+            username : credentials?.username ?? null,
+        };
         return NextResponse.json(userDetail); // handled with success
     }
     catch (error: any) {
