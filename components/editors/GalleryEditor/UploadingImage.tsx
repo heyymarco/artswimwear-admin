@@ -37,34 +37,34 @@ import {
 export interface UploadingImageProps
 {
     // positions:
-    uploadingItemIndex                   : number
+    uploadingItemIndex         : number
     
     
     
     // uploading images:
-    uploadingImageTitle                 ?: string
-    uploadingImageErrorTitle            ?: string
-    uploadingImageRetry                 ?: string
-    uploadingImageCancel                ?: string
-    onUploadingImageProgress            ?: (percentage: number|null) => string
+    uploadingImageTitle       ?: string
+    uploadingImageErrorTitle  ?: string
+    uploadingImageRetry       ?: string
+    uploadingImageCancel      ?: string
+    onUploadingImageProgress  ?: (percentage: number|null) => string
     
     
     
     // uploading activities:
-    uploadingImageFile                   : File
-    uploadingImagePercentage             : number|null
-    uploadingImageErrorMessage           : string
-    onUploadingImageRetry                : () => void
-    onUploadingImageCancel               : () => void
+    uploadingImageFile         : File
+    uploadingImagePercentage   : number|null
+    uploadingImageErrorMessage : string
+    onUploadingImageRetry      : () => void
+    onUploadingImageCancel     : () => void
     
     
     
     // components:
-    imageComponent                       : React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
-    uploadingImageProgressComponent     ?: React.ReactComponentElement<any, ProgressProps<Element>>
-    uploadingImageProgressBarComponent  ?: React.ReactComponentElement<any, ProgressBarProps<Element>>
-    uploadingImageRetryButtonComponent  ?: React.ReactComponentElement<any, ButtonProps>
-    uploadingImageCancelButtonComponent ?: React.ReactComponentElement<any, ButtonProps>
+    imageComponent             : React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
+    progressComponent         ?: React.ReactComponentElement<any, ProgressProps<Element>>
+    progressBarComponent      ?: React.ReactComponentElement<any, ProgressBarProps<Element>>
+    retryButtonComponent      ?: React.ReactComponentElement<any, ButtonProps>
+    cancelButtonComponent     ?: React.ReactComponentElement<any, ButtonProps>
 }
 const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
     // rest props:
@@ -95,10 +95,10 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
         
         // components:
         imageComponent,
-        uploadingImageProgressComponent     = (<Progress                                  size='sm' /> as React.ReactComponentElement<any, ProgressProps<Element>>),
-        uploadingImageProgressBarComponent  = (<ProgressBar                                         /> as React.ReactComponentElement<any, ProgressBarProps<Element>>),
-        uploadingImageRetryButtonComponent  = (<ButtonIcon icon='refresh' theme='success' size='sm' /> as React.ReactComponentElement<any, ButtonProps>),
-        uploadingImageCancelButtonComponent = (<ButtonIcon icon='cancel'  theme='danger'  size='sm' /> as React.ReactComponentElement<any, ButtonProps>),
+        progressComponent     = (<Progress                                  size='sm' /> as React.ReactComponentElement<any, ProgressProps<Element>>),
+        progressBarComponent  = (<ProgressBar                                         /> as React.ReactComponentElement<any, ProgressBarProps<Element>>),
+        retryButtonComponent  = (<ButtonIcon icon='refresh' theme='success' size='sm' /> as React.ReactComponentElement<any, ButtonProps>),
+        cancelButtonComponent = (<ButtonIcon icon='cancel'  theme='danger'  size='sm' /> as React.ReactComponentElement<any, ButtonProps>),
     } = props;
     
     
@@ -165,14 +165,14 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                 {!isError && uploadingImageTitle     }
                 { isError && uploadingImageErrorTitle}
             </h6>
-            {!isError && React.cloneElement<ProgressProps<Element>>(uploadingImageProgressComponent,
+            {!isError && React.cloneElement<ProgressProps<Element>>(progressComponent,
                 // props:
                 {},
                 
                 
                 
                 // children:
-                React.cloneElement<ProgressBarProps<Element>>(uploadingImageProgressBarComponent,
+                React.cloneElement<ProgressBarProps<Element>>(progressBarComponent,
                     // props:
                     {
                         // variants:
@@ -199,7 +199,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                 <p>
                     {uploadingImageErrorMessage}
                 </p>
-                {React.cloneElement<ButtonProps>(uploadingImageRetryButtonComponent,
+                {React.cloneElement<ButtonProps>(retryButtonComponent,
                     // props:
                     {
                         // handlers:
@@ -212,7 +212,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                     uploadingImageRetry,
                 )}
             </>}
-            {React.cloneElement<ButtonProps>(uploadingImageCancelButtonComponent,
+            {React.cloneElement<ButtonProps>(cancelButtonComponent,
                 // props:
                 {
                     // handlers:

@@ -235,12 +235,12 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         deleteButtonComponent,
         
-        uploadImageSelectButtonComponent,
+        selectButtonComponent,
         
-        uploadingImageProgressComponent,
-        uploadingImageProgressBarComponent,
-        uploadingImageRetryButtonComponent,
-        uploadingImageCancelButtonComponent,
+        progressComponent,
+        progressBarComponent,
+        retryButtonComponent,
+        cancelButtonComponent,
         
         
         
@@ -737,10 +737,10 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                                 sizes : imageComponent.props.sizes ?? `calc((${galleryEditors.itemMinColumnWidth} * 2) + ${galleryEditors.gapInline})`,
                             },
                         ),
-                        uploadingImageProgressComponent,
-                        uploadingImageProgressBarComponent,
-                        uploadingImageRetryButtonComponent,
-                        uploadingImageCancelButtonComponent,
+                        progressComponent,
+                        progressBarComponent,
+                        retryButtonComponent,
+                        cancelButtonComponent,
                     }}
                 />
             )}
@@ -760,7 +760,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                     
                     
                     // components:
-                    uploadImageSelectButtonComponent,
+                    selectButtonComponent,
                 }}
             />
         </Content>

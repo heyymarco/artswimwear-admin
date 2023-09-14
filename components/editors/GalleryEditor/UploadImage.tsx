@@ -37,29 +37,29 @@ import {
 export interface UploadImageProps
 {
     // upload images:
-    uploadImageTitle                 ?: string
-    uploadImageSelectImage           ?: string
-    uploadImageDropImage             ?: string
-    uploadImageType                  ?: string
+    uploadImageTitle       ?: string
+    uploadImageSelectImage ?: string
+    uploadImageDropImage   ?: string
+    uploadImageType        ?: string
     
     
     
     // upload activities:
-    onUploadImageStart               ?: (imageFile: File) => void
+    onUploadImageStart     ?: (imageFile: File) => void
     
     
     
     // components:
-    uploadImageSelectButtonComponent ?: React.ReactComponentElement<any, ButtonProps>
+    selectButtonComponent  ?: React.ReactComponentElement<any, ButtonProps>
 }
 const UploadImage = (props: UploadImageProps): JSX.Element|null => {
     // rest props:
     const {
         // upload images:
-        uploadImageTitle           = 'Add New Image(s)',
-        uploadImageSelectImage     = 'Select Images',
-        uploadImageDropImage       = 'or drop images here',
-        uploadImageType            = 'image/jpg, image/jpeg, image/png, image/svg',
+        uploadImageTitle       = 'Add New Image(s)',
+        uploadImageSelectImage = 'Select Images',
+        uploadImageDropImage   = 'or drop images here',
+        uploadImageType        = 'image/jpg, image/jpeg, image/png, image/svg',
         
         
         
@@ -69,7 +69,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         
         
         // components:
-        uploadImageSelectButtonComponent = (<ButtonIcon icon='upload_file' /> as React.ReactComponentElement<any, ButtonProps>),
+        selectButtonComponent  = (<ButtonIcon icon='upload_file' /> as React.ReactComponentElement<any, ButtonProps>),
     } = props;
     
     
@@ -199,7 +199,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
             >
                 {uploadImageTitle}
             </h6>
-            {React.cloneElement<ButtonProps>(uploadImageSelectButtonComponent,
+            {React.cloneElement<ButtonProps>(selectButtonComponent,
                 // props:
                 {
                     // handlers:
