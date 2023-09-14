@@ -20,14 +20,19 @@ import type { ShippingPreview }                 from '@/app/api/(protected)/ship
 export type { ShippingPreview }                 from '@/app/api/(protected)/shipping/route'
 import type { UserDetail }                      from '@/app/api/(protected)/user/route'
 export type { UserDetail }                      from '@/app/api/(protected)/user/route'
+import type { RolePreview, RoleDetail }         from '@/app/api/(protected)/role/route'
+export type { RolePreview, RoleDetail }         from '@/app/api/(protected)/role/route'
 
 
 
 const shippingListAdapter = createEntityAdapter<ShippingPreview>({
     selectId : (shippingPreview) => shippingPreview.id,
 });
-const productListAdapter = createEntityAdapter<ProductPreview>({
+const productListAdapter  = createEntityAdapter<ProductPreview>({
     selectId : (productPreview) => productPreview.id,
+});
+const roleListAdapter     = createEntityAdapter<RolePreview>({
+    selectId : (rolePreview) => rolePreview.id,
 });
 
 
@@ -37,7 +42,7 @@ export const apiSlice = createApi({
     baseQuery : fetchBaseQuery({
         baseUrl: '/api'
     }),
-    tagTypes: ['Products', 'Orders', 'Users'],
+    tagTypes: ['Products', 'Orders', 'Users', 'Roles'],
     endpoints : (builder) => ({
         getProductList  : builder.query<EntityState<ProductPreview>, void>({
             query : () => ({
@@ -63,7 +68,7 @@ export const apiSlice = createApi({
                     
                     {
                         type : 'Products',
-                        id   : 'ORDER_LIST',
+                        id   : 'PRODUCT_LIST',
                     },
                 ];
             },
@@ -155,7 +160,7 @@ export const apiSlice = createApi({
                     
                     {
                         type : 'Users',
-                        id   : 'ORDER_LIST',
+                        id   : 'USER_LIST',
                     },
                 ];
             },
@@ -180,12 +185,62 @@ export const apiSlice = createApi({
                 await handleCumulativeUpdateCacheEntry('getUserPage', (arg.id !== ''), api);
             },
         }),
+        
+        getRoleList  : builder.query<EntityState<RolePreview>, void>({
+            query : () => ({
+                url    : 'role',
+                method : 'GET',
+            }),
+            transformResponse(response: RolePreview[]) {
+                return roleListAdapter.addMany(roleListAdapter.getInitialState(), response);
+            },
+        }),
+        getRolePage  : builder.query<Pagination<RoleDetail>, PaginationArgs>({
+            query : (params) => ({
+                url    : 'role',
+                method : 'POST',
+                body   : params,
+            }),
+            providesTags: (result, error, page)  => {
+                return [
+                    ...(result?.entities ?? []).map((role): { type: 'Roles', id: string } => ({
+                        type : 'Roles',
+                        id   : role.id,
+                    })),
+                    
+                    {
+                        type : 'Roles',
+                        id   : 'ROLE_LIST',
+                    },
+                ];
+            },
+        }),
+        updateRole   : builder.mutation<RoleDetail, MutationArgs<RoleDetail>>({
+            query: (patch) => ({
+                url    : 'role',
+                method : 'PATCH',
+                body   : patch
+            }),
+            
+            // inefficient:
+            // invalidatesTags: (role, error, arg) => [
+            //     ...((!role ? [] : [{
+            //         type : 'Roles',
+            //         id   : role.id,
+            //     }]) as Array<{ type: 'Roles', id: string }>),
+            // ],
+            
+            // more efficient:
+            onCacheEntryAdded: async (arg, api) => {
+                await handleCumulativeUpdateCacheEntry('getRolePage', (arg.id !== ''), api);
+            },
+        }),
     }),
 });
 
 
 
-const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, QueryArg, BaseQuery extends BaseQueryFn>(endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getUserPage'>, isUpdating: boolean, api: MutationCacheLifecycleApi<QueryArg, BaseQuery, TEntry, 'api'>) => {
+const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, QueryArg, BaseQuery extends BaseQueryFn>(endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getUserPage'|'getRolePage'>, isUpdating: boolean, api: MutationCacheLifecycleApi<QueryArg, BaseQuery, TEntry, 'api'>) => {
     // updated TEntry data:
     const { data: entry } = await api.cacheDataLoaded;
     const { id } = entry;
@@ -310,4 +365,8 @@ export const {
     
     useGetUserPageQuery      : useGetUserPage,
     useUpdateUserMutation    : useUpdateUser,
+    
+    useGetRoleListQuery      : useGetRoleList,
+    useGetRolePageQuery      : useGetRolePage,
+    useUpdateRoleMutation    : useUpdateRole,
 } = apiSlice;

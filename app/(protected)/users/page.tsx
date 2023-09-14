@@ -54,6 +54,7 @@ import {
     
     // status-components:
     Badge,
+    Busy,
     
     
     
@@ -121,6 +122,10 @@ import {
     // hooks:
     useGetUserPage,
     useUpdateUser,
+    
+    useGetRoleList,
+    useGetRolePage,
+    useUpdateRole,
 }                           from '@/store/features/api/apiSlice'
 
 // internals:
@@ -168,7 +173,9 @@ const UserCreate = (props: UserCreateProps): JSX.Element|null => {
 };
 
 /* <UserPreview> */
-interface UserPreviewProps extends ModelPreviewProps<UserDetail> {}
+interface UserPreviewProps extends ModelPreviewProps<UserDetail> {
+    getRolePaginationApi : ReturnType<typeof useGetRoleList>
+}
 const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
     // styles:
     const styles = usePageStyleSheet();
@@ -177,6 +184,7 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
     
     const {
         model,
+        getRolePaginationApi,
     ...restListItemProps} = props;
     const {
         name,
@@ -185,6 +193,18 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
         
         roleId,
     } = model;
+    
+    
+    
+    // states:
+    const {
+        data       : roles,
+        isLoading  : isRoleLoadingAndNoData,
+        isFetching : isRoleFetching,
+        isError    : isRoleError,
+        refetch    : refetchRole,
+    } = getRolePaginationApi;
+    const isErrorAndNoData = isRoleError && !roles;
     
     
     
@@ -265,7 +285,8 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
                     <EditButton onClick={() => setEditMode('email')} />
                 </p>
                 <p className='role'>
-                    {roleId}
+                    {isRoleLoadingAndNoData && <Busy />}
+                    {!!roleId && roles?.entities?.[roleId]?.name || 'No Access User'}
                     <EditButton onClick={() => setEditMode('roleId')} />
                 </p>
                 <p className='fullEditor'>
@@ -302,6 +323,8 @@ export default function UserPage(): JSX.Element|null {
     const {data, isLoading: isLoadingAndNoData, isError, refetch } = getModelPaginationApi;
     const isErrorAndNoData = isError && !data;
     
+    const getRolePaginationApi  = useGetRoleList();
+    
     
     
     // jsx:
@@ -326,7 +349,7 @@ export default function UserPage(): JSX.Element|null {
                 
                 // components:
                 modelPreviewComponent={
-                    <UserPreview model={undefined as any} />
+                    <UserPreview model={undefined as any} getRolePaginationApi={getRolePaginationApi} />
                 }
                 modelCreateComponent={
                     <UserCreate onClose={undefined as any} />
