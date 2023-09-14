@@ -42,6 +42,8 @@ export interface UserDetail
         Omit<User,
             |'createdAt'
             |'updatedAt'
+            
+            |'emailVerified'
         >
 {
 }
@@ -113,14 +115,13 @@ router
         prisma.user.count(),
         prisma.user.findMany({
             select: {
-                id             : true,
+                id     : true,
                 
-                name           : true,
-                email          : true,
-                emailVerified  : true,
-                image          : true,
+                name   : true,
+                email  : true,
+                image  : true,
                 
-                roleId         : true,
+                roleId : true,
             },
             orderBy : {
                 createdAt: 'desc',
@@ -154,7 +155,6 @@ router
         
         name,
         email,
-        emailVerified,
         image,
         
         roleId,
@@ -182,6 +182,22 @@ router
     
     //#region save changes
     try {
+        const emailVerified : Date|undefined = (
+            !id
+            ? new Date() // for a new User => mark email as verified
+            : (
+                !!(await prisma.user.findUnique({
+                where  : {
+                    id : id,
+                },
+                select : {
+                    emailVerified : true,
+                },
+                }))?.emailVerified
+                ? undefined  // for existing user => if email already verified => do not modify
+                : new Date() // for existing user => if email not     verified => mark email as verified
+            )
+        );
         const data = {
             name,
             email,
@@ -191,14 +207,13 @@ router
             roleId,
         };
         const select = {
-            id             : true,
+            id     : true,
             
-            name           : true,
-            email          : true,
-            emailVerified  : true,
-            image          : true,
+            name   : true,
+            email  : true,
+            image  : true,
             
-            roleId         : true,
+            roleId : true,
         };
         const userDetail : UserDetail = (
             !id

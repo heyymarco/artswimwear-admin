@@ -148,7 +148,6 @@ const emptyUser : UserDetail = {
     
     name           : '',
     email          : '',
-    emailVerified  : null,
     image          : null,
     
     roleId         : null,

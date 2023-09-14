@@ -181,7 +181,6 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
     const {
         name,
         email,
-        emailVerified,
         image,
         
         roleId,
