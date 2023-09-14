@@ -108,7 +108,7 @@ type UploadingImageData = {
 
 
 // react components:
-interface GalleryEditorProps<TElement extends Element = HTMLElement, TValue extends ImageData = ImageData>
+export interface GalleryEditorProps<TElement extends Element = HTMLElement, TValue extends ImageData = ImageData>
     extends
         // bases:
         Pick<EditorProps<TElement, TValue[]>,
