@@ -1,0 +1,5 @@
+export *            from './styles/elements'
+export *            from './styles/config'
+export *            from './styles/styles'
+export *            from './UploadImage'
+export {default}    from './UploadImage'
