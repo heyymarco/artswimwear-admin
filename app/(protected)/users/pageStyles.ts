@@ -103,8 +103,14 @@ const usesUserItemWrapperLayout = () => { // the <div> of the <ListItem> of user
             ...descendants(['.name', 'p'], {
                 margin: 0,
             }),
-            ...descendants('.value', {
-                fontWeight: typos.fontWeightSemibold,
+            ...descendants('.noValue', {
+                // appearances:
+                opacity    : 0.5,
+                
+                
+                
+                // typos:
+                fontStyle  : 'italic',
             }),
             ...descendants('.edit', {
                 marginInlineStart: '0.25em',
