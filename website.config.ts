@@ -25,6 +25,7 @@ export const PAGE_ORDER_TAB_ORDER_N_SHIPPING         = 'Order & Shipping'
 export const PAGE_ORDER_TAB_PAYMENT                  = 'Payment'
 
 export const PAGE_USER_TAB_ACCOUNT                   = 'Account'
+export const PAGE_USER_TAB_IMAGE                     = 'Image'
 export const PAGE_USER_TAB_ROLE                      = 'Role'
 
 export const PAGE_ORDER_TITLE                        = `Orders - ${WEBSITE_TITLE}`

@@ -129,6 +129,7 @@ import {
     STORE_WEBSITE_URL,
     
     PAGE_USER_TAB_ACCOUNT,
+    PAGE_USER_TAB_IMAGE,
     PAGE_USER_TAB_ROLE,
 }                           from '@/website.config'
 
@@ -144,15 +145,15 @@ import './EditUserDialogStyles';
 
 // utilities:
 const emptyUser : UserDetail = {
-    id             : '',
+    id       : '',
     
-    name           : '',
-    email          : '',
-    image          : null,
+    name     : '',
+    email    : '',
+    image    : null,
     
-    roleId         : null,
+    roleId   : null,
     
-    username       : null,
+    username : null,
 };
 
 
@@ -194,7 +195,10 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
     
     const [enableValidation, setEnableValidation] = useState<boolean>(false);
     const [name            , setName            ] = useState<string>(user.name);
+    const [email           , setEmail           ] = useState<string>(user.email);
     const [image           , setImage           ] = useState<string|null>(user.image);
+    const [roleId          , setRoleId          ] = useState<string|null>(user.roleId);
+    const [username        , setUsername        ] = useState<string|null>(user.username);
     
     
     
@@ -241,7 +245,10 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                 id             : user.id,
                 
                 name,
+                email,
                 image,
+                roleId,
+                username : username || null, // convert empty string to null
             }).unwrap();
             
             onClose();
@@ -373,8 +380,17 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                     <TabPanel label={PAGE_USER_TAB_ACCOUNT} panelComponent={<Generic className={styles.accountTab} />}>
                         <form ref={editorFormRef}>
                             <span className='name label'>Name:</span>
-                            <TextEditor           className='name editor'       required={true}  value={name}           onChange={(value) => { setName(value); setIsModified(true); }} elmRef={firstEditorRef} />
+                            <TextEditor           className='name editor'       required={true }  value={name}           onChange={(value) => { setName(value);     setIsModified(true); }} elmRef={firstEditorRef} autoCapitalize='words' />
+                            
+                            <span className='username label'>Username:</span>
+                            <TextEditor           className='username editor'   required={false}  value={username ?? ''} onChange={(value) => { setUsername(value); setIsModified(true); }} />
+                            
+                            <span className='email label'>Email:</span>
+                            <TextEditor           className='email editor'      required={true}   value={email}          onChange={(value) => { setEmail(value);    setIsModified(true); }} />
                         </form>
+                    </TabPanel>
+                    <TabPanel label={PAGE_USER_TAB_IMAGE}        panelComponent={<Generic className={styles.imageTab} />}>
+                        Testing...
                     </TabPanel>
                     <TabPanel label={PAGE_USER_TAB_ROLE}         panelComponent={<Generic className={styles.roleTab} />}>
                         Testing...
