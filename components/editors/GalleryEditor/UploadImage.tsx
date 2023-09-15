@@ -90,12 +90,16 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
     const handleFilesAdded  = useEvent((files: FileList): void => {
         const mimeMatcher = new MimeMatcher(...uploadImageType.split(',').map((mime) => mime.trim()));
         for (const file of files) {
-            if (mimeMatcher.match(file.type)) {
-                onUploadImageStart?.(file);
-            }
-            else {
+            // conditions:
+            if (!mimeMatcher.match(file.type)) {
                 console.log('unknown file: ', file.name);
+                continue;
             } // if
+            
+            
+            
+            // actions:
+            onUploadImageStart?.(file);
         } // for
     });
     
