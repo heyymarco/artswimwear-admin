@@ -472,9 +472,14 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
             
             
             
+            // resets:
             uploadingImageData.percentage  = null; // reset progress
             uploadingImageData.uploadError = '';   // reset error
             setUploadingImages((current) => current.slice(0)); // force to re-render
+            
+            
+            
+            // actions:
             performUpload();
         };
         const handleUploadCancel = (): void => {
@@ -497,7 +502,6 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         
         // uploading progress:
-        let imageData : TValue|null|undefined = undefined;
         const handleReportProgress = (percentage: number): void => {
             // conditions:
             if (isUploadCanceled()) return; // the uploader was canceled => ignore
@@ -519,6 +523,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
             });
         };
         const performUpload        = async (): Promise<void> => {
+            let imageData : TValue|null|undefined = undefined;
             try {
                 imageData = await onUploadImageStart(imageFile, handleReportProgress, abortSignal);
                 

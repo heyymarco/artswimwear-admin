@@ -144,7 +144,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
     const cancelButtonHandleClickInternal = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
         onUploadingImageCancel();
     });
-    const cancelButtonHandleClick          = useMergeEvents(
+    const cancelButtonHandleClick         = useMergeEvents(
         // preserves the original `onClick` from `cancelButtonComponent`:
         cancelButtonComponent.props.onClick,
         
