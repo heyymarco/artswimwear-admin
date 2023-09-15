@@ -237,15 +237,15 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
     
     
     // states:
-    const isControllableImage = (image !== undefined);
+    const isControllableImage   = (image !== undefined);
     const [imageDn, setImageDn] = useState<TValue|null>(defaultImage ?? null);
     const imageFn : TValue|null = (image /*controllable*/ ?? imageDn /*uncontrollable*/);
     
     const [uploadingImage, setUploadingImage] = useState<UploadingImageData|null>(null);
-    const uploadingImageRef = useRef<UploadingImageData|null>(uploadingImage);
-    uploadingImageRef.current = uploadingImage;
-    const isUnknownProgress = !!uploadingImage && (uploadingImage.percentage === null);
-    const isError           = !!uploadingImage && !!uploadingImage.uploadError;
+    const uploadingImageRef     = useRef<UploadingImageData|null>(uploadingImage);
+    uploadingImageRef.current   = uploadingImage;
+    const isUnknownProgress     = !!uploadingImage && (uploadingImage.percentage === null);
+    const isError               = !!uploadingImage && !!uploadingImage.uploadError;
     
     
     
@@ -336,11 +336,11 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                 
                 
                 // resets:
-                const uploadingImage = uploadingImageRef.current;
-                if (uploadingImage) {
-                    uploadingImage.percentage  = null; // reset progress
-                    uploadingImage.uploadError = '';   // reset error
-                    setUploadingImage({...uploadingImage}); // force to re-render
+                const uploadingImageData = uploadingImageRef.current;
+                if (uploadingImageData) {
+                    uploadingImageData.percentage  = null; // reset progress
+                    uploadingImageData.uploadError = '';   // reset error
+                    setUploadingImage({...uploadingImageData}); // force to re-render
                 } // if
                 
                 
@@ -370,16 +370,16 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
             // uploading progress:
             const handleReportProgress = (percentage: number): void => {
                 // conditions:
-                if (isUploadCanceled()) return; // the uploader was canceled => ignore
-                const uploadingImage = uploadingImageRef.current;
-                if (!uploadingImage)    return; // upload is not started => ignore
-                if (uploadingImage.percentage === percentage)  return; // already the same => ignore
+                if (isUploadCanceled())  return; // the uploader was canceled => ignore
+                const uploadingImageData = uploadingImageRef.current;
+                if (!uploadingImageData) return; // upload is not started => ignore
+                if (uploadingImageData.percentage === percentage)  return; // already the same => ignore
                 
                 
                 
                 // updates:
-                uploadingImage.percentage = percentage; // update the percentage
-                setUploadingImage({...uploadingImage}); // force to re-render
+                uploadingImageData.percentage = percentage; // update the percentage
+                setUploadingImage({...uploadingImageData}); // force to re-render
             };
             const performRemove        = (): void => {
                 // remove the uploading status:
@@ -397,14 +397,14 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                 }
                 catch (error: any) {
                     // conditions:
-                    if (isUploadCanceled()) return; // the uploader was canceled => ignore
-                    const uploadingImage = uploadingImageRef.current;
-                    if (!uploadingImage)    return; // upload is not started => ignore
+                    if (isUploadCanceled())  return; // the uploader was canceled => ignore
+                    const uploadingImageData = uploadingImageRef.current;
+                    if (!uploadingImageData) return; // upload is not started => ignore
                     
                     
                     
-                    uploadingImage.uploadError = `${error?.message ?? error}` || 'Failed to upload image.';
-                    setUploadingImage({...uploadingImage}); // force to re-render
+                    uploadingImageData.uploadError = `${error?.message ?? error}` || 'Failed to upload image.';
+                    setUploadingImage({...uploadingImageData}); // force to re-render
                     return; // failed => no further actions
                 } // try
                 
