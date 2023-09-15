@@ -14,14 +14,14 @@ export default function DashboardPage() {
                 </p>
                 <UploadImage
                     theme='primary'
-                    onUploadImageStart={async (imageFile, percentage) => {
+                    onUploadImageStart={async ({ imageFile, reportProgress }) => {
                         for (let progress = 0; progress <= 100; progress+=10) {
                             await new Promise<void>((resolved) => {
                                 setTimeout(() => {
                                     resolved();
                                 }, 1000);
                             });
-                            percentage(progress);
+                            reportProgress(progress);
                             
                             if (progress >= 30) throw 'error bro!';
                         } // for
