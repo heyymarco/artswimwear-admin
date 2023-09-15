@@ -46,7 +46,7 @@ export interface UploadImageProps
     
     
     // upload activities:
-    onUploadImageStart     ?: (imageFile: File) => void
+    onUploadImageStart     ?: (args: { imageFile: File }) => void
     
     
     
@@ -99,7 +99,9 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
             
             
             // actions:
-            onUploadImageStart?.(file);
+            onUploadImageStart?.({
+                imageFile : file,
+            });
         } // for
     });
     

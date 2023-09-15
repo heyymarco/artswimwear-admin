@@ -170,12 +170,12 @@ export interface GalleryEditorProps<TElement extends Element = HTMLElement, TVal
         >
 {
     // actions:
-    onActionDelete     ?: (imageData: TValue) => Promise<boolean>
+    onActionDelete     ?: (args: { imageData: TValue }) => Promise<boolean>
     
     
     
     // upload activities:
-    onUploadImageStart ?: (imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal) => Promise<TValue|null>
+    onUploadImageStart ?: (args: { imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal }) => Promise<TValue|null>
     
     
     
@@ -412,7 +412,9 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         const imageData = imagesFn[itemIndex];
         if (onActionDelete) {
             try {
-                if (await onActionDelete(imageData) === false) return; // the delete action was prevented by <parent> => ignore
+                if (await onActionDelete({
+                    imageData : imageData,
+                }) === false) return; // the delete action was prevented by <parent> => ignore
             }
             catch {
                 return; // error => abort
@@ -450,7 +452,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         imagesFn = newDraftImages; // a temporary update regradless of (/*controllable*/ ?? /*uncontrollable*/), will be re-updated on *next re-render*
         if (isControllableImages) setImagesDn((current) => current.slice(0)); // force to re-render
     });
-    const uploadImageHandleUploadImageStart  = useEvent((imageFile: File): void => {
+    const uploadImageHandleUploadImageStart  = useEvent(({ imageFile }): void => {
         // conditions:
         if (!onUploadImageStart) return; // the upload image handler is not configured => ignore
         
@@ -496,7 +498,13 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
             // remove the uploading status:
             performRemove();
         };
-        const uploadingImageData : UploadingImageData = { file: imageFile, percentage: null, uploadError: '', onRetry: handleUploadRetry, onCancel: handleUploadCancel };
+        const uploadingImageData : UploadingImageData = {
+            file        : imageFile,
+            percentage  : null,
+            uploadError : '',
+            onRetry     : handleUploadRetry,
+            onCancel    : handleUploadCancel,
+        };
         setUploadingImages((current) => [...current, uploadingImageData]); // append a new uploading status
         
         
@@ -525,7 +533,11 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         const performUpload        = async (): Promise<void> => {
             let imageData : TValue|null|undefined = undefined;
             try {
-                imageData = await onUploadImageStart(imageFile, handleReportProgress, abortSignal);
+                imageData = await onUploadImageStart({
+                    imageFile      : imageFile,
+                    reportProgress : handleReportProgress,
+                    abortSignal    : abortSignal,
+                });
                 
                 
                 

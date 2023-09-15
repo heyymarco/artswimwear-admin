@@ -47,7 +47,7 @@ export interface UploadingImageProps
     uploadingImageErrorTitle  ?: string
     uploadingImageRetry       ?: string
     uploadingImageCancel      ?: string
-    onUploadingImageProgress  ?: (percentage: number|null) => string
+    onUploadingImageProgress  ?: (args: { percentage: number|null }) => string
     
     
     
@@ -80,8 +80,8 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
         uploadingImageErrorTitle = 'Upload Error',
         uploadingImageRetry      = 'Retry',
         uploadingImageCancel     = 'Cancel',
-        // onUploadingImageProgress = (percentage) => `${percentage}%`,
-        onUploadingImageProgress = (percentage) => '',
+        // onUploadingImageProgress = ({ percentage }) => `${percentage}%`,
+        onUploadingImageProgress = ({ percentage }) => '',
         
         
         
@@ -212,7 +212,9 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                     
                     
                     // children:
-                    onUploadingImageProgress(uploadingImagePercentage),
+                    onUploadingImageProgress({
+                        percentage : uploadingImagePercentage,
+                    }),
                 ),
             )}
             { isError && <>
