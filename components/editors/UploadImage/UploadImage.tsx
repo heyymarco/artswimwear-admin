@@ -206,7 +206,8 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         // upload/uploading activities:
         onUploadImageStart,
-        onUploadingImageProgress,
+        // onUploadingImageProgress = (percentage) => `${percentage}%`,
+        onUploadingImageProgress = (percentage) => '',
         
         
         
@@ -241,6 +242,10 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
     const imageFn : TValue|null = (image /*controllable*/ ?? imageDn /*uncontrollable*/);
     
     const [uploadingImage, setUploadingImage] = useState<UploadingImageData|null>(null);
+    const uploadingImageRef = useRef<UploadingImageData|null>(uploadingImage);
+    uploadingImageRef.current = uploadingImage;
+    const isUnknownProgress = !!uploadingImage && (uploadingImage.percentage === null);
+    const isError           = !!uploadingImage && !!uploadingImage.uploadError;
     
     
     
@@ -331,6 +336,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                 
                 
                 // resets:
+                const uploadingImage = uploadingImageRef.current;
                 if (uploadingImage) {
                     uploadingImage.percentage  = null; // reset progress
                     uploadingImage.uploadError = '';   // reset error
@@ -365,6 +371,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
             const handleReportProgress = (percentage: number): void => {
                 // conditions:
                 if (isUploadCanceled()) return; // the uploader was canceled => ignore
+                const uploadingImage = uploadingImageRef.current;
                 if (!uploadingImage)    return; // upload is not started => ignore
                 if (uploadingImage.percentage === percentage)  return; // already the same => ignore
                 
@@ -391,6 +398,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                 catch (error: any) {
                     // conditions:
                     if (isUploadCanceled()) return; // the uploader was canceled => ignore
+                    const uploadingImage = uploadingImageRef.current;
                     if (!uploadingImage)    return; // upload is not started => ignore
                     
                     
@@ -457,6 +465,11 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
             
             
             
+            // variants:
+            mild={props.mild ?? true}
+            
+            
+            
             // classes:
             mainClass={props.mainClass ?? styleSheet.main}
         >
@@ -519,6 +532,68 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                 // handlers:
                 onChange={inputFileHandleChange}
             />
+            
+            {!!uploadingImage && <>
+                {!isError && React.cloneElement<ProgressProps<Element>>(progressComponent,
+                    // props:
+                    {},
+                    
+                    
+                    
+                    // children:
+                    React.cloneElement<ProgressBarProps<Element>>(progressBarComponent,
+                        // props:
+                        {
+                            // variants:
+                            progressBarStyle : isUnknownProgress ? 'striped' : undefined,
+                            
+                            
+                            
+                            // states:
+                            running          : isUnknownProgress ? true : undefined,
+                            
+                            
+                            
+                            // values:
+                            value            : isUnknownProgress ? 100  : (uploadingImage.percentage ?? 100),
+                        },
+                        
+                        
+                        
+                        // children:
+                        onUploadingImageProgress(uploadingImage.percentage),
+                    ),
+                )}
+                { isError && <>
+                    <p>
+                        {uploadingImage.uploadError}
+                    </p>
+                    {React.cloneElement<ButtonProps>(retryButtonComponent,
+                        // props:
+                        {
+                            // handlers:
+                            onClick : retryButtonHandleClick,
+                        },
+                        
+                        
+                        
+                        // children:
+                        uploadingImageRetry,
+                    )}
+                </>}
+                {React.cloneElement<ButtonProps>(cancelButtonComponent,
+                    // props:
+                    {
+                        // handlers:
+                        onClick : cancelButtonHandleClick,
+                    },
+                    
+                    
+                    
+                    // children:
+                    uploadingImageCancel,
+                )}
+            </>}
         </Basic>
     );
 };
