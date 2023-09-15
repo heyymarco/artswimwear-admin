@@ -312,7 +312,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
             inputFileElm.value = '';
         } // try
     });
-    const handleFilesAdded  = useEvent((files: FileList): void => {
+    const handleFilesAdded                = useEvent((files: FileList): void => {
         // conditions:
         if (!onUploadImageStart) return; // the upload image handler is not configured => ignore
         
@@ -333,7 +333,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
             handleUploadImageStart(file);
         } // for
     });
-    const handleUploadImageStart  = useEvent((imageFile: File): void => {
+    const handleUploadImageStart          = useEvent((imageFile: File): void => {
         // conditions:
         if (!onUploadImageStart) return; // the upload image handler is not configured => ignore
         
