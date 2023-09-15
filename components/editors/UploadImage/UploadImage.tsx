@@ -301,143 +301,157 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         const files = inputFileElm.files;
         if (!files)              return; // no file selected => ignore
         
-        if (!onUploadImageStart) return; // the upload image handler is not configured => ignore
-        
         
         
         // actions:
         try {
-            const file = files[0];
-            const mimeMatcher = new MimeMatcher(...uploadImageType.split(',').map((mime) => mime.trim()));
-            // conditions:
-            if (!mimeMatcher.match(file.type)) {
-                console.log('unknown file: ', file.name);
-                return;
-            } // if
-            const imageFile = file;
-            
-            
-            
-            // actions:
-            
-            // add a new uploading status:
-            const abortController    = new AbortController();
-            const abortSignal        = abortController.signal;
-            const isUploadCanceled   = (): boolean => {
-                return (
-                    !isMounted.current
-                    ||
-                    abortSignal.aborted
-                );
-            };
-            const handleUploadRetry  = (): void => {
-                // conditions:
-                if (isUploadCanceled()) return; // the uploader was canceled => ignore
-                
-                
-                
-                // resets:
-                const uploadingImageData = uploadingImageRef.current;
-                if (uploadingImageData) {
-                    uploadingImageData.percentage  = null; // reset progress
-                    uploadingImageData.uploadError = '';   // reset error
-                    setUploadingImage({...uploadingImageData}); // force to re-render
-                } // if
-                
-                
-                
-                // actions:
-                performUpload();
-            };
-            const handleUploadCancel = (): void => {
-                // conditions:
-                if (isUploadCanceled()) return; // the uploader was canceled => ignore
-                
-                
-                
-                // abort the upload progress:
-                abortController.abort();
-                
-                
-                
-                // remove the uploading status:
-                performRemove();
-            };
-            const uploadingImageData : UploadingImageData = {
-                imageFile   : imageFile,
-                percentage  : null,
-                uploadError : '',
-                onRetry     : handleUploadRetry,
-                onCancel    : handleUploadCancel,
-            };
-            setUploadingImage(uploadingImageData); // set a new uploading status
-            
-            
-            
-            // uploading progress:
-            const handleReportProgress = (percentage: number): void => {
-                // conditions:
-                if (isUploadCanceled())  return; // the uploader was canceled => ignore
-                const uploadingImageData = uploadingImageRef.current;
-                if (!uploadingImageData) return; // upload is not started => ignore
-                if (uploadingImageData.percentage === percentage)  return; // already the same => ignore
-                
-                
-                
-                // updates:
-                uploadingImageData.percentage = percentage; // update the percentage
-                setUploadingImage({...uploadingImageData}); // force to re-render
-            };
-            const performRemove        = (): void => {
-                // remove the uploading status:
-                setUploadingImage(null);
-            };
-            const performUpload        = async (): Promise<void> => {
-                let imageData : TValue|null|undefined = undefined;
-                try {
-                    imageData = await onUploadImageStart({
-                        imageFile      : imageFile,
-                        reportProgress : handleReportProgress,
-                        abortSignal    : abortSignal,
-                    });
-                    
-                    
-                    
-                    // conditions:
-                    if (isUploadCanceled()) return; // the uploader was canceled => ignore
-                }
-                catch (error: any) {
-                    // conditions:
-                    if (isUploadCanceled())  return; // the uploader was canceled => ignore
-                    const uploadingImageData = uploadingImageRef.current;
-                    if (!uploadingImageData) return; // upload is not started => ignore
-                    
-                    
-                    
-                    uploadingImageData.uploadError = `${error?.message ?? error}` || 'Failed to upload image.';
-                    setUploadingImage({...uploadingImageData}); // force to re-render
-                    return; // failed => no further actions
-                } // try
-                
-                
-                
-                // remove the uploading status:
-                performRemove();
-                
-                
-                
-                // successfully uploaded:
-                if (imageData) {
-                    // notify the images changed:
-                    triggerChange(imageData); // then at the *next re-render*, the *controllable* `image` will change
-                } // if
-            };
-            performUpload();
+            handleFilesAdded(files);
         }
         finally {
             // unselect files after the selected files has taken:
             inputFileElm.value = '';
         } // try
+    });
+    const handleFilesAdded  = useEvent((files: FileList): void => {
+        // conditions:
+        if (!onUploadImageStart) return; // the upload image handler is not configured => ignore
+        
+        
+        
+        // actions:
+        const mimeMatcher = new MimeMatcher(...uploadImageType.split(',').map((mime) => mime.trim()));
+        for (const file of files) {
+            // conditions:
+            if (!mimeMatcher.match(file.type)) {
+                console.log('unknown file: ', file.name);
+                continue;
+            } // if
+            
+            
+            
+            // actions:
+            handleUploadImageStart(file);
+        } // for
+    });
+    const handleUploadImageStart  = useEvent((imageFile: File): void => {
+        // conditions:
+        if (!onUploadImageStart) return; // the upload image handler is not configured => ignore
+        
+        
+        
+        // add a new uploading status:
+        const abortController    = new AbortController();
+        const abortSignal        = abortController.signal;
+        const isUploadCanceled   = (): boolean => {
+            return (
+                !isMounted.current
+                ||
+                abortSignal.aborted
+            );
+        };
+        const handleUploadRetry  = (): void => {
+            // conditions:
+            if (isUploadCanceled()) return; // the uploader was canceled => ignore
+            
+            
+            
+            // resets:
+            const uploadingImageData = uploadingImageRef.current;
+            if (uploadingImageData) {
+                uploadingImageData.percentage  = null; // reset progress
+                uploadingImageData.uploadError = '';   // reset error
+                setUploadingImage({...uploadingImageData}); // force to re-render
+            } // if
+            
+            
+            
+            // actions:
+            performUpload();
+        };
+        const handleUploadCancel = (): void => {
+            // conditions:
+            if (isUploadCanceled()) return; // the uploader was canceled => ignore
+            
+            
+            
+            // abort the upload progress:
+            abortController.abort();
+            
+            
+            
+            // remove the uploading status:
+            performRemove();
+        };
+        const uploadingImageData : UploadingImageData = {
+            imageFile   : imageFile,
+            percentage  : null,
+            uploadError : '',
+            onRetry     : handleUploadRetry,
+            onCancel    : handleUploadCancel,
+        };
+        setUploadingImage(uploadingImageData); // set a new uploading status
+        
+        
+        
+        // uploading progress:
+        const handleReportProgress = (percentage: number): void => {
+            // conditions:
+            if (isUploadCanceled())  return; // the uploader was canceled => ignore
+            const uploadingImageData = uploadingImageRef.current;
+            if (!uploadingImageData) return; // upload is not started => ignore
+            if (uploadingImageData.percentage === percentage)  return; // already the same => ignore
+            
+            
+            
+            // updates:
+            uploadingImageData.percentage = percentage; // update the percentage
+            setUploadingImage({...uploadingImageData}); // force to re-render
+        };
+        const performRemove        = (): void => {
+            // remove the uploading status:
+            setUploadingImage(null);
+        };
+        const performUpload        = async (): Promise<void> => {
+            let imageData : TValue|null|undefined = undefined;
+            try {
+                imageData = await onUploadImageStart({
+                    imageFile      : imageFile,
+                    reportProgress : handleReportProgress,
+                    abortSignal    : abortSignal,
+                });
+                
+                
+                
+                // conditions:
+                if (isUploadCanceled()) return; // the uploader was canceled => ignore
+            }
+            catch (error: any) {
+                // conditions:
+                if (isUploadCanceled())  return; // the uploader was canceled => ignore
+                const uploadingImageData = uploadingImageRef.current;
+                if (!uploadingImageData) return; // upload is not started => ignore
+                
+                
+                
+                uploadingImageData.uploadError = `${error?.message ?? error}` || 'Failed to upload image.';
+                setUploadingImage({...uploadingImageData}); // force to re-render
+                return; // failed => no further actions
+            } // try
+            
+            
+            
+            // remove the uploading status:
+            performRemove();
+            
+            
+            
+            // successfully uploaded:
+            if (imageData) {
+                // notify the images changed:
+                triggerChange(imageData); // then at the *next re-render*, the *controllable* `image` will change
+            } // if
+        };
+        performUpload();
     });
     
     const retryButtonHandleClickInternal  = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
