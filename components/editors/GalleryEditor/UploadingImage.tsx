@@ -187,7 +187,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
             </h6>
             {!isError && React.cloneElement<ProgressProps<Element>>(progressComponent,
                 // props:
-                {},
+                undefined,
                 
                 
                 
