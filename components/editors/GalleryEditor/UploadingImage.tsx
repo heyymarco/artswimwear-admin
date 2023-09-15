@@ -14,6 +14,7 @@ import {
     // react helper hooks:
     useIsomorphicLayoutEffect,
     useEvent,
+    useMergeEvents,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -127,12 +128,31 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
     
     
     // handlers:
-    const uploadingImageRetryButtonHandleClick  = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
+    const retryButtonHandleClickInternal  = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
         onUploadingImageRetry();
     });
-    const uploadingImageCancelButtonHandleClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
+    const retryButtonHandleClick          = useMergeEvents(
+        // preserves the original `onClick` from `retryButtonComponent`:
+        retryButtonComponent.props.onClick,
+        
+        
+        
+        // actions:
+        retryButtonHandleClickInternal,
+    );
+    
+    const cancelButtonHandleClickInternal = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
         onUploadingImageCancel();
     });
+    const cancelButtonHandleClick          = useMergeEvents(
+        // preserves the original `onClick` from `cancelButtonComponent`:
+        cancelButtonComponent.props.onClick,
+        
+        
+        
+        // actions:
+        cancelButtonHandleClickInternal,
+    );
     
     
     
@@ -203,7 +223,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                     // props:
                     {
                         // handlers:
-                        onClick : uploadingImageRetryButtonHandleClick,
+                        onClick : retryButtonHandleClick,
                     },
                     
                     
@@ -216,7 +236,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                 // props:
                 {
                     // handlers:
-                    onClick : uploadingImageCancelButtonHandleClick,
+                    onClick : cancelButtonHandleClick,
                 },
                 
                 

@@ -14,6 +14,7 @@ import {
 import {
     // react helper hooks:
     useEvent,
+    useMergeEvents,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -96,7 +97,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
                 console.log('unknown file: ', file.name);
             } // if
         } // for
-    })
+    });
     
     
     // droppable handlers:
@@ -153,24 +154,36 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
     
     
     // handlers:
-    const uploadImageButtonHandleClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
+    const selectButtonHandleClickInternal = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
         inputFileRef.current?.click();
     });
-    const inputFileHandleChange        = useEvent<React.ChangeEventHandler<HTMLInputElement>>(() => {
-        const inputFileElm = inputFileRef.current;
-        if (!inputFileElm) return;
-        const files = inputFileElm.files;
-        if (!files) return;
+    const selectButtonHandleClick         = useMergeEvents(
+        // preserves the original `onClick` from `selectButtonComponent`:
+        selectButtonComponent.props.onClick,
         
         
         
         // actions:
-        handleFilesAdded(files);
+        selectButtonHandleClickInternal,
+    );
+    const inputFileHandleChange           = useEvent<React.ChangeEventHandler<HTMLInputElement>>(() => {
+        // conditions:
+        const inputFileElm = inputFileRef.current;
+        if (!inputFileElm)       return; // input file is not loaded => ignore
+        
+        const files = inputFileElm.files;
+        if (!files)              return; // no file selected => ignore
         
         
         
-        // unselect files after the selected files has taken:
-        inputFileElm.value = '';
+        // actions:
+        try {
+            handleFilesAdded(files);
+        }
+        finally {
+            // unselect files after the selected files has taken:
+            inputFileElm.value = '';
+        } // try
     });
     
     
@@ -203,7 +216,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
                 // props:
                 {
                     // handlers:
-                    onClick : uploadImageButtonHandleClick,
+                    onClick : selectButtonHandleClick,
                 },
                 
                 

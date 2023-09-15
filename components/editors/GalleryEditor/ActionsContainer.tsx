@@ -13,6 +13,7 @@ import {
 import {
     // react helper hooks:
     useEvent,
+    useMergeEvents,
     
     
     
@@ -105,7 +106,7 @@ const ActionsContainer = (props: ActionsContainerProps): JSX.Element|null => {
     
     
     // handlers:
-    const deleteButtonHandleClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async () => {
+    const deleteButtonHandleClickInternal = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async () => {
         // conditions:
         if (!isEnabled) return;      // this component is disabled => ignore
         if (!onActionDelete) return; // the delete handler is not configured => ignore
@@ -124,6 +125,15 @@ const ActionsContainer = (props: ActionsContainerProps): JSX.Element|null => {
             setIsEnabled(isEnabled /* instant update without waiting for (slow|delayed) re-render */ = true);
         } // try
     });
+    const deleteButtonHandleClick         = useMergeEvents(
+        // preserves the original `onClick` from `deleteButtonComponent`:
+        deleteButtonComponent.props.onClick,
+        
+        
+        
+        // actions:
+        deleteButtonHandleClickInternal,
+    );
     
     
     
