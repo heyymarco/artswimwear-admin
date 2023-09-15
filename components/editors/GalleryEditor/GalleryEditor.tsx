@@ -98,7 +98,7 @@ export type ImageData =
     |DetailedImageData
 
 type UploadingImageData = {
-    file        : File
+    imageFile   : File
     percentage  : number|null
     uploadError : string
     onRetry     : () => void
@@ -499,7 +499,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
             performRemove();
         };
         const uploadingImageData : UploadingImageData = {
-            file        : imageFile,
+            imageFile   : imageFile,
             percentage  : null,
             uploadError : '',
             onRetry     : handleUploadRetry,
@@ -714,7 +714,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                     }
                 />
             )}
-            {uploadingImages.map(({file, percentage, uploadError, onRetry, onCancel}, uploadingItemIndex) =>
+            {uploadingImages.map(({imageFile, percentage, uploadError, onRetry, onCancel}, uploadingItemIndex) =>
                 <UploadingImage
                     // identifiers:
                     key={`upl:${uploadingItemIndex}`}
@@ -737,7 +737,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                         
                         
                         // uploading activities:
-                        uploadingImageFile         : file,
+                        uploadingImageFile         : imageFile,
                         uploadingImagePercentage   : percentage,
                         uploadingImageErrorMessage : uploadError,
                         onUploadingImageRetry      : onRetry,
