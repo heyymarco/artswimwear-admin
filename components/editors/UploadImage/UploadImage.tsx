@@ -101,7 +101,7 @@ export type ImageData =
     |DetailedImageData
 
 type UploadingImageData = {
-    file        : File
+    imageFile   : File
     percentage  : number|null
     uploadError : string
     onRetry     : () => void
@@ -314,6 +314,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                 console.log('unknown file: ', file.name);
                 return;
             } // if
+            const imageFile = file;
             
             
             
@@ -363,7 +364,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                 performRemove();
             };
             const uploadingImageData : UploadingImageData = {
-                file        : file,
+                imageFile   : imageFile,
                 percentage  : null,
                 uploadError : '',
                 onRetry     : handleUploadRetry,
@@ -395,7 +396,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                 let imageData : TValue|null|undefined = undefined;
                 try {
                     imageData = await onUploadImageStart({
-                        imageFile      : file,
+                        imageFile      : imageFile,
                         reportProgress : handleReportProgress,
                         abortSignal    : abortSignal,
                     });
