@@ -54,7 +54,7 @@ export interface UploadingImageProps
     // uploading activities:
     uploadingImageFile         : File
     uploadingImagePercentage   : number|null
-    uploadingImageErrorMessage : string
+    uploadingImageErrorMessage : React.ReactNode
     onUploadingImageRetry      : () => void
     onUploadingImageCancel     : () => void
     
@@ -106,7 +106,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
     
     // fn props:
     const isUnknownProgress = (uploadingImagePercentage === null);
-    const isError           = !!uploadingImageErrorMessage;
+    const isError           = !!uploadingImageErrorMessage && (uploadingImageErrorMessage !== true);
     
     
     
@@ -218,9 +218,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                 ),
             )}
             { isError && <>
-                <p>
-                    {uploadingImageErrorMessage}
-                </p>
+                {uploadingImageErrorMessage}
                 {React.cloneElement<ButtonProps>(retryButtonComponent,
                     // props:
                     {

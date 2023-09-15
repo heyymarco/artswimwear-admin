@@ -31,6 +31,11 @@ import {
     // react components:
     ContentProps,
     Content,
+    
+    
+    
+    // utility-components:
+    paragraphify,
 }                           from '@reusable-ui/components'
 
 // internals:
@@ -100,7 +105,7 @@ export type ImageData =
 type UploadingImageData = {
     imageFile   : File
     percentage  : number|null
-    uploadError : string
+    uploadError : React.ReactNode
     onRetry     : () => void
     onCancel    : () => void
 }
@@ -175,7 +180,7 @@ export interface GalleryEditorProps<TElement extends Element = HTMLElement, TVal
     
     
     // upload activities:
-    onUploadImageStart ?: (args: { imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal }) => Promise<TValue|null>
+    onUploadImageStart ?: (args: { imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal }) => Promise<TValue|Error|null>
     
     
     
@@ -476,7 +481,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
             
             // resets:
             uploadingImageData.percentage  = null; // reset progress
-            uploadingImageData.uploadError = '';   // reset error
+            uploadingImageData.uploadError = null; // reset error
             setUploadingImages((current) => current.slice(0)); // force to re-render
             
             
@@ -501,7 +506,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         const uploadingImageData : UploadingImageData = {
             imageFile   : imageFile,
             percentage  : null,
-            uploadError : '',
+            uploadError : null,
             onRetry     : handleUploadRetry,
             onCancel    : handleUploadCancel,
         };
@@ -531,13 +536,14 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
             });
         };
         const performUpload        = async (): Promise<void> => {
-            let imageData : TValue|null|undefined = undefined;
+            let imageData : TValue|Error|null|undefined = undefined;
             try {
                 imageData = await onUploadImageStart({
                     imageFile      : imageFile,
                     reportProgress : handleReportProgress,
                     abortSignal    : abortSignal,
                 });
+                if (imageData instanceof Error) throw imageData;
                 
                 
                 
@@ -550,7 +556,12 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                 
                 
                 
-                uploadingImageData.uploadError = `${error?.message ?? error}` || 'Failed to upload image.';
+                const errorJsx : React.ReactNode = (
+                    ((typeof(error?.message) === 'string') || (typeof(error) === 'string'))
+                    ? paragraphify(error?.message ?? error)
+                    : (error ?? <p>Failed to upload image.</p>)
+                );
+                uploadingImageData.uploadError = errorJsx;
                 setUploadingImages((current) => current.slice(0)); // force to re-render
                 return; // failed => no further actions
             } // try
