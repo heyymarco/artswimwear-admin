@@ -8,6 +8,7 @@ import {
     // hooks:
     useState,
     useId,
+    useRef,
 }                           from 'react'
 
 // cssfn:
@@ -47,6 +48,11 @@ import {
     ProgressBarProps,
     ProgressBar,
 }                           from '@reusable-ui/components'
+
+// other libs:
+import {
+    default as MimeMatcher,
+}                           from 'mime-matcher'
 
 // internals:
 import type {
@@ -93,6 +99,14 @@ export type DetailedImageData = {
 export type ImageData =
     |string
     |DetailedImageData
+
+type UploadingImageData = {
+    file        : File
+    percentage  : number|null
+    uploadError : string
+    onRetry     : () => void
+    onCancel    : () => void
+}
 
 
 
@@ -216,9 +230,222 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
     
     
     
+    // refs:
+    const inputFileRef = useRef<HTMLInputElement|null>(null);
+    
+    
+    
     // states:
-    let [imageDn, setImageDn] = useState<TValue|null>(defaultImage ?? null);
-    let imageData : TValue|null = (image /*controllable*/ ?? imageDn /*uncontrollable*/);
+    const isControllableImage = (image !== undefined);
+    const [imageDn, setImageDn] = useState<TValue|null>(defaultImage ?? null);
+    const imageFn : TValue|null = (image /*controllable*/ ?? imageDn /*uncontrollable*/);
+    
+    const [uploadingImage, setUploadingImage] = useState<UploadingImageData|null>(null);
+    
+    
+    
+    // events:
+    const scheduleTriggerEvent = useScheduleTriggerEvent();
+    
+    
+    
+    // dom effects:
+    const isMounted = useMountedFlag();
+    
+    
+    
+    // handlers:
+    const handleChangeInternal            = useEvent<EditorChangeEventHandler<TValue>>((image) => {
+        // update state:
+        if (!isControllableImage) setImageDn(image);
+    });
+    const handleChange                    = useMergeEvents(
+        // preserves the original `onChange` from `props`:
+        onChange,
+        
+        
+        
+        // actions:
+        handleChangeInternal,
+    );
+    const triggerChange                   = useEvent((newDraftImage: TValue): void => {
+        if (handleChange) scheduleTriggerEvent(() => { // runs the `onChange` event *next after* current macroTask completed
+            // fire `onChange` react event:
+            handleChange(newDraftImage);
+        });
+    });
+    
+    const selectButtonHandleClickInternal = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
+        inputFileRef.current?.click();
+    });
+    const selectButtonHandleClick         = useMergeEvents(
+        // preserves the original `onClick` from `selectButtonComponent`:
+        selectButtonComponent.props.onClick,
+        
+        
+        
+        // actions:
+        selectButtonHandleClickInternal,
+    );
+    
+    const inputFileHandleChange           = useEvent<React.ChangeEventHandler<HTMLInputElement>>(async () => {
+        // conditions:
+        const inputFileElm = inputFileRef.current;
+        if (!inputFileElm)       return; // input file is not loaded => ignore
+        
+        const files = inputFileElm.files;
+        if (!files)              return; // no file selected => ignore
+        
+        if (!onUploadImageStart) return; // the upload image handler is not configured => ignore
+        
+        
+        
+        // actions:
+        try {
+            const file = files[0];
+            const mimeMatcher = new MimeMatcher(...uploadImageType.split(',').map((mime) => mime.trim()));
+            // conditions:
+            if (!mimeMatcher.match(file.type)) {
+                console.log('unknown file: ', file.name);
+                return;
+            } // if
+            
+            
+            
+            // actions:
+            
+            // add a new uploading status:
+            const abortController    = new AbortController();
+            const abortSignal        = abortController.signal;
+            const isUploadCanceled   = (): boolean => {
+                return (
+                    !isMounted.current
+                    ||
+                    abortSignal.aborted
+                );
+            };
+            const handleUploadRetry  = (): void => {
+                // conditions:
+                if (isUploadCanceled()) return; // the uploader was canceled => ignore
+                
+                
+                
+                // resets:
+                if (uploadingImage) {
+                    uploadingImage.percentage  = null; // reset progress
+                    uploadingImage.uploadError = '';   // reset error
+                    setUploadingImage({...uploadingImage}); // force to re-render
+                } // if
+                
+                
+                
+                // actions:
+                performUpload();
+            };
+            const handleUploadCancel = (): void => {
+                // conditions:
+                if (isUploadCanceled()) return; // the uploader was canceled => ignore
+                
+                
+                
+                // abort the upload progress:
+                abortController.abort();
+                
+                
+                
+                // remove the uploading status:
+                performRemove();
+            };
+            const uploadingImageData : UploadingImageData = { file: file, percentage: null, uploadError: '', onRetry: handleUploadRetry, onCancel: handleUploadCancel };
+            setUploadingImage(uploadingImageData); // set a new uploading status
+            
+            
+            
+            // uploading progress:
+            const handleReportProgress = (percentage: number): void => {
+                // conditions:
+                if (isUploadCanceled()) return; // the uploader was canceled => ignore
+                if (!uploadingImage)    return; // upload is not started => ignore
+                if (uploadingImage.percentage === percentage)  return; // already the same => ignore
+                
+                
+                
+                // updates:
+                uploadingImage.percentage = percentage; // update the percentage
+                setUploadingImage({...uploadingImage}); // force to re-render
+            };
+            const performRemove        = (): void => {
+                // remove the uploading status:
+                setUploadingImage(null);
+            };
+            const performUpload        = async (): Promise<void> => {
+                let imageData : TValue|null|undefined = undefined;
+                try {
+                    imageData = await onUploadImageStart(file, handleReportProgress, abortSignal);
+                    
+                    
+                    
+                    // conditions:
+                    if (isUploadCanceled()) return; // the uploader was canceled => ignore
+                }
+                catch (error: any) {
+                    // conditions:
+                    if (isUploadCanceled()) return; // the uploader was canceled => ignore
+                    if (!uploadingImage)    return; // upload is not started => ignore
+                    
+                    
+                    
+                    uploadingImage.uploadError = `${error?.message ?? error}` || 'Failed to upload image.';
+                    setUploadingImage({...uploadingImage}); // force to re-render
+                    return; // failed => no further actions
+                } // try
+                
+                
+                
+                // remove the uploading status:
+                performRemove();
+                
+                
+                
+                // successfully uploaded:
+                if (imageData) {
+                    // notify the images changed:
+                    triggerChange(imageData); // then at the *next re-render*, the *controllable* `image` will change
+                } // if
+            };
+            performUpload();
+        }
+        finally {
+            // unselect files after the selected files has taken:
+            inputFileElm.value = '';
+        } // try
+    });
+    
+    const retryButtonHandleClickInternal  = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
+        uploadingImage?.onRetry?.();
+    });
+    const retryButtonHandleClick          = useMergeEvents(
+        // preserves the original `onClick` from `retryButtonComponent`:
+        retryButtonComponent.props.onClick,
+        
+        
+        
+        // actions:
+        retryButtonHandleClickInternal,
+    );
+    
+    const cancelButtonHandleClickInternal = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
+        uploadingImage?.onCancel?.();
+    });
+    const cancelButtonHandleClick         = useMergeEvents(
+        // preserves the original `onClick` from `cancelButtonComponent`:
+        cancelButtonComponent.props.onClick,
+        
+        
+        
+        // actions:
+        cancelButtonHandleClickInternal,
+    );
     
     
     
@@ -234,7 +461,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
             mainClass={props.mainClass ?? styleSheet.main}
         >
             {/* <NoImage> */}
-            { !imageData && React.cloneElement<React.HTMLAttributes<HTMLElement>>(noImageComponent,
+            { !imageFn && React.cloneElement<React.HTMLAttributes<HTMLElement>>(noImageComponent,
                 // props:
                 {
                     // classes:
@@ -243,7 +470,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
             )}
             
             {/* <Image> */}
-            {!!imageData && React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
+            {!!imageFn && React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
                 // props:
                 {
                     // classes:
@@ -252,11 +479,46 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                     
                     
                     // images:
-                    alt       : imageComponent.props.alt   ??  resolveAlt(imageData),
-                    src       : imageComponent.props.src   ?? (resolveSrc(imageData, onResolveUrl) || undefined), // convert empty string to undefined
+                    alt       : imageComponent.props.alt   ??  resolveAlt(imageFn),
+                    src       : imageComponent.props.src   ?? (resolveSrc(imageFn, onResolveUrl) || undefined), // convert empty string to undefined
                     sizes     : imageComponent.props.sizes ?? uploadImages.imageInlineSize,
                 },
             )}
+            
+            {/* <SelectButton> */}
+            {React.cloneElement<ButtonProps>(selectButtonComponent,
+                // props:
+                {
+                    // handlers:
+                    onClick : selectButtonHandleClick,
+                },
+                
+                
+                
+                // children:
+                uploadImageSelectImage,
+            )}
+            <input
+                // refs:
+                ref={inputFileRef}
+                
+                
+                
+                // classes:
+                className='inputFile'
+                
+                
+                
+                // formats:
+                type='file'
+                accept={uploadImageType}
+                multiple={false}
+                
+                
+                
+                // handlers:
+                onChange={inputFileHandleChange}
+            />
         </Basic>
     );
 };
