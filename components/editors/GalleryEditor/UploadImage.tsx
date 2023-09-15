@@ -88,6 +88,12 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
     
     // handlers:
     const handleFilesAdded  = useEvent((files: FileList): void => {
+        // conditions:
+        if (!onUploadImageStart) return; // the upload image handler is not configured => ignore
+        
+        
+        
+        // actions:
         const mimeMatcher = new MimeMatcher(...uploadImageType.split(',').map((mime) => mime.trim()));
         for (const file of files) {
             // conditions:
@@ -99,7 +105,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
             
             
             // actions:
-            onUploadImageStart?.({
+            onUploadImageStart({
                 imageFile : file,
             });
         } // for

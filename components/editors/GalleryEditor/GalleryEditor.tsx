@@ -452,7 +452,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         imagesFn = newDraftImages; // a temporary update regradless of (/*controllable*/ ?? /*uncontrollable*/), will be re-updated on *next re-render*
         if (isControllableImages) setImagesDn((current) => current.slice(0)); // force to re-render
     });
-    const uploadImageHandleUploadImageStart  = useEvent(({ imageFile }): void => {
+    const uploadImageHandleUploadImageStart  = useEvent(({ imageFile }: { imageFile: File }): void => {
         // conditions:
         if (!onUploadImageStart) return; // the upload image handler is not configured => ignore
         
