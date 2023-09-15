@@ -132,7 +132,7 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
 {
     // actions:
     actionDelete             ?: string
-    onActionDelete           ?: (imageData: TValue) => Promise<boolean>
+    onActionDelete           ?: (args: { imageData: TValue }) => Promise<boolean>
     
     
     
@@ -150,8 +150,8 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
     
     
     // upload activities:
-    onUploadImageStart       ?: (imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal) => Promise<TValue|null>
-    onUploadingImageProgress ?: (percentage: number|null) => string
+    onUploadImageStart       ?: (args: { imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal }) => Promise<TValue|null>
+    onUploadingImageProgress ?: (args: { percentage: number|null }) => string
     
     
     
@@ -206,8 +206,8 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         // upload/uploading activities:
         onUploadImageStart,
-        // onUploadingImageProgress = (percentage) => `${percentage}%`,
-        onUploadingImageProgress = (percentage) => '',
+        // onUploadingImageProgress = ({ percentage }) => `${percentage}%`,
+        onUploadingImageProgress = ({ percentage }) => '',
         
         
         
@@ -362,7 +362,13 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                 // remove the uploading status:
                 performRemove();
             };
-            const uploadingImageData : UploadingImageData = { file: file, percentage: null, uploadError: '', onRetry: handleUploadRetry, onCancel: handleUploadCancel };
+            const uploadingImageData : UploadingImageData = {
+                file        : file,
+                percentage  : null,
+                uploadError : '',
+                onRetry     : handleUploadRetry,
+                onCancel    : handleUploadCancel,
+            };
             setUploadingImage(uploadingImageData); // set a new uploading status
             
             
@@ -388,7 +394,11 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
             const performUpload        = async (): Promise<void> => {
                 let imageData : TValue|null|undefined = undefined;
                 try {
-                    imageData = await onUploadImageStart(file, handleReportProgress, abortSignal);
+                    imageData = await onUploadImageStart({
+                        imageFile      : file,
+                        reportProgress : handleReportProgress,
+                        abortSignal    : abortSignal,
+                    });
                     
                     
                     
@@ -561,7 +571,9 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                         
                         
                         // children:
-                        onUploadingImageProgress(uploadingImage.percentage),
+                        onUploadingImageProgress({
+                            percentage : uploadingImage.percentage,
+                        }),
                     ),
                 )}
                 { isError && <>
