@@ -143,6 +143,7 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
     
     // upload images:
     uploadImageSelectImage   ?: string
+    uploadImageDeleteImage   ?: string
     uploadImageType          ?: string
     
     
@@ -198,6 +199,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         // upload images:
         uploadImageSelectImage   = 'Select Image',
+        uploadImageDeleteImage   = 'Delete Image',
         uploadImageType          = 'image/jpg, image/jpeg, image/png, image/svg',
         
         
@@ -217,7 +219,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         
         // components:
-        noImageComponent       = (<Icon icon='image'                             /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
+        noImageComponent       = (<Icon icon='image' size='xl'                   /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
         imageComponent         = (<img                                           /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
         
         selectButtonComponent  = (<ButtonIcon icon='upload_file' theme='primary' /> as React.ReactComponentElement<any, ButtonProps>),
@@ -296,6 +298,19 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         // actions:
         selectButtonHandleClickInternal,
+    );
+    
+    const deleteButtonHandleClickInternal = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
+        // TODO: delete image
+    });
+    const deleteButtonHandleClick         = useMergeEvents(
+        // preserves the original `onClick` from `deleteButtonComponent`:
+        deleteButtonComponent.props.onClick,
+        
+        
+        
+        // actions:
+        deleteButtonHandleClickInternal,
     );
     
     const inputFileHandleChange           = useEvent<React.ChangeEventHandler<HTMLInputElement>>(async () => {
@@ -543,45 +558,54 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                 },
             )}
             
-            {/* <SelectButton> */}
-            {React.cloneElement<ButtonProps>(selectButtonComponent,
-                // props:
-                {
-                    // handlers:
-                    onClick : selectButtonHandleClick,
-                },
+            {!uploadingImage && <>
+                {/* <SelectButton> */}
+                {React.cloneElement<ButtonProps>(selectButtonComponent,
+                    // props:
+                    {
+                        // classes:
+                        className : selectButtonComponent.props.className ?? 'selectButton',
+                        
+                        
+                        
+                        // handlers:
+                        onClick : selectButtonHandleClick,
+                    },
+                    
+                    
+                    
+                    // children:
+                    uploadImageSelectImage,
+                )}
                 
-                
-                
-                // children:
-                uploadImageSelectImage,
-            )}
-            <input
-                // refs:
-                ref={inputFileRef}
-                
-                
-                
-                // classes:
-                className='inputFile'
-                
-                
-                
-                // formats:
-                type='file'
-                accept={uploadImageType}
-                multiple={false}
-                
-                
-                
-                // handlers:
-                onChange={inputFileHandleChange}
-            />
+                {/* <DeleteButton> */}
+                {React.cloneElement<ButtonProps>(deleteButtonComponent,
+                    // props:
+                    {
+                        // classes:
+                        className : deleteButtonComponent.props.className ?? 'deleteButton',
+                        
+                        
+                        
+                        // handlers:
+                        onClick : deleteButtonHandleClick,
+                    },
+                    
+                    
+                    
+                    // children:
+                    uploadImageDeleteImage,
+                )}
+            </>}
             
             {!!uploadingImage && <>
+                {/* <Progress> */}
                 {!isError && React.cloneElement<ProgressProps<Element>>(progressComponent,
                     // props:
-                    {},
+                    {
+                        // classes:
+                        className : progressComponent.props.className ?? 'uploadProgress',
+                    },
                     
                     
                     
@@ -611,11 +635,22 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                         }),
                     ),
                 )}
+                
                 { isError && <>
-                    {uploadingImage.uploadError}
+                    {/* <UploadError> */}
+                    <div className='uploadError'>
+                        {uploadingImage.uploadError}
+                    </div>
+                    
+                    {/* <RetryButton> */}
                     {React.cloneElement<ButtonProps>(retryButtonComponent,
                         // props:
                         {
+                            // classes:
+                            className : retryButtonComponent.props.className ?? 'retryButton',
+                            
+                            
+                            
                             // handlers:
                             onClick : retryButtonHandleClick,
                         },
@@ -626,9 +661,16 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                         uploadingImageRetry,
                     )}
                 </>}
+                
+                {/* <CancelButton> */}
                 {React.cloneElement<ButtonProps>(cancelButtonComponent,
                     // props:
                     {
+                        // classes:
+                        className : cancelButtonComponent.props.className ?? 'cancelButton',
+                        
+                        
+                        
                         // handlers:
                         onClick : cancelButtonHandleClick,
                     },
@@ -639,6 +681,28 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                     uploadingImageCancel,
                 )}
             </>}
+            
+            <input
+                // refs:
+                ref={inputFileRef}
+                
+                
+                
+                // classes:
+                className='inputFile'
+                
+                
+                
+                // formats:
+                type='file'
+                accept={uploadImageType}
+                multiple={false}
+                
+                
+                
+                // handlers:
+                onChange={inputFileHandleChange}
+            />
         </Basic>
     );
 };

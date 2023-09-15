@@ -53,6 +53,9 @@ import {
     uploadImageNoImageElm,
     uploadImageImageElm,
     
+    uploadImageUploadProgressElm,
+    uploadImageUploadErrorElm,
+    
     uploadImageSelectButtonElm,
     uploadImageDeleteButtonElm,
     uploadImageRetryButtonElm,
@@ -84,19 +87,95 @@ export const usesUploadImageLayout = () => {
         ...usesBasicLayout(),
         ...style({
             // layouts:
-            display             : 'grid',        // use css block grid for layouting, the core of our UploadImage layout
-            gridAutoFlow        : 'row',         // items direction is to inline & wrap's direction is to block
-            gridAutoRows        : uploadImages.itemRaiseRowHeight,
-            gridTemplateColumns : `repeat(auto-fill, minmax(${uploadImages.itemMinColumnWidth}, 1fr))`,
-            gridTemplateRows    : '1fr',         // consistent height for each item
+            display      : 'grid',
+            gridTemplate : [[
+                '"image ............" 1fr',
+                '"image selectButton" auto',
+                '"image deleteButton" auto',
+                '"image  retryButton" auto',
+                '"image cancelButton" auto',
+                '"image ............" 1fr',
+                '/',
+                '1fr 1fr'
+            ]],
             
-            // item default sizes:
-            justifyItems        : 'stretch',     // each item fills the entire Gallery's column width
-            alignItems          : 'stretch',     // consistent height for each item
+            
+            
+            // spacings:
+            gap : spacers.default,
             
             
             
             // children:
+            ...children([uploadImageNoImageElm, uploadImageImageElm], {
+                // positions:
+                gridArea    : 'image',
+                
+                
+                
+                // sizes:
+                justifySelf : 'center',
+                alignSelf   : 'center',
+            }),
+            ...children(uploadImageNoImageElm, {
+                ...children('::after', {
+                    // layouts:
+                    display        : 'flex',   // use block flexbox, so it takes the entire parent's width
+                    flexDirection  : 'column', // items are stacked vertically
+                    justifyContent : 'center', // center items vertically
+                    alignItems     : 'center', // center items horizontally
+                    flexWrap       : 'nowrap', // no wrapping
+                }),
+                
+                
+                
+                // customize:
+                ...usesCssProps(usesPrefixedProps(uploadImages, 'noImage')), // apply config's cssProps starting with noImage***
+            }),
+            ...children(uploadImageImageElm, {
+                // customize:
+                ...usesCssProps(usesPrefixedProps(uploadImages, 'image')), // apply config's cssProps starting with image***
+            }),
+            
+            ...children([uploadImageUploadProgressElm, uploadImageUploadErrorElm], {
+                // positions:
+                gridArea : 'image',
+            }),
+            ...children(uploadImageUploadProgressElm, {
+                // positions:
+                alignSelf : 'center',
+                
+                
+                
+                // customize:
+                ...usesCssProps(usesPrefixedProps(uploadImages, 'uploadProgress')), // apply config's cssProps starting with uploadProgress***
+            }),
+            ...children(uploadImageUploadErrorElm, {
+                // customize:
+                ...usesCssProps(usesPrefixedProps(uploadImages, 'uploadError')), // apply config's cssProps starting with uploadError***
+            }),
+            
+            ...children(uploadImageSelectButtonElm, {
+                // positions:
+                gridArea: 'selectButton',
+            }),
+            ...children(uploadImageDeleteButtonElm, {
+                // positions:
+                gridArea: 'deleteButton',
+            }),
+            ...children(uploadImageRetryButtonElm, {
+                // positions:
+                gridArea: 'retryButton',
+            }),
+            ...children(uploadImageCancelButtonElm, {
+                // positions:
+                gridArea: 'cancelButton',
+            }),
+            
+            ...children(uploadImageInputFileElm, {
+                // layouts:
+                display: 'none',
+            }),
             
             
             

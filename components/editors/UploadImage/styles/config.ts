@@ -40,10 +40,23 @@ import {
 // configs:
 export const [uploadImages, uploadImageValues, cssUploadImageConfig] = cssConfig(() => {
     const bases = {
+        // noImages:
+        noImageInlineSizeSm : 'calc(3 * 40px)'              as CssKnownProps['inlineSize'],
+        noImageBlockSizeSm  : 'calc(3 * 40px)'              as CssKnownProps['blockSize' ],
+        noImageInlineSizeMd : 'calc(5 * 40px)'              as CssKnownProps['inlineSize'],
+        noImageBlockSizeMd  : 'calc(5 * 40px)'              as CssKnownProps['blockSize' ],
+        noImageInlineSizeLg : 'calc(8 * 40px)'              as CssKnownProps['inlineSize'],
+        noImageBlockSizeLg  : 'calc(8 * 40px)'              as CssKnownProps['blockSize' ],
+        
+        
+        
         // images:
-        imageInlineSizeSm : 'calc(3 * 40px)'            as CssKnownProps['inlineSize'],
-        imageInlineSizeMd : 'calc(5 * 40px)'            as CssKnownProps['inlineSize'],
-        imageInlineSizeLg : 'calc(8 * 40px)'            as CssKnownProps['inlineSize'],
+        imageInlineSizeSm   : 'calc(3 * 40px)'              as CssKnownProps['inlineSize'],
+        imageBlockSizeSm    : 'calc(3 * 40px)'              as CssKnownProps['blockSize' ],
+        imageInlineSizeMd   : 'calc(5 * 40px)'              as CssKnownProps['inlineSize'],
+        imageBlockSizeMd    : 'calc(5 * 40px)'              as CssKnownProps['blockSize' ],
+        imageInlineSizeLg   : 'calc(8 * 40px)'              as CssKnownProps['inlineSize'],
+        imageBlockSizeLg    : 'calc(8 * 40px)'              as CssKnownProps['blockSize' ],
     };
     
     
@@ -54,7 +67,11 @@ export const [uploadImages, uploadImageValues, cssUploadImageConfig] = cssConfig
     
     
     const defaults = {
-        imageInlineSize   : bases.imageInlineSizeMd     as CssKnownProps['inlineSize'],
+        noImageInlineSize   : bases.noImageInlineSizeMd     as CssKnownProps['inlineSize'],
+        noImageBlockSize    : bases.noImageBlockSizeMd      as CssKnownProps['blockSize' ],
+        
+        imageInlineSize     : bases.imageInlineSizeMd       as CssKnownProps['inlineSize'],
+        imageBlockSize      : bases.imageBlockSizeMd        as CssKnownProps['blockSize' ],
     };
     
     
