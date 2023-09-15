@@ -1,5 +1,11 @@
 'use client'
 
+// react:
+import {
+    // react:
+    default as React,
+}                           from 'react'
+
 import { UploadImage } from '@/components/editors/UploadImage'
 import { Section, Main } from '@heymarco/section'
 
@@ -23,7 +29,8 @@ export default function DashboardPage() {
                             });
                             reportProgress(progress);
                             
-                            if (progress >= 30) throw 'error bro!';
+                            if (progress >= 70) throw <p><span style={{ color: 'red' }}>error</span> bro!</p>;
+                            // if (progress >= 70) return Error('error bro!');
                         } // for
                         await new Promise<void>((resolved) => {
                             setTimeout(() => {

@@ -47,6 +47,11 @@ import {
     Progress,
     ProgressBarProps,
     ProgressBar,
+    
+    
+    
+    // utility-components:
+    paragraphify,
 }                           from '@reusable-ui/components'
 
 // other libs:
@@ -103,7 +108,7 @@ export type ImageData =
 type UploadingImageData = {
     imageFile   : File
     percentage  : number|null
-    uploadError : string
+    uploadError : React.ReactNode
     onRetry     : () => void
     onCancel    : () => void
 }
@@ -150,7 +155,7 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
     
     
     // upload activities:
-    onUploadImageStart       ?: (args: { imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal }) => Promise<TValue|null>
+    onUploadImageStart       ?: (args: { imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal }) => Promise<TValue|Error|null>
     onUploadingImageProgress ?: (args: { percentage: number|null }) => string
     
     
@@ -245,7 +250,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
     const uploadingImageRef     = useRef<UploadingImageData|null>(uploadingImage);
     uploadingImageRef.current   = uploadingImage;
     const isUnknownProgress     = !!uploadingImage && (uploadingImage.percentage === null);
-    const isError               = !!uploadingImage && !!uploadingImage.uploadError;
+    const isError               = !!uploadingImage && !!uploadingImage.uploadError && (uploadingImage.uploadError !== true);
     
     
     
@@ -368,7 +373,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
             const uploadingImageData = uploadingImageRef.current;
             if (uploadingImageData) {
                 uploadingImageData.percentage  = null; // reset progress
-                uploadingImageData.uploadError = '';   // reset error
+                uploadingImageData.uploadError = null; // reset error
                 setUploadingImage({...uploadingImageData}); // force to re-render
             } // if
             
@@ -394,7 +399,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         const uploadingImageData : UploadingImageData = {
             imageFile   : imageFile,
             percentage  : null,
-            uploadError : '',
+            uploadError : null,
             onRetry     : handleUploadRetry,
             onCancel    : handleUploadCancel,
         };
@@ -421,13 +426,14 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
             setUploadingImage(null);
         };
         const performUpload        = async (): Promise<void> => {
-            let imageData : TValue|null|undefined = undefined;
+            let imageData : TValue|Error|null|undefined = undefined;
             try {
                 imageData = await onUploadImageStart({
                     imageFile      : imageFile,
                     reportProgress : handleReportProgress,
                     abortSignal    : abortSignal,
                 });
+                if (imageData instanceof Error) throw imageData;
                 
                 
                 
@@ -442,7 +448,12 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                 
                 
                 
-                uploadingImageData.uploadError = `${error?.message ?? error}` || 'Failed to upload image.';
+                const errorJsx : React.ReactNode = (
+                    ((typeof(error?.message) === 'string') || (typeof(error) === 'string'))
+                    ? paragraphify(error?.message ?? error)
+                    : (error ?? <p>Failed to upload image.</p>)
+                );
+                uploadingImageData.uploadError = errorJsx;
                 setUploadingImage({...uploadingImageData}); // force to re-render
                 return; // failed => no further actions
             } // try
@@ -601,9 +612,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                     ),
                 )}
                 { isError && <>
-                    <p>
-                        {uploadingImage.uploadError}
-                    </p>
+                    {uploadingImage.uploadError}
                     {React.cloneElement<ButtonProps>(retryButtonComponent,
                         // props:
                         {
