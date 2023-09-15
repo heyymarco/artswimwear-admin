@@ -320,18 +320,27 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         // actions:
         const mimeMatcher = new MimeMatcher(...uploadImageType.split(',').map((mime) => mime.trim()));
-        for (const file of files) {
-            // conditions:
-            if (!mimeMatcher.match(file.type)) {
-                console.log('unknown file: ', file.name);
-                continue;
-            } // if
-            
-            
-            
-            // actions:
-            handleUploadImageStart(file);
-        } // for
+        
+        // for (const file of files) {
+        //     // conditions:
+        //     if (!mimeMatcher.match(file.type)) {
+        //         console.log('unknown file: ', file.name);
+        //         continue;
+        //     } // if
+        //     
+        //     
+        //     
+        //     // actions:
+        //     handleUploadImageStart(file);
+        // } // for
+        
+        const file = files?.[0];
+        if (!file) return; // no file selected => ignore
+        if (!mimeMatcher.match(file.type)) {
+            console.log('unknown file: ', file.name);
+            return;
+        } // if
+        handleUploadImageStart(file);
     });
     const handleUploadImageStart          = useEvent((imageFile: File): void => {
         // conditions:
