@@ -51,6 +51,10 @@ export interface UploadImageProps
     
     
     // components:
+    titleComponent         ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
+    
+    actionGroupComponent   ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
+    
     selectButtonComponent  ?: React.ReactComponentElement<any, ButtonProps>
 }
 const UploadImage = (props: UploadImageProps): JSX.Element|null => {
@@ -70,6 +74,10 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         
         
         // components:
+        titleComponent         = (<h1 />                            as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
+        
+        actionGroupComponent   = (<div                           /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
+        
         selectButtonComponent  = (<ButtonIcon icon='upload_file' /> as React.ReactComponentElement<any, ButtonProps>),
     } = props;
     
@@ -208,7 +216,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
             
             
             // classes:
-            className={`uploadImage ${hasEnterCounter ? 'dropTarget' : ''}`}
+            className={`uploadPanel ${hasEnterCounter ? 'dropTarget' : ''}`}
             
             
             
@@ -218,23 +226,56 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
             onDragLeave = {handleDragLeave}
             onDrop      = {handleDrop     }
         >
-            <h6
-                draggable={true}
-            >
-                {uploadImageTitle}
-            </h6>
-            {React.cloneElement<ButtonProps>(selectButtonComponent,
+            {React.cloneElement<React.HTMLAttributes<HTMLElement>>(actionGroupComponent,
                 // props:
                 {
-                    // handlers:
-                    onClick : selectButtonHandleClick,
+                    // classes:
+                    className : actionGroupComponent.props.className ?? 'actionGroup',
                 },
                 
                 
                 
                 // children:
-                uploadImageSelectImage,
+                /* <Title> */
+                (!!titleComponent && React.cloneElement<Pick<React.HTMLAttributes<Element>, 'className'>>(titleComponent,
+                    // props:
+                    {
+                        // classes:
+                        className : titleComponent.props.className ?? 'uploadImageTitle',
+                    },
+                    
+                    
+                    
+                    // children:
+                    uploadImageTitle,
+                )),
+                
+                /* <SelectButton> */
+                React.cloneElement<ButtonProps>(selectButtonComponent,
+                    // props:
+                    {
+                        // classes:
+                        className : selectButtonComponent.props.className ?? 'selectButton',
+                        
+                        
+                        
+                        // handlers:
+                        onClick : selectButtonHandleClick,
+                    },
+                    
+                    
+                    
+                    // children:
+                    uploadImageSelectImage,
+                ),
+                
+                /* <Paragraph> */
+                (!!uploadImageDropImage && <p>
+                    {uploadImageDropImage}
+                </p>),
             )}
+            
+            {/* <Input> */}
             <input
                 // refs:
                 ref={inputFileRef}
@@ -256,9 +297,6 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
                 // handlers:
                 onChange={inputFileHandleChange}
             />
-            <p>
-                {uploadImageDropImage}
-            </p>
         </Basic>
     );
 };

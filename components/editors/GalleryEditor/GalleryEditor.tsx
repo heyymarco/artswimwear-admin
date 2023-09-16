@@ -231,14 +231,21 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         
         // components:
+        titleComponent,
+        
         imageComponent = (<img /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
         
         deleteButtonComponent,
         
         selectButtonComponent,
         
+        previewImageComponent = imageComponent,
+        
+        actionGroupComponent,
         progressComponent,
         progressBarComponent,
+        uploadErrorComponent,
+        
         retryButtonComponent,
         cancelButtonComponent,
         
@@ -771,16 +778,13 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                         
                         
                         // components:
-                        imageComponent : React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
-                            // props:
-                            {
-                                // images:
-                                alt   : imageComponent.props.alt   ?? 'preview',
-                                sizes : imageComponent.props.sizes ?? `calc((${galleryEditors.itemMinColumnWidth} * 2) + ${galleryEditors.gapInline})`,
-                            },
-                        ),
+                        previewImageComponent,
+                        
+                        actionGroupComponent,
                         progressComponent,
                         progressBarComponent,
+                        uploadErrorComponent,
+                        
                         retryButtonComponent,
                         cancelButtonComponent,
                     }}
@@ -802,6 +806,10 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                     
                     
                     // components:
+                    titleComponent,
+                    
+                    actionGroupComponent,
+                    
                     selectButtonComponent,
                 }}
             />

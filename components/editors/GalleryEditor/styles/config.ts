@@ -140,17 +140,13 @@ export const [galleryEditors, galleryEditorValues, cssGalleryEditorConfig] = css
         itemAspectRatio      : '1/1'                                as CssKnownProps['aspectRatio'      ],
         
         
+        // images:
+        
+        
         
         // panels:
         panelJustifyItems    : 'stretch'                            as CssKnownProps['justifyItems'     ],
         panelAlignItems      : 'stretch'                            as CssKnownProps['alignItems'       ],
-        
-        
-        
-        // actions:
-        
-        
-        // images:
         
         
         
@@ -164,10 +160,23 @@ export const [galleryEditors, galleryEditorValues, cssGalleryEditorConfig] = css
         
         
         
-        // previews:
-        previewFilter        : [[
+        // uploadProgresses:
+        
+        
+        
+        // uploadErrors:
+        
+        
+        
+        // previewImages:
+        previewImageFilter   : [[
             'opacity(50%)',
+            'contrast(0.8)',
         ]]                                                          as CssKnownProps['filter'           ],
+        
+        
+        
+        // actions:
     };
     
     

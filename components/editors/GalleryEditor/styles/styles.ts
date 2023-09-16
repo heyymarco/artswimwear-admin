@@ -3,6 +3,7 @@ import {
     // writes css in javascript:
     rule,
     states,
+    descendants,
     children,
     style,
     
@@ -25,8 +26,18 @@ import {
     
     
     
+    // a typography management system:
+    typos,
+    
+    
+    
     // animation stuff of UI:
     usesAnimation,
+    
+    
+    
+    // groups a list of UIs into a single UI:
+    usesGroupable,
     
     
     
@@ -50,15 +61,24 @@ import {
 // internals:
 import {
     // elements:
-    imageElm,
+    galleryEditorImageElm,
     actionsContainerElm,
     actionsPanelElm,
     actionDeleteElm,
     contentElm,
-    uploadingImageElm,
-    uploadingImagePreviewElm,
-    uploadImageElm,
-    uploadImageInputFileElm,
+    uploadingPanelElm,
+    galleryEditorPreviewImageElm,
+    uploadPanelElm,
+    galleryEditorInputFileElm,
+    galleryEditorUploadProgressElm,
+    galleryEditorUploadErrorElm,
+    galleryEditorRetryButtonElm,
+    galleryEditorCancelButtonElm,
+    galleryEditorActionGroupElm,
+    galleryEditorSelectButtonElm,
+    uploadImageTitleElm,
+    uploadingImageTitleElm,
+    uploadingImageErrorTitleElm,
 }                           from './elements'
 import {
     // configs:
@@ -74,8 +94,23 @@ export const onGalleryEditorStylesChange = watchChanges(onContentStylesChange, c
 export const usesGalleryEditorLayout = () => {
     // dependencies:
     
+    // capabilities:
+    const {groupableRule, groupableVars} = usesGroupable({
+        orientationInlineSelector : null, // never
+        orientationBlockSelector  : '&',  // always
+        itemsSelector             : [galleryEditorPreviewImageElm, galleryEditorActionGroupElm],
+    });
+    
     // features:
     const {animationRule , animationVars } = usesAnimation(galleryEditors as any);
+    
+    
+    
+    // spacings:
+    const positivePaddingInline = groupableVars.paddingInline;
+    const positivePaddingBlock  = groupableVars.paddingBlock;
+    const negativePaddingInline = `calc(0px - ${positivePaddingInline})`;
+    const negativePaddingBlock  = `calc(0px - ${positivePaddingBlock })`;
     
     
     
@@ -97,16 +132,122 @@ export const usesGalleryEditorLayout = () => {
             
             
             // children:
-            ...children([imageElm, uploadingImageElm, uploadImageElm], {
-                // sizes:
-                inlineSize : 'unset', // we need to manage the <img>'s width
-                
-                
-                
+            ...children([galleryEditorImageElm, uploadingPanelElm, uploadPanelElm], {
                 // customize:
                 ...usesCssProps(usesPrefixedProps(galleryEditors, 'item')), // apply config's cssProps starting with item***
             }),
-            ...children(imageElm, {
+            ...children([uploadingPanelElm, uploadPanelElm], {
+                // capabilities:
+                ...groupableRule(), // make a nicely rounded corners
+                
+                
+                
+                // layouts:
+                ...style({
+                    // layouts:
+                    display        : 'grid',
+                    gridTemplate   : [[
+                        '"media" auto',
+                        '/',
+                        'auto'
+                    ]],
+                    
+                    
+                    
+                    // borders:
+                    overflow          : 'hidden', // clip the children at the rounded corners
+                    
+                    
+                    
+                    // children:
+                    ...children([galleryEditorPreviewImageElm, galleryEditorActionGroupElm], {
+                        // spacings:
+                        marginInline  : negativePaddingInline, // cancel out parent's padding with negative margin
+                        marginBlock   : negativePaddingBlock,  // cancel out parent's padding with negative margin
+                    }),
+                    ...children(galleryEditorActionGroupElm, {
+                        // spacings:
+                        paddingInline : positivePaddingInline, // restore parent's padding with positive margin
+                        paddingBlock  : positivePaddingBlock,  // restore parent's padding with positive margin
+                    }),
+                    ...children(galleryEditorActionGroupElm, {
+                        // positions:
+                        gridArea        : 'media',
+                        zIndex          : 1,
+                        
+                        
+                        
+                        // layouts:
+                        display         : 'flex',    // use block flexbox, so it takes the entire parent's width
+                        flexDirection   : 'column',  // the flex direction to vert
+                        justifyContent  : 'center',  // center items vertically
+                        alignItems      : 'stretch', // stretch items horizontally
+                        flexWrap        : 'nowrap',  // no wrapping
+                        
+                        
+                        
+                        // spacings:
+                        gap : spacers.default,
+                        
+                        
+                        
+                        // children:
+                        ...descendants([uploadImageTitleElm, uploadingImageTitleElm, uploadingImageErrorTitleElm, 'p'], {
+                            margin    : 0,        // no margin for <p>, <h1>...<h6>
+                            textAlign : 'center', // center text for <p>, <h1>...<h6>
+                        }),
+                        ...descendants([uploadImageTitleElm, uploadingImageTitleElm, uploadingImageErrorTitleElm], {
+                            fontSize : typos.fontSizeMd,
+                            
+                            
+                            
+                            // customize:
+                            ...usesCssProps(usesPrefixedProps(galleryEditors, 'title')), // apply config's cssProps starting with title***
+                        }),
+                        
+                        // <UploadImage>'s children:
+                        ...children(galleryEditorSelectButtonElm, {
+                            // customize:
+                            ...usesCssProps(usesPrefixedProps(galleryEditors, 'selectButton')), // apply config's cssProps starting with selectButton***
+                        }),
+                        
+                        // <UploadingImage>'s children:
+                        ...children(galleryEditorUploadProgressElm, {
+                            // customize:
+                            ...usesCssProps(usesPrefixedProps(galleryEditors, 'uploadProgress')), // apply config's cssProps starting with uploadProgress***
+                        }),
+                        ...children(galleryEditorUploadErrorElm, {
+                            // layouts:
+                            display     : 'grid',
+                            
+                            
+                            
+                            // sizes:
+                            justifySelf : 'center', // center the self horizontally
+                            alignSelf   : 'center', // center the self vertically
+                            
+                            
+                            
+                            // spacings:
+                            gap : spacers.sm,
+                            
+                            
+                            
+                            // customize:
+                            ...usesCssProps(usesPrefixedProps(galleryEditors, 'uploadError')), // apply config's cssProps starting with uploadError***
+                        }),
+                        ...children(galleryEditorRetryButtonElm, {
+                            // customize:
+                            ...usesCssProps(usesPrefixedProps(galleryEditors, 'retryButton')), // apply config's cssProps starting with retryButton***
+                        }),
+                        ...children(galleryEditorCancelButtonElm, {
+                            // customize:
+                            ...usesCssProps(usesPrefixedProps(galleryEditors, 'cancelButton')), // apply config's cssProps starting with cancelButton***
+                        }),
+                    }),
+                }),
+            }),
+            ...children(galleryEditorImageElm, {
                 // accessibilities:
                 cursor     : 'move',
                 
@@ -198,40 +339,24 @@ export const usesGalleryEditorLayout = () => {
                 // customize:
                 ...usesCssProps(usesPrefixedProps(galleryEditors, 'image')), // apply config's cssProps starting with image***
             }),
-            ...children([uploadingImageElm, uploadImageElm], {
-                // layouts:
-                display        : 'flex',    // use block flexbox, so it takes the entire parent's width
-                flexDirection  : 'column',  // items are stacked vertically
-                justifyContent : 'center',  // center item vertically
-                alignItems     : 'center',  // center item horizontally
-                flexWrap       : 'nowrap',  // prevents the items to wrap to the next column
-                
-                
-                
-                // spacings:
-                gap            : spacers.default,
-                
-                
-                
+            ...children(uploadingPanelElm, {
                 // children:
-                ...children('*', {
-                    // spacings:
-                    margin     : 0,
-                }),
-            }),
-            ...children(uploadingImageElm, {
-                // children:
-                ...children(uploadingImagePreviewElm, {
+                ...children(galleryEditorPreviewImageElm, {
                     // positions:
-                    position : 'absolute',
-                    inset    : 0,
-                    margin   : 'auto',
-                    zIndex   : -9,
+                    gridArea       : 'media',
+                    
+                    
+                    
+                    // sizes:
+                    justifySelf    : 'stretch', // stretch the self horizontally
+                    alignSelf      : 'stretch', // stretch the self vertically
+                    minInlineSize  : 0,
+                    minBlockSize   : 0,
                     
                     
                     
                     // customize:
-                    ...usesCssProps(usesPrefixedProps(galleryEditors, 'preview')), // apply config's cssProps starting with preview***
+                    ...usesCssProps(usesPrefixedProps(galleryEditors, 'previewImage')), // apply config's cssProps starting with previewImage***
                 }),
                 
                 
@@ -239,9 +364,8 @@ export const usesGalleryEditorLayout = () => {
                 // customize:
                 ...usesCssProps(usesPrefixedProps(galleryEditors, 'uploading')), // apply config's cssProps starting with uploading***
             }),
-            ...children(uploadImageElm, {
-                // children:
-                ...children(uploadImageInputFileElm, {
+            ...children(uploadPanelElm, {
+                ...children(galleryEditorInputFileElm, {
                     // layouts:
                     display: 'none',
                 }),
@@ -285,7 +409,7 @@ export const usesGalleryEditorStates = () => {
     
     return style({
         // children:
-        ...children(imageElm, {
+        ...children(galleryEditorImageElm, {
             // states:
             ...states([
                 rule('.dragged', {
@@ -318,7 +442,7 @@ export const usesGalleryEditorStates = () => {
                 ...disableableRule(),
             }),
         }),
-        ...children(uploadImageElm, {
+        ...children(uploadPanelElm, {
             // states:
             ...states([
                 rule('.dropTarget', {
