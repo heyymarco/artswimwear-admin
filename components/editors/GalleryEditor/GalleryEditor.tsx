@@ -454,9 +454,16 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         imagesFn = newDraftImages; // a temporary update regradless of (/*controllable*/ ?? /*uncontrollable*/), will be re-updated on *next re-render*
         if (isControllableImages) setImagesDn((current) => current.slice(0)); // force to re-render
     });
-    const handleUploadImageStart = useEvent(({ imageFile }: { imageFile: File }): void => {
+    const handleUploadImageStart = useEvent((args: { imageFile: File }): void => {
         // conditions:
         if (!onUploadImageStart) return; // the upload image handler is not configured => ignore
+        
+        
+        
+        // params:
+        const {
+            imageFile,
+        ...restParams} = args;
         
         
         
@@ -536,6 +543,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
             let imageData : TValue|Error|null|undefined = undefined;
             try {
                 imageData = await onUploadImageStart({
+                    ...restParams,
+                    
                     imageFile      : imageFile,
                     reportProgress : handleReportProgress,
                     abortSignal    : abortSignal,
