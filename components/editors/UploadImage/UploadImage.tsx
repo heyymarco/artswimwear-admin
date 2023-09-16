@@ -240,7 +240,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         selectButtonComponent  = (<ButtonIcon icon='upload_file'                       theme='primary' /> as React.ReactComponentElement<any, ButtonProps>),
         deleteButtonComponent  = (<ButtonIcon icon='clear'                 mild={true} theme='danger'  /> as React.ReactComponentElement<any, ButtonProps>),
         retryButtonComponent   = (<ButtonIcon icon='refresh'                           theme='success' /> as React.ReactComponentElement<any, ButtonProps>),
-        cancelButtonComponent  = (<ButtonIcon icon='cancel'                mild={true} theme='danger'  /> as React.ReactComponentElement<any, ButtonProps>),
+        cancelButtonComponent  = (<ButtonIcon icon='cancel'                            theme='danger'  /> as React.ReactComponentElement<any, ButtonProps>),
         
         
         
