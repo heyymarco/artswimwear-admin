@@ -679,7 +679,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                     
                     // images:
                     alt       : previewImageComponent.props.alt   ?? '',
-                    src       : previewImageComponent.props.src   ?? previewImage, // convert empty string to undefined
+                    src       : previewImageComponent.props.src   ?? previewImage,
                     sizes     : previewImageComponent.props.sizes ?? uploadImages.previewImageInlineSize,
                 },
             )),
