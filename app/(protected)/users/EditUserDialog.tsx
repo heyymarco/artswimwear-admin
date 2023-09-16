@@ -35,6 +35,7 @@ import {
 import {
     // base-components:
     Generic,
+    Basic,
     
     
     
@@ -44,6 +45,7 @@ import {
     
     
     // simple-components:
+    Icon,
     ButtonIcon,
     CloseButton,
     
@@ -309,6 +311,12 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                 break;
         } // switch
     });
+    const handleImgUpload = useEvent(async () => {
+
+    });
+    const handleImgRemove = useEvent(async () => {
+
+    });
     
     
     
@@ -390,7 +398,23 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                         </form>
                     </TabPanel>
                     <TabPanel label={PAGE_USER_TAB_IMAGE}        panelComponent={<Generic className={styles.imageTab} />}>
-                        Testing...
+                        {!!image
+                        ? <Basic
+                            tag='span'
+                            className='userImg'
+                            
+                            style={{
+                                backgroundImage : `url(${image})`,
+                            }}
+                        />
+                        : <Icon className='userImg' icon='person' />}
+                        
+                        <ButtonIcon className='uploadBtn' icon='upload_file' theme='success' onClick={handleImgUpload}>
+                            Change Image
+                        </ButtonIcon>
+                        <ButtonIcon className='removeBtn' icon='delete_forever' theme='danger' onClick={handleImgRemove}>
+                            Remove Image
+                        </ButtonIcon>
                     </TabPanel>
                     <TabPanel label={PAGE_USER_TAB_ROLE}         panelComponent={<Generic className={styles.roleTab} />}>
                         Testing...
