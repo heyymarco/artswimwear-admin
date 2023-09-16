@@ -124,6 +124,9 @@ export const usesUploadImageLayout = () => {
                 
                 
                 // children:
+                ...children('*', { // no margin for <p>, <h1>...<h6>, <etc>
+                    margin: 0,
+                }),
                 ...children([uploadImageNoImageElm, uploadImagePreviewImageElm, uploadImageImageElm, uploadImageUploadProgressElm, uploadImageUploadErrorElm], {
                     // positions:
                     gridArea : 'media',
