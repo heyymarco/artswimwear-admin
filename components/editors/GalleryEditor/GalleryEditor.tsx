@@ -170,7 +170,7 @@ export interface GalleryEditorProps<TElement extends Element = HTMLElement, TVal
         >
 {
     // actions:
-    onActionDelete     ?: (args: { imageData: TValue }) => Promise<boolean>
+    onActionDelete     ?: (args: { imageData: TValue }) => Promise<boolean|Error>
     
     
     
@@ -412,9 +412,11 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         const imageData = imagesFn[itemIndex];
         if (onActionDelete) {
             try {
-                if (await onActionDelete({
+                const result = await onActionDelete({
                     imageData : imageData,
-                }) === false) return; // the delete action was prevented by <parent> => ignore
+                });
+                if (result instanceof Error) return; // error => abort
+                if (result === false)        return; // the delete action was prevented by <parent> => ignore
             }
             catch {
                 return; // error => abort
