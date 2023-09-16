@@ -434,6 +434,10 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         
         
+        // successfully deleted:
+        
+        
+        
         // remove an image from collection by its index:
         const newDraftImages = imagesFn.slice(0); // clone (copy and then modify) the *source of truth* images
         newDraftImages.splice(itemIndex, 1);
