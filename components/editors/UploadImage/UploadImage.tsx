@@ -245,7 +245,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         uploadErrorComponent     = (<Basic                         size='sm' mild={true} theme='danger'  /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
         
         actionGroupComponent     = (<div                                                                 /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
-        selectButtonComponent    = (<ButtonIcon icon='upload_file'                       theme='primary' /> as React.ReactComponentElement<any, ButtonProps>),
+        selectButtonComponent    = (<ButtonIcon icon='upload_file'                                       /> as React.ReactComponentElement<any, ButtonProps>),
         deleteButtonComponent    = (<ButtonIcon icon='clear'                 mild={true} theme='danger'  /> as React.ReactComponentElement<any, ButtonProps>),
         retryButtonComponent     = (<ButtonIcon icon='refresh'                           theme='success' /> as React.ReactComponentElement<any, ButtonProps>),
         cancelButtonComponent    = (<ButtonIcon icon='cancel'                            theme='danger'  /> as React.ReactComponentElement<any, ButtonProps>),
