@@ -226,21 +226,21 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         
         // components:
-        bodyComponent          = (<Content<TElement>                                                       /> as React.ReactComponentElement<any, BasicProps<TElement>>),
+        bodyComponent          = (<Content<TElement>                                                   /> as React.ReactComponentElement<any, BasicProps<TElement>>),
         
-        mediaGroupComponent    = (<div                                                                     /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
-        noImageComponent       = (<Icon       icon='image'       size='xl'                                 /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
-        imageComponent         = (<img                                                                     /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
+        mediaGroupComponent    = (<div                                                                 /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
+        noImageComponent       = (<Icon       icon='image'       size='xl'                             /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
+        imageComponent         = (<img                                                                 /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
         previewImageComponent  = imageComponent,
-        progressComponent      = (<Progress                      size='sm'                                 /> as React.ReactComponentElement<any, ProgressProps<Element>>),
-        progressBarComponent   = (<ProgressBar                                                             /> as React.ReactComponentElement<any, ProgressBarProps<Element>>),
-        uploadErrorComponent   = (<Basic                         size='sm' mild={true}     theme='danger'  /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
+        progressComponent      = (<Progress                      size='sm'                             /> as React.ReactComponentElement<any, ProgressProps<Element>>),
+        progressBarComponent   = (<ProgressBar                                                         /> as React.ReactComponentElement<any, ProgressBarProps<Element>>),
+        uploadErrorComponent   = (<Basic                         size='sm' mild={true} theme='danger'  /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
         
-        actionGroupComponent   = (<div                                                                     /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
-        selectButtonComponent  = (<ButtonIcon icon='upload_file'                           theme='primary' /> as React.ReactComponentElement<any, ButtonProps>),
-        deleteButtonComponent  = (<ButtonIcon icon='clear'                 outlined={true} theme='danger'  /> as React.ReactComponentElement<any, ButtonProps>),
-        retryButtonComponent   = (<ButtonIcon icon='refresh'                               theme='success' /> as React.ReactComponentElement<any, ButtonProps>),
-        cancelButtonComponent  = (<ButtonIcon icon='cancel'                outlined={true} theme='danger'  /> as React.ReactComponentElement<any, ButtonProps>),
+        actionGroupComponent   = (<div                                                                 /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
+        selectButtonComponent  = (<ButtonIcon icon='upload_file'                       theme='primary' /> as React.ReactComponentElement<any, ButtonProps>),
+        deleteButtonComponent  = (<ButtonIcon icon='clear'                 mild={true} theme='danger'  /> as React.ReactComponentElement<any, ButtonProps>),
+        retryButtonComponent   = (<ButtonIcon icon='refresh'                           theme='success' /> as React.ReactComponentElement<any, ButtonProps>),
+        cancelButtonComponent  = (<ButtonIcon icon='cancel'                mild={true} theme='danger'  /> as React.ReactComponentElement<any, ButtonProps>),
         
         
         
