@@ -172,7 +172,12 @@ export const usesUploadImageLayout = () => {
                     ...usesCssProps(usesPrefixedProps(uploadImages, 'uploadProgress')), // apply config's cssProps starting with uploadProgress***
                 }),
                 ...children(uploadImageUploadErrorElm, {
+                    // layouts:
                     display     : 'grid',
+                    
+                    
+                    
+                    // sizes:
                     justifySelf : 'center', // center the self horizontally
                     alignSelf   : 'center', // center the self vertically
                     
