@@ -98,8 +98,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         for (const file of files) {
             // conditions:
             if (!mimeMatcher.match(file.type)) {
-                console.log('unknown file: ', file.name);
-                continue;
+                continue; // ignore foreign files
             } // if
             
             
