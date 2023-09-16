@@ -52,27 +52,45 @@ export const [uploadImages, uploadImageValues, cssUploadImageConfig] = cssConfig
         
         // noImages:
         
+        
+        
         // previewImages:
         previewImageFilter  : [[
             'opacity(0.5)',
             'contrast(0.8)',
         ]]                                              as CssKnownProps['filter'    ],
         
+        
+        
         // images:
+        
+        
         
         // uploadProgresses:
         uploadProgressMargin : spacers.default          as CssKnownProps['margin'    ],
         
+        
+        
         // uploadErrors:
         uploadErrorMargin    : spacers.default          as CssKnownProps['margin'    ],
         
+        
+        
         // actions:
+        
+        
         
         // selectButtons:
         
+        
+        
         // deleteButtons:
         
+        
+        
         // retryButtons:
+        
+        
         
         // cancelButtons:
     };

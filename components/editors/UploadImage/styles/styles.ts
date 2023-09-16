@@ -42,10 +42,10 @@ import {
 // reusable-ui components:
 import {
     // styles:
-    onBasicStylesChange,
-    usesBasicLayout,
-    usesBasicVariants,
-}                           from '@reusable-ui/basic'           // a base component
+    onContentStylesChange,
+    usesContentLayout,
+    usesContentVariants,
+}                           from '@reusable-ui/content'         // a base component
 
 // internals:
 import {
@@ -74,7 +74,7 @@ import {
 
 
 // styles:
-export const onUploadImageStylesChange = watchChanges(onBasicStylesChange, cssUploadImageConfig.onChange);
+export const onUploadImageStylesChange = watchChanges(onContentStylesChange, cssUploadImageConfig.onChange);
 
 export const usesUploadImageLayout = () => {
     // dependencies:
@@ -86,7 +86,7 @@ export const usesUploadImageLayout = () => {
     
     return style({
         // layouts:
-        ...usesBasicLayout(),
+        ...usesContentLayout(),
         ...style({
             // layouts:
             display      : 'grid',
@@ -172,9 +172,9 @@ export const usesUploadImageLayout = () => {
                     ...usesCssProps(usesPrefixedProps(uploadImages, 'uploadProgress')), // apply config's cssProps starting with uploadProgress***
                 }),
                 ...children(uploadImageUploadErrorElm, {
-                    display        : 'grid',
-                    justifyContent : 'center', // center a whole items horizontally
-                    alignContent   : 'center', // center a whole items vertically
+                    display     : 'grid',
+                    justifySelf : 'center', // center the self horizontally
+                    alignSelf   : 'center', // center the self vertically
                     
                     
                     
@@ -255,7 +255,7 @@ export const usesUploadImageVariants = () => {
     
     return style({
         // variants:
-        ...usesBasicVariants(),
+        ...usesContentVariants(),
         ...resizableRule(),
     });
 };
