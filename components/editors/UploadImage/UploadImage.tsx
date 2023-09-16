@@ -159,7 +159,7 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
     
     // upload activities:
     onUploadImageStart       ?: (args: { imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal }) => Promise<TValue|Error|null>
-    onUploadingImageProgress ?: (args: { percentage: number|null }) => string
+    onUploadingImageProgress ?: (args: { imageFile: File, percentage: number|null }) => string
     
     
     
@@ -690,6 +690,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                         
                         // children:
                         onUploadingImageProgress({
+                            imageFile  : uploadingImage.imageFile,
                             percentage : uploadingImage.percentage,
                         }),
                     ),
