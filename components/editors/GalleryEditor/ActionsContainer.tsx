@@ -55,7 +55,7 @@ export interface ActionsContainerProps
     
     // actions:
     actionDelete          ?: string
-    onActionDelete        ?: (itemIndex: number) => Promise<void>
+    onActionDelete        ?: (args: { itemIndex: number }) => Promise<void>
     
     
     
@@ -115,7 +115,9 @@ const ActionsContainer = (props: ActionsContainerProps): JSX.Element|null => {
         
         setIsEnabled(isEnabled /* instant update without waiting for (slow|delayed) re-render */ = false);
         try {
-            await onActionDelete(itemIndex);
+            await onActionDelete({
+                itemIndex : itemIndex,
+            });
         }
         catch {
             // ignore any error

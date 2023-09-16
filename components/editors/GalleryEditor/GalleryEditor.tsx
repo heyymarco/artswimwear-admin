@@ -406,13 +406,22 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
     const handleDrop             = handleMoved;
     
     // handlers:
-    const handleActionDelete     = useEvent(async (itemIndex: number): Promise<void> => {
+    const handleActionDelete     = useEvent(async (args: { itemIndex: number }): Promise<void> => {
+        // params:
+        const {
+            itemIndex,
+        ...restParams} = args;
+        
+        
+        
         // conditions:
         if (itemIndex >= imagesFn.length) return; // out of range => ignore
         const imageData = imagesFn[itemIndex];
         if (onActionDelete) {
             try {
                 const result = await onActionDelete({
+                    ...restParams,
+                    
                     imageData : imageData,
                 });
                 if (result instanceof Error) return; // error => abort
