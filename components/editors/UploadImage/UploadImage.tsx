@@ -355,30 +355,39 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         // actions:
         const mimeMatcher = new MimeMatcher(...uploadImageType.split(',').map((mime) => mime.trim()));
         
-        // for (const file of files) {
+        // for (const imageFile of files) {
         //     // conditions:
-        //     if (!mimeMatcher.match(file.type)) {
-        //         console.log('unknown file: ', file.name);
-        //         continue;
+        //     if (!mimeMatcher.match(imageFile.type)) {
+        //         continue; // ignore foreign files
         //     } // if
         //     
         //     
         //     
         //     // actions:
-        //     handleUploadImageStart(file);
+        //     handleUploadImageStart({
+        //         imageFile : imageFile,
+        //     });
         // } // for
         
-        const file = files?.[0];
-        if (!file) return; // no file selected => ignore
-        if (!mimeMatcher.match(file.type)) {
-            console.log('unknown file: ', file.name);
-            return;
+        const imageFile = files?.[0];
+        if (!imageFile) return; // no file selected => ignore
+        if (!mimeMatcher.match(imageFile.type)) {
+            return; // ignore foreign files
         } // if
-        handleUploadImageStart(file);
+        handleUploadImageStart({
+            imageFile : imageFile,
+        });
     });
-    const handleUploadImageStart          = useEvent((imageFile: File): void => {
+    const handleUploadImageStart          = useEvent((args: { imageFile: File }): void => {
         // conditions:
         if (!onUploadImageStart) return; // the upload image handler is not configured => ignore
+        
+        
+        
+        // params:
+        const {
+            imageFile,
+        ...restParams} = args;
         
         
         
@@ -458,6 +467,8 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
             let imageData : TValue|Error|null|undefined = undefined;
             try {
                 imageData = await onUploadImageStart({
+                    ...restParams,
+                    
                     imageFile      : imageFile,
                     reportProgress : handleReportProgress,
                     abortSignal    : abortSignal,
