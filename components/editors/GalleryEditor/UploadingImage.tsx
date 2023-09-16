@@ -37,11 +37,6 @@ import {
 // react components:
 export interface UploadingImageProps
 {
-    // positions:
-    uploadingItemIndex         : number
-    
-    
-    
     // uploading images:
     uploadingImageTitle       ?: string
     uploadingImageErrorTitle  ?: string
@@ -70,11 +65,6 @@ export interface UploadingImageProps
 const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
     // rest props:
     const {
-        // positions:
-        uploadingItemIndex,
-        
-        
-        
         // uploading images:
         uploadingImageTitle      = 'Uploading...',
         uploadingImageErrorTitle = 'Upload Error',

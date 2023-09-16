@@ -156,11 +156,6 @@ export interface GalleryEditorProps<TElement extends Element = HTMLElement, TVal
             |'onUploadImageStart'         // enhanced with return Promise<TValue>
         >,
         Omit<UploadingImageProps,
-            // positions:
-            |'uploadingItemIndex'         // already handled internally
-            
-            
-            
             // uploading activities:
             |'uploadingImageFile'         // already handled internally
             |'uploadingImagePercentage'   // already handled internally
@@ -729,11 +724,6 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                 <UploadingImage
                     // identifiers:
                     key={`upl:${uploadingItemIndex}`}
-                    
-                    
-                    
-                    // positions:
-                    uploadingItemIndex={uploadingItemIndex}
                     
                     
                     
