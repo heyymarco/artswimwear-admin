@@ -285,14 +285,14 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
     
     
     // handlers:
-    const handleChangeInternal = useEvent<EditorChangeEventHandler<TValue[]>>((images) => {
+    const handleChangeInternal   = useEvent<EditorChangeEventHandler<TValue[]>>((images) => {
         // update state:
         if (!isControllableImages) {
             setImagesDn(imagesDn /* instant update without waiting for (slow|delayed) re-render */ = images);
             imagesFn =  imagesDn /*uncontrollable*/; // instant update the computed variable too, without waiting for (slow|delayed) re-render
         } // if
     });
-    const handleChange         = useMergeEvents(
+    const handleChange           = useMergeEvents(
         // preserves the original `onChange` from `props`:
         onChange,
         
@@ -301,14 +301,14 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         // actions:
         handleChangeInternal,
     );
-    const triggerChange        = useEvent((newDraftImages: TValue[]): void => {
+    const triggerChange          = useEvent((newDraftImages: TValue[]): void => {
         if (handleChange) scheduleTriggerEvent(() => { // runs the `onChange` event *next after* current macroTask completed
             // fire `onChange` react event:
             handleChange(newDraftImages);
         });
     });
     
-    const handlePreviewMoved   = useEvent((newDroppedItemIndex: number): TValue[]|undefined => {
+    const handlePreviewMoved     = useEvent((newDroppedItemIndex: number): TValue[]|undefined => {
         if (draggedItemIndex === newDroppedItemIndex) { // no change => nothing to shift => return the (original) *source of truth* images
             // reset the preview:
             return handleRevertPreview();
@@ -360,7 +360,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         // return the modified:
         return newDraftImages;
     });
-    const handleMoved          = useEvent((newDroppedItemIndex: number): void => {
+    const handleMoved            = useEvent((newDroppedItemIndex: number): void => {
         // update the preview:
         const newDraftImages = handlePreviewMoved(newDroppedItemIndex);
         if (!newDraftImages) return; // no change => ignore
@@ -370,7 +370,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         // notify the gallery's images changed:
         triggerChange(newDraftImages); // then at the *next re-render*, the *controllable* `images` will change and trigger the `handleRevertPreview` and the `droppedItemIndex` will be reset
     });
-    const handleRevertPreview  = useEvent((): TValue[] => {
+    const handleRevertPreview    = useEvent((): TValue[] => {
         // reset the preview:
         if (draftImages !== imagesFn) setDraftImages(imagesFn);
         
@@ -386,15 +386,15 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
     });
     
     // draggable handlers:
-    const handleDragStart      = setDraggedItemIndex;
-    const handleDragEnd        = useEvent((itemIndex: number): void => {
+    const handleDragStart        = setDraggedItemIndex;
+    const handleDragEnd          = useEvent((itemIndex: number): void => {
         // actions:
         setDraggedItemIndex(-1); // clear selection
     });
     
     // droppable handlers:
-    const handleDragEnter      = handlePreviewMoved;
-    const handleDragLeave      = useEvent((itemIndex: number): void => {
+    const handleDragEnter        = handlePreviewMoved;
+    const handleDragLeave        = useEvent((itemIndex: number): void => {
         // conditions:
         if (droppedItemIndex !== itemIndex) return; // the last preview is already updated by another item => no need to revert
         
@@ -403,10 +403,10 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         // actions:
         handleRevertPreview();
     });
-    const handleDrop           = handleMoved;
+    const handleDrop             = handleMoved;
     
     // handlers:
-    const actionsContainerHandleActionDelete = useEvent(async (itemIndex: number): Promise<void> => {
+    const handleActionDelete     = useEvent(async (itemIndex: number): Promise<void> => {
         // conditions:
         if (itemIndex >= imagesFn.length) return; // out of range => ignore
         const imageData = imagesFn[itemIndex];
@@ -454,7 +454,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         imagesFn = newDraftImages; // a temporary update regradless of (/*controllable*/ ?? /*uncontrollable*/), will be re-updated on *next re-render*
         if (isControllableImages) setImagesDn((current) => current.slice(0)); // force to re-render
     });
-    const uploadImageHandleUploadImageStart  = useEvent(({ imageFile }: { imageFile: File }): void => {
+    const handleUploadImageStart = useEvent(({ imageFile }: { imageFile: File }): void => {
         // conditions:
         if (!onUploadImageStart) return; // the upload image handler is not configured => ignore
         
@@ -696,7 +696,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                             {...{
                                 // actions:
                                 actionDelete,
-                                onActionDelete : actionsContainerHandleActionDelete,
+                                onActionDelete : handleActionDelete,
                                 
                                 
                                 
@@ -775,7 +775,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                     
                     
                     // upload activities:
-                    onUploadImageStart : uploadImageHandleUploadImageStart,
+                    onUploadImageStart : handleUploadImageStart,
                     
                     
                     
