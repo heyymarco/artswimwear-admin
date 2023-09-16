@@ -3,7 +3,7 @@
 // react:
 import {
     // react:
-    default as React,
+    default as React, useState,
 }                           from 'react'
 
 import { UploadImage } from '@/components/editors/UploadImage'
@@ -12,6 +12,8 @@ import { Section, Main } from '@heymarco/section'
 
 
 export default function DashboardPage() {
+    const [mockDatabaseImage, setMockDatabaseImage] = useState<string|null>(null);
+    
     return (
         <Main nude={true}>
             <Section title='Dashboard'>
@@ -29,7 +31,7 @@ export default function DashboardPage() {
                             });
                             reportProgress(progress);
                             
-                            if (progress >= 70) throw <p><span style={{ color: 'red' }}>error</span> bro!</p>;
+                            // if (progress >= 70) throw <p><span style={{ color: 'red' }}>error</span> bro!</p>;
                             // if (progress >= 70) return Error('error bro!');
                         } // for
                         await new Promise<void>((resolved) => {
@@ -37,7 +39,26 @@ export default function DashboardPage() {
                                 resolved();
                             }, 1000);
                         });
-                        return 'test.jpg'
+                        
+                        
+                        
+                        if (mockDatabaseImage) URL.revokeObjectURL(mockDatabaseImage);
+                        const imageUrl = URL.createObjectURL(imageFile);
+                        setMockDatabaseImage(imageUrl);
+                        return imageUrl;
+                    }}
+                    onActionDelete={async ({ imageData }) => {
+                        await new Promise<void>((resolved) => {
+                            setTimeout(() => {
+                                resolved();
+                            }, 1000);
+                        });
+                        
+                        
+                        
+                        URL.revokeObjectURL(imageData);
+                        setMockDatabaseImage(null);
+                        return true;
                     }}
                 />
             </Section>
