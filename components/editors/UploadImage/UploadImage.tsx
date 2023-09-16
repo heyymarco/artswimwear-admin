@@ -121,7 +121,7 @@ type UploadingImageData = {
 export interface UploadImageProps<TElement extends Element = HTMLElement, TValue extends ImageData = ImageData>
     extends
         // bases:
-        Pick<EditorProps<TElement, TValue>,
+        Pick<EditorProps<TElement, TValue|null>,
             // values:
             |'defaultValue'
             |'value'
@@ -139,7 +139,7 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
 {
     // actions:
     actionDelete             ?: string
-    onActionDelete           ?: (args: { imageData: TValue }) => Promise<boolean>
+    onActionDelete           ?: (args: { imageData: TValue }) => Promise<boolean|Error>
     
     
     
@@ -258,7 +258,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
     // states:
     const isControllableImage                  = (image !== undefined);
     const [imageDn        , setImageDn       ] = useState<TValue|null>(defaultImage ?? null);
-    const imageFn : TValue|null                = (image /*controllable*/ ?? imageDn /*uncontrollable*/);
+    const imageFn : TValue|null                = ((image !== undefined) ? image /*controllable*/ : imageDn /*uncontrollable*/);
     
     const [uploadingImage , setUploadingImage] = useState<UploadingImageData|null>(null);
     const uploadingImageRef                    = useRef<UploadingImageData|null>(uploadingImage);
@@ -281,7 +281,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
     
     
     // handlers:
-    const handleChangeInternal            = useEvent<EditorChangeEventHandler<TValue>>((image) => {
+    const handleChangeInternal            = useEvent<EditorChangeEventHandler<TValue|null>>((image) => {
         // update state:
         if (!isControllableImage) setImageDn(image);
     });
@@ -294,7 +294,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         // actions:
         handleChangeInternal,
     );
-    const triggerChange                   = useEvent((newDraftImage: TValue): void => {
+    const triggerChange                   = useEvent((newDraftImage: TValue|null): void => {
         if (handleChange) scheduleTriggerEvent(() => { // runs the `onChange` event *next after* current macroTask completed
             // fire `onChange` react event:
             handleChange(newDraftImage);
@@ -314,8 +314,17 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         selectButtonHandleClickInternal,
     );
     
-    const deleteButtonHandleClickInternal = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
-        // TODO: delete image
+    const deleteButtonHandleClickInternal = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
+        // conditions:
+        if (event.defaultPrevented) return; // already handled => ignore
+        event.preventDefault();             // handled
+        
+        
+        
+        // actions:
+        handleActionDelete({
+            /* empty: reserved for future */
+        });
     });
     const deleteButtonHandleClick         = useMergeEvents(
         // preserves the original `onClick` from `deleteButtonComponent`:
@@ -326,6 +335,41 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         // actions:
         deleteButtonHandleClickInternal,
     );
+    const handleActionDelete              = useEvent(async (args: { /* empty: reserved for future */ }): Promise<void> => {
+        // params:
+        const {
+            /* empty: reserved for future */
+        ...restParams} = args;
+        
+        
+        
+        // conditions:
+        const imageData = imageFn;
+        if (!imageData) return; // no image => nothing to delete
+        if (onActionDelete) {
+            try {
+                const result = await onActionDelete({
+                    ...restParams,
+                    
+                    imageData : imageData,
+                });
+                if (result instanceof Error) return; // error => abort
+                if (result === false)        return; // the delete action was prevented by <parent> => ignore
+            }
+            catch {
+                return; // error => abort
+            } // try
+        } // if
+        
+        
+        
+        // successfully deleted:
+        
+        
+        
+        // notify the image changed:
+        triggerChange(null); // then at the *next re-render*, the *controllable* `image` will change
+    });
     
     const inputFileHandleChange           = useEvent<React.ChangeEventHandler<HTMLInputElement>>(async () => {
         // conditions:
@@ -507,7 +551,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
             
             // successfully uploaded:
             if (imageData) {
-                // notify the images changed:
+                // notify the image changed:
                 triggerChange(imageData); // then at the *next re-render*, the *controllable* `image` will change
             } // if
         };

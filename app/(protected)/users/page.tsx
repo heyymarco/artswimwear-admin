@@ -245,7 +245,7 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
             className={styles.userItem}
         >
             <div className={styles.userItemWrapper}>
-                {/* carousel + edit button */}
+                {/* profile image + edit button */}
                 <CompoundWithBadge
                     // components:
                     wrapperComponent={<React.Fragment />}
