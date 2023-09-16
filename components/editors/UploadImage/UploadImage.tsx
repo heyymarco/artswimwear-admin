@@ -151,6 +151,7 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
     
     
     // uploading images:
+    uploadingImageTitle      ?: string
     uploadingImageErrorTitle ?: string
     uploadingImageRetry      ?: string
     uploadingImageCancel     ?: string
@@ -166,7 +167,10 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
     // components:
     bodyComponent            ?: React.ReactComponentElement<any, BasicProps<TElement>>
     
+    titleComponent           ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
+    
     mediaGroupComponent      ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
+    mediaGroupComponentInner ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
     noImageComponent         ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
     previewImageComponent    ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
     imageComponent           ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
@@ -212,6 +216,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         
         // uploading images:
+        uploadingImageTitle      = 'Uploading...',
         uploadingImageErrorTitle = 'Upload Error',
         uploadingImageRetry      = 'Retry',
         uploadingImageCancel     = 'Cancel',
@@ -226,21 +231,24 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         
         // components:
-        bodyComponent          = (<Content<TElement>                                                   /> as React.ReactComponentElement<any, BasicProps<TElement>>),
+        bodyComponent            = (<Content<TElement>                                                   /> as React.ReactComponentElement<any, BasicProps<TElement>>),
         
-        mediaGroupComponent    = (<div                                                                 /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
-        noImageComponent       = (<Icon       icon='image'       size='xl'                             /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
-        imageComponent         = (<img                                                                 /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
-        previewImageComponent  = imageComponent,
-        progressComponent      = (<Progress                      size='sm'                             /> as React.ReactComponentElement<any, ProgressProps<Element>>),
-        progressBarComponent   = (<ProgressBar                                                         /> as React.ReactComponentElement<any, ProgressBarProps<Element>>),
-        uploadErrorComponent   = (<Basic                         size='sm' mild={true} theme='danger'  /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
+        titleComponent           = (<h1 />                                                                  as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         
-        actionGroupComponent   = (<div                                                                 /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
-        selectButtonComponent  = (<ButtonIcon icon='upload_file'                       theme='primary' /> as React.ReactComponentElement<any, ButtonProps>),
-        deleteButtonComponent  = (<ButtonIcon icon='clear'                 mild={true} theme='danger'  /> as React.ReactComponentElement<any, ButtonProps>),
-        retryButtonComponent   = (<ButtonIcon icon='refresh'                           theme='success' /> as React.ReactComponentElement<any, ButtonProps>),
-        cancelButtonComponent  = (<ButtonIcon icon='cancel'                            theme='danger'  /> as React.ReactComponentElement<any, ButtonProps>),
+        mediaGroupComponent      = (<div                                                                 /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
+        mediaGroupComponentInner = (<div                                                                 /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
+        noImageComponent         = (<Icon       icon='image'       size='xl'                             /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
+        imageComponent           = (<img                                                                 /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
+        previewImageComponent    = imageComponent,
+        progressComponent        = (<Progress                      size='sm'                             /> as React.ReactComponentElement<any, ProgressProps<Element>>),
+        progressBarComponent     = (<ProgressBar                                                         /> as React.ReactComponentElement<any, ProgressBarProps<Element>>),
+        uploadErrorComponent     = (<Basic                         size='sm' mild={true} theme='danger'  /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
+        
+        actionGroupComponent     = (<div                                                                 /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
+        selectButtonComponent    = (<ButtonIcon icon='upload_file'                       theme='primary' /> as React.ReactComponentElement<any, ButtonProps>),
+        deleteButtonComponent    = (<ButtonIcon icon='clear'                 mild={true} theme='danger'  /> as React.ReactComponentElement<any, ButtonProps>),
+        retryButtonComponent     = (<ButtonIcon icon='refresh'                           theme='success' /> as React.ReactComponentElement<any, ButtonProps>),
+        cancelButtonComponent    = (<ButtonIcon icon='cancel'                            theme='danger'  /> as React.ReactComponentElement<any, ButtonProps>),
         
         
         
@@ -700,10 +708,33 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                 },
             )),
             
-            /* <Progress> & <UploadError> */
-            (!!uploadingImage && <>
-                {/* <Progress> */}
-                {!isError && React.cloneElement<ProgressProps<Element>>(progressComponent,
+            /* <Title> + <Progress> + <UploadError> */
+            (!!uploadingImage && React.cloneElement<React.HTMLAttributes<HTMLElement>>(mediaGroupComponentInner,
+                // props:
+                {
+                    // classes:
+                    className : mediaGroupComponentInner.props.className ?? 'mediaGroupInner',
+                },
+                
+                
+                
+                // children:
+                /* <Title> */
+                (!isError && !!titleComponent && React.cloneElement<Pick<React.HTMLAttributes<Element>, 'className'>>(titleComponent,
+                    // props:
+                    {
+                        // classes:
+                        className : titleComponent.props.className ?? 'uploadingImageTitle',
+                    },
+                    
+                    
+                    
+                    // children:
+                    uploadingImageTitle,
+                )),
+                
+                /* <Progress> */
+                (!isError && React.cloneElement<ProgressProps<Element>>(progressComponent,
                     // props:
                     {
                         // classes:
@@ -738,10 +769,10 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                             percentage : uploadingImage.percentage,
                         }),
                     ),
-                )}
+                )),
                 
-                {/* <UploadError> */}
-                {isError && React.cloneElement<React.HTMLAttributes<HTMLElement>>(uploadErrorComponent,
+                /* <UploadError> */
+                (isError && React.cloneElement<React.HTMLAttributes<HTMLElement>>(uploadErrorComponent,
                     // props:
                     {
                         // classes:
@@ -751,9 +782,22 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                     
                     
                     // children:
+                    /* <Title> */
+                    (!!titleComponent && React.cloneElement<Pick<React.HTMLAttributes<Element>, 'className'>>(titleComponent,
+                        // props:
+                        {
+                            // classes:
+                            className : titleComponent.props.className ?? 'uploadingImageErrorTitle',
+                        },
+                        
+                        
+                        
+                        // children:
+                        uploadingImageErrorTitle,
+                    )),
                     uploadErrorComponent.props.children ?? uploadingImage.uploadError
-                )}
-            </>),
+                )),
+            )),
         ),
         
         React.cloneElement<React.HTMLAttributes<HTMLElement>>(actionGroupComponent,

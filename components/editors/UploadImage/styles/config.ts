@@ -67,12 +67,10 @@ export const [uploadImages, uploadImageValues, cssUploadImageConfig] = cssConfig
         
         
         // uploadProgresses:
-        uploadProgressMargin : spacers.default          as CssKnownProps['margin'    ],
         
         
         
         // uploadErrors:
-        uploadErrorMargin    : spacers.default          as CssKnownProps['margin'    ],
         
         
         
