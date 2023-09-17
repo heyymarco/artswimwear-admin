@@ -1,8 +1,6 @@
 // elements:
 
 export const galleryEditorMediaGroupElm          = '.mediaGroup'
-export const galleryEditorOverlayGroupElm        = '.overlayGroup'
-export const galleryEditorOverlayGroupInnerElm   = '.overlayGroupInner'
 export const galleryEditorImageElm               = '.image'
 
 export const galleryEditorUploadGroupElm         = '.uploadGroup'

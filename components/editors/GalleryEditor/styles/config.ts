@@ -154,9 +154,9 @@ export const [galleryEditors, galleryEditorValues, cssGalleryEditorConfig] = css
         
         
         
-        // panels:
-        panelJustifyItems        : 'stretch'                        as CssKnownProps['justifyItems'     ],
-        panelAlignItems          : 'stretch'                        as CssKnownProps['alignItems'       ],
+        // // panels:
+        // panelJustifyItems        : 'stretch'                        as CssKnownProps['justifyItems'     ],
+        // panelAlignItems          : 'stretch'                        as CssKnownProps['alignItems'       ],
         
         
         
@@ -175,10 +175,6 @@ export const [galleryEditors, galleryEditorValues, cssGalleryEditorConfig] = css
         
         
         // uploadErrors:
-        
-        
-        
-        // actions:
     };
     
     

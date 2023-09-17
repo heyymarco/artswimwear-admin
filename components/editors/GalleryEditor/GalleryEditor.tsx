@@ -56,9 +56,9 @@ import {
 }                           from './styles/config'
 import {
     // react components:
-    OverlayGroupProps,
-    OverlayGroup,
-}                           from './OverlayGroup'
+    ElementWithActionsProps,
+    ElementWithActions,
+}                           from './ElementWithActions'
 import {
     // react components:
     ElementWithDraggable,
@@ -135,7 +135,7 @@ export interface GalleryEditorProps<TElement extends Element = HTMLElement, TVal
         >,
         
         // sub components:
-        Omit<OverlayGroupProps,
+        Omit<ElementWithActionsProps,
             // bases
             |keyof React.HTMLAttributes<HTMLElement>
             
@@ -685,7 +685,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         // children:
         bodyComponent.props.children ?? <>
-            {/* <ElementWithDraggable> <OverlayGroup> <Image> */}
+            {/* <ElementWithDraggable> <ElementWithActions> <Image> */}
             {draftImages.map((imageData, itemIndex) =>
                 <ElementWithDraggable
                     // identifiers:
@@ -714,74 +714,73 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                     
                     // components:
                     elementComponent={
-                        <OverlayGroup
+                        <ElementWithActions
                             // positions:
                             itemIndex={itemIndex}
                             
                             
                             
-                            // classes:
-                            className={'mediaGroup overlayGroup ' + ((): string|undefined => {
-                                // dropped item:
-                                if (itemIndex === droppedItemIndex) return 'dropped';
-                                
-                                
-                                
-                                // shifted item(s):
-                                if ((draggedItemIndex !== -1) && (droppedItemIndex !== -1)) {
-                                    if (draggedItemIndex < droppedItemIndex) {
-                                        if ((itemIndex >= draggedItemIndex) && (itemIndex <= droppedItemIndex)) return 'shiftedDown';
-                                    }
-                                    else if (draggedItemIndex > droppedItemIndex) {
-                                        if ((itemIndex <= draggedItemIndex) && (itemIndex >= droppedItemIndex)) return 'shiftedUp';
-                                    } // if
-                                } // if
-                                
-                                
-                                
-                                // dragged item:
-                                if ((draggedItemIndex !== -1) && (itemIndex === draggedItemIndex)) return 'dragged';
-                                
-                                
-                                
-                                // dropping target:
-                                if ((draggedItemIndex !== -1) && (itemIndex !== draggedItemIndex)) return 'dropTarget';
-                                
-                                
-                                
-                                // unmoved item(s):
-                                return '';
-                            })()}
+                            // actions:
+                            deleteButtonTitle={deleteButtonTitle}
+                            onDeleteImage={handleDeleteImage}
                             
                             
                             
-                            {...{
-                                // actions:
-                                deleteButtonTitle,
-                                onDeleteImage : handleDeleteImage,
-                                
-                                
-                                
-                                // components:
-                                deleteButtonComponent,
-                            }}
-                        >
-                            {/* <Image> */}
-                            {React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
-                                // props:
-                                {
+                            // components:
+                            elementComponent={
+                                <div
                                     // classes:
-                                    className : imageComponent.props.className ?? 'image',
-                                    
-                                    
-                                    
-                                    // images:
-                                    alt       : imageComponent.props.alt   ??  resolveAlt(imageData),
-                                    src       : imageComponent.props.src   ?? (resolveSrc(imageData, onResolveImageUrl) || undefined), // convert empty string to undefined
-                                    sizes     : imageComponent.props.sizes ?? `calc((${galleryEditors.itemMinColumnWidth} * 2) + ${galleryEditors.gapInline})`,
-                                },
-                            )}
-                        </OverlayGroup>
+                                    className={'mediaGroup ' + ((): string|undefined => {
+                                        // dropped item:
+                                        if (itemIndex === droppedItemIndex) return 'dropped';
+                                        
+                                        
+                                        
+                                        // shifted item(s):
+                                        if ((draggedItemIndex !== -1) && (droppedItemIndex !== -1)) {
+                                            if (draggedItemIndex < droppedItemIndex) {
+                                                if ((itemIndex >= draggedItemIndex) && (itemIndex <= droppedItemIndex)) return 'shiftedDown';
+                                            }
+                                            else if (draggedItemIndex > droppedItemIndex) {
+                                                if ((itemIndex <= draggedItemIndex) && (itemIndex >= droppedItemIndex)) return 'shiftedUp';
+                                            } // if
+                                        } // if
+                                        
+                                        
+                                        
+                                        // dragged item:
+                                        if ((draggedItemIndex !== -1) && (itemIndex === draggedItemIndex)) return 'dragged';
+                                        
+                                        
+                                        
+                                        // dropping target:
+                                        if ((draggedItemIndex !== -1) && (itemIndex !== draggedItemIndex)) return 'dropTarget';
+                                        
+                                        
+                                        
+                                        // unmoved item(s):
+                                        return '';
+                                    })()}
+                                >
+                                    {/* <Image> */}
+                                    {React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
+                                        // props:
+                                        {
+                                            // classes:
+                                            className : imageComponent.props.className ?? 'image',
+                                            
+                                            
+                                            
+                                            // images:
+                                            alt       : imageComponent.props.alt   ??  resolveAlt(imageData),
+                                            src       : imageComponent.props.src   ?? (resolveSrc(imageData, onResolveImageUrl) || undefined), // convert empty string to undefined
+                                            sizes     : imageComponent.props.sizes ?? `calc((${galleryEditors.itemMinColumnWidth} * 2) + ${galleryEditors.gapInline})`,
+                                        },
+                                    )}
+                                </div>
+                            }
+                            deleteButtonComponent={deleteButtonComponent}
+                        />
                     }
                 />
             )}

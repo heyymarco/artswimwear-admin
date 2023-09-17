@@ -14,6 +14,7 @@ import {
     // react helper hooks:
     useEvent,
     useMergeEvents,
+    useMergeClasses,
     
     
     
@@ -34,19 +35,20 @@ import {
 
 // reusable-ui components:
 import {
-    // react components:
-    ButtonProps,
+    // base-components:
+    GenericProps,
     
+    
+    
+    // simple-components:
+    ButtonProps,
     ButtonIcon,
 }                           from '@reusable-ui/components'
 
 
 
 // react components:
-export interface OverlayGroupProps
-    extends
-        // bases:
-        React.HTMLAttributes<HTMLElement>
+export interface ElementWithActionsProps
 {
     // positions:
     itemIndex              : number
@@ -60,14 +62,15 @@ export interface OverlayGroupProps
     
     
     // components:
+    /**
+     * Required.  
+     *   
+     * The underlying `<Element>` to be actionable.
+     */
+    elementComponent       : React.ReactComponentElement<any, GenericProps<Element>>
     deleteButtonComponent ?: React.ReactComponentElement<any, ButtonProps>
-    
-    
-    
-    // children:
-    children               : React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
 }
-const OverlayGroup = (props: OverlayGroupProps): JSX.Element|null => {
+const ElementWithActions = (props: ElementWithActionsProps): JSX.Element|null => {
     // rest props:
     const {
         // positions:
@@ -82,13 +85,9 @@ const OverlayGroup = (props: OverlayGroupProps): JSX.Element|null => {
         
         
         // components:
-        children,
+        elementComponent,
         deleteButtonComponent = (<ButtonIcon icon='clear' size='md' theme='danger' buttonStyle='link' /> as React.ReactComponentElement<any, ButtonProps>),
-    ...restDivProps} = props;
-    
-    
-    
-    React.Children.only(children);
+    ...restGenericProps} = props;
     
     
     
@@ -139,55 +138,91 @@ const OverlayGroup = (props: OverlayGroupProps): JSX.Element|null => {
     
     
     
+    // classes:
+    const stateClasses = useMergeClasses(
+        // preserves the original `stateClasses` from `elementComponent`:
+        elementComponent.props.stateClasses,
+        
+        
+        
+        // states:
+        disableableState.class,
+    );
+    
+    
+    
+    // handlers:
+    const handleAnimationStart = useMergeEvents(
+        // preserves the original `onAnimationStart` from `elementComponent`:
+        elementComponent.props.onAnimationStart,
+        
+        
+        
+        // states:
+        disableableState.handleAnimationStart,
+    );
+    const handleAnimationEnd   = useMergeEvents(
+        // preserves the original `onAnimationEnd` from `elementComponent`:
+        elementComponent.props.onAnimationEnd,
+        
+        
+        
+        // states:
+        disableableState.handleAnimationEnd,
+    );
+    
+    
+    
     // jsx:
-    return (
-        <div
+    /* <Element> */
+    return React.cloneElement<GenericProps<Element>>(elementComponent,
+        // props:
+        {
             // other props:
-            {...restDivProps}
+            ...restGenericProps,
+            ...elementComponent.props, // overwrites restGenericProps (if any conflics)
             
             
             
             // classes:
-            className={`${props.className} ${disableableState.class || ''}`}
+            stateClasses     : stateClasses,
             
             
             
             // handlers:
-            onAnimationStart = {disableableState.handleAnimationStart}
-            onAnimationEnd   = {disableableState.handleAnimationEnd  }
-        >
-            <div
-                // classes:
-                className='overlayGroupInner'
-            >
-                <AccessibilityProvider enabled={isEnabled}>
-                    {children}
+            onAnimationStart : handleAnimationStart,
+            onAnimationEnd   : handleAnimationEnd,
+        },
+        
+        
+        
+        // children:
+        <AccessibilityProvider enabled={isEnabled}>
+            {/* <Children> */}
+            {elementComponent.props.children}
+            
+            {/* <DeleteButton> */}
+            {React.cloneElement<ButtonProps>(deleteButtonComponent,
+                // props:
+                {
+                    // classes:
+                    className : deleteButtonComponent.props.className ?? 'deleteButton',
                     
-                    {/* <DeleteButton> */}
-                    {React.cloneElement<ButtonProps>(deleteButtonComponent,
-                        // props:
-                        {
-                            // classes:
-                            className : deleteButtonComponent.props.className ?? 'deleteButton',
-                            
-                            
-                            
-                            // accessibilities:
-                            title     : deleteButtonComponent.props.title ?? deleteButtonTitle,
-                            
-                            
-                            
-                            // handlers:
-                            onClick   : deleteButtonHandleClick,
-                        },
-                    )}
-                </AccessibilityProvider>
-            </div>
-        </div>
-    )
-    /* <Children> */
+                    
+                    
+                    // accessibilities:
+                    title     : deleteButtonComponent.props.title ?? deleteButtonTitle,
+                    
+                    
+                    
+                    // handlers:
+                    onClick   : deleteButtonHandleClick,
+                },
+            )}
+        </AccessibilityProvider>
+    );
 };
 export {
-    OverlayGroup,
-    OverlayGroup as default,
+    ElementWithActions,
+    ElementWithActions as default,
 }
