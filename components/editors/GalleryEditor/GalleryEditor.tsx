@@ -30,6 +30,7 @@ import {
 // reusable-ui components:
 import {
     // base-components:
+    GenericProps,
     Generic,
     BasicProps,
     Basic,
@@ -179,24 +180,25 @@ export interface GalleryEditorProps<TElement extends Element = HTMLElement, TVal
         >
 {
     // actions:
-    onDeleteImage      ?: (args: { imageData: TValue }) => Promise<boolean|Error>
+    onDeleteImage       ?: (args: { imageData: TValue }) => Promise<boolean|Error>
     
     
     
     // upload activities:
-    onUploadImage      ?: (args: { imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal }) => Promise<TValue|Error|null>
+    onUploadImage       ?: (args: { imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal }) => Promise<TValue|Error|null>
     
     
     
     // components:
-    bodyComponent      ?: React.ReactComponentElement<any, BasicProps<TElement>>
+    bodyComponent       ?: React.ReactComponentElement<any, BasicProps<TElement>>
     
-    imageComponent     ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
+    mediaGroupComponent ?: React.ReactComponentElement<any, GenericProps<HTMLElement>>
+    imageComponent      ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
     
     
     
     // handlers:
-    onResolveImageUrl  ?: (imageData: TValue) => URL|string
+    onResolveImageUrl   ?: (imageData: TValue) => URL|string
 }
 const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends ImageData = ImageData>(props: GalleryEditorProps<TElement, TValue>): JSX.Element|null => {
     // styles:
@@ -246,6 +248,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         titleComponent,
         
+        mediaGroupComponent    = (<Generic tag='div' /> as React.ReactComponentElement<any, GenericProps<HTMLElement>>),
         imageComponent         = (<img               /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
         
         deleteButtonComponent,
@@ -680,7 +683,6 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
             
             // variants:
             mild    : bodyComponent.props.mild ?? props.mild ?? true,
-            nude    : bodyComponent.props.nude ?? props.nude ?? true,
             
             
             
@@ -735,47 +737,49 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                             
                             // components:
                             elementComponent={
-                                <Generic
-                                    // semantics:
-                                    tag='div'
-                                    
-                                    
-                                    
-                                    // classes:
-                                    className={'mediaGroup ' + ((): string|undefined => {
-                                        // dropped item:
-                                        if (itemIndex === droppedItemIndex) return 'dropped';
-                                        
-                                        
-                                        
-                                        // shifted item(s):
-                                        if ((draggedItemIndex !== -1) && (droppedItemIndex !== -1)) {
-                                            if (draggedItemIndex < droppedItemIndex) {
-                                                if ((itemIndex >= draggedItemIndex) && (itemIndex <= droppedItemIndex)) return 'shiftedDown';
-                                            }
-                                            else if (draggedItemIndex > droppedItemIndex) {
-                                                if ((itemIndex <= draggedItemIndex) && (itemIndex >= droppedItemIndex)) return 'shiftedUp';
+                                /* <MediaGroup> */
+                                React.cloneElement<React.HTMLAttributes<HTMLElement>>(mediaGroupComponent,
+                                    // props:
+                                    {
+                                        // classes:
+                                        className : mediaGroupComponent.props.className ?? 'mediaGroup ' + ((): string|undefined => {
+                                            // dropped item:
+                                            if (itemIndex === droppedItemIndex) return 'dropped';
+                                            
+                                            
+                                            
+                                            // shifted item(s):
+                                            if ((draggedItemIndex !== -1) && (droppedItemIndex !== -1)) {
+                                                if (draggedItemIndex < droppedItemIndex) {
+                                                    if ((itemIndex >= draggedItemIndex) && (itemIndex <= droppedItemIndex)) return 'shiftedDown';
+                                                }
+                                                else if (draggedItemIndex > droppedItemIndex) {
+                                                    if ((itemIndex <= draggedItemIndex) && (itemIndex >= droppedItemIndex)) return 'shiftedUp';
+                                                } // if
                                             } // if
-                                        } // if
-                                        
-                                        
-                                        
-                                        // dragged item:
-                                        if ((draggedItemIndex !== -1) && (itemIndex === draggedItemIndex)) return 'dragged';
-                                        
-                                        
-                                        
-                                        // dropping target:
-                                        if ((draggedItemIndex !== -1) && (itemIndex !== draggedItemIndex)) return 'dropTarget';
-                                        
-                                        
-                                        
-                                        // unmoved item(s):
-                                        return '';
-                                    })()}
-                                >
-                                    {/* <Image> */}
-                                    {React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
+                                            
+                                            
+                                            
+                                            // dragged item:
+                                            if ((draggedItemIndex !== -1) && (itemIndex === draggedItemIndex)) return 'dragged';
+                                            
+                                            
+                                            
+                                            // dropping target:
+                                            if ((draggedItemIndex !== -1) && (itemIndex !== draggedItemIndex)) return 'dropTarget';
+                                            
+                                            
+                                            
+                                            // unmoved item(s):
+                                            return '';
+                                        })(),
+                                    },
+                                    
+                                    
+                                    
+                                    // children:
+                                    /* <Image> */
+                                    mediaGroupComponent.props.children ?? React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
                                         // props:
                                         {
                                             // classes:
@@ -788,8 +792,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                                             src       : imageComponent.props.src   ?? (resolveSrc(imageData, onResolveImageUrl) || undefined), // convert empty string to undefined
                                             sizes     : imageComponent.props.sizes ?? `calc((${galleryEditors.itemMinColumnWidth} * 2) + ${galleryEditors.gapInline})`,
                                         },
-                                    )}
-                                </Generic>
+                                    ),
+                                )
                             }
                             deleteButtonComponent={deleteButtonComponent}
                         />
