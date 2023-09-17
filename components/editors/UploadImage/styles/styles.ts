@@ -41,11 +41,6 @@ import {
     
     
     
-    // padding (inner spacing) stuff of UI:
-    usesPadding,
-    
-    
-    
     // groups a list of UIs into a single UI:
     usesGroupable,
     
@@ -97,19 +92,23 @@ export const usesUploadImageLayout = () => {
     
     // capabilities:
     const {groupableRule, groupableVars} = usesGroupable({
-        orientationInlineSelector : null, // never
-        orientationBlockSelector  : '&',  // always
-        itemsSelector             : [uploadImagePreviewImageElm, uploadImageActionGroupElm],
+        orientationInlineSelector : null, // never, calculate the inner border radius manually
+        orientationBlockSelector  : null, // never, calculate the inner border radius manually
+        itemsSelector             : null, // never, calculate the inner border radius manually
     });
     
     // features:
-    const {borderRule    , borderVars    } = usesBorder();
-    const {animationRule , animationVars } = usesAnimation(uploadImages as any);
-    const {paddingRule   , paddingVars   } = usesPadding();
+    const {               borderVars   } = usesBorder();
+    const {animationRule, animationVars} = usesAnimation(uploadImages as any);
     
     
     
     return style({
+        // capabilities:
+        ...groupableRule(), // make a nicely rounded corners
+        
+        
+        
         // layouts:
         ...style({
             // layouts:
@@ -164,24 +163,26 @@ export const usesUploadImageLayout = () => {
                     // positions:
                     gridArea : 'media',
                 }),
+                ...children([uploadImagePreviewImageElm, uploadImageImageElm, uploadImageMediaGroupInnerElm], {
+                    // borders:
+                    // clone <UploadImage>'s border stroke:
+                    border                 : borderVars.border,
+                    borderWidth            : groupableVars.borderWidth,
+                    
+                    // clone <UploadImage>'s border radius:
+                    borderStartStartRadius : groupableVars.borderStartStartRadius,
+                    borderStartEndRadius   : groupableVars.borderStartEndRadius,
+                    borderEndStartRadius   : groupableVars.borderEndStartRadius,
+                    borderEndEndRadius     : groupableVars.borderEndEndRadius,
+                    
+                    overflow               : 'hidden', // clip the children at the rounded corners
+                }),
                 ...children([uploadImagePreviewImageElm, uploadImageImageElm], {
                     // sizes:
                     justifySelf    : 'stretch', // stretch the self horizontally
                     alignSelf      : 'stretch', // stretch the self vertically
-                    minInlineSize  : 0,
-                    minBlockSize   : 0,
-                    
-                    
-                    
-                    // borders:
-                    border                 : borderVars.border,
-                 // borderRadius           : borderVars.borderRadius,
-                    borderStartStartRadius : borderVars.borderStartStartRadius,
-                    borderStartEndRadius   : borderVars.borderStartEndRadius,
-                    borderEndStartRadius   : borderVars.borderEndStartRadius,
-                    borderEndEndRadius     : borderVars.borderEndEndRadius,
-                    
-                    overflow               : 'hidden', // clip the children at the rounded corners
+                    minInlineSize  : 0,         // starts growing from 0px up to justifySelf
+                    minBlockSize   : 0,         // starts growing from 0px up to alignSelf
                 }),
                 ...children(uploadImageNoImageElm, {
                     ...children('::after', {
@@ -224,9 +225,9 @@ export const usesUploadImageLayout = () => {
                     // spacings:
                     gap           : spacers.default,
                     
-                 // padding       : paddingVars.padding,
-                    paddingInline : paddingVars.paddingInline,
-                    paddingBlock  : paddingVars.paddingBlock,
+                    // clone <UploadImage>'s padding:
+                    paddingInline : groupableVars.paddingInline,
+                    paddingBlock  : groupableVars.paddingBlock,
                     
                     
                     
