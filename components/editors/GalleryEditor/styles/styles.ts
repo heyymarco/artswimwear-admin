@@ -159,6 +159,13 @@ export const usesGalleryEditorLayout = () => {
                         marginInline  : negativePaddingInline, // cancel out parent's padding with negative margin
                         marginBlock   : negativePaddingBlock,  // cancel out parent's padding with negative margin
                     }),
+                    ...children([galleryEditorImageElm, galleryEditorPreviewImageElm], {
+                        // sizes:
+                        justifySelf    : 'stretch', // stretch the self horizontally
+                        alignSelf      : 'stretch', // stretch the self vertically
+                        minInlineSize  : 0,
+                        minBlockSize   : 0,
+                    }),
                     
                     
                     
@@ -305,15 +312,7 @@ export const usesGalleryEditorLayout = () => {
                     // children:
                     ...children(galleryEditorImageElm, {
                         // positions:
-                        gridArea  : '1/1/-1/-1',
-                        
-                        
-                        
-                        // sizes:
-                        justifySelf    : 'stretch', // stretch the self horizontally
-                        alignSelf      : 'stretch', // stretch the self vertically
-                        minInlineSize  : 0,
-                        minBlockSize   : 0,
+                        gridArea : '1/1/-1/-1',
                         
                         
                         
@@ -345,15 +344,7 @@ export const usesGalleryEditorLayout = () => {
                 // children:
                 ...children(galleryEditorPreviewImageElm, {
                     // positions:
-                    gridArea       : 'media',
-                    
-                    
-                    
-                    // sizes:
-                    justifySelf    : 'stretch', // stretch the self horizontally
-                    alignSelf      : 'stretch', // stretch the self vertically
-                    minInlineSize  : 0,
-                    minBlockSize   : 0,
+                    gridArea : 'media',
                     
                     
                     
