@@ -22,14 +22,16 @@ import {
     useIsomorphicLayoutEffect,
     useEvent,
     useMergeEvents,
+    useMergeClasses,
     useMountedFlag,
     useScheduleTriggerEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
 import {
-    // react components:
-    ContentProps,
+    // base-components:
+    BasicProps,
+    Basic,
     Content,
     
     
@@ -122,7 +124,7 @@ export interface GalleryEditorProps<TElement extends Element = HTMLElement, TVal
             |'value'
             |'onChange'
         >,
-        Omit<ContentProps<TElement>,
+        Omit<BasicProps<TElement>,
             // values:
             |'defaultValue' // not supported
             |'value'        // not supported
@@ -180,6 +182,8 @@ export interface GalleryEditorProps<TElement extends Element = HTMLElement, TVal
     
     
     // components:
+    bodyComponent      ?: React.ReactComponentElement<any, BasicProps<TElement>>
+    
     imageComponent     ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
     
     
@@ -231,15 +235,17 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         
         // components:
+        bodyComponent          = (<Content<TElement> /> as React.ReactComponentElement<any, BasicProps<TElement>>),
+        
         titleComponent,
         
-        imageComponent = (<img /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
+        imageComponent         = (<img               /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
         
         deleteButtonComponent,
         
         selectButtonComponent,
         
-        previewImageComponent = imageComponent,
+        previewImageComponent  = imageComponent,
         
         actionGroupComponent,
         progressComponent,
@@ -253,7 +259,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         // handlers:
         onResolveUrl,
-    ...restContentProps} = props;
+    ...restBasicProps} = props;
     
     
     
@@ -637,22 +643,49 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
     
     
     
+    // classes:
+    const classes = useMergeClasses(
+        // preserves the original `classes` from `bodyComponent`:
+        bodyComponent.props.classes,
+        
+        
+        
+        // preserves the original `classes` from `props`:
+        props.classes,
+        
+        
+        
+        // classes:
+        styleSheet.main,
+    );
+    
+    
+    
     // jsx:
-    return (
-        <Content<TElement>
+    return React.cloneElement<BasicProps<TElement>>(bodyComponent,
+        // props:
+        {
             // other props:
-            {...restContentProps}
+            ...restBasicProps,
+            ...bodyComponent.props, // overwrites restBasicProps (if any conflics)
             
             
             
             // variants:
-            nude={props.nude ?? true}
+            mild    : bodyComponent.props.mild ?? props.mild ?? true,
+            nude    : bodyComponent.props.nude ?? props.nude ?? true,
             
             
             
             // classes:
-            mainClass={props.mainClass ?? styleSheet.main}
-        >
+            classes : classes,
+        },
+        
+        
+        
+        // children:
+        bodyComponent.props.children ?? <>
+            {/* <ElementWithDraggable> <ActionsContainer> <Image> */}
             {draftImages.map((imageData, itemIndex) =>
                 <ElementWithDraggable
                     // identifiers:
@@ -688,7 +721,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                             
                             
                             // classes:
-                            className={'image actionsContainer ' + ((): string|undefined => {
+                            className={'mediaGroup actionsContainer ' + ((): string|undefined => {
                                 // dropped item:
                                 if (itemIndex === droppedItemIndex) return 'dropped';
                                 
@@ -737,7 +770,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                                 // props:
                                 {
                                     // classes:
-                                    className : 'content',
+                                    className : imageComponent.props.className ?? 'image',
                                     
                                     
                                     
@@ -751,6 +784,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                     }
                 />
             )}
+            
+            {/* <UploadingImage> */}
             {uploadingImages.map(({imageFile, percentage, uploadError, onRetry, onCancel}, uploadingItemIndex) =>
                 <UploadingImage
                     // identifiers:
@@ -790,6 +825,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                     }}
                 />
             )}
+            
             <UploadImage
                 {...{
                     // upload images:
@@ -813,7 +849,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                     selectButtonComponent,
                 }}
             />
-        </Content>
+        </>,
     );
 };
 export {

@@ -50,22 +50,13 @@ import {
     usesDisableable,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
-// reusable-ui components:
-import {
-    // styles:
-    onContentStylesChange,
-    usesContentLayout,
-    usesContentVariants,
-}                           from '@reusable-ui/content'         // a base component
-
 // internals:
 import {
     // elements:
     galleryEditorImageElm,
     actionsContainerElm,
     actionsPanelElm,
-    actionDeleteElm,
-    contentElm,
+    galleryEditorDeleteButtonElm,
     uploadingPanelElm,
     galleryEditorPreviewImageElm,
     uploadPanelElm,
@@ -79,6 +70,7 @@ import {
     uploadImageTitleElm,
     uploadingImageTitleElm,
     uploadingImageErrorTitleElm,
+    galleryEditorMediaGroupElm,
 }                           from './elements'
 import {
     // configs:
@@ -89,7 +81,7 @@ import {
 
 
 // styles:
-export const onGalleryEditorStylesChange = watchChanges(onContentStylesChange, cssGalleryEditorConfig.onChange);
+export const onGalleryEditorStylesChange = watchChanges(cssGalleryEditorConfig.onChange);
 
 export const usesGalleryEditorLayout = () => {
     // dependencies:
@@ -116,7 +108,6 @@ export const usesGalleryEditorLayout = () => {
     
     return style({
         // layouts:
-        ...usesContentLayout(),
         ...style({
             // layouts:
             display             : 'grid',        // use css block grid for layouting, the core of our GalleryEditor layout
@@ -132,7 +123,7 @@ export const usesGalleryEditorLayout = () => {
             
             
             // children:
-            ...children([galleryEditorImageElm, uploadingPanelElm, uploadPanelElm], {
+            ...children([galleryEditorMediaGroupElm, uploadingPanelElm, uploadPanelElm], {
                 // customize:
                 ...usesCssProps(usesPrefixedProps(galleryEditors, 'item')), // apply config's cssProps starting with item***
             }),
@@ -247,7 +238,7 @@ export const usesGalleryEditorLayout = () => {
                     }),
                 }),
             }),
-            ...children(galleryEditorImageElm, {
+            ...children(galleryEditorMediaGroupElm, {
                 // accessibilities:
                 cursor     : 'move',
                 
@@ -301,19 +292,31 @@ export const usesGalleryEditorLayout = () => {
                             
                             
                             // children:
-                            ...children(contentElm, {
+                            ...children(galleryEditorImageElm, {
                                 // positions:
                                 gridArea  : '1/1/-1/-1',
                                 
                                 
                                 
                                 // sizes:
-                                maxWidth  : '100%',
-                                maxHeight : '100%',
+                                justifySelf    : 'stretch', // stretch the self horizontally
+                                alignSelf      : 'stretch', // stretch the self vertically
+                                minInlineSize  : 0,
+                                minBlockSize   : 0,
+                                
+                                
+                                
+                                // customize:
+                                ...usesCssProps(usesPrefixedProps(galleryEditors, 'image')), // apply config's cssProps starting with image***
                             }),
-                            ...children(actionDeleteElm, {
+                            ...children(galleryEditorDeleteButtonElm, {
                                 // positions:
                                 gridArea  : 'delete',
+                                
+                                
+                                
+                                // customize:
+                                ...usesCssProps(usesPrefixedProps(galleryEditors, 'deleteButton')), // apply config's cssProps starting with deleteButton***
                             }),
                             
                             
@@ -337,7 +340,7 @@ export const usesGalleryEditorLayout = () => {
                 
                 
                 // customize:
-                ...usesCssProps(usesPrefixedProps(galleryEditors, 'image')), // apply config's cssProps starting with image***
+                ...usesCssProps(usesPrefixedProps(galleryEditors, 'mediaGroup')), // apply config's cssProps starting with mediaGroup***
             }),
             ...children(uploadingPanelElm, {
                 // children:
@@ -394,7 +397,6 @@ export const usesGalleryEditorVariants = () => {
     
     return style({
         // variants:
-        ...usesContentVariants(),
         ...resizableRule(),
     });
 };
@@ -409,7 +411,7 @@ export const usesGalleryEditorStates = () => {
     
     return style({
         // children:
-        ...children(galleryEditorImageElm, {
+        ...children(galleryEditorMediaGroupElm, {
             // states:
             ...states([
                 rule('.dragged', {

@@ -54,7 +54,7 @@ export interface ActionsContainerProps
     
     
     // actions:
-    actionDelete          ?: string
+    deleteButtonTitle     ?: string
     onActionDelete        ?: (args: { itemIndex: number }) => Promise<void>
     
     
@@ -76,7 +76,7 @@ const ActionsContainer = (props: ActionsContainerProps): JSX.Element|null => {
         
         
         // actions:
-        actionDelete = 'delete',
+        deleteButtonTitle = 'delete',
         onActionDelete,
         
         
@@ -162,16 +162,18 @@ const ActionsContainer = (props: ActionsContainerProps): JSX.Element|null => {
             >
                 <AccessibilityProvider enabled={isEnabled}>
                     {children}
+                    
+                    {/* <DeleteButton> */}
                     {React.cloneElement<ButtonProps>(deleteButtonComponent,
                         // props:
                         {
                             // classes:
-                            className : 'actionDelete',
+                            className : deleteButtonComponent.props.className ?? 'deleteButton',
                             
                             
                             
                             // accessibilities:
-                            title     : actionDelete,
+                            title     : deleteButtonComponent.props.title ?? deleteButtonTitle,
                             
                             
                             

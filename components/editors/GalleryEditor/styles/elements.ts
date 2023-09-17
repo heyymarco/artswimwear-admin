@@ -2,14 +2,13 @@
 
 export const actionsContainerElm            = '.actionsContainer'
 export const actionsPanelElm                = '.actionsPanel'
-export const actionDeleteElm                = '.actionDelete'
-
-export const contentElm                     = '.content'
+export const galleryEditorDeleteButtonElm   = '.deleteButton'
 
 export const uploadImageTitleElm            = '.uploadImageTitle'
 export const uploadingImageTitleElm         = '.uploadingImageTitle'
 export const uploadingImageErrorTitleElm    = '.uploadingImageErrorTitle'
 
+export const galleryEditorMediaGroupElm     = '.mediaGroup'
 export const uploadingPanelElm              = '.uploadingPanel'
 export const uploadPanelElm                 = '.uploadPanel'
 

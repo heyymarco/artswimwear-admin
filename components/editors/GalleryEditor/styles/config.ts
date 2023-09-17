@@ -116,47 +116,57 @@ export const [galleryEditors, galleryEditorValues, cssGalleryEditorConfig] = css
         // animations:
         defaultAnimationDuration : basics.defaultAnimationDuration  as CssKnownProps['animationDuration'],
         
-        filterDisable        : indicators.filterDisable             as CssKnownProps['filter'           ],
-        animEnable           : indicators.animEnable                as CssKnownProps['animation'        ],
-        animDisable          : indicators.animDisable               as CssKnownProps['animation'        ],
+        filterDisable            : indicators.filterDisable         as CssKnownProps['filter'           ],
+        animEnable               : indicators.animEnable            as CssKnownProps['animation'        ],
+        animDisable              : indicators.animDisable           as CssKnownProps['animation'        ],
         
         
         
         // spacings:
-        gapInlineSm          : spacers.xs                           as CssKnownProps['gapInline'        ],
-        gapBlockSm           : spacers.xs                           as CssKnownProps['gapBlock'         ],
-        gapInlineMd          : spacers.sm                           as CssKnownProps['gapInline'        ],
-        gapBlockMd           : spacers.sm                           as CssKnownProps['gapBlock'         ],
-        gapInlineLg          : spacers.md                           as CssKnownProps['gapInline'        ],
-        gapBlockLg           : spacers.md                           as CssKnownProps['gapBlock'         ],
+        gapInlineSm              : spacers.xs                       as CssKnownProps['gapInline'        ],
+        gapBlockSm               : spacers.xs                       as CssKnownProps['gapBlock'         ],
+        gapInlineMd              : spacers.sm                       as CssKnownProps['gapInline'        ],
+        gapBlockMd               : spacers.sm                       as CssKnownProps['gapBlock'         ],
+        gapInlineLg              : spacers.md                       as CssKnownProps['gapInline'        ],
+        gapBlockLg               : spacers.md                       as CssKnownProps['gapBlock'         ],
         
         
         
         // items:
-        itemMinColumnWidthSm : 'calc(3 * 40px)'                     as CssKnownProps['columnWidth'      ],
-        itemMinColumnWidthMd : 'calc(5 * 40px)'                     as CssKnownProps['columnWidth'      ],
-        itemMinColumnWidthLg : 'calc(8 * 40px)'                     as CssKnownProps['columnWidth'      ],
+        itemMinColumnWidthSm     : 'calc(3 * 40px)'                 as CssKnownProps['columnWidth'      ],
+        itemMinColumnWidthMd     : 'calc(5 * 40px)'                 as CssKnownProps['columnWidth'      ],
+        itemMinColumnWidthLg     : 'calc(8 * 40px)'                 as CssKnownProps['columnWidth'      ],
         
-        itemAspectRatio      : '1/1'                                as CssKnownProps['aspectRatio'      ],
+        itemAspectRatio          : '1/1'                            as CssKnownProps['aspectRatio'      ],
         
         
         // images:
+        imageObjectFit           : 'cover'                          as CssKnownProps['objectFit'        ],
+        
+        
+        
+        // previewImages:
+        previewImageObjectFit    : 'cover'                          as CssKnownProps['objectFit'        ],
+        previewImageFilter       : [[
+            'opacity(0.5)',
+            'contrast(0.8)',
+        ]]                                                          as CssKnownProps['filter'           ],
         
         
         
         // panels:
-        panelJustifyItems    : 'stretch'                            as CssKnownProps['justifyItems'     ],
-        panelAlignItems      : 'stretch'                            as CssKnownProps['alignItems'       ],
+        panelJustifyItems        : 'stretch'                        as CssKnownProps['justifyItems'     ],
+        panelAlignItems          : 'stretch'                        as CssKnownProps['alignItems'       ],
         
         
         
         // uploads:
-        uploadBorderStyle    : 'dashed'                             as CssKnownProps['borderStyle'      ],
+        uploadBorderStyle        : 'dashed'                         as CssKnownProps['borderStyle'      ],
         
         
         
         // uploadings:
-        uploadingBorderStyle : 'dashed'                             as CssKnownProps['borderStyle'      ],
+        uploadingBorderStyle     : 'dashed'                         as CssKnownProps['borderStyle'      ],
         
         
         
@@ -165,14 +175,6 @@ export const [galleryEditors, galleryEditorValues, cssGalleryEditorConfig] = css
         
         
         // uploadErrors:
-        
-        
-        
-        // previewImages:
-        previewImageFilter   : [[
-            'opacity(50%)',
-            'contrast(0.8)',
-        ]]                                                          as CssKnownProps['filter'           ],
         
         
         
@@ -187,22 +189,22 @@ export const [galleryEditors, galleryEditorValues, cssGalleryEditorConfig] = css
         ...keyframesDraggedRule,
         ...keyframesDroppedRule,
         ...keyframesDropTargetRule,
-        animDragged          : [
+        animDragged              : [
             [bases.defaultAnimationDuration, 'linear'  , 'none', 'alternate', 'infinite', keyframesDragged          ],
         ]                                                           as CssKnownProps['animation'        ],
-        animDropped          : [
+        animDropped              : [
             [bases.defaultAnimationDuration, 'linear'  , 'none', 'alternate', 'infinite', keyframesDropped          ],
         ]                                                           as CssKnownProps['animation'        ],
-        animDropTarget       : [
+        animDropTarget           : [
             [bases.defaultAnimationDuration, 'linear'  , 'none', 'alternate', 'infinite', keyframesDropTarget       ],
         ]                                                           as CssKnownProps['animation'        ],
         
         ...keyframesShiftedUpRule,
         ...keyframesShiftedDownRule,
-        animShiftedUp        : [
+        animShiftedUp            : [
             [bases.defaultAnimationDuration, 'ease-out', 'none', 'alternate', 'infinite', keyframesShiftedUp        ],
         ]                                                           as CssKnownProps['animation'        ],
-        animShiftedDown      : [
+        animShiftedDown          : [
             [bases.defaultAnimationDuration, 'ease-out', 'none', 'alternate', 'infinite', keyframesShiftedDown      ],
         ]                                                           as CssKnownProps['animation'        ],
         
@@ -210,7 +212,7 @@ export const [galleryEditors, galleryEditorValues, cssGalleryEditorConfig] = css
         
         // uploads:
         ...uploadKeyframesDropTargetRule,
-        uploadAnimDropTarget : [
+        uploadAnimDropTarget     : [
             [bases.defaultAnimationDuration, 'linear'  , 'none', 'alternate', 'infinite', uploadKeyframesDropTarget ],
         ]                                                           as CssKnownProps['animation'        ],
     };
@@ -219,13 +221,13 @@ export const [galleryEditors, galleryEditorValues, cssGalleryEditorConfig] = css
     
     const defaults = {
         // spacings:
-        gapInline            : bases.gapInlineMd                    as CssKnownProps['gapInline'        ],
-        gapBlock             : bases.gapBlockMd                     as CssKnownProps['gapBlock'         ],
+        gapInline                : bases.gapInlineMd                as CssKnownProps['gapInline'        ],
+        gapBlock                 : bases.gapBlockMd                 as CssKnownProps['gapBlock'         ],
         
         
         
         // items:
-        itemMinColumnWidth   : bases.itemMinColumnWidthMd           as CssKnownProps['columnWidth'      ],
+        itemMinColumnWidth       : bases.itemMinColumnWidthMd       as CssKnownProps['columnWidth'      ],
     };
     
     
