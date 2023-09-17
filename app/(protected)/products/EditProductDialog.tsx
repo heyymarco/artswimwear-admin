@@ -459,7 +459,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             
                             
                             
-                            // upload/uploading activities:
+                            // upload activities:
                             onUploadImage={async ({ imageFile, reportProgress, abortSignal }) => {
                                 const formData = new FormData();
                                 formData.append('image' , imageFile);

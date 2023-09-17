@@ -51,13 +51,13 @@ export interface UploadingImageProps
     
     
     
-    // uploading activities:
+    // upload activities:
     uploadingImageFile          : File
     uploadingImagePercentage    : number|null
     uploadingImageErrorMessage  : React.ReactNode
     onUploadImageProgress      ?: (args: { imageFile: File, percentage: number|null }) => string
-    onUploadingImageRetry       : () => void
-    onUploadingImageCancel      : () => void
+    onUploadImageRetry          : () => void
+    onUploadImageCancel         : () => void
     
     
     
@@ -86,13 +86,13 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
         
         
         
-        // uploading activities:
+        // upload activities:
         uploadingImageFile,
         uploadingImagePercentage,
         uploadingImageErrorMessage,
         onUploadImageProgress       = ({ percentage }) => '',
-        onUploadingImageRetry,
-        onUploadingImageCancel,
+        onUploadImageRetry,
+        onUploadImageCancel,
         
         
         
@@ -143,7 +143,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
     
     // handlers:
     const retryButtonHandleClickInternal  = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
-        onUploadingImageRetry();
+        onUploadImageRetry();
     });
     const retryButtonHandleClick          = useMergeEvents(
         // preserves the original `onClick` from `retryButtonComponent`:
@@ -156,7 +156,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
     );
     
     const cancelButtonHandleClickInternal = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
-        onUploadingImageCancel();
+        onUploadImageCancel();
     });
     const cancelButtonHandleClick         = useMergeEvents(
         // preserves the original `onClick` from `cancelButtonComponent`:

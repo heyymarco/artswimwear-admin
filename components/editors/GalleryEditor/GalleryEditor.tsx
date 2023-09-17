@@ -158,12 +158,12 @@ export interface GalleryEditorProps<TElement extends Element = HTMLElement, TVal
             |'onUploadImage'              // enhanced with return Promise<TValue>
         >,
         Omit<UploadingImageProps,
-            // uploading activities:
+            // upload activities:
             |'uploadingImageFile'         // already handled internally
             |'uploadingImagePercentage'   // already handled internally
             |'uploadingImageErrorMessage' // already handled internally
-            |'onUploadingImageRetry'      // already handled internally
-            |'onUploadingImageCancel'     // already handled internally
+            |'onUploadImageRetry'         // already handled internally
+            |'onUploadImageCancel'        // already handled internally
             
             
             
@@ -228,7 +228,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         
         
-        // upload/uploading activities:
+        // upload activities:
         onUploadImage,
         onUploadImageProgress,
         
@@ -802,13 +802,13 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                         
                         
                         
-                        // uploading activities:
+                        // upload activities:
                         uploadingImageFile         : imageFile,
                         uploadingImagePercentage   : percentage,
                         uploadingImageErrorMessage : uploadError,
                         onUploadImageProgress,
-                        onUploadingImageRetry      : onRetry,
-                        onUploadingImageCancel     : onCancel,
+                        onUploadImageRetry         : onRetry,
+                        onUploadImageCancel        : onCancel,
                         
                         
                         
