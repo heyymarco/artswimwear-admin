@@ -452,7 +452,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             
                             
                             // actions:
-                            onActionDelete={async ({ imageData }) => {
+                            onDeleteImage={async ({ imageData }) => {
                                 await axios.delete(`/api/upload?imageId=${encodeURIComponent(imageData)}`);
                                 return true;
                             }}
@@ -460,7 +460,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             
                             
                             // upload/uploading activities:
-                            onUploadImageStart={async ({ imageFile, reportProgress, abortSignal }) => {
+                            onUploadImage={async ({ imageFile, reportProgress, abortSignal }) => {
                                 const formData = new FormData();
                                 formData.append('image' , imageFile);
                                 formData.append('folder', name);

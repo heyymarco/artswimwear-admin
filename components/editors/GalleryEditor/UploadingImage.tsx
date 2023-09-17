@@ -44,47 +44,45 @@ import {
 export interface UploadingImageProps
 {
     // uploading images:
-    uploadingImageTitle       ?: React.ReactNode
-    uploadingImageErrorTitle  ?: React.ReactNode
-    uploadingImageRetryText   ?: React.ReactNode
-    uploadingImageCancelText  ?: React.ReactNode
-    onUploadingImageProgress  ?: (args: { imageFile: File, percentage: number|null }) => string
+    uploadingImageTitle        ?: React.ReactNode
+    uploadingImageErrorTitle   ?: React.ReactNode
+    uploadingImageRetryText    ?: React.ReactNode
+    uploadingImageCancelText   ?: React.ReactNode
     
     
     
     // uploading activities:
-    uploadingImageFile         : File
-    uploadingImagePercentage   : number|null
-    uploadingImageErrorMessage : React.ReactNode
-    onUploadingImageRetry      : () => void
-    onUploadingImageCancel     : () => void
+    uploadingImageFile          : File
+    uploadingImagePercentage    : number|null
+    uploadingImageErrorMessage  : React.ReactNode
+    onUploadingImage           ?: (args: { imageFile: File, percentage: number|null }) => string
+    onUploadingImageRetry       : () => void
+    onUploadingImageCancel      : () => void
     
     
     
     // components:
-    titleComponent            ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
+    titleComponent             ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
     
-    imageComponent            ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
-    previewImageComponent     ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
+    imageComponent             ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
+    previewImageComponent      ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
     
-    actionGroupComponent      ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
-    progressComponent         ?: React.ReactComponentElement<any, ProgressProps<Element>>
-    progressBarComponent      ?: React.ReactComponentElement<any, ProgressBarProps<Element>>
-    uploadErrorComponent      ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
+    actionGroupComponent       ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
+    progressComponent          ?: React.ReactComponentElement<any, ProgressProps<Element>>
+    progressBarComponent       ?: React.ReactComponentElement<any, ProgressBarProps<Element>>
+    uploadErrorComponent       ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
     
-    retryButtonComponent      ?: React.ReactComponentElement<any, ButtonProps>
-    cancelButtonComponent     ?: React.ReactComponentElement<any, ButtonProps>
+    retryButtonComponent       ?: React.ReactComponentElement<any, ButtonProps>
+    cancelButtonComponent      ?: React.ReactComponentElement<any, ButtonProps>
 }
 const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
     // rest props:
     const {
         // uploading images:
-        uploadingImageTitle      = 'Uploading...',
-        uploadingImageErrorTitle = 'Upload Error',
-        uploadingImageRetryText  = 'Retry',
-        uploadingImageCancelText = 'Cancel',
-        // onUploadingImageProgress = ({ percentage }) => `${percentage}%`,
-        onUploadingImageProgress = ({ percentage }) => '',
+        uploadingImageTitle         = 'Uploading...',
+        uploadingImageErrorTitle    = 'Upload Error',
+        uploadingImageRetryText     = 'Retry',
+        uploadingImageCancelText    = 'Cancel',
         
         
         
@@ -92,24 +90,25 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
         uploadingImageFile,
         uploadingImagePercentage,
         uploadingImageErrorMessage,
+        onUploadingImage            = ({ percentage }) => '',
         onUploadingImageRetry,
         onUploadingImageCancel,
         
         
         
         // components:
-        titleComponent        = (<h1 />                                                     as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
+        titleComponent              = (<h1 />                                                     as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         
         imageComponent,
-        previewImageComponent = imageComponent ?? (<img                                  /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
+        previewImageComponent       = imageComponent ?? (<img                                  /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
         
-        actionGroupComponent  = (<div                                                    /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
-        progressComponent     = (<Progress    size='sm'                                  /> as React.ReactComponentElement<any, ProgressProps<Element>>),
-        progressBarComponent  = (<ProgressBar                                            /> as React.ReactComponentElement<any, ProgressBarProps<Element>>),
-        uploadErrorComponent  = (<Basic       size='sm'      mild={true} theme='danger'  /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
+        actionGroupComponent        = (<div                                                    /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
+        progressComponent           = (<Progress    size='sm'                                  /> as React.ReactComponentElement<any, ProgressProps<Element>>),
+        progressBarComponent        = (<ProgressBar                                            /> as React.ReactComponentElement<any, ProgressBarProps<Element>>),
+        uploadErrorComponent        = (<Basic       size='sm'      mild={true} theme='danger'  /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
         
-        retryButtonComponent   = (<ButtonIcon icon='refresh'             theme='success' /> as React.ReactComponentElement<any, ButtonProps>),
-        cancelButtonComponent  = (<ButtonIcon icon='cancel'              theme='danger'  /> as React.ReactComponentElement<any, ButtonProps>),
+        retryButtonComponent        = (<ButtonIcon icon='refresh'             theme='success' /> as React.ReactComponentElement<any, ButtonProps>),
+        cancelButtonComponent       = (<ButtonIcon icon='cancel'              theme='danger'  /> as React.ReactComponentElement<any, ButtonProps>),
     } = props;
     
     
@@ -254,7 +253,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                             
                             
                             // children:
-                            onUploadingImageProgress({
+                            onUploadingImage({
                                 imageFile  : uploadingImageFile,
                                 percentage : uploadingImagePercentage,
                             }),

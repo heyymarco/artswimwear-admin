@@ -147,7 +147,7 @@ export interface GalleryEditorProps<TElement extends Element = HTMLElement, TVal
             
             
             // actions:
-            |'onActionDelete'             // enhanced with return Promise<boolean>
+            |'onDeleteImage'              // enhanced with return Promise<boolean>
             
             
             // children:
@@ -155,7 +155,7 @@ export interface GalleryEditorProps<TElement extends Element = HTMLElement, TVal
         >,
         Omit<UploadImageProps,
             // upload activities:
-            |'onUploadImageStart'         // enhanced with return Promise<TValue>
+            |'onUploadImage'              // enhanced with return Promise<TValue>
         >,
         Omit<UploadingImageProps,
             // uploading activities:
@@ -172,12 +172,12 @@ export interface GalleryEditorProps<TElement extends Element = HTMLElement, TVal
         >
 {
     // actions:
-    onActionDelete     ?: (args: { imageData: TValue }) => Promise<boolean|Error>
+    onDeleteImage      ?: (args: { imageData: TValue }) => Promise<boolean|Error>
     
     
     
     // upload activities:
-    onUploadImageStart ?: (args: { imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal }) => Promise<TValue|Error|null>
+    onUploadImage      ?: (args: { imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal }) => Promise<TValue|Error|null>
     
     
     
@@ -208,7 +208,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         // actions:
         deleteButtonTitle,
-        onActionDelete,
+        onDeleteImage,
         
         
         
@@ -229,8 +229,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         
         // upload/uploading activities:
-        onUploadImageStart,
-        onUploadingImageProgress,
+        onUploadImage,
+        onUploadingImage,
         
         
         
@@ -298,14 +298,14 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
     
     
     // handlers:
-    const handleChangeInternal   = useEvent<EditorChangeEventHandler<TValue[]>>((images) => {
+    const handleChangeInternal = useEvent<EditorChangeEventHandler<TValue[]>>((images) => {
         // update state:
         if (!isControllableImages) {
             setImagesDn(imagesDn /* instant update without waiting for (slow|delayed) re-render */ = images);
             imagesFn =  imagesDn /*uncontrollable*/; // instant update the computed variable too, without waiting for (slow|delayed) re-render
         } // if
     });
-    const handleChange           = useMergeEvents(
+    const handleChange         = useMergeEvents(
         // preserves the original `onChange` from `props`:
         onChange,
         
@@ -314,14 +314,14 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         // actions:
         handleChangeInternal,
     );
-    const triggerChange          = useEvent((newDraftImages: TValue[]): void => {
+    const triggerChange        = useEvent((newDraftImages: TValue[]): void => {
         if (handleChange) scheduleTriggerEvent(() => { // runs the `onChange` event *next after* current macroTask completed
             // fire `onChange` react event:
             handleChange(newDraftImages);
         });
     });
     
-    const handlePreviewMoved     = useEvent((newDroppedItemIndex: number): TValue[]|undefined => {
+    const handlePreviewMoved   = useEvent((newDroppedItemIndex: number): TValue[]|undefined => {
         if (draggedItemIndex === newDroppedItemIndex) { // no change => nothing to shift => return the (original) *source of truth* images
             // reset the preview:
             return handleRevertPreview();
@@ -373,7 +373,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         // return the modified:
         return newDraftImages;
     });
-    const handleMoved            = useEvent((newDroppedItemIndex: number): void => {
+    const handleMoved          = useEvent((newDroppedItemIndex: number): void => {
         // update the preview:
         const newDraftImages = handlePreviewMoved(newDroppedItemIndex);
         if (!newDraftImages) return; // no change => ignore
@@ -383,7 +383,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         // notify the gallery's images changed:
         triggerChange(newDraftImages); // then at the *next re-render*, the *controllable* `images` will change and trigger the `handleRevertPreview` and the `droppedItemIndex` will be reset
     });
-    const handleRevertPreview    = useEvent((): TValue[] => {
+    const handleRevertPreview  = useEvent((): TValue[] => {
         // reset the preview:
         if (draftImages !== imagesFn) setDraftImages(imagesFn);
         
@@ -399,15 +399,15 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
     });
     
     // draggable handlers:
-    const handleDragStart        = setDraggedItemIndex;
-    const handleDragEnd          = useEvent((itemIndex: number): void => {
+    const handleDragStart      = setDraggedItemIndex;
+    const handleDragEnd        = useEvent((itemIndex: number): void => {
         // actions:
         setDraggedItemIndex(-1); // clear selection
     });
     
     // droppable handlers:
-    const handleDragEnter        = handlePreviewMoved;
-    const handleDragLeave        = useEvent((itemIndex: number): void => {
+    const handleDragEnter      = handlePreviewMoved;
+    const handleDragLeave      = useEvent((itemIndex: number): void => {
         // conditions:
         if (droppedItemIndex !== itemIndex) return; // the last preview is already updated by another item => no need to revert
         
@@ -416,10 +416,10 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         // actions:
         handleRevertPreview();
     });
-    const handleDrop             = handleMoved;
+    const handleDrop           = handleMoved;
     
     // handlers:
-    const handleActionDelete     = useEvent(async (args: { itemIndex: number }): Promise<void> => {
+    const handleDeleteImage    = useEvent(async (args: { itemIndex: number }): Promise<void> => {
         // params:
         const {
             itemIndex,
@@ -430,9 +430,9 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         // conditions:
         if (itemIndex >= imagesFn.length) return; // out of range => ignore
         const imageData = imagesFn[itemIndex];
-        if (onActionDelete) {
+        if (onDeleteImage) {
             try {
-                const result = await onActionDelete({
+                const result = await onDeleteImage({
                     ...restParams,
                     
                     imageData : imageData,
@@ -480,9 +480,9 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         imagesFn = newDraftImages; // a temporary update regradless of (/*controllable*/ ?? /*uncontrollable*/), will be re-updated on *next re-render*
         if (isControllableImages) setImagesDn((current) => current.slice(0)); // force to re-render
     });
-    const handleUploadImageStart = useEvent((args: { imageFile: File }): void => {
+    const handleUploadImage    = useEvent((args: { imageFile: File }): void => {
         // conditions:
-        if (!onUploadImageStart) return; // the upload image handler is not configured => ignore
+        if (!onUploadImage) return; // the upload image handler is not configured => ignore
         
         
         
@@ -568,7 +568,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         const performUpload        = async (): Promise<void> => {
             let imageData : TValue|Error|null|undefined = undefined;
             try {
-                imageData = await onUploadImageStart({
+                imageData = await onUploadImage({
                     ...restParams,
                     
                     imageFile      : imageFile,
@@ -758,7 +758,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                             {...{
                                 // actions:
                                 deleteButtonTitle,
-                                onActionDelete : handleActionDelete,
+                                onDeleteImage : handleDeleteImage,
                                 
                                 
                                 
@@ -799,7 +799,6 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                         uploadingImageErrorTitle,
                         uploadingImageRetryText,
                         uploadingImageCancelText,
-                        onUploadingImageProgress,
                         
                         
                         
@@ -807,6 +806,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                         uploadingImageFile         : imageFile,
                         uploadingImagePercentage   : percentage,
                         uploadingImageErrorMessage : uploadError,
+                        onUploadingImage,
                         onUploadingImageRetry      : onRetry,
                         onUploadingImageCancel     : onCancel,
                         
@@ -838,7 +838,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                     
                     
                     // upload activities:
-                    onUploadImageStart : handleUploadImageStart,
+                    onUploadImage : handleUploadImage,
                     
                     
                     

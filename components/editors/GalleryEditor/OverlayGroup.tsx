@@ -55,7 +55,7 @@ export interface OverlayGroupProps
     
     // actions:
     deleteButtonTitle     ?: string
-    onActionDelete        ?: (args: { itemIndex: number }) => Promise<void>
+    onDeleteImage         ?: (args: { itemIndex: number }) => Promise<void>
     
     
     
@@ -77,7 +77,7 @@ const OverlayGroup = (props: OverlayGroupProps): JSX.Element|null => {
         
         // actions:
         deleteButtonTitle = 'delete',
-        onActionDelete,
+        onDeleteImage,
         
         
         
@@ -109,13 +109,13 @@ const OverlayGroup = (props: OverlayGroupProps): JSX.Element|null => {
     const deleteButtonHandleClickInternal = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async () => {
         // conditions:
         if (!isEnabled) return;      // this component is disabled => ignore
-        if (!onActionDelete) return; // the delete handler is not configured => ignore
+        if (!onDeleteImage) return; // the delete handler is not configured => ignore
         
         
         
         setIsEnabled(isEnabled /* instant update without waiting for (slow|delayed) re-render */ = false);
         try {
-            await onActionDelete({
+            await onDeleteImage({
                 itemIndex : itemIndex,
             });
         }

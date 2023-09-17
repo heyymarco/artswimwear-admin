@@ -46,7 +46,7 @@ export interface UploadImageProps
     
     
     // upload activities:
-    onUploadImageStart     ?: (args: { imageFile: File }) => void
+    onUploadImage          ?: (args: { imageFile: File }) => void
     
     
     
@@ -69,7 +69,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         
         
         // upload activities:
-        onUploadImageStart,
+        onUploadImage,
         
         
         
@@ -97,7 +97,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
     // handlers:
     const handleFilesAdded  = useEvent((files: FileList): void => {
         // conditions:
-        if (!onUploadImageStart) return; // the upload image handler is not configured => ignore
+        if (!onUploadImage) return; // the upload image handler is not configured => ignore
         
         
         
@@ -112,7 +112,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
             
             
             // actions:
-            onUploadImageStart({
+            onUploadImage({
                 imageFile : file,
             });
         } // for
