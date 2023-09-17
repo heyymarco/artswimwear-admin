@@ -288,7 +288,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
     const [previewImage   , setPreviewImage  ] = useState<string|null>(null);
     
     let   [isEnabled, setIsEnabled]            = useState<boolean>(true);
-    const disableableState                     = useDisableable<HTMLDivElement>({
+    const disableableState                     = useDisableable<TElement>({
         enabled : isEnabled,
     });
     
@@ -614,10 +614,39 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         cancelButtonHandleClickInternal,
     );
     
+    const handleAnimationStart = useMergeEvents(
+        // preserves the original `onAnimationStart` from `bodyComponent`:
+        bodyComponent.props.onAnimationStart,
+        
+        
+        
+        // preserves the original `onAnimationStart` from `props`:
+        props.onAnimationStart,
+        
+        
+        
+        // states:
+        disableableState.handleAnimationStart,
+    );
+    const handleAnimationEnd   = useMergeEvents(
+        // preserves the original `onAnimationEnd` from `bodyComponent`:
+        bodyComponent.props.onAnimationEnd,
+        
+        
+        
+        // preserves the original `onAnimationEnd` from `props`:
+        props.onAnimationEnd,
+        
+        
+        
+        // states:
+        disableableState.handleAnimationEnd,
+    );
+    
     
     
     // classes:
-    const classes = useMergeClasses(
+    const classes      = useMergeClasses(
         // preserves the original `classes` from `bodyComponent`:
         bodyComponent.props.classes,
         
@@ -630,6 +659,20 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         // classes:
         styleSheet.main,
+    );
+    const stateClasses = useMergeClasses(
+        // preserves the original `stateClasses` from `bodyComponent`:
+        bodyComponent.props.stateClasses,
+        
+        
+        
+        // preserves the original `stateClasses` from `props`:
+        props.stateClasses,
+        
+        
+        
+        // states:
+        disableableState.class,
     );
     
     
@@ -670,12 +713,19 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                     
                     
                     // variants:
-                    mild    : bodyComponent.props.mild ?? props.mild ?? true,
+                    mild             : bodyComponent.props.mild ?? props.mild ?? true,
                     
                     
                     
                     // classes:
-                    classes : classes,
+                    classes          : classes,
+                    stateClasses     : stateClasses,
+                    
+                    
+                    
+                    // handlers:
+                    onAnimationStart : handleAnimationStart,
+                    onAnimationEnd   : handleAnimationEnd,
                 },
                 
                 
