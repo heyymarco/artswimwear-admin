@@ -151,10 +151,10 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
     
     
     // uploading images:
-    uploadingImageTitle      ?: string
-    uploadingImageErrorTitle ?: string
-    uploadingImageRetry      ?: string
-    uploadingImageCancel     ?: string
+    uploadingImageTitle      ?: React.ReactNode
+    uploadingImageErrorTitle ?: React.ReactNode
+    uploadingImageRetry      ?: React.ReactNode
+    uploadingImageCancel     ?: React.ReactNode
     
     
     
@@ -784,20 +784,22 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                         
                         
                         // children:
-                        /* <Title> */
-                        (!!titleComponent && React.cloneElement<Pick<React.HTMLAttributes<Element>, 'className'>>(titleComponent,
-                            // props:
-                            {
-                                // classes:
-                                className : titleComponent.props.className ?? 'uploadingImageErrorTitle',
-                            },
-                            
-                            
-                            
-                            // children:
-                            uploadingImageErrorTitle,
-                        )),
-                        uploadErrorComponent.props.children ?? uploadingImage.uploadError
+                        uploadErrorComponent.props.children ?? <>
+                            {/* <Title> */}
+                            {!!titleComponent && React.cloneElement<Pick<React.HTMLAttributes<Element>, 'className'>>(titleComponent,
+                                // props:
+                                {
+                                    // classes:
+                                    className : titleComponent.props.className ?? 'uploadingImageErrorTitle',
+                                },
+                                
+                                
+                                
+                                // children:
+                                uploadingImageErrorTitle,
+                            )}
+                            {uploadErrorComponent.props.children ?? uploadingImage.uploadError}
+                        </>,
                     )),
                 )),
             )}
@@ -824,13 +826,13 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                             
                             
                             // handlers:
-                            onClick : selectButtonHandleClick,
+                            onClick   : selectButtonHandleClick,
                         },
                         
                         
                         
                         // children:
-                        selectButtonComponent.props.children ?? deleteButtonText,
+                        selectButtonComponent.props.children ?? selectButtonText,
                     )}
                     
                     {/* <DeleteButton> */}
@@ -864,13 +866,13 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                             
                             
                             // handlers:
-                            onClick : retryButtonHandleClick,
+                            onClick   : retryButtonHandleClick,
                         },
                         
                         
                         
                         // children:
-                        uploadingImageRetry,
+                        retryButtonComponent.props.children ?? uploadingImageRetry,
                     )}
                     
                     {/* <CancelButton> */}
@@ -883,13 +885,13 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                             
                             
                             // handlers:
-                            onClick : cancelButtonHandleClick,
+                            onClick   : cancelButtonHandleClick,
                         },
                         
                         
                         
                         // children:
-                        uploadingImageCancel,
+                        cancelButtonComponent.props.children ?? uploadingImageCancel,
                     )}
                 </>),
             )}
