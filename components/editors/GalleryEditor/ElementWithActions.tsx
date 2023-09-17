@@ -93,7 +93,7 @@ const ElementWithActions = (props: ElementWithActionsProps): JSX.Element|null =>
     
     // states:
     let   [isEnabled, setIsEnabled] = useState<boolean>(true);
-    const disableableState = useDisableable<HTMLDivElement>({
+    const disableableState          = useDisableable<HTMLDivElement>({
         enabled : isEnabled,
     });
     
@@ -174,50 +174,52 @@ const ElementWithActions = (props: ElementWithActionsProps): JSX.Element|null =>
     
     
     // jsx:
-    /* <Element> */
-    return React.cloneElement<GenericProps<Element>>(elementComponent,
-        // props:
-        {
-            // other props:
-            ...restGenericProps,
-            ...elementComponent.props, // overwrites restGenericProps (if any conflics)
-            
-            
-            
-            // classes:
-            stateClasses     : stateClasses,
-            
-            
-            
-            // handlers:
-            onAnimationStart : handleAnimationStart,
-            onAnimationEnd   : handleAnimationEnd,
-        },
-        
-        
-        
-        // children:
+    return (
         <AccessibilityProvider enabled={isEnabled}>
-            {/* <Children> */}
-            {elementComponent.props.children}
-            
-            {/* <DeleteButton> */}
-            {React.cloneElement<ButtonProps>(deleteButtonComponent,
+            {/* <Element> */}
+            {React.cloneElement<GenericProps<Element>>(elementComponent,
                 // props:
                 {
+                    // other props:
+                    ...restGenericProps,
+                    ...elementComponent.props, // overwrites restGenericProps (if any conflics)
+                    
+                    
+                    
                     // classes:
-                    className : deleteButtonComponent.props.className ?? 'deleteButton',
-                    
-                    
-                    
-                    // accessibilities:
-                    title     : deleteButtonComponent.props.title ?? deleteButtonTitle,
+                    stateClasses     : stateClasses,
                     
                     
                     
                     // handlers:
-                    onClick   : deleteButtonHandleClick,
+                    onAnimationStart : handleAnimationStart,
+                    onAnimationEnd   : handleAnimationEnd,
                 },
+                
+                
+                
+                // children:
+                /* <Children> */
+                elementComponent.props.children,
+                
+                /* <DeleteButton> */
+                React.cloneElement<ButtonProps>(deleteButtonComponent,
+                    // props:
+                    {
+                        // classes:
+                        className : deleteButtonComponent.props.className ?? 'deleteButton',
+                        
+                        
+                        
+                        // accessibilities:
+                        title     : deleteButtonComponent.props.title ?? deleteButtonTitle,
+                        
+                        
+                        
+                        // handlers:
+                        onClick   : deleteButtonHandleClick,
+                    },
+                )
             )}
         </AccessibilityProvider>
     );
