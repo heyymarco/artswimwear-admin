@@ -61,8 +61,8 @@ import {
 }                           from './OverlayGroup'
 import {
     // react components:
-    ComponentWithDraggable,
-}                           from './ComponentWithDraggable'
+    ElementWithDraggable,
+}                           from './ElementWithDraggable'
 import {
     // react components:
     UploadImageProps,
@@ -685,9 +685,9 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         // children:
         bodyComponent.props.children ?? <>
-            {/* <ComponentWithDraggable> <OverlayGroup> <Image> */}
+            {/* <ElementWithDraggable> <OverlayGroup> <Image> */}
             {draftImages.map((imageData, itemIndex) =>
-                <ComponentWithDraggable
+                <ElementWithDraggable
                     // identifiers:
                     key={`img:${itemIndex}`}
                     
@@ -713,7 +713,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                     
                     
                     // components:
-                    component={
+                    elementComponent={
                         <OverlayGroup
                             // positions:
                             itemIndex={itemIndex}
