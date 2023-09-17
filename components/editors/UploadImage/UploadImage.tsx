@@ -743,7 +743,8 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                         
                         
                         // children:
-                        React.cloneElement<ProgressBarProps<Element>>(progressBarComponent,
+                        /* <ProgressBar> */
+                        progressComponent.props.children ?? React.cloneElement<ProgressBarProps<Element>>(progressBarComponent,
                             // props:
                             {
                                 // variants:
@@ -757,13 +758,13 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                                 
                                 
                                 // values:
-                                value            : progressBarComponent.props.value            ?? (isUnknownProgress ? 100  : (uploadingImage.percentage ?? 100)),
+                                value            : progressBarComponent.props.value            ?? (isUnknownProgress ? 100 : (uploadingImage.percentage ?? 100)),
                             },
                             
                             
                             
                             // children:
-                            onUploadImageProgress({
+                            progressBarComponent.props.children ?? onUploadImageProgress({
                                 imageFile  : uploadingImage.imageFile,
                                 percentage : uploadingImage.percentage,
                             }),
