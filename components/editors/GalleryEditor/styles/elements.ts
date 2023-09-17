@@ -1,25 +1,24 @@
 // elements:
 
-export const actionsContainerElm            = '.actionsContainer'
-export const actionsPanelElm                = '.actionsPanel'
-export const galleryEditorDeleteButtonElm   = '.deleteButton'
+export const galleryEditorMediaGroupElm          = '.mediaGroup'
+export const galleryEditorOverlayGroupElm        = '.overlayGroup'
+export const galleryEditorOverlayGroupInnerElm   = '.overlayGroupInner'
+export const galleryEditorImageElm               = '.image'
 
-export const uploadImageTitleElm            = '.uploadImageTitle'
-export const uploadingImageTitleElm         = '.uploadingImageTitle'
-export const uploadingImageErrorTitleElm    = '.uploadingImageErrorTitle'
+export const galleryEditorUploadGroupElm         = '.uploadGroup'
+export const galleryEditorUploadTitleElm         = '.uploadImageTitle'
 
-export const galleryEditorMediaGroupElm     = '.mediaGroup'
-export const uploadingPanelElm              = '.uploadingPanel'
-export const uploadPanelElm                 = '.uploadPanel'
+export const galleryEditorUploadingGroupElm      = '.uploadingGroup'
+export const galleryEditorUploadingTitleElm      = '.uploadingImageTitle'
+export const galleryEditorUploadingErrorTitleElm = '.uploadingImageErrorTitle'
+export const galleryEditorPreviewImageElm        = '.previewImage'
+export const galleryEditorUploadProgressElm      = '.uploadProgress'
+export const galleryEditorUploadErrorElm         = '.uploadError'
 
-export const galleryEditorPreviewImageElm   = '.previewImage'
-export const galleryEditorImageElm          = '.image'
-export const galleryEditorUploadProgressElm = '.uploadProgress'
-export const galleryEditorUploadErrorElm    = '.uploadError'
+export const galleryEditorActionGroupElm         = '.actionGroup'
+export const galleryEditorSelectButtonElm        = '.selectButton'
+export const galleryEditorDeleteButtonElm        = '.deleteButton'
+export const galleryEditorRetryButtonElm         = '.retryButton'
+export const galleryEditorCancelButtonElm        = '.cancelButton'
 
-export const galleryEditorActionGroupElm    = '.actionGroup'
-export const galleryEditorSelectButtonElm   = '.selectButton'
-export const galleryEditorRetryButtonElm    = '.retryButton'
-export const galleryEditorCancelButtonElm   = '.cancelButton'
-
-export const galleryEditorInputFileElm      = '.inputFile'
+export const galleryEditorInputFileElm           = '.inputFile'

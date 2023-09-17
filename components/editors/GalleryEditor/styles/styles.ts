@@ -53,24 +53,28 @@ import {
 // internals:
 import {
     // elements:
+    galleryEditorMediaGroupElm,
+    galleryEditorOverlayGroupElm,
+    galleryEditorOverlayGroupInnerElm,
     galleryEditorImageElm,
-    actionsContainerElm,
-    actionsPanelElm,
-    galleryEditorDeleteButtonElm,
-    uploadingPanelElm,
+    
+    galleryEditorUploadGroupElm,
+    galleryEditorUploadTitleElm,
+    
+    galleryEditorUploadingGroupElm,
+    galleryEditorUploadingTitleElm,
+    galleryEditorUploadingErrorTitleElm,
     galleryEditorPreviewImageElm,
-    uploadPanelElm,
-    galleryEditorInputFileElm,
     galleryEditorUploadProgressElm,
     galleryEditorUploadErrorElm,
-    galleryEditorRetryButtonElm,
-    galleryEditorCancelButtonElm,
+    
     galleryEditorActionGroupElm,
     galleryEditorSelectButtonElm,
-    uploadImageTitleElm,
-    uploadingImageTitleElm,
-    uploadingImageErrorTitleElm,
-    galleryEditorMediaGroupElm,
+    galleryEditorDeleteButtonElm,
+    galleryEditorRetryButtonElm,
+    galleryEditorCancelButtonElm,
+    
+    galleryEditorInputFileElm,
 }                           from './elements'
 import {
     // configs:
@@ -123,11 +127,11 @@ export const usesGalleryEditorLayout = () => {
             
             
             // children:
-            ...children([galleryEditorMediaGroupElm, uploadingPanelElm, uploadPanelElm], {
+            ...children([galleryEditorMediaGroupElm, galleryEditorUploadingGroupElm, galleryEditorUploadGroupElm], {
                 // customize:
                 ...usesCssProps(usesPrefixedProps(galleryEditors, 'item')), // apply config's cssProps starting with item***
             }),
-            ...children([uploadingPanelElm, uploadPanelElm], {
+            ...children([galleryEditorUploadingGroupElm, galleryEditorUploadGroupElm], {
                 // capabilities:
                 ...groupableRule(), // make a nicely rounded corners
                 
@@ -183,11 +187,11 @@ export const usesGalleryEditorLayout = () => {
                         
                         
                         // children:
-                        ...descendants([uploadImageTitleElm, uploadingImageTitleElm, uploadingImageErrorTitleElm, 'p'], {
+                        ...descendants([galleryEditorUploadTitleElm, galleryEditorUploadingTitleElm, galleryEditorUploadingErrorTitleElm, 'p'], {
                             margin    : 0,        // no margin for <p>, <h1>...<h6>
                             textAlign : 'center', // center text for <p>, <h1>...<h6>
                         }),
-                        ...descendants([uploadImageTitleElm, uploadingImageTitleElm, uploadingImageErrorTitleElm], {
+                        ...descendants([galleryEditorUploadTitleElm, galleryEditorUploadingTitleElm, galleryEditorUploadingErrorTitleElm], {
                             fontSize : typos.fontSizeMd,
                             
                             
@@ -245,7 +249,7 @@ export const usesGalleryEditorLayout = () => {
                 
                 
                 // rules:
-                ...rule(actionsContainerElm, {
+                ...rule(galleryEditorOverlayGroupElm, {
                     // layouts:
                     ...style({
                         // layouts:
@@ -269,7 +273,7 @@ export const usesGalleryEditorLayout = () => {
                         
                         
                         // children:
-                        ...children(actionsPanelElm, {
+                        ...children(galleryEditorOverlayGroupInnerElm, {
                             // layouts:
                             display: 'grid',
                             gridTemplate : [[
@@ -342,7 +346,7 @@ export const usesGalleryEditorLayout = () => {
                 // customize:
                 ...usesCssProps(usesPrefixedProps(galleryEditors, 'mediaGroup')), // apply config's cssProps starting with mediaGroup***
             }),
-            ...children(uploadingPanelElm, {
+            ...children(galleryEditorUploadingGroupElm, {
                 // children:
                 ...children(galleryEditorPreviewImageElm, {
                     // positions:
@@ -367,7 +371,7 @@ export const usesGalleryEditorLayout = () => {
                 // customize:
                 ...usesCssProps(usesPrefixedProps(galleryEditors, 'uploading')), // apply config's cssProps starting with uploading***
             }),
-            ...children(uploadPanelElm, {
+            ...children(galleryEditorUploadGroupElm, {
                 ...children(galleryEditorInputFileElm, {
                     // layouts:
                     display: 'none',
@@ -439,12 +443,12 @@ export const usesGalleryEditorStates = () => {
             
             
             // rules:
-            ...rule(actionsContainerElm, {
+            ...rule(galleryEditorOverlayGroupElm, {
                 // states:
                 ...disableableRule(),
             }),
         }),
-        ...children(uploadPanelElm, {
+        ...children(galleryEditorUploadGroupElm, {
             // states:
             ...states([
                 rule('.dropTarget', {

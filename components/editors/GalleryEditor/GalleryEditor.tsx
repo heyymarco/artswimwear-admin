@@ -56,9 +56,9 @@ import {
 }                           from './styles/config'
 import {
     // react components:
-    ActionsContainerProps,
-    ActionsContainer,
-}                           from './ActionsContainer'
+    OverlayGroupProps,
+    OverlayGroup,
+}                           from './OverlayGroup'
 import {
     // react components:
     ElementWithDraggable,
@@ -135,7 +135,7 @@ export interface GalleryEditorProps<TElement extends Element = HTMLElement, TVal
         >,
         
         // sub components:
-        Omit<ActionsContainerProps,
+        Omit<OverlayGroupProps,
             // bases
             |keyof React.HTMLAttributes<HTMLElement>
             
@@ -685,7 +685,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         // children:
         bodyComponent.props.children ?? <>
-            {/* <ElementWithDraggable> <ActionsContainer> <Image> */}
+            {/* <ElementWithDraggable> <OverlayGroup> <Image> */}
             {draftImages.map((imageData, itemIndex) =>
                 <ElementWithDraggable
                     // identifiers:
@@ -714,14 +714,14 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                     
                     // components:
                     elementComponent={
-                        <ActionsContainer
+                        <OverlayGroup
                             // positions:
                             itemIndex={itemIndex}
                             
                             
                             
                             // classes:
-                            className={'mediaGroup actionsContainer ' + ((): string|undefined => {
+                            className={'mediaGroup overlayGroup ' + ((): string|undefined => {
                                 // dropped item:
                                 if (itemIndex === droppedItemIndex) return 'dropped';
                                 
@@ -780,7 +780,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                                     sizes     : imageComponent.props.sizes ?? `calc((${galleryEditors.itemMinColumnWidth} * 2) + ${galleryEditors.gapInline})`,
                                 },
                             )}
-                        </ActionsContainer>
+                        </OverlayGroup>
                     }
                 />
             )}

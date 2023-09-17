@@ -43,7 +43,7 @@ import {
 
 
 // react components:
-export interface ActionsContainerProps
+export interface OverlayGroupProps
     extends
         // bases:
         React.HTMLAttributes<HTMLElement>
@@ -67,7 +67,7 @@ export interface ActionsContainerProps
     // children:
     children               : React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
 }
-const ActionsContainer = (props: ActionsContainerProps): JSX.Element|null => {
+const OverlayGroup = (props: OverlayGroupProps): JSX.Element|null => {
     // rest props:
     const {
         // positions:
@@ -158,7 +158,7 @@ const ActionsContainer = (props: ActionsContainerProps): JSX.Element|null => {
         >
             <div
                 // classes:
-                className='actionsPanel'
+                className='overlayGroupInner'
             >
                 <AccessibilityProvider enabled={isEnabled}>
                     {children}
@@ -188,6 +188,6 @@ const ActionsContainer = (props: ActionsContainerProps): JSX.Element|null => {
     /* <Children> */
 };
 export {
-    ActionsContainer,
-    ActionsContainer as default,
+    OverlayGroup,
+    OverlayGroup as default,
 }
