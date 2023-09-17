@@ -812,85 +812,89 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                 
                 
                 // children:
-                (!uploadingImage && <>
-                    {/* <SelectButton> */}
-                    {React.cloneElement<ButtonProps>(selectButtonComponent,
-                        // props:
-                        {
-                            // classes:
-                            className : selectButtonComponent.props.className ?? 'selectButton',
+                actionGroupComponent.props.children ?? <>
+                    {/* <SelectButton> + <DeleteButton> */}
+                    {!uploadingImage && <>
+                        {/* <SelectButton> */}
+                        {React.cloneElement<ButtonProps>(selectButtonComponent,
+                            // props:
+                            {
+                                // classes:
+                                className : selectButtonComponent.props.className ?? 'selectButton',
+                                
+                                
+                                
+                                // handlers:
+                                onClick   : selectButtonHandleClick,
+                            },
                             
                             
                             
-                            // handlers:
-                            onClick   : selectButtonHandleClick,
-                        },
+                            // children:
+                            selectButtonComponent.props.children ?? selectButtonText,
+                        )}
                         
-                        
-                        
-                        // children:
-                        selectButtonComponent.props.children ?? selectButtonText,
-                    )}
+                        {/* <DeleteButton> */}
+                        {!!imageFn && React.cloneElement<ButtonProps>(deleteButtonComponent,
+                            // props:
+                            {
+                                // classes:
+                                className : deleteButtonComponent.props.className ?? 'deleteButton',
+                                
+                                
+                                
+                                // handlers:
+                                onClick : deleteButtonHandleClick,
+                            },
+                            
+                            
+                            
+                            // children:
+                            deleteButtonComponent.props.children ?? deleteButtonText,
+                        )}
+                    </>}
                     
-                    {/* <DeleteButton> */}
-                    {!!imageFn && React.cloneElement<ButtonProps>(deleteButtonComponent,
-                        // props:
-                        {
-                            // classes:
-                            className : deleteButtonComponent.props.className ?? 'deleteButton',
+                    {/* <RetryButton> + <CancelButton> */}
+                    {!!uploadingImage && <>
+                        {/* <RetryButton> */}
+                        {isError && React.cloneElement<ButtonProps>(retryButtonComponent,
+                            // props:
+                            {
+                                // classes:
+                                className : retryButtonComponent.props.className ?? 'retryButton',
+                                
+                                
+                                
+                                // handlers:
+                                onClick   : retryButtonHandleClick,
+                            },
                             
                             
                             
-                            // handlers:
-                            onClick : deleteButtonHandleClick,
-                        },
+                            // children:
+                            retryButtonComponent.props.children ?? uploadingImageRetryText,
+                        )}
                         
-                        
-                        
-                        // children:
-                        deleteButtonComponent.props.children ?? deleteButtonText,
-                    )}
-                </>),
-                
-                (!!uploadingImage && <>
-                    {/* <RetryButton> */}
-                    {isError && React.cloneElement<ButtonProps>(retryButtonComponent,
-                        // props:
-                        {
-                            // classes:
-                            className : retryButtonComponent.props.className ?? 'retryButton',
+                        {/* <CancelButton> */}
+                        {React.cloneElement<ButtonProps>(cancelButtonComponent,
+                            // props:
+                            {
+                                // classes:
+                                className : cancelButtonComponent.props.className ?? 'cancelButton',
+                                
+                                
+                                
+                                // handlers:
+                                onClick   : cancelButtonHandleClick,
+                            },
                             
                             
                             
-                            // handlers:
-                            onClick   : retryButtonHandleClick,
-                        },
-                        
-                        
-                        
-                        // children:
-                        retryButtonComponent.props.children ?? uploadingImageRetryText,
-                    )}
-                    
-                    {/* <CancelButton> */}
-                    {React.cloneElement<ButtonProps>(cancelButtonComponent,
-                        // props:
-                        {
-                            // classes:
-                            className : cancelButtonComponent.props.className ?? 'cancelButton',
-                            
-                            
-                            
-                            // handlers:
-                            onClick   : cancelButtonHandleClick,
-                        },
-                        
-                        
-                        
-                        // children:
-                        cancelButtonComponent.props.children ?? uploadingImageCancelText,
-                    )}
-                </>),
+                            // children:
+                            cancelButtonComponent.props.children ?? uploadingImageCancelText,
+                        )}
+                    </>}
+                </>,
             )}
             
             <input
