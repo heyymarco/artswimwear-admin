@@ -64,7 +64,8 @@ export interface UploadingImageProps
     // components:
     titleComponent            ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
     
-    previewImageComponent      : React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
+    imageComponent            ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
+    previewImageComponent     ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
     
     actionGroupComponent      ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
     progressComponent         ?: React.ReactComponentElement<any, ProgressProps<Element>>
@@ -99,7 +100,8 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
         // components:
         titleComponent        = (<h1 />                                                     as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         
-        previewImageComponent,
+        imageComponent,
+        previewImageComponent = imageComponent ?? (<img                                  /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
         
         actionGroupComponent  = (<div                                                    /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
         progressComponent     = (<Progress    size='sm'                                  /> as React.ReactComponentElement<any, ProgressProps<Element>>),

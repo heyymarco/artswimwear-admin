@@ -245,7 +245,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         selectButtonComponent,
         
-        previewImageComponent  = imageComponent,
+        previewImageComponent,
         
         actionGroupComponent,
         progressComponent,
@@ -813,6 +813,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                         
                         
                         // components:
+                        imageComponent,
                         previewImageComponent,
                         
                         actionGroupComponent,
