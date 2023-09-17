@@ -41,12 +41,12 @@ import {
 export const [uploadImages, uploadImageValues, cssUploadImageConfig] = cssConfig(() => {
     const bases = {
         // media:
-        mediaInlineSizeSm    : 'calc(3 * 40px)'         as CssKnownProps['inlineSize'],
-        mediaBlockSizeSm     : 'calc(3 * 40px)'         as CssKnownProps['blockSize' ],
-        mediaInlineSizeMd    : 'calc(5 * 40px)'         as CssKnownProps['inlineSize'],
-        mediaBlockSizeMd     : 'calc(5 * 40px)'         as CssKnownProps['blockSize' ],
-        mediaInlineSizeLg    : 'calc(8 * 40px)'         as CssKnownProps['inlineSize'],
-        mediaBlockSizeLg     : 'calc(8 * 40px)'         as CssKnownProps['blockSize' ],
+        mediaInlineSizeSm     : 'calc(3 * 40px)'            as CssKnownProps['inlineSize'],
+        mediaBlockSizeSm      : 'calc(3 * 40px)'            as CssKnownProps['blockSize' ],
+        mediaInlineSizeMd     : 'calc(5 * 40px)'            as CssKnownProps['inlineSize'],
+        mediaBlockSizeMd      : 'calc(5 * 40px)'            as CssKnownProps['blockSize' ],
+        mediaInlineSizeLg     : 'calc(8 * 40px)'            as CssKnownProps['inlineSize'],
+        mediaBlockSizeLg      : 'calc(8 * 40px)'            as CssKnownProps['blockSize' ],
         
         
         
@@ -55,14 +55,16 @@ export const [uploadImages, uploadImageValues, cssUploadImageConfig] = cssConfig
         
         
         // previewImages:
-        previewImageFilter  : [[
+        previewImageObjectFit : 'cover'                     as CssKnownProps['objectFit' ],
+        previewImageFilter    : [[
             'opacity(0.5)',
             'contrast(0.8)',
-        ]]                                              as CssKnownProps['filter'    ],
+        ]]                                                  as CssKnownProps['filter'    ],
         
         
         
         // images:
+        imageObjectFit : 'cover'                            as CssKnownProps['objectFit' ],
         
         
         
@@ -101,8 +103,8 @@ export const [uploadImages, uploadImageValues, cssUploadImageConfig] = cssConfig
     
     
     const defaults = {
-        mediaInlineSize      : bases.mediaInlineSizeMd  as CssKnownProps['inlineSize'],
-        mediaBlockSize       : bases.mediaBlockSizeMd   as CssKnownProps['blockSize' ],
+        mediaInlineSize       : bases.mediaInlineSizeMd     as CssKnownProps['inlineSize'],
+        mediaBlockSize        : bases.mediaBlockSizeMd      as CssKnownProps['blockSize' ],
     };
     
     

@@ -60,14 +60,6 @@ import {
     usesDisableable,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
-// reusable-ui components:
-import {
-    // styles:
-    onContentStylesChange,
-    usesContentLayout,
-    usesContentVariants,
-}                           from '@reusable-ui/content'         // a base component
-
 // internals:
 import {
     // elements:
@@ -99,7 +91,7 @@ import {
 
 
 // styles:
-export const onUploadImageStylesChange = watchChanges(onContentStylesChange, cssUploadImageConfig.onChange);
+export const onUploadImageStylesChange = watchChanges(cssUploadImageConfig.onChange);
 
 export const usesUploadImageLayout = () => {
     // dependencies:
@@ -120,7 +112,6 @@ export const usesUploadImageLayout = () => {
     
     return style({
         // layouts:
-        ...usesContentLayout(),
         ...style({
             // layouts:
             display      : 'grid',
@@ -340,7 +331,6 @@ export const usesUploadImageVariants = () => {
     
     return style({
         // variants:
-        ...usesContentVariants(),
         ...resizableRule(),
     });
 };

@@ -144,8 +144,8 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
     
     
     // upload images:
-    uploadImageSelectImage   ?: string
-    uploadImageDeleteImage   ?: string
+    selectButtonText         ?: React.ReactNode
+    deleteButtonText         ?: React.ReactNode
     uploadImageType          ?: string
     
     
@@ -209,8 +209,8 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         
         // upload images:
-        uploadImageSelectImage   = 'Select Image',
-        uploadImageDeleteImage   = 'Delete Image',
+        selectButtonText         = 'Select Image',
+        deleteButtonText         = 'Delete Image',
         uploadImageType          = 'image/jpg, image/jpeg, image/png, image/svg',
         
         
@@ -657,261 +657,265 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         
         // children:
-        React.cloneElement<React.HTMLAttributes<HTMLElement>>(mediaGroupComponent,
-            // props:
-            {
-                // classes:
-                className : mediaGroupComponent.props.className ?? 'mediaGroup',
-            },
-            
-            
-            
-            // children:
-            /* <NoImage> */
-            ((!uploadingImage && !imageFn) && React.cloneElement<React.HTMLAttributes<HTMLElement>>(noImageComponent,
+        bodyComponent.props.children ?? <>
+            {/* <MediaGroup> */}
+            {React.cloneElement<React.HTMLAttributes<HTMLElement>>(mediaGroupComponent,
                 // props:
                 {
                     // classes:
-                    className : noImageComponent.props.className ?? 'noImage',
-                },
-            )),
-            
-            /* <PreviewImage> */
-            (!!uploadingImage && !!previewImage && React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(previewImageComponent,
-                // props:
-                {
-                    // classes:
-                    className : previewImageComponent.props.className ?? 'previewImage',
-                    
-                    
-                    
-                    // images:
-                    alt       : previewImageComponent.props.alt   ?? '',
-                    src       : previewImageComponent.props.src   ?? previewImage,
-                    sizes     : previewImageComponent.props.sizes ?? uploadImages.previewImageInlineSize,
-                },
-            )),
-            
-            /* <Image> */
-            ( !uploadingImage && !!imageFn && React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
-                // props:
-                {
-                    // classes:
-                    className : imageComponent.props.className ?? 'image',
-                    
-                    
-                    
-                    // images:
-                    alt       : imageComponent.props.alt   ??  resolveAlt(imageFn),
-                    src       : imageComponent.props.src   ?? (resolveSrc(imageFn, onResolveUrl) || undefined), // convert empty string to undefined
-                    sizes     : imageComponent.props.sizes ?? uploadImages.imageInlineSize,
-                },
-            )),
-            
-            /* <Title> + <Progress> + <UploadError> */
-            (!!uploadingImage && React.cloneElement<React.HTMLAttributes<HTMLElement>>(mediaGroupComponentInner,
-                // props:
-                {
-                    // classes:
-                    className : mediaGroupComponentInner.props.className ?? 'mediaGroupInner',
+                    className : mediaGroupComponent.props.className ?? 'mediaGroup',
                 },
                 
                 
                 
                 // children:
-                /* <Title> */
-                (!isError && !!titleComponent && React.cloneElement<Pick<React.HTMLAttributes<Element>, 'className'>>(titleComponent,
+                /* <NoImage> */
+                ((!uploadingImage && !imageFn) && React.cloneElement<React.HTMLAttributes<HTMLElement>>(noImageComponent,
                     // props:
                     {
                         // classes:
-                        className : titleComponent.props.className ?? 'uploadingImageTitle',
+                        className : noImageComponent.props.className ?? 'noImage',
                     },
-                    
-                    
-                    
-                    // children:
-                    uploadingImageTitle,
                 )),
                 
-                /* <Progress> */
-                (!isError && React.cloneElement<ProgressProps<Element>>(progressComponent,
+                /* <PreviewImage> */
+                (!!uploadingImage && !!previewImage && React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(previewImageComponent,
                     // props:
                     {
                         // classes:
-                        className : progressComponent.props.className ?? 'uploadProgress',
+                        className : previewImageComponent.props.className ?? 'previewImage',
+                        
+                        
+                        
+                        // images:
+                        alt       : previewImageComponent.props.alt   ?? '',
+                        src       : previewImageComponent.props.src   ?? previewImage,
+                        sizes     : previewImageComponent.props.sizes ?? uploadImages.previewImageInlineSize,
                     },
-                    
-                    
-                    
-                    // children:
-                    React.cloneElement<ProgressBarProps<Element>>(progressBarComponent,
-                        // props:
-                        {
-                            // variants:
-                            progressBarStyle : progressBarComponent.props.progressBarStyle ?? (isUnknownProgress ? 'striped' : undefined),
-                            
-                            
-                            
-                            // states:
-                            running          : progressBarComponent.props.running          ?? (isUnknownProgress ? true : undefined),
-                            
-                            
-                            
-                            // values:
-                            value            : progressBarComponent.props.value            ?? (isUnknownProgress ? 100  : (uploadingImage.percentage ?? 100)),
-                        },
-                        
-                        
-                        
-                        // children:
-                        onUploadingImageProgress({
-                            imageFile  : uploadingImage.imageFile,
-                            percentage : uploadingImage.percentage,
-                        }),
-                    ),
                 )),
                 
-                /* <UploadError> */
-                (isError && React.cloneElement<React.HTMLAttributes<HTMLElement>>(uploadErrorComponent,
+                /* <Image> */
+                ( !uploadingImage && !!imageFn && React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
                     // props:
                     {
                         // classes:
-                        className : uploadErrorComponent.props.className ?? 'uploadError',
+                        className : imageComponent.props.className ?? 'image',
+                        
+                        
+                        
+                        // images:
+                        alt       : imageComponent.props.alt   ??  resolveAlt(imageFn),
+                        src       : imageComponent.props.src   ?? (resolveSrc(imageFn, onResolveUrl) || undefined), // convert empty string to undefined
+                        sizes     : imageComponent.props.sizes ?? uploadImages.imageInlineSize,
+                    },
+                )),
+                
+                /* <Title> + <Progress> + <UploadError> */
+                (!!uploadingImage && React.cloneElement<React.HTMLAttributes<HTMLElement>>(mediaGroupComponentInner,
+                    // props:
+                    {
+                        // classes:
+                        className : mediaGroupComponentInner.props.className ?? 'mediaGroupInner',
                     },
                     
                     
                     
                     // children:
                     /* <Title> */
-                    (!!titleComponent && React.cloneElement<Pick<React.HTMLAttributes<Element>, 'className'>>(titleComponent,
+                    (!isError && !!titleComponent && React.cloneElement<Pick<React.HTMLAttributes<Element>, 'className'>>(titleComponent,
                         // props:
                         {
                             // classes:
-                            className : titleComponent.props.className ?? 'uploadingImageErrorTitle',
+                            className : titleComponent.props.className ?? 'uploadingImageTitle',
                         },
                         
                         
                         
                         // children:
-                        uploadingImageErrorTitle,
+                        uploadingImageTitle,
                     )),
-                    uploadErrorComponent.props.children ?? uploadingImage.uploadError
+                    
+                    /* <Progress> */
+                    (!isError && React.cloneElement<ProgressProps<Element>>(progressComponent,
+                        // props:
+                        {
+                            // classes:
+                            className : progressComponent.props.className ?? 'uploadProgress',
+                        },
+                        
+                        
+                        
+                        // children:
+                        React.cloneElement<ProgressBarProps<Element>>(progressBarComponent,
+                            // props:
+                            {
+                                // variants:
+                                progressBarStyle : progressBarComponent.props.progressBarStyle ?? (isUnknownProgress ? 'striped' : undefined),
+                                
+                                
+                                
+                                // states:
+                                running          : progressBarComponent.props.running          ?? (isUnknownProgress ? true : undefined),
+                                
+                                
+                                
+                                // values:
+                                value            : progressBarComponent.props.value            ?? (isUnknownProgress ? 100  : (uploadingImage.percentage ?? 100)),
+                            },
+                            
+                            
+                            
+                            // children:
+                            onUploadingImageProgress({
+                                imageFile  : uploadingImage.imageFile,
+                                percentage : uploadingImage.percentage,
+                            }),
+                        ),
+                    )),
+                    
+                    /* <UploadError> */
+                    (isError && React.cloneElement<React.HTMLAttributes<HTMLElement>>(uploadErrorComponent,
+                        // props:
+                        {
+                            // classes:
+                            className : uploadErrorComponent.props.className ?? 'uploadError',
+                        },
+                        
+                        
+                        
+                        // children:
+                        /* <Title> */
+                        (!!titleComponent && React.cloneElement<Pick<React.HTMLAttributes<Element>, 'className'>>(titleComponent,
+                            // props:
+                            {
+                                // classes:
+                                className : titleComponent.props.className ?? 'uploadingImageErrorTitle',
+                            },
+                            
+                            
+                            
+                            // children:
+                            uploadingImageErrorTitle,
+                        )),
+                        uploadErrorComponent.props.children ?? uploadingImage.uploadError
+                    )),
                 )),
-            )),
-        ),
-        
-        React.cloneElement<React.HTMLAttributes<HTMLElement>>(actionGroupComponent,
-            // props:
-            {
+            )}
+            
+            {/* <ActionGroup> */}
+            {React.cloneElement<React.HTMLAttributes<HTMLElement>>(actionGroupComponent,
+                // props:
+                {
+                    // classes:
+                    className : actionGroupComponent.props.className ?? 'actionGroup',
+                },
+                
+                
+                
+                // children:
+                (!uploadingImage && <>
+                    {/* <SelectButton> */}
+                    {React.cloneElement<ButtonProps>(selectButtonComponent,
+                        // props:
+                        {
+                            // classes:
+                            className : selectButtonComponent.props.className ?? 'selectButton',
+                            
+                            
+                            
+                            // handlers:
+                            onClick : selectButtonHandleClick,
+                        },
+                        
+                        
+                        
+                        // children:
+                        selectButtonComponent.props.children ?? deleteButtonText,
+                    )}
+                    
+                    {/* <DeleteButton> */}
+                    {!!imageFn && React.cloneElement<ButtonProps>(deleteButtonComponent,
+                        // props:
+                        {
+                            // classes:
+                            className : deleteButtonComponent.props.className ?? 'deleteButton',
+                            
+                            
+                            
+                            // handlers:
+                            onClick : deleteButtonHandleClick,
+                        },
+                        
+                        
+                        
+                        // children:
+                        deleteButtonComponent.props.children ?? deleteButtonText,
+                    )}
+                </>),
+                
+                (!!uploadingImage && <>
+                    {/* <RetryButton> */}
+                    {isError && React.cloneElement<ButtonProps>(retryButtonComponent,
+                        // props:
+                        {
+                            // classes:
+                            className : retryButtonComponent.props.className ?? 'retryButton',
+                            
+                            
+                            
+                            // handlers:
+                            onClick : retryButtonHandleClick,
+                        },
+                        
+                        
+                        
+                        // children:
+                        uploadingImageRetry,
+                    )}
+                    
+                    {/* <CancelButton> */}
+                    {React.cloneElement<ButtonProps>(cancelButtonComponent,
+                        // props:
+                        {
+                            // classes:
+                            className : cancelButtonComponent.props.className ?? 'cancelButton',
+                            
+                            
+                            
+                            // handlers:
+                            onClick : cancelButtonHandleClick,
+                        },
+                        
+                        
+                        
+                        // children:
+                        uploadingImageCancel,
+                    )}
+                </>),
+            )}
+            
+            <input
+                // refs:
+                ref={inputFileRef}
+                
+                
+                
                 // classes:
-                className : actionGroupComponent.props.className ?? 'actionGroup',
-            },
-            
-            
-            
-            // children:
-            (!uploadingImage && <>
-                {/* <SelectButton> */}
-                {React.cloneElement<ButtonProps>(selectButtonComponent,
-                    // props:
-                    {
-                        // classes:
-                        className : selectButtonComponent.props.className ?? 'selectButton',
-                        
-                        
-                        
-                        // handlers:
-                        onClick : selectButtonHandleClick,
-                    },
-                    
-                    
-                    
-                    // children:
-                    uploadImageSelectImage,
-                )}
+                className='inputFile'
                 
-                {/* <DeleteButton> */}
-                {!!imageFn && React.cloneElement<ButtonProps>(deleteButtonComponent,
-                    // props:
-                    {
-                        // classes:
-                        className : deleteButtonComponent.props.className ?? 'deleteButton',
-                        
-                        
-                        
-                        // handlers:
-                        onClick : deleteButtonHandleClick,
-                    },
-                    
-                    
-                    
-                    // children:
-                    uploadImageDeleteImage,
-                )}
-            </>),
-            
-            (!!uploadingImage && <>
-                {/* <RetryButton> */}
-                {isError && React.cloneElement<ButtonProps>(retryButtonComponent,
-                    // props:
-                    {
-                        // classes:
-                        className : retryButtonComponent.props.className ?? 'retryButton',
-                        
-                        
-                        
-                        // handlers:
-                        onClick : retryButtonHandleClick,
-                    },
-                    
-                    
-                    
-                    // children:
-                    uploadingImageRetry,
-                )}
                 
-                {/* <CancelButton> */}
-                {React.cloneElement<ButtonProps>(cancelButtonComponent,
-                    // props:
-                    {
-                        // classes:
-                        className : cancelButtonComponent.props.className ?? 'cancelButton',
-                        
-                        
-                        
-                        // handlers:
-                        onClick : cancelButtonHandleClick,
-                    },
-                    
-                    
-                    
-                    // children:
-                    uploadingImageCancel,
-                )}
-            </>),
-        ),
-        
-        <input
-            // refs:
-            ref={inputFileRef}
-            
-            
-            
-            // classes:
-            className='inputFile'
-            
-            
-            
-            // formats:
-            type='file'
-            accept={uploadImageType}
-            multiple={false}
-            
-            
-            
-            // handlers:
-            onChange={inputFileHandleChange}
-        />,
+                
+                // formats:
+                type='file'
+                accept={uploadImageType}
+                multiple={false}
+                
+                
+                
+                // handlers:
+                onChange={inputFileHandleChange}
+            />
+        </>,
     );
 };
 export {
