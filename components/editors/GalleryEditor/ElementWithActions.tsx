@@ -107,7 +107,7 @@ const ElementWithActions = (props: ElementWithActionsProps): JSX.Element|null =>
     // handlers:
     const deleteButtonHandleClickInternal = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async () => {
         // conditions:
-        if (!isEnabled) return;      // this component is disabled => ignore
+        if (!isEnabled)     return; // this component is disabled => ignore
         if (!onDeleteImage) return; // the delete handler is not configured => ignore
         
         

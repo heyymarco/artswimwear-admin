@@ -89,7 +89,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
         uploadingImageFile,
         uploadingImagePercentage,
         uploadingImageErrorMessage,
-        onUploadImageProgress       = ({ percentage }) => '',
+        onUploadImageProgress       = () => '',
         onUploadImageRetry,
         onUploadImageCancel,
         
