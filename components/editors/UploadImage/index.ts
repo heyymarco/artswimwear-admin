@@ -1,4 +1,4 @@
-export *            from './styles/elements'
+// export *            from './styles/elements' // not implicitly exported
 export *            from './styles/config'
 export *            from './styles/styles'
 export *            from './UploadImage'
