@@ -44,10 +44,10 @@ import {
 export interface UploadingImageProps
 {
     // uploading images:
-    uploadingImageTitle       ?: string
-    uploadingImageErrorTitle  ?: string
-    uploadingImageRetry       ?: string
-    uploadingImageCancel      ?: string
+    uploadingImageTitle       ?: React.ReactNode
+    uploadingImageErrorTitle  ?: React.ReactNode
+    uploadingImageRetry       ?: React.ReactNode
+    uploadingImageCancel      ?: React.ReactNode
     onUploadingImageProgress  ?: (args: { imageFile: File, percentage: number|null }) => string
     
     
@@ -272,20 +272,22 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                         
                         
                         // children:
-                        /* <Title> */
-                        (!!titleComponent && React.cloneElement<Pick<React.HTMLAttributes<Element>, 'className'>>(titleComponent,
-                            // props:
-                            {
-                                // classes:
-                                className : titleComponent.props.className ?? 'uploadingImageErrorTitle',
-                            },
-                            
-                            
-                            
-                            // children:
-                            uploadingImageErrorTitle,
-                        )),
-                        (uploadErrorComponent.props.children ?? uploadingImageErrorMessage),
+                        uploadErrorComponent.props.children ?? <>
+                            {/* <Title> */}
+                            {!!titleComponent && React.cloneElement<Pick<React.HTMLAttributes<Element>, 'className'>>(titleComponent,
+                                // props:
+                                {
+                                    // classes:
+                                    className : titleComponent.props.className ?? 'uploadingImageErrorTitle',
+                                },
+                                
+                                
+                                
+                                // children:
+                                uploadingImageErrorTitle,
+                            )}
+                            {uploadErrorComponent.props.children ?? uploadingImageErrorMessage}
+                        </>,
                     )}
                     
                     {React.cloneElement<ButtonProps>(retryButtonComponent,
@@ -297,13 +299,13 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                             
                             
                             // handlers:
-                            onClick : retryButtonHandleClick,
+                            onClick   : retryButtonHandleClick,
                         },
                         
                         
                         
                         // children:
-                        uploadingImageRetry,
+                        retryButtonComponent.props.children ?? uploadingImageRetry,
                     )}
                 </>),
                 
@@ -317,13 +319,13 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                         
                         
                         // handlers:
-                        onClick : cancelButtonHandleClick,
+                        onClick   : cancelButtonHandleClick,
                     },
                     
                     
                     
                     // children:
-                    uploadingImageCancel,
+                    cancelButtonComponent.props.children ?? uploadingImageCancel,
                 ),
             )}
         </Basic>

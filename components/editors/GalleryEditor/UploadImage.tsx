@@ -38,9 +38,9 @@ import {
 export interface UploadImageProps
 {
     // upload images:
-    uploadImageTitle       ?: string
-    uploadImageSelectImage ?: string
-    uploadImageDropImage   ?: string
+    uploadImageTitle       ?: React.ReactNode
+    selectButtonText       ?: React.ReactNode
+    dropImageText          ?: React.ReactNode
     uploadImageType        ?: string
     
     
@@ -62,8 +62,8 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
     const {
         // upload images:
         uploadImageTitle       = 'Add New Image(s)',
-        uploadImageSelectImage = 'Select Images',
-        uploadImageDropImage   = 'or drop images here',
+        selectButtonText       = 'Select Images',
+        dropImageText          = 'or drop images here',
         uploadImageType        = 'image/jpg, image/jpeg, image/png, image/svg',
         
         
@@ -260,19 +260,17 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
                         
                         
                         // handlers:
-                        onClick : selectButtonHandleClick,
+                        onClick   : selectButtonHandleClick,
                     },
                     
                     
                     
                     // children:
-                    uploadImageSelectImage,
+                    selectButtonComponent.props.children ?? selectButtonText,
                 ),
                 
                 /* <Paragraph> */
-                (!!uploadImageDropImage && <p>
-                    {uploadImageDropImage}
-                </p>),
+                (!!dropImageText && ((typeof(dropImageText) === 'string') ? <p>{dropImageText}</p> : dropImageText)),
             )}
             
             {/* <Input> */}
