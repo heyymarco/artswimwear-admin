@@ -139,7 +139,7 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
 {
     // actions:
     deleteButtonText         ?: React.ReactNode
-    onActionDelete           ?: (args: { imageData: TValue }) => Promise<boolean|Error>
+    onDeleteImage            ?: (args: { imageData: TValue }) => Promise<boolean|Error>
     
     
     
@@ -157,9 +157,9 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
     
     
     
-    // upload activities:
-    onUploadImageStart       ?: (args: { imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal }) => Promise<TValue|Error|null>
-    onUploadingImageProgress ?: (args: { imageFile: File, percentage: number|null }) => string
+    // upload/uploading activities:
+    onUploadImage            ?: (args: { imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal }) => Promise<TValue|Error|null>
+    onUploadingImage         ?: (args: { imageFile: File, percentage: number|null }) => string
     
     
     
@@ -203,7 +203,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         // actions:
         deleteButtonText         = 'Delete Image',
-        onActionDelete,
+        onDeleteImage,
         
         
         
@@ -222,9 +222,8 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         
         // upload/uploading activities:
-        onUploadImageStart,
-        // onUploadingImageProgress = ({ percentage }) => `${percentage}%`,
-        onUploadingImageProgress = ({ percentage }) => '',
+        onUploadImage,
+        onUploadingImage         = ({ percentage }) => '',
         
         
         
@@ -328,7 +327,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         
         // actions:
-        handleActionDelete({
+        handleDeleteImage({
             /* empty: reserved for future */
         });
     });
@@ -341,7 +340,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         // actions:
         deleteButtonHandleClickInternal,
     );
-    const handleActionDelete              = useEvent(async (args: { /* empty: reserved for future */ }): Promise<void> => {
+    const handleDeleteImage               = useEvent(async (args: { /* empty: reserved for future */ }): Promise<void> => {
         // params:
         const {
             /* empty: reserved for future */
@@ -352,9 +351,9 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         // conditions:
         const imageData = imageFn;
         if (!imageData) return; // no image => nothing to delete
-        if (onActionDelete) {
+        if (onDeleteImage) {
             try {
-                const result = await onActionDelete({
+                const result = await onDeleteImage({
                     ...restParams,
                     
                     imageData : imageData,
@@ -398,7 +397,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
     });
     const handleFilesAdded                = useEvent((files: FileList): void => {
         // conditions:
-        if (!onUploadImageStart) return; // the upload image handler is not configured => ignore
+        if (!onUploadImage) return; // the upload image handler is not configured => ignore
         
         
         
@@ -414,7 +413,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         //     
         //     
         //     // actions:
-        //     handleUploadImageStart({
+        //     handleUploadImage({
         //         imageFile : imageFile,
         //     });
         // } // for
@@ -424,13 +423,13 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         if (!mimeMatcher.match(imageFile.type)) {
             return; // ignore foreign files
         } // if
-        handleUploadImageStart({
+        handleUploadImage({
             imageFile : imageFile,
         });
     });
-    const handleUploadImageStart          = useEvent((args: { imageFile: File }): void => {
+    const handleUploadImage               = useEvent((args: { imageFile: File }): void => {
         // conditions:
-        if (!onUploadImageStart) return; // the upload image handler is not configured => ignore
+        if (!onUploadImage) return; // the upload image handler is not configured => ignore
         
         
         
@@ -516,7 +515,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         const performUpload        = async (): Promise<void> => {
             let imageData : TValue|Error|null|undefined = undefined;
             try {
-                imageData = await onUploadImageStart({
+                imageData = await onUploadImage({
                     ...restParams,
                     
                     imageFile      : imageFile,
@@ -764,7 +763,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                             
                             
                             // children:
-                            onUploadingImageProgress({
+                            onUploadingImage({
                                 imageFile  : uploadingImage.imageFile,
                                 percentage : uploadingImage.percentage,
                             }),
