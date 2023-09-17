@@ -84,7 +84,7 @@ export default function DashboardPage() {
                         
                         
                         
-                        if (mockDatabaseImage) URL.revokeObjectURL(mockDatabaseImage);
+                        // if (mockDatabaseImage) URL.revokeObjectURL(mockDatabaseImage);
                         const imageUrl = URL.createObjectURL(imageFile);
                         setMockDatabaseImage(imageUrl);
                         return imageUrl;

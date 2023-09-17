@@ -256,14 +256,6 @@ export const usesGalleryEditorLayout = () => {
                     
                     
                     
-                    // sizes:
-                    // maxWidth     : '100%',
-                    // maxHeight    : '100%',
-                    width        : '100%', // fill the entire <parent>
-                    height       : '100%', // fill the entire <parent>
-                    
-                    
-                    
                     // accessibilities:
                     cursor         : 'move',
                     

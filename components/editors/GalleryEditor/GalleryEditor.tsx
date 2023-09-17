@@ -30,6 +30,7 @@ import {
 // reusable-ui components:
 import {
     // base-components:
+    Generic,
     BasicProps,
     Basic,
     Content,
@@ -148,6 +149,12 @@ export interface GalleryEditorProps<TElement extends Element = HTMLElement, TVal
             
             // actions:
             |'onDeleteImage'              // enhanced with return Promise<boolean>
+            
+            
+            
+            // components:
+            |'elementComponent'           // already handled internally
+            
             
             
             // children:
@@ -728,7 +735,12 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                             
                             // components:
                             elementComponent={
-                                <div
+                                <Generic
+                                    // semantics:
+                                    tag='div'
+                                    
+                                    
+                                    
                                     // classes:
                                     className={'mediaGroup ' + ((): string|undefined => {
                                         // dropped item:
@@ -777,7 +789,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                                             sizes     : imageComponent.props.sizes ?? `calc((${galleryEditors.itemMinColumnWidth} * 2) + ${galleryEditors.gapInline})`,
                                         },
                                     )}
-                                </div>
+                                </Generic>
                             }
                             deleteButtonComponent={deleteButtonComponent}
                         />
