@@ -87,9 +87,9 @@ import './styles/styles'
 
 
 // utilities:
-const resolveSrc = <TValue extends ImageData = ImageData>(imageData: TValue, onResolveUrl: ((imageData: TValue) => URL|string)|undefined): string => {
-    if (!onResolveUrl) return (typeof(imageData) === 'string') ? imageData : imageData.url;
-    const resolved = onResolveUrl(imageData);
+const resolveSrc = <TValue extends ImageData = ImageData>(imageData: TValue, onResolveImageUrl: ((imageData: TValue) => URL|string)|undefined): string => {
+    if (!onResolveImageUrl) return (typeof(imageData) === 'string') ? imageData : imageData.url;
+    const resolved = onResolveImageUrl(imageData);
     return (typeof(resolved) === 'string') ? resolved : resolved.href;
 };
 const resolveAlt = <TValue extends ImageData = ImageData>(imageData: TValue): string => {
@@ -184,7 +184,7 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
     cancelButtonComponent    ?: React.ReactComponentElement<any, ButtonProps>
     
     // handlers:
-    onResolveUrl             ?: (imageData: TValue) => URL|string
+    onResolveImageUrl        ?: (imageData: TValue) => URL|string
 }
 const UploadImage = <TElement extends Element = HTMLElement, TValue extends ImageData = ImageData>(props: UploadImageProps<TElement, TValue>): JSX.Element|null => {
     // styles:
@@ -250,7 +250,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         
         // handlers:
-        onResolveUrl,
+        onResolveImageUrl,
     ...restBasicProps} = props;
     
     
@@ -702,7 +702,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                         
                         // images:
                         alt       : imageComponent.props.alt   ??  resolveAlt(imageFn),
-                        src       : imageComponent.props.src   ?? (resolveSrc(imageFn, onResolveUrl) || undefined), // convert empty string to undefined
+                        src       : imageComponent.props.src   ?? (resolveSrc(imageFn, onResolveImageUrl) || undefined), // convert empty string to undefined
                         sizes     : imageComponent.props.sizes ?? uploadImages.imageInlineSize,
                     },
                 )),
