@@ -71,7 +71,6 @@ export interface UploadingImageProps
     progressComponent          ?: React.ReactComponentElement<any, ProgressProps<Element>>
     progressBarComponent       ?: React.ReactComponentElement<any, ProgressBarProps<Element>>
     uploadErrorComponent       ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
-    
     retryButtonComponent       ?: React.ReactComponentElement<any, ButtonProps>
     cancelButtonComponent      ?: React.ReactComponentElement<any, ButtonProps>
 }
@@ -106,9 +105,8 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
         progressComponent           = (<Progress    size='sm'                                  /> as React.ReactComponentElement<any, ProgressProps<Element>>),
         progressBarComponent        = (<ProgressBar                                            /> as React.ReactComponentElement<any, ProgressBarProps<Element>>),
         uploadErrorComponent        = (<Basic       size='sm'      mild={true} theme='danger'  /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
-        
-        retryButtonComponent        = (<ButtonIcon icon='refresh'             theme='success' /> as React.ReactComponentElement<any, ButtonProps>),
-        cancelButtonComponent       = (<ButtonIcon icon='cancel'              theme='danger'  /> as React.ReactComponentElement<any, ButtonProps>),
+        retryButtonComponent        = (<ButtonIcon  icon='refresh'             theme='success' /> as React.ReactComponentElement<any, ButtonProps>),
+        cancelButtonComponent       = (<ButtonIcon  icon='cancel'              theme='danger'  /> as React.ReactComponentElement<any, ButtonProps>),
     } = props;
     
     
@@ -236,27 +234,28 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                             
                             
                             // children:
-                            React.cloneElement<ProgressBarProps<Element>>(progressBarComponent,
+                            /* <ProgressBar> */
+                            progressComponent.props.children ?? React.cloneElement<ProgressBarProps<Element>>(progressBarComponent,
                                 // props:
                                 {
                                     // variants:
-                                    progressBarStyle : isUnknownProgress ? 'striped' : undefined,
+                                    progressBarStyle : progressBarComponent.props.progressBarStyle ?? (isUnknownProgress ? 'striped' : undefined),
                                     
                                     
                                     
                                     // states:
-                                    running          : isUnknownProgress ? true : undefined,
+                                    running          : progressBarComponent.props.running          ?? (isUnknownProgress ? true : undefined),
                                     
                                     
                                     
                                     // values:
-                                    value            : isUnknownProgress ? 100  : uploadingImagePercentage,
+                                    value            : progressBarComponent.props.value            ?? (isUnknownProgress ? 100 : uploadingImagePercentage),
                                 },
                                 
                                 
                                 
                                 // children:
-                                onUploadImageProgress({
+                                progressBarComponent.props.children ?? onUploadImageProgress({
                                     imageFile  : uploadingImageFile,
                                     percentage : uploadingImagePercentage,
                                 }),
@@ -264,7 +263,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                         )}
                     </>}
                     
-                    {/* <UploadError> */}
+                    {/* <UploadError> + <RetryButton> */}
                     {isError && <>
                         {/* <UploadError> */}
                         {React.cloneElement<React.HTMLAttributes<HTMLElement>>(uploadErrorComponent,
