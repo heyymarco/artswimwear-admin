@@ -766,6 +766,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                                 deleteButtonComponent,
                             }}
                         >
+                            {/* <Image> */}
                             {React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
                                 // props:
                                 {
