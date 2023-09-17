@@ -55,7 +55,7 @@ export interface UploadingImageProps
     uploadingImageFile          : File
     uploadingImagePercentage    : number|null
     uploadingImageErrorMessage  : React.ReactNode
-    onUploadingImage           ?: (args: { imageFile: File, percentage: number|null }) => string
+    onUploadImageProgress      ?: (args: { imageFile: File, percentage: number|null }) => string
     onUploadingImageRetry       : () => void
     onUploadingImageCancel      : () => void
     
@@ -90,7 +90,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
         uploadingImageFile,
         uploadingImagePercentage,
         uploadingImageErrorMessage,
-        onUploadingImage            = ({ percentage }) => '',
+        onUploadImageProgress       = ({ percentage }) => '',
         onUploadingImageRetry,
         onUploadingImageCancel,
         
@@ -253,7 +253,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                             
                             
                             // children:
-                            onUploadingImage({
+                            onUploadImageProgress({
                                 imageFile  : uploadingImageFile,
                                 percentage : uploadingImagePercentage,
                             }),

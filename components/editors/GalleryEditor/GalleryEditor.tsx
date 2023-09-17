@@ -230,7 +230,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         // upload/uploading activities:
         onUploadImage,
-        onUploadingImage,
+        onUploadImageProgress,
         
         
         
@@ -806,7 +806,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                         uploadingImageFile         : imageFile,
                         uploadingImagePercentage   : percentage,
                         uploadingImageErrorMessage : uploadError,
-                        onUploadingImage,
+                        onUploadImageProgress,
                         onUploadingImageRetry      : onRetry,
                         onUploadingImageCancel     : onCancel,
                         
