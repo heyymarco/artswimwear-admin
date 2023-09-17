@@ -63,11 +63,10 @@ import {
 // internals:
 import {
     // elements:
-    uploadingImageTitleElm,
-    uploadingImageErrorTitleElm,
-    
     uploadImageMediaGroupElm,
     uploadImageMediaGroupInnerElm,
+    uploadImageUploadingTitleElm,
+    uploadImageUploadingErrorTitleElm,
     uploadImageNoImageElm,
     uploadImagePreviewImageElm,
     uploadImageImageElm,
@@ -149,11 +148,11 @@ export const usesUploadImageLayout = () => {
                 
                 
                 // children:
-                ...descendants([uploadingImageTitleElm, uploadingImageErrorTitleElm, 'p'], {
+                ...descendants([uploadImageUploadingTitleElm, uploadImageUploadingErrorTitleElm, 'p'], {
                     margin    : 0,        // no margin for <p>, <h1>...<h6>
                     textAlign : 'center', // center text for <p>, <h1>...<h6>
                 }),
-                ...descendants([uploadingImageTitleElm, uploadingImageErrorTitleElm], {
+                ...descendants([uploadImageUploadingTitleElm, uploadImageUploadingErrorTitleElm], {
                     fontSize : typos.fontSizeMd,
                     
                     
