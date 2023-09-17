@@ -488,7 +488,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             
                             
                             // handlers:
-                            onResolveUrl={resolveMediaUrl<never>}
+                            onResolveImageUrl={resolveMediaUrl<never>}
                         />
                     </TabPanel>
                     <TabPanel label={PAGE_PRODUCT_TAB_DESCRIPTION}  panelComponent={<Generic className={styles.descriptionTab} />}>

@@ -84,9 +84,9 @@ export const useGalleryEditorStyleSheet = dynamicStyleSheet(
 
 
 // utilities:
-const resolveSrc = <TValue extends ImageData = ImageData>(imageData: TValue, onResolveUrl: ((imageData: TValue) => URL|string)|undefined): string => {
-    if (!onResolveUrl) return (typeof(imageData) === 'string') ? imageData : imageData.url;
-    const resolved = onResolveUrl(imageData);
+const resolveSrc = <TValue extends ImageData = ImageData>(imageData: TValue, onResolveImageUrl: ((imageData: TValue) => URL|string)|undefined): string => {
+    if (!onResolveImageUrl) return (typeof(imageData) === 'string') ? imageData : imageData.url;
+    const resolved = onResolveImageUrl(imageData);
     return (typeof(resolved) === 'string') ? resolved : resolved.href;
 };
 const resolveAlt = <TValue extends ImageData = ImageData>(imageData: TValue): string => {
@@ -189,7 +189,7 @@ export interface GalleryEditorProps<TElement extends Element = HTMLElement, TVal
     
     
     // handlers:
-    onResolveUrl       ?: (imageData: TValue) => URL|string
+    onResolveImageUrl  ?: (imageData: TValue) => URL|string
 }
 const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends ImageData = ImageData>(props: GalleryEditorProps<TElement, TValue>): JSX.Element|null => {
     // styles:
@@ -258,7 +258,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         
         // handlers:
-        onResolveUrl,
+        onResolveImageUrl,
     ...restBasicProps} = props;
     
     
@@ -776,7 +776,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                                     
                                     // images:
                                     alt       : imageComponent.props.alt   ??  resolveAlt(imageData),
-                                    src       : imageComponent.props.src   ?? (resolveSrc(imageData, onResolveUrl) || undefined), // convert empty string to undefined
+                                    src       : imageComponent.props.src   ?? (resolveSrc(imageData, onResolveImageUrl) || undefined), // convert empty string to undefined
                                     sizes     : imageComponent.props.sizes ?? `calc((${galleryEditors.itemMinColumnWidth} * 2) + ${galleryEditors.gapInline})`,
                                 },
                             )}
