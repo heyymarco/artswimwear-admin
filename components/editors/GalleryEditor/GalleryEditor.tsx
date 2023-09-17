@@ -246,7 +246,9 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         // components:
         bodyComponent          = (<Content<TElement> /> as React.ReactComponentElement<any, BasicProps<TElement>>),
         
-        titleComponent,
+        uploadImageTitleComponent,
+        uploadingImageTitleComponent,
+        uploadingImageErrorTitleComponent,
         
         mediaGroupComponent    = (<Generic tag='div' /> as React.ReactComponentElement<any, GenericProps<HTMLElement>>),
         imageComponent         = (<img               /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
@@ -829,6 +831,9 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                         
                         
                         // components:
+                        uploadingImageTitleComponent,
+                        uploadingImageErrorTitleComponent,
+                        
                         imageComponent,
                         previewImageComponent,
                         
@@ -859,7 +864,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                     
                     
                     // components:
-                    titleComponent,
+                    uploadImageTitleComponent,
                     
                     actionGroupComponent,
                     

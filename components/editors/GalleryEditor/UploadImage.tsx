@@ -38,33 +38,33 @@ import {
 export interface UploadImageProps
 {
     // upload images:
-    uploadImageTitle       ?: React.ReactNode
-    selectButtonText       ?: React.ReactNode
-    dropImageText          ?: React.ReactNode
-    uploadImageType        ?: string
+    uploadImageTitle          ?: React.ReactNode
+    selectButtonText          ?: React.ReactNode
+    dropImageText             ?: React.ReactNode
+    uploadImageType           ?: string
     
     
     
     // upload activities:
-    onUploadImage          ?: (args: { imageFile: File }) => void
+    onUploadImage             ?: (args: { imageFile: File }) => void
     
     
     
     // components:
-    titleComponent         ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
+    uploadImageTitleComponent ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
     
-    actionGroupComponent   ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
+    actionGroupComponent      ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
     
-    selectButtonComponent  ?: React.ReactComponentElement<any, ButtonProps>
+    selectButtonComponent     ?: React.ReactComponentElement<any, ButtonProps>
 }
 const UploadImage = (props: UploadImageProps): JSX.Element|null => {
     // rest props:
     const {
         // upload images:
-        uploadImageTitle       = 'Add New Image(s)',
-        selectButtonText       = 'Select Images',
-        dropImageText          = 'or drop images here',
-        uploadImageType        = 'image/jpg, image/jpeg, image/png, image/svg',
+        uploadImageTitle          = 'Add New Image(s)',
+        selectButtonText          = 'Select Images',
+        dropImageText             = 'or drop images here',
+        uploadImageType           = 'image/jpg, image/jpeg, image/png, image/svg',
         
         
         
@@ -74,11 +74,11 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         
         
         // components:
-        titleComponent         = (<h1 />                            as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
+        uploadImageTitleComponent = (<h1                            /> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         
-        actionGroupComponent   = (<div                           /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
+        actionGroupComponent      = (<div                           /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
         
-        selectButtonComponent  = (<ButtonIcon icon='upload_file' /> as React.ReactComponentElement<any, ButtonProps>),
+        selectButtonComponent     = (<ButtonIcon icon='upload_file' /> as React.ReactComponentElement<any, ButtonProps>),
     } = props;
     
     
@@ -239,11 +239,11 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
                 // children:
                 actionGroupComponent.props.children ?? <>
                     {/* <Title> */}
-                    {!!titleComponent && React.cloneElement<Pick<React.HTMLAttributes<Element>, 'className'>>(titleComponent,
+                    {!!uploadImageTitleComponent && React.cloneElement<Pick<React.HTMLAttributes<Element>, 'className'>>(uploadImageTitleComponent,
                         // props:
                         {
                             // classes:
-                            className : titleComponent.props.className ?? 'uploadImageTitle',
+                            className : uploadImageTitleComponent.props.className ?? 'uploadImageTitle',
                         },
                         
                         
