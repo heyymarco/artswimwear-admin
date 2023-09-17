@@ -147,7 +147,7 @@ export const usesGalleryEditorLayout = () => {
                     // children:
                     ...children([galleryEditorImageElm, galleryEditorPreviewImageElm, galleryEditorActionGroupElm], {
                         // borders:
-                        /* important to be placed after "customize" */
+                        // clone <Item>'s border radius:
                         borderStartStartRadius : `calc(${groupableVars.borderStartStartRadius} - ${groupableVars.borderWidth} - min(${groupableVars.borderWidth}, 0.5px))`,
                         borderStartEndRadius   : `calc(${groupableVars.borderStartEndRadius}   - ${groupableVars.borderWidth} - min(${groupableVars.borderWidth}, 0.5px))`,
                         borderEndStartRadius   : `calc(${groupableVars.borderEndStartRadius}   - ${groupableVars.borderWidth} - min(${groupableVars.borderWidth}, 0.5px))`,
@@ -163,8 +163,8 @@ export const usesGalleryEditorLayout = () => {
                         // sizes:
                         justifySelf    : 'stretch', // stretch the self horizontally
                         alignSelf      : 'stretch', // stretch the self vertically
-                        minInlineSize  : 0,
-                        minBlockSize   : 0,
+                        minInlineSize  : 0,         // starts growing from 0px up to justifySelf
+                        minBlockSize   : 0,         // starts growing from 0px up to alignSelf
                     }),
                     
                     
