@@ -226,6 +226,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
             onDragLeave = {handleDragLeave}
             onDrop      = {handleDrop     }
         >
+            {/* <ActionGroup> */}
             {React.cloneElement<React.HTMLAttributes<HTMLElement>>(actionGroupComponent,
                 // props:
                 {
@@ -236,41 +237,43 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
                 
                 
                 // children:
-                /* <Title> */
-                (!!titleComponent && React.cloneElement<Pick<React.HTMLAttributes<Element>, 'className'>>(titleComponent,
-                    // props:
-                    {
-                        // classes:
-                        className : titleComponent.props.className ?? 'uploadImageTitle',
-                    },
-                    
-                    
-                    
-                    // children:
-                    uploadImageTitle,
-                )),
-                
-                /* <SelectButton> */
-                React.cloneElement<ButtonProps>(selectButtonComponent,
-                    // props:
-                    {
-                        // classes:
-                        className : selectButtonComponent.props.className ?? 'selectButton',
+                actionGroupComponent.props.children ?? <>
+                    {/* <Title> */}
+                    {!!titleComponent && React.cloneElement<Pick<React.HTMLAttributes<Element>, 'className'>>(titleComponent,
+                        // props:
+                        {
+                            // classes:
+                            className : titleComponent.props.className ?? 'uploadImageTitle',
+                        },
                         
                         
                         
-                        // handlers:
-                        onClick   : selectButtonHandleClick,
-                    },
+                        // children:
+                        uploadImageTitle,
+                    )}
                     
+                    {/* <SelectButton> */}
+                    {React.cloneElement<ButtonProps>(selectButtonComponent,
+                        // props:
+                        {
+                            // classes:
+                            className : selectButtonComponent.props.className ?? 'selectButton',
+                            
+                            
+                            
+                            // handlers:
+                            onClick   : selectButtonHandleClick,
+                        },
+                        
+                        
+                        
+                        // children:
+                        selectButtonComponent.props.children ?? selectButtonText,
+                    )}
                     
-                    
-                    // children:
-                    selectButtonComponent.props.children ?? selectButtonText,
-                ),
-                
-                /* <Paragraph> */
-                (!!dropImageText && ((typeof(dropImageText) === 'string') ? <p>{dropImageText}</p> : dropImageText)),
+                    {/* <Paragraph> */}
+                    {!!dropImageText && ((typeof(dropImageText) === 'string') ? <p>{dropImageText}</p> : dropImageText)}
+                </>,
             )}
             
             {/* <Input> */}
