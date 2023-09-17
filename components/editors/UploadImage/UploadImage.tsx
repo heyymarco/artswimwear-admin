@@ -183,6 +183,8 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
     retryButtonComponent     ?: React.ReactComponentElement<any, ButtonProps>
     cancelButtonComponent    ?: React.ReactComponentElement<any, ButtonProps>
     
+    
+    
     // handlers:
     onResolveImageUrl        ?: (imageData: TValue) => URL|string
 }
@@ -223,7 +225,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         // upload activities:
         onUploadImage,
-        onUploadImageProgress    = ({ percentage }) => '',
+        onUploadImageProgress    = () => '',
         
         
         
