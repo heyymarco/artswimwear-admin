@@ -244,14 +244,14 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         
         // components:
-        bodyComponent          = (<Content<TElement> /> as React.ReactComponentElement<any, BasicProps<TElement>>),
+        bodyComponent          = (<Content<TElement>           /> as React.ReactComponentElement<any, BasicProps<TElement>>),
         
         uploadImageTitleComponent,
         uploadingImageTitleComponent,
         uploadingImageErrorTitleComponent,
         
-        mediaGroupComponent    = (<Generic tag='div' /> as React.ReactComponentElement<any, GenericProps<HTMLElement>>),
-        imageComponent         = (<img               /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
+        mediaGroupComponent    = (<Basic tag='div' mild={true} /> as React.ReactComponentElement<any, GenericProps<HTMLElement>>),
+        imageComponent         = (<img                         /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
         
         deleteButtonComponent,
         

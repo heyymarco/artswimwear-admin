@@ -36,6 +36,11 @@ import {
     
     
     
+    // padding (inner spacing) stuff of UI:
+    usesPadding,
+    
+    
+    
     // groups a list of UIs into a single UI:
     usesGroupable,
     
@@ -90,13 +95,14 @@ export const usesGalleryEditorLayout = () => {
     
     // capabilities:
     const {groupableRule, groupableVars} = usesGroupable({
-        orientationInlineSelector : null, // never
-        orientationBlockSelector  : '&',  // always
-        itemsSelector             : [galleryEditorPreviewImageElm, galleryEditorActionGroupElm],
+        orientationInlineSelector : null, // never, calculate the inner border radius manually
+        orientationBlockSelector  : null, // never, calculate the inner border radius manually
+        itemsSelector             : null, // never, calculate the inner border radius manually
     });
     
     // features:
-    const {animationRule , animationVars } = usesAnimation(galleryEditors as any);
+    const {animationRule, animationVars} = usesAnimation(galleryEditors as any);
+    const {paddingRule  , paddingVars  } = usesPadding(usesPrefixedProps(galleryEditors, 'item'));
     
     
     
@@ -126,15 +132,54 @@ export const usesGalleryEditorLayout = () => {
             
             // children:
             ...children([galleryEditorMediaGroupElm, galleryEditorUploadingGroupElm, galleryEditorUploadGroupElm], {
-                // customize:
-                ...usesCssProps(usesPrefixedProps(galleryEditors, 'item')), // apply config's cssProps starting with item***
-            }),
-            ...children([galleryEditorUploadingGroupElm, galleryEditorUploadGroupElm], {
                 // capabilities:
                 ...groupableRule(), // make a nicely rounded corners
                 
                 
                 
+                // layouts:
+                ...style({
+                    // borders:
+                    // overflow          : 'hidden', // clip the children at the rounded corners
+                    
+                    
+                    
+                    // children:
+                    ...children([galleryEditorImageElm, galleryEditorPreviewImageElm, galleryEditorActionGroupElm], {
+                        // borders:
+                        /* important to be placed after "customize" */
+                        borderStartStartRadius : `calc(${groupableVars.borderStartStartRadius} - ${groupableVars.borderWidth} - min(${groupableVars.borderWidth}, 0.5px))`,
+                        borderStartEndRadius   : `calc(${groupableVars.borderStartEndRadius}   - ${groupableVars.borderWidth} - min(${groupableVars.borderWidth}, 0.5px))`,
+                        borderEndStartRadius   : `calc(${groupableVars.borderEndStartRadius}   - ${groupableVars.borderWidth} - min(${groupableVars.borderWidth}, 0.5px))`,
+                        borderEndEndRadius     : `calc(${groupableVars.borderEndEndRadius}     - ${groupableVars.borderWidth} - min(${groupableVars.borderWidth}, 0.5px))`,
+                        
+                        
+                        
+                        // spacings:
+                        marginInline  : negativePaddingInline, // cancel out parent's padding with negative margin
+                        marginBlock   : negativePaddingBlock,  // cancel out parent's padding with negative margin
+                    }),
+                    
+                    
+                    
+                    // customize:
+                    ...usesCssProps(usesPrefixedProps(galleryEditors, 'item')), // apply config's cssProps starting with item***
+                    
+                    
+                    
+                    // spacings:
+                    /* important to be placed after "customize" */
+                 // padding       : paddingVars.padding,
+                    paddingInline : paddingVars.paddingInline,
+                    paddingBlock  : paddingVars.paddingBlock,
+                }),
+                
+                
+                
+                // features:
+                ...paddingRule(), // must be placed at the last
+            }),
+            ...children([galleryEditorUploadingGroupElm, galleryEditorUploadGroupElm], {
                 // layouts:
                 ...style({
                     // layouts:
@@ -147,17 +192,7 @@ export const usesGalleryEditorLayout = () => {
                     
                     
                     
-                    // borders:
-                    overflow          : 'hidden', // clip the children at the rounded corners
-                    
-                    
-                    
                     // children:
-                    ...children([galleryEditorPreviewImageElm, galleryEditorActionGroupElm], {
-                        // spacings:
-                        marginInline  : negativePaddingInline, // cancel out parent's padding with negative margin
-                        marginBlock   : negativePaddingBlock,  // cancel out parent's padding with negative margin
-                    }),
                     ...children(galleryEditorActionGroupElm, {
                         // spacings:
                         paddingInline : positivePaddingInline, // restore parent's padding with positive margin
