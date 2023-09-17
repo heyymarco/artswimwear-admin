@@ -138,14 +138,13 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
         >
 {
     // actions:
-    actionDelete             ?: string
+    deleteButtonText         ?: React.ReactNode
     onActionDelete           ?: (args: { imageData: TValue }) => Promise<boolean|Error>
     
     
     
     // upload images:
     selectButtonText         ?: React.ReactNode
-    deleteButtonText         ?: React.ReactNode
     uploadImageType          ?: string
     
     
@@ -203,14 +202,13 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         
         // actions:
-        actionDelete,
+        deleteButtonText         = 'Delete Image',
         onActionDelete,
         
         
         
         // upload images:
         selectButtonText         = 'Select Image',
-        deleteButtonText         = 'Delete Image',
         uploadImageType          = 'image/jpg, image/jpeg, image/png, image/svg',
         
         
