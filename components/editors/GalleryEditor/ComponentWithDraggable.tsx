@@ -18,7 +18,7 @@ import {
 
 
 // react components:
-export interface ElementWithDraggableProps<TElement extends Element = HTMLElement>
+export interface ComponentWithDraggableProps<TElement extends Element = HTMLElement>
     extends
         // bases:
         Omit<React.HTMLAttributes<TElement>,
@@ -42,29 +42,29 @@ export interface ElementWithDraggableProps<TElement extends Element = HTMLElemen
         >
 {
     // positions:
-    itemIndex        : number
+    itemIndex     : number
     
     
     
     // draggable:
-    dragDataType     : string
-    onDragStart     ?: (itemIndex: number) => void
-    onDragEnd       ?: (itemIndex: number) => void
+    dragDataType  : string
+    onDragStart  ?: (itemIndex: number) => void
+    onDragEnd    ?: (itemIndex: number) => void
     
     
     
     // droppable:
-    onDragEnter     ?: (itemIndex: number) => void
-    onDragOver      ?: (itemIndex: number) => void
-    onDragLeave     ?: (itemIndex: number) => void
-    onDrop          ?: (itemIndex: number) => void
+    onDragEnter  ?: (itemIndex: number) => void
+    onDragOver   ?: (itemIndex: number) => void
+    onDragLeave  ?: (itemIndex: number) => void
+    onDrop       ?: (itemIndex: number) => void
     
     
     
     // components:
-    elementComponent : React.ReactComponentElement<any, React.HTMLAttributes<TElement>>
+    component     : React.ReactComponentElement<any, React.HTMLAttributes<TElement>>
 }
-const ElementWithDraggable = <TElement extends Element = HTMLElement>(props: ElementWithDraggableProps<TElement>): JSX.Element|null => {
+const ComponentWithDraggable = <TElement extends Element = HTMLElement>(props: ComponentWithDraggableProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // positions:
@@ -88,8 +88,8 @@ const ElementWithDraggable = <TElement extends Element = HTMLElement>(props: Ele
         
         
         // components:
-        elementComponent,
-    ...restElementProps} = props;
+        component,
+    ...restComponentProps} = props;
     
     
     
@@ -181,12 +181,12 @@ const ElementWithDraggable = <TElement extends Element = HTMLElement>(props: Ele
     
     // jsx:
     /* <Component> */
-    return React.cloneElement<React.HTMLAttributes<TElement>>(elementComponent,
+    return React.cloneElement<React.HTMLAttributes<TElement>>(component,
         // props:
         {
             // other props:
-            ...restElementProps,
-            ...elementComponent.props, // overwrites restElementProps (if any conflics)
+            ...restComponentProps,
+            ...component.props, // overwrites restComponentProps (if any conflics)
             
             
             
@@ -206,6 +206,6 @@ const ElementWithDraggable = <TElement extends Element = HTMLElement>(props: Ele
     );
 };
 export {
-    ElementWithDraggable,
-    ElementWithDraggable as default,
+    ComponentWithDraggable,
+    ComponentWithDraggable as default,
 }
