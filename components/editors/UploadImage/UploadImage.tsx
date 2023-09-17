@@ -614,7 +614,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         cancelButtonHandleClickInternal,
     );
     
-    const handleAnimationStart = useMergeEvents(
+    const handleAnimationStart            = useMergeEvents(
         // preserves the original `onAnimationStart` from `bodyComponent`:
         bodyComponent.props.onAnimationStart,
         
@@ -628,7 +628,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         // states:
         disableableState.handleAnimationStart,
     );
-    const handleAnimationEnd   = useMergeEvents(
+    const handleAnimationEnd              = useMergeEvents(
         // preserves the original `onAnimationEnd` from `bodyComponent`:
         bodyComponent.props.onAnimationEnd,
         
