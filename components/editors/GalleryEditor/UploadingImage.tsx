@@ -46,8 +46,8 @@ export interface UploadingImageProps
     // uploading images:
     uploadingImageTitle       ?: React.ReactNode
     uploadingImageErrorTitle  ?: React.ReactNode
-    uploadingImageRetry       ?: React.ReactNode
-    uploadingImageCancel      ?: React.ReactNode
+    uploadingImageRetryText   ?: React.ReactNode
+    uploadingImageCancelText  ?: React.ReactNode
     onUploadingImageProgress  ?: (args: { imageFile: File, percentage: number|null }) => string
     
     
@@ -80,8 +80,8 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
         // uploading images:
         uploadingImageTitle      = 'Uploading...',
         uploadingImageErrorTitle = 'Upload Error',
-        uploadingImageRetry      = 'Retry',
-        uploadingImageCancel     = 'Cancel',
+        uploadingImageRetryText  = 'Retry',
+        uploadingImageCancelText = 'Cancel',
         // onUploadingImageProgress = ({ percentage }) => `${percentage}%`,
         onUploadingImageProgress = ({ percentage }) => '',
         
@@ -305,7 +305,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                         
                         
                         // children:
-                        retryButtonComponent.props.children ?? uploadingImageRetry,
+                        retryButtonComponent.props.children ?? uploadingImageRetryText,
                     )}
                 </>),
                 
@@ -325,7 +325,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                     
                     
                     // children:
-                    cancelButtonComponent.props.children ?? uploadingImageCancel,
+                    cancelButtonComponent.props.children ?? uploadingImageCancelText,
                 ),
             )}
         </Basic>

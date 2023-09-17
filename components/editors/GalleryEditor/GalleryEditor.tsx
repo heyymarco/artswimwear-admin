@@ -207,15 +207,15 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         
         // actions:
-        actionDelete,
+        deleteButtonTitle,
         onActionDelete,
         
         
         
         // upload images:
         uploadImageTitle,
-        uploadImageSelectImage,
-        uploadImageDropImage,
+        selectButtonText,
+        dropImageText,
         uploadImageType,
         
         
@@ -223,8 +223,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         // uploading images:
         uploadingImageTitle,
         uploadingImageErrorTitle,
-        uploadingImageRetry,
-        uploadingImageCancel,
+        uploadingImageRetryText,
+        uploadingImageCancelText,
         
         
         
@@ -757,7 +757,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                             
                             {...{
                                 // actions:
-                                actionDelete,
+                                deleteButtonTitle,
                                 onActionDelete : handleActionDelete,
                                 
                                 
@@ -797,8 +797,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                         // uploading images:
                         uploadingImageTitle,
                         uploadingImageErrorTitle,
-                        uploadingImageRetry,
-                        uploadingImageCancel,
+                        uploadingImageRetryText,
+                        uploadingImageCancelText,
                         onUploadingImageProgress,
                         
                         
@@ -830,8 +830,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                 {...{
                     // upload images:
                     uploadImageTitle,
-                    uploadImageSelectImage,
-                    uploadImageDropImage,
+                    selectButtonText,
+                    dropImageText,
                     uploadImageType,
                     
                     
