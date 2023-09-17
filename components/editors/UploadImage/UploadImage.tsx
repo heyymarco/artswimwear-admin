@@ -153,8 +153,8 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
     // uploading images:
     uploadingImageTitle      ?: React.ReactNode
     uploadingImageErrorTitle ?: React.ReactNode
-    uploadingImageRetry      ?: React.ReactNode
-    uploadingImageCancel     ?: React.ReactNode
+    uploadingImageRetryText  ?: React.ReactNode
+    uploadingImageCancelText ?: React.ReactNode
     
     
     
@@ -218,8 +218,8 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         // uploading images:
         uploadingImageTitle      = 'Uploading...',
         uploadingImageErrorTitle = 'Upload Error',
-        uploadingImageRetry      = 'Retry',
-        uploadingImageCancel     = 'Cancel',
+        uploadingImageRetryText  = 'Retry',
+        uploadingImageCancelText = 'Cancel',
         
         
         
@@ -872,7 +872,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                         
                         
                         // children:
-                        retryButtonComponent.props.children ?? uploadingImageRetry,
+                        retryButtonComponent.props.children ?? uploadingImageRetryText,
                     )}
                     
                     {/* <CancelButton> */}
@@ -891,7 +891,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                         
                         
                         // children:
-                        cancelButtonComponent.props.children ?? uploadingImageCancel,
+                        cancelButtonComponent.props.children ?? uploadingImageCancelText,
                     )}
                 </>),
             )}
