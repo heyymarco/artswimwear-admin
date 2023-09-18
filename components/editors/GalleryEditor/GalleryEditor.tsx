@@ -257,6 +257,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         imageComponent         = (<img                         /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
         
         deleteButtonComponent,
+        busyComponent,
         
         selectButtonComponent,
         
@@ -787,6 +788,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                                         )
                                     }
                                     deleteButtonComponent={deleteButtonComponent}
+                                    busyComponent={busyComponent}
                                 />
                             }
                         />

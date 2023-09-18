@@ -15,6 +15,7 @@ import {
     useEvent,
     useMergeEvents,
     useMergeClasses,
+    useMountedFlag,
     
     
     
@@ -25,12 +26,6 @@ import {
     
     // a capability of UI to be disabled:
     useDisableable,
-}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
-
-// reusable-ui core:
-import {
-    // react helper hooks:
-    useMountedFlag,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
