@@ -1,8 +1,6 @@
 // cssfn:
 import {
     // writes css in javascript:
-    rule,
-    states,
     descendants,
     children,
     style,
@@ -129,139 +127,153 @@ export const usesUploadImageLayout = () => {
             // children:
             ...children(uploadImageMediaGroupElm, {
                 // layouts:
-                display      : 'grid',
-                gridTemplate : [[
-                    '"media" auto',
-                    '/',
-                    'auto'
-                ]],
-                justifyContent : 'center', // center a whole items horizontally
-                alignContent   : 'center', // center a whole items vertically
-                
-                
-                
-                // sizes:
-                justifySelf    : 'center', // center the self horizontally
-                alignSelf      : 'center', // center the self vertically
-                
-                
-                
-                // children:
-                ...descendants([uploadImageUploadingTitleElm, uploadImageUploadingErrorTitleElm, 'p'], {
-                    margin    : 0,        // no margin for <p>, <h1>...<h6>
-                    textAlign : 'center', // center text for <p>, <h1>...<h6>
-                }),
-                ...descendants([uploadImageUploadingTitleElm, uploadImageUploadingErrorTitleElm], {
-                    fontSize : typos.fontSizeMd,
+                // layouts:
+                ...style({
+                    display      : 'grid',
+                    gridTemplate : [[
+                        '"media" auto',
+                        '/',
+                        'auto'
+                    ]],
+                    justifyContent : 'center', // center a whole items horizontally
+                    alignContent   : 'center', // center a whole items vertically
                     
                     
                     
-                    // customize:
-                    ...usesCssProps(usesPrefixedProps(uploadImages, 'title')), // apply config's cssProps starting with title***
-                }),
-                ...children([uploadImageNoImageElm, uploadImagePreviewImageElm, uploadImageImageElm, uploadImageMediaGroupInnerElm], {
-                    // positions:
-                    gridArea : 'media',
-                }),
-                ...children([uploadImagePreviewImageElm, uploadImageImageElm, uploadImageMediaGroupInnerElm], {
-                    // borders:
-                    // clone <UploadImage>'s border stroke:
-                    border                 : borderVars.border,
-                    borderWidth            : groupableVars.borderWidth,
-                    
-                    // clone <UploadImage>'s border radius:
-                    borderStartStartRadius : groupableVars.borderStartStartRadius,
-                    borderStartEndRadius   : groupableVars.borderStartEndRadius,
-                    borderEndStartRadius   : groupableVars.borderEndStartRadius,
-                    borderEndEndRadius     : groupableVars.borderEndEndRadius,
-                    
-                    overflow               : 'hidden', // clip the children at the rounded corners
-                }),
-                ...children([uploadImagePreviewImageElm, uploadImageImageElm], {
                     // sizes:
-                    justifySelf    : 'stretch', // stretch the self horizontally
-                    alignSelf      : 'stretch', // stretch the self vertically
-                    minInlineSize  : 0,         // starts growing from 0px up to justifySelf
-                    minBlockSize   : 0,         // starts growing from 0px up to alignSelf
-                }),
-                ...children(uploadImageNoImageElm, {
-                    ...children('::after', {
-                        // layouts:
-                        display        : 'flex',   // use block flexbox, so it takes the entire parent's width
-                        flexDirection  : 'column', // items are stacked vertically
-                        justifyContent : 'center', // center items vertically
-                        alignItems     : 'center', // center items horizontally
-                        flexWrap       : 'nowrap', // no wrapping
-                    }),
+                    justifySelf    : 'center', // center the self horizontally
+                    alignSelf      : 'center', // center the self vertically
                     
                     
                     
-                    // customize:
-                    ...usesCssProps(usesPrefixedProps(uploadImages, 'noImage')), // apply config's cssProps starting with noImage***
-                }),
-                ...children(uploadImagePreviewImageElm, {
-                    // customize:
-                    ...usesCssProps(usesPrefixedProps(uploadImages, 'previewImage')), // apply config's cssProps starting with previewImage***
-                }),
-                ...children(uploadImageImageElm, {
-                    // customize:
-                    ...usesCssProps(usesPrefixedProps(uploadImages, 'image')), // apply config's cssProps starting with image***
-                }),
-                ...children(uploadImageMediaGroupInnerElm, {
-                    // positions:
-                    zIndex          : 1,
-                    
-                    
-                    
-                    // layouts:
-                    display         : 'flex',    // use block flexbox, so it takes the entire parent's width
-                    flexDirection   : 'column',  // the flex direction to vert
-                    justifyContent  : 'center',  // center items vertically
-                    alignItems      : 'stretch', // stretch items horizontally
-                    flexWrap        : 'nowrap',  // no wrapping
-                    
-                    
-                    
-                    // spacings:
-                    gap           : spacers.default,
-                    
-                    // clone <UploadImage>'s padding:
-                    paddingInline : groupableVars.paddingInline,
-                    paddingBlock  : groupableVars.paddingBlock,
+                    // animations:
+                    filter         : animationVars.filter,
+                    anim           : animationVars.anim,
                     
                     
                     
                     // children:
-                    ...children(uploadImageUploadProgressElm, {
-                        // customize:
-                        ...usesCssProps(usesPrefixedProps(uploadImages, 'uploadProgress')), // apply config's cssProps starting with uploadProgress***
+                    ...descendants([uploadImageUploadingTitleElm, uploadImageUploadingErrorTitleElm, 'p'], {
+                        margin    : 0,        // no margin for <p>, <h1>...<h6>
+                        textAlign : 'center', // center text for <p>, <h1>...<h6>
                     }),
-                    ...children(uploadImageUploadErrorElm, {
-                        // layouts:
-                        display     : 'grid',
+                    ...descendants([uploadImageUploadingTitleElm, uploadImageUploadingErrorTitleElm], {
+                        fontSize : typos.fontSizeMd,
                         
                         
                         
+                        // customize:
+                        ...usesCssProps(usesPrefixedProps(uploadImages, 'title')), // apply config's cssProps starting with title***
+                    }),
+                    ...children([uploadImageNoImageElm, uploadImagePreviewImageElm, uploadImageImageElm, uploadImageMediaGroupInnerElm], {
+                        // positions:
+                        gridArea : 'media',
+                    }),
+                    ...children([uploadImagePreviewImageElm, uploadImageImageElm, uploadImageMediaGroupInnerElm], {
+                        // borders:
+                        // clone <UploadImage>'s border stroke:
+                        border                 : borderVars.border,
+                        borderWidth            : groupableVars.borderWidth,
+                        
+                        // clone <UploadImage>'s border radius:
+                        borderStartStartRadius : groupableVars.borderStartStartRadius,
+                        borderStartEndRadius   : groupableVars.borderStartEndRadius,
+                        borderEndStartRadius   : groupableVars.borderEndStartRadius,
+                        borderEndEndRadius     : groupableVars.borderEndEndRadius,
+                        
+                        overflow               : 'hidden', // clip the children at the rounded corners
+                    }),
+                    ...children([uploadImagePreviewImageElm, uploadImageImageElm], {
                         // sizes:
-                        justifySelf : 'center', // center the self horizontally
-                        alignSelf   : 'center', // center the self vertically
+                        justifySelf    : 'stretch', // stretch the self horizontally
+                        alignSelf      : 'stretch', // stretch the self vertically
+                        minInlineSize  : 0,         // starts growing from 0px up to justifySelf
+                        minBlockSize   : 0,         // starts growing from 0px up to alignSelf
+                    }),
+                    ...children(uploadImageNoImageElm, {
+                        ...children('::after', {
+                            // layouts:
+                            display        : 'flex',   // use block flexbox, so it takes the entire parent's width
+                            flexDirection  : 'column', // items are stacked vertically
+                            justifyContent : 'center', // center items vertically
+                            alignItems     : 'center', // center items horizontally
+                            flexWrap       : 'nowrap', // no wrapping
+                        }),
+                        
+                        
+                        
+                        // customize:
+                        ...usesCssProps(usesPrefixedProps(uploadImages, 'noImage')), // apply config's cssProps starting with noImage***
+                    }),
+                    ...children(uploadImagePreviewImageElm, {
+                        // customize:
+                        ...usesCssProps(usesPrefixedProps(uploadImages, 'previewImage')), // apply config's cssProps starting with previewImage***
+                    }),
+                    ...children(uploadImageImageElm, {
+                        // customize:
+                        ...usesCssProps(usesPrefixedProps(uploadImages, 'image')), // apply config's cssProps starting with image***
+                    }),
+                    ...children(uploadImageMediaGroupInnerElm, {
+                        // positions:
+                        zIndex          : 1,
+                        
+                        
+                        
+                        // layouts:
+                        display         : 'flex',    // use block flexbox, so it takes the entire parent's width
+                        flexDirection   : 'column',  // the flex direction to vert
+                        justifyContent  : 'center',  // center items vertically
+                        alignItems      : 'stretch', // stretch items horizontally
+                        flexWrap        : 'nowrap',  // no wrapping
                         
                         
                         
                         // spacings:
-                        gap : spacers.sm,
+                        gap           : spacers.default,
+                        
+                        // clone <UploadImage>'s padding:
+                        paddingInline : groupableVars.paddingInline,
+                        paddingBlock  : groupableVars.paddingBlock,
                         
                         
                         
-                        // customize:
-                        ...usesCssProps(usesPrefixedProps(uploadImages, 'uploadError')), // apply config's cssProps starting with uploadError***
+                        // children:
+                        ...children(uploadImageUploadProgressElm, {
+                            // customize:
+                            ...usesCssProps(usesPrefixedProps(uploadImages, 'uploadProgress')), // apply config's cssProps starting with uploadProgress***
+                        }),
+                        ...children(uploadImageUploadErrorElm, {
+                            // layouts:
+                            display     : 'grid',
+                            
+                            
+                            
+                            // sizes:
+                            justifySelf : 'center', // center the self horizontally
+                            alignSelf   : 'center', // center the self vertically
+                            
+                            
+                            
+                            // spacings:
+                            gap : spacers.sm,
+                            
+                            
+                            
+                            // customize:
+                            ...usesCssProps(usesPrefixedProps(uploadImages, 'uploadError')), // apply config's cssProps starting with uploadError***
+                        }),
                     }),
+                    
+                    
+                    
+                    // customize:
+                    ...usesCssProps(usesPrefixedProps(uploadImages, 'media')), // apply config's cssProps starting with media***
                 }),
                 
                 
                 
-                // customize:
-                ...usesCssProps(usesPrefixedProps(uploadImages, 'media')), // apply config's cssProps starting with media***
+                // features:
+                ...animationRule(),  // must be placed at the last
             }),
             
             ...children(uploadImageActionGroupElm, {
@@ -335,10 +347,30 @@ export const usesUploadImageVariants = () => {
     });
 };
 
+export const usesUploadImageStates = () => {
+    // dependencies:
+    
+    // states:
+    const {disableableRule} = usesDisableable(uploadImages);
+    
+    
+    
+    return style({
+        // children:
+        ...children(uploadImageMediaGroupElm, {
+            // states:
+            ...disableableRule(),
+        }),
+    });
+};
+
 export default () => style({
     // layouts:
     ...usesUploadImageLayout(),
     
     // variants:
     ...usesUploadImageVariants(),
+    
+    // states:
+    ...usesUploadImageStates(),
 });

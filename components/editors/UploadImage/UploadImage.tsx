@@ -7,7 +7,6 @@ import {
     
     // hooks:
     useState,
-    useId,
     useRef,
 }                           from 'react'
 
@@ -41,6 +40,8 @@ import {
 // reusable-ui components:
 import {
     // base-components:
+    GenericProps,
+    Generic,
     BasicProps,
     Basic,
     Content,
@@ -179,7 +180,7 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
     uploadingImageTitleComponent      ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
     uploadingImageErrorTitleComponent ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
     
-    mediaGroupComponent               ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
+    mediaGroupComponent               ?: React.ReactComponentElement<any, GenericProps<Element>>
     mediaGroupComponentInner          ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
     noImageComponent                  ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
     previewImageComponent             ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
@@ -246,7 +247,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         uploadingImageTitleComponent      = (<h1                                                                  /> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         uploadingImageErrorTitleComponent = (<h1                                                                  /> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         
-        mediaGroupComponent               = (<div                                                                 /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
+        mediaGroupComponent               = (<Generic<Element> tag='div'                                          /> as React.ReactComponentElement<any, GenericProps<Element>>),
         mediaGroupComponentInner          = (<div                                                                 /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
         noImageComponent                  = (<Icon       icon='image'       size='xl'                             /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
         imageComponent                    = (<img                                                                 /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
@@ -615,13 +616,8 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
     );
     
     const handleAnimationStart            = useMergeEvents(
-        // preserves the original `onAnimationStart` from `bodyComponent`:
-        bodyComponent.props.onAnimationStart,
-        
-        
-        
-        // preserves the original `onAnimationStart` from `props`:
-        props.onAnimationStart,
+        // preserves the original `onAnimationStart` from `mediaGroupComponent`:
+        mediaGroupComponent.props.onAnimationStart,
         
         
         
@@ -629,13 +625,8 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         disableableState.handleAnimationStart,
     );
     const handleAnimationEnd              = useMergeEvents(
-        // preserves the original `onAnimationEnd` from `bodyComponent`:
-        bodyComponent.props.onAnimationEnd,
-        
-        
-        
-        // preserves the original `onAnimationEnd` from `props`:
-        props.onAnimationEnd,
+        // preserves the original `onAnimationEnd` from `mediaGroupComponent`:
+        mediaGroupComponent.props.onAnimationEnd,
         
         
         
@@ -661,13 +652,8 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         styleSheet.main,
     );
     const stateClasses = useMergeClasses(
-        // preserves the original `stateClasses` from `bodyComponent`:
-        bodyComponent.props.stateClasses,
-        
-        
-        
-        // preserves the original `stateClasses` from `props`:
-        props.stateClasses,
+        // preserves the original `stateClasses` from `mediaGroupComponent`:
+        mediaGroupComponent.props.stateClasses,
         
         
         
@@ -713,19 +699,12 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                     
                     
                     // variants:
-                    mild             : bodyComponent.props.mild ?? props.mild ?? true,
+                    mild    : bodyComponent.props.mild ?? props.mild ?? true,
                     
                     
                     
                     // classes:
-                    classes          : classes,
-                    stateClasses     : stateClasses,
-                    
-                    
-                    
-                    // handlers:
-                    onAnimationStart : handleAnimationStart,
-                    onAnimationEnd   : handleAnimationEnd,
+                    classes : classes,
                 },
                 
                 
@@ -733,11 +712,22 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                 // children:
                 bodyComponent.props.children ?? <>
                     {/* <MediaGroup> */}
-                    {React.cloneElement<React.HTMLAttributes<HTMLElement>>(mediaGroupComponent,
+                    {React.cloneElement<GenericProps<Element>>(mediaGroupComponent,
                         // props:
                         {
                             // classes:
-                            className : mediaGroupComponent.props.className ?? 'mediaGroup',
+                            className        : mediaGroupComponent.props.className ?? 'mediaGroup',
+                            
+                            
+                            
+                            // classes:
+                            stateClasses     : stateClasses,
+                            
+                            
+                            
+                            // handlers:
+                            onAnimationStart : handleAnimationStart,
+                            onAnimationEnd   : handleAnimationEnd,
                         },
                         
                         

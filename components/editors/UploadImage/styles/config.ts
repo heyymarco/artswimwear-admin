@@ -40,6 +40,13 @@ import {
 // configs:
 export const [uploadImages, uploadImageValues, cssUploadImageConfig] = cssConfig(() => {
     const bases = {
+        // animations:
+        filterDisable         : indicators.filterDisable    as CssKnownProps['filter'    ],
+        animEnable            : indicators.animEnable       as CssKnownProps['animation' ],
+        animDisable           : indicators.animDisable      as CssKnownProps['animation' ],
+        
+        
+        
         // media:
         mediaInlineSizeSm     : 'calc(3 * 40px)'            as CssKnownProps['inlineSize'],
         mediaBlockSizeSm      : 'calc(3 * 40px)'            as CssKnownProps['blockSize' ],
