@@ -296,7 +296,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
     const [previewImage   , setPreviewImage  ] = useState<string|null>(null);
     
     let   [isBusy, setIsBusy]                  = useState<boolean>(false);
-    const disableableState                     = useDisableable<TElement>({
+    const disableableState                     = useDisableable<HTMLImageElement>({
         enabled : !isBusy,
     });
     
@@ -623,8 +623,8 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
     );
     
     const handleAnimationStart            = useMergeEvents(
-        // preserves the original `onAnimationStart` from `mediaGroupComponent`:
-        mediaGroupComponent.props.onAnimationStart,
+        // preserves the original `onAnimationStart` from `imageComponent`:
+        imageComponent.props.onAnimationStart,
         
         
         
@@ -632,8 +632,8 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         disableableState.handleAnimationStart,
     );
     const handleAnimationEnd              = useMergeEvents(
-        // preserves the original `onAnimationEnd` from `mediaGroupComponent`:
-        mediaGroupComponent.props.onAnimationEnd,
+        // preserves the original `onAnimationEnd` from `imageComponent`:
+        imageComponent.props.onAnimationEnd,
         
         
         
@@ -714,13 +714,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                         // props:
                         {
                             // classes:
-                            className        : mediaGroupComponent.props.className ?? 'mediaGroup',
-                            
-                            
-                            
-                            // handlers:
-                            onAnimationStart : handleAnimationStart,
-                            onAnimationEnd   : handleAnimationEnd,
+                            className : mediaGroupComponent.props.className ?? 'mediaGroup',
                         },
                         
                         
@@ -757,14 +751,20 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                                 // props:
                                 {
                                     // classes:
-                                    className : imageComponent.props.className ?? `image ${disableableState.class ?? ''}`,
+                                    className        : imageComponent.props.className ?? `image ${disableableState.class ?? ''}`,
                                     
                                     
                                     
                                     // images:
-                                    alt       : imageComponent.props.alt   ??  resolveAlt(imageFn),
-                                    src       : imageComponent.props.src   ?? (resolveSrc(imageFn, onResolveImageUrl) || undefined), // convert empty string to undefined
-                                    sizes     : imageComponent.props.sizes ?? uploadImages.imageInlineSize,
+                                    alt              : imageComponent.props.alt   ??  resolveAlt(imageFn),
+                                    src              : imageComponent.props.src   ?? (resolveSrc(imageFn, onResolveImageUrl) || undefined), // convert empty string to undefined
+                                    sizes            : imageComponent.props.sizes ?? uploadImages.imageInlineSize,
+                                    
+                                    
+                                    
+                                    // handlers:
+                                    onAnimationStart : handleAnimationStart,
+                                    onAnimationEnd   : handleAnimationEnd,
                                 },
                             )}
                             
