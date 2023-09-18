@@ -658,15 +658,6 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         // classes:
         styleSheet.main,
     );
-    const stateClasses = useMergeClasses(
-        // preserves the original `stateClasses` from `mediaGroupComponent`:
-        mediaGroupComponent.props.stateClasses,
-        
-        
-        
-        // states:
-        disableableState.class,
-    );
     
     
     
@@ -727,11 +718,6 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                             
                             
                             
-                            // classes:
-                            stateClasses     : stateClasses,
-                            
-                            
-                            
                             // handlers:
                             onAnimationStart : handleAnimationStart,
                             onAnimationEnd   : handleAnimationEnd,
@@ -771,7 +757,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                                 // props:
                                 {
                                     // classes:
-                                    className : imageComponent.props.className ?? 'image',
+                                    className : imageComponent.props.className ?? `image ${disableableState.class ?? ''}`,
                                     
                                     
                                     

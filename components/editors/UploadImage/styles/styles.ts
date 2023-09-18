@@ -147,12 +147,6 @@ export const usesUploadImageLayout = () => {
                     
                     
                     
-                    // animations:
-                    filter         : animationVars.filter,
-                    anim           : animationVars.anim,
-                    
-                    
-                    
                     // children:
                     ...descendants([uploadImageUploadingTitleElm, uploadImageUploadingErrorTitleElm, 'p'], {
                         margin    : 0,        // no margin for <p>, <h1>...<h6>
@@ -211,8 +205,22 @@ export const usesUploadImageLayout = () => {
                         ...usesCssProps(usesPrefixedProps(uploadImages, 'previewImage')), // apply config's cssProps starting with previewImage***
                     }),
                     ...children(uploadImageImageElm, {
-                        // customize:
-                        ...usesCssProps(usesPrefixedProps(uploadImages, 'image')), // apply config's cssProps starting with image***
+                        // layouts:
+                        ...style({
+                            // customize:
+                            ...usesCssProps(usesPrefixedProps(uploadImages, 'image')), // apply config's cssProps starting with image***
+                            
+                            
+                            
+                            // animations:
+                            filter : animationVars.filter,
+                            anim   : animationVars.anim,
+                        }),
+                        
+                        
+                        
+                        // features:
+                        ...animationRule(), // must be placed at the last
                     }),
                     ...children(uploadImageBusyElm, {
                         // positions:
@@ -291,11 +299,6 @@ export const usesUploadImageLayout = () => {
                     // customize:
                     ...usesCssProps(usesPrefixedProps(uploadImages, 'media')), // apply config's cssProps starting with media***
                 }),
-                
-                
-                
-                // features:
-                ...animationRule(),  // must be placed at the last
             }),
             
             ...children(uploadImageActionGroupElm, {
@@ -380,8 +383,10 @@ export const usesUploadImageStates = () => {
     return style({
         // children:
         ...children(uploadImageMediaGroupElm, {
-            // states:
-            ...disableableRule(),
+            ...children(uploadImageImageElm, {
+                // states:
+                ...disableableRule(),
+            }),
         }),
     });
 };
