@@ -31,7 +31,6 @@ import {
 import {
     // base-components:
     GenericProps,
-    Generic,
     BasicProps,
     Basic,
     Content,
@@ -192,7 +191,7 @@ export interface GalleryEditorProps<TElement extends Element = HTMLElement, TVal
     // components:
     bodyComponent       ?: React.ReactComponentElement<any, BasicProps<TElement>>
     
-    mediaGroupComponent ?: React.ReactComponentElement<any, GenericProps<HTMLElement>>
+    mediaGroupComponent ?: React.ReactComponentElement<any, GenericProps<Element>>
     imageComponent      ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
     
     
@@ -250,7 +249,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         uploadingImageTitleComponent,
         uploadingImageErrorTitleComponent,
         
-        mediaGroupComponent    = (<Basic tag='div' mild={true} /> as React.ReactComponentElement<any, GenericProps<HTMLElement>>),
+        mediaGroupComponent    = (<Basic tag='div' mild={true} /> as React.ReactComponentElement<any, GenericProps<Element>>),
         imageComponent         = (<img                         /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
         
         deleteButtonComponent,
@@ -740,7 +739,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                             // components:
                             elementComponent={
                                 /* <MediaGroup> */
-                                React.cloneElement<React.HTMLAttributes<HTMLElement>>(mediaGroupComponent,
+                                React.cloneElement<GenericProps<Element>>(mediaGroupComponent,
                                     // props:
                                     {
                                         // classes:
