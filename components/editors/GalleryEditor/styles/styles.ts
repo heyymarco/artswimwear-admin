@@ -323,7 +323,9 @@ export const usesGalleryEditorLayout = () => {
                     }),
                     ...children(galleryEditorBusyElm, {
                         // positions:
-                        zIndex   : 1,
+                        justifySelf : 'center',
+                        alignSelf   : 'center',
+                        zIndex      : 1,
                         
                         
                         
