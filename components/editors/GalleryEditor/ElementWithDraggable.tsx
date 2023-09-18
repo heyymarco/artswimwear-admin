@@ -2,11 +2,6 @@
 import {
     // react:
     default as React,
-    
-    
-    
-    // hooks:
-    useRef,
 }                           from 'react'
 
 // reusable-ui core:
@@ -29,14 +24,6 @@ export interface ElementWithDraggableProps<TElement extends Element = HTMLElemen
             
             
             
-            // droppable:
-            |'onDragEnter' // already implemented internally
-            |'onDragOver'  // already implemented internally
-            |'onDragLeave' // already implemented internally
-            |'onDrop'      // already implemented internally
-            
-            
-            
             // children:
             |'children' // no nested children
         >
@@ -50,14 +37,6 @@ export interface ElementWithDraggableProps<TElement extends Element = HTMLElemen
     dragDataType     : string
     onDragStart     ?: (itemIndex: number) => void
     onDragEnd       ?: (itemIndex: number) => void
-    
-    
-    
-    // droppable:
-    onDragEnter     ?: (itemIndex: number) => void
-    onDragOver      ?: (itemIndex: number) => void
-    onDragLeave     ?: (itemIndex: number) => void
-    onDrop          ?: (itemIndex: number) => void
     
     
     
@@ -84,22 +63,9 @@ const ElementWithDraggable = <TElement extends Element = HTMLElement>(props: Ele
         
         
         
-        // droppable:
-        onDragEnter,
-        onDragOver,
-        onDragLeave,
-        onDrop,
-        
-        
-        
         // components:
         elementComponent,
     ...restElementProps} = props;
-    
-    
-    
-    // states:
-    const dragEnterCounter = useRef<number>(0);
     
     
     
@@ -126,64 +92,6 @@ const ElementWithDraggable = <TElement extends Element = HTMLElement>(props: Ele
     
     
     
-    // droppable handlers:
-    const handleDragEnter   = useEvent<React.DragEventHandler<TElement>>((event) => {
-        // conditions:
-        const isValidDragObject = event.dataTransfer.types.includes(dragDataType);
-        if (!isValidDragObject) return; // unknown drag object => ignore
-        
-        
-        
-        // callback:
-        dragEnterCounter.current++;
-        if (dragEnterCounter.current === 1) onDragEnter?.(itemIndex);
-    });
-    const handleDragOver    = useEvent<React.DragEventHandler<TElement>>((event) => {
-        // conditions:
-        const isValidDragObject = event.dataTransfer.types.includes(dragDataType);
-        if (!isValidDragObject) return; // unknown drag object => ignore
-        
-        
-        
-        // events:
-        event.dataTransfer.dropEffect = 'move';
-        event.preventDefault(); // prevents the default behavior to *disallow* for dropping here
-        
-        
-        
-        // callback:
-        onDragOver?.(itemIndex);
-    });
-    const handleDragLeave   = useEvent<React.DragEventHandler<TElement>>((event) => {
-        // callback:
-        if (dragEnterCounter.current >= 1) {
-            dragEnterCounter.current--;
-            if (dragEnterCounter.current === 0) onDragLeave?.(itemIndex);
-        } // if
-    });
-    const handleDrop        = useEvent<React.DragEventHandler<TElement>>((event) => {
-        // conditions:
-        const isValidDragObject = event.dataTransfer.types.includes(dragDataType);
-        if (!isValidDragObject) return; // unknown drag object => ignore
-        
-        
-        
-        // events:
-        event.preventDefault();
-        event.stopPropagation(); // do not bubble event to the <parent>
-        
-        
-        
-        // callback:
-        if (dragEnterCounter.current >= 1) {
-            dragEnterCounter.current = 0;
-            onDragLeave?.(itemIndex);
-        } // if
-        onDrop?.(itemIndex);
-    });
-    
-    
-    
     // jsx:
     /* <Element> */
     return React.cloneElement<React.HTMLAttributes<TElement>>(elementComponent,
@@ -199,14 +107,6 @@ const ElementWithDraggable = <TElement extends Element = HTMLElement>(props: Ele
             draggable   : true,
             onDragStart : handleDragStart,
             onDragEnd   : handleDragEnd,
-            
-            
-            
-            // droppable:
-            onDragEnter : handleDragEnter,
-            onDragOver  : handleDragOver,
-            onDragLeave : handleDragLeave,
-            onDrop      : handleDrop,
         },
     );
 };

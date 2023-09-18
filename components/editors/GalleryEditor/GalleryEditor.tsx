@@ -66,6 +66,10 @@ import {
 }                           from './ElementWithDraggable'
 import {
     // react components:
+    ElementWithDroppable,
+}                           from './ElementWithDroppable'
+import {
+    // react components:
     UploadImageProps,
     UploadImage,
 }                           from './UploadImage'
@@ -715,88 +719,103 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                     
                     
                     
-                    // droppable:
-                    onDragEnter  = {handleDragEnter}
-                    onDragLeave  = {handleDragLeave}
-                    onDrop       = {handleDrop     }
-                    
-                    
-                    
                     // components:
                     elementComponent={
-                        <ElementWithActions
+                        <ElementWithDroppable
                             // positions:
                             itemIndex={itemIndex}
                             
                             
                             
-                            // actions:
-                            deleteButtonTitle={deleteButtonTitle}
-                            onDeleteImage={handleDeleteImage}
+                            // draggable:
+                            dragDataType = {dragDataType   }
+                            
+                            
+                            
+                            // droppable:
+                            onDragEnter  = {handleDragEnter}
+                            onDragLeave  = {handleDragLeave}
+                            onDrop       = {handleDrop     }
                             
                             
                             
                             // components:
                             elementComponent={
-                                /* <MediaGroup> */
-                                React.cloneElement<GenericProps<Element>>(mediaGroupComponent,
-                                    // props:
-                                    {
-                                        // classes:
-                                        className : mediaGroupComponent.props.className ?? 'mediaGroup ' + ((): string|undefined => {
-                                            // dropped item:
-                                            if (itemIndex === droppedItemIndex) return 'dropped';
-                                            
-                                            
-                                            
-                                            // shifted item(s):
-                                            if ((draggedItemIndex !== -1) && (droppedItemIndex !== -1)) {
-                                                if (draggedItemIndex < droppedItemIndex) {
-                                                    if ((itemIndex >= draggedItemIndex) && (itemIndex <= droppedItemIndex)) return 'shiftedDown';
-                                                }
-                                                else if (draggedItemIndex > droppedItemIndex) {
-                                                    if ((itemIndex <= draggedItemIndex) && (itemIndex >= droppedItemIndex)) return 'shiftedUp';
-                                                } // if
-                                            } // if
-                                            
-                                            
-                                            
-                                            // dragged item:
-                                            if ((draggedItemIndex !== -1) && (itemIndex === draggedItemIndex)) return 'dragged';
-                                            
-                                            
-                                            
-                                            // dropping target:
-                                            if ((draggedItemIndex !== -1) && (itemIndex !== draggedItemIndex)) return 'dropTarget';
-                                            
-                                            
-                                            
-                                            // unmoved item(s):
-                                            return '';
-                                        })(),
-                                    },
+                                <ElementWithActions
+                                    // positions:
+                                    itemIndex={itemIndex}
                                     
                                     
                                     
-                                    // children:
-                                    /* <Image> */
-                                    mediaGroupComponent.props.children ?? React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
-                                        // props:
-                                        {
-                                            // classes:
-                                            className : imageComponent.props.className ?? 'image',
+                                    // actions:
+                                    deleteButtonTitle={deleteButtonTitle}
+                                    onDeleteImage={handleDeleteImage}
+                                    
+                                    
+                                    
+                                    // components:
+                                    elementComponent={
+                                        /* <MediaGroup> */
+                                        React.cloneElement<GenericProps<Element>>(mediaGroupComponent,
+                                            // props:
+                                            {
+                                                // classes:
+                                                className : mediaGroupComponent.props.className ?? 'mediaGroup ' + ((): string|undefined => {
+                                                    // dropped item:
+                                                    if (itemIndex === droppedItemIndex) return 'dropped';
+                                                    
+                                                    
+                                                    
+                                                    // shifted item(s):
+                                                    if ((draggedItemIndex !== -1) && (droppedItemIndex !== -1)) {
+                                                        if (draggedItemIndex < droppedItemIndex) {
+                                                            if ((itemIndex >= draggedItemIndex) && (itemIndex <= droppedItemIndex)) return 'shiftedDown';
+                                                        }
+                                                        else if (draggedItemIndex > droppedItemIndex) {
+                                                            if ((itemIndex <= draggedItemIndex) && (itemIndex >= droppedItemIndex)) return 'shiftedUp';
+                                                        } // if
+                                                    } // if
+                                                    
+                                                    
+                                                    
+                                                    // dragged item:
+                                                    if ((draggedItemIndex !== -1) && (itemIndex === draggedItemIndex)) return 'dragged';
+                                                    
+                                                    
+                                                    
+                                                    // dropping target:
+                                                    if ((draggedItemIndex !== -1) && (itemIndex !== draggedItemIndex)) return 'dropTarget';
+                                                    
+                                                    
+                                                    
+                                                    // unmoved item(s):
+                                                    return '';
+                                                })(),
+                                            },
                                             
                                             
                                             
-                                            // images:
-                                            alt       : imageComponent.props.alt   ??  resolveAlt(imageData),
-                                            src       : imageComponent.props.src   ?? (resolveSrc(imageData, onResolveImageUrl) || undefined), // convert empty string to undefined
-                                            sizes     : imageComponent.props.sizes ?? `calc((${galleryEditors.itemMinColumnWidth} * 2) + ${galleryEditors.gapInline})`,
-                                        },
-                                    ),
-                                )
+                                            // children:
+                                            /* <Image> */
+                                            mediaGroupComponent.props.children ?? React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
+                                            // props:
+                                            {
+                                                // classes:
+                                                className : imageComponent.props.className ?? 'image',
+                                                
+                                                
+                                                
+                                                // images:
+                                                alt       : imageComponent.props.alt   ??  resolveAlt(imageData),
+                                                src       : imageComponent.props.src   ?? (resolveSrc(imageData, onResolveImageUrl) || undefined), // convert empty string to undefined
+                                                sizes     : imageComponent.props.sizes ?? `calc((${galleryEditors.itemMinColumnWidth} * 2) + ${galleryEditors.gapInline})`,
+                                            },
+                                            ),
+                                        )
+                                    }
+                                    deleteButtonComponent={deleteButtonComponent}
+                                />
                             }
-                            deleteButtonComponent={deleteButtonComponent}
                         />
                     }
                 />
