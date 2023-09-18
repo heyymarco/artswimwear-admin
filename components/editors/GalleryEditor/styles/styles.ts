@@ -201,11 +201,6 @@ export const usesGalleryEditorLayout = () => {
                     
                     // children:
                     ...children(galleryEditorActionGroupElm, {
-                        // spacings:
-                        paddingInline : positivePaddingInline, // restore parent's padding with positive margin
-                        paddingBlock  : positivePaddingBlock,  // restore parent's padding with positive margin
-                    }),
-                    ...children(galleryEditorActionGroupElm, {
                         // positions:
                         gridArea        : 'media',
                         zIndex          : 1,
@@ -222,7 +217,9 @@ export const usesGalleryEditorLayout = () => {
                         
                         
                         // spacings:
-                        gap : spacers.default,
+                        paddingInline   : positivePaddingInline, // restore parent's padding with positive margin
+                        paddingBlock    : positivePaddingBlock,  // restore parent's padding with positive margin
+                        gap             : spacers.default,
                         
                         
                         
@@ -279,6 +276,11 @@ export const usesGalleryEditorLayout = () => {
                             // customize:
                             ...usesCssProps(usesPrefixedProps(galleryEditors, 'cancelButton')), // apply config's cssProps starting with cancelButton***
                         }),
+                        
+                        
+                        
+                        // customize:
+                        ...usesCssProps(usesPrefixedProps(galleryEditors, 'action')), // apply config's cssProps starting with action***
                     }),
                 }),
             }),
@@ -332,7 +334,7 @@ export const usesGalleryEditorLayout = () => {
                     
                     
                     // customize:
-                    ...usesCssProps(usesPrefixedProps(galleryEditors, 'mediaGroup')), // apply config's cssProps starting with mediaGroup***
+                    ...usesCssProps(usesPrefixedProps(galleryEditors, 'media')), // apply config's cssProps starting with media***
                 }),
                 
                 
