@@ -102,8 +102,8 @@ const ElementWithActions = <TElement extends Element = HTMLElement>(props: Eleme
     
     
     // states:
-    let  [isBusy, setIsBusy] = useState<boolean>(false);
-    const disableableState   = useDisableable<TElement>({
+    let   [isBusy, setIsBusy] = useState<boolean>(false);
+    const disableableState    = useDisableable<TElement>({
         enabled : !isBusy,
     });
     
