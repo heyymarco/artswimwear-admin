@@ -262,6 +262,11 @@ export const usesUploadImageLayout = () => {
                             // customize:
                             ...usesCssProps(usesPrefixedProps(uploadImages, 'uploadError')), // apply config's cssProps starting with uploadError***
                         }),
+                        
+                        
+                        
+                        // customize:
+                        ...usesCssProps(usesPrefixedProps(uploadImages, 'mediaInner')), // apply config's cssProps starting with mediaInner***
                     }),
                     
                     
