@@ -127,8 +127,8 @@ export const usesUploadImageLayout = () => {
             // children:
             ...children(uploadImageMediaGroupElm, {
                 // layouts:
-                // layouts:
                 ...style({
+                    // layouts:
                     display      : 'grid',
                     gridTemplate : [[
                         '"media" auto',
