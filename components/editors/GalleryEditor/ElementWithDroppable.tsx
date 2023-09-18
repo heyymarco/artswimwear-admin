@@ -13,7 +13,14 @@ import {
 import {
     // react helper hooks:
     useEvent,
+    useMergeClasses,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
+// reusable-ui components:
+import {
+    // base-components:
+    GenericProps,
+}                           from '@reusable-ui/components'
 
 // internals:
 import type {
@@ -27,7 +34,7 @@ import type {
 export interface ElementWithDroppableProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Omit<React.HTMLAttributes<TElement>,
+        Omit<GenericProps<TElement>,
             // droppable:
             |'onDragEnter' // already implemented internally
             |'onDragOver'  // already implemented internally
@@ -47,6 +54,8 @@ export interface ElementWithDroppableProps<TElement extends Element = HTMLElemen
 {
     // positions:
     itemIndex        : number
+    draggedItemIndex : number
+    droppedItemIndex : number
     
     
     
@@ -64,13 +73,15 @@ export interface ElementWithDroppableProps<TElement extends Element = HTMLElemen
      *   
      * The underlying `<Element>` to be droppable.
      */
-    elementComponent : React.ReactComponentElement<any, React.HTMLAttributes<TElement>>
+    elementComponent : React.ReactComponentElement<any, GenericProps<TElement>>
 }
 const ElementWithDroppable = <TElement extends Element = HTMLElement>(props: ElementWithDroppableProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // positions:
         itemIndex,
+        draggedItemIndex,
+        droppedItemIndex,
         
         
         
@@ -156,9 +167,63 @@ const ElementWithDroppable = <TElement extends Element = HTMLElement>(props: Ele
     
     
     
+    // states:
+    const droppedStateClass = ((): string|null => {
+        // dropped item:
+        if (itemIndex === droppedItemIndex) return 'dropped';
+        
+        
+        
+        // shifted item(s):
+        if ((draggedItemIndex !== -1) && (droppedItemIndex !== -1)) {
+            if (draggedItemIndex < droppedItemIndex) {
+                if ((itemIndex >= draggedItemIndex) && (itemIndex <= droppedItemIndex)) return 'shiftedDown';
+            }
+            else if (draggedItemIndex > droppedItemIndex) {
+                if ((itemIndex <= draggedItemIndex) && (itemIndex >= droppedItemIndex)) return 'shiftedUp';
+            } // if
+        } // if
+        
+        
+        
+        // dragged item:
+        if ((draggedItemIndex !== -1) && (itemIndex === draggedItemIndex)) return 'dragged';
+        
+        
+        
+        // dropping target:
+        if ((draggedItemIndex !== -1) && (itemIndex !== draggedItemIndex)) return 'dropTarget';
+        
+        
+        
+        // unmoved item(s):
+        return null;
+    })();
+    console.log({droppedStateClass})
+    
+    
+    
+    // classes:
+    const stateClasses = useMergeClasses(
+        // preserves the original `stateClasses` from `elementComponent`:
+        elementComponent.props.stateClasses,
+        
+        
+        
+        // preserves the original `stateClasses` from `props`:
+        props.stateClasses,
+        
+        
+        
+        // states:
+        droppedStateClass,
+    );
+    
+    
+    
     // jsx:
     /* <Element> */
-    return React.cloneElement<React.HTMLAttributes<TElement>>(elementComponent,
+    return React.cloneElement<GenericProps<TElement>>(elementComponent,
         // props:
         {
             // other props:
@@ -167,11 +232,16 @@ const ElementWithDroppable = <TElement extends Element = HTMLElement>(props: Ele
             
             
             
+            // classes:
+            stateClasses : stateClasses,
+            
+            
+            
             // droppable:
-            onDragEnter : handleDragEnter,
-            onDragOver  : handleDragOver,
-            onDragLeave : handleDragLeave,
-            onDrop      : handleDrop,
+            onDragEnter  : handleDragEnter,
+            onDragOver   : handleDragOver,
+            onDragLeave  : handleDragLeave,
+            onDrop       : handleDrop,
         },
     );
 };

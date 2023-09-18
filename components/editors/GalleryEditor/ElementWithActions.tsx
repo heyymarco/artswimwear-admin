@@ -48,7 +48,10 @@ import {
 
 
 // react components:
-export interface ElementWithActionsProps
+export interface ElementWithActionsProps<TElement extends Element = HTMLElement>
+    extends
+        // bases:
+        GenericProps<TElement>
 {
     // positions:
     itemIndex              : number
@@ -67,10 +70,10 @@ export interface ElementWithActionsProps
      *   
      * The underlying `<Element>` to be actionable.
      */
-    elementComponent       : React.ReactComponentElement<any, GenericProps<Element>>
+    elementComponent       : React.ReactComponentElement<any, GenericProps<TElement>>
     deleteButtonComponent ?: React.ReactComponentElement<any, ButtonProps>
 }
-const ElementWithActions = (props: ElementWithActionsProps): JSX.Element|null => {
+const ElementWithActions = <TElement extends Element = HTMLElement>(props: ElementWithActionsProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // positions:
@@ -93,7 +96,7 @@ const ElementWithActions = (props: ElementWithActionsProps): JSX.Element|null =>
     
     // states:
     let   [isEnabled, setIsEnabled] = useState<boolean>(true);
-    const disableableState          = useDisableable<HTMLDivElement>({
+    const disableableState          = useDisableable<TElement>({
         enabled : isEnabled,
     });
     
@@ -145,6 +148,11 @@ const ElementWithActions = (props: ElementWithActionsProps): JSX.Element|null =>
         
         
         
+        // preserves the original `stateClasses` from `props`:
+        props.stateClasses,
+        
+        
+        
         // states:
         disableableState.class,
     );
@@ -158,12 +166,22 @@ const ElementWithActions = (props: ElementWithActionsProps): JSX.Element|null =>
         
         
         
+        // preserves the original `onAnimationStart` from `props`:
+        props.onAnimationStart,
+        
+        
+        
         // states:
         disableableState.handleAnimationStart,
     );
     const handleAnimationEnd   = useMergeEvents(
         // preserves the original `onAnimationEnd` from `elementComponent`:
         elementComponent.props.onAnimationEnd,
+        
+        
+        
+        // preserves the original `onAnimationEnd` from `props`:
+        props.onAnimationEnd,
         
         
         
@@ -177,7 +195,7 @@ const ElementWithActions = (props: ElementWithActionsProps): JSX.Element|null =>
     return (
         <AccessibilityProvider enabled={isEnabled}>
             {/* <Element> */}
-            {React.cloneElement<GenericProps<Element>>(elementComponent,
+            {React.cloneElement<GenericProps<TElement>>(elementComponent,
                 // props:
                 {
                     // other props:

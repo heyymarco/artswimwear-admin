@@ -140,7 +140,7 @@ export interface GalleryEditorProps<TElement extends Element = HTMLElement, TVal
         >,
         
         // sub components:
-        Omit<ElementWithActionsProps,
+        Omit<ElementWithActionsProps<TElement>,
             // bases
             |keyof React.HTMLAttributes<HTMLElement>
             
@@ -723,7 +723,9 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                     elementComponent={
                         <ElementWithDroppable
                             // positions:
-                            itemIndex={itemIndex}
+                            itemIndex        = {itemIndex       }
+                            draggedItemIndex = {draggedItemIndex}
+                            droppedItemIndex = {droppedItemIndex}
                             
                             
                             
@@ -747,6 +749,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                                     
                                     
                                     
+                                    
                                     // actions:
                                     deleteButtonTitle={deleteButtonTitle}
                                     onDeleteImage={handleDeleteImage}
@@ -760,37 +763,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                                             // props:
                                             {
                                                 // classes:
-                                                className : mediaGroupComponent.props.className ?? 'mediaGroup ' + ((): string|undefined => {
-                                                    // dropped item:
-                                                    if (itemIndex === droppedItemIndex) return 'dropped';
-                                                    
-                                                    
-                                                    
-                                                    // shifted item(s):
-                                                    if ((draggedItemIndex !== -1) && (droppedItemIndex !== -1)) {
-                                                        if (draggedItemIndex < droppedItemIndex) {
-                                                            if ((itemIndex >= draggedItemIndex) && (itemIndex <= droppedItemIndex)) return 'shiftedDown';
-                                                        }
-                                                        else if (draggedItemIndex > droppedItemIndex) {
-                                                            if ((itemIndex <= draggedItemIndex) && (itemIndex >= droppedItemIndex)) return 'shiftedUp';
-                                                        } // if
-                                                    } // if
-                                                    
-                                                    
-                                                    
-                                                    // dragged item:
-                                                    if ((draggedItemIndex !== -1) && (itemIndex === draggedItemIndex)) return 'dragged';
-                                                    
-                                                    
-                                                    
-                                                    // dropping target:
-                                                    if ((draggedItemIndex !== -1) && (itemIndex !== draggedItemIndex)) return 'dropTarget';
-                                                    
-                                                    
-                                                    
-                                                    // unmoved item(s):
-                                                    return '';
-                                                })(),
+                                                className : mediaGroupComponent.props.className ?? 'mediaGroup',
                                             },
                                             
                                             
