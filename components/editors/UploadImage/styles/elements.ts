@@ -7,6 +7,7 @@ export const uploadImageUploadingErrorTitleElm = '.uploadingImageErrorTitle'
 export const uploadImageNoImageElm             = '.noImage'
 export const uploadImagePreviewImageElm        = '.previewImage'
 export const uploadImageImageElm               = '.image'
+export const uploadImageBusyElm                = '.busy'
 export const uploadImageUploadProgressElm      = '.uploadProgress'
 export const uploadImageUploadErrorElm         = '.uploadError'
 

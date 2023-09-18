@@ -55,6 +55,11 @@ import {
     
     
     
+    // status-components:
+    Busy,
+    
+    
+    
     // composite-components:
     ProgressProps,
     Progress,
@@ -185,6 +190,7 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
     noImageComponent                  ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
     previewImageComponent             ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
     imageComponent                    ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
+    busyComponent                     ?: React.ReactComponentElement<any, GenericProps<Element>>
     progressComponent                 ?: React.ReactComponentElement<any, ProgressProps<Element>>
     progressBarComponent              ?: React.ReactComponentElement<any, ProgressBarProps<Element>>
     uploadErrorComponent              ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
@@ -251,6 +257,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         mediaGroupComponentInner          = (<div                                                                 /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
         noImageComponent                  = (<Icon       icon='image'       size='xl'                             /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
         imageComponent                    = (<img                                                                 /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
+        busyComponent                     = (<Busy                          size='lg'                             /> as React.ReactComponentElement<any, GenericProps<Element>>),
         previewImageComponent             = imageComponent,
         progressComponent                 = (<Progress                      size='sm'                             /> as React.ReactComponentElement<any, ProgressProps<Element>>),
         progressBarComponent              = (<ProgressBar                                                         /> as React.ReactComponentElement<any, ProgressBarProps<Element>>),
@@ -288,9 +295,9 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
     
     const [previewImage   , setPreviewImage  ] = useState<string|null>(null);
     
-    let   [isEnabled, setIsEnabled]            = useState<boolean>(true);
+    let   [isBusy, setIsBusy]                  = useState<boolean>(false);
     const disableableState                     = useDisableable<TElement>({
-        enabled : isEnabled,
+        enabled : !isBusy,
     });
     
     
@@ -369,11 +376,11 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         
         // conditions:
-        if (!isEnabled) return; // this component is disabled => ignore
+        if (isBusy)     return; // this component is busy => ignore
         const imageData = imageFn;
         if (!imageData) return; // no image => nothing to delete
         if (onDeleteImage) {
-            setIsEnabled(isEnabled /* instant update without waiting for (slow|delayed) re-render */ = false);
+            setIsBusy(isBusy /* instant update without waiting for (slow|delayed) re-render */ = true);
             try {
                 const result = await onDeleteImage({
                     ...restParams,
@@ -388,7 +395,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
             }
             finally {
                 if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
-                setIsEnabled(isEnabled /* instant update without waiting for (slow|delayed) re-render */ = true);
+                setIsBusy(isBusy /* instant update without waiting for (slow|delayed) re-render */ = false);
             } // try
         } // if
         
@@ -688,7 +695,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
     
     // jsx:
     return (
-        <AccessibilityProvider enabled={isEnabled}>
+        <AccessibilityProvider enabled={!isBusy}>
             {React.cloneElement<BasicProps<TElement>>(bodyComponent,
                 // props:
                 {
@@ -772,6 +779,15 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                                     alt       : imageComponent.props.alt   ??  resolveAlt(imageFn),
                                     src       : imageComponent.props.src   ?? (resolveSrc(imageFn, onResolveImageUrl) || undefined), // convert empty string to undefined
                                     sizes     : imageComponent.props.sizes ?? uploadImages.imageInlineSize,
+                                },
+                            )}
+                            
+                            {/* <Busy> */}
+                            { !uploadingImage && !!imageFn && isBusy && React.cloneElement<GenericProps<Element>>(busyComponent,
+                                // props:
+                                {
+                                    // classes:
+                                    className : busyComponent.props.className ?? 'busy',
                                 },
                             )}
                             

@@ -63,6 +63,7 @@ import {
     uploadImageNoImageElm,
     uploadImagePreviewImageElm,
     uploadImageImageElm,
+    uploadImageBusyElm,
     uploadImageUploadProgressElm,
     uploadImageUploadErrorElm,
     
@@ -165,7 +166,7 @@ export const usesUploadImageLayout = () => {
                         // customize:
                         ...usesCssProps(usesPrefixedProps(uploadImages, 'title')), // apply config's cssProps starting with title***
                     }),
-                    ...children([uploadImageNoImageElm, uploadImagePreviewImageElm, uploadImageImageElm, uploadImageMediaGroupInnerElm], {
+                    ...children([uploadImageNoImageElm, uploadImagePreviewImageElm, uploadImageImageElm, uploadImageBusyElm, uploadImageMediaGroupInnerElm], {
                         // positions:
                         gridArea : 'media',
                     }),
@@ -212,6 +213,22 @@ export const usesUploadImageLayout = () => {
                     ...children(uploadImageImageElm, {
                         // customize:
                         ...usesCssProps(usesPrefixedProps(uploadImages, 'image')), // apply config's cssProps starting with image***
+                    }),
+                    ...children(uploadImageBusyElm, {
+                        // positions:
+                        justifySelf : 'center',
+                        alignSelf   : 'center',
+                        zIndex      : 1,
+                        
+                        
+                        
+                        // typos:
+                        fontSize : '3rem',
+                        
+                        
+                        
+                        // customize:
+                        ...usesCssProps(usesPrefixedProps(uploadImages, 'busy')), // apply config's cssProps starting with busy***
                     }),
                     ...children(uploadImageMediaGroupInnerElm, {
                         // positions:
