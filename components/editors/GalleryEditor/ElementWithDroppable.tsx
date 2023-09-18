@@ -100,7 +100,7 @@ const ElementWithDroppable = <TElement extends Element = HTMLElement>(props: Ele
         
         // components:
         elementComponent,
-    ...restElementProps} = props;
+    ...restGenericProps} = props;
     
     
     
@@ -199,7 +199,6 @@ const ElementWithDroppable = <TElement extends Element = HTMLElement>(props: Ele
         // unmoved item(s):
         return null;
     })();
-    console.log({droppedStateClass})
     
     
     
@@ -227,8 +226,8 @@ const ElementWithDroppable = <TElement extends Element = HTMLElement>(props: Ele
         // props:
         {
             // other props:
-            ...restElementProps,
-            ...elementComponent.props, // overwrites restElementProps (if any conflics)
+            ...restGenericProps,
+            ...elementComponent.props, // overwrites restGenericProps (if any conflics)
             
             
             
