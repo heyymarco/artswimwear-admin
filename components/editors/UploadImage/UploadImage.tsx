@@ -755,6 +755,11 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                                     
                                     
                                     
+                                    // :disabled | [aria-disabled]
+                                    ...disableableState.props,
+                                    
+                                    
+                                    
                                     // images:
                                     alt              : imageComponent.props.alt   ??  resolveAlt(imageFn),
                                     src              : imageComponent.props.src   ?? (resolveSrc(imageFn, onResolveImageUrl) || undefined), // convert empty string to undefined
