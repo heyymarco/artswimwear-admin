@@ -147,23 +147,17 @@ export const [galleryEditors, galleryEditorValues, cssGalleryEditorConfig] = css
         itemAspectRatio          : '1/1'                                                as CssKnownProps['aspectRatio'      ],
         
         
+        
+        // media:
+        
+        
+        
+        // titles:
+        
+        
+        
         // images:
         imageObjectFit           : 'cover'                                              as CssKnownProps['objectFit'        ],
-        
-        
-        
-        // previewImages:
-        previewImageObjectFit    : 'cover'                                              as CssKnownProps['objectFit'        ],
-        previewImageFilter       : [[
-            'opacity(0.5)',
-            'contrast(0.8)',
-        ]]                                                                              as CssKnownProps['filter'           ],
-        
-        
-        
-        // // panels:
-        // panelJustifyItems        : 'stretch'                                         as CssKnownProps['justifyItems'     ],
-        // panelAlignItems          : 'stretch'                                         as CssKnownProps['alignItems'       ],
         
         
         
@@ -177,11 +171,40 @@ export const [galleryEditors, galleryEditorValues, cssGalleryEditorConfig] = css
         
         
         
-        // uploadProgresses:
+        // previewImages:
+        previewImageObjectFit    : 'cover'                                              as CssKnownProps['objectFit'        ],
+        previewImageFilter       : [[
+            'opacity(0.5)',
+            'contrast(0.8)',
+        ]]                                                                              as CssKnownProps['filter'           ],
+        
+        
+        
+        // uploadProgresses:        
         
         
         
         // uploadErrors:
+        
+        
+        
+        // actions:
+        
+        
+        
+        // selectButtons:
+        
+        
+        
+        // deleteButtons:
+        
+        
+        
+        // retryButtons:
+        
+        
+        
+        // cancelButtons:
     };
     
     
