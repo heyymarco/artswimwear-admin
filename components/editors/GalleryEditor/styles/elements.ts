@@ -2,6 +2,7 @@
 
 export const galleryEditorMediaGroupElm          = '.mediaGroup'
 export const galleryEditorImageElm               = '.image'
+export const galleryEditorBusyElm                = '.busy'
 
 export const galleryEditorUploadGroupElm         = '.uploadGroup'
 export const galleryEditorUploadTitleElm         = '.uploadImageTitle'

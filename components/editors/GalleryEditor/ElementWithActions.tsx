@@ -43,6 +43,11 @@ import {
     // simple-components:
     ButtonProps,
     ButtonIcon,
+    
+    
+    
+    // status-components:
+    Busy,
 }                           from '@reusable-ui/components'
 
 
@@ -72,6 +77,7 @@ export interface ElementWithActionsProps<TElement extends Element = HTMLElement>
      */
     elementComponent       : React.ReactComponentElement<any, GenericProps<TElement>>
     deleteButtonComponent ?: React.ReactComponentElement<any, ButtonProps>
+    busyComponent         ?: React.ReactComponentElement<any, GenericProps<Element>>
 }
 const ElementWithActions = <TElement extends Element = HTMLElement>(props: ElementWithActionsProps<TElement>): JSX.Element|null => {
     // rest props:
@@ -90,14 +96,15 @@ const ElementWithActions = <TElement extends Element = HTMLElement>(props: Eleme
         // components:
         elementComponent,
         deleteButtonComponent = (<ButtonIcon icon='clear' size='md' theme='danger' buttonStyle='link' /> as React.ReactComponentElement<any, ButtonProps>),
+        busyComponent         = (<Busy                    size='lg'                                   /> as React.ReactComponentElement<any, GenericProps<Element>>),
     ...restGenericProps} = props;
     
     
     
     // states:
-    let   [isEnabled, setIsEnabled] = useState<boolean>(true);
-    const disableableState          = useDisableable<TElement>({
-        enabled : isEnabled,
+    let  [isBusy, setIsBusy] = useState<boolean>(false);
+    const disableableState   = useDisableable<TElement>({
+        enabled : !isBusy,
     });
     
     
@@ -110,12 +117,12 @@ const ElementWithActions = <TElement extends Element = HTMLElement>(props: Eleme
     // handlers:
     const deleteButtonHandleClickInternal = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async () => {
         // conditions:
-        if (!isEnabled)     return; // this component is disabled => ignore
+        if (isBusy)         return; // this component is busy => ignore
         if (!onDeleteImage) return; // the delete handler is not configured => ignore
         
         
         
-        setIsEnabled(isEnabled /* instant update without waiting for (slow|delayed) re-render */ = false);
+        setIsBusy(isBusy /* instant update without waiting for (slow|delayed) re-render */ = true);
         try {
             await onDeleteImage({
                 itemIndex : itemIndex,
@@ -126,7 +133,7 @@ const ElementWithActions = <TElement extends Element = HTMLElement>(props: Eleme
         }
         finally {
             if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
-            setIsEnabled(isEnabled /* instant update without waiting for (slow|delayed) re-render */ = true);
+            setIsBusy(isBusy /* instant update without waiting for (slow|delayed) re-render */ = false);
         } // try
     });
     const deleteButtonHandleClick         = useMergeEvents(
@@ -193,7 +200,7 @@ const ElementWithActions = <TElement extends Element = HTMLElement>(props: Eleme
     
     // jsx:
     return (
-        <AccessibilityProvider enabled={isEnabled}>
+        <AccessibilityProvider enabled={!isBusy}>
             {/* <Element> */}
             {React.cloneElement<GenericProps<TElement>>(elementComponent,
                 // props:
@@ -237,7 +244,16 @@ const ElementWithActions = <TElement extends Element = HTMLElement>(props: Eleme
                         // handlers:
                         onClick   : deleteButtonHandleClick,
                     },
-                )
+                ),
+                
+                /* <Busy> */
+                (isBusy && React.cloneElement<GenericProps<Element>>(busyComponent,
+                    // props:
+                    {
+                        // classes:
+                        className : busyComponent.props.className ?? 'busy',
+                    },
+                )),
             )}
         </AccessibilityProvider>
     );

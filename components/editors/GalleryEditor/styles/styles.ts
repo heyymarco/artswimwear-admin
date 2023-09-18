@@ -60,6 +60,7 @@ import {
     // elements:
     galleryEditorMediaGroupElm,
     galleryEditorImageElm,
+    galleryEditorBusyElm,
     
     galleryEditorUploadGroupElm,
     galleryEditorUploadTitleElm,
@@ -312,14 +313,27 @@ export const usesGalleryEditorLayout = () => {
                     
                     
                     // children:
-                    ...children(galleryEditorImageElm, {
+                    ...children([galleryEditorImageElm, galleryEditorBusyElm], {
                         // positions:
                         gridArea : '1/1/-1/-1',
+                    }),
+                    ...children(galleryEditorImageElm, {
+                        // customize:
+                        ...usesCssProps(usesPrefixedProps(galleryEditors, 'image')), // apply config's cssProps starting with image***
+                    }),
+                    ...children(galleryEditorBusyElm, {
+                        // positions:
+                        zIndex   : 1,
+                        
+                        
+                        
+                        // typos:
+                        fontSize : '3rem',
                         
                         
                         
                         // customize:
-                        ...usesCssProps(usesPrefixedProps(galleryEditors, 'image')), // apply config's cssProps starting with image***
+                        ...usesCssProps(usesPrefixedProps(galleryEditors, 'busy')), // apply config's cssProps starting with busy***
                     }),
                     ...children(galleryEditorDeleteButtonElm, {
                         // positions:
