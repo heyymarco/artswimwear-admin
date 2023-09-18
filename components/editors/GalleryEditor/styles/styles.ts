@@ -287,76 +287,76 @@ export const usesGalleryEditorLayout = () => {
             }),
             ...children(galleryEditorMediaGroupElm, {
                 // layouts:
-                ...style({
+                display: 'grid',
+                gridTemplate : [[
+                    '"delete edit ..." auto',
+                    '"...... .... ..." 1fr',
+                    '/',
+                    ' auto   auto  1fr'
+                ]],
+                justifyItems : 'center',
+                alignItems   : 'center',
+                
+                
+                
+                // accessibilities:
+                cursor         : 'move',
+                
+                
+                
+                // children:
+                ...children([galleryEditorImageElm, galleryEditorBusyElm], {
+                    // positions:
+                    gridArea : '1/1/-1/-1',
+                }),
+                ...children(galleryEditorImageElm, {
                     // layouts:
-                    display: 'grid',
-                    gridTemplate : [[
-                        '"delete edit ..." auto',
-                        '"...... .... ..." 1fr',
-                        '/',
-                        ' auto   auto  1fr'
-                    ]],
-                    justifyItems : 'center',
-                    alignItems   : 'center',
-                    
-                    
-                    
-                    // accessibilities:
-                    cursor         : 'move',
-                    
-                    
-                    
-                    // animations:
-                    filter         : animationVars.filter,
-                    anim           : animationVars.anim,
-                    
-                    
-                    
-                    // children:
-                    ...children([galleryEditorImageElm, galleryEditorBusyElm], {
-                        // positions:
-                        gridArea : '1/1/-1/-1',
-                    }),
-                    ...children(galleryEditorImageElm, {
+                    ...style({
                         // customize:
                         ...usesCssProps(usesPrefixedProps(galleryEditors, 'image')), // apply config's cssProps starting with image***
+                        
+                        
+                        
+                        // animations:
+                        filter : animationVars.filter,
+                        anim   : animationVars.anim,
                     }),
-                    ...children(galleryEditorBusyElm, {
-                        // positions:
-                        justifySelf : 'center',
-                        alignSelf   : 'center',
-                        zIndex      : 1,
-                        
-                        
-                        
-                        // typos:
-                        fontSize : '3rem',
-                        
-                        
-                        
-                        // customize:
-                        ...usesCssProps(usesPrefixedProps(galleryEditors, 'busy')), // apply config's cssProps starting with busy***
-                    }),
-                    ...children(galleryEditorDeleteButtonElm, {
-                        // positions:
-                        gridArea  : 'delete',
-                        
-                        
-                        
-                        // customize:
-                        ...usesCssProps(usesPrefixedProps(galleryEditors, 'deleteButton')), // apply config's cssProps starting with deleteButton***
-                    }),
+                    
+                    
+                    
+                    // features:
+                    ...animationRule(), // must be placed at the last
+                }),
+                ...children(galleryEditorBusyElm, {
+                    // positions:
+                    justifySelf : 'center',
+                    alignSelf   : 'center',
+                    zIndex      : 1,
+                    
+                    
+                    
+                    // typos:
+                    fontSize : '3rem',
                     
                     
                     
                     // customize:
-                    ...usesCssProps(usesPrefixedProps(galleryEditors, 'media')), // apply config's cssProps starting with media***
+                    ...usesCssProps(usesPrefixedProps(galleryEditors, 'busy')), // apply config's cssProps starting with busy***
+                }),
+                ...children(galleryEditorDeleteButtonElm, {
+                    // positions:
+                    gridArea  : 'delete',
+                    
+                    
+                    
+                    // customize:
+                    ...usesCssProps(usesPrefixedProps(galleryEditors, 'deleteButton')), // apply config's cssProps starting with deleteButton***
                 }),
                 
                 
                 
-                // features:
-                ...animationRule(),  // must be placed at the last
+                // customize:
+                ...usesCssProps(usesPrefixedProps(galleryEditors, 'media')), // apply config's cssProps starting with media***
             }),
             ...children(galleryEditorUploadingGroupElm, {
                 // children:
@@ -420,8 +420,6 @@ export const usesGalleryEditorStates = () => {
     return style({
         // children:
         ...children(galleryEditorMediaGroupElm, {
-            // states:
-            ...disableableRule(),
             ...states([
                 rule('.dragged', {
                     // animations:
@@ -444,6 +442,14 @@ export const usesGalleryEditorStates = () => {
                     anim : galleryEditors.animShiftedDown,
                 }),
             ]),
+            
+            
+            
+            // children:
+            ...children(galleryEditorImageElm, {
+                // states:
+                ...disableableRule(),
+            }),
         }),
         ...children(galleryEditorUploadGroupElm, {
             // states:

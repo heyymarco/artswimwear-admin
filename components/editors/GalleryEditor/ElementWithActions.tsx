@@ -14,7 +14,6 @@ import {
     // react helper hooks:
     useEvent,
     useMergeEvents,
-    useMergeClasses,
     useMountedFlag,
     
     
@@ -51,7 +50,7 @@ import {
 export interface ElementWithActionsProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        GenericProps<TElement>
+        React.HTMLAttributes<TElement>
 {
     // positions:
     itemIndex              : number
@@ -70,9 +69,9 @@ export interface ElementWithActionsProps<TElement extends Element = HTMLElement>
      *   
      * The underlying `<Element>` to be actionable.
      */
-    elementComponent       : React.ReactComponentElement<any, GenericProps<TElement>>
-    deleteButtonComponent ?: React.ReactComponentElement<any, ButtonProps>
+    elementComponent       : React.ReactComponentElement<any, React.HTMLAttributes<TElement>>
     busyComponent         ?: React.ReactComponentElement<any, GenericProps<Element>>
+    deleteButtonComponent ?: React.ReactComponentElement<any, ButtonProps>
 }
 const ElementWithActions = <TElement extends Element = HTMLElement>(props: ElementWithActionsProps<TElement>): JSX.Element|null => {
     // rest props:
@@ -90,9 +89,9 @@ const ElementWithActions = <TElement extends Element = HTMLElement>(props: Eleme
         
         // components:
         elementComponent,
-        deleteButtonComponent = (<ButtonIcon icon='clear' size='md' theme='danger' buttonStyle='link' /> as React.ReactComponentElement<any, ButtonProps>),
         busyComponent         = (<Busy                    size='lg'                                   /> as React.ReactComponentElement<any, GenericProps<Element>>),
-    ...restGenericProps} = props;
+        deleteButtonComponent = (<ButtonIcon icon='clear' size='md' theme='danger' buttonStyle='link' /> as React.ReactComponentElement<any, ButtonProps>),
+    ...restElementProps} = props;
     
     
     
@@ -143,24 +142,6 @@ const ElementWithActions = <TElement extends Element = HTMLElement>(props: Eleme
     
     
     
-    // classes:
-    const stateClasses = useMergeClasses(
-        // preserves the original `stateClasses` from `elementComponent`:
-        elementComponent.props.stateClasses,
-        
-        
-        
-        // preserves the original `stateClasses` from `props`:
-        props.stateClasses,
-        
-        
-        
-        // states:
-        disableableState.class,
-    );
-    
-    
-    
     // handlers:
     const handleAnimationStart = useMergeEvents(
         // preserves the original `onAnimationStart` from `elementComponent`:
@@ -197,17 +178,22 @@ const ElementWithActions = <TElement extends Element = HTMLElement>(props: Eleme
     return (
         <AccessibilityProvider enabled={!isBusy}>
             {/* <Element> */}
-            {React.cloneElement<GenericProps<TElement>>(elementComponent,
+            {React.cloneElement<React.HTMLAttributes<TElement>>(elementComponent,
                 // props:
                 {
                     // other props:
-                    ...restGenericProps,
-                    ...elementComponent.props, // overwrites restGenericProps (if any conflics)
+                    ...restElementProps,
+                    ...elementComponent.props, // overwrites restElementProps (if any conflics)
                     
                     
                     
                     // classes:
-                    stateClasses     : stateClasses,
+                    className        : `${elementComponent.props.className ?? ''} ${disableableState.class ?? ''}`,
+                    
+                    
+                    
+                    // :disabled | [aria-disabled]
+                    ...disableableState.props,
                     
                     
                     
@@ -215,40 +201,34 @@ const ElementWithActions = <TElement extends Element = HTMLElement>(props: Eleme
                     onAnimationStart : handleAnimationStart,
                     onAnimationEnd   : handleAnimationEnd,
                 },
-                
-                
-                
-                // children:
-                /* <Children> */
-                elementComponent.props.children,
-                
-                /* <DeleteButton> */
-                React.cloneElement<ButtonProps>(deleteButtonComponent,
-                    // props:
-                    {
-                        // classes:
-                        className : deleteButtonComponent.props.className ?? 'deleteButton',
-                        
-                        
-                        
-                        // accessibilities:
-                        title     : deleteButtonComponent.props.title ?? deleteButtonTitle,
-                        
-                        
-                        
-                        // handlers:
-                        onClick   : deleteButtonHandleClick,
-                    },
-                ),
-                
-                /* <Busy> */
-                (isBusy && React.cloneElement<GenericProps<Element>>(busyComponent,
-                    // props:
-                    {
-                        // classes:
-                        className : busyComponent.props.className ?? 'busy',
-                    },
-                )),
+            )}
+            
+            {/* <Busy> */}
+            {isBusy && React.cloneElement<GenericProps<Element>>(busyComponent,
+                // props:
+                {
+                    // classes:
+                    className : busyComponent.props.className ?? 'busy',
+                },
+            )}
+            
+            {/* <DeleteButton> */}
+            {React.cloneElement<ButtonProps>(deleteButtonComponent,
+                // props:
+                {
+                    // classes:
+                    className : deleteButtonComponent.props.className ?? 'deleteButton',
+                    
+                    
+                    
+                    // accessibilities:
+                    title     : deleteButtonComponent.props.title ?? deleteButtonTitle,
+                    
+                    
+                    
+                    // handlers:
+                    onClick   : deleteButtonHandleClick,
+                },
             )}
         </AccessibilityProvider>
     );

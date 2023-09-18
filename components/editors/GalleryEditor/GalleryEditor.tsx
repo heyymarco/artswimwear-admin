@@ -256,8 +256,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         mediaGroupComponent    = (<Basic tag='div' mild={true} /> as React.ReactComponentElement<any, GenericProps<Element>>),
         imageComponent         = (<img                         /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
         
-        deleteButtonComponent,
         busyComponent,
+        deleteButtonComponent,
         
         selectButtonComponent,
         
@@ -744,52 +744,51 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                             
                             // components:
                             elementComponent={
-                                <ElementWithActions
-                                    // positions:
-                                    itemIndex={itemIndex}
+                                /* <MediaGroup> */
+                                React.cloneElement<GenericProps<Element>>(mediaGroupComponent,
+                                    // props:
+                                    {
+                                        // classes:
+                                        className : mediaGroupComponent.props.className ?? 'mediaGroup',
+                                    },
                                     
                                     
                                     
-                                    
-                                    // actions:
-                                    deleteButtonTitle={deleteButtonTitle}
-                                    onDeleteImage={handleDeleteImage}
-                                    
-                                    
-                                    
-                                    // components:
-                                    elementComponent={
-                                        /* <MediaGroup> */
-                                        React.cloneElement<GenericProps<Element>>(mediaGroupComponent,
-                                            // props:
-                                            {
-                                                // classes:
-                                                className : mediaGroupComponent.props.className ?? 'mediaGroup',
-                                            },
-                                            
-                                            
-                                            
-                                            // children:
+                                    // children:
+                                    (mediaGroupComponent.props.children ?? <ElementWithActions
+                                        // positions:
+                                        itemIndex={itemIndex}
+                                        
+                                        
+                                        
+                                        // actions:
+                                        deleteButtonTitle={deleteButtonTitle}
+                                        onDeleteImage={handleDeleteImage}
+                                        
+                                        
+                                        
+                                        // components:
+                                        elementComponent={
                                             /* <Image> */
-                                            mediaGroupComponent.props.children ?? React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
-                                            // props:
-                                            {
-                                                // classes:
-                                                className : imageComponent.props.className ?? 'image',
-                                                
-                                                
-                                                
-                                                // images:
-                                                alt       : imageComponent.props.alt   ??  resolveAlt(imageData),
-                                                src       : imageComponent.props.src   ?? (resolveSrc(imageData, onResolveImageUrl) || undefined), // convert empty string to undefined
-                                                sizes     : imageComponent.props.sizes ?? `calc((${galleryEditors.itemMinColumnWidth} * 2) + ${galleryEditors.gapInline})`,
-                                            },
-                                            ),
-                                        )
-                                    }
-                                    deleteButtonComponent={deleteButtonComponent}
-                                    busyComponent={busyComponent}
-                                />
+                                            React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
+                                                // props:
+                                                {
+                                                    // classes:
+                                                    className : imageComponent.props.className ?? 'image',
+                                                    
+                                                    
+                                                    
+                                                    // images:
+                                                    alt       : imageComponent.props.alt   ??  resolveAlt(imageData),
+                                                    src       : imageComponent.props.src   ?? (resolveSrc(imageData, onResolveImageUrl) || undefined), // convert empty string to undefined
+                                                    sizes     : imageComponent.props.sizes ?? `calc((${galleryEditors.itemMinColumnWidth} * 2) + ${galleryEditors.gapInline})`,
+                                                },
+                                            )
+                                        }
+                                        busyComponent={busyComponent}
+                                        deleteButtonComponent={deleteButtonComponent}
+                                    />),
+                                )
                             }
                         />
                     }
