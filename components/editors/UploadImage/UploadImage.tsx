@@ -782,7 +782,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                                 },
                             )}
                             
-                            {/* <Title> + <Progress> + <UploadError> */}
+                            {/* <UploadingImageTitle> + <Progress> + <UploadError> */}
                             {!!uploadingImage && React.cloneElement<React.HTMLAttributes<HTMLElement>>(mediaGroupComponentInner,
                                 // props:
                                 {
@@ -794,7 +794,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                                 
                                 // children:
                                 mediaGroupComponentInner.props.children ?? <>
-                                    {/* <Title> */}
+                                    {/* <UploadingImageTitle> */}
                                     {!isError && !!uploadingImageTitleComponent && React.cloneElement<Pick<React.HTMLAttributes<Element>, 'className'>>(uploadingImageTitleComponent,
                                         // props:
                                         {
@@ -859,7 +859,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                                         
                                         // children:
                                         uploadErrorComponent.props.children ?? <>
-                                            {/* <Title> */}
+                                            {/* <UploadingImageErrorTitle> */}
                                             {!!uploadingImageErrorTitleComponent && React.cloneElement<Pick<React.HTMLAttributes<Element>, 'className'>>(uploadingImageErrorTitleComponent,
                                                 // props:
                                                 {
@@ -872,6 +872,8 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                                                 // children:
                                                 uploadingImageErrorTitle,
                                             )}
+                                            
+                                            {/* <UploadingImageErrorMessage> */}
                                             {uploadErrorComponent.props.children ?? uploadingImage.uploadError}
                                         </>,
                                     )}
