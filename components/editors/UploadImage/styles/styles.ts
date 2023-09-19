@@ -141,8 +141,8 @@ export const usesUploadImageLayout = () => {
                     '/',
                     'auto'
                 ]],
-                justifyContent : 'center', // center the whole image/media horizontally
-                alignContent   : 'center', // center the whole image/media vertically
+                justifyContent : 'center', // center the whole image/media horizontally // TODO: on firefox: fix gridArea to follow the width & height of <Image>
+                alignContent   : 'center', // center the whole image/media vertically   // TODO: on firefox: fix gridArea to follow the width & height of <Image>
                 
                 
                 
