@@ -128,7 +128,10 @@ export const [galleryEditors, galleryEditorValues, cssGalleryEditorConfig] = css
         // animations:
         defaultAnimationDuration : basics.defaultAnimationDuration                      as CssKnownProps['animationDuration'],
         
-        filterDisable            : indicators.filterDisable                             as CssKnownProps['filter'           ],
+        filterDisable            : [[
+            'opacity(0.5)',
+            'contrast(0.8)',
+        ]]                                                                              as CssKnownProps['filter'           ],
         animEnable               : indicators.animEnable                                as CssKnownProps['animation'        ],
         animDisable              : indicators.animDisable                               as CssKnownProps['animation'        ],
         
