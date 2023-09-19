@@ -51,10 +51,8 @@ export interface UploadImageProps
     
     
     // components:
-    uploadImageTitleComponent ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
-    
     actionGroupComponent      ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
-    
+    uploadImageTitleComponent ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
     selectButtonComponent     ?: React.ReactComponentElement<any, ButtonProps>
 }
 const UploadImage = (props: UploadImageProps): JSX.Element|null => {
@@ -74,10 +72,8 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         
         
         // components:
-        uploadImageTitleComponent = (<h1                            /> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
-        
         actionGroupComponent      = (<div                           /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
-        
+        uploadImageTitleComponent = (<h1                            /> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         selectButtonComponent     = (<ButtonIcon icon='upload_file' /> as React.ReactComponentElement<any, ButtonProps>),
     } = props;
     

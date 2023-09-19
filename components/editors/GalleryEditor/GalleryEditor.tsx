@@ -220,7 +220,6 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         // actions:
         deletingImageTitle,
-        
         deleteButtonTitle,
         onDeleteImage,
         
@@ -251,27 +250,23 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         // components:
         bodyComponent          = (<Content<TElement>           /> as React.ReactComponentElement<any, BasicProps<TElement>>),
         
-        uploadImageTitleComponent,
-        uploadingImageTitleComponent,
-        uploadingImageErrorTitleComponent,
-        
         mediaGroupComponent    = (<Basic tag='div' mild={true} /> as React.ReactComponentElement<any, GenericProps<Element>>),
         imageComponent         = (<img                         /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
         
         deletingImageTitleComponent,
-        
         busyComponent,
         deleteButtonComponent,
-        
-        selectButtonComponent,
         
         previewImageComponent,
         
         actionGroupComponent,
+        uploadImageTitleComponent,
+        selectButtonComponent,
+        uploadingImageTitleComponent,
         progressComponent,
         progressBarComponent,
         uploadErrorComponent,
-        
+        uploadingImageErrorTitleComponent,
         retryButtonComponent,
         cancelButtonComponent,
         
@@ -767,7 +762,6 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                                         
                                         // actions:
                                         deletingImageTitle={deletingImageTitle}
-                                        
                                         deleteButtonTitle={deleteButtonTitle}
                                         onDeleteImage={handleDeleteImage}
                                         
@@ -793,7 +787,6 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                                         }
                                         
                                         deletingImageTitleComponent={deletingImageTitleComponent}
-                                        
                                         busyComponent={busyComponent}
                                         deleteButtonComponent={deleteButtonComponent}
                                     />),
@@ -832,17 +825,15 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                         
                         
                         // components:
-                        uploadingImageTitleComponent,
-                        uploadingImageErrorTitleComponent,
-                        
                         imageComponent,
                         previewImageComponent,
                         
                         actionGroupComponent,
+                        uploadingImageTitleComponent,
                         progressComponent,
                         progressBarComponent,
                         uploadErrorComponent,
-                        
+                        uploadingImageErrorTitleComponent,
                         retryButtonComponent,
                         cancelButtonComponent,
                     }}
@@ -865,10 +856,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                     
                     
                     // components:
-                    uploadImageTitleComponent,
-                    
                     actionGroupComponent,
-                    
+                    uploadImageTitleComponent,
                     selectButtonComponent,
                 }}
             />

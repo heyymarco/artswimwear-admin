@@ -59,7 +59,6 @@ export interface ElementWithActionsProps<TElement extends Element = HTMLElement>
     
     // actions:
     deletingImageTitle          ?: React.ReactNode
-    
     deleteButtonTitle           ?: string
     onDeleteImage               ?: (args: { itemIndex: number }) => Promise<void>
     
@@ -74,7 +73,6 @@ export interface ElementWithActionsProps<TElement extends Element = HTMLElement>
     elementComponent             : React.ReactComponentElement<any, React.HTMLAttributes<TElement>>
     
     deletingImageTitleComponent ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
-    
     busyComponent               ?: React.ReactComponentElement<any, GenericProps<Element>>
     deleteButtonComponent       ?: React.ReactComponentElement<any, ButtonProps>
 }
@@ -88,7 +86,6 @@ const ElementWithActions = <TElement extends Element = HTMLElement>(props: Eleme
         
         // actions:
         deletingImageTitle          = 'Deleting...',
-        
         deleteButtonTitle           = 'delete',
         onDeleteImage,
         
@@ -98,7 +95,6 @@ const ElementWithActions = <TElement extends Element = HTMLElement>(props: Eleme
         elementComponent,
         
         deletingImageTitleComponent = (<h1                                                                  /> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
-        
         busyComponent               = (<Busy                    size='lg'                                   /> as React.ReactComponentElement<any, GenericProps<Element>>),
         deleteButtonComponent       = (<ButtonIcon icon='clear' size='md' theme='danger' buttonStyle='link' /> as React.ReactComponentElement<any, ButtonProps>),
     ...restElementProps} = props;
