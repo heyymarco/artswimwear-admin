@@ -177,16 +177,24 @@ export const usesUploadImageLayout = () => {
                     
                     overflow               : 'hidden', // clip the children at the rounded corners
                 }),
+                ...children(uploadImageMediaGroupInnerElm, {
+                    // borders:
+                    borderColor            : 'transparent',
+                }),
                 ...children([uploadImagePreviewImageElm, uploadImageImageElm], {
                     // positions:
-                    justifySelf    : 'stretch', // stretch the self horizontally
-                    alignSelf      : 'stretch', // stretch the self vertically
+                    // justifySelf    : 'stretch', // stretch the self horizontally
+                    // alignSelf      : 'stretch', // stretch the self vertically
+                    justifySelf    : 'center', // center the self horizontally
+                    alignSelf      : 'center', // center the self vertically
                     
                     
                     
                     // sizes:
-                    minInlineSize  : 0,         // starts growing from 0px up to justifySelf
-                    minBlockSize   : 0,         // starts growing from 0px up to alignSelf
+                    // minInlineSize  : 0,         // starts growing from 0px up to justifySelf
+                    // minBlockSize   : 0,         // starts growing from 0px up to alignSelf
+                    maxInlineSize  : '100%', // do not overflow the <parent>
+                    maxBlockSize   : '100%', // do not overflow the <parent>
                 }),
                 ...children(uploadImageNoImageElm, {
                     ...children('::after', {
