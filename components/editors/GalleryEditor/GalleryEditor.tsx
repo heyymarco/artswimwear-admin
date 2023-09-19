@@ -563,8 +563,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         // uploading progress:
         const handleReportProgress = (percentage: number): void => {
             // conditions:
-            if (!isMounted.current) return; // the component was unloaded => ignore
-            if (uploadingImageData.percentage === percentage)  return; // already the same => ignore
+            if (!isMounted.current) return; // the component was unloaded => do nothing
+            if (uploadingImageData.percentage === percentage)  return; // already the same => do nothing
             
             
             
@@ -596,11 +596,11 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                 
                 
                 // conditions:
-                if (!isMounted.current) return; // the component was unloaded before awaiting returned => ignore
+                if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
             }
             catch (error: any) {
                 // conditions:
-                if (!isMounted.current) return; // the component was unloaded before awaiting returned => ignore
+                if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
                 
                 
                 
