@@ -128,31 +128,31 @@ export const usesUploadImageLayout = () => {
             
             // children:
             ...children(uploadImageMediaGroupElm, {
-                // layouts:
-                display      : 'grid',
-                gridTemplate : [[
-                    '"media" auto',
-                    '/',
-                    'auto'
-                ]],
-                justifyContent : 'center', // center a whole items horizontally
-                alignContent   : 'center', // center a whole items vertically
-                
-                
-                
-                // sizes:
+                // positions:
                 justifySelf    : 'center', // center the self horizontally
                 alignSelf      : 'center', // center the self vertically
                 
                 
                 
+                // layouts:
+                display        : 'grid',
+                gridTemplate   : [[
+                    '"media" auto',
+                    '/',
+                    'auto'
+                ]],
+                justifyContent : 'center', // center the whole image/media horizontally
+                alignContent   : 'center', // center the whole image/media vertically
+                
+                
+                
                 // children:
                 ...descendants([uploadImageDeletingImageTitleElm, uploadImageUploadingTitleElm, uploadImageUploadingErrorTitleElm, 'p'], {
-                    margin    : 0,        // no margin for <p>, <h1>...<h6>
-                    textAlign : 'center', // center text for <p>, <h1>...<h6>
+                    margin     : 0,        // no margin for <p>, <h1>...<h6>
+                    textAlign  : 'center', // center text for <p>, <h1>...<h6>
                 }),
                 ...descendants([uploadImageDeletingImageTitleElm, uploadImageUploadingTitleElm, uploadImageUploadingErrorTitleElm], {
-                    fontSize : typos.fontSizeMd,
+                    fontSize   : typos.fontSizeMd,
                     
                     
                     
@@ -178,9 +178,13 @@ export const usesUploadImageLayout = () => {
                     overflow               : 'hidden', // clip the children at the rounded corners
                 }),
                 ...children([uploadImagePreviewImageElm, uploadImageImageElm], {
-                    // sizes:
+                    // positions:
                     justifySelf    : 'stretch', // stretch the self horizontally
                     alignSelf      : 'stretch', // stretch the self vertically
+                    
+                    
+                    
+                    // sizes:
                     minInlineSize  : 0,         // starts growing from 0px up to justifySelf
                     minBlockSize   : 0,         // starts growing from 0px up to alignSelf
                 }),
@@ -248,12 +252,12 @@ export const usesUploadImageLayout = () => {
                     // children:
                     ...children(uploadImageBusyElm, {
                         // positions:
-                        alignSelf   : 'center',
+                        alignSelf   : 'center', // center the self horizontally
                         
                         
                         
                         // typos:
-                        fontSize : '3rem',
+                        fontSize    : '3rem',
                         
                         
                         
@@ -265,14 +269,13 @@ export const usesUploadImageLayout = () => {
                         ...usesCssProps(usesPrefixedProps(uploadImages, 'uploadProgress')), // apply config's cssProps starting with uploadProgress***
                     }),
                     ...children(uploadImageUploadErrorElm, {
+                        // positions:
+                        alignSelf   : 'center', // center the self horizontally
+                        
+                        
+                        
                         // layouts:
                         display     : 'grid',
-                        
-                        
-                        
-                        // sizes:
-                        justifySelf : 'center', // center the self horizontally
-                        alignSelf   : 'center', // center the self vertically
                         
                         
                         
