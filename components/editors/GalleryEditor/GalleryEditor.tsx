@@ -521,7 +521,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         };
         const handleUploadRetry  = (): void => {
             // conditions:
-            if (isUploadCanceled()) return; // the uploader was canceled => ignore
+            if (isUploadCanceled()) return; // the uploader was canceled => do nothing
             
             
             
@@ -537,7 +537,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         };
         const handleUploadCancel = (): void => {
             // conditions:
-            if (isUploadCanceled()) return; // the uploader was canceled => ignore
+            if (isUploadCanceled()) return; // the uploader was canceled => do nothing
             
             
             
