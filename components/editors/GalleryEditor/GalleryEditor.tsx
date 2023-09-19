@@ -219,6 +219,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         
         // actions:
+        deletingImageTitle,
+        
         deleteButtonTitle,
         onDeleteImage,
         
@@ -255,6 +257,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         mediaGroupComponent    = (<Basic tag='div' mild={true} /> as React.ReactComponentElement<any, GenericProps<Element>>),
         imageComponent         = (<img                         /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
+        
+        deletingImageTitleComponent,
         
         busyComponent,
         deleteButtonComponent,
@@ -762,6 +766,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                                         
                                         
                                         // actions:
+                                        deletingImageTitle={deletingImageTitle}
+                                        
                                         deleteButtonTitle={deleteButtonTitle}
                                         onDeleteImage={handleDeleteImage}
                                         
@@ -785,6 +791,9 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                                                 },
                                             )
                                         }
+                                        
+                                        deletingImageTitleComponent={deletingImageTitleComponent}
+                                        
                                         busyComponent={busyComponent}
                                         deleteButtonComponent={deleteButtonComponent}
                                     />),

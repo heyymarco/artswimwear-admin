@@ -66,6 +66,7 @@ import {
     galleryEditorUploadTitleElm,
     
     galleryEditorUploadingGroupElm,
+    galleryEditorDeletingImageTitleElm,
     galleryEditorUploadingTitleElm,
     galleryEditorUploadingErrorTitleElm,
     galleryEditorPreviewImageElm,
@@ -225,11 +226,11 @@ export const usesGalleryEditorLayout = () => {
                         
                         
                         // children:
-                        ...descendants([galleryEditorUploadTitleElm, galleryEditorUploadingTitleElm, galleryEditorUploadingErrorTitleElm, 'p'], {
+                        ...descendants([galleryEditorDeletingImageTitleElm, galleryEditorUploadTitleElm, galleryEditorUploadingTitleElm, galleryEditorUploadingErrorTitleElm, 'p'], {
                             margin    : 0,        // no margin for <p>, <h1>...<h6>
                             textAlign : 'center', // center text for <p>, <h1>...<h6>
                         }),
-                        ...descendants([galleryEditorUploadTitleElm, galleryEditorUploadingTitleElm, galleryEditorUploadingErrorTitleElm], {
+                        ...descendants([galleryEditorDeletingImageTitleElm, galleryEditorUploadTitleElm, galleryEditorUploadingTitleElm, galleryEditorUploadingErrorTitleElm], {
                             fontSize : typos.fontSizeMd,
                             
                             

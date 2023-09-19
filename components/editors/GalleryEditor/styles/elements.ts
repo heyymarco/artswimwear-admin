@@ -8,6 +8,7 @@ export const galleryEditorUploadGroupElm         = '.uploadGroup'
 export const galleryEditorUploadTitleElm         = '.uploadImageTitle'
 
 export const galleryEditorUploadingGroupElm      = '.uploadingGroup'
+export const galleryEditorDeletingImageTitleElm  = '.deletingImageTitle'
 export const galleryEditorUploadingTitleElm      = '.uploadingImageTitle'
 export const galleryEditorUploadingErrorTitleElm = '.uploadingImageErrorTitle'
 export const galleryEditorPreviewImageElm        = '.previewImage'
