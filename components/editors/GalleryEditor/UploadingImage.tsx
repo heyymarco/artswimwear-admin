@@ -209,9 +209,9 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                 
                 // children:
                 actionGroupComponent.props.children ?? <>
-                    {/* <Title> + <Progress> */}
+                    {/* <UploadingImageTitle> + <Progress> */}
                     {!isError && <>
-                        {/* <Title> */}
+                        {/* <UploadingImageTitle> */}
                         {!!uploadingImageTitleComponent && React.cloneElement<Pick<React.HTMLAttributes<Element>, 'className'>>(uploadingImageTitleComponent,
                             // props:
                             {
@@ -279,7 +279,7 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                             
                             // children:
                             uploadErrorComponent.props.children ?? <>
-                                {/* <Title> */}
+                                {/* <UploadingImageErrorTitle> */}
                                 {!!uploadingImageErrorTitleComponent && React.cloneElement<Pick<React.HTMLAttributes<Element>, 'className'>>(uploadingImageErrorTitleComponent,
                                     // props:
                                     {
@@ -292,6 +292,8 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
                                     // children:
                                     uploadingImageErrorTitle,
                                 )}
+                                
+                                {/* <UploadingImageErrorMessage> */}
                                 {uploadErrorComponent.props.children ?? uploadingImageErrorMessage}
                             </>,
                         )}

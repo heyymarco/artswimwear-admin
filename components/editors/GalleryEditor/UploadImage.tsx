@@ -40,7 +40,7 @@ export interface UploadImageProps
     // upload images:
     uploadImageTitle          ?: React.ReactNode
     selectButtonText          ?: React.ReactNode
-    dropImageText             ?: React.ReactNode
+    uploadImageMessage        ?: React.ReactNode
     uploadImageType           ?: string
     
     
@@ -63,7 +63,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         // upload images:
         uploadImageTitle          = 'Add New Image(s)',
         selectButtonText          = 'Select Images',
-        dropImageText             = 'or drop images here',
+        uploadImageMessage        = 'or drop images here',
         uploadImageType           = 'image/jpg, image/jpeg, image/png, image/svg',
         
         
@@ -238,7 +238,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
                 
                 // children:
                 actionGroupComponent.props.children ?? <>
-                    {/* <Title> */}
+                    {/* <UploadImageTitle> */}
                     {!!uploadImageTitleComponent && React.cloneElement<Pick<React.HTMLAttributes<Element>, 'className'>>(uploadImageTitleComponent,
                         // props:
                         {
@@ -271,8 +271,8 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
                         selectButtonComponent.props.children ?? selectButtonText,
                     )}
                     
-                    {/* <Paragraph> */}
-                    {!!dropImageText && ((typeof(dropImageText) === 'string') ? <p>{dropImageText}</p> : dropImageText)}
+                    {/* <UploadImageMessage> */}
+                    {!!uploadImageMessage && ((typeof(uploadImageMessage) === 'string') ? <p>{uploadImageMessage}</p> : uploadImageMessage)}
                 </>,
             )}
             

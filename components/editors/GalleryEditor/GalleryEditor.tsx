@@ -227,7 +227,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         // upload images:
         uploadImageTitle,
         selectButtonText,
-        dropImageText,
+        uploadImageMessage,
         uploadImageType,
         
         
@@ -845,7 +845,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                     // upload images:
                     uploadImageTitle,
                     selectButtonText,
-                    dropImageText,
+                    uploadImageMessage,
                     uploadImageType,
                     
                     
