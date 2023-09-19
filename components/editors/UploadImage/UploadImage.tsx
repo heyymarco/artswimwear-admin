@@ -394,7 +394,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                 return; // error => abort
             }
             finally {
-                if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
+                if (!isMounted.current) return; // the component was unloaded before awaiting returned => ignore
                 setIsBusy(isBusy /* instant update without waiting for (slow|delayed) re-render */ = false);
             } // try
         } // if
@@ -530,9 +530,9 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         // uploading progress:
         const handleReportProgress = (percentage: number): void => {
             // conditions:
-            if (isUploadCanceled())  return; // the uploader was canceled => ignore
+            if (!isMounted.current ) return; // the component was unloaded => ignore
             const uploadingImageData = uploadingImageRef.current;
-            if (!uploadingImageData) return; // upload is not started => ignore
+            if (!uploadingImageData) return; // upload was not started => ignore
             if (uploadingImageData.percentage === percentage)  return; // already the same => ignore
             
             
@@ -560,13 +560,13 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                 
                 
                 // conditions:
-                if (isUploadCanceled()) return; // the uploader was canceled => ignore
+                if (!isMounted.current) return; // the component was unloaded before awaiting returned => ignore
             }
             catch (error: any) {
                 // conditions:
-                if (isUploadCanceled())  return; // the uploader was canceled => ignore
+                if (!isMounted.current) return; // the component was unloaded before awaiting returned => ignore
                 const uploadingImageData = uploadingImageRef.current;
-                if (!uploadingImageData) return; // upload is not started => ignore
+                if (!uploadingImageData) return; // upload was not started => ignore
                 
                 
                 
