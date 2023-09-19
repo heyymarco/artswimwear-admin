@@ -21,7 +21,10 @@ import {
 export const [uploadImages, uploadImageValues, cssUploadImageConfig] = cssConfig(() => {
     const bases = {
         // animations:
-        filterDisable         : indicators.filterDisable    as CssKnownProps['filter'    ],
+        filterDisable         : [[
+            'opacity(0.5)',
+            'contrast(0.8)',
+        ]]                                                  as CssKnownProps['filter'    ],
         animEnable            : indicators.animEnable       as CssKnownProps['animation' ],
         animDisable           : indicators.animDisable      as CssKnownProps['animation' ],
         
