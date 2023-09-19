@@ -72,6 +72,7 @@ export interface ElementWithActionsProps<TElement extends Element = HTMLElement>
      */
     elementComponent             : React.ReactComponentElement<any, React.HTMLAttributes<TElement>>
     
+    actionGroupComponent        ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
     deletingImageTitleComponent ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
     busyComponent               ?: React.ReactComponentElement<any, GenericProps<Element>>
     deleteButtonComponent       ?: React.ReactComponentElement<any, ButtonProps>
@@ -94,6 +95,7 @@ const ElementWithActions = <TElement extends Element = HTMLElement>(props: Eleme
         // components:
         elementComponent,
         
+        actionGroupComponent        = (<div                                                                 /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
         deletingImageTitleComponent = (<h1                                                                  /> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         busyComponent               = (<Busy                    size='lg'                                   /> as React.ReactComponentElement<any, GenericProps<Element>>),
         deleteButtonComponent       = (<ButtonIcon icon='clear' size='md' theme='danger' buttonStyle='link' /> as React.ReactComponentElement<any, ButtonProps>),
@@ -209,31 +211,43 @@ const ElementWithActions = <TElement extends Element = HTMLElement>(props: Eleme
                 },
             )}
             
-            {/* <DeletingImageTitle> + <Busy> */}
-            {isBusy && <>
-                {/* <DeletingImageTitle> */}
-                {!!deletingImageTitleComponent && React.cloneElement<React.HTMLAttributes<HTMLElement>>(deletingImageTitleComponent,
-                    // props:
-                    {
-                        // classes:
-                        className : deletingImageTitleComponent.props.className ?? 'deletingImageTitle',
-                    },
-                    
-                    
-                    
-                    // children:
-                    deletingImageTitle,
-                )}
+            {/* <ActionGroup> */}
+            {isBusy && React.cloneElement<React.HTMLAttributes<HTMLElement>>(actionGroupComponent,
+                // props:
+                {
+                    // classes:
+                    className : actionGroupComponent.props.className ?? 'actionGroup',
+                },
                 
-                {/* <Busy> */}
-                {React.cloneElement<GenericProps<Element>>(busyComponent,
-                    // props:
-                    {
-                        // classes:
-                        className : busyComponent.props.className ?? 'busy',
-                    },
-                )}
-            </>}
+                
+                
+                // children:
+                /* <DeletingImageTitle> + <Busy> */
+                actionGroupComponent.props.children ?? <>
+                    {/* <DeletingImageTitle> */}
+                    {!!deletingImageTitleComponent && React.cloneElement<React.HTMLAttributes<HTMLElement>>(deletingImageTitleComponent,
+                        // props:
+                        {
+                            // classes:
+                            className : deletingImageTitleComponent.props.className ?? 'deletingImageTitle',
+                        },
+                        
+                        
+                        
+                        // children:
+                        deletingImageTitle,
+                    )}
+                    
+                    {/* <Busy> */}
+                    {React.cloneElement<GenericProps<Element>>(busyComponent,
+                        // props:
+                        {
+                            // classes:
+                            className : busyComponent.props.className ?? 'busy',
+                        },
+                    )}
+                </>,
+            )}
             
             {/* <DeleteButton> */}
             {React.cloneElement<ButtonProps>(deleteButtonComponent,

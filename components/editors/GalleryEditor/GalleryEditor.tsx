@@ -253,13 +253,14 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         mediaGroupComponent    = (<Basic tag='div' mild={true} /> as React.ReactComponentElement<any, GenericProps<Element>>),
         imageComponent         = (<img                         /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
         
+        actionGroupComponent,
+        
         deletingImageTitleComponent,
         busyComponent,
         deleteButtonComponent,
         
         previewImageComponent,
         
-        actionGroupComponent,
         uploadImageTitleComponent,
         selectButtonComponent,
         uploadingImageTitleComponent,
@@ -786,6 +787,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                                             )
                                         }
                                         
+                                        actionGroupComponent={actionGroupComponent}
                                         deletingImageTitleComponent={deletingImageTitleComponent}
                                         busyComponent={busyComponent}
                                         deleteButtonComponent={deleteButtonComponent}

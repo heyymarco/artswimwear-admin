@@ -141,6 +141,16 @@ export const usesGalleryEditorLayout = () => {
                 
                 // layouts:
                 ...style({
+                    // layouts:
+                    display        : 'grid',
+                    gridTemplate   : [[
+                        '"media" auto',
+                        '/',
+                        'auto'
+                    ]],
+                    
+                    
+                    
                     // borders:
                     // overflow          : 'hidden', // clip the children at the rounded corners
                     
@@ -168,40 +178,6 @@ export const usesGalleryEditorLayout = () => {
                         minInlineSize  : 0,         // starts growing from 0px up to justifySelf
                         minBlockSize   : 0,         // starts growing from 0px up to alignSelf
                     }),
-                    
-                    
-                    
-                    // customize:
-                    ...usesCssProps(usesPrefixedProps(galleryEditors, 'item')), // apply config's cssProps starting with item***
-                    
-                    
-                    
-                    // spacings:
-                    /* important to be placed after "customize" */
-                 // padding       : paddingVars.padding,
-                    paddingInline : paddingVars.paddingInline,
-                    paddingBlock  : paddingVars.paddingBlock,
-                }),
-                
-                
-                
-                // features:
-                ...paddingRule(), // must be placed at the last
-            }),
-            ...children([galleryEditorUploadingGroupElm, galleryEditorUploadGroupElm], {
-                // layouts:
-                ...style({
-                    // layouts:
-                    display        : 'grid',
-                    gridTemplate   : [[
-                        '"media" auto',
-                        '/',
-                        'auto'
-                    ]],
-                    
-                    
-                    
-                    // children:
                     ...children(galleryEditorActionGroupElm, {
                         // positions:
                         gridArea        : 'media',
@@ -237,6 +213,22 @@ export const usesGalleryEditorLayout = () => {
                             
                             // customize:
                             ...usesCssProps(usesPrefixedProps(galleryEditors, 'title')), // apply config's cssProps starting with title***
+                        }),
+                        
+                        // <ElementWithActions>'s children:
+                        ...children(galleryEditorBusyElm, {
+                            // positions:
+                            alignSelf   : 'center',
+                            
+                            
+                            
+                            // typos:
+                            fontSize : '3rem',
+                            
+                            
+                            
+                            // customize:
+                            ...usesCssProps(usesPrefixedProps(galleryEditors, 'busy')), // apply config's cssProps starting with busy***
                         }),
                         
                         // <UploadImage>'s children:
@@ -284,7 +276,25 @@ export const usesGalleryEditorLayout = () => {
                         // customize:
                         ...usesCssProps(usesPrefixedProps(galleryEditors, 'action')), // apply config's cssProps starting with action***
                     }),
+                    
+                    
+                    
+                    // customize:
+                    ...usesCssProps(usesPrefixedProps(galleryEditors, 'item')), // apply config's cssProps starting with item***
+                    
+                    
+                    
+                    // spacings:
+                    /* important to be placed after "customize" */
+                 // padding       : paddingVars.padding,
+                    paddingInline : paddingVars.paddingInline,
+                    paddingBlock  : paddingVars.paddingBlock,
                 }),
+                
+                
+                
+                // features:
+                ...paddingRule(), // must be placed at the last
             }),
             ...children(galleryEditorMediaGroupElm, {
                 // layouts:
@@ -306,7 +316,7 @@ export const usesGalleryEditorLayout = () => {
                 
                 
                 // children:
-                ...children([galleryEditorImageElm, galleryEditorBusyElm], {
+                ...children([galleryEditorImageElm, galleryEditorActionGroupElm], {
                     // positions:
                     gridArea : '1/1/-1/-1',
                 }),
@@ -327,22 +337,6 @@ export const usesGalleryEditorLayout = () => {
                     
                     // features:
                     ...animationRule(), // must be placed at the last
-                }),
-                ...children(galleryEditorBusyElm, {
-                    // positions:
-                    justifySelf : 'center',
-                    alignSelf   : 'center',
-                    zIndex      : 1,
-                    
-                    
-                    
-                    // typos:
-                    fontSize : '3rem',
-                    
-                    
-                    
-                    // customize:
-                    ...usesCssProps(usesPrefixedProps(galleryEditors, 'busy')), // apply config's cssProps starting with busy***
                 }),
                 ...children(galleryEditorDeleteButtonElm, {
                     // positions:
