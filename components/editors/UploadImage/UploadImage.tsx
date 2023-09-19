@@ -485,7 +485,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         };
         const handleUploadRetry  = (): void => {
             // conditions:
-            if (isUploadCanceled()) return; // the uploader was canceled => ignore
+            if (isUploadCanceled()) return; // the uploader was canceled => do nothing
             
             
             
@@ -504,7 +504,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         };
         const handleUploadCancel = (): void => {
             // conditions:
-            if (isUploadCanceled()) return; // the uploader was canceled => ignore
+            if (isUploadCanceled()) return; // the uploader was canceled => do nothing
             
             
             
