@@ -779,8 +779,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                                 },
                             )}
                             
-                            {/* <DeletingImageTitle> + <Busy> */}
-                            {/* <UploadingImageTitle> + <Progress> + <UploadError> */}
+                            {/* <MediaGroupInner> */}
                             {((!uploadingImage && !!imageFn && isBusy) || !!uploadingImage) && React.cloneElement<React.HTMLAttributes<HTMLElement>>(mediaGroupComponentInner,
                                 // props:
                                 {
@@ -792,6 +791,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                                 
                                 // children:
                                 mediaGroupComponentInner.props.children ?? <>
+                                    {/* <DeletingImageTitle> + <Busy> */}
                                     {(!uploadingImage && !!imageFn && isBusy) && <>
                                         {/* <DeletingImageTitle> */}
                                         {!!deletingImageTitleComponent && React.cloneElement<React.HTMLAttributes<HTMLElement>>(deletingImageTitleComponent,
@@ -816,6 +816,8 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                                             },
                                         )}
                                     </>}
+                                    
+                                    {/* <UploadingImageTitle> + <Progress> + <UploadError> */}
                                     {!!uploadingImage && <>
                                         {/* <UploadingImageTitle> */}
                                         {!isError && !!uploadingImageTitleComponent && React.cloneElement<Pick<React.HTMLAttributes<Element>, 'className'>>(uploadingImageTitleComponent,
