@@ -240,12 +240,17 @@ export const usesUploadImageLayout = () => {
                     
                     
                     
+                    // sizes:
+                    contain         : 'size', // follows <Image>'s size, including fractional size, so the aspect ratio preserved accurately
+                    
+                    
+                    
                     // spacings:
-                    gap           : spacers.default,
+                    gap             : spacers.default,
                     
                     // clone <UploadImage>'s padding:
-                    paddingInline : groupableVars.paddingInline,
-                    paddingBlock  : groupableVars.paddingBlock,
+                    paddingInline   : groupableVars.paddingInline,
+                    paddingBlock    : groupableVars.paddingBlock,
                     
                     
                     
@@ -280,7 +285,7 @@ export const usesUploadImageLayout = () => {
                         
                         
                         // spacings:
-                        gap : spacers.sm,
+                        gap         : spacers.sm,
                         
                         
                         
@@ -302,7 +307,7 @@ export const usesUploadImageLayout = () => {
             
             ...children(uploadImageActionGroupElm, {
                 // positions:
-                gridArea : 'actionGroup',
+                gridArea        : 'actionGroup',
                 
                 
                 
@@ -316,7 +321,7 @@ export const usesUploadImageLayout = () => {
                 
                 
                 // spacings:
-                gap : spacers.default,
+                gap             : spacers.default,
                 
                 
                 
