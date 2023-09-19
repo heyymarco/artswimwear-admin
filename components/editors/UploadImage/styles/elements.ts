@@ -2,6 +2,7 @@
 
 export const uploadImageMediaGroupElm          = '.mediaGroup'
 export const uploadImageMediaGroupInnerElm     = '.mediaGroupInner'
+export const uploadImageDeletingImageTitleElm  = '.deletingImageTitle'
 export const uploadImageUploadingTitleElm      = '.uploadingImageTitle'
 export const uploadImageUploadingErrorTitleElm = '.uploadingImageErrorTitle'
 export const uploadImageNoImageElm             = '.noImage'

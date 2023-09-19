@@ -154,6 +154,8 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
         >
 {
     // actions:
+    deletingImageTitle                ?: React.ReactNode
+    
     deleteButtonText                  ?: React.ReactNode
     onDeleteImage                     ?: (args: { imageData: TValue }) => Promise<boolean|Error>
     
@@ -182,6 +184,7 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
     // components:
     bodyComponent                     ?: React.ReactComponentElement<any, BasicProps<TElement>>
     
+    deletingImageTitleComponent       ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
     uploadingImageTitleComponent      ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
     uploadingImageErrorTitleComponent ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
     
@@ -222,6 +225,8 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         
         // actions:
+        deletingImageTitle                = 'Deleting...',
+        
         deleteButtonText                  = 'Delete Image',
         onDeleteImage,
         
@@ -250,6 +255,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         // components:
         bodyComponent                     = (<Content<TElement>                                                   /> as React.ReactComponentElement<any, BasicProps<TElement>>),
         
+        deletingImageTitleComponent       = (<h1                                                                  /> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         uploadingImageTitleComponent      = (<h1                                                                  /> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         uploadingImageErrorTitleComponent = (<h1                                                                  /> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         
@@ -773,14 +779,31 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                                 },
                             )}
                             
-                            {/* <Busy> */}
-                            { !uploadingImage && !!imageFn && isBusy && React.cloneElement<GenericProps<Element>>(busyComponent,
-                                // props:
-                                {
-                                    // classes:
-                                    className : busyComponent.props.className ?? 'busy',
-                                },
-                            )}
+                            {/* <DeletingImageTitle> + <Busy> */}
+                            { !uploadingImage && !!imageFn && isBusy && <>
+                                {/* <DeletingImageTitle> */}
+                                {!!deletingImageTitleComponent && React.cloneElement<React.HTMLAttributes<HTMLElement>>(deletingImageTitleComponent,
+                                    // props:
+                                    {
+                                        // classes:
+                                        className : deletingImageTitleComponent.props.className ?? 'deletingImageTitle',
+                                    },
+                                    
+                                    
+                                    
+                                    // children:
+                                    deletingImageTitle,
+                                )}
+                                
+                                {/* <Busy> */}
+                                {React.cloneElement<GenericProps<Element>>(busyComponent,
+                                    // props:
+                                    {
+                                        // classes:
+                                        className : busyComponent.props.className ?? 'busy',
+                                    },
+                                )}
+                            </>}
                             
                             {/* <UploadingImageTitle> + <Progress> + <UploadError> */}
                             {!!uploadingImage && React.cloneElement<React.HTMLAttributes<HTMLElement>>(mediaGroupComponentInner,

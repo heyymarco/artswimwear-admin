@@ -58,6 +58,7 @@ import {
     // elements:
     uploadImageMediaGroupElm,
     uploadImageMediaGroupInnerElm,
+    uploadImageDeletingImageTitleElm,
     uploadImageUploadingTitleElm,
     uploadImageUploadingErrorTitleElm,
     uploadImageNoImageElm,
@@ -146,11 +147,11 @@ export const usesUploadImageLayout = () => {
                 
                 
                 // children:
-                ...descendants([uploadImageUploadingTitleElm, uploadImageUploadingErrorTitleElm, 'p'], {
+                ...descendants([uploadImageDeletingImageTitleElm, uploadImageUploadingTitleElm, uploadImageUploadingErrorTitleElm, 'p'], {
                     margin    : 0,        // no margin for <p>, <h1>...<h6>
                     textAlign : 'center', // center text for <p>, <h1>...<h6>
                 }),
-                ...descendants([uploadImageUploadingTitleElm, uploadImageUploadingErrorTitleElm], {
+                ...descendants([uploadImageDeletingImageTitleElm, uploadImageUploadingTitleElm, uploadImageUploadingErrorTitleElm], {
                     fontSize : typos.fontSizeMd,
                     
                     
