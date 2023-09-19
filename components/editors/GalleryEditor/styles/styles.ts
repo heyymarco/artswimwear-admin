@@ -172,9 +172,13 @@ export const usesGalleryEditorLayout = () => {
                         marginBlock   : negativePaddingBlock,  // cancel out parent's padding with negative margin
                     }),
                     ...children([galleryEditorImageElm, galleryEditorPreviewImageElm], {
-                        // sizes:
+                        // positions:
                         justifySelf    : 'stretch', // stretch the self horizontally
                         alignSelf      : 'stretch', // stretch the self vertically
+                        
+                        
+                        
+                        // sizes:
                         minInlineSize  : 0,         // starts growing from 0px up to justifySelf
                         minBlockSize   : 0,         // starts growing from 0px up to alignSelf
                     }),
@@ -218,12 +222,12 @@ export const usesGalleryEditorLayout = () => {
                         // <ElementWithActions>'s children:
                         ...children(galleryEditorBusyElm, {
                             // positions:
-                            alignSelf   : 'center',
+                            alignSelf   : 'center', // center the self horizontally
                             
                             
                             
                             // typos:
-                            fontSize : '3rem',
+                            fontSize    : '3rem',
                             
                             
                             
@@ -243,14 +247,13 @@ export const usesGalleryEditorLayout = () => {
                             ...usesCssProps(usesPrefixedProps(galleryEditors, 'uploadProgress')), // apply config's cssProps starting with uploadProgress***
                         }),
                         ...children(galleryEditorUploadErrorElm, {
+                            // positions:
+                            alignSelf   : 'center', // center the self horizontally
+                            
+                            
+                            
                             // layouts:
                             display     : 'grid',
-                            
-                            
-                            
-                            // sizes:
-                            justifySelf : 'center', // center the self horizontally
-                            alignSelf   : 'center', // center the self vertically
                             
                             
                             
