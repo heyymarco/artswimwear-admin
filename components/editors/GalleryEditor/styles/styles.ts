@@ -299,22 +299,27 @@ export const usesGalleryEditorLayout = () => {
                 // features:
                 ...paddingRule(), // must be placed at the last
             }),
+            ...children([galleryEditorMediaGroupElm, galleryEditorUploadingGroupElm], {
+                // children:
+                ...children(galleryEditorActionGroupElm, {
+                    // sizes:
+                    contain  : 'size', // follows <Image>'s size, including fractional size, so the aspect ratio preserved accurately
+                }),
+            }),
             ...children(galleryEditorMediaGroupElm, {
                 // layouts:
-                display: 'grid',
+                display      : 'grid',
                 gridTemplate : [[
                     '"delete edit ..." auto',
                     '"...... .... ..." 1fr',
                     '/',
                     ' auto   auto  1fr'
                 ]],
-                justifyItems : 'center',
-                alignItems   : 'center',
                 
                 
                 
                 // accessibilities:
-                cursor         : 'move',
+                cursor       : 'move',
                 
                 
                 
@@ -343,7 +348,7 @@ export const usesGalleryEditorLayout = () => {
                 }),
                 ...children(galleryEditorDeleteButtonElm, {
                     // positions:
-                    gridArea  : 'delete',
+                    gridArea : 'delete',
                     
                     
                     
