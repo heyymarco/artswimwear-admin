@@ -530,10 +530,10 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         // uploading progress:
         const handleReportProgress = (percentage: number): void => {
             // conditions:
-            if (!isMounted.current ) return; // the component was unloaded => ignore
+            if (!isMounted.current ) return; // the component was unloaded => do nothing
             const uploadingImageData = uploadingImageRef.current;
-            if (!uploadingImageData) return; // upload was not started => ignore
-            if (uploadingImageData.percentage === percentage)  return; // already the same => ignore
+            if (!uploadingImageData) return; // upload was not started => do nothing
+            if (uploadingImageData.percentage === percentage)  return; // already the same => do nothing
             
             
             
@@ -560,13 +560,13 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                 
                 
                 // conditions:
-                if (!isMounted.current) return; // the component was unloaded before awaiting returned => ignore
+                if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
             }
             catch (error: any) {
                 // conditions:
-                if (!isMounted.current) return; // the component was unloaded before awaiting returned => ignore
+                if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
                 const uploadingImageData = uploadingImageRef.current;
-                if (!uploadingImageData) return; // upload was not started => ignore
+                if (!uploadingImageData) return; // upload was not started => do nothing
                 
                 
                 
