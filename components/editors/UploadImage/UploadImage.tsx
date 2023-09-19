@@ -394,7 +394,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                 return; // error => abort
             }
             finally {
-                if (!isMounted.current) return; // the component was unloaded before awaiting returned => ignore
+                if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
                 setIsBusy(isBusy /* instant update without waiting for (slow|delayed) re-render */ = false);
             } // try
         } // if
