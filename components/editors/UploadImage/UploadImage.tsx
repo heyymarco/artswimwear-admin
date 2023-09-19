@@ -155,7 +155,6 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
 {
     // actions:
     deletingImageTitle                ?: React.ReactNode
-    
     deleteButtonText                  ?: React.ReactNode
     onDeleteImage                     ?: (args: { imageData: TValue }) => Promise<boolean|Error>
     
@@ -184,19 +183,20 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
     // components:
     bodyComponent                     ?: React.ReactComponentElement<any, BasicProps<TElement>>
     
-    deletingImageTitleComponent       ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
-    uploadingImageTitleComponent      ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
-    uploadingImageErrorTitleComponent ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
-    
     mediaGroupComponent               ?: React.ReactComponentElement<any, GenericProps<Element>>
-    mediaGroupComponentInner          ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
     noImageComponent                  ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
     previewImageComponent             ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
     imageComponent                    ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
+    
+    deletingImageTitleComponent       ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
     busyComponent                     ?: React.ReactComponentElement<any, GenericProps<Element>>
+    
+    mediaGroupComponentInner          ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
+    uploadingImageTitleComponent      ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
     progressComponent                 ?: React.ReactComponentElement<any, ProgressProps<Element>>
     progressBarComponent              ?: React.ReactComponentElement<any, ProgressBarProps<Element>>
     uploadErrorComponent              ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
+    uploadingImageErrorTitleComponent ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
     
     actionGroupComponent              ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
     selectButtonComponent             ?: React.ReactComponentElement<any, ButtonProps>
@@ -226,7 +226,6 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         // actions:
         deletingImageTitle                = 'Deleting...',
-        
         deleteButtonText                  = 'Delete Image',
         onDeleteImage,
         
