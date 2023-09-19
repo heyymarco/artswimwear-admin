@@ -159,7 +159,7 @@ export const usesUploadImageLayout = () => {
                     // customize:
                     ...usesCssProps(usesPrefixedProps(uploadImages, 'title')), // apply config's cssProps starting with title***
                 }),
-                ...children([uploadImageNoImageElm, uploadImagePreviewImageElm, uploadImageImageElm, uploadImageBusyElm, uploadImageMediaGroupInnerElm], {
+                ...children([uploadImageNoImageElm, uploadImagePreviewImageElm, uploadImageImageElm, uploadImageMediaGroupInnerElm], {
                     // positions:
                     gridArea : 'media',
                 }),
@@ -221,22 +221,6 @@ export const usesUploadImageLayout = () => {
                     // features:
                     ...animationRule(), // must be placed at the last
                 }),
-                ...children(uploadImageBusyElm, {
-                    // positions:
-                    justifySelf : 'center',
-                    alignSelf   : 'center',
-                    zIndex      : 1,
-                    
-                    
-                    
-                    // typos:
-                    fontSize : '3rem',
-                    
-                    
-                    
-                    // customize:
-                    ...usesCssProps(usesPrefixedProps(uploadImages, 'busy')), // apply config's cssProps starting with busy***
-                }),
                 ...children(uploadImageMediaGroupInnerElm, {
                     // positions:
                     zIndex          : 1,
@@ -262,6 +246,20 @@ export const usesUploadImageLayout = () => {
                     
                     
                     // children:
+                    ...children(uploadImageBusyElm, {
+                        // positions:
+                        alignSelf   : 'center',
+                        
+                        
+                        
+                        // typos:
+                        fontSize : '3rem',
+                        
+                        
+                        
+                        // customize:
+                        ...usesCssProps(usesPrefixedProps(uploadImages, 'busy')), // apply config's cssProps starting with busy***
+                    }),
                     ...children(uploadImageUploadProgressElm, {
                         // customize:
                         ...usesCssProps(usesPrefixedProps(uploadImages, 'uploadProgress')), // apply config's cssProps starting with uploadProgress***
