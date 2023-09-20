@@ -148,10 +148,10 @@ export const usesGalleryEditorLayout = () => {
                         '/',
                         'auto'
                     ]],
-                    justifyItems   : 'center', // default center the items horizontally
-                    alignItems     : 'center', // default center the items vertically
-                    justifyContent : 'center', // center the whole image horizontally
-                    alignContent   : 'center', // center the whole image vertically
+                    justifyItems   : 'center',  // default center the items horizontally
+                    alignItems     : 'center',  // default center the items vertically
+                    justifyContent : 'stretch', // consistent the width  for all <Items>s
+                    alignContent   : 'stretch', // consistent the height for all <Items>s
                     
                     
                     
