@@ -137,19 +137,21 @@ export const usesUploadImageLayout = () => {
                 // layouts:
                 display        : 'grid',
                 gridTemplate   : [[
-                    '"media" auto',
+                    '"image" auto',
                     '/',
                     'auto'
                 ]],
-                justifyContent : 'center', // center the whole image/media horizontally // TODO: on firefox: fix gridArea to follow the width & height of <Image>
-                alignContent   : 'center', // center the whole image/media vertically   // TODO: on firefox: fix gridArea to follow the width & height of <Image>
+                justifyItems   : 'center', // default center the items horizontally
+                alignItems     : 'center', // default center the items vertically
+                justifyContent : 'center', // center the whole image horizontally
+                alignContent   : 'center', // center the whole image vertically
                 
                 
                 
                 // children:
                 ...children([uploadImageNoImageElm, uploadImagePreviewImageElm, uploadImageImageElm, uploadImageMediaGroupInnerElm], {
                     // positions:
-                    gridArea : 'media',
+                    gridArea : 'image',
                 }),
                 ...children([uploadImagePreviewImageElm, uploadImageImageElm, uploadImageMediaGroupInnerElm], {
                     // borders:
@@ -223,7 +225,9 @@ export const usesUploadImageLayout = () => {
                 }),
                 ...children(uploadImageMediaGroupInnerElm, {
                     // positions:
-                    zIndex          : 1,
+                    justifySelf     : 'stretch', // fill the <parent> horizontally
+                    alignSelf       : 'stretch', // fill the <parent> vertically
+                    zIndex          : 1,         // placed on the top of <Image>
                     
                     
                     
