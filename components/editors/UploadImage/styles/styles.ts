@@ -1,6 +1,7 @@
 // cssfn:
 import {
     // writes css in javascript:
+    descendants,
     children,
     style,
     
@@ -252,11 +253,11 @@ export const usesUploadImageLayout = () => {
                     // children:
                     
                     // titles & paragraphs:
-                    ...children([uploadImageDeletingImageTitleElm, uploadImageUploadingImageTitleElm, uploadImageUploadingImageErrorTitleElm, 'p'], {
+                    ...descendants([uploadImageDeletingImageTitleElm, uploadImageUploadingImageTitleElm, uploadImageUploadingImageErrorTitleElm, 'p'], {
                         margin     : 0,        // no margin for <p>, <h1>...<h6>
                         textAlign  : 'center', // center text for <p>, <h1>...<h6>
                     }),
-                    ...children([uploadImageDeletingImageTitleElm, uploadImageUploadingImageTitleElm, uploadImageUploadingImageErrorTitleElm], {
+                    ...descendants([uploadImageDeletingImageTitleElm, uploadImageUploadingImageTitleElm, uploadImageUploadingImageErrorTitleElm], {
                         fontSize   : typos.fontSizeMd,
                         
                         
