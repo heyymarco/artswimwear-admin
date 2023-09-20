@@ -456,15 +456,17 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             
                             
                             
-                            // actions:
-                            onDeleteImage={async ({ imageData }) => {
-                                await axios.delete(`/api/upload?imageId=${encodeURIComponent(imageData)}`);
-                                return true;
-                            }}
+                            // components:
+                            imageComponent={
+                                // @ts-ignore
+                                <Image
+                                    priority={true}
+                                />
+                            }
                             
                             
                             
-                            // upload activities:
+                            // handlers:
                             onUploadImage={async ({ imageFile, reportProgress, abortSignal }) => {
                                 const formData = new FormData();
                                 formData.append('image' , imageFile);
@@ -479,20 +481,10 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                                 });
                                 return response.data.id;
                             }}
-                            
-                            
-                            
-                            // components:
-                            imageComponent={
-                                // @ts-ignore
-                                <Image
-                                    priority={true}
-                                />
-                            }
-                            
-                            
-                            
-                            // handlers:
+                            onDeleteImage={async ({ imageData }) => {
+                                await axios.delete(`/api/upload?imageId=${encodeURIComponent(imageData)}`);
+                                return true;
+                            }}
                             onResolveImageUrl={resolveMediaUrl<never>}
                         />
                     </TabPanel>
