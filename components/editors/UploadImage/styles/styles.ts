@@ -155,11 +155,11 @@ export const usesUploadImageLayout = () => {
                 }),
                 ...children([uploadImagePreviewImageElm, uploadImageImageElm, uploadImageMediaGroupInnerElm], {
                     // borders:
-                    // clone <UploadImage>'s border stroke:
+                    // clone <UploadImage>'s border stroke: // TODO: doesn't work if nude={true}
                     border                 : borderVars.border,
                     borderWidth            : groupableVars.borderWidth,
                     
-                    // clone <UploadImage>'s border radius:
+                    // clone <UploadImage>'s border radius: // TODO: doesn't work if nude={true}
                     borderStartStartRadius : groupableVars.borderStartStartRadius,
                     borderStartEndRadius   : groupableVars.borderStartEndRadius,
                     borderEndStartRadius   : groupableVars.borderEndStartRadius,
@@ -248,7 +248,7 @@ export const usesUploadImageLayout = () => {
                     // spacings:
                     gap             : spacers.default,
                     
-                    // clone <UploadImage>'s padding:
+                    // clone <UploadImage>'s padding: // TODO: doesn't work if nude={true}
                     paddingInline   : groupableVars.paddingInline,
                     paddingBlock    : groupableVars.paddingBlock,
                     
