@@ -183,8 +183,8 @@ export const usesGalleryEditorLayout = () => {
                         // sizes:
                         minInlineSize  : 0,         // starts growing from 0px up to "image" gridArea
                         minBlockSize   : 0,         // starts growing from 0px up to "image" gridArea
-                        // maxInlineSize  : '100%', // do not overflow the <parent>
-                        // maxBlockSize   : '100%', // do not overflow the <parent>
+                        // maxInlineSize  : '100%', // do not overflow the "image" gridArea
+                        // maxBlockSize   : '100%', // do not overflow the "image" gridArea
                     }),
                     ...children(galleryEditorActionGroupElm, {
                         // positions:
