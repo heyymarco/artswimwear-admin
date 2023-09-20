@@ -326,12 +326,13 @@ export const usesGalleryEditorLayout = () => {
             }),
             ...children(galleryEditorMediaGroupElm, {
                 // layouts:
+                /* override the layout of <Item>s: */
                 display      : 'grid',
                 gridTemplate : [[
-                    '"delete edit ..." auto',
-                    '"...... .... ..." 1fr',
+                    '"delete ...... ....." auto',
+                    '"...... ...... ....." 1fr',
                     '/',
-                    ' auto   auto  1fr'
+                    ' auto    auto    1fr'
                 ]],
                 
                 
