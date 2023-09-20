@@ -29,11 +29,6 @@ import {
 
 // reusable-ui components:
 import {
-    // base-components:
-    GenericProps,
-    
-    
-    
     // simple-components:
     ButtonProps,
     ButtonIcon,
@@ -74,7 +69,7 @@ export interface ElementWithActionsProps<TElement extends Element = HTMLElement>
     
     actionGroupComponent        ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
     deletingImageTitleComponent ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
-    busyComponent               ?: React.ReactComponentElement<any, GenericProps<Element>>
+    busyComponent               ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
     deleteButtonComponent       ?: React.ReactComponentElement<any, ButtonProps>
 }
 const ElementWithActions = <TElement extends Element = HTMLElement>(props: ElementWithActionsProps<TElement>): JSX.Element|null => {
@@ -97,7 +92,7 @@ const ElementWithActions = <TElement extends Element = HTMLElement>(props: Eleme
         
         actionGroupComponent        = (<div                                                                 /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
         deletingImageTitleComponent = (<h1                                                                  /> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
-        busyComponent               = (<Busy                    size='lg'                                   /> as React.ReactComponentElement<any, GenericProps<Element>>),
+        busyComponent               = (<Busy                    size='lg'                                   /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
         deleteButtonComponent       = (<ButtonIcon icon='clear' size='md' theme='danger' buttonStyle='link' /> as React.ReactComponentElement<any, ButtonProps>),
     ...restElementProps} = props;
     
@@ -239,7 +234,7 @@ const ElementWithActions = <TElement extends Element = HTMLElement>(props: Eleme
                     )}
                     
                     {/* <Busy> */}
-                    {React.cloneElement<GenericProps<Element>>(busyComponent,
+                    {React.cloneElement<React.HTMLAttributes<HTMLElement>>(busyComponent,
                         // props:
                         {
                             // classes:
