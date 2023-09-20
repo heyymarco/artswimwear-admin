@@ -54,8 +54,10 @@ const handler = async (req: NextRequest, ctx: RequestContext) => router.run(req,
 export {
     handler as GET,
     handler as POST,
-    handler as PATCH,
     handler as PUT,
+    handler as PATCH,
+    handler as DELETE,
+    handler as HEAD,
 }
 
 router
