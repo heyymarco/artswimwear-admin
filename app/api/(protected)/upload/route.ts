@@ -16,16 +16,14 @@ import {
 
 // other libs:
 import {
-    default as multer,
-}                           from 'multer'
-import {
+    writeFile,
     unlink,
-}                           from 'fs'
+}                           from 'fs/promises'
 
 // utilities:
 import {
     uploadMedia,
-    deleteMedia
+    deleteMedia,
 }                           from '@/libs/mediaStorage.server'
 
 // internal auth:
@@ -35,21 +33,17 @@ import {
 
 
 
-// file processors:
-const upload = multer({
-    storage: multer.diskStorage({
-        destination: '/tmp',
-        filename: (req, file, cb) => {
-            cb(null, file.originalname);
-            (req as any).originalname = file.originalname;
-        },
-    }),
-});
-const uploadMiddleware = upload.single('image');
-
-const deleteFile = (file: Express.Multer.File) => {
-    unlink(file.path, () => {});
-};
+// // file processors:
+// const upload = multer({
+//     storage: multer.diskStorage({
+//         destination: '/tmp',
+//         filename: (req, file, cb) => {
+//             cb(null, file.originalname);
+//             (req as any).originalname = file.originalname;
+//         },
+//     }),
+// });
+// const uploadMiddleware = upload.single('image');
 
 
 
@@ -81,9 +75,11 @@ router
     // authorized => next:
     return next();
 })
-.post(uploadMiddleware as any, async (req) => {
-    const file : Express.Multer.File = (req as any).file;
-    if (!file) {
+.post(async (req) => {
+    const data = await req.formData();
+    const file = data.get('image');
+    // const file : Express.Multer.File = (req as any).file;
+    if (!file || !(file instanceof Object)) {
         return NextResponse.json({
             error: 'No file uploaded.',
         }, { status: 400 }); // handled with error
@@ -91,9 +87,10 @@ router
     
     
     
-    const {
-        folder,
-    } = await req.json();
+    // const {
+    //     folder,
+    // } = await req.json();
+    const folder = data.get('folder');
     if ((folder !== undefined) && (typeof(folder) !== 'string')) {
         return NextResponse.json({
             error: 'Invalid parameter(s).',
@@ -102,8 +99,10 @@ router
     
     
     
+    const filePath = `/tmp/${file.name}`;
     try {
-        const fileId = await uploadMedia(file, {
+        await writeFile(filePath, Buffer.from(await file.arrayBuffer()));
+        const fileId = await uploadMedia({ path: filePath, originalname: file.name } as any, {
             folder,
         });
         
@@ -115,7 +114,7 @@ router
     }
     finally {
         try {
-            deleteFile(file);
+            await unlink(filePath);
         }
         catch {
             // ignore error

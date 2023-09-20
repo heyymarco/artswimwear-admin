@@ -78,29 +78,8 @@ import {
     TextEditor,
 }                           from '@/components/editors/TextEditor'
 import {
-    PathEditor,
-}                           from '@/components/editors/PathEditor'
-import {
-    CurrencyEditor,
-}                           from '@/components/editors/CurrencyEditor'
-import {
-    ShippingWeightEditor,
-}                           from '@/components/editors/ShippingWeightEditor'
-import {
-    StockEditor,
-}                           from '@/components/editors/StockEditor'
-import {
-    VisibilityEditor,
-}                           from '@/components/editors/VisibilityEditor'
-import {
-    GalleryEditor,
-}                           from '@/components/editors/GalleryEditor'
-import {
-    WysiwygEditorState,
-    ToolbarPlugin,
-    EditorPlugin,
-    WysiwygEditor,
-}                           from '@/components/editors/WysiwygEditor'
+    UploadImage,
+}                           from '@/components/editors/UploadImage'
 
 // stores:
 import {
@@ -355,7 +334,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                 <CloseButton onClick={handleClosing} />
             </CardHeader>
             <ValidationProvider enableValidation={enableValidation}>
-            <Tab
+                <Tab
                     // variants:
                     mild='inherit'
                     
@@ -398,23 +377,52 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                         </form>
                     </TabPanel>
                     <TabPanel label={PAGE_USER_TAB_IMAGE}        panelComponent={<Generic className={styles.imageTab} />}>
-                        {!!image
-                        ? <Basic
-                            tag='span'
-                            className='userImg'
+                        <UploadImage<HTMLElement, string>
+                            // variants:
+                            nude={true}
                             
-                            style={{
-                                backgroundImage : `url(${image})`,
+                            
+                            
+                            // values:
+                            value={image}
+                            onChange={(value) => {
+                                setImage(value);
+                                setIsModified(true);
                             }}
+                            
+                            
+                            
+                            // components:
+                            imageComponent={
+                                // @ts-ignore
+                                <Image
+                                    priority={true}
+                                />
+                            }
+                            
+                            
+                            
+                            // handlers:
+                            onUploadImage={async ({ imageFile, reportProgress, abortSignal }) => {
+                                const formData = new FormData();
+                                formData.append('image' , imageFile);
+                                formData.append('folder', '@@user');
+                                const response = await axios.post('/api/upload', formData, {
+                                    headers          : { 'content-type': 'multipart/form-data' },
+                                    onUploadProgress : (event) => {
+                                        reportProgress(
+                                            (event.loaded * 100) / (event.total ?? 100)
+                                        );
+                                    },
+                                });
+                                return response.data.id;
+                            }}
+                            onDeleteImage={async ({ imageData }) => {
+                                await axios.delete(`/api/upload?imageId=${encodeURIComponent(imageData)}`);
+                                return true;
+                            }}
+                            onResolveImageUrl={resolveMediaUrl<never>}
                         />
-                        : <Icon className='userImg' icon='person' />}
-                        
-                        <ButtonIcon className='uploadBtn' icon='upload_file' theme='success' onClick={handleImgUpload}>
-                            Change Image
-                        </ButtonIcon>
-                        <ButtonIcon className='removeBtn' icon='delete_forever' theme='danger' onClick={handleImgRemove}>
-                            Remove Image
-                        </ButtonIcon>
                     </TabPanel>
                     <TabPanel label={PAGE_USER_TAB_ROLE}         panelComponent={<Generic className={styles.roleTab} />}>
                         Testing...

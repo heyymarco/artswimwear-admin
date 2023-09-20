@@ -163,78 +163,7 @@ export const usesAccountTabLayout = () => {
 };
 export const usesImageTabLayout = () => {
     return style({
-        display            : 'grid',
-        alignContent       : 'start',
-        gridTemplate       : [[
-            '" userImg "', 'min-content',
-            '"uploadBtn"', 'min-content',
-            '"removeBtn"', 'min-content',
-            '/',
-            '1fr'
-        ]],
-        // gridTemplate       : [[
-        //     '"userImg uploadBtn"', 'min-content',
-        //     '"userImg removeBtn"', 'min-content',
-        //     '"userImg ........."', 'auto',
-        //     '/',
-        //     '1fr 2fr'
-        // ]],
-        ...ifScreenWidthAtLeast('sm', {
-            gridTemplate       : [[
-                '"....... ........."', '1fr',
-                '"userImg uploadBtn"', 'min-content',
-                '"userImg removeBtn"', 'min-content',
-                '"....... ........."', '1fr',
-                '/',
-                '1fr 1fr'
-            ]],
-        }),
-        
-        
-        
-        // scrolls:
-        overscrollBehavior : 'none',
-        
-        
-        
-        // spacings:
-        gapInline          : spacers.default,
-        gapBlock           : spacers.default,
-        
-        
-        
-        // children:
-        ...children('.userImg', {
-            // positions:
-            gridArea    : 'userImg',
-            justifySelf : 'center',
-            
-            
-            
-            // sizes:
-            aspectRatio : '1 / 1',
-            blockSize     : '100px',
-            ...ifScreenWidthAtLeast('sm', {
-                blockSize : '150px',
-            }),
-            ...ifScreenWidthAtLeast('md', {
-                blockSize : '200px',
-            }),
-            
-            
-            
-            // backgrounds:
-            backgroundBlendMode : 'normal',
-            backgroundRepeat    : 'no-repeat',
-            backgroundPosition  : 'center',
-            backgroundSize      : 'cover',
-        }),
-        ...children('.uploadBtn', {
-            gridArea: 'uploadBtn',
-        }),
-        ...children('.removeBtn', {
-            gridArea: 'removeBtn',
-        }),
+        // empty
     });
 };
 export const usesRoleTabLayout = () => {

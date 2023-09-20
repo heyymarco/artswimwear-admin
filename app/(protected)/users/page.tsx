@@ -271,7 +271,7 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
                             className='userImg'
                             
                             style={{
-                                backgroundImage : `url(${image})`,
+                                background: `no-repeat center/cover url("${resolveMediaUrl(image)}")`,
                             }}
                         />
                         : <Icon className='userImg' icon='person' />

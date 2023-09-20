@@ -35,6 +35,11 @@ import {
     Nav,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
+// internals:
+import {
+    resolveMediaUrl,
+}                           from '@/libs/mediaStorage.client'
+
 
 
 // styles:
@@ -79,7 +84,7 @@ export const ProfileMenu = (props: NavProps): JSX.Element|null => {
             <NavItem className='menu'>
                 {(status === 'authenticated') && <>
                     { !image && <Icon icon='person' size='xl' />}
-                    {!!image && <Basic className='photo' style={{ backgroundImage: `url(${image})` }} />}
+                    {!!image && <Basic className='photo' style={{ background: `no-repeat center/cover url("${resolveMediaUrl(image)}")` }} />}
                     
                     {!!image && <span>
                         {name?.split?.(' ')?.[0]}
