@@ -251,6 +251,8 @@ export const usesGalleryEditorLayout = () => {
                             // customize:
                             ...usesCssProps(usesPrefixedProps(galleryEditors, 'uploadProgress')), // apply config's cssProps starting with uploadProgress***
                         }),
+                        
+                        // uploading error:
                         ...children(galleryEditorUploadErrorElm, {
                             // positions:
                             alignSelf   : 'center', // center the self horizontally
@@ -270,8 +272,6 @@ export const usesGalleryEditorLayout = () => {
                             // customize:
                             ...usesCssProps(usesPrefixedProps(galleryEditors, 'uploadError')), // apply config's cssProps starting with uploadError***
                         }),
-                        
-                        // uploading error:
                         ...children(galleryEditorRetryButtonElm, {
                             // customize:
                             ...usesCssProps(usesPrefixedProps(galleryEditors, 'retryButton')), // apply config's cssProps starting with retryButton***
