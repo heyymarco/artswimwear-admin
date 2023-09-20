@@ -62,12 +62,12 @@ import {
     galleryEditorBusyElm,
     
     galleryEditorUploadGroupElm,
-    galleryEditorUploadTitleElm,
+    galleryEditorUploadImageTitleElm,
     
     galleryEditorUploadingGroupElm,
     galleryEditorDeletingImageTitleElm,
-    galleryEditorUploadingTitleElm,
-    galleryEditorUploadingErrorTitleElm,
+    galleryEditorUploadingImageTitleElm,
+    galleryEditorUploadingImageErrorTitleElm,
     galleryEditorPreviewImageElm,
     galleryEditorUploadProgressElm,
     galleryEditorUploadErrorElm,
@@ -211,11 +211,11 @@ export const usesGalleryEditorLayout = () => {
                         // children:
                         
                         // titles & paragraphs:
-                        ...children([galleryEditorDeletingImageTitleElm, galleryEditorUploadTitleElm, galleryEditorUploadingTitleElm, galleryEditorUploadingErrorTitleElm, 'p'], {
+                        ...children([galleryEditorDeletingImageTitleElm, galleryEditorUploadImageTitleElm, galleryEditorUploadingImageTitleElm, galleryEditorUploadingImageErrorTitleElm, 'p'], {
                             margin    : 0,        // no margin for <p>, <h1>...<h6>
                             textAlign : 'center', // center text for <p>, <h1>...<h6>
                         }),
-                        ...children([galleryEditorDeletingImageTitleElm, galleryEditorUploadTitleElm, galleryEditorUploadingTitleElm, galleryEditorUploadingErrorTitleElm], {
+                        ...children([galleryEditorDeletingImageTitleElm, galleryEditorUploadImageTitleElm, galleryEditorUploadingImageTitleElm, galleryEditorUploadingImageErrorTitleElm], {
                             fontSize : typos.fontSizeMd,
                             
                             
