@@ -442,6 +442,11 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                     </TabPanel>
                     <TabPanel label={PAGE_PRODUCT_TAB_IMAGES}       panelComponent={<Generic className={styles.imagesTab} />}>
                         <GalleryEditor<HTMLElement, string>
+                            // variants:
+                            nude={true}
+                            
+                            
+                            
                             // values:
                             value={images}
                             onChange={(value) => {
