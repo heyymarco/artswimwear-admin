@@ -40,8 +40,6 @@ import {
 // reusable-ui components:
 import {
     // base-components:
-    GenericProps,
-    Generic,
     BasicProps,
     Basic,
     Content,
@@ -183,7 +181,7 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
     // components:
     bodyComponent                     ?: React.ReactComponentElement<any, BasicProps<TElement>>
     
-    mediaGroupComponent               ?: React.ReactComponentElement<any, GenericProps<Element>>
+    mediaGroupComponent               ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
     noImageComponent                  ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
     previewImageComponent             ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
     imageComponent                    ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
@@ -258,7 +256,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         uploadingImageTitleComponent      = (<h1                                                                  /> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         uploadingImageErrorTitleComponent = (<h1                                                                  /> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         
-        mediaGroupComponent               = (<Generic<Element> tag='div'                                          /> as React.ReactComponentElement<any, GenericProps<Element>>),
+        mediaGroupComponent               = (<div                                                                 /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
         mediaGroupComponentInner          = (<div                                                                 /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
         noImageComponent                  = (<Icon       icon='image'       size='xl'                             /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
         imageComponent                    = (<img                                                                 /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
@@ -715,7 +713,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                 // children:
                 bodyComponent.props.children ?? <>
                     {/* <MediaGroup> */}
-                    {React.cloneElement<GenericProps<Element>>(mediaGroupComponent,
+                    {React.cloneElement<React.HTMLAttributes<HTMLElement>>(mediaGroupComponent,
                         // props:
                         {
                             // classes:
