@@ -181,8 +181,8 @@ export const usesGalleryEditorLayout = () => {
                         
                         
                         // sizes:
-                        minInlineSize  : 0,         // starts growing from 0px up to justifySelf
-                        minBlockSize   : 0,         // starts growing from 0px up to alignSelf
+                        minInlineSize  : 0,         // starts growing from 0px up to "image" gridArea
+                        minBlockSize   : 0,         // starts growing from 0px up to "image" gridArea
                         // maxInlineSize  : '100%', // do not overflow the <parent>
                         // maxBlockSize   : '100%', // do not overflow the <parent>
                     }),
