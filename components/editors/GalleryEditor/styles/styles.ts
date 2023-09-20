@@ -3,7 +3,6 @@ import {
     // writes css in javascript:
     rule,
     states,
-    descendants,
     children,
     style,
     
@@ -210,11 +209,13 @@ export const usesGalleryEditorLayout = () => {
                         
                         
                         // children:
-                        ...descendants([galleryEditorDeletingImageTitleElm, galleryEditorUploadTitleElm, galleryEditorUploadingTitleElm, galleryEditorUploadingErrorTitleElm, 'p'], {
+                        
+                        // titles & paragraphs:
+                        ...children([galleryEditorDeletingImageTitleElm, galleryEditorUploadTitleElm, galleryEditorUploadingTitleElm, galleryEditorUploadingErrorTitleElm, 'p'], {
                             margin    : 0,        // no margin for <p>, <h1>...<h6>
                             textAlign : 'center', // center text for <p>, <h1>...<h6>
                         }),
-                        ...descendants([galleryEditorDeletingImageTitleElm, galleryEditorUploadTitleElm, galleryEditorUploadingTitleElm, galleryEditorUploadingErrorTitleElm], {
+                        ...children([galleryEditorDeletingImageTitleElm, galleryEditorUploadTitleElm, galleryEditorUploadingTitleElm, galleryEditorUploadingErrorTitleElm], {
                             fontSize : typos.fontSizeMd,
                             
                             
@@ -223,7 +224,7 @@ export const usesGalleryEditorLayout = () => {
                             ...usesCssProps(usesPrefixedProps(galleryEditors, 'title')), // apply config's cssProps starting with title***
                         }),
                         
-                        // <ElementWithActions>'s children:
+                        // deleting:
                         ...children(galleryEditorBusyElm, {
                             // positions:
                             alignSelf   : 'center', // center the self horizontally
@@ -239,13 +240,13 @@ export const usesGalleryEditorLayout = () => {
                             ...usesCssProps(usesPrefixedProps(galleryEditors, 'busy')), // apply config's cssProps starting with busy***
                         }),
                         
-                        // <UploadImage>'s children:
+                        // upload:
                         ...children(galleryEditorSelectButtonElm, {
                             // customize:
                             ...usesCssProps(usesPrefixedProps(galleryEditors, 'selectButton')), // apply config's cssProps starting with selectButton***
                         }),
                         
-                        // <UploadingImage>'s children:
+                        // uploading:
                         ...children(galleryEditorUploadProgressElm, {
                             // customize:
                             ...usesCssProps(usesPrefixedProps(galleryEditors, 'uploadProgress')), // apply config's cssProps starting with uploadProgress***
@@ -269,6 +270,8 @@ export const usesGalleryEditorLayout = () => {
                             // customize:
                             ...usesCssProps(usesPrefixedProps(galleryEditors, 'uploadError')), // apply config's cssProps starting with uploadError***
                         }),
+                        
+                        // uploading error:
                         ...children(galleryEditorRetryButtonElm, {
                             // customize:
                             ...usesCssProps(usesPrefixedProps(galleryEditors, 'retryButton')), // apply config's cssProps starting with retryButton***
