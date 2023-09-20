@@ -144,10 +144,14 @@ export const usesGalleryEditorLayout = () => {
                     // layouts:
                     display        : 'grid',
                     gridTemplate   : [[
-                        '"media" auto',
+                        '"image" auto',
                         '/',
                         'auto'
                     ]],
+                    justifyItems   : 'center', // default center the items horizontally
+                    alignItems     : 'center', // default center the items vertically
+                    justifyContent : 'center', // center the whole image horizontally
+                    alignContent   : 'center', // center the whole image vertically
                     
                     
                     
@@ -159,7 +163,7 @@ export const usesGalleryEditorLayout = () => {
                     // children:
                     ...children([galleryEditorImageElm, galleryEditorPreviewImageElm, galleryEditorActionGroupElm], {
                         // positions:
-                        gridArea        : 'media',
+                        gridArea        : 'image',
                         
                         
                         
@@ -193,7 +197,9 @@ export const usesGalleryEditorLayout = () => {
                     }),
                     ...children(galleryEditorActionGroupElm, {
                         // positions:
-                        zIndex          : 1,
+                        justifySelf     : 'stretch', // fill the <parent> horizontally
+                        alignSelf       : 'stretch', // fill the <parent> vertically
+                        zIndex          : 1,         // placed on the top of <Image>
                         
                         
                         
