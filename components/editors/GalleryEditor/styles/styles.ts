@@ -158,6 +158,11 @@ export const usesGalleryEditorLayout = () => {
                     
                     // children:
                     ...children([galleryEditorImageElm, galleryEditorPreviewImageElm, galleryEditorActionGroupElm], {
+                        // positions:
+                        gridArea        : 'media',
+                        
+                        
+                        
                         // borders:
                         // clone <Item>'s border radius:
                         borderStartStartRadius : `calc(${groupableVars.borderStartStartRadius} - ${groupableVars.borderWidth} - min(${groupableVars.borderWidth}, 0.5px))`,
@@ -188,7 +193,6 @@ export const usesGalleryEditorLayout = () => {
                     }),
                     ...children(galleryEditorActionGroupElm, {
                         // positions:
-                        gridArea        : 'media',
                         zIndex          : 1,
                         
                         
@@ -372,11 +376,6 @@ export const usesGalleryEditorLayout = () => {
             ...children(galleryEditorUploadingGroupElm, {
                 // children:
                 ...children(galleryEditorPreviewImageElm, {
-                    // positions:
-                    gridArea : 'media',
-                    
-                    
-                    
                     // customize:
                     ...usesCssProps(usesPrefixedProps(galleryEditors, 'previewImage')), // apply config's cssProps starting with previewImage***
                 }),
