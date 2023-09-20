@@ -40,23 +40,24 @@ import {
 
 // types:
 export interface OrderDetail
-extends
-    Omit<Order,
+    extends
+        Omit<Order,
+            |'createdAt'
+            |'updatedAt'
+            
+            |'customerId'
+        >
+{
+    // relations:
+    items    : Omit<OrdersOnProducts,
+        |'id'
+        |'orderId'
+    >[]
+    
+    customer : null|Omit<Customer,
         |'createdAt'
         |'updatedAt'
-        
-        |'customerId'
     >
-{
-// relations:
-items    : Omit<OrdersOnProducts,
-    |'id'
-    |'orderId'
->[],
-customer : null|Omit<Customer,
-    |'createdAt'
-    |'updatedAt'
->
 }
 
 
@@ -68,7 +69,7 @@ interface RequestContext {
     }
 }
 const router  = createEdgeRouter<NextRequest, RequestContext>();
-const handler = async (req: NextRequest, ctx: RequestContext) => router.run(req, ctx);
+const handler = async (req: NextRequest, ctx: RequestContext) => router.run(req, ctx) as Promise<any>;
 export {
     handler as GET,
     handler as POST,
@@ -87,7 +88,7 @@ router
     
     
     // authorized => next:
-    return next();
+    return await next();
 })
 .post(async (req) => {
     if (process.env.SIMULATE_SLOW_NETWORK === 'true') {

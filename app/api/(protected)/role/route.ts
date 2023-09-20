@@ -63,7 +63,7 @@ interface RequestContext {
     }
 }
 const router  = createEdgeRouter<NextRequest, RequestContext>();
-const handler = async (req: NextRequest, ctx: RequestContext) => router.run(req, ctx);
+const handler = async (req: NextRequest, ctx: RequestContext) => router.run(req, ctx) as Promise<any>;
 export {
     handler as GET,
     handler as POST,
@@ -82,7 +82,7 @@ router
     
     
     // authorized => next:
-    return next();
+    return await next();
 })
 .get(async (req) => {
     const rolePreviews : RolePreview[] = (
