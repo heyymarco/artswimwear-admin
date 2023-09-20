@@ -1,7 +1,6 @@
 // cssfn:
 import {
     // writes css in javascript:
-    descendants,
     children,
     style,
     
@@ -59,8 +58,8 @@ import {
     uploadImageMediaGroupElm,
     uploadImageMediaGroupInnerElm,
     uploadImageDeletingImageTitleElm,
-    uploadImageUploadingTitleElm,
-    uploadImageUploadingErrorTitleElm,
+    uploadImageUploadingImageTitleElm,
+    uploadImageUploadingImageErrorTitleElm,
     uploadImageNoImageElm,
     uploadImagePreviewImageElm,
     uploadImageImageElm,
@@ -147,18 +146,6 @@ export const usesUploadImageLayout = () => {
                 
                 
                 // children:
-                ...descendants([uploadImageDeletingImageTitleElm, uploadImageUploadingTitleElm, uploadImageUploadingErrorTitleElm, 'p'], {
-                    margin     : 0,        // no margin for <p>, <h1>...<h6>
-                    textAlign  : 'center', // center text for <p>, <h1>...<h6>
-                }),
-                ...descendants([uploadImageDeletingImageTitleElm, uploadImageUploadingTitleElm, uploadImageUploadingErrorTitleElm], {
-                    fontSize   : typos.fontSizeMd,
-                    
-                    
-                    
-                    // customize:
-                    ...usesCssProps(usesPrefixedProps(uploadImages, 'title')), // apply config's cssProps starting with title***
-                }),
                 ...children([uploadImageNoImageElm, uploadImagePreviewImageElm, uploadImageImageElm, uploadImageMediaGroupInnerElm], {
                     // positions:
                     gridArea : 'media',
@@ -263,6 +250,22 @@ export const usesUploadImageLayout = () => {
                     
                     
                     // children:
+                    
+                    // titles & paragraphs:
+                    ...children([uploadImageDeletingImageTitleElm, uploadImageUploadingImageTitleElm, uploadImageUploadingImageErrorTitleElm, 'p'], {
+                        margin     : 0,        // no margin for <p>, <h1>...<h6>
+                        textAlign  : 'center', // center text for <p>, <h1>...<h6>
+                    }),
+                    ...children([uploadImageDeletingImageTitleElm, uploadImageUploadingImageTitleElm, uploadImageUploadingImageErrorTitleElm], {
+                        fontSize   : typos.fontSizeMd,
+                        
+                        
+                        
+                        // customize:
+                        ...usesCssProps(usesPrefixedProps(uploadImages, 'title')), // apply config's cssProps starting with title***
+                    }),
+                    
+                    // deleting:
                     ...children(uploadImageBusyElm, {
                         // positions:
                         alignSelf   : 'center', // center the self horizontally
@@ -277,6 +280,8 @@ export const usesUploadImageLayout = () => {
                         // customize:
                         ...usesCssProps(usesPrefixedProps(uploadImages, 'busy')), // apply config's cssProps starting with busy***
                     }),
+                    
+                    // uploading:
                     ...children(uploadImageUploadProgressElm, {
                         // customize:
                         ...usesCssProps(usesPrefixedProps(uploadImages, 'uploadProgress')), // apply config's cssProps starting with uploadProgress***
