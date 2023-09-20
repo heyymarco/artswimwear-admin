@@ -189,7 +189,7 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
     imageComponent                    ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
     
     deletingImageTitleComponent       ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
-    busyComponent                     ?: React.ReactComponentElement<any, GenericProps<Element>>
+    busyComponent                     ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
     
     mediaGroupComponentInner          ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
     uploadingImageTitleComponent      ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
@@ -262,7 +262,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         mediaGroupComponentInner          = (<div                                                                 /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
         noImageComponent                  = (<Icon       icon='image'       size='xl'                             /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
         imageComponent                    = (<img                                                                 /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
-        busyComponent                     = (<Busy                          size='lg'                             /> as React.ReactComponentElement<any, GenericProps<Element>>),
+        busyComponent                     = (<Busy                          size='lg'                             /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
         previewImageComponent             = imageComponent,
         progressComponent                 = (<Progress                      size='sm'                             /> as React.ReactComponentElement<any, ProgressProps<Element>>),
         progressBarComponent              = (<ProgressBar                                                         /> as React.ReactComponentElement<any, ProgressBarProps<Element>>),
@@ -807,7 +807,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                                         )}
                                         
                                         {/* <Busy> */}
-                                        {React.cloneElement<GenericProps<Element>>(busyComponent,
+                                        {React.cloneElement<React.HTMLAttributes<HTMLElement>>(busyComponent,
                                             // props:
                                             {
                                                 // classes:
