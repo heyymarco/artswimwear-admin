@@ -3,6 +3,7 @@ import {
     // writes css in javascript:
     rule,
     states,
+    descendants,
     children,
     style,
     
@@ -211,11 +212,11 @@ export const usesGalleryEditorLayout = () => {
                         // children:
                         
                         // titles & paragraphs:
-                        ...children([galleryEditorDeletingImageTitleElm, galleryEditorUploadImageTitleElm, galleryEditorUploadingImageTitleElm, galleryEditorUploadingImageErrorTitleElm, 'p'], {
+                        ...descendants([galleryEditorDeletingImageTitleElm, galleryEditorUploadImageTitleElm, galleryEditorUploadingImageTitleElm, galleryEditorUploadingImageErrorTitleElm, 'p'], {
                             margin    : 0,        // no margin for <p>, <h1>...<h6>
                             textAlign : 'center', // center text for <p>, <h1>...<h6>
                         }),
-                        ...children([galleryEditorDeletingImageTitleElm, galleryEditorUploadImageTitleElm, galleryEditorUploadingImageTitleElm, galleryEditorUploadingImageErrorTitleElm], {
+                        ...descendants([galleryEditorDeletingImageTitleElm, galleryEditorUploadImageTitleElm, galleryEditorUploadingImageTitleElm, galleryEditorUploadingImageErrorTitleElm], {
                             fontSize : typos.fontSizeMd,
                             
                             
