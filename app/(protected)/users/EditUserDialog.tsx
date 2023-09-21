@@ -279,20 +279,22 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
         } // if
     });
     const handleSaveImages = useEvent(async (commitImages : boolean) => {
+        // search for unused image(s) and delete them:
+        const formData = new FormData();
+        for (const unusedImageId of
+            Array.from(draftImages.entries())
+            .filter((draftImage) => (draftImage[1] !== commitImages))
+            .map((draftImage) => draftImage[0])
+        )
+        {
+            formData.append('image' , unusedImageId);
+        } // for
+        
+        draftImages.clear(); // clear the drafts
+        
+        
+        
         try {
-            // search for unused image(s) and delete them:
-            const formData = new FormData();
-            for (const unusedImageId of
-                Array.from(draftImages.entries())
-                .filter((draftImage) => (draftImage[1] !== commitImages))
-                .map((draftImage) => draftImage[0])
-            )
-            {
-                formData.append('image' , unusedImageId);
-            } // for
-            
-            draftImages.clear(); // clear the drafts
-            
             if (formData.getAll('image').length) {
                 await axios.patch('/api/upload', formData, {
                     headers : { 'content-type': 'multipart/form-data' },
