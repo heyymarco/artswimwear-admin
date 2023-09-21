@@ -181,6 +181,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
     const [roleId          , setRoleId          ] = useState<string|null>(user.roleId);
     const [username        , setUsername        ] = useState<string|null>(user.username);
     
+    const [draftImages                          ] = useState<Map<string, boolean>>(() => new Map<string, boolean>());
     
     
     // stores:
@@ -232,7 +233,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                 username : username || null, // convert empty string to null
             }).unwrap();
             
-            onClose();
+            await handleClosed(/*commitImages = */true);
         }
         catch (error: any) {
             showMessageFetchError(error);
@@ -266,7 +267,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                     break;
                 case 'dontSave':
                     // then close the editor (without saving):
-                    onClose();
+                    await handleClosed(/*commitImages = */false);
                     break;
                 default:
                     // do nothing (continue editing)
@@ -274,8 +275,37 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
             } // switch
         }
         else {
-            onClose();
+            await handleClosed(/*commitImages = */false);
         } // if
+    });
+    const handleSaveImages = useEvent(async (commitImages : boolean) => {
+        try {
+            // search for unused image(s) and delete them:
+            const formData = new FormData();
+            for (const unusedImageId of
+                Array.from(draftImages.entries())
+                .filter((draftImage) => (draftImage[1] !== commitImages))
+                .map((draftImage) => draftImage[0])
+            )
+            {
+                formData.append('image' , unusedImageId);
+            } // for
+            
+            draftImages.clear(); // clear the drafts
+            
+            if (formData.getAll('image').length) {
+                await axios.patch('/api/upload', formData, {
+                    headers : { 'content-type': 'multipart/form-data' },
+                });
+            } // if
+        }
+        catch {
+            // ignore any error
+        } // try
+    });
+    const handleClosed = useEvent(async (commitImages : boolean) => {
+        await handleSaveImages(commitImages);
+        onClose();
     });
     const handleKeyDown : React.KeyboardEventHandler<HTMLElement> = useEvent((event) => {
         switch (event.key) {
@@ -289,12 +319,6 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                 // handleClosing();
                 break;
         } // switch
-    });
-    const handleImgUpload = useEvent(async () => {
-
-    });
-    const handleImgRemove = useEvent(async () => {
-
     });
     
     
@@ -415,10 +439,23 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                                         );
                                     },
                                 });
-                                return response.data.id;
+                                const imageId : string = response.data.id as any;
+                                
+                                // replace => delete prev drafts:
+                                handleSaveImages(/*commitImages = */false);
+                                
+                                // mark the image as being used:
+                                draftImages.set(imageId, true);
+                                
+                                return imageId;
                             }}
-                            onDeleteImage={async ({ imageData }) => {
-                                await axios.delete(`/api/upload?imageId=${encodeURIComponent(imageData)}`);
+                            onDeleteImage={async ({ imageData: imageId }) => {
+                                // delete later (on save/cancel):
+                                // await axios.delete(`/api/upload?imageId=${encodeURIComponent(imageId)}`);
+                                
+                                // mark the image as unused:
+                                draftImages.set(imageId, false);
+                                
                                 return true;
                             }}
                             onResolveImageUrl={resolveMediaUrl<never>}

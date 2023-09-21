@@ -228,6 +228,8 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
         } // try
     });
     
+    const [draftImages                          ] = useState<Map<string, boolean>>(() => new Map<string, boolean>());
+    
     
     
     // stores:
@@ -293,7 +295,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                 description    : (description?.toJSON?.() ?? description) as any,
             }).unwrap();
             
-            onClose();
+            await handleClosed(/*commitImages = */true);
         }
         catch (error: any) {
             showMessageFetchError(error);
@@ -327,7 +329,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                     break;
                 case 'dontSave':
                     // then close the editor (without saving):
-                    onClose();
+                    await handleClosed(/*commitImages = */false);
                     break;
                 default:
                     // do nothing (continue editing)
@@ -335,8 +337,37 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
             } // switch
         }
         else {
-            onClose();
+            await handleClosed(/*commitImages = */false);
         } // if
+    });
+    const handleSaveImages = useEvent(async (commitImages : boolean) => {
+        try {
+            // search for unused image(s) and delete them:
+            const formData = new FormData();
+            for (const unusedImageId of
+                Array.from(draftImages.entries())
+                .filter((draftImage) => (draftImage[1] !== commitImages))
+                .map((draftImage) => draftImage[0])
+            )
+            {
+                formData.append('image' , unusedImageId);
+            } // for
+            
+            draftImages.clear(); // clear the drafts
+            
+            if (formData.getAll('image').length) {
+                await axios.patch('/api/upload', formData, {
+                    headers : { 'content-type': 'multipart/form-data' },
+                });
+            } // if
+        }
+        catch {
+            // ignore any error
+        } // try
+    });
+    const handleClosed = useEvent(async (commitImages : boolean) => {
+        await handleSaveImages(commitImages);
+        onClose();
     });
     const handleKeyDown : React.KeyboardEventHandler<HTMLElement> = useEvent((event) => {
         switch (event.key) {
@@ -479,10 +510,20 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                                         );
                                     },
                                 });
-                                return response.data.id;
+                                const imageId : string = response.data.id as any;
+                                
+                                // mark the image as being used:
+                                draftImages.set(imageId, true);
+                                
+                                return imageId;
                             }}
-                            onDeleteImage={async ({ imageData }) => {
-                                await axios.delete(`/api/upload?imageId=${encodeURIComponent(imageData)}`);
+                            onDeleteImage={async ({ imageData: imageId }) => {
+                                // delete later (on save/cancel):
+                                // await axios.delete(`/api/upload?imageId=${encodeURIComponent(imageId)}`);
+                                
+                                // mark the image as unused:
+                                draftImages.set(imageId, false);
+                                
                                 return true;
                             }}
                             onResolveImageUrl={resolveMediaUrl<never>}

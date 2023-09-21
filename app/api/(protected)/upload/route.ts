@@ -121,11 +121,10 @@ router
         }
     } // try
 })
-.delete(async (req) => {
-    const {
-        imageId,
-    } = Object.fromEntries(new URL(req.url, 'https://localhost/').searchParams.entries());
-    if (!imageId || (typeof(imageId) !== 'string')) {
+.patch(async (req) => {
+    const data = await req.formData();
+    const imageIds : string[] = data.getAll('image') as any;
+    if (!imageIds.length || !imageIds.every((imageId) => (typeof(imageId) === 'string'))) {
         return NextResponse.json({
             error: 'Invalid parameter(s).',
         }, { status: 400 }); // handled with error
@@ -134,14 +133,14 @@ router
     
     
     try {
-        await deleteMedia(imageId);
+        await Promise.all(imageIds.map((imageId) => deleteMedia(imageId)));
         
         
         
-        return NextResponse.json({ id: imageId }); // deleted => success
+        return NextResponse.json({ id: imageIds }); // deleted => success
     }
     catch (error: any) {
-        if (error?.code === 404) return NextResponse.json({ id: imageId }); // not found => treat as success
+        if (error?.code === 404) return NextResponse.json({ id: imageIds }); // not found => treat as success
         return NextResponse.json({ error: error?.message ?? `${error}` }, { status: 500 }); // handled with error
     } // try
 });
