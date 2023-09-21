@@ -90,6 +90,9 @@ import {
     
     // hooks:
     useUpdateUser,
+    
+    usePostImage,
+    useDeleteImage,
 }                           from '@/store/features/api/apiSlice'
 
 // internals:
@@ -186,7 +189,10 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
     
     
     // stores:
-    const [updateUser, {isLoading}] = useUpdateUser();
+    const [updateUser , {isLoading : isLoading1}] = useUpdateUser();
+    const [postImage  , {isLoading : isLoading2}] = usePostImage();
+    const [deleteImage, {isLoading : isLoading3}] = useDeleteImage();
+    const isLoading = isLoading1 || isLoading2 || isLoading3;
     
     
     
@@ -288,23 +294,23 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
         
         
         // search for unused image(s) and delete them:
-        const formData = new FormData();
+        const unusedImageIds : string[] = [];
         for (const unusedImageId of
             Array.from(draftImages.entries())
             .filter((draftImage) => (draftImage[1] !== commitImages))
             .map((draftImage) => draftImage[0])
         )
         {
-            formData.append('image' , unusedImageId);
+            unusedImageIds.push(unusedImageId);
         } // for
         
         
         
         try {
-            if (formData.getAll('image').length) {
-                await axios.patch('/api/upload', formData, {
-                    headers : { 'content-type': 'multipart/form-data' },
-                });
+            if (unusedImageIds.length) {
+                await deleteImage({
+                    imageId : unusedImageIds,
+                }).unwrap();
             } // if
         }
         catch {
@@ -445,18 +451,11 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                             
                             // handlers:
                             onUploadImage={async ({ imageFile, reportProgress, abortSignal }) => {
-                                const formData = new FormData();
-                                formData.append('image' , imageFile);
-                                formData.append('folder', '@@user');
-                                const response = await axios.post('/api/upload', formData, {
-                                    headers          : { 'content-type': 'multipart/form-data' },
-                                    onUploadProgress : (event) => {
-                                        reportProgress(
-                                            (event.loaded * 100) / (event.total ?? 100)
-                                        );
-                                    },
-                                });
-                                const imageId : string = response.data.id as any;
+                                const imageId = await postImage({
+                                    image            : imageFile,
+                                    folder           : '@@user',
+                                    onUploadProgress : reportProgress,
+                                }).unwrap();
                                 
                                 // replace => delete prev drafts:
                                 handleSaveImages(/*commitImages = */false);
@@ -467,9 +466,6 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                                 return imageId;
                             }}
                             onDeleteImage={async ({ imageData: imageId }) => {
-                                // delete later (on save/cancel):
-                                // await axios.delete(`/api/upload?imageId=${encodeURIComponent(imageId)}`);
-                                
                                 // mark the image as unused:
                                 draftImages.set(imageId, false);
                                 

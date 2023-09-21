@@ -22,6 +22,15 @@ import type { UserDetail }                      from '@/app/api/(protected)/user
 export type { UserDetail }                      from '@/app/api/(protected)/user/route'
 import type { RolePreview, RoleDetail }         from '@/app/api/(protected)/role/route'
 export type { RolePreview, RoleDetail }         from '@/app/api/(protected)/role/route'
+import type { ImageId }                         from '@/app/api/(protected)/upload/route'
+export type { ImageId }                         from '@/app/api/(protected)/upload/route'
+
+// other libs:
+import {
+    default as axios,
+    AxiosRequestConfig,
+    AxiosError,
+}                           from 'axios'
 
 
 
@@ -37,9 +46,40 @@ const roleListAdapter     = createEntityAdapter<RolePreview>({
 
 
 
+const axiosBaseQuery = (
+    { baseUrl }: { baseUrl: string } = { baseUrl: '' }
+): BaseQueryFn<
+    AxiosRequestConfig<any> & { body ?: {} },
+    unknown,
+    unknown
+> => {
+    return async ({ url, body, data, ...restAxiosRequestConfig }) => {
+        try {
+            const result = await axios({
+                ...restAxiosRequestConfig,
+                url : `${baseUrl}/${url}`,
+                data : data ?? body,
+            });
+            
+            return {
+                data: result.data,
+            };
+        }
+        catch (error) {
+            let axiosError = error as AxiosError;
+            return {
+                error: {
+                    status : axiosError.response?.status,
+                    data   : axiosError.response?.data || axiosError.message,
+                },
+            };
+        }
+    };
+};
+
 export const apiSlice = createApi({
     reducerPath : 'api',
-    baseQuery : fetchBaseQuery({
+    baseQuery : axiosBaseQuery({
         baseUrl: '/api'
     }),
     tagTypes: ['Products', 'Orders', 'Users', 'Roles'],
@@ -235,6 +275,37 @@ export const apiSlice = createApi({
                 await handleCumulativeUpdateCacheEntry('getRolePage', (arg.id !== ''), api);
             },
         }),
+        
+        postImage    : builder.mutation<ImageId, { image: File, folder?: string, onUploadProgress?: (percentage: number) => void }>({
+            query: ({ image, folder, onUploadProgress }) => ({
+                url     : 'upload',
+                method  : 'POST',
+                headers : { 'content-type': 'multipart/form-data' },
+                body    : ((): FormData => {
+                    const formData = new FormData();
+                    formData.append('image' , image);
+                    if (folder) formData.append('folder', folder);
+                    return formData;
+                })(),
+                onUploadProgress(event) {
+                    onUploadProgress?.(
+                        (event.loaded * 100) / (event.total ?? 100)
+                    );
+                },
+            }),
+        }),
+        deleteImage  : builder.mutation<ImageId[], { imageId: string[] }>({
+            query: ({ imageId: imageIds }) => ({
+                url     : 'upload',
+                method  : 'PATCH',
+                headers : { 'content-type': 'multipart/form-data' },
+                body    : ((): FormData => {
+                    const formData = new FormData();
+                    for (const imageId of imageIds) formData.append('image' , imageId);
+                    return formData;
+                })(),
+            }),
+        }),
     }),
 });
 
@@ -369,4 +440,7 @@ export const {
     useGetRoleListQuery      : useGetRoleList,
     useGetRolePageQuery      : useGetRolePage,
     useUpdateRoleMutation    : useUpdateRole,
+    
+    usePostImageMutation     : usePostImage,
+    useDeleteImageMutation   : useDeleteImage,
 } = apiSlice;

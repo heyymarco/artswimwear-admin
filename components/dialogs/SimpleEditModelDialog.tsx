@@ -36,7 +36,7 @@ import type {
 
 // types:
 export type UpdateModelApi<TModel extends Model> = readonly [
-    MutationTrigger<MutationDefinition<MutationArgs<TModel>, BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError, {}, FetchBaseQueryMeta>, string, TModel>>,
+    MutationTrigger<MutationDefinition<MutationArgs<TModel>, BaseQueryFn<any, unknown, unknown, {}, {}>, string, TModel>>,
     {
         isLoading   : boolean
     }

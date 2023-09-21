@@ -527,9 +527,6 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                                 return imageId;
                             }}
                             onDeleteImage={async ({ imageData: imageId }) => {
-                                // delete later (on save/cancel):
-                                // await axios.delete(`/api/upload?imageId=${encodeURIComponent(imageId)}`);
-                                
                                 // mark the image as unused:
                                 draftImages.set(imageId, false);
                                 

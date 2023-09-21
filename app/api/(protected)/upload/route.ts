@@ -33,6 +33,11 @@ import {
 
 
 
+// types:
+export type ImageId = string & {}
+
+
+
 // // file processors:
 // const upload = multer({
 //     storage: multer.diskStorage({
@@ -107,7 +112,7 @@ router
         });
         
         
-        return NextResponse.json({ id: fileId }); // handled with success
+        return NextResponse.json(fileId); // handled with success
     }
     catch (error: any) {
         return NextResponse.json({ error: error?.message ?? `${error}` }, { status: 500 }); // handled with error
@@ -136,11 +141,12 @@ router
         await Promise.all(imageIds.map((imageId) => deleteMedia(imageId)));
         
         
-        
-        return NextResponse.json({ id: imageIds }); // deleted => success
+        return NextResponse.json(imageIds); // deleted => success
     }
     catch (error: any) {
-        if (error?.code === 404) return NextResponse.json({ id: imageIds }); // not found => treat as success
+        if (error?.code === 404) { // not found => treat as success
+            return NextResponse.json(imageIds); // deleted => success
+        } // if
         return NextResponse.json({ error: error?.message ?? `${error}` }, { status: 500 }); // handled with error
     } // try
 });
