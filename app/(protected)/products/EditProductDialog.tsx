@@ -114,6 +114,9 @@ import {
     
     // hooks:
     useUpdateProduct,
+    
+    usePostImage,
+    useDeleteImage,
 }                           from '@/store/features/api/apiSlice'
 
 // internals:
@@ -123,11 +126,6 @@ import {
 import {
     resolveMediaUrl,
 }                           from '@/libs/mediaStorage.client'
-
-// other libs:
-import {
-    default as axios,
-}                           from 'axios'
 
 // configs:
 import {
@@ -233,7 +231,10 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
     
     
     // stores:
-    const [updateProduct, {isLoading}] = useUpdateProduct();
+    const [updateProduct, {isLoading : isLoading1}] = useUpdateProduct();
+    const [postImage    , {isLoading : isLoading2}] = usePostImage();
+    const [deleteImage  , {isLoading : isLoading3}] = useDeleteImage();
+    const isLoading = isLoading1 || isLoading2 || isLoading3;
     
     
     
@@ -342,23 +343,23 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
     });
     const handleSaveImages = useEvent(async (commitImages : boolean) => {
         // search for unused image(s) and delete them:
-        const formData = new FormData();
+        const unusedImageIds : string[] = [];
         for (const unusedImageId of
             Array.from(draftImages.entries())
             .filter((draftImage) => (draftImage[1] !== commitImages))
             .map((draftImage) => draftImage[0])
         )
         {
-            formData.append('image' , unusedImageId);
+            unusedImageIds.push(unusedImageId);
         } // for
         
         
         
         try {
-            if (formData.getAll('image').length) {
-                await axios.patch('/api/upload', formData, {
-                    headers : { 'content-type': 'multipart/form-data' },
-                });
+            if (unusedImageIds.length) {
+                await deleteImage({
+                    imageId : unusedImageIds,
+                }).unwrap();
             } // if
         }
         catch {
@@ -368,8 +369,8 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
         
         
         
-        // clear the drafts:
-        draftImages.clear();
+        // substract the drafts:
+        for (const unusedImageId of unusedImageIds) draftImages.delete(unusedImageId);
     });
     const handleClosed = useEvent(async (commitImages : boolean, otherTasks : Promise<any>[] = []) => {
         await Promise.all([
@@ -508,18 +509,11 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             
                             // handlers:
                             onUploadImage={async ({ imageFile, reportProgress, abortSignal }) => {
-                                const formData = new FormData();
-                                formData.append('image' , imageFile);
-                                formData.append('folder', name);
-                                const response = await axios.post('/api/upload', formData, {
-                                    headers          : { 'content-type': 'multipart/form-data' },
-                                    onUploadProgress : (event) => {
-                                        reportProgress(
-                                            (event.loaded * 100) / (event.total ?? 100)
-                                        );
-                                    },
-                                });
-                                const imageId : string = response.data.id as any;
+                                const imageId = await postImage({
+                                    image            : imageFile,
+                                    folder           : '@@user',
+                                    onUploadProgress : reportProgress,
+                                }).unwrap();
                                 
                                 // mark the image as being used:
                                 draftImages.set(imageId, true);
