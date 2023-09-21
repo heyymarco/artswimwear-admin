@@ -279,6 +279,13 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
         } // if
     });
     const handleSaveImages = useEvent(async (commitImages : boolean) => {
+        // on save => delete the initial image if has been replaced
+        if (commitImages && user.image && (user.image !== image)) {
+            draftImages.set(user.image, false);
+        } // if
+        
+        
+        
         // search for unused image(s) and delete them:
         const formData = new FormData();
         for (const unusedImageId of
