@@ -184,6 +184,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
     const [roleId          , setRoleId          ] = useState<string|null>(user.roleId);
     const [username        , setUsername        ] = useState<string|null>(user.username);
     
+    const initialImageRef                         = useRef<string|null>(user.image);
     const [draftImages                          ] = useState<Map<string, boolean>>(() => new Map<string, boolean>());
     
     
@@ -287,8 +288,8 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
     });
     const handleSaveImages = useEvent(async (commitImages : boolean) => {
         // on save => delete the initial image if has been replaced
-        if (commitImages && user.image && (user.image !== image)) {
-            draftImages.set(user.image, false);
+        if (commitImages && initialImageRef.current && (initialImageRef.current !== image)) {
+            draftImages.set(initialImageRef.current, false);
         } // if
         
         
@@ -320,8 +321,8 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
         
         
         
-        // clear the drafts:
-        draftImages.clear();
+        // substract the drafts:
+        for (const unusedImageId of unusedImageIds) draftImages.delete(unusedImageId);
     });
     const handleClosed = useEvent(async (commitImages : boolean, otherTasks : Promise<any>[] = []) => {
         await Promise.all([
