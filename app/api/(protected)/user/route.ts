@@ -192,7 +192,7 @@ router
         ||
         ((email !== undefined) && ((typeof(email) !== 'string') || (email.length < 5)))
         ||
-        ((image !== undefined) && ((typeof(image) !== 'string') || (image.length < 1)))
+        ((image !== undefined) && (image !== null) && ((typeof(image) !== 'string') || (image.length < 1)))
         ||
         ((username !== undefined) && ((typeof(username) !== 'string') || (username.length < 1)))
         
