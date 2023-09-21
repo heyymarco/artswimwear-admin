@@ -282,7 +282,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
         
         
         try {
-            await updateProduct({
+            const updatingProductTask = updateProduct({
                 id             : product.id,
                 
                 visibility,
@@ -295,7 +295,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                 description    : (description?.toJSON?.() ?? description) as any,
             }).unwrap();
             
-            await handleClosed(/*commitImages = */true);
+            await handleClosed(/*commitImages = */true, [updatingProductTask]);
         }
         catch (error: any) {
             showMessageFetchError(error);
@@ -352,8 +352,6 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
             formData.append('image' , unusedImageId);
         } // for
         
-        draftImages.clear(); // clear the drafts
-        
         
         
         try {
@@ -365,10 +363,19 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
         }
         catch {
             // ignore any error
+            return; // but do not clear the draft
         } // try
+        
+        
+        
+        // clear the drafts:
+        draftImages.clear();
     });
-    const handleClosed = useEvent(async (commitImages : boolean) => {
-        await handleSaveImages(commitImages);
+    const handleClosed = useEvent(async (commitImages : boolean, otherTasks : Promise<any>[] = []) => {
+        await Promise.all([
+            handleSaveImages(commitImages),
+            ...otherTasks,
+        ]);
         onClose();
     });
     const handleKeyDown : React.KeyboardEventHandler<HTMLElement> = useEvent((event) => {
