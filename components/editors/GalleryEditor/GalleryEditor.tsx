@@ -617,11 +617,6 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
             
             
             
-            // remove the uploading status:
-            performRemove();
-            
-            
-            
             // successfully uploaded:
             if (imageData) {
                 // append the new image into a new draft images:
@@ -654,6 +649,11 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                 */
                 imagesFn = newDraftImages; // a temporary update regradless of (/*controllable*/ ?? /*uncontrollable*/), will be re-updated on *next re-render*
             } // if
+            
+            
+            
+            // remove the uploading status:
+            scheduleTriggerEvent(performRemove); // runs the `performRemove` function *next after* `onChange` event fired (to avoid blinking of previous image issue)
         };
         performUpload();
     });

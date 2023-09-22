@@ -585,16 +585,16 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
             
             
             
-            // remove the uploading status:
-            performRemove();
-            
-            
-            
             // successfully uploaded:
             if (imageData) {
                 // notify the image changed:
                 triggerChange(imageData); // then at the *next re-render*, the *controllable* `image` will change
             } // if
+            
+            
+            
+            // remove the uploading status:
+            scheduleTriggerEvent(performRemove); // runs the `performRemove` function *next after* `onChange` event fired (to avoid blinking of previous image issue)
         };
         performUpload();
     });
