@@ -231,7 +231,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
         } // try
     });
     
-    const [draftDeletedImages                   ] = useState<Map<string, boolean>>(() => new Map<string, boolean>());
+    const [draftDeletedImages                   ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
     
     
     
@@ -354,7 +354,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
         const unusedImageIds : string[] = [];
         for (const unusedImageId of
             Array.from(draftDeletedImages.entries())
-            .filter((draftDeletedImage) => (draftDeletedImage[1] === commitImages))
+            .filter((draftDeletedImage) => ((draftDeletedImage[1] === commitImages) || (draftDeletedImage[1] === null)))
             .map((draftDeletedImage) => draftDeletedImage[0])
         )
         {
@@ -537,7 +537,11 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             }}
                             onDeleteImage={async ({ imageData: imageId }) => {
                                 // register to actual_delete the deleted_image when committed:
-                                draftDeletedImages.set(imageId, true /* true: delete when committed, noop when reverted */);
+                                draftDeletedImages.set(imageId,
+                                    draftDeletedImages.has(imageId)
+                                    ? null /* null: delete when committed, delete when reverted */
+                                    : true /* true: delete when committed, noop when reverted */
+                                );
                                 
                                 return true;
                             }}
