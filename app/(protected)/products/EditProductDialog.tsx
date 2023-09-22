@@ -538,7 +538,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             onDeleteImage={async ({ imageData: imageId }) => {
                                 // register to actual_delete the deleted_image when committed:
                                 draftDeletedImages.set(imageId,
-                                    draftDeletedImages.has(imageId)
+                                    draftDeletedImages.has(imageId) // if has been created but not saved
                                     ? null /* null: delete when committed, delete when reverted */
                                     : true /* true: delete when committed, noop when reverted */
                                 );
