@@ -2,6 +2,7 @@ import '@reusable-ui/typos/effects'
 import { defineTheme, colorValues, breakpoints } from '@reusable-ui/core'
 import { iconConfig, navbarValues } from '@reusable-ui/components'
 import { galleryEditors } from '@/components/editors/GalleryEditor/styles/config'
+import { uploadImages } from '@/components/editors/UploadImage/styles/config'
 import { commerces } from '@/config'
 import { basicValues } from '@reusable-ui/components'
 import { imageValues } from '@heymarco/image'
@@ -66,6 +67,17 @@ navbarValues.blockSize = '4rem';
 // <GalleryEditor>:
 galleryEditors.itemAspectRatio = commerces.defaultProductAspectRatio;
 
+
+
+// <UploadImage>:
+// uploadImages.mediaAspectRatio  = commerces.defaultProductAspectRatio;
+
+
+
+// <Image>:
 imageValues.objectFit = 'cover';
 
+
+
+// <Carousel>:
 carouselValues.mediaFlex = [[1, 1, 'auto']]; // growable, shrinkable, initial from it's height
