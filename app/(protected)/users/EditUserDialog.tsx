@@ -473,6 +473,8 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                                 }
                                 catch (error : any) {
                                     if (error.status === 0) { // non_standard HTTP status code: a request was aborted
+                                        // TODO: try to cleanup a prematurely image (if any)
+                                        
                                         return null; // prevents showing error
                                     } // if
                                     
