@@ -520,7 +520,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                                         abortSignal      : abortSignal,
                                     }).unwrap();
                                     
-                                    // register to delete the new_image when reverted:
+                                    // register to actual_delete the new_image when reverted:
                                     draftImages.set(imageId, true /* true: delete when reverted, valid when committed */);
                                     
                                     return imageId;
@@ -536,7 +536,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                                 } // try
                             }}
                             onDeleteImage={async ({ imageData: imageId }) => {
-                                // register to delete the deleted_image when committed:
+                                // register to actual_delete the deleted_image when committed:
                                 draftImages.set(imageId, false /* false: delete when committed, valid when reverted */);
                                 
                                 return true;

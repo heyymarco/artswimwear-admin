@@ -292,7 +292,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
     const handleSaveImages = useEvent(async (commitImages : boolean) => {
         // initial_image have been replaced with new image:
         if (commitImages && initialImageRef.current && (initialImageRef.current !== image)) {
-            // register to delete the initial_image when committed:
+            // register to actual_delete the initial_image when committed:
             draftImages.set(initialImageRef.current, false /* false: delete when committed, valid when reverted */);
         } // if
         
@@ -462,7 +462,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                                     // replace => delete prev drafts:
                                     await handleSaveImages(/*commitImages = */false);
                                     
-                                    // register to delete the new_image when reverted:
+                                    // register to actual_delete the new_image when reverted:
                                     draftImages.set(imageId, true /* true: delete when reverted, valid when committed */);
                                     
                                     return imageId;
@@ -478,7 +478,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                                 } // try
                             }}
                             onDeleteImage={async ({ imageData: imageId }) => {
-                                // register to delete the deleted_image when committed:
+                                // register to actual_delete the deleted_image when committed:
                                 draftImages.set(imageId, false /* false: delete when committed, valid when reverted */);
                                 
                                 return true;
