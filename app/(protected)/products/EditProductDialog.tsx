@@ -231,7 +231,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
         } // try
     });
     
-    const [draftImages                          ] = useState<Map<string, boolean>>(() => new Map<string, boolean>());
+    const [draftDeletedImages                   ] = useState<Map<string, boolean>>(() => new Map<string, boolean>());
     
     
     
@@ -353,9 +353,9 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
         // search for unused image(s) and delete them:
         const unusedImageIds : string[] = [];
         for (const unusedImageId of
-            Array.from(draftImages.entries())
-            .filter((draftImage) => (draftImage[1] !== commitImages))
-            .map((draftImage) => draftImage[0])
+            Array.from(draftDeletedImages.entries())
+            .filter((draftDeletedImage) => (draftDeletedImage[1] !== commitImages))
+            .map((draftDeletedImage) => draftDeletedImage[0])
         )
         {
             unusedImageIds.push(unusedImageId);
@@ -378,7 +378,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
         
         
         // substract the drafts:
-        for (const unusedImageId of unusedImageIds) draftImages.delete(unusedImageId);
+        for (const unusedImageId of unusedImageIds) draftDeletedImages.delete(unusedImageId);
     });
     const handleClose = useEvent(async (commitImages : boolean, otherTasks : Promise<any>[] = []) => {
         await Promise.all([
@@ -521,7 +521,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                                     }).unwrap();
                                     
                                     // register to actual_delete the new_image when reverted:
-                                    draftImages.set(imageId, true /* true: delete when reverted, valid when committed */);
+                                    draftDeletedImages.set(imageId, true /* true: delete when reverted, valid when committed */);
                                     
                                     return imageId;
                                 }
@@ -537,7 +537,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             }}
                             onDeleteImage={async ({ imageData: imageId }) => {
                                 // register to actual_delete the deleted_image when committed:
-                                draftImages.set(imageId, false /* false: delete when committed, valid when reverted */);
+                                draftDeletedImages.set(imageId, false /* false: delete when committed, valid when reverted */);
                                 
                                 return true;
                             }}
