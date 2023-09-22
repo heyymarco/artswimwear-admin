@@ -9,6 +9,12 @@ import {
     cssConfig,
 }                           from '@cssfn/core'                  // writes css in javascript
 
+// reusable-ui core:
+import {
+    // a spacer (gap) management system:
+    spacers,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
 // reusable-ui components:
 import {
     // configs:
@@ -24,21 +30,28 @@ export const [uploadImages, uploadImageValues, cssUploadImageConfig] = cssConfig
         filterDisable         : [[
             'opacity(0.5)',
             'contrast(0.8)',
-        ]]                                                  as CssKnownProps['filter'    ],
-        animEnable            : indicators.animEnable       as CssKnownProps['animation' ],
-        animDisable           : indicators.animDisable      as CssKnownProps['animation' ],
+        ]]                                                                          as CssKnownProps['filter'       ],
+        animEnable            : indicators.animEnable                               as CssKnownProps['animation'    ],
+        animDisable           : indicators.animDisable                              as CssKnownProps['animation'    ],
         
         
         
         // media:
-        mediaInlineSizeSm     : 'calc(3 * 40px)'            as CssKnownProps['inlineSize'],
-        mediaBlockSizeSm      : 'auto'                      as CssKnownProps['blockSize' ],
-        mediaInlineSizeMd     : 'calc(5 * 40px)'            as CssKnownProps['inlineSize'],
-        mediaBlockSizeMd      : 'auto'                      as CssKnownProps['blockSize' ],
-        mediaInlineSizeLg     : 'calc(8 * 40px)'            as CssKnownProps['inlineSize'],
-        mediaBlockSizeLg      : 'auto'                      as CssKnownProps['blockSize' ],
+        mediaPaddingInlineSm  : spacers.sm                                          as CssKnownProps['paddingInline'],
+        mediaPaddingBlockSm   : spacers.sm                                          as CssKnownProps['paddingBlock' ],
+        mediaPaddingInlineMd  : [['calc((', spacers.sm, '+', spacers.md, ')/2)']]   as CssKnownProps['paddingInline'],
+        mediaPaddingBlockMd   : [['calc((', spacers.sm, '+', spacers.md, ')/2)']]   as CssKnownProps['paddingBlock' ],
+        mediaPaddingInlineLg  : spacers.md                                          as CssKnownProps['paddingInline'],
+        mediaPaddingBlockLg   : spacers.md                                          as CssKnownProps['paddingBlock' ],
         
-        mediaAspectRatio      : '1/1'                       as CssKnownProps['aspectRatio'],
+        mediaInlineSizeSm     : 'calc(3 * 40px)'                                    as CssKnownProps['inlineSize'   ],
+        mediaBlockSizeSm      : 'auto'                                              as CssKnownProps['blockSize'    ],
+        mediaInlineSizeMd     : 'calc(5 * 40px)'                                    as CssKnownProps['inlineSize'   ],
+        mediaBlockSizeMd      : 'auto'                                              as CssKnownProps['blockSize'    ],
+        mediaInlineSizeLg     : 'calc(8 * 40px)'                                    as CssKnownProps['inlineSize'   ],
+        mediaBlockSizeLg      : 'auto'                                              as CssKnownProps['blockSize'    ],
+        
+        mediaAspectRatio      : '1/1'                                               as CssKnownProps['aspectRatio'  ],
         
         
         
@@ -55,16 +68,16 @@ export const [uploadImages, uploadImageValues, cssUploadImageConfig] = cssConfig
         
         
         // previewImages:
-        previewImageObjectFit : 'cover'                     as CssKnownProps['objectFit' ],
+        previewImageObjectFit : 'cover'                                             as CssKnownProps['objectFit'    ],
         previewImageFilter    : [[
             'opacity(0.5)',
             'contrast(0.8)',
-        ]]                                                  as CssKnownProps['filter'    ],
+        ]]                                                                          as CssKnownProps['filter'       ],
         
         
         
         // images:
-        imageObjectFit : 'cover'                            as CssKnownProps['objectFit' ],
+        imageObjectFit : 'cover'                                                    as CssKnownProps['objectFit'    ],
         
         
         
@@ -107,8 +120,11 @@ export const [uploadImages, uploadImageValues, cssUploadImageConfig] = cssConfig
     
     
     const defaults = {
-        mediaInlineSize       : bases.mediaInlineSizeMd     as CssKnownProps['inlineSize'],
-        mediaBlockSize        : bases.mediaBlockSizeMd      as CssKnownProps['blockSize' ],
+        mediaPaddingInline    : bases.mediaPaddingInlineMd                          as CssKnownProps['paddingInline'],
+        mediaPaddingBlock     : bases.mediaPaddingBlockMd                           as CssKnownProps['paddingBlock' ],
+        
+        mediaInlineSize       : bases.mediaInlineSizeMd                             as CssKnownProps['inlineSize'   ],
+        mediaBlockSize        : bases.mediaBlockSizeMd                              as CssKnownProps['blockSize'    ],
     };
     
     

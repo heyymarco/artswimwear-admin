@@ -29,13 +29,13 @@ import {
     
     
     
-    // border (stroke) stuff of UI:
-    usesBorder,
-    
-    
-    
     // animation stuff of UI:
     usesAnimation,
+    
+    
+    
+    // padding (inner spacing) stuff of UI:
+    usesPadding,
     
     
     
@@ -98,36 +98,44 @@ export const usesUploadImageLayout = () => {
     });
     
     // features:
-    const {               borderVars   } = usesBorder();
     const {animationRule, animationVars} = usesAnimation(uploadImages as any);
+    const {paddingRule  , paddingVars  } = usesPadding(usesPrefixedProps(uploadImages, 'media'));
+    
+    
+    
+    // spacings:
+    const positivePaddingInline = groupableVars.paddingInline;
+    const positivePaddingBlock  = groupableVars.paddingBlock;
+    const negativePaddingInline = `calc(0px - ${positivePaddingInline})`;
+    const negativePaddingBlock  = `calc(0px - ${positivePaddingBlock })`;
     
     
     
     return style({
-        // capabilities:
-        ...groupableRule(), // make a nicely rounded corners
-        
-        
-        
         // layouts:
-        ...style({
+        display      : 'grid',
+        gridTemplate : [[
+            '"mediaGroup actionGroup" auto',
+            '/',
+            '1fr 1fr'
+        ]],
+        
+        
+        
+        // spacings:
+        gap : spacers.default,
+        
+        
+        
+        // children:
+        ...children(uploadImageMediaGroupElm, {
+            // capabilities:
+            ...groupableRule(), // make a nicely rounded corners
+            
+            
+            
             // layouts:
-            display      : 'grid',
-            gridTemplate : [[
-                '"mediaGroup actionGroup" auto',
-                '/',
-                '1fr 1fr'
-            ]],
-            
-            
-            
-            // spacings:
-            gap : spacers.default,
-            
-            
-            
-            // children:
-            ...children(uploadImageMediaGroupElm, {
+            ...style({
                 // positions:
                 justifySelf    : 'center', // center the self horizontally
                 alignSelf      : 'center', // center the self vertically
@@ -155,21 +163,17 @@ export const usesUploadImageLayout = () => {
                 }),
                 ...children([uploadImagePreviewImageElm, uploadImageImageElm, uploadImageMediaGroupInnerElm], {
                     // borders:
-                    // clone <UploadImage>'s border stroke: // TODO: doesn't work if nude={true}
-                    border                 : borderVars.border,
-                    borderWidth            : groupableVars.borderWidth,
+                    // clone <Item>'s border radius:
+                    borderStartStartRadius : `calc(${groupableVars.borderStartStartRadius} - ${groupableVars.borderWidth} - min(${groupableVars.borderWidth}, 0.5px))`,
+                    borderStartEndRadius   : `calc(${groupableVars.borderStartEndRadius}   - ${groupableVars.borderWidth} - min(${groupableVars.borderWidth}, 0.5px))`,
+                    borderEndStartRadius   : `calc(${groupableVars.borderEndStartRadius}   - ${groupableVars.borderWidth} - min(${groupableVars.borderWidth}, 0.5px))`,
+                    borderEndEndRadius     : `calc(${groupableVars.borderEndEndRadius}     - ${groupableVars.borderWidth} - min(${groupableVars.borderWidth}, 0.5px))`,
                     
-                    // clone <UploadImage>'s border radius: // TODO: doesn't work if nude={true}
-                    borderStartStartRadius : groupableVars.borderStartStartRadius,
-                    borderStartEndRadius   : groupableVars.borderStartEndRadius,
-                    borderEndStartRadius   : groupableVars.borderEndStartRadius,
-                    borderEndEndRadius     : groupableVars.borderEndEndRadius,
                     
-                    overflow               : 'hidden', // clip the children at the rounded corners
-                }),
-                ...children(uploadImageMediaGroupInnerElm, {
-                    // borders:
-                    borderColor            : 'transparent',
+                    
+                    // spacings:
+                    marginInline  : negativePaddingInline, // cancel out parent's padding with negative margin
+                    marginBlock   : negativePaddingBlock,  // cancel out parent's padding with negative margin
                 }),
                 ...children([uploadImagePreviewImageElm, uploadImageImageElm], {
                     // positions:
@@ -246,11 +250,9 @@ export const usesUploadImageLayout = () => {
                     
                     
                     // spacings:
+                    paddingInline   : positivePaddingInline, // restore parent's padding with positive margin
+                    paddingBlock    : positivePaddingBlock,  // restore parent's padding with positive margin
                     gap             : spacers.default,
-                    
-                    // clone <UploadImage>'s padding: // TODO: doesn't work if nude={true}
-                    paddingInline   : groupableVars.paddingInline,
-                    paddingBlock    : groupableVars.paddingBlock,
                     
                     
                     
@@ -323,62 +325,75 @@ export const usesUploadImageLayout = () => {
                 
                 // customize:
                 ...usesCssProps(usesPrefixedProps(uploadImages, 'media')), // apply config's cssProps starting with media***
-            }),
-            
-            ...children(uploadImageActionGroupElm, {
-                // positions:
-                gridArea        : 'actionGroup',
-                
-                
-                
-                // layouts:
-                display         : 'flex',    // use block flexbox, so it takes the entire parent's width
-                flexDirection   : 'column',  // the flex direction to vert
-                justifyContent  : 'center',  // center items vertically
-                alignItems      : 'stretch', // stretch items horizontally
-                flexWrap        : 'nowrap',  // no wrapping
                 
                 
                 
                 // spacings:
-                gap             : spacers.default,
-                
-                
-                
-                // children:
-                ...children(uploadImageSelectButtonElm, {
-                    // customize:
-                    ...usesCssProps(usesPrefixedProps(uploadImages, 'selectButton')), // apply config's cssProps starting with selectButton***
-                }),
-                ...children(uploadImageDeleteButtonElm, {
-                    // customize:
-                    ...usesCssProps(usesPrefixedProps(uploadImages, 'deleteButton')), // apply config's cssProps starting with deleteButton***
-                }),
-                ...children(uploadImageRetryButtonElm, {
-                    // customize:
-                    ...usesCssProps(usesPrefixedProps(uploadImages, 'retryButton')), // apply config's cssProps starting with retryButton***
-                }),
-                ...children(uploadImageCancelButtonElm, {
-                    // customize:
-                    ...usesCssProps(usesPrefixedProps(uploadImages, 'cancelButton')), // apply config's cssProps starting with cancelButton***
-                }),
-                
-                
-                
-                // customize:
-                ...usesCssProps(usesPrefixedProps(uploadImages, 'action')), // apply config's cssProps starting with action***
+                /* important to be placed after "customize" */
+             // padding       : paddingVars.padding,
+                paddingInline : paddingVars.paddingInline,
+                paddingBlock  : paddingVars.paddingBlock,
             }),
             
-            ...children(uploadImageInputFileElm, {
-                // layouts:
-                display: 'none',
+            
+            
+            // features:
+            ...paddingRule(), // must be placed at the last
+        }),
+        
+        ...children(uploadImageActionGroupElm, {
+            // positions:
+            gridArea        : 'actionGroup',
+            
+            
+            
+            // layouts:
+            display         : 'flex',    // use block flexbox, so it takes the entire parent's width
+            flexDirection   : 'column',  // the flex direction to vert
+            justifyContent  : 'center',  // center items vertically
+            alignItems      : 'stretch', // stretch items horizontally
+            flexWrap        : 'nowrap',  // no wrapping
+            
+            
+            
+            // spacings:
+            gap             : spacers.default,
+            
+            
+            
+            // children:
+            ...children(uploadImageSelectButtonElm, {
+                // customize:
+                ...usesCssProps(usesPrefixedProps(uploadImages, 'selectButton')), // apply config's cssProps starting with selectButton***
+            }),
+            ...children(uploadImageDeleteButtonElm, {
+                // customize:
+                ...usesCssProps(usesPrefixedProps(uploadImages, 'deleteButton')), // apply config's cssProps starting with deleteButton***
+            }),
+            ...children(uploadImageRetryButtonElm, {
+                // customize:
+                ...usesCssProps(usesPrefixedProps(uploadImages, 'retryButton')), // apply config's cssProps starting with retryButton***
+            }),
+            ...children(uploadImageCancelButtonElm, {
+                // customize:
+                ...usesCssProps(usesPrefixedProps(uploadImages, 'cancelButton')), // apply config's cssProps starting with cancelButton***
             }),
             
             
             
             // customize:
-            ...usesCssProps(uploadImages), // apply config's cssProps
+            ...usesCssProps(usesPrefixedProps(uploadImages, 'action')), // apply config's cssProps starting with action***
         }),
+        
+        ...children(uploadImageInputFileElm, {
+            // layouts:
+            display: 'none',
+        }),
+        
+        
+        
+        // customize:
+        ...usesCssProps(uploadImages), // apply config's cssProps
     });
 };
 
