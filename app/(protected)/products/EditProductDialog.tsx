@@ -512,16 +512,26 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             
                             // handlers:
                             onUploadImage={async ({ imageFile, reportProgress, abortSignal }) => {
-                                const imageId = await postImage({
-                                    image            : imageFile,
-                                    folder           : '@@user',
-                                    onUploadProgress : reportProgress,
-                                }).unwrap();
-                                
-                                // mark the image as being used:
-                                draftImages.set(imageId, true);
-                                
-                                return imageId;
+                                try {
+                                    const imageId = await postImage({
+                                        image            : imageFile,
+                                        folder           : '@@user',
+                                        onUploadProgress : reportProgress,
+                                        abortSignal      : abortSignal,
+                                    }).unwrap();
+                                    
+                                    // mark the image as being used:
+                                    draftImages.set(imageId, true);
+                                    
+                                    return imageId;
+                                }
+                                catch (error : any) {
+                                    if (error.status === 0) { // non_standard HTTP status code: a request was aborted
+                                        return null; // prevents showing error
+                                    } // if
+                                    
+                                    throw error;     // shows the error detail
+                                } // try
                             }}
                             onDeleteImage={async ({ imageData: imageId }) => {
                                 // mark the image as unused:
