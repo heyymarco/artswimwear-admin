@@ -535,7 +535,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
             // conditions:
             if (!isMounted.current ) return; // the component was unloaded => do nothing
             const uploadingImageData = uploadingImageRef.current;
-            if (!uploadingImageData) return; // upload was not started => do nothing
+            if (!uploadingImageData) return; // upload was not started or aborted => do nothing
             if (uploadingImageData.percentage === percentage)  return; // already the same => do nothing
             
             

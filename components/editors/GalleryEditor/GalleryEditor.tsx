@@ -601,6 +601,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
             catch (error: any) {
                 // conditions:
                 if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
+                if (!uploadingImages.includes(uploadingImageData)) return; // upload was not started or aborted => do nothing
                 
                 
                 
