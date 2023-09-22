@@ -296,7 +296,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                 description    : (description?.toJSON?.() ?? description) as any,
             }).unwrap();
             
-            await handleClosed(/*commitImages = */true, [updatingProductTask]);
+            await handleClose(/*commitImages = */true, [updatingProductTask]);
         }
         catch (error: any) {
             showMessageFetchError(error);
@@ -330,7 +330,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                     break;
                 case 'dontSave':
                     // then close the editor (without saving):
-                    await handleClosed(/*commitImages = */false);
+                    await handleClose(/*commitImages = */false);
                     break;
                 default:
                     // do nothing (continue editing)
@@ -338,7 +338,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
             } // switch
         }
         else {
-            await handleClosed(/*commitImages = */false);
+            await handleClose(/*commitImages = */false);
         } // if
     });
     const handleSaveImages = useEvent(async (commitImages : boolean) => {
@@ -372,7 +372,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
         // substract the drafts:
         for (const unusedImageId of unusedImageIds) draftImages.delete(unusedImageId);
     });
-    const handleClosed = useEvent(async (commitImages : boolean, otherTasks : Promise<any>[] = []) => {
+    const handleClose = useEvent(async (commitImages : boolean, otherTasks : Promise<any>[] = []) => {
         await Promise.all([
             handleSaveImages(commitImages),
             ...otherTasks,

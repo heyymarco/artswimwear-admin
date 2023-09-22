@@ -241,7 +241,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                 username : username || null, // convert empty string to null
             }).unwrap();
             
-            await handleClosed(/*commitImages = */true, [updatingUserTask]);
+            await handleClose(/*commitImages = */true, [updatingUserTask]);
         }
         catch (error: any) {
             showMessageFetchError(error);
@@ -275,7 +275,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                     break;
                 case 'dontSave':
                     // then close the editor (without saving):
-                    await handleClosed(/*commitImages = */false);
+                    await handleClose(/*commitImages = */false);
                     break;
                 default:
                     // do nothing (continue editing)
@@ -283,7 +283,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
             } // switch
         }
         else {
-            await handleClosed(/*commitImages = */false);
+            await handleClose(/*commitImages = */false);
         } // if
     });
     const handleSaveImages = useEvent(async (commitImages : boolean) => {
@@ -324,7 +324,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
         // substract the drafts:
         for (const unusedImageId of unusedImageIds) draftImages.delete(unusedImageId);
     });
-    const handleClosed = useEvent(async (commitImages : boolean, otherTasks : Promise<any>[] = []) => {
+    const handleClose = useEvent(async (commitImages : boolean, otherTasks : Promise<any>[] = []) => {
         await Promise.all([
             handleSaveImages(commitImages),
             ...otherTasks,
