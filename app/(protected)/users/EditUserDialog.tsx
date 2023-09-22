@@ -290,9 +290,10 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
         } // if
     });
     const handleSaveImages = useEvent(async (commitImages : boolean) => {
-        // on save => delete the initial image if has been replaced
+        // initial_image have been replaced with new image:
         if (commitImages && initialImageRef.current && (initialImageRef.current !== image)) {
-            draftImages.set(initialImageRef.current, false);
+            // register to delete the initial_image when committed:
+            draftImages.set(initialImageRef.current, false /* false: delete when committed, valid when reverted */);
         } // if
         
         
@@ -461,8 +462,8 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                                     // replace => delete prev drafts:
                                     await handleSaveImages(/*commitImages = */false);
                                     
-                                    // mark the image as being used:
-                                    draftImages.set(imageId, true);
+                                    // register to delete the new_image when reverted:
+                                    draftImages.set(imageId, true /* true: delete when reverted, valid when committed */);
                                     
                                     return imageId;
                                 }
@@ -477,8 +478,8 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                                 } // try
                             }}
                             onDeleteImage={async ({ imageData: imageId }) => {
-                                // mark the image as unused:
-                                draftImages.set(imageId, false);
+                                // register to delete the deleted_image when committed:
+                                draftImages.set(imageId, false /* false: delete when committed, valid when reverted */);
                                 
                                 return true;
                             }}
