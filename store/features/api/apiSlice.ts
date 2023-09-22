@@ -29,6 +29,7 @@ export type { ImageId }                         from '@/app/api/(protected)/uplo
 import {
     default as axios,
     AxiosRequestConfig,
+    CanceledError,
     AxiosError,
 }                           from 'axios'
 
@@ -49,16 +50,17 @@ const roleListAdapter     = createEntityAdapter<RolePreview>({
 const axiosBaseQuery = (
     { baseUrl }: { baseUrl: string } = { baseUrl: '' }
 ): BaseQueryFn<
-    AxiosRequestConfig<any> & { body ?: {} },
+    AxiosRequestConfig<any> & { body ?: {}, abortSignal?: AbortSignal },
     unknown,
     unknown
 > => {
-    return async ({ url, body, data, ...restAxiosRequestConfig }) => {
+    return async ({ url, body, data, abortSignal, signal, ...restAxiosRequestConfig }) => {
         try {
             const result = await axios({
                 ...restAxiosRequestConfig,
-                url : `${baseUrl}/${url}`,
-                data : data ?? body,
+                url    : `${baseUrl}/${url}`,
+                data   : data ?? body,
+                signal : signal ?? abortSignal,
             });
             
             return {
@@ -66,6 +68,18 @@ const axiosBaseQuery = (
             };
         }
         catch (error) {
+            if (error instanceof CanceledError) {
+                const canceledError = error;
+                return {
+                    error : {
+                        status : 0, // non_standard HTTP status code: a request was aborted
+                        data   : canceledError.message,
+                    },
+                };
+            } // if
+            
+            
+            
             let axiosError = error as AxiosError;
             return {
                 error: {
@@ -276,8 +290,8 @@ export const apiSlice = createApi({
             },
         }),
         
-        postImage    : builder.mutation<ImageId, { image: File, folder?: string, onUploadProgress?: (percentage: number) => void }>({
-            query: ({ image, folder, onUploadProgress }) => ({
+        postImage    : builder.mutation<ImageId, { image: File, folder?: string, onUploadProgress?: (percentage: number) => void, abortSignal?: AbortSignal }>({
+            query: ({ image, folder, onUploadProgress, abortSignal }) => ({
                 url     : 'upload',
                 method  : 'POST',
                 headers : { 'content-type': 'multipart/form-data' },
@@ -292,6 +306,7 @@ export const apiSlice = createApi({
                         (event.loaded * 100) / (event.total ?? 100)
                     );
                 },
+                abortSignal,
             }),
         }),
         deleteImage  : builder.mutation<ImageId[], { imageId: string[] }>({
