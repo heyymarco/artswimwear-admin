@@ -141,10 +141,10 @@ export const usesUploadImageLayout = () => {
                     '/',
                     'auto'
                 ]],
-                justifyItems   : 'center', // default center the items horizontally
-                alignItems     : 'center', // default center the items vertically
-                justifyContent : 'center', // center the whole image horizontally
-                alignContent   : 'center', // center the whole image vertically
+                justifyItems   : 'center',  // default center the items horizontally
+                alignItems     : 'center',  // default center the items vertically
+                justifyContent : 'stretch', // force the width  follows aspectRatio
+                alignContent   : 'stretch', // force the height follows aspectRatio
                 
                 
                 
@@ -173,18 +173,18 @@ export const usesUploadImageLayout = () => {
                 }),
                 ...children([uploadImagePreviewImageElm, uploadImageImageElm], {
                     // positions:
-                    // justifySelf    : 'stretch', // stretch the self horizontally
-                    // alignSelf      : 'stretch', // stretch the self vertically
-                    justifySelf    : 'center', // center the self horizontally
-                    alignSelf      : 'center', // center the self vertically
+                    justifySelf    : 'stretch', // stretch the self horizontally
+                    alignSelf      : 'stretch', // stretch the self vertically
+                    // justifySelf    : 'center', // center the self horizontally
+                    // alignSelf      : 'center', // center the self vertically
                     
                     
                     
                     // sizes:
-                    // minInlineSize  : 0,   // starts growing from 0px up to "image" gridArea
-                    // minBlockSize   : 0,   // starts growing from 0px up to "image" gridArea
-                    maxInlineSize  : '100%', // do not overflow the "image" gridArea
-                    maxBlockSize   : '100%', // do not overflow the "image" gridArea
+                    minInlineSize  : 0,         // starts growing from 0px up to "image" gridArea
+                    minBlockSize   : 0,         // starts growing from 0px up to "image" gridArea
+                    // maxInlineSize  : '100%', // do not overflow the "image" gridArea
+                    // maxBlockSize   : '100%', // do not overflow the "image" gridArea
                 }),
                 ...children(uploadImageNoImageElm, {
                     ...children('::after', {

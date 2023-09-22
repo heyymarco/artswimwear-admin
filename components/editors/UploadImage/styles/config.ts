@@ -32,11 +32,13 @@ export const [uploadImages, uploadImageValues, cssUploadImageConfig] = cssConfig
         
         // media:
         mediaInlineSizeSm     : 'calc(3 * 40px)'            as CssKnownProps['inlineSize'],
-        mediaBlockSizeSm      : 'calc(3 * 40px)'            as CssKnownProps['blockSize' ],
+        mediaBlockSizeSm      : 'auto'                      as CssKnownProps['blockSize' ],
         mediaInlineSizeMd     : 'calc(5 * 40px)'            as CssKnownProps['inlineSize'],
-        mediaBlockSizeMd      : 'calc(5 * 40px)'            as CssKnownProps['blockSize' ],
+        mediaBlockSizeMd      : 'auto'                      as CssKnownProps['blockSize' ],
         mediaInlineSizeLg     : 'calc(8 * 40px)'            as CssKnownProps['inlineSize'],
-        mediaBlockSizeLg      : 'calc(8 * 40px)'            as CssKnownProps['blockSize' ],
+        mediaBlockSizeLg      : 'auto'                      as CssKnownProps['blockSize' ],
+        
+        mediaAspectRatio      : '1/1'                       as CssKnownProps['aspectRatio'],
         
         
         
