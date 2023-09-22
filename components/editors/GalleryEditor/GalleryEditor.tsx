@@ -84,7 +84,7 @@ import {
 // styles:
 export const useGalleryEditorStyleSheet = dynamicStyleSheet(
     () => import(/* webpackPrefetch: true */ './styles/styles')
-, { id: 'd3yn00z8kw' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
+, { specificityWeight: 2, id: 'd3yn00z8kw' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 
 
 
