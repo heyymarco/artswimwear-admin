@@ -108,11 +108,6 @@ import {
     resolveMediaUrl,
 }                           from '@/libs/mediaStorage.client'
 
-// other libs:
-import {
-    default as axios,
-}                           from 'axios'
-
 // configs:
 import {
     STORE_WEBSITE_URL,
