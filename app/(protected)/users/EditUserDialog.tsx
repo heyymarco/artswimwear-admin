@@ -293,7 +293,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
         // initial_image have been replaced with new image:
         if (commitImages && initialImageRef.current && (initialImageRef.current !== image)) {
             // register to actual_delete the initial_image when committed:
-            draftDeletedImages.set(initialImageRef.current, false /* false: delete when committed, valid when reverted */);
+            draftDeletedImages.set(initialImageRef.current, true /* true: delete when committed, noop when reverted */);
         } // if
         
         
@@ -302,7 +302,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
         const unusedImageIds : string[] = [];
         for (const unusedImageId of
             Array.from(draftDeletedImages.entries())
-            .filter((draftDeletedImage) => (draftDeletedImage[1] !== commitImages))
+            .filter((draftDeletedImage) => (draftDeletedImage[1] === commitImages))
             .map((draftDeletedImage) => draftDeletedImage[0])
         )
         {
@@ -463,7 +463,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                                     await handleSaveImages(/*commitImages = */false);
                                     
                                     // register to actual_delete the new_image when reverted:
-                                    draftDeletedImages.set(imageId, true /* true: delete when reverted, valid when committed */);
+                                    draftDeletedImages.set(imageId, false /* false: delete when reverted, noop when committed */);
                                     
                                     return imageId;
                                 }
@@ -479,7 +479,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                             }}
                             onDeleteImage={async ({ imageData: imageId }) => {
                                 // register to actual_delete the deleted_image when committed:
-                                draftDeletedImages.set(imageId, false /* false: delete when committed, valid when reverted */);
+                                draftDeletedImages.set(imageId, true /* true: delete when committed, noop when reverted */);
                                 
                                 return true;
                             }}
