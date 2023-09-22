@@ -27,6 +27,11 @@ import {
     
     
     
+    // an accessibility management system:
+    AccessibilityProvider,
+    
+    
+    
     // a validation management system:
     ValidationProvider,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
@@ -190,10 +195,13 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
     
     
     // stores:
-    const [updateUser , {isLoading : isLoading1}] = useUpdateUser();
-    const [postImage  , {isLoading : isLoading2}] = usePostImage();
-    const [deleteImage, {isLoading : isLoading3}] = useDeleteImage();
-    const isLoading = isLoading1 || isLoading2 || isLoading3;
+    const [updateUser , {isLoading : isLoadingModel                  }] = useUpdateUser();
+    const [postImage                                                  ] = usePostImage();
+    const [commitDeleteImage, {isLoading : isLoadingCommitDeleteImage}] = useDeleteImage();
+    const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
+    const isCommiting = isLoadingModel || isLoadingCommitDeleteImage;
+    const isReverting = isLoadingRevertDeleteImage;
+    const isLoading   = isCommiting || isReverting;
     
     
     
@@ -309,7 +317,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
         
         try {
             if (unusedImageIds.length) {
-                await deleteImage({
+                await (commitImages ? commitDeleteImage : revertDeleteImage)({
                     imageId : unusedImageIds,
                 }).unwrap();
             } // if
@@ -373,7 +381,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
     
     // jsx:
     return (
-        <>
+        <AccessibilityProvider enabled={!isLoading}>
             <CardHeader
                 // handlers:
                 onKeyDown={handleKeyDown}
@@ -390,11 +398,6 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                     
                     // classes:
                     className={styles.cardBody}
-                    
-                    
-                    
-                    // states:
-                    enabled={!isLoading}
                     
                     
                     
@@ -459,7 +462,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                                 }).unwrap();
                                 
                                 // replace => delete prev drafts:
-                                handleSaveImages(/*commitImages = */false);
+                                await handleSaveImages(/*commitImages = */false);
                                 
                                 // mark the image as being used:
                                 draftImages.set(imageId, true);
@@ -481,9 +484,9 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                 </Tab>
             </ValidationProvider>
             <CardFooter onKeyDown={handleKeyDown}>
-                <ButtonIcon className='btnSave' icon={isLoading ? 'busy' : 'save'} theme='success' onClick={handleSave}>Save</ButtonIcon>
-                <ButtonIcon className='btnCancel' icon='cancel' theme='danger' onClick={handleClosing}>Cancel</ButtonIcon>
+                <ButtonIcon className='btnSave'   icon={isCommiting ? 'busy' : 'save'  } theme='success' onClick={handleSave}>Save</ButtonIcon>
+                <ButtonIcon className='btnCancel' icon={isReverting ? 'busy' : 'cancel'} theme='danger'  onClick={handleClosing}>{isReverting ? 'Reverting' : 'Cancel'}</ButtonIcon>
             </CardFooter>
-        </>
+        </AccessibilityProvider>
     );
 }

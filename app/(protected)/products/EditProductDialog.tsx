@@ -27,6 +27,11 @@ import {
     
     
     
+    // an accessibility management system:
+    AccessibilityProvider,
+    
+    
+    
     // a validation management system:
     ValidationProvider,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
@@ -231,10 +236,13 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
     
     
     // stores:
-    const [updateProduct, {isLoading : isLoading1}] = useUpdateProduct();
-    const [postImage    , {isLoading : isLoading2}] = usePostImage();
-    const [deleteImage  , {isLoading : isLoading3}] = useDeleteImage();
-    const isLoading = isLoading1 || isLoading2 || isLoading3;
+    const [updateProduct, {isLoading : isLoadingModel                }] = useUpdateProduct();
+    const [postImage                                                  ] = usePostImage();
+    const [commitDeleteImage, {isLoading : isLoadingCommitDeleteImage}] = useDeleteImage();
+    const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
+    const isCommiting = isLoadingModel || isLoadingCommitDeleteImage;
+    const isReverting = isLoadingRevertDeleteImage;
+    const isLoading   = isCommiting || isReverting;
     
     
     
@@ -357,7 +365,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
         
         try {
             if (unusedImageIds.length) {
-                await deleteImage({
+                await (commitImages ? commitDeleteImage : revertDeleteImage)({
                     imageId : unusedImageIds,
                 }).unwrap();
             } // if
@@ -421,7 +429,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
     
     // jsx:
     return (
-        <>
+        <AccessibilityProvider enabled={!isLoading}>
             <CardHeader
                 // handlers:
                 onKeyDown={handleKeyDown}
@@ -438,11 +446,6 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                     
                     // classes:
                     className={styles.cardBody}
-                    
-                    
-                    
-                    // states:
-                    enabled={!isLoading}
                     
                     
                     
@@ -558,9 +561,9 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                 </Tab>
             </ValidationProvider>
             <CardFooter onKeyDown={handleKeyDown}>
-                <ButtonIcon className='btnSave' icon={isLoading ? 'busy' : 'save'} theme='success' onClick={handleSave}>Save</ButtonIcon>
-                <ButtonIcon className='btnCancel' icon='cancel' theme='danger' onClick={handleClosing}>Cancel</ButtonIcon>
+                <ButtonIcon className='btnSave'   icon={isCommiting ? 'busy' : 'save'  } theme='success' onClick={handleSave}>Save</ButtonIcon>
+                <ButtonIcon className='btnCancel' icon={isReverting ? 'busy' : 'cancel'} theme='danger'  onClick={handleClosing}>{isReverting ? 'Reverting' : 'Cancel'}</ButtonIcon>
             </CardFooter>
-        </>
+        </AccessibilityProvider>
     );
 }
