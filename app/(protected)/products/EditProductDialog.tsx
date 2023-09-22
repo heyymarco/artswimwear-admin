@@ -236,7 +236,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
     
     
     // stores:
-    const [updateProduct, {isLoading : isLoadingModel                }] = useUpdateProduct();
+    const [updateProduct    , {isLoading : isLoadingModel            }] = useUpdateProduct();
     const [postImage                                                  ] = usePostImage();
     const [commitDeleteImage, {isLoading : isLoadingCommitDeleteImage}] = useDeleteImage();
     const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
