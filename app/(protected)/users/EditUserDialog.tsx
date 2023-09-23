@@ -85,6 +85,9 @@ import {
 import {
     UploadImage,
 }                           from '@/components/editors/UploadImage'
+import {
+    RoleEditor,
+}                           from '@/components/editors/RoleEditor'
 
 // stores:
 import {
@@ -98,6 +101,8 @@ import {
     
     usePostImage,
     useDeleteImage,
+    
+    useGetRoleList,
 }                           from '@/store/features/api/apiSlice'
 
 // internals:
@@ -124,6 +129,7 @@ const useEditUserDialogStyleSheet = dynamicStyleSheets(
     () => import(/* webpackPrefetch: true */'./EditUserDialogStyles')
 , { id: 'm4oi6itiaq' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 import './EditUserDialogStyles';
+import LoadingBar from '@heymarco/loading-bar'
 
 
 
@@ -170,6 +176,11 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
         // handlers:
         onClose,
     } = props;
+    
+    
+    
+    // stores:
+    const {data: roleList, isLoading: isLoadingRole, isError: isErrorRole} = useGetRoleList();
     
     
     
@@ -490,9 +501,21 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                             onResolveImageUrl={resolveMediaUrl<never>}
                         />
                     </TabPanel>
-                    <TabPanel label={PAGE_USER_TAB_ROLE}         panelComponent={<Generic className={styles.roleTab} />}>
-                        Testing...
-                    </TabPanel>
+                    <TabPanel label={PAGE_USER_TAB_ROLE}         panelComponent={<Generic className={styles.roleTab} />}>{
+                        isLoadingRole
+                        ? <LoadingBar />
+                        : isErrorRole
+                            ? 'Error getting role data'
+                            : <RoleEditor
+                                // values:
+                                roleList={roleList}
+                                value={roleId}
+                                onChange={(value) => {
+                                    setRoleId(value);
+                                    setIsModified(true);
+                                }}
+                            />
+                    }</TabPanel>
                 </Tab>
             </ValidationProvider>
             <CardFooter onKeyDown={handleKeyDown}>
