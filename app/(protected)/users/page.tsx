@@ -178,7 +178,7 @@ interface UserPreviewProps extends ModelPreviewProps<UserDetail> {
 }
 const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
     // styles:
-    const styles = usePageStyleSheet();
+    const styleSheet = usePageStyleSheet();
     
     
     
@@ -242,9 +242,9 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
             
             
             // classes:
-            className={styles.userItem}
+            className={styleSheet.userItem}
         >
-            <div className={styles.userItemWrapper}>
+            <div className={styleSheet.userItemWrapper}>
                 {/* profile image + edit button */}
                 <CompoundWithBadge
                     // components:
@@ -319,7 +319,7 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
 /* <UserPage> */
 export default function UserPage(): JSX.Element|null {
     // styles:
-    const styles = usePageStyleSheet();
+    const styleSheet = usePageStyleSheet();
     
     
     
@@ -338,7 +338,7 @@ export default function UserPage(): JSX.Element|null {
     if (isLoadingAndNoData) return <PageLoading />;
     if (isErrorAndNoData  ) return <PageError onRetry={refetch} />;
     return (
-        <Main className={styles.page}>
+        <Main className={styleSheet.page}>
             <SectionModelEditor<UserDetail>
                 // accessibilities:
                 createItemText='Add New User'

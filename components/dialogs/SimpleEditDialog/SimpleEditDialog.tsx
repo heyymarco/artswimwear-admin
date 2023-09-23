@@ -46,7 +46,7 @@ export interface SimpleEditDialogProps<TValue extends any, TModel extends {}, TE
 }
 export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit extends string>(props: SimpleEditDialogProps<TValue, TModel, TEdit>) => {
     // styles:
-    const styles = useSimpleEditDialogStyleSheet();
+    const styleSheet = useSimpleEditDialogStyleSheet();
     
     
     
@@ -221,7 +221,7 @@ export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit ex
     
     // jsx:
     return (
-        <CardBody className={styles.main} onKeyDown={handleKeyDown}>
+        <CardBody className={styleSheet.main} onKeyDown={handleKeyDown}>
             <AccessibilityProvider enabled={!isLoading}>
                 <ValidationProvider enableValidation={enableValidation}>
                     {React.cloneElement<EditorProps<Element, TValue>>(editorComponent,

@@ -161,7 +161,7 @@ export interface EditUserDialogProps {
 }
 export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
     // styles:
-    const styles = useEditUserDialogStyleSheet();
+    const styleSheet = useEditUserDialogStyleSheet();
     
     
     
@@ -404,7 +404,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                     
                     
                     // classes:
-                    className={styles.cardBody}
+                    className={styleSheet.cardBody}
                     
                     
                     
@@ -414,15 +414,15 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                     
                     
                     // components:
-                    listComponent={<List className={styles.tabList} />}
-                    bodyComponent={<Content className={styles.tabBody} />}
+                    listComponent={<List className={styleSheet.tabList} />}
+                    bodyComponent={<Content className={styleSheet.tabBody} />}
                     
                     
                     
                     // handlers:
                     onKeyDown={handleKeyDown}
                 >
-                    <TabPanel label={PAGE_USER_TAB_ACCOUNT} panelComponent={<Generic className={styles.accountTab} />}>
+                    <TabPanel label={PAGE_USER_TAB_ACCOUNT} panelComponent={<Generic className={styleSheet.accountTab} />}>
                         <form ref={editorFormRef}>
                             <span className='name label'>Name:</span>
                             <TextEditor           className='name editor'       required={true }  value={name}           onChange={(value) => { setName(value);     setIsModified(true); }} elmRef={firstEditorRef} autoCapitalize='words' />
@@ -434,7 +434,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                             <TextEditor           className='email editor'      required={true}   value={email}          onChange={(value) => { setEmail(value);    setIsModified(true); }} />
                         </form>
                     </TabPanel>
-                    <TabPanel label={PAGE_USER_TAB_IMAGE}        panelComponent={<Generic className={styles.imageTab} />}>
+                    <TabPanel label={PAGE_USER_TAB_IMAGE}        panelComponent={<Generic className={styleSheet.imageTab} />}>
                         <UploadImage<HTMLElement, string>
                             // variants:
                             nude={true}
@@ -501,7 +501,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                             onResolveImageUrl={resolveMediaUrl<never>}
                         />
                     </TabPanel>
-                    <TabPanel label={PAGE_USER_TAB_ROLE}         panelComponent={<Generic className={styles.roleTab} />}>{
+                    <TabPanel label={PAGE_USER_TAB_ROLE}         panelComponent={<Generic className={styleSheet.roleTab} />}>{
                         isLoadingRole
                         ? <LoadingBar />
                         : isErrorRole

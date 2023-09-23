@@ -157,7 +157,7 @@ export interface EditOrderDialogProps {
 }
 export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     // styles:
-    const styles = useEditOrderDialogStyleSheet();
+    const styleSheet = useEditOrderDialogStyleSheet();
     
     
     
@@ -289,13 +289,13 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
         // jsx:
         return (
             <>
-                <Section title='Order List' theme={!printMode ? 'primary' : 'light'} className={styles.orderShippingSection}>
-                    <Basic tag='strong' theme={!printMode ? (isPaid ? 'success' : 'danger') : undefined} className={styles.badge}>{
+                <Section title='Order List' theme={!printMode ? 'primary' : 'light'} className={styleSheet.orderShippingSection}>
+                    <Basic tag='strong' theme={!printMode ? (isPaid ? 'success' : 'danger') : undefined} className={styleSheet.badge}>{
                         isPaid
                         ? 'PAID'
                         : 'UNPAID'
                     }</Basic>
-                    <List className={styles.orderList} listStyle={['flat', 'numbered']}>
+                    <List className={styleSheet.orderList} listStyle={['flat', 'numbered']}>
                         {items.map(({quantity, price: unitPrice, productId}, index) => {
                             const product = productList?.entities?.[`${productId}`];
                             
@@ -303,7 +303,7 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
                             
                             // jsx:
                             return (
-                                <ListItem key={`${productId}`} className={styles.productItem}>
+                                <ListItem key={`${productId}`} className={styleSheet.productItem}>
                                     <h3 className='title h6'>{
                                         isLoadingProduct
                                         ? <Busy />
@@ -376,20 +376,20 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
                         </span>
                     </p>
                 </Section>
-                {printMode && <Content theme='danger' outlined={true} nude={true} className={styles.printSpacer}>
+                {printMode && <Content theme='danger' outlined={true} nude={true} className={styleSheet.printSpacer}>
                     <Icon className='scissors' icon='content_cut' />
                     <hr className='line' />
                 </Content>}
-                <Section title='Deliver To' theme={!printMode ? 'secondary' : 'light'} className={styles.orderDeliverySection}>
-                    <Basic tag='strong' className={styles.badge}>{
+                <Section title='Deliver To' theme={!printMode ? 'secondary' : 'light'} className={styleSheet.orderDeliverySection}>
+                    <Basic tag='strong' className={styleSheet.badge}>{
                         isLoadingShipping
                         ? <Busy />
                         : isErrorShipping
                             ? 'Error getting shipping data'
                             : (shippingProvider?.name ?? 'DELETED SHIPPING PROVIDER')
                     }</Basic>
-                    <div className={styles.shippingAddress}>
-                        {!printMode && <EditButton className={styles.editShippingAddress} onClick={() => setEditMode('shippingAddress')} />}
+                    <div className={styleSheet.shippingAddress}>
+                        {!printMode && <EditButton className={styleSheet.editShippingAddress} onClick={() => setEditMode('shippingAddress')} />}
                         <p>
                             <strong>{shippingFirstName} {shippingLastName}</strong>
                         </p>
@@ -403,7 +403,7 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
                         </p>
                     </div>
                 </Section>
-                {printMode && <Content theme='danger' outlined={true} nude={true} className={styles.printSpacer}>
+                {printMode && <Content theme='danger' outlined={true} nude={true} className={styleSheet.printSpacer}>
                     <Icon className='scissors' icon='content_cut' />
                     <hr className='line' />
                 </Content>}
@@ -426,22 +426,22 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
                 
                 
                 // classes:
-                className={styles.cardBody}
+                className={styleSheet.cardBody}
                 
                 
                 
                 // components:
-                listComponent={<List className={styles.tabList} />}
-                bodyComponent={<Content className={`${styles.tabBody} ${styles.typos}`} />}
+                listComponent={<List className={styleSheet.tabList} />}
+                bodyComponent={<Content className={`${styleSheet.tabBody} ${styleSheet.typos}`} />}
                 
                 
                 
                 // handlers:
                 onKeyDown={handleKeyDown}
             >
-                <TabPanel label={PAGE_ORDER_TAB_ORDER_N_SHIPPING} panelComponent={<Generic className={styles.orderShippingTab} />}>
+                <TabPanel label={PAGE_ORDER_TAB_ORDER_N_SHIPPING} panelComponent={<Generic className={styleSheet.orderShippingTab} />}>
                     <OrderAndShipping />
-                    <Section theme='primary' className={styles.actionSection}>
+                    <Section theme='primary' className={styleSheet.actionSection}>
                         <ButtonIcon className='btnPrint' icon='print' theme='primary' onClick={handlePrint}>
                             Print and Mark as Processing
                         </ButtonIcon>
@@ -453,8 +453,8 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
                         </ButtonIcon>
                     </Section>
                 </TabPanel>
-                <TabPanel label={PAGE_ORDER_TAB_PAYMENT} panelComponent={<Generic className={styles.paymentTab} />}>
-                    <Section className={styles.paymentSection}>
+                <TabPanel label={PAGE_ORDER_TAB_PAYMENT} panelComponent={<Generic className={styleSheet.paymentTab} />}>
+                    <Section className={styleSheet.paymentSection}>
                         <table>
                             <tbody>
                                 <tr>
@@ -533,7 +533,7 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
                 </>}
             </ModalStatus>
             {showPrintDialog && <PrintDialog
-                className={`${styles.orderShippingTab} ${styles.typos}`}
+                className={`${styleSheet.orderShippingTab} ${styleSheet.typos}`}
                 onDone={handlePrintDone}
             >
                 <OrderAndShipping printMode={true} />

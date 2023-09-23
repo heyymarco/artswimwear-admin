@@ -189,7 +189,7 @@ export interface EditProductDialogProps {
 }
 export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     // styles:
-    const styles = useEditProductDialogStyleSheet();
+    const styleSheet = useEditProductDialogStyleSheet();
     
     
     
@@ -445,7 +445,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                     
                     
                     // classes:
-                    className={styles.cardBody}
+                    className={styleSheet.cardBody}
                     
                     
                     
@@ -455,15 +455,15 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                     
                     
                     // components:
-                    listComponent={<List className={styles.tabList} />}
-                    bodyComponent={<Content className={styles.tabBody} />}
+                    listComponent={<List className={styleSheet.tabList} />}
+                    bodyComponent={<Content className={styleSheet.tabBody} />}
                     
                     
                     
                     // handlers:
                     onKeyDown={handleKeyDown}
                 >
-                    <TabPanel label={PAGE_PRODUCT_TAB_INFORMATIONS} panelComponent={<Generic className={styles.infoTab} />}>
+                    <TabPanel label={PAGE_PRODUCT_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                         <form ref={editorFormRef}>
                             <span className='name label'>Name:</span>
                             <TextEditor           className='name editor'       required={true}  value={name}           onChange={(value) => { setName(value); setIsModified(true); handleNameChange(value); }} elmRef={((defaultExpandedTabIndex ?? 0) === 0) ? firstEditorRef : undefined} />
@@ -484,7 +484,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             <VisibilityEditor     className='visibility editor'                  value={visibility}     onChange={(value) => { setVisibility(value); setIsModified(true); }} theme='secondary' />
                         </form>
                     </TabPanel>
-                    <TabPanel label={PAGE_PRODUCT_TAB_IMAGES}       panelComponent={<Generic className={styles.imagesTab} />}>
+                    <TabPanel label={PAGE_PRODUCT_TAB_IMAGES}       panelComponent={<Generic className={styleSheet.imagesTab} />}>
                         <GalleryEditor<HTMLElement, string>
                             // variants:
                             nude={true}
@@ -548,7 +548,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             onResolveImageUrl={resolveMediaUrl<never>}
                         />
                     </TabPanel>
-                    <TabPanel label={PAGE_PRODUCT_TAB_DESCRIPTION}  panelComponent={<Generic className={styles.descriptionTab} />}>
+                    <TabPanel label={PAGE_PRODUCT_TAB_DESCRIPTION}  panelComponent={<Generic className={styleSheet.descriptionTab} />}>
                         <WysiwygEditor
                             // refs:
                             elmRef={((defaultExpandedTabIndex ?? 0) === 2) ? firstEditorRef : undefined}
@@ -556,7 +556,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             
                             
                             // classes:
-                            className={styles.editDescription}
+                            className={styleSheet.editDescription}
                             
                             
                             

@@ -159,7 +159,7 @@ const ProductCreate = (props: ProductCreateProps): JSX.Element|null => {
 interface ProductPreviewProps extends ModelPreviewProps<ProductDetail> {}
 const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
     // styles:
-    const styles = usePageStyleSheet();
+    const styleSheet = usePageStyleSheet();
     
     
     
@@ -208,9 +208,9 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
             
             
             // classes:
-            className={styles.productItem}
+            className={styleSheet.productItem}
         >
-            <div className={styles.productItemWrapper}>
+            <div className={styleSheet.productItemWrapper}>
                 {/* carousel + edit button */}
                 <CompoundWithBadge
                     // components:
@@ -304,7 +304,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
 /* <ProductPage> */
 export default function ProductPage(): JSX.Element|null {
     // styles:
-    const styles = usePageStyleSheet();
+    const styleSheet = usePageStyleSheet();
     
     
     
@@ -321,7 +321,7 @@ export default function ProductPage(): JSX.Element|null {
     if (isLoadingAndNoData) return <PageLoading />;
     if (isErrorAndNoData  ) return <PageError onRetry={refetch} />;
     return (
-        <Main className={styles.page}>
+        <Main className={styleSheet.page}>
             <SectionModelEditor<ProductDetail>
                 // accessibilities:
                 createItemText='Add New Product'

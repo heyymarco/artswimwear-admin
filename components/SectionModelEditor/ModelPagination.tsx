@@ -72,7 +72,7 @@ export interface ModelPaginationProps<TElement extends Element = HTMLElement>
 }
 const ModelPagination = <TModel extends Model, TElement extends Element = HTMLElement>(props: ModelPaginationProps<TElement>): JSX.Element|null => {
     // styles:
-    const styles = useModelPaginationStyleSheet();
+    const styleSheet = useModelPaginationStyleSheet();
     
     
     
@@ -148,7 +148,7 @@ const ModelPagination = <TModel extends Model, TElement extends Element = HTMLEl
                 />
             }
         >
-            {!data && <ListItem actionCtrl={false} nude={true}><LoadingBar className={styles.main}
+            {!data && <ListItem actionCtrl={false} nude={true}><LoadingBar className={styleSheet.main}
                 nude={true}
                 running={isFetching}
                 theme={isError ? 'danger' : undefined}

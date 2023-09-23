@@ -61,7 +61,7 @@ export interface ModalLoadingErrorProps<TElement extends Element = HTMLElement, 
 }
 export const ModalLoadingError = <TElement extends Element = HTMLElement, TModalExpandedChangeEvent extends ModalExpandedChangeEvent = ModalExpandedChangeEvent>(props: ModalLoadingErrorProps<TElement, TModalExpandedChangeEvent>): JSX.Element|null => {
     // styles:
-    const styles = useModalLoadingErrorStyleSheet();
+    const styleSheet = useModalLoadingErrorStyleSheet();
     
     
     
@@ -105,7 +105,7 @@ export const ModalLoadingError = <TElement extends Element = HTMLElement, TModal
         >
             <CardBody
                 // classes:
-                className={styles.main}
+                className={styleSheet.main}
             >
                 {isFetching && <MessageLoading />}
                 

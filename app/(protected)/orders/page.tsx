@@ -142,7 +142,7 @@ const usePageStyleSheet = dynamicStyleSheets(
 interface OrderPreviewProps extends ModelPreviewProps<OrderDetail> {}
 const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
     // styles:
-    const styles = usePageStyleSheet();
+    const styleSheet = usePageStyleSheet();
     
     
     
@@ -199,9 +199,9 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
             
             
             // classes:
-            className={styles.orderItem}
+            className={styleSheet.orderItem}
         >
-            <div className={styles.orderItemWrapper}>
+            <div className={styleSheet.orderItemWrapper}>
                 <h3 className='orderId'>
                     #ORDER-{orderId}
                 </h3>
@@ -316,7 +316,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
 /* <OrderPage> */
 export default function OrderPage(): JSX.Element|null {
     // styles:
-    const styles = usePageStyleSheet();
+    const styleSheet = usePageStyleSheet();
     
     
     
@@ -333,7 +333,7 @@ export default function OrderPage(): JSX.Element|null {
     if (isLoadingAndNoData) return <PageLoading />;
     if (isErrorAndNoData  ) return <PageError onRetry={refetch} />;
     return (
-        <Main className={styles.page}>
+        <Main className={styleSheet.page}>
             <SectionModelEditor<OrderDetail>
                 // data:
                 page={page}

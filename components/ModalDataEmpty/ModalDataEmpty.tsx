@@ -55,7 +55,7 @@ export interface ModalDataEmptyProps<TModel extends Model, TElement extends Elem
 }
 export const ModalDataEmpty = <TModel extends Model, TElement extends Element = HTMLElement, TModalExpandedChangeEvent extends ModalExpandedChangeEvent = ModalExpandedChangeEvent>(props: ModalDataEmptyProps<TModel, TElement, TModalExpandedChangeEvent>): JSX.Element|null => {
     // styles:
-    const styles = useModalDataEmptyStyleSheet();
+    const styleSheet = useModalDataEmptyStyleSheet();
     
     
     
@@ -88,7 +88,7 @@ export const ModalDataEmpty = <TModel extends Model, TElement extends Element = 
         >
             <CardBody
                 // classes:
-                className={styles.main}
+                className={styleSheet.main}
             >
                 <MessageDataEmpty />
             </CardBody>

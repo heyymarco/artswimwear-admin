@@ -115,7 +115,7 @@ export interface ModelCreateOuterProps
 }
 const ModelCreateOuter = (props: ModelCreateOuterProps) => {
     // styles:
-    const styles = useSectionModelEditorStyleSheet();
+    const styleSheet = useSectionModelEditorStyleSheet();
     
     
     
@@ -163,7 +163,7 @@ const ModelCreateOuter = (props: ModelCreateOuterProps) => {
             
             
             // classes:
-            className={`${styles.createData} ${props.className}`}
+            className={`${styleSheet.createData} ${props.className}`}
         >
             <ButtonIcon icon='create' onClick={() => setShowAddNew(true)}>
                 {createItemText ?? 'Add New Item'}
@@ -225,7 +225,7 @@ export interface SectionModelEditorProps<TModel extends Model>
 }
 const SectionModelEditor         = <TModel extends Model>(props: SectionModelEditorProps<TModel>): JSX.Element|null => {
     // styles:
-    const styles = useSectionModelEditorStyleSheet();
+    const styleSheet = useSectionModelEditorStyleSheet();
     
     
     
@@ -254,7 +254,7 @@ const SectionModelEditor         = <TModel extends Model>(props: SectionModelEdi
             // data:
             getModelPaginationApi={getModelPaginationApi}
         >
-            <Section className={`fill-self ${styles.sectionModel}`}>
+            <Section className={`fill-self ${styleSheet.sectionModel}`}>
                 <ModelPagination<TModel>
                     // paginations:
                     page={page}
@@ -263,7 +263,7 @@ const SectionModelEditor         = <TModel extends Model>(props: SectionModelEdi
                     
                     
                     // classes:
-                    className={styles.paginTop}
+                    className={styleSheet.paginTop}
                     
                     
                     
@@ -279,7 +279,7 @@ const SectionModelEditor         = <TModel extends Model>(props: SectionModelEdi
                     
                     
                     // classes:
-                    className={styles.paginBtm}
+                    className={styleSheet.paginBtm}
                     
                     
                     
@@ -306,7 +306,7 @@ interface SectionModelEditorInternalProps<TModel extends Model>
 }
 const SectionModelEditorInternal = <TModel extends Model>(props: SectionModelEditorInternalProps<TModel>): JSX.Element|null => {
     // styles:
-    const styles = useSectionModelEditorStyleSheet();
+    const styleSheet = useSectionModelEditorStyleSheet();
     
     
     
@@ -343,7 +343,7 @@ const SectionModelEditorInternal = <TModel extends Model>(props: SectionModelEdi
     
     // jsx:
     return (
-        <Basic className={`${styles.listData}${isDataEmpty ? ' empty' : ''}`} theme='primary' mild={true} elmRef={dataListRef}>
+        <Basic className={`${styleSheet.listData}${isDataEmpty ? ' empty' : ''}`} theme='primary' mild={true} elmRef={dataListRef}>
             <ModalLoadingError
                 // data:
                 isFetching={isFetching}
@@ -356,7 +356,7 @@ const SectionModelEditorInternal = <TModel extends Model>(props: SectionModelEdi
                 viewport={dataListRef}
             />
             
-            <List listStyle='flush' className={styles.listDataInner}>
+            <List listStyle='flush' className={styleSheet.listDataInner}>
                 {/* <ModelCreate> */}
                 {!!modelCreateComponent  && <ModelCreateOuter className='solid' createItemText={createItemText} modelCreateComponent={modelCreateComponent} />}
                 
