@@ -88,6 +88,16 @@ import {
 import {
     RoleEditor,
 }                           from '@/components/editors/RoleEditor'
+import type {
+    ModelCreateProps,
+    ModelPreviewProps,
+    SectionModelEditor,
+}                           from '@/components/SectionModelEditor'
+
+// private components:
+import {
+    EditRoleDialog,
+}                           from './EditRoleDialog'
 
 // stores:
 import {
@@ -149,6 +159,17 @@ const emptyUser : UserDetail = {
 
 
 // react components:
+
+/* <RoleCreate> */
+interface RoleCreateProps extends ModelCreateProps {}
+const RoleCreate = (props: RoleCreateProps): JSX.Element|null => {
+    // jsx:
+    return (
+        <EditRoleDialog role={undefined} onClose={props.onClose} />
+    );
+};
+
+/* <EditUserDialog> */
 export interface EditUserDialogProps {
     // data:
     user                    ?: UserDetail
@@ -514,6 +535,13 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                                     setRoleId(value);
                                     setIsModified(true);
                                 }}
+                                
+                                
+                                
+                                // components:
+                                modelCreateComponent={
+                                    <RoleCreate onClose={undefined as any} />
+                                }
                             />
                     }</TabPanel>
                 </Tab>

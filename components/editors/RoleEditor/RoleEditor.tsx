@@ -34,12 +34,13 @@ import {
     
     
     // layout-components:
+    ListItemProps,
     ListItem,
     ListProps,
     List,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
-// internals:
+// internal components:
 import type {
     // types:
     EditorChangeEventHandler,
@@ -49,6 +50,10 @@ import type {
     // react components:
     EditorProps,
 }                           from '@/components/editors/Editor'
+import {
+    ModelCreateOuterProps,
+    ModelCreateOuter,
+}                           from '@/components/SectionModelEditor'
 import {
     // react components:
     RadioDecorator,
@@ -91,7 +96,9 @@ interface RoleEditorProps<TElement extends Element = HTMLElement>
             
             // children:
             |'children'                // already taken over
-        >
+        >,
+        // data:
+        Partial<Omit<ModelCreateOuterProps, keyof ListItemProps>>
 {
     // values:
     roleList ?: EntityState<RoleEntry>
@@ -110,6 +117,11 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
         defaultValue,
         value,
         onChange,
+        
+        
+        
+        // components:
+        modelCreateComponent,
     ...restListProps} = props;
     
     const filteredRoleList = !roleList ? undefined : Object.values(roleList.entities).filter((roleEntry): roleEntry is Exclude<typeof roleEntry, undefined> => !!roleEntry);
@@ -129,11 +141,8 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
             // other props:
             {...restListProps}
         >
-            <ListItem className={styleSheet.createData} actionCtrl={false}>
-                <ButtonIcon icon='create' onClick={undefined}>
-                    Add New Role
-                </ButtonIcon>
-            </ListItem>
+            {/* <ModelCreate> */}
+            {!!modelCreateComponent  && <ModelCreateOuter className='solid' createItemText='Add New Role' modelCreateComponent={modelCreateComponent} />}
             
             {roleListWithNone.map(({id, name}) =>
                 <ListItem

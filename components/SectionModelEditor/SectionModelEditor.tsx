@@ -113,7 +113,7 @@ export interface ModelCreateOuterProps
     // components:
     modelCreateComponent  : React.ReactComponentElement<any, ModelCreateProps>
 }
-const ModelCreateOuter = (props: ModelCreateOuterProps) => {
+export const ModelCreateOuter = (props: ModelCreateOuterProps) => {
     // styles:
     const styleSheet = useSectionModelEditorStyleSheet();
     
@@ -299,7 +299,7 @@ export {
 interface SectionModelEditorInternalProps<TModel extends Model>
     extends
         // data:
-        Partial<ModelCreateOuterProps>
+        Partial<Omit<ModelCreateOuterProps, keyof ListItemProps>>
 {
     // components:
     modelPreviewComponent : React.ReactComponentElement<any, ModelPreviewProps<TModel, Element>>
