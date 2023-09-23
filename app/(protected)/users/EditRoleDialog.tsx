@@ -68,6 +68,8 @@ import {
     
     
     // composite-components:
+    AccordionItem,
+    ExclusiveAccordion,
     TabPanel,
     Tab,
     
@@ -346,15 +348,37 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                 <h1>{name || ((role === emptyRole) ? 'Create New Role' : 'Edit Role')}</h1>
                 <CloseButton onClick={handleClosing} />
             </CardHeader>
-            <CardBody>
+            <CardBody
+                // classes:
+                className={styleSheet.cardBody}
+            >
                 <ValidationProvider enableValidation={enableValidation}>
                     <form ref={editorFormRef}>
                         <span className='name label'>Name:</span>
                         <TextEditor className='name editor'  required={true } value={name}                onChange={(value) => { setName(value);       setIsModified(true); }} elmRef={firstEditorRef} autoCapitalize='words' />
                         
-                        <Check      className='check editor' required={false} active={product_r} onActiveChange={({active}) => { setProduct_r(active); setIsModified(true); }}>
-                            View Product
-                        </Check>
+                        <span className='authorities label'>Authorities:</span>
+                        <ExclusiveAccordion className='authorities list' defaultExpandedListIndex={0}>
+                            <AccordionItem label='Products'>
+                                <Check      className='check editor' required={false} active={product_r} onActiveChange={({active}) => { setProduct_r(active); setIsModified(true); }}>
+                                    View
+                                </Check>
+                                <Check      className='check editor' required={false} active={product_c} onActiveChange={({active}) => { setProduct_c(active); setIsModified(true); }}>
+                                    Add New
+                                </Check>
+                                <Check      className='check editor' required={false} active={product_u} onActiveChange={({active}) => { setProduct_u(active); setIsModified(true); }}>
+                                    Change
+                                </Check>
+                                <Check      className='check editor' required={false} active={product_d} onActiveChange={({active}) => { setProduct_d(active); setIsModified(true); }}>
+                                    Delete
+                                </Check>
+                            </AccordionItem>
+                            <AccordionItem label='Orders'>
+                                <Check      className='check editor' required={false} active={product_r} onActiveChange={({active}) => { setProduct_r(active); setIsModified(true); }}>
+                                    View
+                                </Check>
+                            </AccordionItem>
+                        </ExclusiveAccordion>
                     </form>
                 </ValidationProvider>
             </CardBody>

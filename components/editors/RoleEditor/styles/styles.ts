@@ -39,7 +39,15 @@ export const usesDataListInnerLayout = () => {
         
         // children:
         ...children('.decorator', {
+            // sizes:
             flex : [[0, 0, 'auto']], // ungrowable, unshrinkable, initial from it's width
+            
+            
+            
+            // children:
+            ...children('input', {
+                borderColor: 'currentcolor',
+            }),
         }),
         ...children('.noValue', {
             // appearances:

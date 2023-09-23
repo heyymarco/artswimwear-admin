@@ -62,6 +62,7 @@ export const usesCardBodyLayout = () => {
             // sizes:
             // the default <Card>'s body height is resizeable, ensuring footers are aligned to the bottom:
             flex           : [[1, 1, 'auto']], // growable, shrinkable, initial from it's width (for variant `.inline`) or height (for variant `.block`)
+            boxSizing         : 'border-box',
             minInlineSize     : `calc(100vw - (${containers.paddingInline} * 2))`,
             ...ifScreenWidthAtLeast('md', {
                 minInlineSize : `${breakpoints.sm}px`,
