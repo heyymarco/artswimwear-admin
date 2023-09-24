@@ -8,6 +8,7 @@ import {
 }                           from '@cssfn/core'          // writes css in javascript
 import { basics } from '@reusable-ui/components';
 import { typos, usesBorder, usesGroupable, usesPadding } from '@reusable-ui/core';
+import { commerces } from '@/config';
 
 
 
@@ -131,6 +132,7 @@ const usesOrderItemWrapperLayout = () => { // the <div> of the <ListItem> of ord
                 
                 // sizes:
                 alignSelf   : 'stretch',
+                aspectRatio : commerces.defaultProductAspectRatio,
                 
                 
                 
@@ -149,6 +151,14 @@ const usesOrderItemWrapperLayout = () => { // the <div> of the <ListItem> of ord
                 // cancel-out parent's padding with negative margin:
                 marginInlineStart : negativePaddingInline,
                 marginBlock       : negativePaddingBlock,
+                
+                
+                
+                // children:
+                ...children('ul>li>.prodImg', {
+                    inlineSize : '100%',
+                    blockSize  : '100%',
+                }),
             }),
             ...children('.fullEditor', {
                 gridArea: 'fullEditor',
