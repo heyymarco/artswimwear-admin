@@ -173,6 +173,45 @@ export const usesRoleTabLayout = () => {
         overscrollBehavior : 'none',
     });
 };
+const usesRoleItemLayout = () => { // the <ListItem> of role list
+    return style({
+        // layouts:
+        display       : 'flex',
+        flexDirection : 'row',
+        alignItems    : 'center',
+        
+        
+        
+        // spacings:
+        gap           : '1rem',
+        paddingInline : '1rem',
+        paddingBlock  : '0.5rem',
+        
+        
+        
+        // children:
+        ...children('.decorator', {
+            // sizes:
+            flex : [[0, 0, 'auto']], // ungrowable, unshrinkable, initial from it's width
+            
+            
+            
+            // children:
+            ...children('input', {
+                borderColor: 'currentcolor',
+            }),
+        }),
+        ...children('.noValue', {
+            // appearances:
+            opacity    : 0.5,
+            
+            
+            
+            // typos:
+            fontStyle  : 'italic',
+        }),
+    });
+};
 
 export default () => [
     scope('cardBody', {
@@ -196,4 +235,7 @@ export default () => [
     scope('roleTab', {
         ...usesRoleTabLayout(),
     }),
+    scope('roleItem', { // the <ListItem> of role list
+        ...usesRoleItemLayout(),
+    }, { specificityWeight: 2 }),
 ];

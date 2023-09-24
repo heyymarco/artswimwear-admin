@@ -9,62 +9,25 @@ import type {
     EntityState
 }                           from '@reduxjs/toolkit'
 
-// cssfn:
-import {
-    // style sheets:
-    dynamicStyleSheets,
-}                           from '@cssfn/cssfn-react'           // writes css in react hook
-
-// reusable-ui core:
-import {
-    // react helper hooks:
-    useIsomorphicLayoutEffect,
-    useEvent,
-    useMergeEvents,
-    useMergeClasses,
-    useMountedFlag,
-    useScheduleTriggerEvent,
-}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
-
 // reusable-ui components:
 import {
-    // simple-components:
-    ButtonIcon,
-    
-    
-    
     // layout-components:
     ListItemProps,
-    ListItem,
     ListProps,
     List,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // internal components:
 import type {
-    // types:
-    EditorChangeEventHandler,
-    
-    
-    
     // react components:
     EditorProps,
 }                           from '@/components/editors/Editor'
 import {
     ModelCreateOuterProps,
     ModelCreateOuter,
+    
+    ModelPreviewProps,
 }                           from '@/components/SectionModelEditor'
-import {
-    // react components:
-    RadioDecorator,
-}                           from '@/components/RadioDecorator'
-
-
-
-// styles:
-export const useRoleEditorStyleSheet = dynamicStyleSheets(
-    () => import(/* webpackPrefetch: true */ './styles/styles')
-, { id: 'w9jt10v10e' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 
 
 
@@ -101,14 +64,14 @@ interface RoleEditorProps<TElement extends Element = HTMLElement>
         Partial<Omit<ModelCreateOuterProps, keyof ListItemProps>>
 {
     // values:
-    roleList ?: EntityState<RoleEntry>
+    roleList              ?: EntityState<RoleEntry>
+    
+    
+    
+    // components:
+    modelPreviewComponent  : React.ReactComponentElement<any, ModelPreviewProps<RoleEntry, Element>>
 }
 const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorProps<TElement>): JSX.Element|null => {
-    // styles:
-    const styleSheet = useRoleEditorStyleSheet();
-    
-    
-    
     // rest props:
     const {
         // values:
@@ -122,6 +85,7 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
         
         // components:
         modelCreateComponent,
+        modelPreviewComponent,
     ...restListProps} = props;
     
     const filteredRoleList = !roleList ? undefined : Object.values(roleList.entities).filter((roleEntry): roleEntry is Exclude<typeof roleEntry, undefined> => !!roleEntry);
@@ -144,34 +108,20 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
             {/* <ModelCreate> */}
             {!!modelCreateComponent  && <ModelCreateOuter className='solid' createItemText='Add New Role' modelCreateComponent={modelCreateComponent} />}
             
-            {roleListWithNone.map(({id, name}) =>
-                <ListItem
-                    // identifiers:
-                    key={id}
-                    
-                    
-                    
-                    // classes:
-                    className={styleSheet.listDataInner}
-                    
-                    
-                    
-                    // behaviors:
-                    actionCtrl={true}
-                    
-                    
-                    
-                    // states:
-                    active={id === value}
-                    
-                    
-                    
-                    // handlers:
-                    onClick={() => onChange?.(id)}
-                >
-                    <RadioDecorator />
-                    {!!id ? name : <span className='noValue'>No Access</span>}
-                </ListItem>
+            {roleListWithNone.map((model) =>
+                /* <ModelPreview> */
+                React.cloneElement<ModelPreviewProps<RoleEntry, Element>>(modelPreviewComponent,
+                    // props:
+                    {
+                        // identifiers:
+                        key   : modelPreviewComponent.key         ?? model.id,
+                        
+                        
+                        
+                        // data:
+                        model : modelPreviewComponent.props.model ?? model,
+                    },
+                )
             )}
         </List>
     );

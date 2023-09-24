@@ -23,6 +23,7 @@ import {
 import {
     // react helper hooks:
     useEvent,
+    EventHandler,
     useMountedFlag,
     
     
@@ -57,6 +58,7 @@ import {
     
     
     // layout-components:
+    ListItem,
     List,
     CardHeader,
     CardFooter,
@@ -64,6 +66,7 @@ import {
     
     
     // composite-components:
+    TabExpandedChangeEvent,
     TabPanel,
     Tab,
     
@@ -86,6 +89,7 @@ import {
     UploadImage,
 }                           from '@/components/editors/UploadImage'
 import {
+    RoleEntry,
     RoleEditor,
 }                           from '@/components/editors/RoleEditor'
 import type {
@@ -93,6 +97,9 @@ import type {
     ModelPreviewProps,
     SectionModelEditor,
 }                           from '@/components/SectionModelEditor'
+import {
+    RadioDecorator,
+}                           from '@/components/RadioDecorator'
 
 // private components:
 import {
@@ -169,6 +176,92 @@ const RoleCreate = (props: RoleCreateProps): JSX.Element|null => {
     );
 };
 
+/* <RolePreview> */
+interface RolePreviewProps extends ModelPreviewProps<RoleEntry> {
+    selectedRoleId : string|null
+    isShown        : boolean
+}
+const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
+    // styles:
+    const styleSheet = useEditUserDialogStyleSheet();
+    
+    
+    
+    const {
+        model,
+        selectedRoleId,
+        isShown,
+    ...restListItemProps} = props;
+    const {
+        id,
+        name,
+    } = model;
+    const isSelected = !!selectedRoleId && (selectedRoleId === id);
+    
+    
+    
+    // states:
+    type EditMode = Exclude<keyof RoleEntry, 'id'>|'images'|'full'
+    const [editMode, setEditMode] = useState<EditMode|null>(null);
+    
+    
+    
+    // refs:
+    const listItemRef = useRef<HTMLElement|null>(null);
+    
+    
+    
+    // dom effects:
+    useEffect(() => {
+        // conditions:
+        if (!isShown)     return;
+        if (!isSelected)  return;
+        const listItemElm = listItemRef.current;
+        if (!listItemElm) return;
+        
+        
+        
+        // actions:
+        listItemElm.scrollIntoView({
+            behavior : 'smooth',
+        });
+        console.log('scroll')
+    }, [isShown, isSelected]);
+    
+    
+    
+    // jsx:
+    return (
+        <ListItem
+            // other props:
+            {...restListItemProps}
+            
+            
+            
+            // refs:
+            elmRef={listItemRef}
+            
+            
+            
+            // classes:
+            className={styleSheet.roleItem}
+            
+            
+            
+            // behaviors:
+            actionCtrl={true}
+            
+            
+            
+            // states:
+            active={isSelected}
+        >
+            <RadioDecorator />
+            {!!id ? name : <span className='noValue'>No Access</span>}
+        </ListItem>
+    );
+}
+
 /* <EditUserDialog> */
 export interface EditUserDialogProps {
     // data:
@@ -206,6 +299,8 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
     
     
     // states:
+    const [isTabRoleShown  , setIsTabRoleShown  ] = useState<boolean>(() => (defaultExpandedTabIndex === 2));
+    
     const [isPathModified  , setIsPathModified  ] = useState<boolean>(false);
     const [isModified      , setIsModified      ] = useState<boolean>(false);
     
@@ -252,6 +347,13 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
     
     
     // handlers:
+    const tabRoleHandleCollapseStart = useEvent<EventHandler<void>>(() => {
+        setIsTabRoleShown(false);
+    });
+    const tabRoleHandleExpandEnd    = useEvent<EventHandler<void>>(() => {
+        setIsTabRoleShown(true);
+    });
+    
     const handleSave = useEvent(async () => {
         setEnableValidation(true);
         await new Promise<void>((resolve) => { // wait for a validation state applied
@@ -522,7 +624,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                             onResolveImageUrl={resolveMediaUrl<never>}
                         />
                     </TabPanel>
-                    <TabPanel label={PAGE_USER_TAB_ROLE}         panelComponent={<Generic className={styleSheet.roleTab} />}>{
+                    <TabPanel label={PAGE_USER_TAB_ROLE}         panelComponent={<Generic className={styleSheet.roleTab} />} onCollapseStart={tabRoleHandleCollapseStart} onExpandEnd={tabRoleHandleExpandEnd}>{
                         isLoadingRole
                         ? <LoadingBar />
                         : isErrorRole
@@ -539,6 +641,9 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                                 
                                 
                                 // components:
+                                modelPreviewComponent={
+                                    <RolePreview model={undefined as any} selectedRoleId={roleId} isShown={isTabRoleShown} />
+                                }
                                 modelCreateComponent={
                                     <RoleCreate onClose={undefined as any} />
                                 }
