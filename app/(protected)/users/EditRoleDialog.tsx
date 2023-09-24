@@ -218,6 +218,7 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
     // dialogs:
     const {
         showMessage,
+        showMessageFieldError,
         showMessageFetchError,
     } = useDialogMessage();
     
@@ -233,7 +234,11 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                 }, 0);
             }, 0);
         });
-        if (editorFormRef.current?.querySelector(':is(:invalid)')) return;
+        const fieldErrors = editorFormRef?.current?.querySelectorAll?.(':is(.invalidating, .invalidated)');
+        if (fieldErrors?.length) { // there is an/some invalid field
+            showMessageFieldError(fieldErrors);
+            return;
+        } // if
         
         
         
@@ -354,7 +359,7 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                 <ValidationProvider enableValidation={enableValidation} inheritValidation={false}>
                     <form ref={editorFormRef}>
                         <span className='name label'>Name:</span>
-                        <TextEditor className='name editor'  required={true } value={name}                onChange={(value) => { setName(value);       setIsModified(true); }} elmRef={firstEditorRef} autoCapitalize='words' />
+                        <TextEditor className='name editor' aria-label='Name' required={true } value={name} onChange={(value) => { setName(value); setIsModified(true); }} elmRef={firstEditorRef} autoCapitalize='words' />
                         
                         <span className='authorities label'>Authorities:</span>
                         <ValidationProvider enableValidation={false} inheritValidation={false}>

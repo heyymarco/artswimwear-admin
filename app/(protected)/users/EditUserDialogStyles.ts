@@ -120,7 +120,8 @@ export const usesAccountTabLayout = () => {
         
         
         // scrolls:
-        overscrollBehavior : 'none',
+        overscrollBehavior      : 'none',
+        scrollPaddingBlockStart : '1.75rem', // makes scroll to field's label
         
         
         
