@@ -182,7 +182,7 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
     
     
     // stores:
-    const {data: roleList, isLoading: isLoadingRole, isError: isErrorRole} = useGetRoleList();
+    const [updateRole, {isLoading}] = useUpdateRole();
     
     
     
@@ -201,7 +201,6 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
     
     
     // stores:
-    const [updateRole, {isLoading}] = useUpdateRole();
     
     
     
@@ -371,11 +370,6 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                                 </Check>
                                 <Check      className='check editor' required={false} active={product_d} onActiveChange={({active}) => { setProduct_d(active); setIsModified(true); }}>
                                     Delete
-                                </Check>
-                            </AccordionItem>
-                            <AccordionItem label='Orders'>
-                                <Check      className='check editor' required={false} active={product_r} onActiveChange={({active}) => { setProduct_r(active); setIsModified(true); }}>
-                                    View
                                 </Check>
                             </AccordionItem>
                         </ExclusiveAccordion>

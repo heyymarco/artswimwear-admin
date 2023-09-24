@@ -128,7 +128,7 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
     const roleListWithNone = [
         {
             id   : null,
-            name : 'No Access User',
+            name : 'No Access',
         },
         ...(filteredRoleList ?? []),
     ];
@@ -170,7 +170,7 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
                     onClick={() => onChange?.(id)}
                 >
                     <RadioDecorator />
-                    {!!id ? name : <span className='noValue'>No Access User</span>}
+                    {!!id ? name : <span className='noValue'>No Access</span>}
                 </ListItem>
             )}
         </List>

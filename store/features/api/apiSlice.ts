@@ -248,18 +248,11 @@ export const apiSlice = createApi({
             transformResponse(response: RolePreview[]) {
                 return roleListAdapter.addMany(roleListAdapter.getInitialState(), response);
             },
-        }),
-        getRolePage  : builder.query<Pagination<RoleDetail>, PaginationArgs>({
-            query : (params) => ({
-                url    : 'role',
-                method : 'POST',
-                body   : params,
-            }),
             providesTags: (result, error, page)  => {
                 return [
-                    ...(result?.entities ?? []).map((role): { type: 'Roles', id: string } => ({
+                    ...(result?.ids ?? []).map((id): { type: 'Roles', id: string } => ({
                         type : 'Roles',
-                        id   : role.id,
+                        id   : `${id}`,
                     })),
                     
                     {
@@ -275,19 +268,15 @@ export const apiSlice = createApi({
                 method : 'PATCH',
                 body   : patch
             }),
-            
-            // inefficient:
-            // invalidatesTags: (role, error, arg) => [
-            //     ...((!role ? [] : [{
-            //         type : 'Roles',
-            //         id   : role.id,
-            //     }]) as Array<{ type: 'Roles', id: string }>),
-            // ],
-            
-            // more efficient:
-            onCacheEntryAdded: async (arg, api) => {
-                await handleCumulativeUpdateCacheEntry('getRolePage', (arg.id !== ''), api);
-            },
+            invalidatesTags: (role, error, arg) => [
+                ...(((!arg.id || !role) ? [{
+                    type : 'Roles',
+                    id   : 'ROLE_LIST', // create new      => invalidates the whole list
+                }] : [{
+                    type : 'Roles',
+                    id   : role.id,     // update existing => invalidates the modified
+                }]) as Array<{ type: 'Roles', id: string }>),
+            ],
         }),
         
         postImage    : builder.mutation<ImageId, { image: File, folder?: string, onUploadProgress?: (percentage: number) => void, abortSignal?: AbortSignal }>({
@@ -326,7 +315,7 @@ export const apiSlice = createApi({
 
 
 
-const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, QueryArg, BaseQuery extends BaseQueryFn>(endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getUserPage'|'getRolePage'>, isUpdating: boolean, api: MutationCacheLifecycleApi<QueryArg, BaseQuery, TEntry, 'api'>) => {
+const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, QueryArg, BaseQuery extends BaseQueryFn>(endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getUserPage'>, isUpdating: boolean, api: MutationCacheLifecycleApi<QueryArg, BaseQuery, TEntry, 'api'>) => {
     // updated TEntry data:
     const { data: entry } = await api.cacheDataLoaded;
     const { id } = entry;
@@ -453,7 +442,6 @@ export const {
     useUpdateUserMutation    : useUpdateUser,
     
     useGetRoleListQuery      : useGetRoleList,
-    useGetRolePageQuery      : useGetRolePage,
     useUpdateRoleMutation    : useUpdateRole,
     
     usePostImageMutation     : usePostImage,

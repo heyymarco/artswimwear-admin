@@ -14,11 +14,6 @@ import {
     createEdgeRouter,
 }                           from 'next-connect'
 
-// types:
-import type {
-    Pagination,
-}                           from '@/libs/types'
-
 // models:
 import type {
     Role,
@@ -94,67 +89,6 @@ router
         }))
     );
     return NextResponse.json(rolePreviews); // handled with success
-})
-.post(async (req) => {
-    if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
-        await new Promise<void>((resolve) => {
-            setTimeout(() => {
-                resolve();
-            }, 2000);
-        });
-    } // if
-    
-    // throw '';
-    
-    //#region parsing request
-    const {
-        page    : pageStr    = 1,
-        perPage : perPageStr = 20,
-    } = await req.json();
-    const page = Number.parseInt(pageStr as string);
-    const perPage = Number.parseInt(perPageStr as string);
-    //#endregion parsing request
-    
-    
-    
-    //#region validating request
-    if ((typeof(page) !== 'number') || !isFinite(page) || (page < 1)
-        ||
-        (typeof(perPage) !== 'number') || !isFinite(perPage) || (perPage < 1)
-    ) {
-        return NextResponse.json({
-            error: 'Invalid parameter(s).',
-        }, { status: 400 }); // handled with error
-    } // if
-    //#endregion validating request
-    
-    
-    
-    const [total, paged] = await prisma.$transaction([
-        prisma.role.count(),
-        prisma.role.findMany({
-            select: {
-                id     : true,
-                
-                name   : true,
-                
-                product_r : true,
-                product_c : true,
-                product_u : true,
-                product_d : true,
-            },
-            // orderBy : {
-            //     createdAt: 'desc',
-            // },
-            skip    : (page - 1) * perPage, // note: not scaleable but works in small commerce app -- will be fixed in the future
-            take    : perPage,
-        }),
-    ]);
-    const paginationRoleDetail : Pagination<RoleDetail> = {
-        total    : total,
-        entities : paged,
-    };
-    return NextResponse.json(paginationRoleDetail); // handled with success
 })
 .patch(async (req) => {
     if (process.env.SIMULATE_SLOW_NETWORK === 'true') {

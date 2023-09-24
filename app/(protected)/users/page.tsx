@@ -124,8 +124,6 @@ import {
     useUpdateUser,
     
     useGetRoleList,
-    useGetRolePage,
-    useUpdateRole,
 }                           from '@/store/features/api/apiSlice'
 
 // internals:
@@ -292,7 +290,7 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
                 </p>
                 <p className='role'>
                     {isRoleLoadingAndNoData && <Busy />}
-                    {!!roleId && roles?.entities?.[roleId]?.name || <span className='noValue'>No Access User</span>}
+                    {!!roleId && roles?.entities?.[roleId]?.name || <span className='noValue'>No Access</span>}
                     <EditButton onClick={() => setEditMode('roleId')} />
                 </p>
                 <p className='fullEditor'>
