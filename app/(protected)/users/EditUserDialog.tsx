@@ -82,6 +82,9 @@ import {
 }                           from '@heymarco/image'
 
 // internal components:
+import type {
+    EditorChangeEventHandler,
+}                           from '@/components/editors/Editor'
 import {
     TextEditor,
 }                           from '@/components/editors/TextEditor'
@@ -177,9 +180,19 @@ const RoleCreate = (props: RoleCreateProps): JSX.Element|null => {
 };
 
 /* <RolePreview> */
-interface RolePreviewProps extends ModelPreviewProps<RoleEntry> {
+interface RolePreviewProps extends Omit<ModelPreviewProps<RoleEntry>, 'onChange'> {
+    // data:
     selectedRoleId : string|null
+    
+    
+    
+    // appearances:
     isShown        : boolean
+    
+    
+    
+    // handlers:
+    onChange      ?: EditorChangeEventHandler<string|null>
 }
 const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     // styles:
@@ -188,15 +201,25 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     
     
     const {
+        // data:
         model,
         selectedRoleId,
+        
+        
+        
+        // appearances:
         isShown,
+        
+        
+        
+        // handlers:
+        onChange,
     ...restListItemProps} = props;
     const {
         id,
         name,
     } = model;
-    const isSelected = !!selectedRoleId && (selectedRoleId === id);
+    const isSelected = !!selectedRoleId && !!id && (selectedRoleId === id);
     
     
     
@@ -208,6 +231,13 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     
     // refs:
     const listItemRef = useRef<HTMLElement|null>(null);
+    
+    
+    
+    // handlers:
+    const handleClick = useEvent(() => {
+        onChange?.(id ?? null);
+    });
     
     
     
@@ -254,6 +284,11 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
             
             // states:
             active={isSelected}
+            
+            
+            
+            // handlers:
+            onClick={handleClick}
         >
             <RadioDecorator />
             {!!id ? name : <span className='noValue'>No Access</span>}

@@ -9,6 +9,12 @@ import type {
     EntityState
 }                           from '@reduxjs/toolkit'
 
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useEvent,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
 // reusable-ui components:
 import {
     // layout-components:
@@ -19,6 +25,11 @@ import {
 
 // internal components:
 import type {
+    // types:
+    EditorChangeEventHandler,
+    
+    
+    
     // react components:
     EditorProps,
 }                           from '@/components/editors/Editor'
@@ -40,6 +51,7 @@ export interface RoleEntry {
 
 
 // react components:
+export type RolePreviewProps = Omit<ModelPreviewProps<RoleEntry, Element>, 'onChange'> & { onChange ?: EditorChangeEventHandler<string|null> }
 interface RoleEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
@@ -69,7 +81,7 @@ interface RoleEditorProps<TElement extends Element = HTMLElement>
     
     
     // components:
-    modelPreviewComponent  : React.ReactComponentElement<any, ModelPreviewProps<RoleEntry, Element>>
+    modelPreviewComponent  : React.ReactComponentElement<any, RolePreviewProps>
 }
 const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorProps<TElement>): JSX.Element|null => {
     // rest props:
@@ -91,7 +103,7 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
     const filteredRoleList = !roleList ? undefined : Object.values(roleList.entities).filter((roleEntry): roleEntry is Exclude<typeof roleEntry, undefined> => !!roleEntry);
     const roleListWithNone = [
         {
-            id   : null,
+            id   : '',
             name : 'No Access',
         },
         ...(filteredRoleList ?? []),
@@ -110,16 +122,21 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
             
             {roleListWithNone.map((model) =>
                 /* <ModelPreview> */
-                React.cloneElement<ModelPreviewProps<RoleEntry, Element>>(modelPreviewComponent,
+                React.cloneElement<RolePreviewProps>(modelPreviewComponent,
                     // props:
                     {
                         // identifiers:
-                        key   : modelPreviewComponent.key         ?? model.id,
+                        key      : modelPreviewComponent.key         ?? model.id,
                         
                         
                         
                         // data:
-                        model : modelPreviewComponent.props.model ?? model,
+                        model    : modelPreviewComponent.props.model ?? model,
+                        
+                        
+                        
+                        // handlers:
+                        onChange : onChange,
                     },
                 )
             )}
