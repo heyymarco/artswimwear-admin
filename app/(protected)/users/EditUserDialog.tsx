@@ -365,22 +365,24 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
     
     
     // states:
-    const { update : updateSession              } = useSession();
+    const { data: session, update : updateSession} = useSession();
     
-    const [isTabRoleShown  , setIsTabRoleShown  ] = useState<boolean>(() => (defaultExpandedTabIndex === 2));
+    const [isTabRoleShown  , setIsTabRoleShown   ] = useState<boolean>(() => (defaultExpandedTabIndex === 2));
     
-    const [isPathModified  , setIsPathModified  ] = useState<boolean>(false);
-    const [isModified      , setIsModified      ] = useState<boolean>(false);
+    const [isPathModified  , setIsPathModified   ] = useState<boolean>(false);
+    const [isModified      , setIsModified       ] = useState<boolean>(false);
     
-    const [enableValidation, setEnableValidation] = useState<boolean>(false);
-    const [name            , setName            ] = useState<string>(user.name);
-    const [email           , setEmail           ] = useState<string>(user.email);
-    const [image           , setImage           ] = useState<string|null>(user.image);
-    const [roleId          , setRoleId          ] = useState<string|null>(user.roleId);
-    const [username        , setUsername        ] = useState<string|null>(user.username);
+    const [enableValidation, setEnableValidation ] = useState<boolean>(false);
+    const [name            , setName             ] = useState<string>(user.name);
+    const [email           , setEmail            ] = useState<string>(user.email);
+    const [image           , setImage            ] = useState<string|null>(user.image);
+    const [roleId          , setRoleId           ] = useState<string|null>(user.roleId);
+    const [username        , setUsername         ] = useState<string|null>(user.username);
     
-    const initialImageRef                         = useRef<string|null>(user.image);
-    const [draftDeletedImages                   ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
+    const initialEmailRef                          = useRef<string>(user.email);
+    
+    const initialImageRef                          = useRef<string|null>(user.image);
+    const [draftDeletedImages                    ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
     
     
     
@@ -449,8 +451,8 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                 image,
                 roleId,
                 username : username || null, // convert empty string to null
-            }).unwrap().then(async () => {
-                await updateSession();
+            }).unwrap().then(async (): Promise<void> => {
+                if (session?.user?.email?.toLowerCase() === initialEmailRef.current.toLowerCase()) await updateSession(); // update the session if updated current user
             });
             
             await handleClose(/*commitImages = */true, [updatingUserTask]);
