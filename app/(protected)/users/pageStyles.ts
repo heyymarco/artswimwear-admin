@@ -123,14 +123,25 @@ const usesUserItemWrapperLayout = () => { // the <div> of the <ListItem> of user
                     opacity: 'unset',
                     transform: 'scale(105%)',
                 }),
+                ...rule('.overlay', {
+                    opacity : 0.8,
+                }),
             }),
             ...children('.userImg', {
+                // positions:
                 gridArea    : 'userImg',
                 
+                justifySelf : 'stretch', // stretch the self horizontally
+                alignSelf   : 'stretch', // stretch the self vertically
                 
                 
-                // sizes:
-                alignSelf   : 'stretch',
+                
+                // layout:
+                ...rule('.empty', {
+                    display      : 'grid',
+                    justifyItems : 'center',  // default center the items horizontally
+                    alignItems   : 'center',  // default center the items vertically
+                }),
                 
                 
                 

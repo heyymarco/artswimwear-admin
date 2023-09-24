@@ -259,7 +259,7 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
                             floatingShift={10}
                             floatingOffset={-30}
                         >
-                            <EditButton onClick={() => setEditMode('image')} />
+                            <EditButton className='edit overlay' onClick={() => setEditMode('image')} />
                         </Badge>
                     }
                     elementComponent={
@@ -272,7 +272,7 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
                                 background: `no-repeat center/cover url("${resolveMediaUrl(image)}")`,
                             }}
                         />
-                        : <Icon className='userImg' icon='person' />
+                        : <Generic className='userImg empty'><Icon icon='person' size='xl' /></Generic>
                     }
                 />
                 
