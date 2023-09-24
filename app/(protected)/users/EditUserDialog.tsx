@@ -242,6 +242,29 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     
     
     // dom effects:
+    // initial-focus on initial-tab-is-role:
+    useEffect(() => {
+        // conditions:
+        if (!isShown)     return;
+        if (!isSelected)  return;
+        const listItemElm = listItemRef.current;
+        if (!listItemElm) return;
+        
+        
+        
+        // actions:
+        setTimeout(() => {
+            listItemElm.scrollIntoView({
+                behavior : 'smooth',
+                
+                inline   : 'nearest',
+                block    : 'nearest',
+            });
+        }, 500); // a delay to compensate <Modal> showing => <Modal> shown
+        // @ts-ignore
+    }, []);
+    
+    // re-focus on selected tab changed:
     useEffect(() => {
         // conditions:
         if (!isShown)     return;

@@ -308,7 +308,14 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
                 </>}
             </ModalStatus>
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {!!editMode && ((editMode === 'image') || (editMode === 'roleId') || (editMode === 'full')) && <EditUserDialog user={model} onClose={handleEditDialogClose} defaultExpandedTabIndex={(editMode === 'roleId') ? 1 : undefined} />}
+                {!!editMode && ((editMode === 'image') || (editMode === 'roleId') || (editMode === 'full')) && <EditUserDialog user={model} onClose={handleEditDialogClose} defaultExpandedTabIndex={((): number|undefined => {
+                    // switch (editMode === 'roleId') ? 2 : undefined
+                    switch (editMode) {
+                        case 'image' : return 1;
+                        case 'roleId': return 2;
+                        default      : return undefined;
+                    } // switch
+                })()} />}
             </ModalStatus>
         </ListItem>
     );
