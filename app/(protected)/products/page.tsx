@@ -227,7 +227,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                             floatingShift={10}
                             floatingOffset={-30}
                         >
-                            <EditButton onClick={() => setEditMode('images')} />
+                            <EditButton className='edit overlay' onClick={() => setEditMode('images')} />
                         </Badge>
                     }
                     elementComponent={

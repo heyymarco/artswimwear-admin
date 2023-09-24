@@ -8,6 +8,7 @@ import {
 }                           from '@cssfn/core'          // writes css in javascript
 import { basics } from '@reusable-ui/components';
 import { typos, usesBorder, usesGroupable, usesPadding } from '@reusable-ui/core';
+import { commerces } from '@/config';
 
 
 
@@ -117,6 +118,18 @@ const usesProductItemWrapperLayout = () => { // the <div> of the <ListItem> of p
                     opacity: 'unset',
                     transform: 'scale(105%)',
                 }),
+                // ...rule('.overlay', {
+                //     opacity : 0.8,
+                //     
+                //     
+                //     
+                //     // children:
+                //     ...children('[role="img"]', {
+                //         filter : [[
+                //             'invert(1)',
+                //         ]],
+                //     }),
+                // }),
             }),
             ...children('.images', {
                 gridArea    : 'images',
@@ -125,6 +138,7 @@ const usesProductItemWrapperLayout = () => { // the <div> of the <ListItem> of p
                 
                 // sizes:
                 alignSelf   : 'stretch',
+                aspectRatio : commerces.defaultProductAspectRatio,
                 
                 
                 
@@ -143,6 +157,14 @@ const usesProductItemWrapperLayout = () => { // the <div> of the <ListItem> of p
                 // cancel-out parent's padding with negative margin:
                 marginInlineStart : negativePaddingInline,
                 marginBlock       : negativePaddingBlock,
+                
+                
+                
+                // children:
+                ...children('ul>li>.prodImg', {
+                    inlineSize : '100%',
+                    blockSize  : '100%',
+                }),
             }),
             ...children('.name', {
                 gridArea: 'name',
