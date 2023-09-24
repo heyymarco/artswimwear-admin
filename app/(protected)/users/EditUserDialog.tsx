@@ -225,7 +225,6 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         listItemElm.scrollIntoView({
             behavior : 'smooth',
         });
-        console.log('scroll')
     }, [isShown, isSelected]);
     
     
