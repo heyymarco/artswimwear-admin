@@ -20,8 +20,8 @@ import type { ShippingPreview }                 from '@/app/api/(protected)/ship
 export type { ShippingPreview }                 from '@/app/api/(protected)/shipping/route'
 import type { UserDetail }                      from '@/app/api/(protected)/user/route'
 export type { UserDetail }                      from '@/app/api/(protected)/user/route'
-import type { RolePreview, RoleDetail }         from '@/app/api/(protected)/role/route'
-export type { RolePreview, RoleDetail }         from '@/app/api/(protected)/role/route'
+import type { RoleDetail }                      from '@/app/api/(protected)/role/route'
+export type { RoleDetail }                      from '@/app/api/(protected)/role/route'
 import type { ImageId }                         from '@/app/api/(protected)/upload/route'
 export type { ImageId }                         from '@/app/api/(protected)/upload/route'
 
@@ -41,7 +41,7 @@ const shippingListAdapter = createEntityAdapter<ShippingPreview>({
 const productListAdapter  = createEntityAdapter<ProductPreview>({
     selectId : (productPreview) => productPreview.id,
 });
-const roleListAdapter     = createEntityAdapter<RolePreview>({
+const roleListAdapter     = createEntityAdapter<RoleDetail>({
     selectId : (rolePreview) => rolePreview.id,
 });
 
@@ -240,12 +240,12 @@ export const apiSlice = createApi({
             },
         }),
         
-        getRoleList  : builder.query<EntityState<RolePreview>, void>({
+        getRoleList  : builder.query<EntityState<RoleDetail>, void>({
             query : () => ({
                 url    : 'role',
                 method : 'GET',
             }),
-            transformResponse(response: RolePreview[]) {
+            transformResponse(response: RoleDetail[]) {
                 return roleListAdapter.addMany(roleListAdapter.getInitialState(), response);
             },
             providesTags: (result, error, page)  => {

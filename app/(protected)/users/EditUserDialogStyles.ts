@@ -177,9 +177,12 @@ export const usesRoleTabLayout = () => {
 const usesRoleItemLayout = () => { // the <ListItem> of role list
     return style({
         // layouts:
-        display       : 'flex',
-        flexDirection : 'row',
-        alignItems    : 'center',
+        display       : 'grid',
+        gridTemplate  : [[
+            '"decorator name edit"',
+            '/',
+            'auto 1fr auto',
+        ]],
         
         
         
@@ -192,6 +195,11 @@ const usesRoleItemLayout = () => { // the <ListItem> of role list
         
         // children:
         ...children('.decorator', {
+            // positions:
+            gridArea : 'decorator',
+            
+            
+            
             // sizes:
             flex : [[0, 0, 'auto']], // ungrowable, unshrinkable, initial from it's width
             
@@ -202,14 +210,31 @@ const usesRoleItemLayout = () => { // the <ListItem> of role list
                 borderColor: 'currentcolor',
             }),
         }),
-        ...children('.noValue', {
-            // appearances:
-            opacity    : 0.5,
+        ...children('.name', {
+            // positions:
+            gridArea : 'name',
             
             
             
-            // typos:
-            fontStyle  : 'italic',
+            // spacings:
+            margin: 0,
+            
+            
+            
+            // children:
+            ...children('.noValue', {
+                // appearances:
+                opacity    : 0.5,
+                
+                
+                
+                // typos:
+                fontStyle  : 'italic',
+            }),
+        }),
+        ...children('.edit', {
+            // positions:
+            gridArea : 'edit',
         }),
     });
 };

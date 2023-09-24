@@ -78,6 +78,7 @@ import {
     
     
     // utility-components:
+    ModalStatus,
     useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
@@ -87,6 +88,9 @@ import {
 }                           from '@heymarco/image'
 
 // internal components:
+import {
+    EditButton,
+}                           from '@/components/EditButton'
 import type {
     EditorChangeEventHandler,
 }                           from '@/components/editors/Editor'
@@ -97,7 +101,6 @@ import {
     UploadImage,
 }                           from '@/components/editors/UploadImage'
 import {
-    RoleEntry,
     RoleEditor,
 }                           from '@/components/editors/RoleEditor'
 import type {
@@ -118,6 +121,7 @@ import {
 import {
     // types:
     UserDetail,
+    RoleDetail,
     
     
     
@@ -185,7 +189,7 @@ const RoleCreate = (props: RoleCreateProps): JSX.Element|null => {
 };
 
 /* <RolePreview> */
-interface RolePreviewProps extends Omit<ModelPreviewProps<RoleEntry>, 'onChange'> {
+interface RolePreviewProps extends Omit<ModelPreviewProps<RoleDetail>, 'onChange'> {
     // data:
     selectedRoleId : string|null
     
@@ -229,7 +233,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     
     
     // states:
-    type EditMode = Exclude<keyof RoleEntry, 'id'>|'images'|'full'
+    type EditMode = 'full'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     
@@ -240,6 +244,9 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     
     
     // handlers:
+    const handleEditDialogClose = useEvent((): void => {
+        setEditMode(null);
+    });
     const handleClick = useEvent(() => {
         onChange?.(id || null);
     });
@@ -323,7 +330,15 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
             onClick={handleClick}
         >
             <RadioDecorator />
-            {!!id ? name : <span className='noValue'>No Access</span>}
+            <p className='name'>{!!id ? name : <span className='noValue'>No Access</span>}</p>
+            {!!id && <EditButton
+                iconComponent={<Icon icon='edit' mild={isSelected} />}
+                onClick={() => setEditMode('full')}
+            />}
+            {/* edit dialog: */}
+            {!!id && <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
+                {!!editMode && (editMode === 'full') && <EditRoleDialog role={model} onClose={handleEditDialogClose} />}
+            </ModalStatus>}
         </ListItem>
     );
 }

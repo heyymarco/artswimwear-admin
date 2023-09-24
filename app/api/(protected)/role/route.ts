@@ -32,14 +32,6 @@ import {
 
 
 // types:
-export interface RolePreview
-extends
-    Pick<Role,
-        |'id'
-        |'name'
-    >
-{
-}
 export interface RoleDetail
     extends
         Omit<Role,
@@ -80,15 +72,21 @@ router
     return await next();
 })
 .get(async (req) => {
-    const rolePreviews : RolePreview[] = (
+    const roleDetails : RoleDetail[] = (
         (await prisma.role.findMany({
             select: {
                 id             : true,
+                
                 name           : true,
+                
+                product_r      : true,
+                product_c      : true,
+                product_u      : true,
+                product_d      : true,
             },
         }))
     );
-    return NextResponse.json(rolePreviews); // handled with success
+    return NextResponse.json(roleDetails); // handled with success
 })
 .patch(async (req) => {
     if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
