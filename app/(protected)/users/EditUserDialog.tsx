@@ -424,7 +424,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                 }, 0);
             }, 0);
         });
-        if (editorFormRef.current?.querySelector(':is(.invalidating, .invalidated)')) return;
+        if (editorFormRef.current?.querySelector(':is(:invalid)')) return;
         
         
         
@@ -580,7 +580,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                 <h1>{name || ((user === emptyUser) ? 'Create New User' : 'Edit User')}</h1>
                 <CloseButton onClick={handleClosing} />
             </CardHeader>
-            <ValidationProvider enableValidation={enableValidation}>
+            <ValidationProvider enableValidation={enableValidation} inheritValidation={false}>
                 <Tab
                     // variants:
                     mild='inherit'

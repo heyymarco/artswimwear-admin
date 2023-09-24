@@ -233,7 +233,7 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                 }, 0);
             }, 0);
         });
-        if (editorFormRef.current?.querySelector(':is(.invalidating, .invalidated)')) return;
+        if (editorFormRef.current?.querySelector(':is(:invalid)')) return;
         
         
         
@@ -351,7 +351,7 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                 // classes:
                 className={styleSheet.cardBody}
             >
-                <ValidationProvider enableValidation={enableValidation}>
+                <ValidationProvider enableValidation={enableValidation} inheritValidation={false}>
                     <form ref={editorFormRef}>
                         <span className='name label'>Name:</span>
                         <TextEditor className='name editor'  required={true } value={name}                onChange={(value) => { setName(value);       setIsModified(true); }} elmRef={firstEditorRef} autoCapitalize='words' />

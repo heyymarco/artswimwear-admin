@@ -286,7 +286,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                 }, 0);
             }, 0);
         });
-        if (editorFormRef.current?.querySelector(':is(.invalidating, .invalidated)')) return;
+        if (editorFormRef.current?.querySelector(':is(:invalid)')) return;
         
         
         
@@ -437,7 +437,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                 <h1>{name || ((product === emptyProduct) ? 'Create New Product' : 'Edit Product')}</h1>
                 <CloseButton onClick={handleClosing} />
             </CardHeader>
-            <ValidationProvider enableValidation={enableValidation}>
+            <ValidationProvider enableValidation={enableValidation} inheritValidation={false}>
                 <Tab
                     // variants:
                     mild='inherit'
