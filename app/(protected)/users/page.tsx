@@ -289,8 +289,8 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
                     <EditButton onClick={() => setEditMode('email')} />
                 </p>
                 <p className='role'>
-                    {isRoleLoadingAndNoData && <Busy />}
-                    {!!roleId && roles?.entities?.[roleId]?.name || <span className='noValue'>No Access</span>}
+                    { isRoleLoadingAndNoData && <Busy />}
+                    {!isRoleLoadingAndNoData && !!roleId && roles?.entities?.[roleId]?.name || <span className='noValue'>No Access</span>}
                     <EditButton onClick={() => setEditMode('roleId')} />
                 </p>
                 <p className='fullEditor'>
