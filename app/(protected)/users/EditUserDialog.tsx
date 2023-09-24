@@ -247,7 +247,8 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     const handleEditDialogClose = useEvent((): void => {
         setEditMode(null);
     });
-    const handleClick = useEvent(() => {
+    const handleClick = useEvent<React.MouseEventHandler<HTMLElement>>((event) => {
+        if (!!editMode) return; // ignore bubbling from <EditRoleDialog>
         onChange?.(id || null);
     });
     
@@ -333,7 +334,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
             <p className='name'>{!!id ? name : <span className='noValue'>No Access</span>}</p>
             {!!id && <EditButton
                 iconComponent={<Icon icon='edit' mild={isSelected} />}
-                onClick={() => setEditMode('full')}
+                onClick={(event) => { setEditMode('full'); event.stopPropagation(); }}
             />}
             {/* edit dialog: */}
             {!!id && <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
