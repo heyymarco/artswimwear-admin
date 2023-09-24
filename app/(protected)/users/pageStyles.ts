@@ -125,6 +125,15 @@ const usesUserItemWrapperLayout = () => { // the <div> of the <ListItem> of user
                 }),
                 ...rule('.overlay', {
                     opacity : 0.8,
+                    
+                    
+                    
+                    // children:
+                    ...children('[role="img"]', {
+                        filter : [[
+                            'invert(1)',
+                        ]],
+                    }),
                 }),
             }),
             ...children('.userImg', {
