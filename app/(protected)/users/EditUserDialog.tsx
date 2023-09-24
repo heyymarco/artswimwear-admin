@@ -219,7 +219,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         id,
         name,
     } = model;
-    const isSelected = !!selectedRoleId && !!id && (selectedRoleId === id);
+    const isSelected = ((selectedRoleId || null) === (id || null));
     
     
     
@@ -236,7 +236,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     
     // handlers:
     const handleClick = useEvent(() => {
-        onChange?.(id ?? null);
+        onChange?.(id || null);
     });
     
     
@@ -254,8 +254,12 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         // actions:
         listItemElm.scrollIntoView({
             behavior : 'smooth',
+            
+            inline   : 'nearest',
+            block    : 'nearest',
         });
-    }, [isShown, isSelected]);
+        // @ts-ignore
+    }, [isShown, /* isSelected // do not re-focus on re-selected */]);
     
     
     
