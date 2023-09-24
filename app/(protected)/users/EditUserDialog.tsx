@@ -13,6 +13,11 @@ import {
     useEffect,
 }                           from 'react'
 
+// next-auth:
+import {
+    useSession,
+}                           from 'next-auth/react'
+
 // cssfn:
 import {
     // style sheets:
@@ -360,6 +365,8 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
     
     
     // states:
+    const { update : updateSession              } = useSession();
+    
     const [isTabRoleShown  , setIsTabRoleShown  ] = useState<boolean>(() => (defaultExpandedTabIndex === 2));
     
     const [isPathModified  , setIsPathModified  ] = useState<boolean>(false);
@@ -442,7 +449,9 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                 image,
                 roleId,
                 username : username || null, // convert empty string to null
-            }).unwrap();
+            }).unwrap().then(async () => {
+                await updateSession();
+            });
             
             await handleClose(/*commitImages = */true, [updatingUserTask]);
         }
