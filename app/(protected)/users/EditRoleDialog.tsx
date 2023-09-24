@@ -123,9 +123,8 @@ import {
 import {
     STORE_WEBSITE_URL,
     
-    PAGE_USER_TAB_ACCOUNT,
-    PAGE_USER_TAB_IMAGE,
-    PAGE_USER_TAB_ROLE,
+    PAGE_ROLE_TAB_ROLE,
+    PAGE_ROLE_TAB_DELETE,
 }                           from '@/website.config'
 
 
@@ -352,37 +351,60 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                 <h1>{name || ((role === emptyRole) ? 'Create New Role' : 'Edit Role')}</h1>
                 <CloseButton onClick={handleClosing} />
             </CardHeader>
-            <CardBody
-                // classes:
-                className={styleSheet.cardBody}
-            >
-                <ValidationProvider enableValidation={enableValidation} inheritValidation={false}>
-                    <form ref={editorFormRef}>
-                        <span className='name label'>Name:</span>
-                        <TextEditor className='name editor' aria-label='Name' required={true } value={name} onChange={(value) => { setName(value); setIsModified(true); }} elmRef={firstEditorRef} autoCapitalize='words' />
-                        
-                        <span className='authorities label'>Authorities:</span>
-                        <ValidationProvider enableValidation={false} inheritValidation={false}>
-                            <ExclusiveAccordion className='authorities list' defaultExpandedListIndex={0}>
-                                <AccordionItem label='Products'>
-                                    <Check      className='check editor' required={false} active={product_r} onActiveChange={({active}) => { setProduct_r(active); setIsModified(true); }}>
-                                        View
-                                    </Check>
-                                    <Check      className='check editor' required={false} active={product_c} onActiveChange={({active}) => { setProduct_c(active); setIsModified(true); }}>
-                                        Add New
-                                    </Check>
-                                    <Check      className='check editor' required={false} active={product_u} onActiveChange={({active}) => { setProduct_u(active); setIsModified(true); }}>
-                                        Change
-                                    </Check>
-                                    <Check      className='check editor' required={false} active={product_d} onActiveChange={({active}) => { setProduct_d(active); setIsModified(true); }}>
-                                        Delete
-                                    </Check>
-                                </AccordionItem>
-                            </ExclusiveAccordion>
-                        </ValidationProvider>
-                    </form>
-                </ValidationProvider>
-            </CardBody>
+            <ValidationProvider enableValidation={enableValidation} inheritValidation={false}>
+            <Tab
+                    // variants:
+                    mild='inherit'
+                    
+                    
+                    
+                    // classes:
+                    className={styleSheet.cardBody}
+                    
+                    
+                    
+                    // components:
+                    listComponent={<List className={styleSheet.tabList} />}
+                    bodyComponent={<Content className={styleSheet.tabBody} />}
+                    
+                    
+                    
+                    // handlers:
+                    onKeyDown={handleKeyDown}
+                >
+                    <TabPanel label={PAGE_ROLE_TAB_ROLE} panelComponent={<Generic className={styleSheet.roleTab} />}>
+                        <form ref={editorFormRef}>
+                            <span className='name label'>Name:</span>
+                            <TextEditor className='name editor' aria-label='Name' required={true } value={name} onChange={(value) => { setName(value); setIsModified(true); }} elmRef={firstEditorRef} autoCapitalize='words' />
+                            
+                            <span className='authorities label'>Authorities:</span>
+                            <ValidationProvider enableValidation={false} inheritValidation={false}>
+                                <ExclusiveAccordion className='authorities list' defaultExpandedListIndex={0}>
+                                    <AccordionItem label='Products'>
+                                        <Check      className='check editor' required={false} active={product_r} onActiveChange={({active}) => { setProduct_r(active); setIsModified(true); }}>
+                                            View
+                                        </Check>
+                                        <Check      className='check editor' required={false} active={product_c} onActiveChange={({active}) => { setProduct_c(active); setIsModified(true); }}>
+                                            Add New
+                                        </Check>
+                                        <Check      className='check editor' required={false} active={product_u} onActiveChange={({active}) => { setProduct_u(active); setIsModified(true); }}>
+                                            Change
+                                        </Check>
+                                        <Check      className='check editor' required={false} active={product_d} onActiveChange={({active}) => { setProduct_d(active); setIsModified(true); }}>
+                                            Delete
+                                        </Check>
+                                    </AccordionItem>
+                                </ExclusiveAccordion>
+                            </ValidationProvider>
+                        </form>
+                    </TabPanel>
+                    <TabPanel label={PAGE_ROLE_TAB_DELETE} panelComponent={<Generic className={styleSheet.deleteTab} />}>
+                        <ButtonIcon icon='delete' theme='danger'>
+                            Delete <strong>{role.name}</strong> Role
+                        </ButtonIcon>
+                    </TabPanel>
+                </Tab>
+            </ValidationProvider>
             <CardFooter onKeyDown={handleKeyDown}>
                 <ButtonIcon className='btnSave'   icon={isLoading ? 'busy' : 'save'  } theme='success' onClick={handleSave}>Save</ButtonIcon>
                 <ButtonIcon className='btnCancel' icon='cancel'                        theme='danger'  onClick={handleClosing}>Cancel</ButtonIcon>

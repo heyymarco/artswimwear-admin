@@ -51,11 +51,17 @@ export const usesCardBodyLayout = () => {
         // layouts:
         ...style({
             // layouts:
-            display : 'grid',
+            display        : 'flex',
+            flexDirection  : 'column',
+            justifyContent : 'start',       // if items are not growable, the excess space (if any) placed at the end, and if no sufficient space available => the first item should be visible first
+            alignItems     : 'stretch',     // items width are 100% of the parent (for variant `.block`) or height (for variant `.inline`)
+            flexWrap       : 'nowrap',      // no wrapping
             
             
             
             // sizes:
+            // the default <Card>'s body height is resizeable, ensuring footers are aligned to the bottom:
+            flex           : [[1, 1, 'auto']], // growable, shrinkable, initial from it's width (for variant `.inline`) or height (for variant `.block`)
             boxSizing         : 'border-box',
             minInlineSize     : `calc(100vw - (${containers.paddingInline} * 2))`,
             ...ifScreenWidthAtLeast('md', {
@@ -70,50 +76,107 @@ export const usesCardBodyLayout = () => {
             
             
             
+            // borders:
+            [borderVars.borderStartStartRadius] : '0px',
+            [borderVars.borderStartEndRadius  ] : '0px',
+            [borderVars.borderEndStartRadius  ] : '0px',
+            [borderVars.borderEndEndRadius    ] : '0px',
+        }),
+    });
+};
+export const usesTabListLayout = () => {
+    return style({
+        // layouts:
+        ...style({
+            // positions:
+            zIndex: 1, // a draggable fix for Chrome
+        }),
+        
+        
+        
+        // configs:
+        ...vars({
+            [lists.borderRadius] : '0px',
+        }),
+    });
+};
+export const usesTabBodyLayout = () => {
+    // dependencies:
+    
+    // features:
+    const {borderVars} = usesBorder();
+    
+    
+    
+    return style({
+        // borders:
+        [borderVars.borderWidth]: '0px',
+    });
+};
+export const usesRoleTabLayout = () => {
+    return style({
+        // layout:
+        display: 'grid',
+        
+        
+        
+        // scrolls:
+        overscrollBehavior      : 'none',
+        scrollPaddingBlockStart : '1.75rem', // makes scroll to field's label
+        
+        
+        
+        // children:
+        ...children('form', {// layouts:
+            // layouts:
+            display      : 'grid',
+            alignContent : 'start',
+            gridTemplate : [[
+                '"name-label       "', 'auto',
+                '"name-editor      "', 'auto',
+                '"................."', spacers.sm,
+                '"authorities-label"', 'auto',
+                '"authorities-list "', 'auto',
+                '/',
+                '1fr'
+            ]],
+            
+            
+            
+            // spacings:
+            gapInline    : spacers.default,
+            gapBlock     : spacers.xs,
+            
+            
+            
             // children:
-            ...children('form', {
-                // layouts:
-                display      : 'grid',
-                alignContent : 'start',
-                gridTemplate : [[
-                    '"name-label       "', 'auto',
-                    '"name-editor      "', 'auto',
-                    '"................."', spacers.sm,
-                    '"authorities-label"', 'auto',
-                    '"authorities-list "', 'auto',
-                    '/',
-                    '1fr'
-                ]],
-                
-                
-                
-                // spacings:
-                gapInline    : spacers.default,
-                gapBlock     : spacers.xs,
-                
-                
-                
-                // children:
-                ...children('.name.label'       , { gridArea: 'name-label'        }),
-                ...children('.name.editor'      , { gridArea: 'name-editor'       }),
-                
-                ...children('.authorities.label', { gridArea: 'authorities-label' }),
-                ...children('.authorities.list' , { gridArea: 'authorities-list'  }),
-                ...children(':where(.authorities.list)' , {
-                    ...children('*>*:where(:nth-child(2))', {
-                        // layouts:
-                        display       : 'flex',
-                        flexDirection : 'row',
-                        flexWrap      : 'wrap',
-                        
-                        
-                        
-                        // spacings:
-                        gap           : spacers.default,
-                    }),
+            ...children('.name.label'       , { gridArea: 'name-label'        }),
+            ...children('.name.editor'      , { gridArea: 'name-editor'       }),
+            
+            ...children('.authorities.label', { gridArea: 'authorities-label' }),
+            ...children('.authorities.list' , { gridArea: 'authorities-list'  }),
+            ...children(':where(.authorities.list)' , {
+                ...children('*>*:where(:nth-child(2))', {
+                    // layouts:
+                    display       : 'flex',
+                    flexDirection : 'row',
+                    flexWrap      : 'wrap',
+                    
+                    
+                    
+                    // spacings:
+                    gap           : spacers.default,
                 }),
             }),
         }),
+    });
+};
+export const usesDeleteTabLayout = () => {
+    return style({
+        // layout:
+        display      : 'grid',
+        justifyItems : 'center',  // default center the items horizontally
+        alignItems   : 'center',  // default center the items vertically
     });
 };
 
@@ -121,4 +184,19 @@ export default () => [
     scope('cardBody', {
         ...usesCardBodyLayout(),
     }, { specificityWeight: 2 }),
+    
+    scope('tabList', {
+        ...usesTabListLayout(),
+    }, { specificityWeight: 2 }),
+    
+    scope('tabBody', {
+        ...usesTabBodyLayout(),
+    }, { specificityWeight: 2 }),
+    
+    scope('roleTab', {
+        ...usesRoleTabLayout(),
+    }),
+    scope('deleteTab', {
+        ...usesDeleteTabLayout(),
+    }),
 ];

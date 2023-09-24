@@ -28,5 +28,8 @@ export const PAGE_USER_TAB_ACCOUNT                   = 'Account'
 export const PAGE_USER_TAB_IMAGE                     = 'Image'
 export const PAGE_USER_TAB_ROLE                      = 'Role'
 
+export const PAGE_ROLE_TAB_ROLE                      = 'Role'
+export const PAGE_ROLE_TAB_DELETE                    = 'Delete'
+
 export const PAGE_ORDER_TITLE                        = `Orders - ${WEBSITE_TITLE}`
 export const PAGE_ORDER_DESCRIPTION                  = 'Order management.'
