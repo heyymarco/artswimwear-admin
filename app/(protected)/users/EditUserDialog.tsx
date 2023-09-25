@@ -99,6 +99,9 @@ import {
     UsernameEditor,
 }                           from '@/components/editors/UsernameEditor'
 import {
+    EmailEditor,
+}                           from '@/components/editors/EmailEditor'
+import {
     UploadImage,
 }                           from '@/components/editors/UploadImage'
 import {
@@ -684,7 +687,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                             <UsernameEditor className='username editor'   aria-label='Username' autoComplete='nope' required={false}  currentValue={user.username ?? ''} value={username ?? ''} onChange={(value) => { setUsername(value); setIsModified(true); }} />
                             
                             <span className='email label'>Email:</span>
-                            <TextEditor     className='email editor'      aria-label='Email'    autoComplete='nope' required={true}   value={email}                                             onChange={(value) => { setEmail(value)   ; setIsModified(true); }} />
+                            <EmailEditor    className='email editor'      aria-label='Email'    autoComplete='nope' required={true}   currentValue={user.email}          value={email}          onChange={(value) => { setEmail(value)   ; setIsModified(true); }} />
                         </form>
                     </TabPanel>
                     <TabPanel label={PAGE_USER_TAB_IMAGE}        panelComponent={<Generic className={styleSheet.imageTab} />}>

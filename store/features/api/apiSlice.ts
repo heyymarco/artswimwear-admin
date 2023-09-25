@@ -503,6 +503,7 @@ export const {
     useUpdateUserMutation        : useUpdateUser,
     useDeleteUserMutation        : useDeleteUser,
     useAvailableUsernameMutation : useAvailableUsername,
+    useAvailableEmailMutation    : useAvailableEmail,
     
     useGetRoleListQuery          : useGetRoleList,
     useUpdateRoleMutation        : useUpdateRole,

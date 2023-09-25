@@ -172,12 +172,12 @@ const UniqueEditor = <TElement extends Element = HTMLElement>(props: UniqueEdito
             return;
         } // if
         
-        if (value && currentValue && (value === currentValue)) {
+        if (value && currentValue && (value.toLowerCase() === currentValue.toLowerCase())) {
             setIsValidAvailable(true);
             return;
         } // if
         
-        
+        console.log('checking: ', {value, currentValue});
         
         // actions:
         (async () => {
@@ -222,7 +222,7 @@ const UniqueEditor = <TElement extends Element = HTMLElement>(props: UniqueEdito
                 setIsValidAvailable(isClientError(error) ? false : 'error');
             } // try
         })();
-    }, [value, isValidLength, isValidFormat]);
+    }, [value, currentValue, isValidLength, isValidFormat]);
     
     
     
