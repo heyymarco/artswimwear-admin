@@ -72,16 +72,21 @@ export interface UniqueEditorProps<TElement extends Element = HTMLElement>
         TextEditorProps<TElement>
 {
     // values:
-    currentValue    ?: string
+    currentValue     ?: string
     
     
     
     // constraints:
-    minLength        : number
-    maxLength        : number
-    format           : RegExp
-    formatHint       : React.ReactNode
-    onCheckAvailable : (value: string) => Promise<boolean>
+    minLength         : number
+    maxLength         : number
+    format            : RegExp
+    formatHint        : React.ReactNode
+    onCheckAvailable  : (value: string) => Promise<boolean>
+    
+    
+    
+    // components:
+    editorComponent  ?: React.ReactComponentElement<any, TextEditorProps<TElement>>
 }
 const UniqueEditor = <TElement extends Element = HTMLElement>(props: UniqueEditorProps<TElement>): JSX.Element|null => {
     // rest props:
@@ -97,7 +102,12 @@ const UniqueEditor = <TElement extends Element = HTMLElement>(props: UniqueEdito
         format,
         formatHint,
         onCheckAvailable,
-    ...restTextEditorProps} = props;
+        
+        
+        
+        // components:
+        editorComponent = (<TextEditor<TElement> /> as React.ReactComponentElement<any, TextEditorProps<TElement>>),
+    ...restEditorProps} = props;
     
     
     
@@ -115,7 +125,12 @@ const UniqueEditor = <TElement extends Element = HTMLElement>(props: UniqueEdito
         setIsUserInteracted(true);
     });
     const handleChange         = useMergeEvents(
-        // preserves the original `onChange`:
+        // preserves the original `onChange` from `editorComponent`:
+        editorComponent.props.onChange,
+        
+        
+        
+        // preserves the original `onChange` from `props`:
         props.onChange,
         
         
@@ -128,7 +143,12 @@ const UniqueEditor = <TElement extends Element = HTMLElement>(props: UniqueEdito
         setIsFocused(true);
     });
     const handleFocus          = useMergeEvents(
-        // preserves the original `onFocus`:
+        // preserves the original `onFocus` from `editorComponent`:
+        editorComponent.props.onFocus,
+        
+        
+        
+        // preserves the original `onFocus` from `props`:
         props.onFocus,
         
         
@@ -141,7 +161,12 @@ const UniqueEditor = <TElement extends Element = HTMLElement>(props: UniqueEdito
         setIsFocused(false);
     });
     const handleBlur           = useMergeEvents(
-        // preserves the original `onBlur`:
+        // preserves the original `onBlur` from `editorComponent`:
+        editorComponent.props.onBlur,
+        
+        
+        
+        // preserves the original `onBlur` from `props`:
         props.onBlur,
         
         
@@ -241,9 +266,14 @@ const UniqueEditor = <TElement extends Element = HTMLElement>(props: UniqueEdito
     
     
     // refs:
-    const editorRef = useRef<HTMLInputElement|null>(null);
-    const elmRef    = useMergeRefs(
-        // preserves the original `elmRef`:
+    const editorRef    = useRef<HTMLInputElement|null>(null);
+    const mergedElmRef = useMergeRefs(
+        // preserves the original `elmRef` from `editorComponent`:
+        editorComponent.props.elmRef,
+        
+        
+        
+        // preserves the original `elmRef` from `props`:
         props.elmRef,
         
         
@@ -261,43 +291,48 @@ const UniqueEditor = <TElement extends Element = HTMLElement>(props: UniqueEdito
     // jsx:
     return (
         <>
-            <TextEditor<TElement>
-                // other props:
-                {...restTextEditorProps}
-                
-                
-                
-                // refs:
-                elmRef={elmRef}
-                
-                
-                
-                // values:
-                value={value}
-                onChange={handleChange}
-                
-                
-                
-                // states:
-                enabled={isEnabled}
-                isValid={
-                    !value
-                    ||
-                    (
-                        isValidLength
-                        &&
-                        isValidFormat
-                        &&
-                        (isValidAvailable === true)
-                    )
-                }
-                
-                
-                
-                // handlers:
-                onFocus = {handleFocus}
-                onBlur  = {handleBlur }
-            />
+            {/* <TextEditor> */}
+            {React.cloneElement<TextEditorProps<TElement>>(editorComponent,
+                // props:
+                {
+                    // other props:
+                    ...restEditorProps,
+                    ...editorComponent.props, // overwrites restEditorProps (if any conflics)
+                    
+                    
+                    
+                    // refs:
+                    elmRef   : mergedElmRef,
+                    
+                    
+                    
+                    // values:
+                    value    : editorComponent.props.value ?? value,
+                    onChange : handleChange,
+                    
+                    
+                    
+                    // states:
+                    enabled  : isEnabled,
+                    isValid  : (
+                        !value
+                        ||
+                        (
+                            isValidLength
+                            &&
+                            isValidFormat
+                            &&
+                            (isValidAvailable === true)
+                        )
+                    ),
+                    
+                    
+                    
+                    // handlers:
+                    onFocus  : handleFocus,
+                    onBlur   : handleBlur,
+                },
+            )}
             <Tooltip
                 // variants:
                 theme='warning'
