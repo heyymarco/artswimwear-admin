@@ -177,6 +177,12 @@ export const usesDeleteTabLayout = () => {
         display      : 'grid',
         justifyItems : 'center',  // default center the items horizontally
         alignItems   : 'center',  // default center the items vertically
+        
+        
+        
+        // borders:
+        borderWidth  : 0,
+        borderRadius : 0,
     });
 };
 
@@ -198,5 +204,5 @@ export default () => [
     }),
     scope('deleteTab', {
         ...usesDeleteTabLayout(),
-    }),
+    }, { specificityWeight: 2 }),
 ];

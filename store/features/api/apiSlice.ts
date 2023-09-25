@@ -278,6 +278,22 @@ export const apiSlice = createApi({
                 }]) as Array<{ type: 'Roles', id: string }>),
             ],
         }),
+        deleteRole   : builder.mutation<Pick<RoleDetail, 'id'>, MutationArgs<Pick<RoleDetail, 'id'>>>({
+            query: (patch) => ({
+                url    : 'role',
+                method : 'DELETE',
+                body   : patch
+            }),
+            invalidatesTags: (role, error, arg) => [
+                ...((!role ? [{
+                    type : 'Roles',
+                    id   : 'ROLE_LIST', // delete unspecified => invalidates the whole list
+                }] : [{
+                    type : 'Roles',
+                    id   : role.id,     // delete existing    => invalidates the modified
+                }]) as Array<{ type: 'Roles', id: string }>),
+            ],
+        }),
         
         postImage    : builder.mutation<ImageId, { image: File, folder?: string, onUploadProgress?: (percentage: number) => void, abortSignal?: AbortSignal }>({
             query: ({ image, folder, onUploadProgress, abortSignal }) => ({
@@ -443,6 +459,7 @@ export const {
     
     useGetRoleListQuery      : useGetRoleList,
     useUpdateRoleMutation    : useUpdateRole,
+    useDeleteRoleMutation    : useDeleteRole,
     
     usePostImageMutation     : usePostImage,
     useDeleteImageMutation   : useDeleteImage,

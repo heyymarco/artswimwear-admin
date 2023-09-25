@@ -104,11 +104,7 @@ import {
     
     // hooks:
     useUpdateRole,
-    
-    usePostImage,
-    useDeleteImage,
-    
-    useGetRoleList,
+    useDeleteRole,
 }                           from '@/store/features/api/apiSlice'
 
 // internals:
@@ -181,7 +177,9 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
     
     
     // stores:
-    const [updateRole, {isLoading}] = useUpdateRole();
+    const [updateRole, {isLoading : isLoadingModelUpdate}] = useUpdateRole();
+    const [deleteRole, {isLoading : isLoadingModelDelete}] = useDeleteRole();
+    const isLoading = isLoadingModelUpdate || isLoadingModelDelete;
     
     
     
@@ -251,6 +249,45 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                 product_c,
                 product_u,
                 product_d,
+            }).unwrap();
+            
+            await handleClose();
+        }
+        catch (error: any) {
+            showMessageFetchError(error);
+        } // try
+    });
+    const handleDelete = useEvent(async () => {
+        // conditions:
+        if (
+            (await showMessage<'yes'|'no'>({
+                theme    : 'warning',
+                title    : <h1>Delete Confirmation</h1>,
+                message  : <>
+                    <p>
+                        Are you sure to remove <strong>{role.name}</strong> role?
+                    </p>
+                    <p>
+                        The users associated with the {role.name} role will still be logged in but will not have any authority.<br />
+                        You can re-assign their authorities later.
+                    </p>
+                </>,
+                options  : {
+                    yes  : <ButtonIcon icon='check'          theme='primary'>Yes</ButtonIcon>,
+                    no   : <ButtonIcon icon='not_interested' theme='secondary' autoFocus={true}>No</ButtonIcon>,
+                },
+            }))
+            !==
+            'yes'
+        ) return false;
+        if (!isMounted.current) return false; // the component was unloaded before awaiting returned => do nothing
+        
+        
+        
+        // actions:
+        try {
+            await deleteRole({
+                id : role.id,
             }).unwrap();
             
             await handleClose();
@@ -398,16 +435,16 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                             </ValidationProvider>
                         </form>
                     </TabPanel>
-                    <TabPanel label={PAGE_ROLE_TAB_DELETE} panelComponent={<Generic className={styleSheet.deleteTab} />}>
-                        <ButtonIcon icon='delete' theme='danger'>
+                    <TabPanel label={PAGE_ROLE_TAB_DELETE} panelComponent={<Content theme='warning' className={styleSheet.deleteTab} />}>
+                        <ButtonIcon icon={isLoadingModelDelete ? 'busy' : 'delete'} theme='danger' onClick={handleDelete}>
                             Delete <strong>{role.name}</strong> Role
                         </ButtonIcon>
                     </TabPanel>
                 </Tab>
             </ValidationProvider>
             <CardFooter onKeyDown={handleKeyDown}>
-                <ButtonIcon className='btnSave'   icon={isLoading ? 'busy' : 'save'  } theme='success' onClick={handleSave}>Save</ButtonIcon>
-                <ButtonIcon className='btnCancel' icon='cancel'                        theme='danger'  onClick={handleClosing}>Cancel</ButtonIcon>
+                <ButtonIcon className='btnSave'   icon={isLoadingModelUpdate ? 'busy' : 'save'  } theme='success' onClick={handleSave}>Save</ButtonIcon>
+                <ButtonIcon className='btnCancel' icon='cancel'                                   theme='danger'  onClick={handleClosing}>Cancel</ButtonIcon>
             </CardFooter>
         </AccessibilityProvider>
     );
