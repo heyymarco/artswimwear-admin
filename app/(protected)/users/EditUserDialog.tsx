@@ -40,6 +40,11 @@ import {
     
     // a validation management system:
     ValidationProvider,
+    
+    
+    
+    // color options of UI:
+    ThemeName,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -56,6 +61,7 @@ import {
     
     
     // simple-components:
+    IconProps,
     Icon,
     ButtonIcon,
     CloseButton,
@@ -67,6 +73,11 @@ import {
     List,
     CardHeader,
     CardFooter,
+    
+    
+    
+    // notification-components:
+    Tooltip,
     
     
     
@@ -86,6 +97,9 @@ import {
 import {
     Image,
 }                           from '@heymarco/image'
+import type {
+    ValidityStatus,
+}                           from '@heymarco/next-auth'
 
 // internal components:
 import {
@@ -128,6 +142,7 @@ import {
     // hooks:
     useUpdateUser,
     useDeleteUser,
+    useAvailableUser,
     
     usePostImage,
     useDeleteImage,
@@ -152,6 +167,10 @@ import {
     PAGE_USER_TAB_ROLE,
     PAGE_USER_TAB_DELETE,
 }                           from '@/website.config'
+// configs:
+import {
+    credentialsConfig,
+}                           from '@/credentials.config'
 
 
 
@@ -175,6 +194,28 @@ const emptyUser : UserDetail = {
     roleId   : null,
     
     username : null,
+};
+const getValidityTheme = (isValid: boolean|'unknown'|'loading'|'error'|undefined): ThemeName => {
+    switch (isValid) {
+        case true      : return 'success';
+        case false     : return 'danger';
+        case 'unknown' : return 'danger';
+        default        : return 'secondary';
+    } // switch
+};
+export const getValidityIcon  = (isValid: boolean|'unknown'|'loading'|'error'|undefined): IconProps['icon'] => {
+    switch (isValid) {
+        case true      : return 'check';
+        case false     : return 'error_outline';
+        case 'loading' : return 'busy';
+        case 'unknown' : return 'help_outline';
+        default        : return 'help_outline';
+    } // switch
+};
+export const isClientError = (fetchError: any): boolean => {
+    const errorCode = fetchError?.status ?? fetchError?.cause?.status;
+    if (typeof(errorCode) !== 'number') return false;
+    return (errorCode >= 400) && (errorCode <= 499);
 };
 
 
@@ -402,11 +443,15 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
     const initialImageRef                          = useRef<string|null>(user.image);
     const [draftDeletedImages                    ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
     
+    const [usernameFocused       , setUsernameFocused       ] = useState<boolean>(false);
+    const [usernameValidAvailable, setUsernameValidAvailable] = useState<ValidityStatus>('unknown');
+    
     
     
     // stores:
     const [updateUser       , {isLoading : isLoadingModelUpdate      }] = useUpdateUser();
     const [deleteUser       , {isLoading : isLoadingModelDelete      }] = useDeleteUser();
+    const [availableUser    , {isLoading : isLoadingModelAvailable   }] = useAvailableUser();
     const [postImage                                                  ] = usePostImage();
     const [commitDeleteImage, {isLoading : isLoadingCommitDeleteImage}] = useDeleteImage();
     const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
@@ -419,6 +464,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
     // refs:
     const firstEditorRef = useRef<HTMLInputElement|null>(null); // TODO: finish this
     const editorFormRef  = useRef<HTMLFormElement|null>(null);
+    const usernameRef    = useRef<HTMLInputElement|null>(null);
     
     
     
@@ -613,10 +659,18 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                 break;
         } // switch
     });
+    const usernameHandleFocus = useEvent((): void => {
+        setUsernameFocused(true);
+    });
+    const usernameHandleBlur  = useEvent((): void => {
+        setUsernameFocused(false);
+    });
     
     
     
     // dom effects:
+    
+    // autoFocus on first editor:
     useEffect(() => {
         // setups:
         const cancelFocus = setTimeout(() => {
@@ -637,6 +691,77 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
             clearTimeout(cancelFocus);
         };
     }, []);
+    
+    // validate username availability:
+    const usernameValidLength = !username || ((username.length >= credentialsConfig.USERNAME_MIN_LENGTH) && (username.length <= credentialsConfig.USERNAME_MAX_LENGTH));
+    const usernameValidFormat = !username || !!username.match(credentialsConfig.USERNAME_FORMAT);
+    useEffect(() => {
+        // conditions:
+        if (
+            !username
+            ||
+            !usernameValidLength
+            ||
+            !usernameValidFormat
+        ) {
+            setUsernameValidAvailable('unknown');
+            return;
+        } // if
+        
+        if (username && user.username && (username === user.username)) {
+            setUsernameValidAvailable(true);
+            return;
+        } // if
+        
+        
+        
+        // actions:
+        (async () => {
+            try {
+                // delay a brief moment, waiting for the user typing:
+                setUsernameValidAvailable('unknown');
+                await new Promise<void>((resolved) => {
+                    setTimeout(() => {
+                        resolved();
+                    }, 500);
+                });
+                if (!isMounted.current) return; // unmounted => abort
+                
+                
+                
+                setUsernameValidAvailable('loading');
+                await availableUser(username).unwrap();
+                if (!isMounted.current) return; // unmounted => abort
+                
+                
+                
+                // success
+                
+                
+                
+                // save the success:
+                setUsernameValidAvailable(true);
+            }
+            catch (error) {
+                console.log({error});
+                setUsernameValidAvailable(isClientError(error) ? false : 'error');
+            } // try
+        })();
+    }, [username, usernameValidLength, usernameValidFormat]);
+    
+    
+    
+    // validations:
+    const specificValidations = {
+        usernameValidLength,
+        usernameValidFormat,
+        usernameValidAvailable,
+    };
+    const usernameValidationMap = {
+        Length        : <>Must be {credentialsConfig.USERNAME_MIN_LENGTH}-{credentialsConfig.USERNAME_MAX_LENGTH} characters.</>,
+        Format        : credentialsConfig.USERNAME_FORMAT_HINT,
+        Available     : <>Must have never been registered.</>,
+    };
     
     
     
@@ -679,13 +804,61 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                     <TabPanel label={PAGE_USER_TAB_ACCOUNT} panelComponent={<Generic className={styleSheet.accountTab} />}>
                         <form ref={editorFormRef}>
                             <span className='name label'>Name:</span>
-                            <TextEditor className='name editor'       aria-label='Name'     required={true }  value={name}           onChange={(value) => { setName(value)    ; setIsModified(true); }} elmRef={firstEditorRef} autoCapitalize='words' />
+                            <TextEditor className='name editor'       aria-label='Name'     autoComplete='nope' required={true }  value={name}           onChange={(value) => { setName(value)    ; setIsModified(true); }} elmRef={firstEditorRef} autoCapitalize='words' />
                             
                             <span className='username label'>Username:</span>
-                            <TextEditor className='username editor'   aria-label='Username' required={false}  value={username ?? ''} onChange={(value) => { setUsername(value); setIsModified(true); }} />
+                            <TextEditor className='username editor'   aria-label='Username' autoComplete='nope' required={false}  value={username ?? ''} onChange={(value) => { setUsername(value); setIsModified(true); }}
+                                elmRef={usernameRef}
+                                onFocus={usernameHandleFocus}
+                                onBlur={usernameHandleBlur}
+                                isValid={!username || (usernameValidLength && usernameValidFormat && (usernameValidAvailable === true))}
+                            />
+                            <Tooltip theme='warning' floatingPlacement='top' floatingOn={usernameRef} expanded={usernameFocused && !!username && !isLoading}>
+                                <List listStyle='flat'>
+                                    {Object.entries(usernameValidationMap).map(([validationType, text], index) => {
+                                        // conditions:
+                                        if (!text) return null; // disabled => ignore
+                                        
+                                        
+                                        
+                                        // fn props:
+                                        const isValid = (specificValidations as any)?.[`usernameValid${validationType}`] as (ValidityStatus|undefined);
+                                        if (isValid === undefined) return null;
+                                        
+                                        
+                                        
+                                        // jsx:
+                                        return (
+                                            <ListItem
+                                                // identifiers:
+                                                key={index}
+                                                
+                                                
+                                                
+                                                // variants:
+                                                size='sm'
+                                                theme={getValidityTheme(isValid)}
+                                                outlined={true}
+                                            >
+                                                <Icon
+                                                    // appearances:
+                                                    icon={getValidityIcon(isValid)}
+                                                    
+                                                    
+                                                    
+                                                    // variants:
+                                                    size='sm'
+                                                />
+                                                &nbsp;
+                                                {text}
+                                            </ListItem>
+                                        );
+                                    })}
+                                </List>
+                            </Tooltip>
                             
                             <span className='email label'>Email:</span>
-                            <TextEditor className='email editor'      aria-label='Email'    required={true}   value={email}          onChange={(value) => { setEmail(value)   ; setIsModified(true); }} />
+                            <TextEditor className='email editor'      aria-label='Email'    autoComplete='nope' required={true}   value={email}          onChange={(value) => { setEmail(value)   ; setIsModified(true); }} />
                         </form>
                     </TabPanel>
                     <TabPanel label={PAGE_USER_TAB_IMAGE}        panelComponent={<Generic className={styleSheet.imageTab} />}>

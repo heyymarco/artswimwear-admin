@@ -148,10 +148,10 @@ export const apiSlice = createApi({
             },
         }),
         deleteProduct   : builder.mutation<Pick<ProductDetail, 'id'>, MutationArgs<Pick<ProductDetail, 'id'>>>({
-            query: (patch) => ({
+            query: (params) => ({
                 url    : 'product',
                 method : 'DELETE',
-                body   : patch
+                body   : params
             }),
             invalidatesTags: (product, error, arg) => [
                 ...((!product ? [{
@@ -215,7 +215,7 @@ export const apiSlice = createApi({
             },
         }),
         
-        getUserPage  : builder.query<Pagination<UserDetail>, PaginationArgs>({
+        getUserPage   : builder.query<Pagination<UserDetail>, PaginationArgs>({
             query : (params) => ({
                 url    : 'user',
                 method : 'POST',
@@ -235,7 +235,7 @@ export const apiSlice = createApi({
                 ];
             },
         }),
-        updateUser   : builder.mutation<UserDetail, MutationArgs<UserDetail>>({
+        updateUser    : builder.mutation<UserDetail, MutationArgs<UserDetail>>({
             query: (patch) => ({
                 url    : 'user',
                 method : 'PATCH',
@@ -255,11 +255,11 @@ export const apiSlice = createApi({
                 await handleCumulativeUpdateCacheEntry('getUserPage', (arg.id !== ''), api);
             },
         }),
-        deleteUser   : builder.mutation<Pick<UserDetail, 'id'>, MutationArgs<Pick<UserDetail, 'id'>>>({
-            query: (patch) => ({
+        deleteUser    : builder.mutation<Pick<UserDetail, 'id'>, MutationArgs<Pick<UserDetail, 'id'>>>({
+            query: (params) => ({
                 url    : 'user',
                 method : 'DELETE',
-                body   : patch
+                body   : params
             }),
             invalidatesTags: (user, error, arg) => [
                 ...((!user ? [{
@@ -270,6 +270,12 @@ export const apiSlice = createApi({
                     id   : user.id,     // delete existing    => invalidates the modified
                 }]) as Array<{ type: 'Users', id: string }>),
             ],
+        }),
+        availableUser : builder.mutation<boolean, string>({
+            query: (username) => ({
+                url    : `user/check-username?username=${encodeURIComponent(username)}`,
+                method : 'GET',
+            }),
         }),
         
         getRoleList  : builder.query<EntityState<RoleDetail>, void>({
@@ -311,10 +317,10 @@ export const apiSlice = createApi({
             ],
         }),
         deleteRole   : builder.mutation<Pick<RoleDetail, 'id'>, MutationArgs<Pick<RoleDetail, 'id'>>>({
-            query: (patch) => ({
+            query: (params) => ({
                 url    : 'role',
                 method : 'DELETE',
-                body   : patch
+                body   : params
             }),
             invalidatesTags: (role, error, arg) => [
                 ...((!role ? [{
@@ -490,6 +496,7 @@ export const {
     useGetUserPageQuery      : useGetUserPage,
     useUpdateUserMutation    : useUpdateUser,
     useDeleteUserMutation    : useDeleteUser,
+    useAvailableUserMutation : useAvailableUser,
     
     useGetRoleListQuery      : useGetRoleList,
     useUpdateRoleMutation    : useUpdateRole,
