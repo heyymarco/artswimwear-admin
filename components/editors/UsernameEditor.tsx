@@ -116,6 +116,7 @@ const UsernameEditor = <TElement extends Element = HTMLElement>(props: UsernameE
     
     // states:
     const [value           , setValue           ] = useState<string>(props.value ?? props.defaultValue ?? '');
+    const [isUserInteracted, setIsUserInteracted] = useState<boolean>(false);
     const [isFocused       , setIsFocused       ] = useState<boolean>(false);
     const [isValidAvailable, setIsValidAvailable] = useState<ValidityStatus>('unknown');
     
@@ -129,6 +130,7 @@ const UsernameEditor = <TElement extends Element = HTMLElement>(props: UsernameE
     // handlers:
     const handleChangeInternal = useEvent<EditorChangeEventHandler<string>>((value) => {
         setValue(value);
+        setIsUserInteracted(true);
     });
     const handleChange         = useMergeEvents(
         // preserves the original `onChange`:
@@ -310,7 +312,7 @@ const UsernameEditor = <TElement extends Element = HTMLElement>(props: UsernameE
                 
                 
                 // states:
-                expanded={isFocused && !!value && isEnabled}
+                expanded={isUserInteracted && isFocused && !!value && isEnabled}
                 
                 
                 
