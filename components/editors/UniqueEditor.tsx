@@ -72,16 +72,16 @@ export interface UniqueEditorProps<TElement extends Element = HTMLElement>
         TextEditorProps<TElement>
 {
     // values:
-    currentValue  ?: string
+    currentValue    ?: string
     
     
     
     // constraints:
-    minLength      : number
-    maxLength      : number
-    format         : RegExp
-    formatHint     : React.ReactNode
-    checkAvailable : () => Promise<boolean>
+    minLength        : number
+    maxLength        : number
+    format           : RegExp
+    formatHint       : React.ReactNode
+    onCheckAvailable : (value: string) => Promise<boolean>
 }
 const UniqueEditor = <TElement extends Element = HTMLElement>(props: UniqueEditorProps<TElement>): JSX.Element|null => {
     // rest props:
@@ -96,7 +96,7 @@ const UniqueEditor = <TElement extends Element = HTMLElement>(props: UniqueEdito
         maxLength,
         format,
         formatHint,
-        checkAvailable,
+        onCheckAvailable,
     ...restTextEditorProps} = props;
     
     
@@ -194,7 +194,7 @@ const UniqueEditor = <TElement extends Element = HTMLElement>(props: UniqueEdito
                 
                 
                 setIsValidAvailable('loading');
-                const result = await checkAvailable();
+                const result = await onCheckAvailable(value);
                 if (!isMounted.current) return; // unmounted => abort
                 if (!result) {
                     // failed
