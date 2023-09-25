@@ -163,6 +163,12 @@ export const apiSlice = createApi({
                 }]) as Array<{ type: 'Products', id: string }>),
             ],
         }),
+        availablePath     : builder.mutation<boolean, string>({
+            query: (path) => ({
+                url    : `product/check-path?path=${encodeURIComponent(path)}`,
+                method : 'GET',
+            }),
+        }),
         
         getOrderPage      : builder.query<Pagination<OrderDetail>, PaginationArgs>({
             query : (params) => ({
@@ -493,6 +499,7 @@ export const {
     useGetProductPageQuery       : useGetProductPage,
     useUpdateProductMutation     : useUpdateProduct,
     useDeleteProductMutation     : useDeleteProduct,
+    useAvailablePathMutation     : useAvailablePath,
     
     useGetOrderPageQuery         : useGetOrderPage,
     useUpdateOrderMutation       : useUpdateOrder,

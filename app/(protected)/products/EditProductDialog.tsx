@@ -81,8 +81,11 @@ import {
     TextEditor,
 }                           from '@/components/editors/TextEditor'
 import {
-    PathEditor,
+    // PathEditor,
 }                           from '@/components/editors/PathEditor'
+import {
+    PathEditor,
+}                           from '@/components/editors/Path2Editor'
 import {
     CurrencyEditor,
 }                           from '@/components/editors/CurrencyEditor'
@@ -512,22 +515,22 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                     <TabPanel label={PAGE_PRODUCT_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                         <form ref={editorFormRef}>
                             <span className='name label'>Name:</span>
-                            <TextEditor           className='name editor'       aria-label='Name'            required={true}  value={name}           onChange={(value) => { setName(value)          ; setIsModified(true); handleNameChange(value); }} elmRef={((defaultExpandedTabIndex ?? 0) === 0) ? firstEditorRef : undefined} />
+                            <TextEditor           className='name editor'       aria-label='Name'            required={true}                              value={name}           onChange={(value) => { setName(value)          ; setIsModified(true); handleNameChange(value); }} elmRef={((defaultExpandedTabIndex ?? 0) === 0) ? firstEditorRef : undefined} />
                             
                             <span className='path label'>Path:</span>
-                            <PathEditor           className='path editor'       aria-label='Path'            required={true}  value={path}           onChange={(value) => { setPath(value)          ; setIsPathModified(true);                      }} homeUrl={STORE_WEBSITE_URL} isValid={!!path} />
+                            <PathEditor           className='path editor'       aria-label='Path'            required={true}  currentValue={product.path} value={path}           onChange={(value) => { setPath(value)          ; setIsPathModified(true);                      }} homeUrl={STORE_WEBSITE_URL} isValid={!!path} />
                             
                             <span className='price label'>Price:</span>
-                            <CurrencyEditor       className='price editor'      aria-label='Price'           required={true}  value={price}          onChange={(value) => { setPrice(value ?? 0)    ; setIsModified(true);                          }} currencySign={getCurrencySign()} currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX} />
+                            <CurrencyEditor       className='price editor'      aria-label='Price'           required={true}                              value={price}          onChange={(value) => { setPrice(value ?? 0)    ; setIsModified(true);                          }} currencySign={getCurrencySign()} currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX} />
                             
                             <span className='sWeight label'>Shipping Weight:</span>
-                            <ShippingWeightEditor className='sWeight editor'    aria-label='Shipping Weight' required={false} value={shippingWeight} onChange={(value) => { setShippingWeight(value); setIsModified(true);                          }} />
+                            <ShippingWeightEditor className='sWeight editor'    aria-label='Shipping Weight' required={false}                             value={shippingWeight} onChange={(value) => { setShippingWeight(value); setIsModified(true);                          }} />
                             
                             <span className='stock label'>Stock:</span>
-                            <StockEditor          className='stock editor'      aria-label='Stock'                            value={stock}          onChange={(value) => { setStock(value)         ; setIsModified(true);                          }} theme='secondary' />
+                            <StockEditor          className='stock editor'      aria-label='Stock'                                                        value={stock}          onChange={(value) => { setStock(value)         ; setIsModified(true);                          }} theme='secondary' />
                             
                             <span className='visibility label'>Visibility:</span>
-                            <VisibilityEditor     className='visibility editor' aria-label='Visibility'                       value={visibility}     onChange={(value) => { setVisibility(value)    ; setIsModified(true);                          }} theme='secondary' />
+                            <VisibilityEditor     className='visibility editor' aria-label='Visibility'                                                   value={visibility}     onChange={(value) => { setVisibility(value)    ; setIsModified(true);                          }} theme='secondary' />
                         </form>
                     </TabPanel>
                     <TabPanel label={PAGE_PRODUCT_TAB_IMAGES}       panelComponent={<Generic className={styleSheet.imagesTab} />}>
