@@ -262,6 +262,20 @@ export const usesEditDescription = () => {
         ...borderRule(), // must be placed at the last
     });
 };
+export const usesDeleteTabLayout = () => {
+    return style({
+        // layout:
+        display      : 'grid',
+        justifyItems : 'center',  // default center the items horizontally
+        alignItems   : 'center',  // default center the items vertically
+        
+        
+        
+        // borders:
+        borderWidth  : 0,
+        borderRadius : 0,
+    });
+};
 
 export default () => [
     scope('cardBody', {
@@ -287,5 +301,8 @@ export default () => [
     }),
     scope('editDescription', {
         ...usesEditDescription(),
+    }, { specificityWeight: 2 }),
+    scope('deleteTab', {
+        ...usesDeleteTabLayout(),
     }, { specificityWeight: 2 }),
 ];

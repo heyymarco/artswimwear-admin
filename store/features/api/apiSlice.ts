@@ -147,6 +147,22 @@ export const apiSlice = createApi({
                 await handleCumulativeUpdateCacheEntry('getProductPage', (arg.id !== ''), api);
             },
         }),
+        deleteProduct   : builder.mutation<Pick<ProductDetail, 'id'>, MutationArgs<Pick<ProductDetail, 'id'>>>({
+            query: (patch) => ({
+                url    : 'product',
+                method : 'DELETE',
+                body   : patch
+            }),
+            invalidatesTags: (product, error, arg) => [
+                ...((!product ? [{
+                    type : 'Products',
+                    id   : 'PRODUCT_LIST', // delete unspecified => invalidates the whole list
+                }] : [{
+                    type : 'Products',
+                    id   : product.id,     // delete existing    => invalidates the modified
+                }]) as Array<{ type: 'Products', id: string }>),
+            ],
+        }),
         
         getOrderPage    : builder.query<Pagination<OrderDetail>, PaginationArgs>({
             query : (params) => ({
@@ -464,6 +480,7 @@ export const {
     useGetProductListQuery   : useGetProductList,
     useGetProductPageQuery   : useGetProductPage,
     useUpdateProductMutation : useUpdateProduct,
+    useDeleteProductMutation : useDeleteProduct,
     
     useGetOrderPageQuery     : useGetOrderPage,
     useUpdateOrderMutation   : useUpdateOrder,

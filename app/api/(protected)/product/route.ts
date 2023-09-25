@@ -294,4 +294,56 @@ router
         return NextResponse.json({ error: error }, { status: 500 }); // handled with error
     } // try
     //#endregion save changes
+})
+.delete(async (req) => {
+    if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
+        await new Promise<void>((resolve) => {
+            setTimeout(() => {
+                resolve();
+            }, 2000);
+        });
+    } // if
+    
+    
+    
+    //#region parsing request
+    const {
+        id,
+    } = await req.json();
+    //#endregion parsing request
+    
+    
+    
+    //#region validating request
+    if (
+        ((typeof(id) !== 'string') || (id.length < 1))
+    ) {
+        return NextResponse.json({
+            error: 'Invalid data.',
+        }, { status: 400 }); // handled with error
+    } // if
+    //#endregion validating request
+    
+    
+    
+    //#region save changes
+    try {
+        const deletedProduct : Pick<ProductDetail, 'id'> = (
+            await prisma.product.delete({
+                where  : {
+                    id : id,
+                },
+                select : {
+                    id : true,
+                },
+            })
+        );
+        return NextResponse.json(deletedProduct); // handled with success
+    }
+    catch (error: any) {
+        console.log('ERROR: ', error);
+        // if (error instanceof RecordNotFound) return NextResponse.json({ error: 'invalid ID' }, { status: 400 }); // handled with error
+        return NextResponse.json({ error: error }, { status: 500 }); // handled with error
+    } // try
+    //#endregion save changes
 });

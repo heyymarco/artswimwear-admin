@@ -119,6 +119,7 @@ import {
     
     // hooks:
     useUpdateProduct,
+    useDeleteProduct,
     
     usePostImage,
     useDeleteImage,
@@ -139,6 +140,7 @@ import {
     PAGE_PRODUCT_TAB_INFORMATIONS,
     PAGE_PRODUCT_TAB_IMAGES,
     PAGE_PRODUCT_TAB_DESCRIPTION,
+    PAGE_PRODUCT_TAB_DELETE,
 }                           from '@/website.config'
 import {
     COMMERCE_CURRENCY_FRACTION_MAX,
@@ -236,13 +238,14 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
     
     
     // stores:
-    const [updateProduct    , {isLoading : isLoadingModel            }] = useUpdateProduct();
+    const [updateProduct    , {isLoading : isLoadingModelUpdate      }] = useUpdateProduct();
+    const [deleteProduct    , {isLoading : isLoadingModelDelete      }] = useDeleteProduct();
     const [postImage                                                  ] = usePostImage();
     const [commitDeleteImage, {isLoading : isLoadingCommitDeleteImage}] = useDeleteImage();
     const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
-    const isCommiting = isLoadingModel || isLoadingCommitDeleteImage;
+    const isCommiting = isLoadingModelUpdate || isLoadingCommitDeleteImage;
     const isReverting = isLoadingRevertDeleteImage;
-    const isLoading   = isCommiting || isReverting;
+    const isLoading   = isCommiting || isReverting || isLoadingModelDelete;
     
     
     
@@ -310,6 +313,44 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
             }).unwrap();
             
             await handleClose(/*commitImages = */true, [updatingProductTask]);
+        }
+        catch (error: any) {
+            showMessageFetchError(error);
+        } // try
+    });
+    const handleDelete = useEvent(async () => {
+        // conditions:
+        if (
+            (await showMessage<'yes'|'no'>({
+                theme    : 'warning',
+                title    : <h1>Delete Confirmation</h1>,
+                message  : <>
+                    <p>
+                        Are you sure to delete product <strong>{product.name}</strong>?
+                    </p>
+                    <p>
+                        The associated product in existing orders will be marked as <strong>DELETED PRODUCT</strong>.
+                    </p>
+                </>,
+                options  : {
+                    yes  : <ButtonIcon icon='check'          theme='primary'>Yes</ButtonIcon>,
+                    no   : <ButtonIcon icon='not_interested' theme='secondary' autoFocus={true}>No</ButtonIcon>,
+                },
+            }))
+            !==
+            'yes'
+        ) return false;
+        if (!isMounted.current) return false; // the component was unloaded before awaiting returned => do nothing
+        
+        
+        
+        // actions:
+        try {
+            await deleteProduct({
+                id : product.id,
+            }).unwrap();
+            
+            await handleClose(/*commitImages = */false);
         }
         catch (error: any) {
             showMessageFetchError(error);
@@ -578,6 +619,11 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                                 placeholder='Type product description here...'
                             />
                         </WysiwygEditor>
+                    </TabPanel>
+                    <TabPanel label={PAGE_PRODUCT_TAB_DELETE} panelComponent={<Content theme='warning' className={styleSheet.deleteTab} />}>
+                        <ButtonIcon icon={isLoadingModelDelete ? 'busy' : 'delete'} theme='danger' onClick={handleDelete}>
+                            Delete Product <strong>{product.name}</strong>
+                        </ButtonIcon>
                     </TabPanel>
                 </Tab>
             </ValidationProvider>
