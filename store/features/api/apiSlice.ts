@@ -239,6 +239,22 @@ export const apiSlice = createApi({
                 await handleCumulativeUpdateCacheEntry('getUserPage', (arg.id !== ''), api);
             },
         }),
+        deleteUser   : builder.mutation<Pick<UserDetail, 'id'>, MutationArgs<Pick<UserDetail, 'id'>>>({
+            query: (patch) => ({
+                url    : 'user',
+                method : 'DELETE',
+                body   : patch
+            }),
+            invalidatesTags: (user, error, arg) => [
+                ...((!user ? [{
+                    type : 'Users',
+                    id   : 'USER_LIST', // delete unspecified => invalidates the whole list
+                }] : [{
+                    type : 'Users',
+                    id   : user.id,     // delete existing    => invalidates the modified
+                }]) as Array<{ type: 'Users', id: string }>),
+            ],
+        }),
         
         getRoleList  : builder.query<EntityState<RoleDetail>, void>({
             query : () => ({
@@ -456,6 +472,7 @@ export const {
     
     useGetUserPageQuery      : useGetUserPage,
     useUpdateUserMutation    : useUpdateUser,
+    useDeleteUserMutation    : useDeleteUser,
     
     useGetRoleListQuery      : useGetRoleList,
     useUpdateRoleMutation    : useUpdateRole,

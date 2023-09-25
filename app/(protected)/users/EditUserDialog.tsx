@@ -127,6 +127,7 @@ import {
     
     // hooks:
     useUpdateUser,
+    useDeleteUser,
     
     usePostImage,
     useDeleteImage,
@@ -149,6 +150,7 @@ import {
     PAGE_USER_TAB_ACCOUNT,
     PAGE_USER_TAB_IMAGE,
     PAGE_USER_TAB_ROLE,
+    PAGE_USER_TAB_DELETE,
 }                           from '@/website.config'
 
 
@@ -403,13 +405,14 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
     
     
     // stores:
-    const [updateUser       , {isLoading : isLoadingModel            }] = useUpdateUser();
+    const [updateUser       , {isLoading : isLoadingModelUpdate      }] = useUpdateUser();
+    const [deleteUser       , {isLoading : isLoadingModelDelete      }] = useDeleteUser();
     const [postImage                                                  ] = usePostImage();
     const [commitDeleteImage, {isLoading : isLoadingCommitDeleteImage}] = useDeleteImage();
     const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
-    const isCommiting = isLoadingModel || isLoadingCommitDeleteImage;
+    const isCommiting = isLoadingModelUpdate || isLoadingCommitDeleteImage;
     const isReverting = isLoadingRevertDeleteImage;
-    const isLoading   = isCommiting || isReverting;
+    const isLoading   = isCommiting || isReverting || isLoadingModelDelete;
     
     
     
@@ -472,6 +475,41 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
             });
             
             await handleClose(/*commitImages = */true, [updatingUserTask]);
+        }
+        catch (error: any) {
+            showMessageFetchError(error);
+        } // try
+    });
+    const handleDelete = useEvent(async () => {
+        // conditions:
+        if (
+            (await showMessage<'yes'|'no'>({
+                theme    : 'warning',
+                title    : <h1>Delete Confirmation</h1>,
+                message  : <>
+                    <p>
+                        Are you sure to delete user <strong>{user.name}</strong>?
+                    </p>
+                </>,
+                options  : {
+                    yes  : <ButtonIcon icon='check'          theme='primary'>Yes</ButtonIcon>,
+                    no   : <ButtonIcon icon='not_interested' theme='secondary' autoFocus={true}>No</ButtonIcon>,
+                },
+            }))
+            !==
+            'yes'
+        ) return false;
+        if (!isMounted.current) return false; // the component was unloaded before awaiting returned => do nothing
+        
+        
+        
+        // actions:
+        try {
+            await deleteUser({
+                id : user.id,
+            }).unwrap();
+            
+            await handleClose(/*commitImages = */false);
         }
         catch (error: any) {
             showMessageFetchError(error);
@@ -742,6 +780,11 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                                 }
                             />
                     }</TabPanel>
+                    <TabPanel label={PAGE_USER_TAB_DELETE} panelComponent={<Content theme='warning' className={styleSheet.deleteTab} />}>
+                        <ButtonIcon icon={isLoadingModelDelete ? 'busy' : 'delete'} theme='danger' onClick={handleDelete}>
+                            Delete User <strong>{user.name}</strong>
+                        </ButtonIcon>
+                    </TabPanel>
                 </Tab>
             </ValidationProvider>
             <CardFooter onKeyDown={handleKeyDown}>

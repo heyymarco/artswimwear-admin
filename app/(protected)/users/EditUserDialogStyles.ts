@@ -238,6 +238,20 @@ const usesRoleItemLayout = () => { // the <ListItem> of role list
         }),
     });
 };
+export const usesDeleteTabLayout = () => {
+    return style({
+        // layout:
+        display      : 'grid',
+        justifyItems : 'center',  // default center the items horizontally
+        alignItems   : 'center',  // default center the items vertically
+        
+        
+        
+        // borders:
+        borderWidth  : 0,
+        borderRadius : 0,
+    });
+};
 
 export default () => [
     scope('cardBody', {
@@ -263,5 +277,8 @@ export default () => [
     }),
     scope('roleItem', { // the <ListItem> of role list
         ...usesRoleItemLayout(),
+    }, { specificityWeight: 2 }),
+    scope('deleteTab', {
+        ...usesDeleteTabLayout(),
     }, { specificityWeight: 2 }),
 ];
