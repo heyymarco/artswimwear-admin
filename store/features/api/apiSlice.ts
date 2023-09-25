@@ -98,7 +98,7 @@ export const apiSlice = createApi({
     }),
     tagTypes: ['Products', 'Orders', 'Users', 'Roles'],
     endpoints : (builder) => ({
-        getProductList  : builder.query<EntityState<ProductPreview>, void>({
+        getProductList    : builder.query<EntityState<ProductPreview>, void>({
             query : () => ({
                 url    : 'product',
                 method : 'GET',
@@ -107,7 +107,7 @@ export const apiSlice = createApi({
                 return productListAdapter.addMany(productListAdapter.getInitialState(), response);
             },
         }),
-        getProductPage  : builder.query<Pagination<ProductDetail>, PaginationArgs>({
+        getProductPage    : builder.query<Pagination<ProductDetail>, PaginationArgs>({
             query : (params) => ({
                 url    : 'product',
                 method : 'POST',
@@ -127,7 +127,7 @@ export const apiSlice = createApi({
                 ];
             },
         }),
-        updateProduct   : builder.mutation<ProductDetail, MutationArgs<ProductDetail>>({
+        updateProduct     : builder.mutation<ProductDetail, MutationArgs<ProductDetail>>({
             query: (patch) => ({
                 url    : 'product',
                 method : 'PATCH',
@@ -147,7 +147,7 @@ export const apiSlice = createApi({
                 await handleCumulativeUpdateCacheEntry('getProductPage', (arg.id !== ''), api);
             },
         }),
-        deleteProduct   : builder.mutation<Pick<ProductDetail, 'id'>, MutationArgs<Pick<ProductDetail, 'id'>>>({
+        deleteProduct     : builder.mutation<Pick<ProductDetail, 'id'>, MutationArgs<Pick<ProductDetail, 'id'>>>({
             query: (params) => ({
                 url    : 'product',
                 method : 'DELETE',
@@ -164,7 +164,7 @@ export const apiSlice = createApi({
             ],
         }),
         
-        getOrderPage    : builder.query<Pagination<OrderDetail>, PaginationArgs>({
+        getOrderPage      : builder.query<Pagination<OrderDetail>, PaginationArgs>({
             query : (params) => ({
                 url    : 'order',
                 method : 'POST',
@@ -184,7 +184,7 @@ export const apiSlice = createApi({
                 ];
             },
         }),
-        updateOrder     : builder.mutation<OrderDetail, MutationArgs<OrderDetail>>({
+        updateOrder       : builder.mutation<OrderDetail, MutationArgs<OrderDetail>>({
             query: (patch) => ({
                 url    : 'order',
                 method : 'PATCH',
@@ -205,7 +205,7 @@ export const apiSlice = createApi({
             },
         }),
         
-        getShippingList : builder.query<EntityState<ShippingPreview>, void>({
+        getShippingList   : builder.query<EntityState<ShippingPreview>, void>({
             query : () => ({
                 url    : 'shipping',
                 method : 'GET',
@@ -215,7 +215,7 @@ export const apiSlice = createApi({
             },
         }),
         
-        getUserPage   : builder.query<Pagination<UserDetail>, PaginationArgs>({
+        getUserPage       : builder.query<Pagination<UserDetail>, PaginationArgs>({
             query : (params) => ({
                 url    : 'user',
                 method : 'POST',
@@ -235,7 +235,7 @@ export const apiSlice = createApi({
                 ];
             },
         }),
-        updateUser    : builder.mutation<UserDetail, MutationArgs<UserDetail>>({
+        updateUser        : builder.mutation<UserDetail, MutationArgs<UserDetail>>({
             query: (patch) => ({
                 url    : 'user',
                 method : 'PATCH',
@@ -255,7 +255,7 @@ export const apiSlice = createApi({
                 await handleCumulativeUpdateCacheEntry('getUserPage', (arg.id !== ''), api);
             },
         }),
-        deleteUser    : builder.mutation<Pick<UserDetail, 'id'>, MutationArgs<Pick<UserDetail, 'id'>>>({
+        deleteUser        : builder.mutation<Pick<UserDetail, 'id'>, MutationArgs<Pick<UserDetail, 'id'>>>({
             query: (params) => ({
                 url    : 'user',
                 method : 'DELETE',
@@ -271,14 +271,20 @@ export const apiSlice = createApi({
                 }]) as Array<{ type: 'Users', id: string }>),
             ],
         }),
-        availableUser : builder.mutation<boolean, string>({
+        availableUsername : builder.mutation<boolean, string>({
             query: (username) => ({
                 url    : `user/check-username?username=${encodeURIComponent(username)}`,
                 method : 'GET',
             }),
         }),
+        availableEmail    : builder.mutation<boolean, string>({
+            query: (email) => ({
+                url    : `user/check-email?email=${encodeURIComponent(email)}`,
+                method : 'GET',
+            }),
+        }),
         
-        getRoleList  : builder.query<EntityState<RoleDetail>, void>({
+        getRoleList       : builder.query<EntityState<RoleDetail>, void>({
             query : () => ({
                 url    : 'role',
                 method : 'GET',
@@ -300,7 +306,7 @@ export const apiSlice = createApi({
                 ];
             },
         }),
-        updateRole   : builder.mutation<RoleDetail, MutationArgs<RoleDetail>>({
+        updateRole        : builder.mutation<RoleDetail, MutationArgs<RoleDetail>>({
             query: (patch) => ({
                 url    : 'role',
                 method : 'PATCH',
@@ -316,7 +322,7 @@ export const apiSlice = createApi({
                 }]) as Array<{ type: 'Roles', id: string }>),
             ],
         }),
-        deleteRole   : builder.mutation<Pick<RoleDetail, 'id'>, MutationArgs<Pick<RoleDetail, 'id'>>>({
+        deleteRole        : builder.mutation<Pick<RoleDetail, 'id'>, MutationArgs<Pick<RoleDetail, 'id'>>>({
             query: (params) => ({
                 url    : 'role',
                 method : 'DELETE',
@@ -333,7 +339,7 @@ export const apiSlice = createApi({
             ],
         }),
         
-        postImage    : builder.mutation<ImageId, { image: File, folder?: string, onUploadProgress?: (percentage: number) => void, abortSignal?: AbortSignal }>({
+        postImage         : builder.mutation<ImageId, { image: File, folder?: string, onUploadProgress?: (percentage: number) => void, abortSignal?: AbortSignal }>({
             query: ({ image, folder, onUploadProgress, abortSignal }) => ({
                 url     : 'upload',
                 method  : 'POST',
@@ -352,7 +358,7 @@ export const apiSlice = createApi({
                 abortSignal,
             }),
         }),
-        deleteImage  : builder.mutation<ImageId[], { imageId: string[] }>({
+        deleteImage       : builder.mutation<ImageId[], { imageId: string[] }>({
             query: ({ imageId: imageIds }) => ({
                 url     : 'upload',
                 method  : 'PATCH',
@@ -483,25 +489,25 @@ const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, Q
 
 
 export const {
-    useGetProductListQuery   : useGetProductList,
-    useGetProductPageQuery   : useGetProductPage,
-    useUpdateProductMutation : useUpdateProduct,
-    useDeleteProductMutation : useDeleteProduct,
+    useGetProductListQuery       : useGetProductList,
+    useGetProductPageQuery       : useGetProductPage,
+    useUpdateProductMutation     : useUpdateProduct,
+    useDeleteProductMutation     : useDeleteProduct,
     
-    useGetOrderPageQuery     : useGetOrderPage,
-    useUpdateOrderMutation   : useUpdateOrder,
+    useGetOrderPageQuery         : useGetOrderPage,
+    useUpdateOrderMutation       : useUpdateOrder,
     
-    useGetShippingListQuery  : useGetShippingList,
+    useGetShippingListQuery      : useGetShippingList,
     
-    useGetUserPageQuery      : useGetUserPage,
-    useUpdateUserMutation    : useUpdateUser,
-    useDeleteUserMutation    : useDeleteUser,
-    useAvailableUserMutation : useAvailableUser,
+    useGetUserPageQuery          : useGetUserPage,
+    useUpdateUserMutation        : useUpdateUser,
+    useDeleteUserMutation        : useDeleteUser,
+    useAvailableUsernameMutation : useAvailableUsername,
     
-    useGetRoleListQuery      : useGetRoleList,
-    useUpdateRoleMutation    : useUpdateRole,
-    useDeleteRoleMutation    : useDeleteRole,
+    useGetRoleListQuery          : useGetRoleList,
+    useUpdateRoleMutation        : useUpdateRole,
+    useDeleteRoleMutation        : useDeleteRole,
     
-    usePostImageMutation     : usePostImage,
-    useDeleteImageMutation   : useDeleteImage,
+    usePostImageMutation         : usePostImage,
+    useDeleteImageMutation       : useDeleteImage,
 } = apiSlice;
