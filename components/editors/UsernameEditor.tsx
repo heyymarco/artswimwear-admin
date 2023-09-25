@@ -52,6 +52,11 @@ import {
 import type {
     ValidityStatus,
 }                           from '@heymarco/next-auth'
+import {
+    getValidityTheme,
+    getValidityIcon,
+    isClientError,
+}                           from '@heymarco/next-auth/utilities'
 
 // stores:
 import {
@@ -74,27 +79,6 @@ import {
 import {
     credentialsConfig,
 }                           from '@/credentials.config'
-
-
-
-// utilities:
-const getValidityTheme = (isValid: boolean|'unknown'|'loading'|'error'|undefined): ThemeName => {
-    switch (isValid) {
-        case true      : return 'success';
-        case false     : return 'danger';
-        case 'unknown' : return 'danger';
-        default        : return 'secondary';
-    } // switch
-};
-export const getValidityIcon  = (isValid: boolean|'unknown'|'loading'|'error'|undefined): IconProps['icon'] => {
-    switch (isValid) {
-        case true      : return 'check';
-        case false     : return 'error_outline';
-        case 'loading' : return 'busy';
-        case 'unknown' : return 'help_outline';
-        default        : return 'help_outline';
-    } // switch
-};
 
 
 
@@ -224,9 +208,8 @@ const UsernameEditor = <TElement extends Element = HTMLElement>(props: UsernameE
                 // save the success:
                 setIsValidAvailable(true);
             }
-            catch (fetchError: any) {
-                const errorCode = fetchError?.status ?? fetchError?.cause?.status;
-                setIsValidAvailable(((errorCode >= 400) && (errorCode <= 499)) ? false : 'error');
+            catch (error) {
+                setIsValidAvailable(isClientError(error) ? false : 'error');
             } // try
         })();
     }, [value, isValidLength, isValidFormat]);
