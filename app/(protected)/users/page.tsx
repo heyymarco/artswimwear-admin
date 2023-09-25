@@ -89,6 +89,9 @@ import {
     TextEditor,
 }                           from '@/components/editors/TextEditor'
 import {
+    UsernameEditor,
+}                           from '@/components/editors/UsernameEditor'
+import {
     CurrencyEditor,
 }                           from '@/components/editors/CurrencyEditor'
 import {
@@ -302,9 +305,9 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
             {/* edit dialog: */}
             <ModalStatus theme='primary' viewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
                 {!!editMode && (editMode !== 'full') && <>
-                    {(editMode === 'name'      ) && <SimpleEditModelDialog<UserDetail> model={model} updateModelApi={useUpdateUser} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor       type='text'  required={true } autoComplete='off' autoCapitalize='words' />} />}
-                    {(editMode === 'username'  ) && <SimpleEditModelDialog<UserDetail> model={model} updateModelApi={useUpdateUser} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor       type='text'  required={true } autoComplete='off' />} />}
-                    {(editMode === 'email'     ) && <SimpleEditModelDialog<UserDetail> model={model} updateModelApi={useUpdateUser} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor       type='email' required={true } autoComplete='off' />} />}
+                    {(editMode === 'name'      ) && <SimpleEditModelDialog<UserDetail> model={model} updateModelApi={useUpdateUser} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor       type='text'  required={true } autoComplete='nope' autoCapitalize='words' />} />}
+                    {(editMode === 'username'  ) && <SimpleEditModelDialog<UserDetail> model={model} updateModelApi={useUpdateUser} edit={editMode} onClose={handleEditDialogClose} editorComponent={<UsernameEditor                required={true } autoComplete='nope' currentValue={username ?? ''} />} />}
+                    {(editMode === 'email'     ) && <SimpleEditModelDialog<UserDetail> model={model} updateModelApi={useUpdateUser} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor       type='email' required={true } autoComplete='nope' />} />}
                 </>}
             </ModalStatus>
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
