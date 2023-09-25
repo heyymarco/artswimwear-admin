@@ -265,7 +265,7 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                 title    : <h1>Delete Confirmation</h1>,
                 message  : <>
                     <p>
-                        Are you sure to remove <strong>{role.name}</strong> role?
+                        Are you sure to delete <strong>{role.name}</strong> role?
                     </p>
                     <p>
                         The users associated with the {role.name} role will still be logged in but will not have any authority.<br />
