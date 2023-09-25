@@ -45,13 +45,6 @@ export interface UsernameEditorProps<TElement extends Element = HTMLElement>
 {
 }
 const UsernameEditor = <TElement extends Element = HTMLElement>(props: UsernameEditorProps<TElement>): JSX.Element|null => {
-    // rest props:
-    const {
-        currentValue,
-    ...restUniqueEditorProps} = props;
-    
-    
-    
     // stores:
     const [availableUsername] = useAvailableUsername();
     
@@ -68,7 +61,7 @@ const UsernameEditor = <TElement extends Element = HTMLElement>(props: UsernameE
     return (
         <UniqueEditor<TElement>
             // other props:
-            {...restUniqueEditorProps}
+            {...props}
             
             
             
