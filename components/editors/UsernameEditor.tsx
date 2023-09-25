@@ -13,7 +13,7 @@ import {
 // stores:
 import {
     // hooks:
-    useAvailableUser,
+    useAvailableUsername,
 }                           from '@/store/features/api/apiSlice'
 
 // internals:
@@ -53,13 +53,13 @@ const UsernameEditor = <TElement extends Element = HTMLElement>(props: UsernameE
     
     
     // stores:
-    const [availableUser] = useAvailableUser();
+    const [availableUsername] = useAvailableUsername();
     
     
     
     // handlers:
     const handleCheckAvailable = useEvent(async (value: string): Promise<boolean> => {
-        return await availableUser(value).unwrap();
+        return await availableUsername(value).unwrap();
     });
     
     
