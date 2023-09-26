@@ -86,8 +86,8 @@ import {
 
 // internal components:
 import {
-    NameEditor,
-}                           from '@/components/editors/NameEditor'
+    UniqueRolenameEditor,
+}                           from '@/components/editors/UniqueRolenameEditor'
 import {
     UploadImage,
 }                           from '@/components/editors/UploadImage'
@@ -412,7 +412,7 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                     <TabPanel label={PAGE_ROLE_TAB_ROLE} panelComponent={<Generic className={styleSheet.roleTab} />}>
                         <form ref={editorFormRef}>
                             <span className='name label'>Name:</span>
-                            <NameEditor
+                            <UniqueRolenameEditor
                                 // refs:
                                 elmRef={firstEditorRef}
                                 
@@ -424,6 +424,7 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                                 
                                 
                                 // values:
+                                currentValue={role.name ?? ''}
                                 value={name}
                                 onChange={(value) => {
                                     setName(value);

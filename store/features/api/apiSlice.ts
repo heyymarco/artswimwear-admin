@@ -344,6 +344,12 @@ export const apiSlice = createApi({
                 }]) as Array<{ type: 'Roles', id: string }>),
             ],
         }),
+        availableRolename : builder.mutation<boolean, string>({
+            query: (name) => ({
+                url    : `role/check-name?name=${encodeURIComponent(name)}`,
+                method : 'GET',
+            }),
+        }),
         
         postImage         : builder.mutation<ImageId, { image: File, folder?: string, onUploadProgress?: (percentage: number) => void, abortSignal?: AbortSignal }>({
             query: ({ image, folder, onUploadProgress, abortSignal }) => ({
@@ -515,6 +521,7 @@ export const {
     useGetRoleListQuery          : useGetRoleList,
     useUpdateRoleMutation        : useUpdateRole,
     useDeleteRoleMutation        : useDeleteRole,
+    useAvailableRolenameMutation : useAvailableRolename,
     
     usePostImageMutation         : usePostImage,
     useDeleteImageMutation       : useDeleteImage,
