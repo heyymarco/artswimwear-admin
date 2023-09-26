@@ -84,6 +84,7 @@ export const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditMod
         return model[edit] as TModel[keyof TModel];
     });
     const handleUpdateModel  = useEvent<UpdateModelEventHandler<TModel[keyof TModel], TModel, Extract<keyof TModel, string>>>(async (value, edit, model) => {
+        if (value === '') value = null as typeof value; // auto convert empty string to null
         await updateModel({
             // @ts-ignore
             id     : model.id,
