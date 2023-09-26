@@ -23,19 +23,17 @@ import {
 import {
     TextEditor,
 }                           from '@/components/editors/TextEditor'
+import {
+    // react components:
+    UniqueEditorProps,
+    UniqueEditor,
+}                           from '@/components/editors/UniqueEditor'
 
 // stores:
 import {
     // hooks:
     useAvailablePath,
 }                           from '@/store/features/api/apiSlice'
-
-// internals:
-import {
-    // react components:
-    UniqueEditorProps,
-    UniqueEditor,
-}                           from '@/components/editors/UniqueEditor'
 
 // configs:
 import {
