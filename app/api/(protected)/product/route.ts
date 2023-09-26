@@ -4,10 +4,15 @@ import {
     NextResponse,
 }                           from 'next/server'
 
-// next-next:
+// next-auth:
 import {
     getServerSession,
 }                           from 'next-auth'
+
+// heymarco components:
+import type {
+    Session,
+}                           from '@heymarco/next-auth'
 
 // next-connect:
 import {
@@ -81,6 +86,7 @@ router
     // conditions:
     const session = await getServerSession(authOptions);
     if (!session) return NextResponse.json({ error: 'Please sign in.' }, { status: 401 }); // handled with error: unauthorized
+    (req as any).session = session;
     
     
     
@@ -88,6 +94,10 @@ router
     return await next();
 })
 .get(async (req) => {
+    const session = (req as any).session as Session;
+    
+    
+    
     const productPreviews : ProductPreview[] = (
         (await prisma.product.findMany({
             select: {

@@ -4,7 +4,7 @@ import {
     NextResponse,
 }                           from 'next/server'
 
-// next-next:
+// next-auth:
 import {
     getServerSession,
 }                           from 'next-auth'
