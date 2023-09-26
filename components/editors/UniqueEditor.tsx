@@ -202,7 +202,7 @@ const UniqueEditor = <TElement extends Element = HTMLElement>(props: UniqueEdito
             return;
         } // if
         
-        console.log('checking: ', {value, currentValue});
+        
         
         // actions:
         (async () => {
