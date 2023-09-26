@@ -93,8 +93,8 @@ import type {
     EditorChangeEventHandler,
 }                           from '@/components/editors/Editor'
 import {
-    TextEditor,
-}                           from '@/components/editors/TextEditor'
+    NameEditor,
+}                           from '@/components/editors/NameEditor'
 import {
     UsernameEditor,
 }                           from '@/components/editors/UsernameEditor'
@@ -681,7 +681,29 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                     <TabPanel label={PAGE_USER_TAB_ACCOUNT} panelComponent={<Generic className={styleSheet.accountTab} />}>
                         <form ref={editorFormRef}>
                             <span className='name label'>Name:</span>
-                            <TextEditor     className='name editor'       aria-label='Name'     autoComplete='nope' required={true }  value={name}                                              onChange={(value) => { setName(value)    ; setIsModified(true); }} elmRef={firstEditorRef} autoCapitalize='words' />
+                            <NameEditor
+                                // refs:
+                                elmRef={firstEditorRef}
+                                
+                                
+                                
+                                // classes:
+                                className='name editor'
+                                
+                                
+                                
+                                // values:
+                                value={name}
+                                onChange={(value) => {
+                                    setName(value);
+                                    setIsModified(true);
+                                }}
+                                
+                                
+                                
+                                // formats:
+                                autoComplete='nope'
+                            />
                             
                             <span className='username label'>Username:</span>
                             <UsernameEditor className='username editor'   aria-label='Username' autoComplete='nope' required={false}  currentValue={user.username ?? ''} value={username ?? ''} onChange={(value) => { setUsername(value); setIsModified(true); }} />

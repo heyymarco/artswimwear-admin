@@ -78,8 +78,8 @@ import {
 
 // internal components:
 import {
-    TextEditor,
-}                           from '@/components/editors/TextEditor'
+    NameEditor,
+}                           from '@/components/editors/NameEditor'
 import {
     PathEditor,
 }                           from '@/components/editors/PathEditor'
@@ -512,7 +512,25 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                     <TabPanel label={PAGE_PRODUCT_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                         <form ref={editorFormRef}>
                             <span className='name label'>Name:</span>
-                            <TextEditor           className='name editor'       aria-label='Name'            required={true}                              value={name}           onChange={(value) => { setName(value)          ; setIsModified(true); handleNameChange(value); }} elmRef={((defaultExpandedTabIndex ?? 0) === 0) ? firstEditorRef : undefined} />
+                            <NameEditor
+                                // refs:
+                                elmRef={((defaultExpandedTabIndex ?? 0) === 0) ? firstEditorRef : undefined}
+                                
+                                
+                                
+                                // classes:
+                                className='name editor'
+                                
+                                
+                                
+                                // values:
+                                value={name}
+                                onChange={(value) => {
+                                    setName(value);
+                                    setIsModified(true);
+                                    handleNameChange(value);
+                                }}
+                            />
                             
                             <span className='path label'>Path:</span>
                             <PathEditor

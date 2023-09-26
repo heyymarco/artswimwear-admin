@@ -76,6 +76,9 @@ import {
     TextEditor,
 }                           from '@/components/editors/TextEditor'
 import {
+    NameEditor,
+}                           from '@/components/editors/NameEditor'
+import {
     CompoundWithBadge,
 }                           from '@/components/CompoundWithBadge'
 import {
@@ -302,7 +305,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
             {/* edit dialog: */}
             <ModalStatus theme='primary' viewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
                 {!!editMode && (editMode !== 'full') && <>
-                    {(editMode === 'nickName'       ) && <SimpleEditCustomerDialog model={model} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor type='text'  required minLength={2} maxLength={30} autoCapitalize='words' />} />}
+                    {(editMode === 'nickName'       ) && <SimpleEditCustomerDialog model={model} edit={editMode} onClose={handleEditDialogClose} editorComponent={<NameEditor minLength={2} maxLength={30} />} />}
                     {(editMode === 'email'          ) && <SimpleEditCustomerDialog model={model} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor type='email' required minLength={5} maxLength={50} />} />}
                 </>}
             </ModalStatus>

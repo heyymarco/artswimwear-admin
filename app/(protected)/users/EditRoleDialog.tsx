@@ -86,8 +86,8 @@ import {
 
 // internal components:
 import {
-    TextEditor,
-}                           from '@/components/editors/TextEditor'
+    NameEditor,
+}                           from '@/components/editors/NameEditor'
 import {
     UploadImage,
 }                           from '@/components/editors/UploadImage'
@@ -412,7 +412,24 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                     <TabPanel label={PAGE_ROLE_TAB_ROLE} panelComponent={<Generic className={styleSheet.roleTab} />}>
                         <form ref={editorFormRef}>
                             <span className='name label'>Name:</span>
-                            <TextEditor className='name editor' aria-label='Name' required={true } value={name} onChange={(value) => { setName(value); setIsModified(true); }} elmRef={firstEditorRef} autoCapitalize='words' />
+                            <NameEditor
+                                // refs:
+                                elmRef={firstEditorRef}
+                                
+                                
+                                
+                                // classes:
+                                className='name editor'
+                                
+                                
+                                
+                                // values:
+                                value={name}
+                                onChange={(value) => {
+                                    setName(value);
+                                    setIsModified(true);
+                                }}
+                            />
                             
                             <span className='authorities label'>Authorities:</span>
                             <ValidationProvider enableValidation={false} inheritValidation={false}>
