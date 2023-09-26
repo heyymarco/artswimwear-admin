@@ -253,9 +253,9 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                     <Label
                         // variants:
                         theme={
-                            (props.theme === 'primary')
+                            (theme === 'primary')
                             ? 'primaryAlt'
-                            :   (props.theme === 'primaryAlt')
+                            :   (theme === 'primaryAlt')
                                 ? 'primary'
                                 : undefined
                         }
@@ -275,9 +275,9 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                         
                         // variants:
                         theme={
-                            (props.theme === 'primary')
+                            (theme === 'primary')
                             ? 'primaryAlt'
-                            :   (props.theme === 'primaryAlt')
+                            :   (theme === 'primaryAlt')
                                 ? 'primary'
                                 : undefined
                         }
