@@ -81,8 +81,8 @@ import {
     NameEditor,
 }                           from '@/components/editors/NameEditor'
 import {
-    PathEditor,
-}                           from '@/components/editors/PathEditor'
+    UniquePathEditor,
+}                           from '@/components/editors/UniquePathEditor'
 import {
     PriceEditor,
 }                           from '@/components/editors/PriceEditor'
@@ -527,7 +527,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             />
                             
                             <span className='path label'>Path:</span>
-                            <PathEditor
+                            <UniquePathEditor
                                 // classes:
                                 className='path editor'
                                 

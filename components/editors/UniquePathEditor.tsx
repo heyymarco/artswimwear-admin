@@ -43,7 +43,7 @@ import {
 
 
 // react components:
-export interface PathEditorProps<TElement extends Element = HTMLElement>
+export interface UniquePathEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
         Omit<UniqueEditorProps<TElement>,
@@ -58,7 +58,7 @@ export interface PathEditorProps<TElement extends Element = HTMLElement>
     // appearances:
     homeUrl ?: string
 }
-const PathEditor = <TElement extends Element = HTMLElement>(props: PathEditorProps<TElement>): JSX.Element|null => {
+const UniquePathEditor = <TElement extends Element = HTMLElement>(props: UniquePathEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // appearances:
@@ -137,6 +137,6 @@ const PathEditor = <TElement extends Element = HTMLElement>(props: PathEditorPro
     );
 };
 export {
-    PathEditor,
-    PathEditor as default,
+    UniquePathEditor,
+    UniquePathEditor as default,
 }
