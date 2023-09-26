@@ -82,7 +82,7 @@ import {
 }                           from '@/components/editors/TextEditor'
 import {
     PathEditor,
-}                           from '@/components/editors/Path2Editor'
+}                           from '@/components/editors/PathEditor'
 import {
     CurrencyEditor,
 }                           from '@/components/editors/CurrencyEditor'
