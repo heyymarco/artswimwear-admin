@@ -73,11 +73,11 @@ import {
     EditButton,
 }                           from '@/components/EditButton'
 import {
-    TextEditor,
-}                           from '@/components/editors/TextEditor'
-import {
     NameEditor,
 }                           from '@/components/editors/NameEditor'
+import {
+    EmailEditor,
+}                           from '@/components/editors/EmailEditor'
 import {
     CompoundWithBadge,
 }                           from '@/components/CompoundWithBadge'
@@ -305,8 +305,8 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
             {/* edit dialog: */}
             <ModalStatus theme='primary' viewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
                 {!!editMode && (editMode !== 'full') && <>
-                    {(editMode === 'nickName'       ) && <SimpleEditCustomerDialog model={model} edit={editMode} onClose={handleEditDialogClose} editorComponent={<NameEditor minLength={2} maxLength={30} />} />}
-                    {(editMode === 'email'          ) && <SimpleEditCustomerDialog model={model} edit={editMode} onClose={handleEditDialogClose} editorComponent={<TextEditor type='email' required minLength={5} maxLength={50} />} />}
+                    {(editMode === 'nickName'       ) && <SimpleEditCustomerDialog model={model} edit={editMode} onClose={handleEditDialogClose} editorComponent={<NameEditor />} />}
+                    {(editMode === 'email'          ) && <SimpleEditCustomerDialog model={model} edit={editMode} onClose={handleEditDialogClose} editorComponent={<EmailEditor />} />}
                 </>}
             </ModalStatus>
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
