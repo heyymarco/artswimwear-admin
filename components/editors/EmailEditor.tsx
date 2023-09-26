@@ -65,6 +65,21 @@ const EmailEditor = <TElement extends Element = HTMLElement>(props: EmailEditorP
             
             
             
+            // accessibilities:
+            aria-label={props['aria-label'] ?? 'Email'}
+            
+            
+            
+            // validations:
+            required={props.required ?? true}
+            
+            
+            
+            // formats:
+            type={props.type ?? 'email'}
+            
+            
+            
             // constraints:
             minLength        = {credentialsConfig.EMAIL_MIN_LENGTH}
             maxLength        = {credentialsConfig.EMAIL_MAX_LENGTH}
