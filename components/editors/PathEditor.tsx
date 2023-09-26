@@ -37,6 +37,11 @@ import {
     UniqueEditor,
 }                           from '@/components/editors/UniqueEditor'
 
+// configs:
+import {
+    STORE_WEBSITE_URL,
+}                           from '@/website.config'
+
 
 
 // react components:
@@ -57,7 +62,7 @@ export interface PathEditorProps<TElement extends Element = HTMLElement>
 const PathEditor = <TElement extends Element = HTMLElement>(props: PathEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
-        homeUrl,
+        homeUrl = STORE_WEBSITE_URL,
     ...restUniqueEditorProps} = props;
     
     
@@ -82,6 +87,11 @@ const PathEditor = <TElement extends Element = HTMLElement>(props: PathEditorPro
             
             
             
+            // accessibilities:
+            aria-label={props['aria-label'] ?? 'Path'}
+            
+            
+            
             // constraints:
             minLength        = {1}
             maxLength        = {100}
@@ -91,11 +101,21 @@ const PathEditor = <TElement extends Element = HTMLElement>(props: PathEditorPro
             
             
             
+            // validations:
+            required={props.required ?? true}
+            
+            
+            
             // components:
             editorComponent={
                 <EditorWithLabel
                     // appearances:
                     icon='home'
+                    
+                    
+                    
+                    // accessibilities:
+                    title={homeUrl}
                     
                     
                     

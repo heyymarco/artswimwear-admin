@@ -515,7 +515,20 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             <TextEditor           className='name editor'       aria-label='Name'            required={true}                              value={name}           onChange={(value) => { setName(value)          ; setIsModified(true); handleNameChange(value); }} elmRef={((defaultExpandedTabIndex ?? 0) === 0) ? firstEditorRef : undefined} />
                             
                             <span className='path label'>Path:</span>
-                            <PathEditor           className='path editor'       aria-label='Path'            required={true}  currentValue={product.path} value={path}           onChange={(value) => { setPath(value)          ; setIsPathModified(true);                      }} homeUrl={STORE_WEBSITE_URL} isValid={!!path} />
+                            <PathEditor
+                                // classes:
+                                className='path editor'
+                                
+                                
+                                
+                                // values:
+                                currentValue={product.path}
+                                value={path}
+                                onChange={(value) => {
+                                    setPath(value);
+                                    setIsPathModified(true);
+                                }}
+                            />
                             
                             <span className='price label'>Price:</span>
                             <CurrencyEditor       className='price editor'      aria-label='Price'           required={true}                              value={price}          onChange={(value) => { setPrice(value ?? 0)    ; setIsModified(true);                          }} currencySign={getCurrencySign()} currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX} />
