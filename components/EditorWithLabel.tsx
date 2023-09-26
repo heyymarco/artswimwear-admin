@@ -8,6 +8,7 @@ import {
 import {
     // react helper hooks:
     useMergeRefs,
+    useMergeClasses,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -40,7 +41,12 @@ export interface EditorWithLabelProps<TElement extends Element = HTMLElement, TV
         EditorProps<TElement, TValue>
 {
     // appearances:
-    icon            : IconProps<Element>['icon']
+    icon                  : IconProps<Element>['icon']
+    
+    
+    
+    // accessibilities:
+    title                ?: string
     
     
     
@@ -97,6 +103,11 @@ const EditorWithLabel = <TElement extends Element = HTMLElement, TValue extends 
         
         
         
+        // accessibilities:
+        title,
+        
+        
+        
         // components:
         editorComponent,
         groupComponent        = (<Group            /> as React.ReactComponentElement<any, GroupProps<Element>>),
@@ -117,6 +128,29 @@ const EditorWithLabel = <TElement extends Element = HTMLElement, TValue extends 
         
         // preserves the original `elmRef` from `props`:
         elmRef,
+    );
+    
+    
+    
+    // classes:
+    const allClasses     = [
+        ...(editorComponent.props.className ?? '').split(' '),
+        ...(editorComponent.props.classes   ?? []),
+    ];
+    const isSolidOrFluid = allClasses.includes('solid') || allClasses.includes('fluid');
+    const mergedClasses  = useMergeClasses(
+        // preserves the original `classes` from `editorComponent`:
+        editorComponent.props.classes,
+        
+        
+        
+        // preserves the original `classes` from `props`:
+        props.classes,
+        
+        
+        
+        // classes:
+        (isSolidOrFluid ? null : 'fluid'), // defaults to 'fluid'
     );
     
     
@@ -167,6 +201,11 @@ const EditorWithLabel = <TElement extends Element = HTMLElement, TValue extends 
             {
                 // classes:
                 className : labelComponent.props.className ?? 'solid',
+                
+                
+                
+                // accessibilities:
+                title     : labelComponent.props.title     ?? title,
             },
             
             
@@ -200,7 +239,12 @@ const EditorWithLabel = <TElement extends Element = HTMLElement, TValue extends 
                 
                 
                 // refs:
-                elmRef : mergedElmRef,
+                elmRef  : mergedElmRef,
+                
+                
+                
+                // classes:
+                classes : mergedClasses,
             },
         ),
         /* <LabelAfter> */
