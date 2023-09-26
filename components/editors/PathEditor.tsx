@@ -57,11 +57,13 @@ export interface PathEditorProps<TElement extends Element = HTMLElement>
             |'onCheckAvailable' // already handled internally
         >
 {
+    // appearances:
     homeUrl ?: string
 }
 const PathEditor = <TElement extends Element = HTMLElement>(props: PathEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
+        // appearances:
         homeUrl = STORE_WEBSITE_URL,
     ...restUniqueEditorProps} = props;
     
