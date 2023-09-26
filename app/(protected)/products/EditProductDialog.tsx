@@ -573,7 +573,24 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             />
                             
                             <span className='stock label'>Stock:</span>
-                            <StockEditor          className='stock editor'      aria-label='Stock'                                                        value={stock}          onChange={(value) => { setStock(value)         ; setIsModified(true);                          }} theme='secondary' />
+                            <StockEditor
+                                // variants:
+                                theme='primaryAlt'
+                                
+                                
+                                
+                                // classes:
+                                className='stock editor'
+                                
+                                
+                                
+                                // values:
+                                value={stock}
+                                onChange={(value) => {
+                                    setStock(value);
+                                    setIsModified(true);
+                                }}
+                            />
                             
                             <span className='visibility label'>Visibility:</span>
                             <VisibilityEditor     className='visibility editor' aria-label='Visibility'                                                   value={visibility}     onChange={(value) => { setVisibility(value)    ; setIsModified(true);                          }} theme='secondary' />

@@ -21,9 +21,12 @@ colorValues.foreg = colorValues.dark;
 
 const primaryCol = Color('hsl(185, 35%, 60%)').darken(0.2).saturate(0.2);
 defineTheme('primary',    primaryCol);
-colorValues.primaryText = primaryCol.lighten(1);
-colorValues.primaryMild = primaryCol.lighten(1);
-// colorValues.primaryMild = primaryCol.darken(0.5);
+colorValues.primaryText = primaryCol.lighten(0.95);
+colorValues.primaryMild = primaryCol.lighten(0.90);
+
+defineTheme('primaryAlt',             colorValues.primaryThin.lighten(0.6));
+(colorValues as any).primaryAltText = colorValues.primaryBold;
+(colorValues as any).primaryAltMild = colorValues.primaryThin;
 
 const secondaryCol = primaryCol.rotate(5).desaturate(0.5).lighten(0.65);
 defineTheme('secondary', secondaryCol);

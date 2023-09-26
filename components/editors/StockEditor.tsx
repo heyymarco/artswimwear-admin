@@ -219,6 +219,11 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
             
             
             
+            // accessibilities:
+            aria-label={props['aria-label'] ?? 'Stock'}
+            
+            
+            
             // states:
             expandedTabIndex={selectedTabLimited ? 1 : 0}
             onExpandedChange={handleExpandedChange}
@@ -245,12 +250,37 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                     // classes:
                     className={selectedTabLimited ? undefined : 'hidden'}
                 >
-                    <Label className='solid'>
+                    <Label
+                        // variants:
+                        theme={
+                            (props.theme === 'primary')
+                            ? 'primaryAlt'
+                            :   (props.theme === 'primaryAlt')
+                                ? 'primary'
+                                : undefined
+                        }
+                        
+                        
+                        
+                        // classes:
+                        className='solid'
+                    >
                         Current stock:
                     </Label>
                     <QuantityEditor<TElement>
                         // refs:
                         elmRef={numberInputRef}
+                        
+                        
+                        
+                        // variants:
+                        theme={
+                            (props.theme === 'primary')
+                            ? 'primaryAlt'
+                            :   (props.theme === 'primaryAlt')
+                                ? 'primary'
+                                : undefined
+                        }
                         
                         
                         

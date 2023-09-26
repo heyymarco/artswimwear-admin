@@ -290,7 +290,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                 {!!editMode && (editMode !== 'images') && (editMode !== 'full') && <>
                     {(editMode === 'name'      ) && <SimpleEditModelDialog<ProductDetail> model={model} updateModelApi={useUpdateProduct} edit={editMode} onClose={handleEditDialogClose} editorComponent={<NameEditor />} />}
                     {(editMode === 'price'     ) && <SimpleEditModelDialog<ProductDetail> model={model} updateModelApi={useUpdateProduct} edit={editMode} onClose={handleEditDialogClose} editorComponent={<PriceEditor />} />}
-                    {(editMode === 'stock'     ) && <SimpleEditModelDialog<ProductDetail> model={model} updateModelApi={useUpdateProduct} edit={editMode} onClose={handleEditDialogClose} editorComponent={<StockEditor      theme='secondary' />} />}
+                    {(editMode === 'stock'     ) && <SimpleEditModelDialog<ProductDetail> model={model} updateModelApi={useUpdateProduct} edit={editMode} onClose={handleEditDialogClose} editorComponent={<StockEditor      theme='primaryAlt' />} />}
                     {(editMode === 'visibility') && <SimpleEditModelDialog<ProductDetail> model={model} updateModelApi={useUpdateProduct} edit={editMode} onClose={handleEditDialogClose} editorComponent={<VisibilityEditor theme='secondary' />} />}
                 </>}
             </ModalStatus>
