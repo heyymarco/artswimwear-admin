@@ -84,8 +84,8 @@ import {
     PathEditor,
 }                           from '@/components/editors/PathEditor'
 import {
-    CurrencyEditor,
-}                           from '@/components/editors/CurrencyEditor'
+    PriceEditor,
+}                           from '@/components/editors/PriceEditor'
 import {
     ShippingWeightEditor,
 }                           from '@/components/editors/ShippingWeightEditor'
@@ -127,9 +127,6 @@ import {
 
 // internals:
 import {
-    getCurrencySign,
-}                           from '@/libs/formatters'
-import {
     resolveMediaUrl,
 }                           from '@/libs/mediaStorage.client'
 
@@ -142,9 +139,6 @@ import {
     PAGE_PRODUCT_TAB_DESCRIPTION,
     PAGE_PRODUCT_TAB_DELETE,
 }                           from '@/website.config'
-import {
-    COMMERCE_CURRENCY_FRACTION_MAX,
-}                           from '@/commerce.config'
 
 
 
@@ -549,7 +543,19 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             />
                             
                             <span className='price label'>Price:</span>
-                            <CurrencyEditor       className='price editor'      aria-label='Price'           required={true}                              value={price}          onChange={(value) => { setPrice(value ?? 0)    ; setIsModified(true);                          }} currencySign={getCurrencySign()} currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX} />
+                            <PriceEditor
+                                // classes:
+                                className='price editor'
+                                
+                                
+                                
+                                // values:
+                                value={price}
+                                onChange={(value) => {
+                                    setPrice(value ?? 0);
+                                    setIsModified(true);
+                                }}
+                            />
                             
                             <span className='sWeight label'>Shipping Weight:</span>
                             <ShippingWeightEditor className='sWeight editor'    aria-label='Shipping Weight' required={false}                             value={shippingWeight} onChange={(value) => { setShippingWeight(value); setIsModified(true);                          }} />

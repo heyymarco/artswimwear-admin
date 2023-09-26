@@ -77,8 +77,8 @@ import {
     NameEditor,
 }                           from '@/components/editors/NameEditor'
 import {
-    CurrencyEditor,
-}                           from '@/components/editors/CurrencyEditor'
+    PriceEditor,
+}                           from '@/components/editors/PriceEditor'
 import {
     StockEditor,
 }                           from '@/components/editors/StockEditor'
@@ -289,7 +289,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
             <ModalStatus theme='primary' viewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
                 {!!editMode && (editMode !== 'images') && (editMode !== 'full') && <>
                     {(editMode === 'name'      ) && <SimpleEditModelDialog<ProductDetail> model={model} updateModelApi={useUpdateProduct} edit={editMode} onClose={handleEditDialogClose} editorComponent={<NameEditor />} />}
-                    {(editMode === 'price'     ) && <SimpleEditModelDialog<ProductDetail> model={model} updateModelApi={useUpdateProduct} edit={editMode} onClose={handleEditDialogClose} editorComponent={<CurrencyEditor   currencySign={getCurrencySign()} currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX} />} />}
+                    {(editMode === 'price'     ) && <SimpleEditModelDialog<ProductDetail> model={model} updateModelApi={useUpdateProduct} edit={editMode} onClose={handleEditDialogClose} editorComponent={<PriceEditor />} />}
                     {(editMode === 'stock'     ) && <SimpleEditModelDialog<ProductDetail> model={model} updateModelApi={useUpdateProduct} edit={editMode} onClose={handleEditDialogClose} editorComponent={<StockEditor      theme='secondary' />} />}
                     {(editMode === 'visibility') && <SimpleEditModelDialog<ProductDetail> model={model} updateModelApi={useUpdateProduct} edit={editMode} onClose={handleEditDialogClose} editorComponent={<VisibilityEditor theme='secondary' />} />}
                 </>}

@@ -71,23 +71,13 @@ import type {
     EditorProps,
 }                           from '@/components/editors/Editor'
 import {
-    CurrencyEditor,
-}                           from '@/components/editors/CurrencyEditor'
+    PriceEditor,
+}                           from '@/components/editors/PriceEditor'
 
 // models:
 import type {
     PaymentMethod,
 }                           from '@prisma/client'
-
-// libs:
-import {
-    getCurrencySign,
-}                           from '@/libs/formatters'
-
-// configs:
-import {
-    COMMERCE_CURRENCY_FRACTION_MAX,
-}                           from '@/commerce.config'
 
 
 
@@ -312,17 +302,20 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     </DropdownListButton>
                 </Group>
                 
-                <CurrencyEditor
+                <PriceEditor
                     // classes:
                     className='amount'
+                    
+                    
+                    
+                    // accessibilities:
+                    aria-label='Amount'
                     
                     
                     
                     // values:
                     value={amount}
                     onChange={handleAmountChange}
-                    currencySign={getCurrencySign()}
-                    currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX}
                     
                     
                     
@@ -335,17 +328,20 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     placeholder='Amount'
                 />
                 
-                <CurrencyEditor
+                <PriceEditor
                     // classes:
                     className='fee'
+                    
+                    
+                    
+                    // accessibilities:
+                    aria-label='Fee'
                     
                     
                     
                     // values:
                     value={fee}
                     onChange={handleFeeChange}
-                    currencySign={getCurrencySign()}
-                    currencyFraction={COMMERCE_CURRENCY_FRACTION_MAX}
                     
                     
                     
