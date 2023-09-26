@@ -89,7 +89,7 @@ router
     try {
         const result = await prisma.role.findFirst({
             where  : {
-                name : { equals: name, mode: 'insensitive' } // case-insensitive comparison
+                name : { equals: name, mode: 'insensitive' }, // case-insensitive comparison
             },
             select : {
                 id : true,
