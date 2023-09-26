@@ -17,6 +17,11 @@ import type {
     Metadata,
 }                           from 'next'
 
+// next-auth:
+import {
+    useSession,
+}                           from 'next-auth/react'
+
 // cssfn:
 import {
     // style sheets:
@@ -309,6 +314,8 @@ export default function ProductPage(): JSX.Element|null {
     
     
     // states:
+    const { data: session, status: sessionStatus } = useSession();
+    const role = session?.role;
     const [page   , setPage   ] = useState<number>(1);
     const [perPage, setPerPage] = useState<number>(10);
     const getModelPaginationApi = useGetProductPage({ page, perPage });
@@ -318,8 +325,8 @@ export default function ProductPage(): JSX.Element|null {
     
     
     // jsx:
-    if (isLoadingAndNoData) return <PageLoading />;
-    if (isErrorAndNoData  ) return <PageError onRetry={refetch} />;
+    if (isLoadingAndNoData || (sessionStatus === 'loading'        )) return <PageLoading />;
+    if (isErrorAndNoData   || (sessionStatus === 'unauthenticated')) return <PageError onRetry={refetch} />;
     return (
         <Main className={styleSheet.page}>
             <SectionModelEditor<ProductDetail>
@@ -342,7 +349,9 @@ export default function ProductPage(): JSX.Element|null {
                     <ProductPreview model={undefined as any} />
                 }
                 modelCreateComponent={
-                    <ProductCreate onClose={undefined as any} />
+                    role?.product_c
+                    ? <ProductCreate onClose={undefined as any} />
+                    : undefined
                 }
             />
         </Main>

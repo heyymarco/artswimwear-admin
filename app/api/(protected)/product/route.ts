@@ -122,8 +122,6 @@ router
 })
 .post(async (req) => {
     /* required for displaying products page */
-    const session = (req as any).session as Session;
-    if (!session.role?.product_r) return NextResponse.json({ error: 'Not enough privileges.' }, { status: 403 }); // handled with error: forbidden
     
     
     
@@ -158,6 +156,13 @@ router
         }, { status: 400 }); // handled with error
     } // if
     //#endregion validating request
+    
+    
+    
+    //#region validating privileges
+    const session = (req as any).session as Session;
+    if (!session.role?.product_r) return NextResponse.json({ error: 'Not enough privileges.' }, { status: 403 }); // handled with error: forbidden
+    //#endregion validating privileges
     
     
     
@@ -247,6 +252,13 @@ router
         }, { status: 400 }); // handled with error
     } // if
     //#endregion validating request
+    
+    
+    
+    //#region validating privileges
+    const session = (req as any).session as Session;
+    if (!id ? !session.role?.product_c : !session.role?.product_u) return NextResponse.json({ error: 'Not enough privileges.' }, { status: 403 }); // handled with error: forbidden
+    //#endregion validating privileges
     
     
     
