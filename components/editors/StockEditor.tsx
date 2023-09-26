@@ -251,17 +251,6 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                     className={selectedTabLimited ? undefined : 'hidden'}
                 >
                     <Label
-                        // variants:
-                        theme={
-                            (theme === 'primary')
-                            ? 'primaryAlt'
-                            :   (theme === 'primaryAlt')
-                                ? 'primary'
-                                : undefined
-                        }
-                        
-                        
-                        
                         // classes:
                         className='solid'
                     >
