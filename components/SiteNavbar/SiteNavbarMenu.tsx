@@ -78,6 +78,7 @@ const SiteNavbarMenu = ({
     const isFullySignedIn  = !isSigningOut && (status === 'authenticated')   && !!session;
     const isFullySignedOut = !isSigningOut && (status === 'unauthenticated') &&  !session;
     const isBusy           =  isSigningOut || (status === 'loading');
+    const role = session?.role;
     
     
     
@@ -116,7 +117,7 @@ const SiteNavbarMenu = ({
             <Collapse className='list' mainClass={navbarExpanded ? '' : undefined} expanded={listExpanded}>
                 <Nav tag='ul' role='' {...basicVariantProps} listStyle='flat' gradient={navbarExpanded ? 'inherit' : false} orientation={navbarExpanded ? 'inline' : 'block'}>
                     {isFullySignedIn && <NavItem><Link href='/'>Dashboard</Link></NavItem>}
-                    {isFullySignedIn && <NavItem><Link href='/products'>Products</Link></NavItem>}
+                    {isFullySignedIn && !!role?.product_r && <NavItem><Link href='/products'>Products</Link></NavItem>}
                     {isFullySignedIn && <NavItem><Link href='/orders'>Orders</Link></NavItem>}
                     {isFullySignedIn && <NavItem><Link href='/users'>Users</Link></NavItem>}
                     

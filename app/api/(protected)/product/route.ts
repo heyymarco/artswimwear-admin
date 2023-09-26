@@ -9,10 +9,10 @@ import {
     getServerSession,
 }                           from 'next-auth'
 
-// heymarco components:
+// heymarco:
 import type {
     Session,
-}                           from '@heymarco/next-auth'
+}                           from '@heymarco/next-auth/server'
 
 // next-connect:
 import {
@@ -94,7 +94,7 @@ router
     return await next();
 })
 .get(async (req) => {
-    const session = (req as any).session as Session;
+    /* required for displaying related_products in orders page */
     
     
     
@@ -121,6 +121,12 @@ router
     return NextResponse.json(productPreviews); // handled with success
 })
 .post(async (req) => {
+    /* required for displaying products page */
+    const session = (req as any).session as Session;
+    if (!session.role?.product_r) return NextResponse.json({ error: 'Not enough privileges.' }, { status: 403 }); // handled with error: forbidden
+    
+    
+    
     if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
         await new Promise<void>((resolve) => {
             setTimeout(() => {
