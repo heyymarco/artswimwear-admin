@@ -593,7 +593,24 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             />
                             
                             <span className='visibility label'>Visibility:</span>
-                            <VisibilityEditor     className='visibility editor' aria-label='Visibility'                                                   value={visibility}     onChange={(value) => { setVisibility(value)    ; setIsModified(true);                          }} theme='secondary' />
+                            <VisibilityEditor
+                                // variants:
+                                theme='primaryAlt'
+                                
+                                
+                                
+                                // classes:
+                                className='visibility editor'
+                                
+                                
+                                
+                                // values:
+                                value={visibility}
+                                onChange={(value) => {
+                                    setVisibility(value);
+                                    setIsModified(true);
+                                }}
+                            />
                         </form>
                     </TabPanel>
                     <TabPanel label={PAGE_PRODUCT_TAB_IMAGES}       panelComponent={<Generic className={styleSheet.imagesTab} />}>

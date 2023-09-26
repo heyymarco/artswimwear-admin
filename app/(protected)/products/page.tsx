@@ -291,7 +291,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                     {(editMode === 'name'      ) && <SimpleEditModelDialog<ProductDetail> model={model} updateModelApi={useUpdateProduct} edit={editMode} onClose={handleEditDialogClose} editorComponent={<NameEditor />} />}
                     {(editMode === 'price'     ) && <SimpleEditModelDialog<ProductDetail> model={model} updateModelApi={useUpdateProduct} edit={editMode} onClose={handleEditDialogClose} editorComponent={<PriceEditor />} />}
                     {(editMode === 'stock'     ) && <SimpleEditModelDialog<ProductDetail> model={model} updateModelApi={useUpdateProduct} edit={editMode} onClose={handleEditDialogClose} editorComponent={<StockEditor      theme='primaryAlt' />} />}
-                    {(editMode === 'visibility') && <SimpleEditModelDialog<ProductDetail> model={model} updateModelApi={useUpdateProduct} edit={editMode} onClose={handleEditDialogClose} editorComponent={<VisibilityEditor theme='secondary' />} />}
+                    {(editMode === 'visibility') && <SimpleEditModelDialog<ProductDetail> model={model} updateModelApi={useUpdateProduct} edit={editMode} onClose={handleEditDialogClose} editorComponent={<VisibilityEditor theme='primaryAlt' />} />}
                 </>}
             </ModalStatus>
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>

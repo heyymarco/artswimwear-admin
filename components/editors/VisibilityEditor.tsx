@@ -92,6 +92,11 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
             
             
             
+            // accessibilities:
+            aria-label={props['aria-label'] ?? 'Visibility'}
+            
+            
+            
             // states:
             defaultExpandedTabIndex={possibleValues.findIndex((possibleValue) => (possibleValue.toUpperCase() === (value ?? defaultValue)?.toUpperCase()))}
             onExpandedChange={handleExpandedChange}
