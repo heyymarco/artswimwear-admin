@@ -698,11 +698,6 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                                     setName(value);
                                     setIsModified(true);
                                 }}
-                                
-                                
-                                
-                                // formats:
-                                autoComplete='nope'
                             />
                             
                             <span className='username label'>Username:</span>
