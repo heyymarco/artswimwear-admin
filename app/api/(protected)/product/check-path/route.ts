@@ -85,11 +85,11 @@ router
     
     
     
-    //#region save changes
+    //#region query result
     try {
-        const result = await prisma.product.findUnique({
+        const result = await prisma.product.findFirst({
             where  : {
-                path : path.toLowerCase()
+                path : { equals: path, mode: 'insensitive' }, // case-insensitive comparison
             },
             select : {
                 id : true,
@@ -112,5 +112,5 @@ router
         console.log('ERROR: ', error);
         return NextResponse.json({ error: error }, { status: 500 }); // handled with error
     } // try
-    //#endregion save changes
+    //#endregion query result
 });
