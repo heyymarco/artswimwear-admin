@@ -307,14 +307,14 @@ const UniqueEditor = <TElement extends Element = HTMLElement>(props: UniqueEdito
                     
                     
                     // values:
-                    value    : editorComponent.props.value   ?? value,
+                    value    : editorComponent.props.value   ?? props.value   ?? value,
                     onChange : handleChange,
                     
                     
                     
                     // states:
-                    enabled  : editorComponent.props.enabled ?? isEnabled,
-                    isValid  : editorComponent.props.isValid ?? (
+                    enabled  : editorComponent.props.enabled ?? props.enabled ?? isEnabled,
+                    isValid  : editorComponent.props.isValid ?? props.isValid ?? (
                         !value
                         ||
                         (
