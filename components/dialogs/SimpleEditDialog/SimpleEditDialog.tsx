@@ -97,6 +97,7 @@ export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit ex
     // dialogs:
     const {
         showMessage,
+        showMessageFieldError,
         showMessageFetchError,
     } = useDialogMessage();
     
@@ -113,13 +114,17 @@ export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit ex
             }, 0);
         });
         const editorElm = editorRef.current;
-        if (
+        const fieldError = (
             // for <Form>:
-            editorElm?.matches(':is(.invalidating, .invalidated)')
-            ||
+            (editorElm?.matches?.(':is(.invalidating, .invalidated)') ? editorElm : null)
+            ??
             // for <Input>:
-            editorElm?.parentElement?.matches(':is(.invalidating, .invalidated)')
-        ) return;
+            (editorElm?.parentElement?.matches?.(':is(.invalidating, .invalidated)') ? editorElm.parentElement : null)
+        );
+        if (fieldError) { // there is an invalid field
+            showMessageFieldError([fieldError]);
+            return;
+        } // if
         
         
         
