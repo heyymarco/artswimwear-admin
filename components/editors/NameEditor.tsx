@@ -4,7 +4,7 @@ import {
     default as React,
 }                           from 'react'
 
-// internals:
+// internal components:
 import {
     // react components:
     TextEditorProps,
