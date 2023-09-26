@@ -92,8 +92,8 @@ import {
     UniqueUsernameEditor,
 }                           from '@/components/editors/UniqueUsernameEditor'
 import {
-    EmailEditor,
-}                           from '@/components/editors/EmailEditor'
+    UniqueEmailEditor,
+}                           from '@/components/editors/UniqueEmailEditor'
 import {
     CurrencyEditor,
 }                           from '@/components/editors/CurrencyEditor'
@@ -310,7 +310,7 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
                 {!!editMode && (editMode !== 'full') && <>
                     {(editMode === 'name'      ) && <SimpleEditModelDialog<UserDetail> model={model} updateModelApi={useUpdateUser} edit={editMode} onClose={handleEditDialogClose} editorComponent={<NameEditor autoComplete='nope' />} />}
                     {(editMode === 'username'  ) && <SimpleEditModelDialog<UserDetail> model={model} updateModelApi={useUpdateUser} edit={editMode} onClose={handleEditDialogClose} editorComponent={<UniqueUsernameEditor currentValue={username ?? ''} required={true} />} />}
-                    {(editMode === 'email'     ) && <SimpleEditModelDialog<UserDetail> model={model} updateModelApi={useUpdateUser} edit={editMode} onClose={handleEditDialogClose} editorComponent={<EmailEditor          currentValue={email}                          autoComplete='nope' />} />}
+                    {(editMode === 'email'     ) && <SimpleEditModelDialog<UserDetail> model={model} updateModelApi={useUpdateUser} edit={editMode} onClose={handleEditDialogClose} editorComponent={<UniqueEmailEditor    currentValue={email} />} />}
                 </>}
             </ModalStatus>
             <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>

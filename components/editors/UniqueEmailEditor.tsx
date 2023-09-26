@@ -31,7 +31,7 @@ import {
 
 
 // react components:
-export interface EmailEditorProps<TElement extends Element = HTMLElement>
+export interface UniqueEmailEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
         Omit<UniqueEditorProps<TElement>,
@@ -44,7 +44,7 @@ export interface EmailEditorProps<TElement extends Element = HTMLElement>
         >
 {
 }
-const EmailEditor = <TElement extends Element = HTMLElement>(props: EmailEditorProps<TElement>): JSX.Element|null => {
+const UniqueEmailEditor = <TElement extends Element = HTMLElement>(props: UniqueEmailEditorProps<TElement>): JSX.Element|null => {
     // stores:
     const [availableEmail] = useAvailableEmail();
     
@@ -77,6 +77,7 @@ const EmailEditor = <TElement extends Element = HTMLElement>(props: EmailEditorP
             
             // formats:
             type={props.type ?? 'email'}
+            autoComplete={props.autoComplete ?? 'nope'}
             
             
             
@@ -90,6 +91,6 @@ const EmailEditor = <TElement extends Element = HTMLElement>(props: EmailEditorP
     );
 };
 export {
-    EmailEditor,
-    EmailEditor as default,
+    UniqueEmailEditor,
+    UniqueEmailEditor as default,
 }

@@ -99,8 +99,8 @@ import {
     UniqueUsernameEditor,
 }                           from '@/components/editors/UniqueUsernameEditor'
 import {
-    EmailEditor,
-}                           from '@/components/editors/EmailEditor'
+    UniqueEmailEditor,
+}                           from '@/components/editors/UniqueEmailEditor'
 import {
     UploadImage,
 }                           from '@/components/editors/UploadImage'
@@ -722,7 +722,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                             />
                             
                             <span className='email label'>Email:</span>
-                            <EmailEditor
+                            <UniqueEmailEditor
                                 // classes:
                                 className='email editor'
                                 
@@ -735,11 +735,6 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                                     setEmail(value);
                                     setIsModified(true);
                                 }}
-                                
-                                
-                                
-                                // formats:
-                                autoComplete='nope'
                             />
                         </form>
                     </TabPanel>
