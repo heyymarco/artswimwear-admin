@@ -10,6 +10,20 @@ import {
     useEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
+// reusable-ui components:
+import {
+    // react components:
+    Label,
+}                           from '@reusable-ui/components'      // a set of official Reusable-UI components
+
+// internal components:
+import {
+    EditorWithLabel,
+}                           from '@/components/EditorWithLabel'
+import {
+    TextEditor,
+}                           from '@/components/editors/TextEditor'
+
 // stores:
 import {
     // hooks:
@@ -74,6 +88,31 @@ const PathEditor = <TElement extends Element = HTMLElement>(props: PathEditorPro
             format           = {/^[a-zA-Z0-9-_.!$%&'*+=^`|~(){}<>\[\]]+$/}
             formatHint       = {<>Must be a common url-path format.</>}
             onCheckAvailable = {handleCheckAvailable}
+            
+            
+            
+            // components:
+            editorComponent={
+                <EditorWithLabel
+                    // appearances:
+                    icon='home'
+                    
+                    
+                    
+                    // components:
+                    labelBeforeComponent={
+                        <Label
+                            // classes:
+                            className='solid'
+                        >
+                            /products/
+                        </Label>
+                    }
+                    editorComponent={
+                        <TextEditor<TElement> />
+                    }
+                />
+            }
         />
     );
 };
