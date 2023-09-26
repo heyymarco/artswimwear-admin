@@ -73,7 +73,13 @@ const ShippingWeightEditor = <TElement extends Element = HTMLSpanElement>(props:
             
             
             
+            // accessibilities:
+            aria-label={props['aria-label'] ?? 'Shipping Weight'}
+            
+            
+            
             // validations:
+            required={props.required ?? false}
             step={props.step ?? 0.01}
             
             

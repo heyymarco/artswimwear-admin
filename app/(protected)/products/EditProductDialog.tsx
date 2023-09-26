@@ -558,7 +558,19 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             />
                             
                             <span className='sWeight label'>Shipping Weight:</span>
-                            <ShippingWeightEditor className='sWeight editor'    aria-label='Shipping Weight' required={false}                             value={shippingWeight} onChange={(value) => { setShippingWeight(value); setIsModified(true);                          }} />
+                            <ShippingWeightEditor
+                                // classes:
+                                className='sWeight editor'
+                                
+                                
+                                
+                                // values:
+                                value={shippingWeight}
+                                onChange={(value) => {
+                                    setShippingWeight(value);
+                                    setIsModified(true);
+                                }}
+                            />
                             
                             <span className='stock label'>Stock:</span>
                             <StockEditor          className='stock editor'      aria-label='Stock'                                                        value={stock}          onChange={(value) => { setStock(value)         ; setIsModified(true);                          }} theme='secondary' />
