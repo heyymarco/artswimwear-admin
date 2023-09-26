@@ -706,7 +706,25 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                             />
                             
                             <span className='username label'>Username:</span>
-                            <UsernameEditor className='username editor'   aria-label='Username' autoComplete='nope' required={false}  currentValue={user.username ?? ''} value={username ?? ''} onChange={(value) => { setUsername(value); setIsModified(true); }} />
+                            <UsernameEditor
+                                // classes:
+                                className='username editor'
+                                
+                                
+                                
+                                // values:
+                                currentValue={user.username ?? ''}
+                                value={username ?? ''}
+                                onChange={(value) => {
+                                    setUsername(value);
+                                    setIsModified(true);
+                                }}
+                                
+                                
+                                
+                                // formats:
+                                autoComplete='nope'
+                            />
                             
                             <span className='email label'>Email:</span>
                             <EmailEditor

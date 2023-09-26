@@ -65,6 +65,21 @@ const UsernameEditor = <TElement extends Element = HTMLElement>(props: UsernameE
             
             
             
+            // accessibilities:
+            aria-label={props['aria-label'] ?? 'Username'}
+            
+            
+            
+            // validations:
+            required={props.required ?? false}
+            
+            
+            
+            // formats:
+            type={props.type ?? 'text'}
+            
+            
+            
             // constraints:
             minLength        = {credentialsConfig.USERNAME_MIN_LENGTH}
             maxLength        = {credentialsConfig.USERNAME_MAX_LENGTH}
