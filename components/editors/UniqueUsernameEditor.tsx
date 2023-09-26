@@ -31,7 +31,7 @@ import {
 
 
 // react components:
-export interface UsernameEditorProps<TElement extends Element = HTMLElement>
+export interface UniqueUsernameEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
         Omit<UniqueEditorProps<TElement>,
@@ -44,7 +44,7 @@ export interface UsernameEditorProps<TElement extends Element = HTMLElement>
         >
 {
 }
-const UsernameEditor = <TElement extends Element = HTMLElement>(props: UsernameEditorProps<TElement>): JSX.Element|null => {
+const UniqueUsernameEditor = <TElement extends Element = HTMLElement>(props: UniqueUsernameEditorProps<TElement>): JSX.Element|null => {
     // stores:
     const [availableUsername] = useAvailableUsername();
     
@@ -77,6 +77,7 @@ const UsernameEditor = <TElement extends Element = HTMLElement>(props: UsernameE
             
             // formats:
             type={props.type ?? 'text'}
+            autoComplete={props.autoComplete ?? 'nope'}
             
             
             
@@ -90,6 +91,6 @@ const UsernameEditor = <TElement extends Element = HTMLElement>(props: UsernameE
     );
 };
 export {
-    UsernameEditor,
-    UsernameEditor as default,
+    UniqueUsernameEditor,
+    UniqueUsernameEditor as default,
 }

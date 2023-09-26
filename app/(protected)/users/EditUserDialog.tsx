@@ -96,8 +96,8 @@ import {
     NameEditor,
 }                           from '@/components/editors/NameEditor'
 import {
-    UsernameEditor,
-}                           from '@/components/editors/UsernameEditor'
+    UniqueUsernameEditor,
+}                           from '@/components/editors/UniqueUsernameEditor'
 import {
     EmailEditor,
 }                           from '@/components/editors/EmailEditor'
@@ -706,7 +706,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                             />
                             
                             <span className='username label'>Username:</span>
-                            <UsernameEditor
+                            <UniqueUsernameEditor
                                 // classes:
                                 className='username editor'
                                 
@@ -719,11 +719,6 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                                     setUsername(value);
                                     setIsModified(true);
                                 }}
-                                
-                                
-                                
-                                // formats:
-                                autoComplete='nope'
                             />
                             
                             <span className='email label'>Email:</span>
