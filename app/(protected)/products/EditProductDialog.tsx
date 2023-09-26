@@ -81,9 +81,6 @@ import {
     TextEditor,
 }                           from '@/components/editors/TextEditor'
 import {
-    // PathEditor,
-}                           from '@/components/editors/PathEditor'
-import {
     PathEditor,
 }                           from '@/components/editors/Path2Editor'
 import {
