@@ -268,8 +268,8 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                         Are you sure to delete <strong>{role.name}</strong> role?
                     </p>
                     <p>
-                        The users associated with the {role.name} role will still be logged in but will not have any authority.<br />
-                        You can re-assign their authorities later.
+                        The users associated with the {role.name} role will still be logged in but will not have any access.<br />
+                        You can re-assign their roles later.
                     </p>
                 </>,
                 options  : {
@@ -432,9 +432,9 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                                 }}
                             />
                             
-                            <span className='authorities label'>Authorities:</span>
+                            <span className='privileges label'>Privileges:</span>
                             <ValidationProvider enableValidation={false} inheritValidation={false}>
-                                <ExclusiveAccordion className='authorities list' defaultExpandedListIndex={0}>
+                                <ExclusiveAccordion className='privileges list' defaultExpandedListIndex={0}>
                                     <AccordionItem label='Products'>
                                         <Check      className='check editor' required={false} active={product_r} onActiveChange={({active}) => { setProduct_r(active); setIsModified(true); }}>
                                             View

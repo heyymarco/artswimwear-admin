@@ -132,11 +132,11 @@ export const usesRoleTabLayout = () => {
             display      : 'grid',
             alignContent : 'start',
             gridTemplate : [[
-                '"name-label       "', 'auto',
-                '"name-editor      "', 'auto',
-                '"................."', spacers.sm,
-                '"authorities-label"', 'auto',
-                '"authorities-list "', 'auto',
+                '"name-label      "', 'auto',
+                '"name-editor     "', 'auto',
+                '"................"', spacers.sm,
+                '"privileges-label"', 'auto',
+                '"privileges-list "', 'auto',
                 '/',
                 '1fr'
             ]],
@@ -150,12 +150,12 @@ export const usesRoleTabLayout = () => {
             
             
             // children:
-            ...children('.name.label'       , { gridArea: 'name-label'        }),
-            ...children('.name.editor'      , { gridArea: 'name-editor'       }),
+            ...children('.name.label'      , { gridArea: 'name-label'        }),
+            ...children('.name.editor'     , { gridArea: 'name-editor'       }),
             
-            ...children('.authorities.label', { gridArea: 'authorities-label' }),
-            ...children('.authorities.list' , { gridArea: 'authorities-list'  }),
-            ...children(':where(.authorities.list)' , {
+            ...children('.privileges.label', { gridArea: 'privileges-label' }),
+            ...children('.privileges.list' , { gridArea: 'privileges-list'  }),
+            ...children(':where(.privileges.list)' , {
                 ...children('*>*:where(:nth-child(2))', {
                     // layouts:
                     display       : 'flex',
