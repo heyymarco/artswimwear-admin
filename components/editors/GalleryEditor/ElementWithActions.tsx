@@ -70,7 +70,7 @@ export interface ElementWithActionsProps<TElement extends Element = HTMLElement>
     actionGroupComponent        ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
     deletingImageTitleComponent ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
     busyComponent               ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
-    deleteButtonComponent       ?: React.ReactComponentElement<any, ButtonProps>
+    deleteButtonComponent       ?: React.ReactComponentElement<any, ButtonProps>|null
 }
 const ElementWithActions = <TElement extends Element = HTMLElement>(props: ElementWithActionsProps<TElement>): JSX.Element|null => {
     // rest props:
@@ -135,7 +135,7 @@ const ElementWithActions = <TElement extends Element = HTMLElement>(props: Eleme
     });
     const deleteButtonHandleClick         = useMergeEvents(
         // preserves the original `onClick` from `deleteButtonComponent`:
-        deleteButtonComponent.props.onClick,
+        (!!deleteButtonComponent ? deleteButtonComponent.props.onClick : null),
         
         
         
@@ -245,7 +245,7 @@ const ElementWithActions = <TElement extends Element = HTMLElement>(props: Eleme
             )}
             
             {/* <DeleteButton> */}
-            {React.cloneElement<ButtonProps>(deleteButtonComponent,
+            {!!deleteButtonComponent && React.cloneElement<ButtonProps>(deleteButtonComponent,
                 // props:
                 {
                     // classes:

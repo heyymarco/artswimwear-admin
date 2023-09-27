@@ -338,7 +338,9 @@ export const usesGalleryEditorLayout = () => {
                 
                 
                 // accessibilities:
-                cursor       : 'move',
+                ...rule('.draggable', {
+                    cursor       : 'move',
+                }),
                 
                 
                 
