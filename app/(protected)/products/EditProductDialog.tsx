@@ -241,12 +241,22 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
     // sessions:
     const { data: session } = useSession();
     const role = session?.role;
+    const privelegeAdd               = !!role?.product_c && !product.id;
     const privelegeUpdateDescription = !!role?.product_ud;
     const privelegeUpdateImages      = !!role?.product_ui;
     const privelegeUpdatePrice       = !!role?.product_up;
     const privelegeUpdateStock       = !!role?.product_us;
     const privelegeUpdateVisibility  = !!role?.product_uv;
     const privilegeDelete            = !!role?.product_d;
+    const privilegeWrite             = (
+        privelegeAdd
+        || privelegeUpdateDescription
+        || privelegeUpdateImages
+        || privelegeUpdatePrice
+        || privelegeUpdateStock
+        || privelegeUpdateVisibility
+        || privilegeDelete
+    );
     
     
     
@@ -315,14 +325,14 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
             const updatingProductTask = updateProduct({
                 id             : product.id,
                 
-                visibility     : privelegeUpdateVisibility  ? visibility     : undefined,
-                name           : privelegeUpdateDescription ? name           : undefined,
-                path           : privelegeUpdateDescription ? path           : undefined,
-                price          : privelegeUpdatePrice       ? price          : undefined,
-                shippingWeight : privelegeUpdatePrice       ? shippingWeight : undefined,
-                stock          : privelegeUpdateStock       ? stock          : undefined,
-                images         : privelegeUpdateImages      ? images : undefined,
-                description    : privelegeUpdateDescription ? ((description?.toJSON?.() ?? description) as any) : undefined,
+                visibility     : (privelegeUpdateVisibility  || privelegeAdd) ? visibility     : undefined,
+                name           : (privelegeUpdateDescription || privelegeAdd) ? name           : undefined,
+                path           : (privelegeUpdateDescription || privelegeAdd) ? path           : undefined,
+                price          : (privelegeUpdatePrice       || privelegeAdd) ? price          : undefined,
+                shippingWeight : (privelegeUpdatePrice       || privelegeAdd) ? shippingWeight : undefined,
+                stock          : (privelegeUpdateStock       || privelegeAdd) ? stock          : undefined,
+                images         : (privelegeUpdateImages      || privelegeAdd) ? images : undefined,
+                description    : (privelegeUpdateDescription || privelegeAdd) ? ((description?.toJSON?.() ?? description) as any) : undefined,
             }).unwrap();
             
             await handleClose(/*commitImages = */true, [updatingProductTask]);
@@ -539,7 +549,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                                 
                                 
                                 // accessibilities:
-                                enabled={privelegeUpdateDescription}
+                                enabled={privelegeUpdateDescription || privelegeAdd}
                                 
                                 
                                 
@@ -560,7 +570,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                                 
                                 
                                 // accessibilities:
-                                enabled={privelegeUpdateDescription}
+                                enabled={privelegeUpdateDescription || privelegeAdd}
                                 
                                 
                                 
@@ -581,7 +591,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                                 
                                 
                                 // accessibilities:
-                                enabled={privelegeUpdatePrice}
+                                enabled={privelegeUpdatePrice || privelegeAdd}
                                 
                                 
                                 
@@ -601,7 +611,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                                 
                                 
                                 // accessibilities:
-                                enabled={privelegeUpdatePrice}
+                                enabled={privelegeUpdatePrice || privelegeAdd}
                                 
                                 
                                 
@@ -626,7 +636,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                                 
                                 
                                 // accessibilities:
-                                enabled={privelegeUpdateStock}
+                                enabled={privelegeUpdateStock || privelegeAdd}
                                 
                                 
                                 
@@ -651,7 +661,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                                 
                                 
                                 // accessibilities:
-                                enabled={privelegeUpdateVisibility}
+                                enabled={privelegeUpdateVisibility || privelegeAdd}
                                 
                                 
                                 
@@ -672,7 +682,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             
                             
                             // accessibilities:
-                            readOnly={!privelegeUpdateImages}
+                            readOnly={!(privelegeUpdateImages || privelegeAdd)}
                             
                             
                             
@@ -746,7 +756,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             
                             
                             // accessibilities:
-                            enabled={privelegeUpdateDescription}
+                            enabled={privelegeUpdateDescription || privelegeAdd}
                             
                             
                             

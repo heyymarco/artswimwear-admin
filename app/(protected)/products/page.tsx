@@ -191,11 +191,22 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
     // sessions:
     const { data: session } = useSession();
     const role = session?.role;
+    const privelegeAdd               = !!role?.product_c;
     const privelegeUpdateDescription = !!role?.product_ud;
     const privelegeUpdateImages      = !!role?.product_ui;
     const privelegeUpdatePrice       = !!role?.product_up;
     const privelegeUpdateStock       = !!role?.product_us;
     const privelegeUpdateVisibility  = !!role?.product_uv;
+    const privilegeDelete            = !!role?.product_d;
+    const privilegeWrite             = (
+        privelegeAdd
+        || privelegeUpdateDescription
+        || privelegeUpdateImages
+        || privelegeUpdatePrice
+        || privelegeUpdateStock
+        || privelegeUpdateVisibility
+        || privilegeDelete
+    );
     
     
     
@@ -299,9 +310,9 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                     {privelegeUpdateVisibility  && <EditButton onClick={() => setEditMode('visibility')} />}
                 </p>
                 <p className='fullEditor'>
-                    <EditButton buttonStyle='regular' onClick={() => setEditMode('full')}>
+                    {privilegeWrite             && <EditButton buttonStyle='regular' onClick={() => setEditMode('full')}>
                         Open Full Editor
-                    </EditButton>
+                    </EditButton>}
                 </p>
             </div>
             {/* edit dialog: */}
@@ -336,6 +347,7 @@ export default function ProductPage(): JSX.Element|null {
     // sessions:
     const { data: session, status: sessionStatus } = useSession();
     const role = session?.role;
+    const privelegeAdd = !!role?.product_c;
     
     
     
@@ -371,7 +383,7 @@ export default function ProductPage(): JSX.Element|null {
                     <ProductPreview model={undefined as any} />
                 }
                 modelCreateComponent={
-                    role?.product_c
+                    privelegeAdd
                     ? <ProductCreate onClose={undefined as any} />
                     : undefined
                 }
