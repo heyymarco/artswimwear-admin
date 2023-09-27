@@ -245,6 +245,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
     const privelegeUpdateImages      = !!role?.product_ui;
     const privelegeUpdatePrice       = !!role?.product_up;
     const privelegeUpdateStock       = !!role?.product_us;
+    const privelegeUpdateVisibility  = !!role?.product_uv;
     const privilegeDelete            = !!role?.product_d;
     
     
@@ -314,7 +315,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
             const updatingProductTask = updateProduct({
                 id             : product.id,
                 
-                visibility,
+                visibility     : privelegeUpdateVisibility  ? visibility     : undefined,
                 name           : privelegeUpdateDescription ? name           : undefined,
                 path           : privelegeUpdateDescription ? path           : undefined,
                 price          : privelegeUpdatePrice       ? price          : undefined,
@@ -619,13 +620,13 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                                 
                                 
                                 
-                                // accessibilities:
-                                enabled={privelegeUpdateStock}
-                                
-                                
-                                
                                 // classes:
                                 className='stock editor'
+                                
+                                
+                                
+                                // accessibilities:
+                                enabled={privelegeUpdateStock}
                                 
                                 
                                 
@@ -646,6 +647,11 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                                 
                                 // classes:
                                 className='visibility editor'
+                                
+                                
+                                
+                                // accessibilities:
+                                enabled={privelegeUpdateVisibility}
                                 
                                 
                                 
