@@ -237,7 +237,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
     
     
     // sessions:
-    const { data: session, status: sessionStatus } = useSession();
+    const { data: session } = useSession();
     const role = session?.role;
     
     
