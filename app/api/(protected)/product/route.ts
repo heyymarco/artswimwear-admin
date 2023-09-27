@@ -262,10 +262,18 @@ You do not have the privilege to view the products.`
     //#region validating privileges
     const session = (req as any).session as Session;
     if (!id) {
-        if (!session.role?.product_c) return NextResponse.json({ error: `You do not have the privilege to add new products.` }, { status: 403 }); // handled with error: forbidden
+        if (!session.role?.product_c) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to add new product.`
+        }, { status: 403 }); // handled with error: forbidden
     }
     else {
-        if (!session.role?.product_u) return NextResponse.json({ error: `You do not have the privilege to modify the products.` }, { status: 403 }); // handled with error: forbidden
+        if (!session.role?.product_u) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the product.`
+        }, { status: 403 }); // handled with error: forbidden
     } // if
     //#endregion validating privileges
     

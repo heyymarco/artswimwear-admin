@@ -357,9 +357,9 @@ export default function ProductPage(): JSX.Element|null {
                     <ProductPreview model={undefined as any} />
                 }
                 modelCreateComponent={
-                    role?.product_c
-                    ? <ProductCreate onClose={undefined as any} />
-                    : undefined
+                    
+                    <ProductCreate onClose={undefined as any} />
+                    
                 }
             />
         </Main>
