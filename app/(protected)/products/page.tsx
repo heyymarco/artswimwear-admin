@@ -192,6 +192,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
     const { data: session } = useSession();
     const role = session?.role;
     const privelegeUpdateDescription = !!role?.product_ud;
+    const privelegeUpdateImages      = !!role?.product_ui;
     
     
     
@@ -229,7 +230,8 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                     // components:
                     wrapperComponent={<React.Fragment />}
                     badgeComponent={
-                        <Badge
+                        privelegeUpdateImages
+                        ? <Badge
                             // variants:
                             nude={true}
                             
@@ -242,6 +244,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                         >
                             <EditButton className='edit overlay' onClick={() => setEditMode('images')} />
                         </Badge>
+                        : null
                     }
                     elementComponent={
                         <MiniCarousel

@@ -242,6 +242,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
     const { data: session } = useSession();
     const role = session?.role;
     const privelegeUpdateDescription = !!role?.product_ud;
+    const privelegeUpdateImages      = !!role?.product_ui;
     const privilegeDelete            = !!role?.product_d;
     
     
@@ -312,12 +313,12 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                 id             : product.id,
                 
                 visibility,
-                name           : privelegeUpdateDescription ? name : undefined,
-                path           : privelegeUpdateDescription ? path : undefined,
+                name           : privelegeUpdateDescription ? name   : undefined,
+                path           : privelegeUpdateDescription ? path   : undefined,
                 price          : price,
                 shippingWeight : shippingWeight,
                 stock          : stock,
-                images,
+                images         : privelegeUpdateImages      ? images : undefined,
                 description    : privelegeUpdateDescription ? ((description?.toJSON?.() ?? description) as any) : undefined,
             }).unwrap();
             
@@ -647,6 +648,11 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             
                             
                             
+                            // accessibilities:
+                            readOnly={!privelegeUpdateImages}
+                            
+                            
+                            
                             // values:
                             value={images}
                             onChange={(value) => {
@@ -671,7 +677,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                                 try {
                                     const imageId = await postImage({
                                         image            : imageFile,
-                                        folder           : '@@user',
+                                        folder           : `products/${name}`,
                                         onUploadProgress : reportProgress,
                                         abortSignal      : abortSignal,
                                     }).unwrap();

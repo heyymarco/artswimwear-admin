@@ -32,7 +32,7 @@ export interface CompoundWithBadgeProps<TElement extends Element = HTMLElement>
 {
     // components:
     wrapperComponent ?: React.ReactComponentElement<any, GenericProps<TElement>>
-    badgeComponent    : React.ReactComponentElement<any, BadgeProps<Element>>
+    badgeComponent    : React.ReactComponentElement<any, BadgeProps<Element>>|null
     elementComponent  : React.ReactComponentElement<any, GenericProps<Element>>
 }
 const CompoundWithBadge = <TElement extends Element = HTMLElement>(props: CompoundWithBadgeProps<TElement>) => {
@@ -79,13 +79,14 @@ const CompoundWithBadge = <TElement extends Element = HTMLElement>(props: Compou
                 elmRef : mergedComponentRef,
             },
         ),
+        
         /* <Badge> */
-        React.cloneElement<BadgeProps<Element>>(badgeComponent,
+        (!!badgeComponent && React.cloneElement<BadgeProps<Element>>(badgeComponent,
             // props:
             {
                 floatingOn : badgeComponent.props.floatingOn ?? componentRefInternal,
             },
-        ),
+        )),
     );
 };
 export {

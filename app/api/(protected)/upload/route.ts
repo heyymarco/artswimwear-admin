@@ -9,6 +9,11 @@ import {
     getServerSession,
 }                           from 'next-auth'
 
+// heymarco:
+import type {
+    Session,
+}                           from '@heymarco/next-auth/server'
+
 // next-connect:
 import {
     createEdgeRouter,
@@ -74,6 +79,7 @@ router
     // conditions:
     const session = await getServerSession(authOptions);
     if (!session) return NextResponse.json({ error: 'Please sign in.' }, { status: 401 }); // handled with error: unauthorized
+    (req as any).session = session;
     
     
     
@@ -96,11 +102,22 @@ router
     //     folder,
     // } = await req.json();
     const folder = data.get('folder');
-    if ((folder !== undefined) && (typeof(folder) !== 'string')) {
+    if ((typeof(folder) !== 'string') || !folder) {
         return NextResponse.json({
             error: 'Invalid parameter(s).',
         }, { status: 400 }); // handled with error
     } // if
+    
+    
+    
+    //#region validating privileges
+    const session = (req as any).session as Session;
+    if (!session.role?.product_ui && folder.startsWith('products/')) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the product images.`
+    }, { status: 403 }); // handled with error: forbidden
+    //#endregion validating privileges
     
     
     
