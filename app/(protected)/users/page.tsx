@@ -208,10 +208,6 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
     
     
     
-    // sessions:
-    
-    
-    
     // stores:
     const {
         data       : roles,
@@ -341,6 +337,14 @@ export default function UserPage(): JSX.Element|null {
     // states:
     const [page   , setPage   ] = useState<number>(1);
     const [perPage, setPerPage] = useState<number>(10);
+    
+    
+    
+    // sessions:
+    
+    
+    
+    // stores:
     const getModelPaginationApi = useGetUserPage({ page, perPage });
     const {data, isLoading: isLoadingAndNoData, isError, refetch } = getModelPaginationApi;
     const isErrorAndNoData = isError && !data;
