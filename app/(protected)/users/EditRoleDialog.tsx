@@ -406,7 +406,7 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                 <CloseButton onClick={handleClosing} />
             </CardHeader>
             <ValidationProvider enableValidation={enableValidation} inheritValidation={false}>
-            <Tab
+                <Tab
                     // variants:
                     mild='inherit'
                     
