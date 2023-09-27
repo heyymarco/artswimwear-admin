@@ -199,8 +199,8 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
     const privelegeUpdateVisibility  = !!role?.product_uv;
     const privilegeDelete            = !!role?.product_d;
     const privilegeWrite             = (
-        privelegeAdd
-        || privelegeUpdateDescription
+        /* privelegeAdd */ // except for add
+        privelegeUpdateDescription
         || privelegeUpdateImages
         || privelegeUpdatePrice
         || privelegeUpdateStock

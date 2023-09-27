@@ -255,7 +255,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
         || privelegeUpdatePrice
         || privelegeUpdateStock
         || privelegeUpdateVisibility
-        || privilegeDelete
+        /* || privilegeDelete */ // except for delete
     );
     
     
@@ -305,6 +305,10 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
         );
     });
     const handleSave = useEvent(async () => {
+        if (!privilegeWrite) return;
+        
+        
+        
         setEnableValidation(true);
         await new Promise<void>((resolve) => { // wait for a validation state applied
             setTimeout(() => {
@@ -380,7 +384,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
         } // try
     });
     const handleClosing = useEvent(async () => {
-        if (isModified || isPathModified) {
+        if (privilegeWrite && (isModified || isPathModified)) {
             // conditions:
             const answer = await showMessage<'save'|'dontSave'|'continue'>({
                 theme         : 'warning',
@@ -419,6 +423,10 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
         } // if
     });
     const handleSaveImages = useEvent(async (commitImages : boolean) => {
+        if (!privilegeWrite) return;
+        
+        
+        
         // search for unused image(s) and delete them:
         const unusedImageIds : string[] = [];
         for (const unusedImageId of
@@ -782,8 +790,8 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                 </Tab>
             </ValidationProvider>
             <CardFooter onKeyDown={handleKeyDown}>
-                <ButtonIcon className='btnSave'   icon={isCommiting ? 'busy' : 'save'  } theme='success' onClick={handleSave}>Save</ButtonIcon>
-                <ButtonIcon className='btnCancel' icon={isReverting ? 'busy' : 'cancel'} theme='danger'  onClick={handleClosing}>{isReverting ? 'Reverting' : 'Cancel'}</ButtonIcon>
+                {privilegeWrite && <ButtonIcon className='btnSave'   icon={isCommiting ? 'busy' : 'save'  } theme='success' onClick={handleSave}>Save</ButtonIcon>}
+                <ButtonIcon className='btnCancel' icon={privilegeWrite ? (isReverting ? 'busy' : 'cancel') : 'done'} theme={privilegeWrite ? 'danger' : 'primary'}  onClick={handleClosing}>{isReverting ? 'Reverting' : (privilegeWrite ? 'Cancel' : 'Close')}</ButtonIcon>
             </CardFooter>
         </AccessibilityProvider>
     );
