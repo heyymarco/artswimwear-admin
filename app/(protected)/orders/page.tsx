@@ -149,6 +149,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
     
     
     
+    // rest props:
     const {
         model,
     ...restListItemProps} = props;
@@ -165,14 +166,14 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
     
     
     
-    // stores:
-    const {data: productList, isLoading: isLoadingProduct, isError: isErrorProduct } = useGetProductList();
-    
-    
-    
     // states:
     type EditMode = keyof NonNullable<OrderDetail['customer']>|'full'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
+    
+    
+    
+    // stores:
+    const {data: productList, isLoading: isLoadingProduct, isError: isErrorProduct } = useGetProductList();
     
     
     
@@ -314,7 +315,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
             </ModalStatus>
         </ListItem>
     );
-}
+};
 
 /* <OrderPage> */
 export default function OrderPage(): JSX.Element|null {
