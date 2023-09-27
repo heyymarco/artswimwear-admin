@@ -188,6 +188,13 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
     
     
     
+    // sessions:
+    const { data: session } = useSession();
+    const role = session?.role;
+    const privelegeUpdateDescription = !!role?.product_ud;
+    
+    
+    
     // refs:
     const listItemRef = useRef<HTMLElement|null>(null);
     
@@ -271,7 +278,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                 
                 <h3 className='name'>
                     {name}
-                    <EditButton onClick={() => setEditMode('name')} />
+                    {privelegeUpdateDescription && <EditButton onClick={() => setEditMode('name')} />}
                 </h3>
                 <p className='price'>
                     <strong className='value'>{formatCurrency(price)}</strong>
