@@ -168,6 +168,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
     
     
     
+    // rest props:
     const {
         model,
     ...restListItemProps} = props;
@@ -304,7 +305,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
             </ModalStatus>
         </ListItem>
     );
-}
+};
 
 /* <ProductPage> */
 export default function ProductPage(): JSX.Element|null {
