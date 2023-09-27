@@ -108,6 +108,7 @@ const UniqueEditor = <TElement extends Element = HTMLElement>(props: UniqueEdito
         // components:
         editorComponent = (<TextEditor<TElement> /> as React.ReactComponentElement<any, TextEditorProps<TElement>>),
     ...restEditorProps} = props;
+    const required = editorComponent.props.required ?? props.required ?? false;
     
     
     
@@ -182,8 +183,8 @@ const UniqueEditor = <TElement extends Element = HTMLElement>(props: UniqueEdito
     const isMounted = useMountedFlag();
     
     // validate availability:
-    const isValidLength = !value || ((value.length >= minLength) && (value.length <= maxLength));
-    const isValidFormat = !value || !!value.match(format);
+    const isValidLength = (!value && !required) || ((value.length >= minLength) && (value.length <= maxLength));
+    const isValidFormat = (!value && !required) || !!value.match(format);
     useEffect(() => {
         // conditions:
         if (
@@ -204,7 +205,8 @@ const UniqueEditor = <TElement extends Element = HTMLElement>(props: UniqueEdito
         
         
         
-        // actions:
+        // setups:
+        const abortController = new AbortController();
         (async () => {
             try {
                 // delay a brief moment, waiting for the user typing:
@@ -214,12 +216,14 @@ const UniqueEditor = <TElement extends Element = HTMLElement>(props: UniqueEdito
                         resolved();
                     }, 500);
                 });
+                if (abortController.signal.aborted) return; // aborted => abort
                 if (!isMounted.current) return; // unmounted => abort
                 
                 
                 
                 setIsValidAvailable('loading');
                 const result = await onCheckAvailable(value);
+                if (abortController.signal.aborted) return; // aborted => abort
                 if (!isMounted.current) return; // unmounted => abort
                 if (!result) {
                     // failed
@@ -244,9 +248,21 @@ const UniqueEditor = <TElement extends Element = HTMLElement>(props: UniqueEdito
                 
                 
                 
+                if (abortController.signal.aborted) return; // aborted => abort
+                if (!isMounted.current) return; // unmounted => abort
+                
+                
+                
                 setIsValidAvailable(isClientError(error) ? false : 'error');
             } // try
         })();
+        
+        
+        
+        // cleanups:
+        return () => {
+            abortController.abort();
+        };
     }, [value, currentValue, isValidLength, isValidFormat]);
     
     
@@ -312,10 +328,15 @@ const UniqueEditor = <TElement extends Element = HTMLElement>(props: UniqueEdito
                     
                     
                     
+                    // validations:
+                    required,
+                    
+                    
+                    
                     // states:
                     enabled  : editorComponent.props.enabled ?? props.enabled ?? isEnabled,
                     isValid  : editorComponent.props.isValid ?? props.isValid ?? (
-                        !value
+                        (!value && !required)
                         ||
                         (
                             isValidLength
@@ -340,7 +361,7 @@ const UniqueEditor = <TElement extends Element = HTMLElement>(props: UniqueEdito
                 
                 
                 // states:
-                expanded={isUserInteracted && isFocused && !!value && isEnabled}
+                expanded={isUserInteracted && isFocused && (required || !!value) && isEnabled}
                 
                 
                 
