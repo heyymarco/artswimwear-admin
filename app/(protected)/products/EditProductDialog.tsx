@@ -13,6 +13,11 @@ import {
     useEffect,
 }                           from 'react'
 
+// next-auth:
+import {
+    useSession,
+}                           from 'next-auth/react'
+
 // cssfn:
 import {
     // style sheets:
@@ -228,6 +233,12 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
     });
     
     const [draftDeletedImages                   ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
+    
+    
+    
+    // sessions:
+    const { data: session, status: sessionStatus } = useSession();
+    const role = session?.role;
     
     
     
@@ -703,11 +714,11 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             />
                         </WysiwygEditor>
                     </TabPanel>
-                    <TabPanel label={PAGE_PRODUCT_TAB_DELETE} panelComponent={<Content theme='warning' className={styleSheet.deleteTab} />}>
+                    {!!role?.product_d && <TabPanel label={PAGE_PRODUCT_TAB_DELETE} panelComponent={<Content theme='warning' className={styleSheet.deleteTab} />}>
                         <ButtonIcon icon={isLoadingModelDelete ? 'busy' : 'delete'} theme='danger' onClick={handleDelete}>
                             Delete Product <strong>{product.name}</strong>
                         </ButtonIcon>
-                    </TabPanel>
+                    </TabPanel>}
                 </Tab>
             </ValidationProvider>
             <CardFooter onKeyDown={handleKeyDown}>

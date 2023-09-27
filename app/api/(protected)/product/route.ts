@@ -359,6 +359,17 @@ router
     
     
     
+    //#region validating privileges
+    const session = (req as any).session as Session;
+    if (!session.role?.product_d) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to delete the product.`
+    }, { status: 403 }); // handled with error: forbidden
+    //#endregion validating privileges
+    
+    
+    
     //#region save changes
     try {
         const deletedProduct : Pick<ProductDetail, 'id'> = (
