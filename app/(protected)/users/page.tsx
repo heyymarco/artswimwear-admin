@@ -186,6 +186,7 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
     
     
     
+    // rest props:
     const {
         model,
         getRolePaginationApi,
@@ -325,7 +326,7 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
             </ModalStatus>
         </ListItem>
     );
-}
+};
 
 /* <UserPage> */
 export default function UserPage(): JSX.Element|null {
