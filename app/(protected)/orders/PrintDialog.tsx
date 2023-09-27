@@ -55,6 +55,9 @@ const usePrintDialogStyleSheet = dynamicStyleSheets(
 
 
 
+// react components:
+
+/* <PrintDialog> */
 export interface PrintDialogProps
     extends
         ContentProps
@@ -82,6 +85,8 @@ const PrintDialog = (props: PrintDialogProps): JSX.Element|null => {
     
     
     // dom effects:
+    
+    // hides the website's page, only show the print dialog:
     useEffect(() => {
         // setups:
         const visuallyHiddenClass = styleSheets.visuallyHidden;

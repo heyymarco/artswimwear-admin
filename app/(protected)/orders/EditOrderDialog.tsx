@@ -146,6 +146,8 @@ const useEditOrderDialogStyleSheet = dynamicStyleSheets(
 
 
 // react components:
+
+/* <EditOrderDialog> */
 export interface EditOrderDialogProps {
     // data:
     order            : OrderDetail
@@ -269,6 +271,8 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
     });
     
     
+    
+    // dom effects:
     
     // a fix for <Badge>'s position:
     const [showBadge, setShowBadge] = useState<boolean>(false);
@@ -544,4 +548,4 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
             </PrintDialog>}
         </>
     );
-}
+};

@@ -211,6 +211,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     
     
     
+    // rest props:
     const {
         // data:
         model,
@@ -257,6 +258,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     
     
     // dom effects:
+    
     // initial-focus on initial-tab-is-role:
     useEffect(() => {
         // conditions:
@@ -344,7 +346,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
             </ModalStatus>}
         </ListItem>
     );
-}
+};
 
 /* <EditUserDialog> */
 export interface EditUserDialogProps {
@@ -838,4 +840,4 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
             </CardFooter>
         </AccessibilityProvider>
     );
-}
+};

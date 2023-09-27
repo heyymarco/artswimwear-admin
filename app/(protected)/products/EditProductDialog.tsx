@@ -178,6 +178,8 @@ const emptyProduct : ProductDetail = {
 
 
 // react components:
+
+/* <EditProductDialog> */
 export interface EditProductDialogProps {
     // data:
     product                 ?: ProductDetail
@@ -455,6 +457,8 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
     
     
     // dom effects:
+    
+    // autoFocus on first editor:
     useEffect(() => {
         // setups:
         const cancelFocus = setTimeout(() => {
@@ -727,4 +731,4 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
             </CardFooter>
         </AccessibilityProvider>
     );
-}
+};

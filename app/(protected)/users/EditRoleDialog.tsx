@@ -148,6 +148,8 @@ const emptyRole : RoleDetail = {
 
 
 // react components:
+
+/* <EditRoleDialog> */
 export interface EditRoleDialogProps {
     // data:
     role    ?: RoleDetail
@@ -355,6 +357,8 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
     
     
     // dom effects:
+    
+    // autoFocus on first editor:
     useEffect(() => {
         // setups:
         const cancelFocus = setTimeout(() => {
@@ -466,4 +470,4 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
             </CardFooter>
         </AccessibilityProvider>
     );
-}
+};
