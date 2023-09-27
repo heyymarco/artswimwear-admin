@@ -269,10 +269,34 @@ You do not have the privilege to add new product.`
         }, { status: 403 }); // handled with error: forbidden
     }
     else {
-        if (!session.role?.product_u) return NextResponse.json({ error:
+        if (!session.role?.product_ud && ((name !== undefined) || (path !== undefined) || (description !== undefined))) return NextResponse.json({ error:
 `Access denied.
 
-You do not have the privilege to modify the product.`
+You do not have the privilege to modify the product name, path and/or description.`
+        }, { status: 403 }); // handled with error: forbidden
+        
+        if (!session.role?.product_ui && (images !== undefined)) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the product images.`
+        }, { status: 403 }); // handled with error: forbidden
+        
+        if (!session.role?.product_up && ((price !== undefined) || (shippingWeight !== undefined))) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the product price and/or shipping weight.`
+        }, { status: 403 }); // handled with error: forbidden
+        
+        if (!session.role?.product_us && (stock !== undefined)) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the product stock.`
+        }, { status: 403 }); // handled with error: forbidden
+        
+        if (!session.role?.product_uv && (visibility !== undefined)) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the product visibility.`
         }, { status: 403 }); // handled with error: forbidden
     } // if
     //#endregion validating privileges

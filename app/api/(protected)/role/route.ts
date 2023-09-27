@@ -75,14 +75,18 @@ router
     const roleDetails : RoleDetail[] = (
         (await prisma.role.findMany({
             select: {
-                id             : true,
+                id         : true,
                 
-                name           : true,
+                name       : true,
                 
-                product_r      : true,
-                product_c      : true,
-                product_u      : true,
-                product_d      : true,
+                product_r  : true,
+                product_c  : true,
+                product_ud : true,
+                product_ui : true,
+                product_up : true,
+                product_us : true,
+                product_uv : true,
+                product_d  : true,
             },
         }))
     );
@@ -109,7 +113,11 @@ router
         
         product_r,
         product_c,
-        product_u,
+        product_ud,
+        product_ui,
+        product_up,
+        product_us,
+        product_uv,
         product_d,
     } = await req.json();
     //#endregion parsing request
@@ -140,18 +148,26 @@ router
             
             product_r,
             product_c,
-            product_u,
+            product_ud,
+            product_ui,
+            product_up,
+            product_us,
+            product_uv,
             product_d,
         };
         const select = {
-            id        : true,
+            id         : true,
             
-            name      : true,
+            name       : true,
             
-            product_r : true,
-            product_c : true,
-            product_u : true,
-            product_d : true,
+            product_r  : true,
+            product_c  : true,
+            product_ud : true,
+            product_ui : true,
+            product_up : true,
+            product_us : true,
+            product_uv : true,
+            product_d  : true,
         };
         const roleDetail : RoleDetail = (
             !id

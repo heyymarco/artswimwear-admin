@@ -357,10 +357,15 @@ model Role {
     
     // data:
     name                    String                  @unique
-    product_r               Boolean
-    product_c               Boolean
-    product_u               Boolean
-    product_d               Boolean
+    
+    product_r               Boolean                 @default(false)
+    product_c               Boolean                 @default(false)
+    product_ud              Boolean                 @default(false)
+    product_ui              Boolean                 @default(false)
+    product_up              Boolean                 @default(false)
+    product_us              Boolean                 @default(false)
+    product_uv              Boolean                 @default(false)
+    product_d               Boolean                 @default(false)
     
     // relations:
     users                   User[]                  // a Role may have some related Users(s)  // one  to many

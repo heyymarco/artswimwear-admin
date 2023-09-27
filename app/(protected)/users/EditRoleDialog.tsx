@@ -136,13 +136,18 @@ import LoadingBar from '@heymarco/loading-bar'
 
 // utilities:
 const emptyRole : RoleDetail = {
-    id       : '',
+    id         : '',
     
-    name      : '',
-    product_r : false,
-    product_c : false,
-    product_u : false,
-    product_d : false,
+    name       : '',
+    
+    product_r  : false,
+    product_c  : false,
+    product_ud : false,
+    product_ui : false,
+    product_up : false,
+    product_us : false,
+    product_uv : false,
+    product_d  : false,
 };
 
 
@@ -187,7 +192,11 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
     
     const [product_r       , setProduct_r       ] = useState<boolean>(role.product_r);
     const [product_c       , setProduct_c       ] = useState<boolean>(role.product_c);
-    const [product_u       , setProduct_u       ] = useState<boolean>(role.product_u);
+    const [product_ud      , setProduct_ud      ] = useState<boolean>(role.product_ud);
+    const [product_ui      , setProduct_ui      ] = useState<boolean>(role.product_ui);
+    const [product_up      , setProduct_up      ] = useState<boolean>(role.product_up);
+    const [product_us      , setProduct_us      ] = useState<boolean>(role.product_us);
+    const [product_uv      , setProduct_uv      ] = useState<boolean>(role.product_uv);
     const [product_d       , setProduct_d       ] = useState<boolean>(role.product_d);
     
     
@@ -249,7 +258,11 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                 
                 product_r,
                 product_c,
-                product_u,
+                product_ud,
+                product_ui,
+                product_up,
+                product_us,
+                product_uv,
                 product_d,
             }).unwrap();
             
@@ -440,16 +453,28 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                             <ValidationProvider enableValidation={false} inheritValidation={false}>
                                 <ExclusiveAccordion className='privileges list' defaultExpandedListIndex={0}>
                                     <AccordionItem label='Products'>
-                                        <Check      className='check editor' required={false} active={product_r} onActiveChange={({active}) => { setProduct_r(active); setIsModified(true); }}>
+                                        <Check      className='check editor' required={false} active={product_r}  onActiveChange={({active}) => { setProduct_r(active);  setIsModified(true); }}>
                                             View
                                         </Check>
-                                        <Check      className='check editor' required={false} active={product_c} onActiveChange={({active}) => { setProduct_c(active); setIsModified(true); }}>
+                                        <Check      className='check editor' required={false} active={product_c}  onActiveChange={({active}) => { setProduct_c(active);  setIsModified(true); }}>
                                             Add New
                                         </Check>
-                                        <Check      className='check editor' required={false} active={product_u} onActiveChange={({active}) => { setProduct_u(active); setIsModified(true); }}>
-                                            Change
+                                        <Check      className='check editor' required={false} active={product_ud} onActiveChange={({active}) => { setProduct_ud(active); setIsModified(true); }}>
+                                            Change Name, Path &amp; Description
                                         </Check>
-                                        <Check      className='check editor' required={false} active={product_d} onActiveChange={({active}) => { setProduct_d(active); setIsModified(true); }}>
+                                        <Check      className='check editor' required={false} active={product_ui} onActiveChange={({active}) => { setProduct_ui(active); setIsModified(true); }}>
+                                            Change Images
+                                        </Check>
+                                        <Check      className='check editor' required={false} active={product_up} onActiveChange={({active}) => { setProduct_up(active); setIsModified(true); }}>
+                                            Change Price &amp; Shipping Weight
+                                        </Check>
+                                        <Check      className='check editor' required={false} active={product_us} onActiveChange={({active}) => { setProduct_us(active); setIsModified(true); }}>
+                                            Change Stock
+                                        </Check>
+                                        <Check      className='check editor' required={false} active={product_uv} onActiveChange={({active}) => { setProduct_uv(active); setIsModified(true); }}>
+                                            Change Visibility
+                                        </Check>
+                                        <Check      className='check editor' required={false} active={product_d}  onActiveChange={({active}) => { setProduct_d(active);  setIsModified(true); }}>
                                             Delete
                                         </Check>
                                     </AccordionItem>
