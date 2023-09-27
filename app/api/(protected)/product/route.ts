@@ -161,7 +161,7 @@ router
     
     //#region validating privileges
     const session = (req as any).session as Session;
-    if (!session.role?.product_r) return NextResponse.json({ error: 'Not enough privileges.' }, { status: 403 }); // handled with error: forbidden
+    if (!session.role?.product_r) return NextResponse.json({ error: `You do not have the privilege to view the products.` }, { status: 403 }); // handled with error: forbidden
     //#endregion validating privileges
     
     
@@ -257,7 +257,12 @@ router
     
     //#region validating privileges
     const session = (req as any).session as Session;
-    if (!id ? !session.role?.product_c : !session.role?.product_u) return NextResponse.json({ error: 'Not enough privileges.' }, { status: 403 }); // handled with error: forbidden
+    if (!id) {
+        if (!session.role?.product_c) return NextResponse.json({ error: `You do not have the privilege to add new products.` }, { status: 403 }); // handled with error: forbidden
+    }
+    else {
+        if (!session.role?.product_u) return NextResponse.json({ error: `You do not have the privilege to modify the products.` }, { status: 403 }); // handled with error: forbidden
+    } // if
     //#endregion validating privileges
     
     
