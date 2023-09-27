@@ -244,6 +244,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
     const privelegeUpdateDescription = !!role?.product_ud;
     const privelegeUpdateImages      = !!role?.product_ui;
     const privelegeUpdatePrice       = !!role?.product_up;
+    const privelegeUpdateStock       = !!role?.product_us;
     const privilegeDelete            = !!role?.product_d;
     
     
@@ -318,7 +319,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                 path           : privelegeUpdateDescription ? path           : undefined,
                 price          : privelegeUpdatePrice       ? price          : undefined,
                 shippingWeight : privelegeUpdatePrice       ? shippingWeight : undefined,
-                stock          : stock,
+                stock          : privelegeUpdateStock       ? stock          : undefined,
                 images         : privelegeUpdateImages      ? images : undefined,
                 description    : privelegeUpdateDescription ? ((description?.toJSON?.() ?? description) as any) : undefined,
             }).unwrap();
@@ -615,6 +616,11 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             <StockEditor
                                 // variants:
                                 theme='primaryAlt'
+                                
+                                
+                                
+                                // accessibilities:
+                                enabled={privelegeUpdateStock}
                                 
                                 
                                 

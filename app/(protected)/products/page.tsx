@@ -194,6 +194,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
     const privelegeUpdateDescription = !!role?.product_ud;
     const privelegeUpdateImages      = !!role?.product_ui;
     const privelegeUpdatePrice       = !!role?.product_up;
+    const privelegeUpdateStock       = !!role?.product_us;
     
     
     
@@ -290,7 +291,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                 </p>
                 <p className='stock'>
                     Stock: <strong className='value'>{stock ?? 'unlimited'}</strong>
-                    <EditButton onClick={() => setEditMode('stock')} />
+                    {privelegeUpdateStock       && <EditButton onClick={() => setEditMode('stock')} />}
                 </p>
                 <p className='visibility'>
                     Visibility: <strong className='value'>{visibility}</strong>
