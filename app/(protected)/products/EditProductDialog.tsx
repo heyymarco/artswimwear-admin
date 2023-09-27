@@ -243,6 +243,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
     const role = session?.role;
     const privelegeUpdateDescription = !!role?.product_ud;
     const privelegeUpdateImages      = !!role?.product_ui;
+    const privelegeUpdatePrice       = !!role?.product_up;
     const privilegeDelete            = !!role?.product_d;
     
     
@@ -313,10 +314,10 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                 id             : product.id,
                 
                 visibility,
-                name           : privelegeUpdateDescription ? name   : undefined,
-                path           : privelegeUpdateDescription ? path   : undefined,
-                price          : price,
-                shippingWeight : shippingWeight,
+                name           : privelegeUpdateDescription ? name           : undefined,
+                path           : privelegeUpdateDescription ? path           : undefined,
+                price          : privelegeUpdatePrice       ? price          : undefined,
+                shippingWeight : privelegeUpdatePrice       ? shippingWeight : undefined,
                 stock          : stock,
                 images         : privelegeUpdateImages      ? images : undefined,
                 description    : privelegeUpdateDescription ? ((description?.toJSON?.() ?? description) as any) : undefined,
@@ -577,6 +578,11 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                                 
                                 
                                 
+                                // accessibilities:
+                                enabled={privelegeUpdatePrice}
+                                
+                                
+                                
                                 // values:
                                 value={price}
                                 onChange={(value) => {
@@ -589,6 +595,11 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             <ShippingWeightEditor
                                 // classes:
                                 className='sWeight editor'
+                                
+                                
+                                
+                                // accessibilities:
+                                enabled={privelegeUpdatePrice}
                                 
                                 
                                 
