@@ -269,10 +269,10 @@ You do not have the privilege to add new product.`
         }, { status: 403 }); // handled with error: forbidden
     }
     else {
-        if (!session.role?.product_ud && ((name !== undefined) || (path !== undefined) || (description !== undefined))) return NextResponse.json({ error:
+        if (!session.role?.product_ud && ((name !== undefined) || (path !== undefined) || (excerpt !== undefined) || (description !== undefined))) return NextResponse.json({ error:
 `Access denied.
 
-You do not have the privilege to modify the product name, path and/or description.`
+You do not have the privilege to modify the product name, path, excerpt, and/or description.`
         }, { status: 403 }); // handled with error: forbidden
         
         if (!session.role?.product_ui && (images !== undefined)) return NextResponse.json({ error:
