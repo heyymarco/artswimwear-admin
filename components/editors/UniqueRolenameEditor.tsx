@@ -66,13 +66,14 @@ const UniqueRolenameEditor = <TElement extends Element = HTMLElement>(props: Uni
             
             
             // validations:
-            required={props.required ?? false}
+            required={props.required ?? true}
             
             
             
             // formats:
             type={props.type ?? 'text'}
             autoComplete={props.autoComplete ?? 'nope'}
+            autoCapitalize={props.autoCapitalize ?? 'words'}
             
             
             
