@@ -161,7 +161,11 @@ router
     
     //#region validating privileges
     const session = (req as any).session as Session;
-    if (!session.role?.product_r) return NextResponse.json({ error: `You do not have the privilege to view the products.` }, { status: 403 }); // handled with error: forbidden
+    if (!session.role?.product_r) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to view the products.`
+    }, { status: 403 }); // handled with error: forbidden
     //#endregion validating privileges
     
     

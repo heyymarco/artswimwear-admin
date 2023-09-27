@@ -72,7 +72,7 @@ const SiteNavbarMenu = ({
         listExpanded,
         handleClickToToggleList,
     } : NavbarParams) => {
-    // states:
+    // sessions:
     const { data: session, status } = useSession();
     const [isSigningOut, setIsSigningOut] = useState<boolean>(false);
     const isFullySignedIn  = !isSigningOut && (status === 'authenticated')   && !!session;
