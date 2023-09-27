@@ -241,6 +241,8 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
     // sessions:
     const { data: session } = useSession();
     const role = session?.role;
+    const privelegeUpdateDescription = !!role?.product_ud;
+    const privilegeDelete            = !!role?.product_d;
     
     
     
@@ -310,13 +312,13 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                 id             : product.id,
                 
                 visibility,
-                name,
-                path,
+                name           : privelegeUpdateDescription ? name : undefined,
+                path           : privelegeUpdateDescription ? path : undefined,
                 price          : price,
                 shippingWeight : shippingWeight,
                 stock          : stock,
                 images,
-                description    : (description?.toJSON?.() ?? description) as any,
+                description    : privelegeUpdateDescription ? ((description?.toJSON?.() ?? description) as any) : undefined,
             }).unwrap();
             
             await handleClose(/*commitImages = */true, [updatingProductTask]);
@@ -532,6 +534,11 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                                 
                                 
                                 
+                                // accessibilities:
+                                enabled={privelegeUpdateDescription}
+                                
+                                
+                                
                                 // values:
                                 value={name}
                                 onChange={(value) => {
@@ -545,6 +552,11 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             <UniquePathEditor
                                 // classes:
                                 className='path editor'
+                                
+                                
+                                
+                                // accessibilities:
+                                enabled={privelegeUpdateDescription}
                                 
                                 
                                 
@@ -704,6 +716,11 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             
                             
                             
+                            // accessibilities:
+                            enabled={privelegeUpdateDescription}
+                            
+                            
+                            
                             // values:
                             value={description}
                             onChange={(value) => {
@@ -718,7 +735,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                             />
                         </WysiwygEditor>
                     </TabPanel>
-                    {!!role?.product_d && <TabPanel label={PAGE_PRODUCT_TAB_DELETE} panelComponent={<Content theme='warning' className={styleSheet.deleteTab} />}>
+                    {privilegeDelete && <TabPanel label={PAGE_PRODUCT_TAB_DELETE} panelComponent={<Content theme='warning' className={styleSheet.deleteTab} />}>
                         <ButtonIcon icon={isLoadingModelDelete ? 'busy' : 'delete'} theme='danger' onClick={handleDelete}>
                             Delete Product <strong>{product.name}</strong>
                         </ButtonIcon>
