@@ -203,6 +203,16 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
     
     
     // states:
+    type EditMode = Exclude<keyof UserDetail, 'id'>|'full'
+    const [editMode, setEditMode] = useState<EditMode|null>(null);
+    
+    
+    
+    // sessions:
+    
+    
+    
+    // stores:
     const {
         data       : roles,
         isLoading  : isRoleLoadingAndNoData,
@@ -211,12 +221,6 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
         refetch    : refetchRole,
     } = getRolePaginationApi;
     const isErrorAndNoData = isRoleError && !roles;
-    
-    
-    
-    // states:
-    type EditMode = Exclude<keyof UserDetail, 'id'>|'full'
-    const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     
     

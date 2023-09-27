@@ -176,13 +176,6 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
     
     
     
-    // stores:
-    const [updateRole, {isLoading : isLoadingModelUpdate}] = useUpdateRole();
-    const [deleteRole, {isLoading : isLoadingModelDelete}] = useDeleteRole();
-    const isLoading = isLoadingModelUpdate || isLoadingModelDelete;
-    
-    
-    
     // states:
     const [isPathModified  , setIsPathModified  ] = useState<boolean>(false);
     const [isModified      , setIsModified      ] = useState<boolean>(false);
@@ -197,7 +190,14 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
     
     
     
+    // sessions:
+    
+    
+    
     // stores:
+    const [updateRole, {isLoading : isLoadingModelUpdate}] = useUpdateRole();
+    const [deleteRole, {isLoading : isLoadingModelDelete}] = useDeleteRole();
+    const isLoading = isLoadingModelUpdate || isLoadingModelDelete;
     
     
     

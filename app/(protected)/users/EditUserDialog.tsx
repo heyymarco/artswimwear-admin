@@ -377,14 +377,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
     
     
     
-    // stores:
-    const {data: roleList, isLoading: isLoadingRole, isError: isErrorRole} = useGetRoleList();
-    
-    
-    
     // states:
-    const { data: session, update : updateSession} = useSession();
-    
     const [isTabRoleShown  , setIsTabRoleShown   ] = useState<boolean>(() => (defaultExpandedTabIndex === 2));
     
     const [isPathModified  , setIsPathModified   ] = useState<boolean>(false);
@@ -404,6 +397,11 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
     
     
     
+    // sessions:
+    const { data: session, update : updateSession} = useSession();
+    
+    
+    
     // stores:
     const [updateUser       , {isLoading : isLoadingModelUpdate      }] = useUpdateUser();
     const [deleteUser       , {isLoading : isLoadingModelDelete      }] = useDeleteUser();
@@ -413,6 +411,8 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
     const isCommiting = isLoadingModelUpdate || isLoadingCommitDeleteImage;
     const isReverting = isLoadingRevertDeleteImage;
     const isLoading   = isCommiting || isReverting || isLoadingModelDelete;
+    
+    const {data: roleList, isLoading: isLoadingRole, isError: isErrorRole} = useGetRoleList();
     
     
     

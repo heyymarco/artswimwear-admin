@@ -55,8 +55,8 @@ export const ProfileMenu = (props: NavProps): JSX.Element|null => {
     
     
     
-    // states:
-    const { data: session, status } = useSession();
+    // sessions:
+    const { data: session, status: sessionStatus } = useSession();
     
     
     
@@ -82,7 +82,7 @@ export const ProfileMenu = (props: NavProps): JSX.Element|null => {
             className={styleSheet.main}
         >
             <NavItem className='menu'>
-                {(status === 'authenticated') && <>
+                {(sessionStatus === 'authenticated') && <>
                     { !image && <Icon icon='person' size='xl' />}
                     {!!image && <Basic className='photo' style={{ background: `no-repeat center/cover url("${resolveMediaUrl(image)}")` }} />}
                     

@@ -35,8 +35,8 @@ export default function ProtectedLayout({
 }: {
     children: React.ReactNode
 }) {
-    // states:
-    const { status } = useSession();
+    // sessions:
+    const { status: sessionStatus } = useSession();
     
     
     
@@ -45,7 +45,7 @@ export default function ProtectedLayout({
     const pathname = usePathname();
     useIsomorphicLayoutEffect(() => {
         // conditions:
-        if (status !== 'unauthenticated') return; // ignore if still loading or has authenticated
+        if (sessionStatus !== 'unauthenticated') return; // ignore if still loading or has authenticated
         
         
         
@@ -55,12 +55,12 @@ export default function ProtectedLayout({
             ? `/signin`
             : `/signin?callbackUrl=${encodeURIComponent(pathname)}`
         );
-    }, [status])
+    }, [sessionStatus])
     
     
     
     // jsx:
-    if (status !== 'authenticated') return <PageLoading />;
+    if (sessionStatus !== 'authenticated') return <PageLoading />;
     return (
         <>
             {children}

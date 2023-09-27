@@ -174,6 +174,16 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
     
     
     
+    // states:
+    type EditMode = 'shippingAddress'|'paymentMethod'
+    const [editMode, setEditMode] = useState<EditMode|null>(null);
+    
+    
+    
+    // sessions:
+    
+    
+    
     // stores:
     const {data: shippingList, isLoading: isLoadingShipping, isError: isErrorShipping } = useGetShippingList();
     const {data: productList, isLoading: isLoadingProduct, isError: isErrorProduct } = useGetProductList();
@@ -215,13 +225,7 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
     
     const paymentTypeUppercased = paymentType.toUpperCase();
     const isPaid                = (paymentTypeUppercased !== 'MANUAL');
-    const isManualPaid          = (paymentTypeUppercased === 'MANUAL_PAID')
-    
-    
-    
-    // states:
-    type EditMode = 'shippingAddress'|'paymentMethod'
-    const [editMode, setEditMode] = useState<EditMode|null>(null);
+    const isManualPaid          = (paymentTypeUppercased === 'MANUAL_PAID');
     
     
     
