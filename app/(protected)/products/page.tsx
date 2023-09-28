@@ -191,20 +191,20 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
     // sessions:
     const { data: session } = useSession();
     const role = session?.role;
-    const privelegeAdd               = !!role?.product_c;
-    const privelegeUpdateDescription = !!role?.product_ud;
-    const privelegeUpdateImages      = !!role?.product_ui;
-    const privelegeUpdatePrice       = !!role?.product_up;
-    const privelegeUpdateStock       = !!role?.product_us;
-    const privelegeUpdateVisibility  = !!role?.product_uv;
+    const privilegeAdd               = !!role?.product_c;
+    const privilegeUpdateDescription = !!role?.product_ud;
+    const privilegeUpdateImages      = !!role?.product_ui;
+    const privilegeUpdatePrice       = !!role?.product_up;
+    const privilegeUpdateStock       = !!role?.product_us;
+    const privilegeUpdateVisibility  = !!role?.product_uv;
     const privilegeDelete            = !!role?.product_d;
     const privilegeWrite             = (
-        /* privelegeAdd */ // except for add
-        privelegeUpdateDescription
-        || privelegeUpdateImages
-        || privelegeUpdatePrice
-        || privelegeUpdateStock
-        || privelegeUpdateVisibility
+        /* privilegeAdd */ // except for add
+        privilegeUpdateDescription
+        || privilegeUpdateImages
+        || privilegeUpdatePrice
+        || privilegeUpdateStock
+        || privilegeUpdateVisibility
         || privilegeDelete
     );
     
@@ -244,7 +244,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                     // components:
                     wrapperComponent={<React.Fragment />}
                     badgeComponent={
-                        privelegeUpdateImages
+                        privilegeUpdateImages
                         ? <Badge
                             // variants:
                             nude={true}
@@ -295,19 +295,19 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                 
                 <h3 className='name'>
                     {name}
-                    {privelegeUpdateDescription && <EditButton onClick={() => setEditMode('name')} />}
+                    {privilegeUpdateDescription && <EditButton onClick={() => setEditMode('name')} />}
                 </h3>
                 <p className='price'>
                     <strong className='value'>{formatCurrency(price)}</strong>
-                    {privelegeUpdatePrice       && <EditButton onClick={() => setEditMode('price')} />}
+                    {privilegeUpdatePrice       && <EditButton onClick={() => setEditMode('price')} />}
                 </p>
                 <p className='stock'>
                     Stock: <strong className='value'>{stock ?? 'unlimited'}</strong>
-                    {privelegeUpdateStock       && <EditButton onClick={() => setEditMode('stock')} />}
+                    {privilegeUpdateStock       && <EditButton onClick={() => setEditMode('stock')} />}
                 </p>
                 <p className='visibility'>
                     Visibility: <strong className='value'>{visibility}</strong>
-                    {privelegeUpdateVisibility  && <EditButton onClick={() => setEditMode('visibility')} />}
+                    {privilegeUpdateVisibility  && <EditButton onClick={() => setEditMode('visibility')} />}
                 </p>
                 <p className='fullEditor'>
                     {privilegeWrite             && <EditButton buttonStyle='regular' onClick={() => setEditMode('full')}>
@@ -347,7 +347,7 @@ export default function ProductPage(): JSX.Element|null {
     // sessions:
     const { data: session, status: sessionStatus } = useSession();
     const role = session?.role;
-    const privelegeAdd = !!role?.product_c;
+    const privilegeAdd = !!role?.product_c;
     
     
     
@@ -383,7 +383,7 @@ export default function ProductPage(): JSX.Element|null {
                     <ProductPreview model={undefined as any} />
                 }
                 modelCreateComponent={
-                    privelegeAdd
+                    privilegeAdd
                     ? <ProductCreate onClose={undefined as any} />
                     : undefined
                 }
