@@ -112,10 +112,17 @@ router
     
     //#region validating privileges
     const session = (req as any).session as Session;
+    
     if (!session.role?.product_ui && folder.startsWith('products/')) return NextResponse.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the product images.`
+    }, { status: 403 }); // handled with error: forbidden
+    
+    if (!session.role?.user_ui && folder.startsWith('users/')) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the user's image.`
     }, { status: 403 }); // handled with error: forbidden
     //#endregion validating privileges
     

@@ -224,6 +224,11 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         
         
         
+        // accessibilities:
+        readOnly = false,
+        
+        
+        
         // handlers:
         onChange,
     ...restListItemProps} = props;
@@ -322,7 +327,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
             
             
             // behaviors:
-            actionCtrl={true}
+            actionCtrl={!readOnly}
             
             
             
@@ -332,9 +337,9 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
             
             
             // handlers:
-            onClick={handleClick}
+            onClick={!readOnly ? handleClick : undefined}
         >
-            <RadioDecorator />
+            <RadioDecorator enabled={!readOnly} />
             <p className='name'>{!!id ? name : <span className='noValue'>No Access</span>}</p>
             {!!id && <EditButton
                 iconComponent={<Icon icon='edit' mild={isSelected} />}
@@ -382,7 +387,6 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
     // states:
     const [isTabRoleShown  , setIsTabRoleShown   ] = useState<boolean>(() => (defaultExpandedTabIndex === 2));
     
-    const [isPathModified  , setIsPathModified   ] = useState<boolean>(false);
     const [isModified      , setIsModified       ] = useState<boolean>(false);
     
     const [enableValidation, setEnableValidation ] = useState<boolean>(false);
@@ -401,6 +405,25 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
     
     // sessions:
     const { data: session, update : updateSession} = useSession();
+    const role = session?.role;
+    const privilegeAdd               = !!role?.user_c && !user.id;
+    const privilegeUpdateName        = !!role?.user_un;
+    const privilegeUpdateUsername    = !!role?.user_uu;
+    const privilegeUpdateEmail       = !!role?.user_ue;
+    const privilegeUpdatePassword    = !!role?.user_up;
+    const privilegeUpdateImage       = !!role?.user_ui;
+    const privilegeUpdateRole        = !!role?.user_ur;
+    const privilegeDelete            = !!role?.user_d;
+    const privilegeWrite             = (
+        privilegeAdd
+        || privilegeUpdateName
+        || privilegeUpdateUsername
+        || privilegeUpdateEmail
+        || privilegeUpdatePassword
+        || privilegeUpdateImage
+        || privilegeUpdateRole
+        /* || privilegeDelete */ // except for delete
+    );
     
     
     
@@ -447,6 +470,10 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
     });
     
     const handleSave = useEvent(async () => {
+        if (!privilegeWrite) return;
+        
+        
+        
         setEnableValidation(true);
         await new Promise<void>((resolve) => { // wait for a validation state applied
             setTimeout(() => {
@@ -467,11 +494,11 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
             const updatingUserTask = updateUser({
                 id             : user.id,
                 
-                name,
-                email,
-                image,
-                roleId,
-                username : username || null, // convert empty string to null
+                name     : (privilegeUpdateName     || privilegeAdd) ? name               : undefined,
+                email    : (privilegeUpdateEmail    || privilegeAdd) ? email              : undefined,
+                image    : (privilegeUpdateImage    || privilegeAdd) ? image              : undefined,
+                roleId   : (privilegeUpdateRole     || privilegeAdd) ? roleId             : undefined,
+                username : (privilegeUpdateUsername || privilegeAdd) ? (username || null) : undefined, // convert empty string to null
             }).unwrap().then(async (): Promise<void> => {
                 if (session?.user?.email?.toLowerCase() === initialEmailRef.current.toLowerCase()) await updateSession(); // update the session if updated current user
             });
@@ -518,7 +545,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
         } // try
     });
     const handleClosing = useEvent(async () => {
-        if (isModified || isPathModified) {
+        if (privilegeWrite && isModified) {
             // conditions:
             const answer = await showMessage<'save'|'dontSave'|'continue'>({
                 theme         : 'warning',
@@ -557,6 +584,10 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
         } // if
     });
     const handleSaveImages = useEvent(async (commitImages : boolean) => {
+        if (!privilegeWrite) return;
+        
+        
+        
         // initial_image have been replaced with new image:
         if (commitImages && initialImageRef.current && (initialImageRef.current !== image)) {
             // register to actual_delete the initial_image when committed:
@@ -694,6 +725,11 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                                 
                                 
                                 
+                                // accessibilities:
+                                enabled={privilegeUpdateName || privilegeAdd}
+                                
+                                
+                                
                                 // values:
                                 value={name}
                                 onChange={(value) => {
@@ -706,6 +742,11 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                             <UniqueUsernameEditor
                                 // classes:
                                 className='username editor'
+                                
+                                
+                                
+                                // accessibilities:
+                                enabled={privilegeUpdateUsername || privilegeAdd}
                                 
                                 
                                 
@@ -725,6 +766,11 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                                 
                                 
                                 
+                                // accessibilities:
+                                enabled={privilegeUpdateEmail || privilegeAdd}
+                                
+                                
+                                
                                 // values:
                                 currentValue={user.email}
                                 value={email}
@@ -739,6 +785,11 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                         <UploadImage<HTMLElement, string>
                             // variants:
                             nude={true}
+                            
+                            
+                            
+                            // accessibilities:
+                            // TODO: readOnly={!(privilegeUpdateImage || privilegeAdd)}
                             
                             
                             
@@ -820,23 +871,23 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                                 
                                 // components:
                                 modelPreviewComponent={
-                                    <RolePreview model={undefined as any} selectedRoleId={roleId} isShown={isTabRoleShown} />
+                                    <RolePreview model={undefined as any} selectedRoleId={roleId} isShown={isTabRoleShown} readOnly={!(privilegeUpdateRole || privilegeAdd)} />
                                 }
                                 modelCreateComponent={
                                     <RoleCreate onClose={undefined as any} />
                                 }
                             />
                     }</TabPanel>
-                    <TabPanel label={PAGE_USER_TAB_DELETE} panelComponent={<Content theme='warning' className={styleSheet.deleteTab} />}>
+                    {privilegeDelete && <TabPanel label={PAGE_USER_TAB_DELETE} panelComponent={<Content theme='warning' className={styleSheet.deleteTab} />}>
                         <ButtonIcon icon={isLoadingModelDelete ? 'busy' : 'delete'} theme='danger' onClick={handleDelete}>
                             Delete User <strong>{user.name}</strong>
                         </ButtonIcon>
-                    </TabPanel>
+                    </TabPanel>}
                 </Tab>
             </ValidationProvider>
             <CardFooter onKeyDown={handleKeyDown}>
-                <ButtonIcon className='btnSave'   icon={isCommiting ? 'busy' : 'save'  } theme='success' onClick={handleSave}>Save</ButtonIcon>
-                <ButtonIcon className='btnCancel' icon={isReverting ? 'busy' : 'cancel'} theme='danger'  onClick={handleClosing}>{isReverting ? 'Reverting' : 'Cancel'}</ButtonIcon>
+                {privilegeWrite && <ButtonIcon className='btnSave'   icon={isCommiting ? 'busy' : 'save'  } theme='success' onClick={handleSave}>Save</ButtonIcon>}
+                <ButtonIcon className='btnCancel' icon={privilegeWrite ? (isReverting ? 'busy' : 'cancel') : 'done'} theme={privilegeWrite ? 'danger' : 'primary'}  onClick={handleClosing}>{isReverting ? 'Reverting' : (privilegeWrite ? 'Cancel' : 'Close')}</ButtonIcon>
             </CardFooter>
         </AccessibilityProvider>
     );

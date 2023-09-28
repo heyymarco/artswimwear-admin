@@ -17,6 +17,11 @@ import type {
     Metadata,
 }                           from 'next'
 
+// next-auth:
+import {
+    useSession,
+}                           from 'next-auth/react'
+
 // cssfn:
 import {
     // style sheets:
@@ -143,8 +148,8 @@ import {
 
 // configs:
 import {
-    PAGE_PRODUCT_TITLE,
-    PAGE_PRODUCT_DESCRIPTION,
+    PAGE_USER_TITLE,
+    PAGE_USER_DESCRIPTION,
 }                           from '@/website.config' // TODO: will be used soon
 import {
     COMMERCE_CURRENCY_FRACTION_MAX,
@@ -206,6 +211,30 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
     // states:
     type EditMode = Exclude<keyof UserDetail, 'id'>|'full'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
+    
+    
+    
+    // sessions:
+    const { data: session } = useSession();
+    const role = session?.role;
+    const privilegeAdd               = !!role?.user_c;
+    const privilegeUpdateName        = !!role?.user_un;
+    const privilegeUpdateUsername    = !!role?.user_uu;
+    const privilegeUpdateEmail       = !!role?.user_ue;
+    const privilegeUpdatePassword    = !!role?.user_up;
+    const privilegeUpdateImage       = !!role?.user_ui;
+    const privilegeUpdateRole        = !!role?.user_ur;
+    const privilegeDelete            = !!role?.user_d;
+    const privilegeWrite             = (
+        /* privilegeAdd */ // except for add
+        privilegeUpdateName
+        || privilegeUpdateUsername
+        || privilegeUpdateEmail
+        || privilegeUpdatePassword
+        || privilegeUpdateImage
+        || privilegeUpdateRole
+        || privilegeDelete
+    );
     
     
     
@@ -285,25 +314,25 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
                 
                 <h3 className='name'>
                     {name}
-                    <EditButton onClick={() => setEditMode('name')} />
+                    {privilegeUpdateName     && <EditButton onClick={() => setEditMode('name')} />}
                 </h3>
                 <p className='username'>
                     {username || <span className='noValue'>No Username</span>}
-                    <EditButton onClick={() => setEditMode('username')} />
+                    {privilegeUpdateUsername && <EditButton onClick={() => setEditMode('username')} />}
                 </p>
                 <p className='email'>
                     {email}
-                    <EditButton onClick={() => setEditMode('email')} />
+                    {privilegeUpdateEmail    && <EditButton onClick={() => setEditMode('email')} />}
                 </p>
                 <p className='role'>
                     { isRoleLoadingAndNoData && <Busy />}
                     {!isRoleLoadingAndNoData && !!roleId && roles?.entities?.[roleId]?.name || <span className='noValue'>No Access</span>}
-                    <EditButton onClick={() => setEditMode('roleId')} />
+                    {privilegeUpdateRole     && <EditButton onClick={() => setEditMode('roleId')} />}
                 </p>
                 <p className='fullEditor'>
-                    <EditButton buttonStyle='regular' onClick={() => setEditMode('full')}>
+                    {privilegeWrite          && <EditButton buttonStyle='regular' onClick={() => setEditMode('full')}>
                         Open Full Editor
-                    </EditButton>
+                    </EditButton>}
                 </p>
             </div>
             {/* edit dialog: */}
@@ -342,6 +371,9 @@ export default function UserPage(): JSX.Element|null {
     
     
     // sessions:
+    const { data: session, status: sessionStatus } = useSession();
+    const role = session?.role;
+    const privilegeAdd = !!role?.user_c;
     
     
     
@@ -355,8 +387,8 @@ export default function UserPage(): JSX.Element|null {
     
     
     // jsx:
-    if (isLoadingAndNoData) return <PageLoading />;
-    if (isErrorAndNoData  ) return <PageError onRetry={refetch} />;
+    if (isLoadingAndNoData || (sessionStatus === 'loading'        )) return <PageLoading />;
+    if (isErrorAndNoData   || (sessionStatus === 'unauthenticated')) return <PageError onRetry={refetch} />;
     return (
         <Main className={styleSheet.page}>
             <SectionModelEditor<UserDetail>
@@ -379,7 +411,9 @@ export default function UserPage(): JSX.Element|null {
                     <UserPreview model={undefined as any} getRolePaginationApi={getRolePaginationApi} />
                 }
                 modelCreateComponent={
-                    <UserCreate onClose={undefined as any} />
+                    privilegeAdd
+                    ? <UserCreate onClose={undefined as any} />
+                    : undefined
                 }
             />
         </Main>
@@ -389,6 +423,6 @@ export default function UserPage(): JSX.Element|null {
 
 
 // export const metadata : Metadata = {
-//     title       : PAGE_PRODUCT_TITLE,
-//     description : PAGE_PRODUCT_DESCRIPTION,
+//     title       : PAGE_USER_TITLE,
+//     description : PAGE_USER_DESCRIPTION,
 // };

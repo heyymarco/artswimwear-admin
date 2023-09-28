@@ -9,6 +9,11 @@ import {
     getServerSession,
 }                           from 'next-auth'
 
+// heymarco:
+import type {
+    Session,
+}                           from '@heymarco/next-auth/server'
+
 // next-connect:
 import {
     createEdgeRouter,
@@ -73,6 +78,7 @@ router
     // conditions:
     const session = await getServerSession(authOptions);
     if (!session) return NextResponse.json({ error: 'Please sign in.' }, { status: 401 }); // handled with error: unauthorized
+    (req as any).session = session;
     
     
     
@@ -80,6 +86,10 @@ router
     return await next();
 })
 .post(async (req) => {
+    /* required for displaying users page */
+    
+    
+    
     if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
         await new Promise<void>((resolve) => {
             setTimeout(() => {
@@ -111,6 +121,17 @@ router
         }, { status: 400 }); // handled with error
     } // if
     //#endregion validating request
+    
+    
+    
+    //#region validating privileges
+    const session = (req as any).session as Session;
+    if (!session.role?.user_r) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to view the users.`
+    }, { status: 403 }); // handled with error: forbidden
+    //#endregion validating privileges
     
     
     
@@ -173,6 +194,7 @@ router
         
         name,
         email,
+        password,
         image,
         
         roleId,
@@ -192,6 +214,8 @@ router
         ||
         ((email !== undefined) && ((typeof(email) !== 'string') || (email.length < 5)))
         ||
+        ((password !== undefined) && ((typeof(password) !== 'string') || (password.length < 1)))
+        ||
         ((image !== undefined) && (image !== null) && ((typeof(image) !== 'string') || (image.length < 1)))
         ||
         ((username !== undefined) && (username !== null) && ((typeof(username) !== 'string') || (username.length < 1)))
@@ -203,6 +227,56 @@ router
         }, { status: 400 }); // handled with error
     } // if
     //#endregion validating request
+    
+    
+    
+    //#region validating privileges
+    const session = (req as any).session as Session;
+    if (!id) {
+        if (!session.role?.user_c) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to add new user.`
+        }, { status: 403 }); // handled with error: forbidden
+    }
+    else {
+        if (!session.role?.user_un && (name !== undefined)) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the user's name.`
+        }, { status: 403 }); // handled with error: forbidden
+        
+        if (!session.role?.user_uu && (username !== undefined)) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the user's username.`
+        }, { status: 403 }); // handled with error: forbidden
+        
+        if (!session.role?.user_ue && (email !== undefined)) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the user's email.`
+        }, { status: 403 }); // handled with error: forbidden
+        
+        if (!session.role?.user_up && (password !== undefined)) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the user's password.`
+        }, { status: 403 }); // handled with error: forbidden
+        
+        if (!session.role?.user_ui && (image !== undefined)) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the user's image.`
+        }, { status: 403 }); // handled with error: forbidden
+    } // if
+    
+    if (!session.role?.user_ur && (roleId !== undefined)) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the user's role.`
+    }, { status: 403 }); // handled with error: forbidden
+    //#endregion validating privileges
     
     
     
@@ -228,6 +302,7 @@ router
             name,
             email,
             emailVerified,
+            // password : TODO: hashed password,
             image,
             
             roleId,
@@ -326,6 +401,17 @@ router
         }, { status: 400 }); // handled with error
     } // if
     //#endregion validating request
+    
+    
+    
+    //#region validating privileges
+    const session = (req as any).session as Session;
+    if (!session.role?.user_d) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to delete the user.`
+    }, { status: 403 }); // handled with error: forbidden
+    //#endregion validating privileges
     
     
     
