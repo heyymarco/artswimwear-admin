@@ -148,6 +148,16 @@ const emptyRole : RoleDetail = {
     product_us : false,
     product_uv : false,
     product_d  : false,
+    
+    user_r     : false,
+    user_c     : false,
+    user_un    : false,
+    user_uu    : false,
+    user_ue    : false,
+    user_up    : false,
+    user_ui    : false,
+    user_ur    : false,
+    user_d     : false,
 };
 
 
@@ -198,6 +208,16 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
     const [product_us      , setProduct_us      ] = useState<boolean>(role.product_us);
     const [product_uv      , setProduct_uv      ] = useState<boolean>(role.product_uv);
     const [product_d       , setProduct_d       ] = useState<boolean>(role.product_d);
+    
+    const [user_r          , setUser_r          ] = useState<boolean>(role.user_r);
+    const [user_c          , setUser_c          ] = useState<boolean>(role.user_c);
+    const [user_un         , setUser_un         ] = useState<boolean>(role.user_un);
+    const [user_uu         , setUser_uu         ] = useState<boolean>(role.user_uu);
+    const [user_ue         , setUser_ue         ] = useState<boolean>(role.user_ue);
+    const [user_up         , setUser_up         ] = useState<boolean>(role.user_up);
+    const [user_ui         , setUser_ui         ] = useState<boolean>(role.user_ui);
+    const [user_ur         , setUser_ur         ] = useState<boolean>(role.user_ur);
+    const [user_d          , setUser_d          ] = useState<boolean>(role.user_d);
     
     
     
@@ -264,6 +284,16 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                 product_us,
                 product_uv,
                 product_d,
+                
+                user_r,
+                user_c,
+                user_un,
+                user_uu,
+                user_ue,
+                user_up,
+                user_ui,
+                user_ur,
+                user_d,
             }).unwrap();
             
             await handleClose();
@@ -475,6 +505,35 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                                             Change Visibility
                                         </Check>
                                         <Check      className='check editor' required={false} active={product_d}  onActiveChange={({active}) => { setProduct_d(active);  setIsModified(true); }}>
+                                            Delete
+                                        </Check>
+                                    </AccordionItem>
+                                    <AccordionItem label='Users'>
+                                        <Check      className='check editor' required={false} active={user_r}  onActiveChange={({active}) => { setUser_r(active);  setIsModified(true); }}>
+                                            View
+                                        </Check>
+                                        <Check      className='check editor' required={false} active={user_c}  onActiveChange={({active}) => { setUser_c(active);  setIsModified(true); }}>
+                                            Add New
+                                        </Check>
+                                        <Check      className='check editor' required={false} active={user_un} onActiveChange={({active}) => { setUser_un(active); setIsModified(true); }}>
+                                            Change Name
+                                        </Check>
+                                        <Check      className='check editor' required={false} active={user_uu} onActiveChange={({active}) => { setUser_uu(active); setIsModified(true); }}>
+                                            Change Username
+                                        </Check>
+                                        <Check      className='check editor' required={false} active={user_ue} onActiveChange={({active}) => { setUser_ue(active); setIsModified(true); }}>
+                                            Change Email
+                                        </Check>
+                                        <Check      className='check editor' required={false} active={user_up} onActiveChange={({active}) => { setUser_up(active); setIsModified(true); }}>
+                                            Change Password
+                                        </Check>
+                                        <Check      className='check editor' required={false} active={user_ui} onActiveChange={({active}) => { setUser_ui(active); setIsModified(true); }}>
+                                            Change Image
+                                        </Check>
+                                        <Check      className='check editor' required={false} active={user_ur} onActiveChange={({active}) => { setUser_ur(active); setIsModified(true); }}>
+                                            Change Role
+                                        </Check>
+                                        <Check      className='check editor' required={false} active={user_d}  onActiveChange={({active}) => { setUser_d(active);  setIsModified(true); }}>
                                             Delete
                                         </Check>
                                     </AccordionItem>

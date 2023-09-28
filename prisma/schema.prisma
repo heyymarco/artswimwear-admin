@@ -367,6 +367,16 @@ model Role {
     product_uv              Boolean                 @default(false)
     product_d               Boolean                 @default(false)
     
+    user_r                  Boolean                 @default(false)
+    user_c                  Boolean                 @default(false)
+    user_un                 Boolean                 @default(false)
+    user_uu                 Boolean                 @default(false)
+    user_ue                 Boolean                 @default(false)
+    user_up                 Boolean                 @default(false)
+    user_ui                 Boolean                 @default(false)
+    user_ur                 Boolean                 @default(false)
+    user_d                  Boolean                 @default(false)
+    
     // relations:
     users                   User[]                  // a Role may have some related Users(s)  // one  to many
 }

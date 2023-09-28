@@ -87,6 +87,16 @@ router
                 product_us : true,
                 product_uv : true,
                 product_d  : true,
+                
+                user_r     : true,
+                user_c     : true,
+                user_un    : true,
+                user_uu    : true,
+                user_ue    : true,
+                user_up    : true,
+                user_ui    : true,
+                user_ur    : true,
+                user_d     : true,
             },
         }))
     );
@@ -119,6 +129,16 @@ router
         product_us,
         product_uv,
         product_d,
+        
+        user_r,
+        user_c,
+        user_un,
+        user_uu,
+        user_ue,
+        user_up,
+        user_ui,
+        user_ur,
+        user_d,
     } = await req.json();
     //#endregion parsing request
     
@@ -154,6 +174,16 @@ router
             product_us,
             product_uv,
             product_d,
+            
+            user_r,
+            user_c,
+            user_un,
+            user_uu,
+            user_ue,
+            user_up,
+            user_ui,
+            user_ur,
+            user_d,
         };
         const select = {
             id         : true,
@@ -168,6 +198,16 @@ router
             product_us : true,
             product_uv : true,
             product_d  : true,
+            
+            user_r     : true,
+            user_c     : true,
+            user_un    : true,
+            user_uu    : true,
+            user_ue    : true,
+            user_up    : true,
+            user_ui    : true,
+            user_ur    : true,
+            user_d     : true,
         };
         const roleDetail : RoleDetail = (
             !id
