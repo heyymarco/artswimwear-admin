@@ -97,6 +97,10 @@ router
                 user_ui    : true,
                 user_ur    : true,
                 user_d     : true,
+                
+                role_c     : true,
+                role_u     : true,
+                role_d     : true,
             },
         }))
     );
@@ -139,6 +143,10 @@ router
         user_ui,
         user_ur,
         user_d,
+        
+        role_c,
+        role_u,
+        role_d,
     } = await req.json();
     //#endregion parsing request
     
@@ -184,6 +192,10 @@ router
             user_ui,
             user_ur,
             user_d,
+            
+            role_c,
+            role_u,
+            role_d,
         };
         const select = {
             id         : true,
@@ -208,6 +220,10 @@ router
             user_ui    : true,
             user_ur    : true,
             user_d     : true,
+            
+            role_c     : true,
+            role_u     : true,
+            role_d     : true,
         };
         const roleDetail : RoleDetail = (
             !id

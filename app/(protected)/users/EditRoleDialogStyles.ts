@@ -164,6 +164,11 @@ export const usesRoleTabLayout = () => {
                     
                     
                     
+                    // sizes:
+                    contain       : 'inline-size', // do not take inline-space
+                    
+                    
+                    
                     // spacings:
                     gap           : spacers.default,
                 }),

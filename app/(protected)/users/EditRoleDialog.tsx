@@ -158,6 +158,10 @@ const emptyRole : RoleDetail = {
     user_ui    : false,
     user_ur    : false,
     user_d     : false,
+    
+    role_c     : false,
+    role_u     : false,
+    role_d     : false,
 };
 
 
@@ -218,6 +222,10 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
     const [user_ui         , setUser_ui         ] = useState<boolean>(role.user_ui);
     const [user_ur         , setUser_ur         ] = useState<boolean>(role.user_ur);
     const [user_d          , setUser_d          ] = useState<boolean>(role.user_d);
+    
+    const [role_c          , setRole_c          ] = useState<boolean>(role.role_c);
+    const [role_u          , setRole_u          ] = useState<boolean>(role.role_u);
+    const [role_d          , setRole_d          ] = useState<boolean>(role.role_d);
     
     
     
@@ -294,6 +302,10 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                 user_ui,
                 user_ur,
                 user_d,
+                
+                role_c,
+                role_u,
+                role_d,
             }).unwrap();
             
             await handleClose();
@@ -534,6 +546,17 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                                             Change Role
                                         </Check>
                                         <Check      className='check editor' required={false} active={user_d}  onActiveChange={({active}) => { setUser_d(active);  setIsModified(true); }}>
+                                            Delete
+                                        </Check>
+                                    </AccordionItem>
+                                    <AccordionItem label='Roles'>
+                                        <Check      className='check editor' required={false} active={role_c}  onActiveChange={({active}) => { setRole_c(active);  setIsModified(true); }}>
+                                            Add New
+                                        </Check>
+                                        <Check      className='check editor' required={false} active={role_u}  onActiveChange={({active}) => { setRole_u(active); setIsModified(true); }}>
+                                            Change
+                                        </Check>
+                                        <Check      className='check editor' required={false} active={role_d}  onActiveChange={({active}) => { setRole_d(active);  setIsModified(true); }}>
                                             Delete
                                         </Check>
                                     </AccordionItem>

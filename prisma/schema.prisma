@@ -377,6 +377,10 @@ model Role {
     user_ur                 Boolean                 @default(false)
     user_d                  Boolean                 @default(false)
     
+    role_c                  Boolean                 @default(false)
+    role_u                  Boolean                 @default(false)
+    role_d                  Boolean                 @default(false)
+    
     // relations:
     users                   User[]                  // a Role may have some related Users(s)  // one  to many
 }
