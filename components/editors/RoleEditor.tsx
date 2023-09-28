@@ -81,7 +81,7 @@ interface RoleEditorProps<TElement extends Element = HTMLElement>
     
     
     // components:
-    modelPreviewComponent  : React.ReactComponentElement<any, RolePreviewProps>
+    modelPreviewComponent  : (model: RoleEntry) => React.ReactComponentElement<any, RolePreviewProps>
 }
 const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorProps<TElement>): JSX.Element|null => {
     // rest props:
@@ -97,7 +97,7 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
         
         // components:
         modelCreateComponent,
-        modelPreviewComponent,
+        modelPreviewComponent : modelPreviewComponentFn,
     ...restListProps} = props;
     
     const filteredRoleList = !roleList ? undefined : Object.values(roleList.entities).filter((roleEntry): roleEntry is Exclude<typeof roleEntry, undefined> => !!roleEntry);
@@ -120,26 +120,30 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
             {/* <ModelCreate> */}
             {!!modelCreateComponent  && <ModelCreateOuter className='solid' createItemText='Add New Role' modelCreateComponent={modelCreateComponent} />}
             
-            {roleListWithNone.map((model) =>
-                /* <ModelPreview> */
-                React.cloneElement<RolePreviewProps>(modelPreviewComponent,
-                    // props:
-                    {
-                        // identifiers:
-                        key      : modelPreviewComponent.key         ?? model.id,
-                        
-                        
-                        
-                        // data:
-                        model    : modelPreviewComponent.props.model ?? model,
-                        
-                        
-                        
-                        // handlers:
-                        onChange : onChange,
-                    },
-                )
-            )}
+            {roleListWithNone.map((model) => {
+                const modelPreviewComponent = modelPreviewComponentFn(model);
+                // jsx:
+                return (
+                    /* <ModelPreview> */
+                    React.cloneElement<RolePreviewProps>(modelPreviewComponent,
+                        // props:
+                        {
+                            // identifiers:
+                            key      : modelPreviewComponent.key         ?? model.id,
+                            
+                            
+                            
+                            // data:
+                            model    : modelPreviewComponent.props.model ?? model,
+                            
+                            
+                            
+                            // handlers:
+                            onChange : onChange,
+                        },
+                    )
+                );
+            })}
         </List>
     );
 };

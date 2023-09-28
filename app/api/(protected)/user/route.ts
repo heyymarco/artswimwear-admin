@@ -238,6 +238,12 @@ You do not have the privilege to view the users.`
 
 You do not have the privilege to add new user.`
         }, { status: 403 }); // handled with error: forbidden
+        
+        if (!session.role?.user_ur && (roleId !== null) && (roleId !== undefined)) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to add new user with a user role.`
+        }, { status: 403 }); // handled with error: forbidden
     }
     else {
         if (!session.role?.user_un && (name !== undefined)) return NextResponse.json({ error:

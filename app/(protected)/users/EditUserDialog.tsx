@@ -497,7 +497,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                 name     : (privilegeUpdateName     || privilegeAdd) ? name               : undefined,
                 email    : (privilegeUpdateEmail    || privilegeAdd) ? email              : undefined,
                 image    : (privilegeUpdateImage    || privilegeAdd) ? image              : undefined,
-                roleId   : (privilegeUpdateRole     || privilegeAdd) ? roleId             : undefined,
+                roleId   : (privilegeUpdateRole                    ) ? roleId             : ((!user.id && privilegeAdd) ? null : undefined),
                 username : (privilegeUpdateUsername || privilegeAdd) ? (username || null) : undefined, // convert empty string to null
             }).unwrap().then(async (): Promise<void> => {
                 if (session?.user?.email?.toLowerCase() === initialEmailRef.current.toLowerCase()) await updateSession(); // update the session if updated current user
@@ -871,7 +871,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                                 
                                 // components:
                                 modelPreviewComponent={
-                                    <RolePreview model={undefined as any} selectedRoleId={roleId} isShown={isTabRoleShown} readOnly={!(privilegeUpdateRole || privilegeAdd)} />
+                                    ({id}) => <RolePreview model={undefined as any} selectedRoleId={roleId} isShown={isTabRoleShown} readOnly={!(privilegeUpdateRole /* || privilegeAdd */) && !(!id && privilegeAdd)} />
                                 }
                                 modelCreateComponent={
                                     <RoleCreate onClose={undefined as any} />
