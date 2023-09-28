@@ -269,13 +269,13 @@ You do not have the privilege to modify the user's password.`
 
 You do not have the privilege to modify the user's image.`
         }, { status: 403 }); // handled with error: forbidden
-    } // if
-    
-    if (!session.role?.user_ur && (roleId !== undefined)) return NextResponse.json({ error:
+        
+        if (!session.role?.user_ur && (roleId !== undefined)) return NextResponse.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the user's role.`
-    }, { status: 403 }); // handled with error: forbidden
+        }, { status: 403 }); // handled with error: forbidden
+    } // if
     //#endregion validating privileges
     
     
