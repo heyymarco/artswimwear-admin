@@ -55,7 +55,7 @@ export default function SignInPage() {
                     providers={loginProviders}
                     signUpEnable={false}
                     gotoHomeButtonComponent={null}
-                    defaultCallbackUrl='/'
+                    defaultCallbackUrl='/orders'
                 />
             </Section>
         </Main>
