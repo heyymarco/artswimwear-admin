@@ -234,6 +234,9 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
         || privilegeUpdateImage
         || privilegeUpdateRole
         || privilegeDelete
+        // TODO: || privilegeRoleAdd
+        // TODO: || privilegeRoleUpdate
+        // TODO: || privilegeRoleDelete
     );
     
     
@@ -284,7 +287,8 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
                     // components:
                     wrapperComponent={<React.Fragment />}
                     badgeComponent={
-                        <Badge
+                        privilegeUpdateImage
+                        ? <Badge
                             // variants:
                             nude={true}
                             
@@ -297,6 +301,7 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
                         >
                             <EditButton className='edit overlay' onClick={() => setEditMode('image')} />
                         </Badge>
+                        : null
                     }
                     elementComponent={
                         !!image
