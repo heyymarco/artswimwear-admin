@@ -766,7 +766,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                                 try {
                                     const imageId = await postImage({
                                         image            : imageFile,
-                                        folder           : '@@user',
+                                        folder           : 'users',
                                         onUploadProgress : reportProgress,
                                         abortSignal      : abortSignal,
                                     }).unwrap();
