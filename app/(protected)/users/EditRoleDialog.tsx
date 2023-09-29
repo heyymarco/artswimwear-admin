@@ -13,6 +13,11 @@ import {
     useEffect,
 }                           from 'react'
 
+// next-auth:
+import {
+    useSession,
+}                           from 'next-auth/react'
+
 // cssfn:
 import {
     // style sheets:
@@ -230,6 +235,16 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
     
     
     // sessions:
+    const { data: session, update : updateSession} = useSession();
+    const rolee = session?.role;
+    const privilegeAdd               = !!rolee?.role_c && !role.id;
+    const privilegeUpdate            = !!rolee?.role_u;
+    const privilegeDelete            = !!rolee?.role_d;
+    const privilegeWrite             = (
+        privilegeAdd
+        || privilegeUpdate
+        /* || privilegeDelete */ // except for delete
+    );
     
     
     
@@ -262,6 +277,11 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
     
     // handlers:
     const handleSave = useEvent(async () => {
+        // if (!privilegeWrite) return;
+        if (!privilegeUpdate) return;
+        
+        
+        
         setEnableValidation(true);
         await new Promise<void>((resolve) => { // wait for a validation state applied
             setTimeout(() => {
@@ -354,7 +374,7 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
         } // try
     });
     const handleClosing = useEvent(async () => {
-        if (isModified || isPathModified) {
+        if (privilegeWrite && isModified) {
             // conditions:
             const answer = await showMessage<'save'|'dontSave'|'continue'>({
                 theme         : 'warning',
@@ -482,6 +502,11 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                                 
                                 
                                 
+                                // accessibilities:
+                                enabled={privilegeUpdate || privilegeAdd}
+                                
+                                
+                                
                                 // values:
                                 currentValue={role.name ?? ''}
                                 value={name}
@@ -493,87 +518,89 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                             
                             <span className='privileges label'>Privileges:</span>
                             <ValidationProvider enableValidation={false} inheritValidation={false}>
-                                <ExclusiveAccordion className='privileges list' defaultExpandedListIndex={0}>
-                                    <AccordionItem label='Products'>
-                                        <Check      className='check editor' required={false} active={product_r}  onActiveChange={({active}) => { setProduct_r(active);  setIsModified(true); }}>
-                                            View
-                                        </Check>
-                                        <Check      className='check editor' required={false} active={product_c}  onActiveChange={({active}) => { setProduct_c(active);  setIsModified(true); }}>
-                                            Add New
-                                        </Check>
-                                        <Check      className='check editor' required={false} active={product_ud} onActiveChange={({active}) => { setProduct_ud(active); setIsModified(true); }}>
-                                            Change Name, Path &amp; Description
-                                        </Check>
-                                        <Check      className='check editor' required={false} active={product_ui} onActiveChange={({active}) => { setProduct_ui(active); setIsModified(true); }}>
-                                            Change Images
-                                        </Check>
-                                        <Check      className='check editor' required={false} active={product_up} onActiveChange={({active}) => { setProduct_up(active); setIsModified(true); }}>
-                                            Change Price &amp; Shipping Weight
-                                        </Check>
-                                        <Check      className='check editor' required={false} active={product_us} onActiveChange={({active}) => { setProduct_us(active); setIsModified(true); }}>
-                                            Change Stock
-                                        </Check>
-                                        <Check      className='check editor' required={false} active={product_uv} onActiveChange={({active}) => { setProduct_uv(active); setIsModified(true); }}>
-                                            Change Visibility
-                                        </Check>
-                                        <Check      className='check editor' required={false} active={product_d}  onActiveChange={({active}) => { setProduct_d(active);  setIsModified(true); }}>
-                                            Delete
-                                        </Check>
-                                    </AccordionItem>
-                                    <AccordionItem label='Users'>
-                                        <Check      className='check editor' required={false} active={user_r}  onActiveChange={({active}) => { setUser_r(active);  setIsModified(true); }}>
-                                            View
-                                        </Check>
-                                        <Check      className='check editor' required={false} active={user_c}  onActiveChange={({active}) => { setUser_c(active);  setIsModified(true); }}>
-                                            Add New
-                                        </Check>
-                                        <Check      className='check editor' required={false} active={user_un} onActiveChange={({active}) => { setUser_un(active); setIsModified(true); }}>
-                                            Change Name
-                                        </Check>
-                                        <Check      className='check editor' required={false} active={user_uu} onActiveChange={({active}) => { setUser_uu(active); setIsModified(true); }}>
-                                            Change Username
-                                        </Check>
-                                        <Check      className='check editor' required={false} active={user_ue} onActiveChange={({active}) => { setUser_ue(active); setIsModified(true); }}>
-                                            Change Email
-                                        </Check>
-                                        <Check      className='check editor' required={false} active={user_up} onActiveChange={({active}) => { setUser_up(active); setIsModified(true); }}>
-                                            Change Password
-                                        </Check>
-                                        <Check      className='check editor' required={false} active={user_ui} onActiveChange={({active}) => { setUser_ui(active); setIsModified(true); }}>
-                                            Change Image
-                                        </Check>
-                                        <Check      className='check editor' required={false} active={user_ur} onActiveChange={({active}) => { setUser_ur(active); setIsModified(true); }}>
-                                            Change Role
-                                        </Check>
-                                        <Check      className='check editor' required={false} active={user_d}  onActiveChange={({active}) => { setUser_d(active);  setIsModified(true); }}>
-                                            Delete
-                                        </Check>
-                                    </AccordionItem>
-                                    <AccordionItem label='Roles'>
-                                        <Check      className='check editor' required={false} active={role_c}  onActiveChange={({active}) => { setRole_c(active);  setIsModified(true); }}>
-                                            Add New
-                                        </Check>
-                                        <Check      className='check editor' required={false} active={role_u}  onActiveChange={({active}) => { setRole_u(active); setIsModified(true); }}>
-                                            Change
-                                        </Check>
-                                        <Check      className='check editor' required={false} active={role_d}  onActiveChange={({active}) => { setRole_d(active);  setIsModified(true); }}>
-                                            Delete
-                                        </Check>
-                                    </AccordionItem>
-                                </ExclusiveAccordion>
+                                <AccessibilityProvider enabled={privilegeUpdate || privilegeAdd}>
+                                    <ExclusiveAccordion className='privileges list' defaultExpandedListIndex={0}>
+                                        <AccordionItem label='Products' inheritEnabled={false}>
+                                            <Check      className='check editor' required={false} active={product_r}  onActiveChange={({active}) => { setProduct_r(active);  setIsModified(true); }}>
+                                                View
+                                            </Check>
+                                            <Check      className='check editor' required={false} active={product_c}  onActiveChange={({active}) => { setProduct_c(active);  setIsModified(true); }}>
+                                                Add New
+                                            </Check>
+                                            <Check      className='check editor' required={false} active={product_ud} onActiveChange={({active}) => { setProduct_ud(active); setIsModified(true); }}>
+                                                Change Name, Path &amp; Description
+                                            </Check>
+                                            <Check      className='check editor' required={false} active={product_ui} onActiveChange={({active}) => { setProduct_ui(active); setIsModified(true); }}>
+                                                Change Images
+                                            </Check>
+                                            <Check      className='check editor' required={false} active={product_up} onActiveChange={({active}) => { setProduct_up(active); setIsModified(true); }}>
+                                                Change Price &amp; Shipping Weight
+                                            </Check>
+                                            <Check      className='check editor' required={false} active={product_us} onActiveChange={({active}) => { setProduct_us(active); setIsModified(true); }}>
+                                                Change Stock
+                                            </Check>
+                                            <Check      className='check editor' required={false} active={product_uv} onActiveChange={({active}) => { setProduct_uv(active); setIsModified(true); }}>
+                                                Change Visibility
+                                            </Check>
+                                            <Check      className='check editor' required={false} active={product_d}  onActiveChange={({active}) => { setProduct_d(active);  setIsModified(true); }}>
+                                                Delete
+                                            </Check>
+                                        </AccordionItem>
+                                        <AccordionItem label='Users' inheritEnabled={false}>
+                                            <Check      className='check editor' required={false} active={user_r}  onActiveChange={({active}) => { setUser_r(active);  setIsModified(true); }}>
+                                                View
+                                            </Check>
+                                            <Check      className='check editor' required={false} active={user_c}  onActiveChange={({active}) => { setUser_c(active);  setIsModified(true); }}>
+                                                Add New
+                                            </Check>
+                                            <Check      className='check editor' required={false} active={user_un} onActiveChange={({active}) => { setUser_un(active); setIsModified(true); }}>
+                                                Change Name
+                                            </Check>
+                                            <Check      className='check editor' required={false} active={user_uu} onActiveChange={({active}) => { setUser_uu(active); setIsModified(true); }}>
+                                                Change Username
+                                            </Check>
+                                            <Check      className='check editor' required={false} active={user_ue} onActiveChange={({active}) => { setUser_ue(active); setIsModified(true); }}>
+                                                Change Email
+                                            </Check>
+                                            <Check      className='check editor' required={false} active={user_up} onActiveChange={({active}) => { setUser_up(active); setIsModified(true); }}>
+                                                Change Password
+                                            </Check>
+                                            <Check      className='check editor' required={false} active={user_ui} onActiveChange={({active}) => { setUser_ui(active); setIsModified(true); }}>
+                                                Change Image
+                                            </Check>
+                                            <Check      className='check editor' required={false} active={user_ur} onActiveChange={({active}) => { setUser_ur(active); setIsModified(true); }}>
+                                                Change Role
+                                            </Check>
+                                            <Check      className='check editor' required={false} active={user_d}  onActiveChange={({active}) => { setUser_d(active);  setIsModified(true); }}>
+                                                Delete
+                                            </Check>
+                                        </AccordionItem>
+                                        <AccordionItem label='Roles' inheritEnabled={false}>
+                                            <Check      className='check editor' required={false} active={role_c}  onActiveChange={({active}) => { setRole_c(active);  setIsModified(true); }}>
+                                                Add New
+                                            </Check>
+                                            <Check      className='check editor' required={false} active={role_u}  onActiveChange={({active}) => { setRole_u(active); setIsModified(true); }}>
+                                                Change
+                                            </Check>
+                                            <Check      className='check editor' required={false} active={role_d}  onActiveChange={({active}) => { setRole_d(active);  setIsModified(true); }}>
+                                                Delete
+                                            </Check>
+                                        </AccordionItem>
+                                    </ExclusiveAccordion>
+                                </AccessibilityProvider>
                             </ValidationProvider>
                         </form>
                     </TabPanel>
-                    <TabPanel label={PAGE_ROLE_TAB_DELETE} panelComponent={<Content theme='warning' className={styleSheet.deleteTab} />}>
+                    {privilegeDelete && <TabPanel label={PAGE_ROLE_TAB_DELETE} panelComponent={<Content theme='warning' className={styleSheet.deleteTab} />}>
                         <ButtonIcon icon={isLoadingModelDelete ? 'busy' : 'delete'} theme='danger' onClick={handleDelete}>
                             Delete <strong>{role.name}</strong> Role
                         </ButtonIcon>
-                    </TabPanel>
+                    </TabPanel>}
                 </Tab>
             </ValidationProvider>
             <CardFooter onKeyDown={handleKeyDown}>
-                <ButtonIcon className='btnSave'   icon={isLoadingModelUpdate ? 'busy' : 'save'  } theme='success' onClick={handleSave}>Save</ButtonIcon>
-                <ButtonIcon className='btnCancel' icon='cancel'                                   theme='danger'  onClick={handleClosing}>Cancel</ButtonIcon>
+            {privilegeWrite && <ButtonIcon className='btnSave'   icon='save' theme='success' onClick={handleSave}>Save</ButtonIcon>}
+            <ButtonIcon className='btnCancel' icon={privilegeWrite ? 'cancel' : 'done'} theme={privilegeWrite ? 'danger' : 'primary'}  onClick={handleClosing}>{privilegeWrite ? 'Cancel' : 'Close'}</ButtonIcon>
             </CardFooter>
         </AccessibilityProvider>
     );

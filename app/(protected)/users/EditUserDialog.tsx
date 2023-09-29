@@ -874,7 +874,9 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                                     ({id}) => <RolePreview model={undefined as any} selectedRoleId={roleId} isShown={isTabRoleShown} readOnly={!(privilegeUpdateRole /* || privilegeAdd */) && !(!id && privilegeAdd)} />
                                 }
                                 modelCreateComponent={
-                                    <RoleCreate onClose={undefined as any} />
+                                    !!role?.role_c
+                                    ? <RoleCreate onClose={undefined as any} />
+                                    : undefined
                                 }
                             />
                     }</TabPanel>

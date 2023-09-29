@@ -9,6 +9,11 @@ import {
     getServerSession,
 }                           from 'next-auth'
 
+// heymarco:
+import type {
+    Session,
+}                           from '@heymarco/next-auth/server'
+
 // next-connect:
 import {
     createEdgeRouter,
@@ -65,6 +70,7 @@ router
     // conditions:
     const session = await getServerSession(authOptions);
     if (!session) return NextResponse.json({ error: 'Please sign in.' }, { status: 401 }); // handled with error: unauthorized
+    (req as any).session = session;
     
     
     
@@ -72,6 +78,10 @@ router
     return await next();
 })
 .get(async (req) => {
+    /* required for constraining the privileges */
+    
+    
+    
     const roleDetails : RoleDetail[] = (
         (await prisma.role.findMany({
             select: {
@@ -166,6 +176,26 @@ router
         }, { status: 400 }); // handled with error
     } // if
     //#endregion validating request
+    
+    
+    
+    //#region validating privileges
+    const session = (req as any).session as Session;
+    if (!id) {
+        if (!session.role?.role_c) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to add new role.`
+        }, { status: 403 }); // handled with error: forbidden
+    }
+    else {
+        if (!session.role?.role_u) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the role.`
+        }, { status: 403 }); // handled with error: forbidden
+    } // if
+    //#endregion validating privileges
     
     
     
@@ -276,6 +306,17 @@ router
         }, { status: 400 }); // handled with error
     } // if
     //#endregion validating request
+    
+    
+    
+    //#region validating privileges
+    const session = (req as any).session as Session;
+    if (!session.role?.role_d) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to delete the role.`
+    }, { status: 403 }); // handled with error: forbidden
+    //#endregion validating privileges
     
     
     
