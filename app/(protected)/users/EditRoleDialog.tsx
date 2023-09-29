@@ -277,8 +277,7 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
     
     // handlers:
     const handleSave = useEvent(async () => {
-        // if (!privilegeWrite) return;
-        if (!privilegeUpdate) return;
+        if (!privilegeWrite) return;
         
         
         
