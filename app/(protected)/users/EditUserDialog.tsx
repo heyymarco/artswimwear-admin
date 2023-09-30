@@ -235,6 +235,11 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         
         
         
+        // states:
+        active = false,
+        
+        
+        
         // handlers:
         onChange,
     ...restListItemProps} = props;
@@ -242,7 +247,6 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         id,
         name,
     } = model;
-    const isSelected = ((selectedRoleId || null) === (id || null));
     
     
     
@@ -274,7 +278,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     useEffect(() => {
         // conditions:
         if (!isShown)     return;
-        if (!isSelected)  return;
+        if (!active)      return;
         const listItemElm = listItemRef.current;
         if (!listItemElm) return;
         
@@ -296,7 +300,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     useEffect(() => {
         // conditions:
         if (!isShown)     return;
-        if (!isSelected)  return;
+        if (!active)      return;
         const listItemElm = listItemRef.current;
         if (!listItemElm) return;
         
@@ -310,7 +314,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
             block    : 'nearest',
         });
         // @ts-ignore
-    }, [isShown, /* isSelected // do not re-focus on re-selected */]);
+    }, [isShown, /* active // do not re-focus on re-selected */]);
     
     
     
@@ -338,7 +342,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
             
             
             // states:
-            active={isSelected}
+            active={active}
             
             
             
@@ -348,7 +352,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
             <RadioDecorator enabled={!readOnly} />
             <p className='name'>{!!id ? name : <span className='noValue'>No Access</span>}</p>
             {!!id && <EditButton
-                iconComponent={<Icon icon='edit' mild={isSelected} />}
+                iconComponent={<Icon icon='edit' mild={active} />}
                 onClick={(event) => { setEditMode('full'); event.stopPropagation(); }}
             />}
             {/* edit dialog: */}
