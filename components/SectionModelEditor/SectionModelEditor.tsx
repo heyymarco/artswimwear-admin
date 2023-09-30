@@ -113,6 +113,11 @@ export interface ModelCreateOuterProps
     
     // components:
     modelCreateComponent  : React.ReactComponentElement<any, ModelCreateProps>
+    
+    
+    
+    // handlers:
+    onModelCreated       ?: EventHandler<string>
 }
 export const ModelCreateOuter = (props: ModelCreateOuterProps) => {
     // styles:
@@ -129,6 +134,11 @@ export const ModelCreateOuter = (props: ModelCreateOuterProps) => {
         
         // components:
         modelCreateComponent,
+        
+        
+        
+        // handlers:
+        onModelCreated,
     ...restListItemProps} = props;
     
     
@@ -139,9 +149,15 @@ export const ModelCreateOuter = (props: ModelCreateOuterProps) => {
     
     
     // handlers:
-    const handleCloseInternal = useEvent<EventHandler<CloseEvent>>(() => {
+    const handleCloseInternal = useEvent<EventHandler<CloseEvent>>((event) => {
         // actions:
         setShowAddNew(false);
+        
+        
+        
+        if (event && (typeof(event) === 'string')) {
+            onModelCreated?.(event);
+        } // if
     });
     const handleClose         = useMergeEvents(
         // preserves the original `onClose` from `modelCreateComponent`:

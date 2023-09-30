@@ -886,6 +886,14 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                                     ? <RoleCreate onClose={undefined as any} />
                                     : undefined
                                 }
+                                
+                                
+                                
+                                // handlers:
+                                onModelCreated={(value) => {
+                                    setRoleId(value);
+                                    setIsModified(true);
+                                }}
                             />
                     }</TabPanel>
                     {privilegeDelete && <TabPanel label={PAGE_USER_TAB_DELETE} panelComponent={<Content theme='warning' className={styleSheet.deleteTab} />}>
