@@ -22,6 +22,7 @@ import {
 import {
     // react helper hooks:
     useEvent,
+    EventHandler,
     useMergeEvents,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
@@ -93,10 +94,10 @@ import './styles/styles';
 // react components:
 
 /* <ModelCreate> */
-export type CloseEventHandler = () => void
+export type CloseEvent = string|false|null
 export interface ModelCreateProps {
     // handlers:
-    onClose : CloseEventHandler
+    onClose : EventHandler<CloseEvent>
 }
 
 /* <ModelCreateOuter> */
@@ -138,11 +139,11 @@ export const ModelCreateOuter = (props: ModelCreateOuterProps) => {
     
     
     // handlers:
-    const handleCloseInternal = useEvent<CloseEventHandler>(() => {
+    const handleCloseInternal = useEvent<EventHandler<CloseEvent>>(() => {
         // actions:
         setShowAddNew(false);
     });
-    const handleClose         = useMergeEvents<void>(
+    const handleClose         = useMergeEvents(
         // preserves the original `onClose` from `modelCreateComponent`:
         modelCreateComponent.props.onClose,
         

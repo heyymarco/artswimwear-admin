@@ -28,6 +28,7 @@ import {
 import {
     // react helper hooks:
     useEvent,
+    EventHandler,
     useMountedFlag,
     
     
@@ -109,6 +110,10 @@ import {
     EditorPlugin,
     WysiwygEditor,
 }                           from '@/components/editors/WysiwygEditor'
+import type {
+    // types:
+    CloseEvent,
+}                           from '@/components/SectionModelEditor'
 
 // models:
 import type {
@@ -188,7 +193,7 @@ export interface EditProductDialogProps {
     
     
     // handlers:
-    onClose                  : () => void
+    onClose                  : EventHandler<CloseEvent>
 }
 export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     // styles:
@@ -304,7 +309,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
             name.trim().toLowerCase().replace(/(\s|_|-)+/ig, '-')
         );
     });
-    const handleSave = useEvent(async () => {
+    const handleSave       = useEvent(async () => {
         if (!privilegeWrite) return;
         
         
@@ -326,7 +331,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
         
         
         try {
-            const updatingProductTask = updateProduct({
+            const updatingModelTask = updateProduct({
                 id             : product.id,
                 
                 visibility     : (privilegeUpdateVisibility  || privilegeAdd) ? visibility     : undefined,
@@ -337,15 +342,15 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                 stock          : (privilegeUpdateStock       || privilegeAdd) ? stock          : undefined,
                 images         : (privilegeUpdateImages      || privilegeAdd) ? images : undefined,
                 description    : (privilegeUpdateDescription || privilegeAdd) ? ((description?.toJSON?.() ?? description) as any) : undefined,
-            }).unwrap();
+            }).unwrap().then((model) => model.id);
             
-            await handleClose(/*commitImages = */true, [updatingProductTask]);
+            await handleClose(updatingModelTask, /*commitImages = */true, [updatingModelTask]); // result: created|mutated
         }
         catch (error: any) {
             showMessageFetchError(error);
         } // try
     });
-    const handleDelete = useEvent(async () => {
+    const handleDelete     = useEvent(async () => {
         // conditions:
         if (
             (await showMessage<'yes'|'no'>({
@@ -377,13 +382,13 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                 id : product.id,
             }).unwrap();
             
-            await handleClose(/*commitImages = */false);
+            await handleClose(false, /*commitImages = */false); // result: deleted
         }
         catch (error: any) {
             showMessageFetchError(error);
         } // try
     });
-    const handleClosing = useEvent(async () => {
+    const handleClosing    = useEvent(async () => {
         if (privilegeWrite && (isModified || isPathModified)) {
             // conditions:
             const answer = await showMessage<'save'|'dontSave'|'continue'>({
@@ -411,7 +416,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
                     break;
                 case 'dontSave':
                     // then close the editor (without saving):
-                    await handleClose(/*commitImages = */false);
+                    await handleClose(null, /*commitImages = */false); // result: discard changes
                     break;
                 default:
                     // do nothing (continue editing)
@@ -419,7 +424,7 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
             } // switch
         }
         else {
-            await handleClose(/*commitImages = */false);
+            await handleClose(null, /*commitImages = */false); // result: no changes
         } // if
     });
     const handleSaveImages = useEvent(async (commitImages : boolean) => {
@@ -457,12 +462,12 @@ export const EditProductDialog = (props: EditProductDialogProps): JSX.Element|nu
         // substract the drafts:
         for (const unusedImageId of unusedImageIds) draftDeletedImages.delete(unusedImageId);
     });
-    const handleClose = useEvent(async (commitImages : boolean, otherTasks : Promise<any>[] = []) => {
+    const handleClose      = useEvent(async (event: CloseEvent|Promise<CloseEvent>, commitImages : boolean, otherTasks : Promise<any>[] = []) => {
         await Promise.all([
             handleSaveImages(commitImages),
             ...otherTasks,
         ]);
-        onClose();
+        onClose(await event);
     });
     const handleKeyDown : React.KeyboardEventHandler<HTMLElement> = useEvent((event) => {
         switch (event.key) {

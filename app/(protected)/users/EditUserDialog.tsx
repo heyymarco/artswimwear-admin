@@ -108,6 +108,12 @@ import {
     RoleEditor,
 }                           from '@/components/editors/RoleEditor'
 import type {
+    // types:
+    CloseEvent,
+    
+    
+    
+    // react components:
     ModelCreateProps,
     ModelPreviewProps,
 }                           from '@/components/SectionModelEditor'
@@ -362,7 +368,7 @@ export interface EditUserDialogProps {
     
     
     // handlers:
-    onClose                  : () => void
+    onClose                  : EventHandler<CloseEvent>
 }
 export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
     // styles:
@@ -465,11 +471,11 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
     const tabRoleHandleCollapseStart = useEvent<EventHandler<void>>(() => {
         setIsTabRoleShown(false);
     });
-    const tabRoleHandleExpandEnd    = useEvent<EventHandler<void>>(() => {
+    const tabRoleHandleExpandEnd     = useEvent<EventHandler<void>>(() => {
         setIsTabRoleShown(true);
     });
     
-    const handleSave = useEvent(async () => {
+    const handleSave       = useEvent(async () => {
         if (!privilegeWrite) return;
         
         
@@ -491,7 +497,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
         
         
         try {
-            const updatingUserTask = updateUser({
+            const updatingModelTask = updateUser({
                 id             : user.id,
                 
                 name     : (privilegeUpdateName     || privilegeAdd) ? name               : undefined,
@@ -499,17 +505,19 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                 image    : (privilegeUpdateImage    || privilegeAdd) ? image              : undefined,
                 roleId   : (privilegeUpdateRole                    ) ? roleId             : ((!user.id && privilegeAdd) ? null : undefined),
                 username : (privilegeUpdateUsername || privilegeAdd) ? (username || null) : undefined, // convert empty string to null
-            }).unwrap().then(async (): Promise<void> => {
+            }).unwrap().then((model) => model.id);
+            
+            const updatingSessionTask = updatingModelTask.then(async (): Promise<void> => {
                 if (session?.user?.email?.toLowerCase() === initialEmailRef.current.toLowerCase()) await updateSession(); // update the session if updated current user
             });
             
-            await handleClose(/*commitImages = */true, [updatingUserTask]);
+            await handleClose(updatingModelTask, /*commitImages = */true, [updatingSessionTask]); // result: created|mutated
         }
         catch (error: any) {
             showMessageFetchError(error);
         } // try
     });
-    const handleDelete = useEvent(async () => {
+    const handleDelete     = useEvent(async () => {
         // conditions:
         if (
             (await showMessage<'yes'|'no'>({
@@ -538,13 +546,13 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                 id : user.id,
             }).unwrap();
             
-            await handleClose(/*commitImages = */false);
+            await handleClose(false, /*commitImages = */false); // result: deleted
         }
         catch (error: any) {
             showMessageFetchError(error);
         } // try
     });
-    const handleClosing = useEvent(async () => {
+    const handleClosing    = useEvent(async () => {
         if (privilegeWrite && isModified) {
             // conditions:
             const answer = await showMessage<'save'|'dontSave'|'continue'>({
@@ -572,7 +580,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                     break;
                 case 'dontSave':
                     // then close the editor (without saving):
-                    await handleClose(/*commitImages = */false);
+                    await handleClose(null, /*commitImages = */false); // result: discard changes
                     break;
                 default:
                     // do nothing (continue editing)
@@ -580,7 +588,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
             } // switch
         }
         else {
-            await handleClose(/*commitImages = */false);
+            await handleClose(null, /*commitImages = */false); // result: no changes
         } // if
     });
     const handleSaveImages = useEvent(async (commitImages : boolean) => {
@@ -626,12 +634,12 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
         // substract the drafts:
         for (const unusedImageId of unusedImageIds) draftDeletedImages.delete(unusedImageId);
     });
-    const handleClose = useEvent(async (commitImages : boolean, otherTasks : Promise<any>[] = []) => {
+    const handleClose      = useEvent(async (event: CloseEvent|Promise<CloseEvent>, commitImages : boolean, otherTasks : Promise<any>[] = []) => {
         await Promise.all([
             handleSaveImages(commitImages),
             ...otherTasks,
         ]);
-        onClose();
+        onClose(await event);
     });
     const handleKeyDown : React.KeyboardEventHandler<HTMLElement> = useEvent((event) => {
         switch (event.key) {

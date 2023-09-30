@@ -28,6 +28,7 @@ import {
 import {
     // react helper hooks:
     useEvent,
+    EventHandler,
     useMountedFlag,
     
     
@@ -99,6 +100,10 @@ import {
 import {
     RoleEditor,
 }                           from '@/components/editors/RoleEditor'
+import type {
+    // types:
+    CloseEvent,
+}                           from '@/components/SectionModelEditor'
 
 // stores:
 import {
@@ -181,7 +186,7 @@ export interface EditRoleDialogProps {
     
     
     // handlers:
-    onClose  : () => void
+    onClose  : EventHandler<CloseEvent>
 }
 export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
     // styles:
@@ -276,7 +281,7 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
     
     
     // handlers:
-    const handleSave = useEvent(async () => {
+    const handleSave    = useEvent(async () => {
         if (!privilegeWrite) return;
         
         
@@ -298,7 +303,7 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
         
         
         try {
-            await updateRole({
+            const updatedModel = await updateRole({
                 id : role.id,
                 
                 name,
@@ -327,13 +332,13 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                 role_d,
             }).unwrap();
             
-            await handleClose();
+            await handleClose(updatedModel.id); // result: created|mutated
         }
         catch (error: any) {
             showMessageFetchError(error);
         } // try
     });
-    const handleDelete = useEvent(async () => {
+    const handleDelete  = useEvent(async () => {
         // conditions:
         if (
             (await showMessage<'yes'|'no'>({
@@ -366,7 +371,7 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                 id : role.id,
             }).unwrap();
             
-            await handleClose();
+            await handleClose(false); // result: deleted
         }
         catch (error: any) {
             showMessageFetchError(error);
@@ -400,7 +405,7 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
                     break;
                 case 'dontSave':
                     // then close the editor (without saving):
-                    await handleClose();
+                    await handleClose(null); // result: discard changes
                     break;
                 default:
                     // do nothing (continue editing)
@@ -408,11 +413,11 @@ export const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => 
             } // switch
         }
         else {
-            await handleClose();
+            await handleClose(null); // result: no changes
         } // if
     });
-    const handleClose = useEvent(async () => {
-        onClose();
+    const handleClose   = useEvent<EventHandler<CloseEvent>>(async (event) => {
+        onClose(event);
     });
     const handleKeyDown : React.KeyboardEventHandler<HTMLElement> = useEvent((event) => {
         switch (event.key) {

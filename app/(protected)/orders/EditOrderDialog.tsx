@@ -22,6 +22,7 @@ import {
 import {
     // react helper hooks:
     useEvent,
+    EventHandler,
     useMountedFlag,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
@@ -96,6 +97,10 @@ import {
 import {
     SimpleEditPaymentDialog,
 }                           from '@/components/dialogs/SimpleEditPaymentDialog'
+import type {
+    // types:
+    CloseEvent,
+}                           from '@/components/SectionModelEditor'
 
 // private components:
 import {
@@ -150,12 +155,12 @@ const useEditOrderDialogStyleSheet = dynamicStyleSheets(
 /* <EditOrderDialog> */
 export interface EditOrderDialogProps {
     // data:
-    order            : OrderDetail
+    order   : OrderDetail
     
     
     
     // handlers:
-    onClose          : () => void
+    onClose : EventHandler<CloseEvent>
 }
 export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     // styles:
@@ -238,7 +243,7 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
     
     // handlers:
     const handleClosing = useEvent(() => {
-        onClose();
+        onClose(null); // result: discard changes
     });
     const handleKeyDown : React.KeyboardEventHandler<HTMLElement> = useEvent((event) => {
         switch (event.key) {
@@ -253,17 +258,17 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
                 break;
         } // switch
     });
-    const handleEditDialogClose = useEvent((): void => {
+    const handleEditDialogClose   = useEvent((): void => {
         setEditMode(null);
     });
-    const handlePrint = useEvent(() => {
+    const handlePrint             = useEvent(() => {
         setShowPrintDialog(true);
         handleMarkAsProcessing();
     });
-    const handlePrintDone = useEvent(() => {
+    const handlePrintDone         = useEvent(() => {
         setShowPrintDialog(false);
     });
-    const handleMarkAsProcessing = useEvent(() => {
+    const handleMarkAsProcessing  = useEvent(() => {
         // TODO
     });
     const handleMarkAsUnprocessed = useEvent(() => {
