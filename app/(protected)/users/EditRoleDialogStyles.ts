@@ -51,17 +51,17 @@ export const usesCardBodyLayout = () => {
         // layouts:
         ...style({
             // layouts:
-            display        : 'flex',
-            flexDirection  : 'column',
-            justifyContent : 'start',       // if items are not growable, the excess space (if any) placed at the end, and if no sufficient space available => the first item should be visible first
-            alignItems     : 'stretch',     // items width are 100% of the parent (for variant `.block`) or height (for variant `.inline`)
-            flexWrap       : 'nowrap',      // no wrapping
+            display           : 'flex',
+            flexDirection     : 'column',
+            justifyContent    : 'start',       // if items are not growable, the excess space (if any) placed at the end, and if no sufficient space available => the first item should be visible first
+            alignItems        : 'stretch',     // items width are 100% of the parent (for variant `.block`) or height (for variant `.inline`)
+            flexWrap          : 'nowrap',      // no wrapping
             
             
             
             // sizes:
             // the default <Card>'s body height is resizeable, ensuring footers are aligned to the bottom:
-            flex           : [[1, 1, 'auto']], // growable, shrinkable, initial from it's width (for variant `.inline`) or height (for variant `.block`)
+            flex              : [[1, 1, 'auto']], // growable, shrinkable, initial from it's width (for variant `.inline`) or height (for variant `.block`)
             boxSizing         : 'border-box',
             minInlineSize     : `calc(100vw - (${containers.paddingInline} * 2))`,
             ...ifScreenWidthAtLeast('md', {
@@ -71,6 +71,7 @@ export const usesCardBodyLayout = () => {
             
             
             // scrolls:
+            overflow                : 'hidden', // force <TabBody> to scroll
             overscrollBehavior      : 'none',
             scrollPaddingBlockStart : '1.75rem', // makes scroll to field's label
             
