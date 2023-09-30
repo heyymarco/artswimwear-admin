@@ -112,6 +112,9 @@ router
                 role_u     : true,
                 role_d     : true,
             },
+            orderBy : {
+                name : 'asc',
+            },
         }))
     );
     return NextResponse.json(roleDetails); // handled with success
