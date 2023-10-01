@@ -93,6 +93,19 @@ export type EditModelDialogResult = string|false|null
 export interface EditModelDialogExpandedChangeEvent extends ModalExpandedChangeEvent {
     result: EditModelDialogResult
 }
+
+export type UpdateModelHandler                               = (args: { id: string|null, privilegeModelAdd: boolean, privilegeModelUpdate: boolean }) => Promise<string>
+export type AfterUpdateModelHandler                          = () => Promise<void>
+
+export type DeleteModelHandler                               = (args: { id: string }) => Promise<void>
+export type AfterDeleteModelHandler                          = () => Promise<void>
+
+export type UpdateSideModelHandler                           = () => Promise<void>
+export type DeleteSideModelHandler                           = () => Promise<void>
+
+export type DeleteModelConfirmHandler<TModel extends Model>  = (args: { model: TModel }) => { title?: React.ReactNode, message: React.ReactNode }
+export type UnsavedModelConfirmHandler<TModel extends Model> = (args: { model: TModel }) => { title?: React.ReactNode, message: React.ReactNode }
+
 export interface ComplexEditModelDialogProps<TModel extends Model>
     extends
         Omit<ModalCardProps<HTMLElement, EditModelDialogExpandedChangeEvent>,
@@ -133,17 +146,17 @@ export interface ComplexEditModelDialogProps<TModel extends Model>
     
     
     // handlers:
-    onUpdateModel            : (args: { id: string|null, privilegeModelAdd: boolean, privilegeModelUpdate: boolean }) => Promise<string>
-    onAfterUpdateModel      ?: () => Promise<void>
+    onUpdateModel            : UpdateModelHandler
+    onAfterUpdateModel      ?: AfterUpdateModelHandler
     
-    onDeleteModel            : (args: { id: string }) => Promise<void>
-    onAfterDeleteModel      ?: () => Promise<void>
+    onDeleteModel            : DeleteModelHandler
+    onAfterDeleteModel      ?: AfterDeleteModelHandler
     
-    onUpdateSideModels      ?: () => Promise<void>
-    onDeleteSideModels      ?: () => Promise<void>
+    onUpdateSideModel       ?: UpdateSideModelHandler
+    onDeleteSideModel       ?: DeleteSideModelHandler
     
-    onDeleteModelConfirm     : (args: { model: TModel }) => { title?: React.ReactNode, message: React.ReactNode }
-    onUnsavedModelConfirm    : (args: { model: TModel }) => { title?: React.ReactNode, message: React.ReactNode }
+    onDeleteModelConfirm     : DeleteModelConfirmHandler<TModel>
+    onUnsavedModelConfirm    : UnsavedModelConfirmHandler<TModel>
     
     
     
@@ -197,8 +210,8 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
         onDeleteModel,
         onAfterDeleteModel,
         
-        onUpdateSideModels,
-        onDeleteSideModels,
+        onUpdateSideModel,
+        onDeleteSideModel,
         
         onDeleteModelConfirm,
         onUnsavedModelConfirm,
@@ -322,16 +335,16 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
             showMessageFetchError(error);
         } // try
     });
-    const handleSaveSideModels = useEvent(async (commitImages : boolean) => {
+    const handleSaveSideModel  = useEvent(async (commitImages : boolean) => {
         if (!privilegeModelWrite) return;
         
         
         
         if (commitImages) {
-            await onUpdateSideModels?.();
+            await onUpdateSideModel?.();
         }
         else {
-            await onDeleteSideModels?.();
+            await onDeleteSideModel?.();
         } // if
     });
     
@@ -381,7 +394,7 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
     });
     const handleFinalizing     = useEvent(async (event: EditModelDialogResult|Promise<EditModelDialogResult>, commitImages : boolean, otherTasks : Promise<any>[] = []) => {
         await Promise.all([
-            handleSaveSideModels(commitImages),
+            handleSaveSideModel(commitImages),
             ...otherTasks,
         ]);
         onExpandedChange?.({
@@ -390,7 +403,7 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
             result     : await event,
         });
     });
-    const handleExpandedChange  : EventHandler<EditModelDialogExpandedChangeEvent> = useEvent((event) => {
+    const handleExpandedChange : EventHandler<EditModelDialogExpandedChangeEvent> = useEvent((event) => {
         // conditions:
         if (event.actionType === 'shortcut') return; // prevents closing modal by accidentally pressing [esc]
         
