@@ -165,7 +165,9 @@ export const usesAccountTabLayout = () => {
 };
 export const usesImageTabLayout = () => {
     return style({
-        // empty
+        // positions:
+        justifySelf : 'center',
+        alignSelf   : 'center',
     });
 };
 export const usesRoleTabLayout = () => {
