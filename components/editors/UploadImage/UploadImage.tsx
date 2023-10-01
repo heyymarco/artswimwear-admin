@@ -136,6 +136,9 @@ export interface UploadImageProps<TElement extends Element = HTMLElement, TValue
     extends
         // bases:
         Pick<EditorProps<TElement, TValue|null>,
+            // accessibilities:
+            |'readOnly'
+            
             // values:
             |'defaultValue'
             |'value'
@@ -215,6 +218,11 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
     
     // rest props:
     const {
+        // accessibilities:
+        readOnly = false,
+        
+        
+        
         // values:
         defaultValue : defaultImage,
         value        : image,
@@ -734,7 +742,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                             )}
                             
                             {/* <PreviewImage> */}
-                            {!!uploadingImage && !!previewImage && React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(previewImageComponent,
+                            {!!uploadingImage && !!previewImage && !readOnly && React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(previewImageComponent,
                                 // props:
                                 {
                                     // classes:
@@ -777,7 +785,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                             )}
                             
                             {/* <MediaGroupInner> */}
-                            {((!uploadingImage && !!imageFn && isBusy) || !!uploadingImage) && React.cloneElement<React.HTMLAttributes<HTMLElement>>(mediaGroupComponentInner,
+                            {((!uploadingImage && !!imageFn && isBusy) || !!uploadingImage) && !readOnly && React.cloneElement<React.HTMLAttributes<HTMLElement>>(mediaGroupComponentInner,
                                 // props:
                                 {
                                     // classes:
@@ -906,7 +914,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                     )}
                     
                     {/* <ActionGroup> */}
-                    {React.cloneElement<React.HTMLAttributes<HTMLElement>>(actionGroupComponent,
+                    {!readOnly && React.cloneElement<React.HTMLAttributes<HTMLElement>>(actionGroupComponent,
                         // props:
                         {
                             // classes:
@@ -1001,7 +1009,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                         </>,
                     )}
                     
-                    <input
+                    {!readOnly && <input
                         // refs:
                         ref={inputFileRef}
                         
@@ -1021,7 +1029,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                         
                         // handlers:
                         onChange={inputFileHandleChange}
-                    />
+                    />}
                 </>,
             )}
         </AccessibilityProvider>
