@@ -801,7 +801,7 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
                             
                             
                             // accessibilities:
-                            // TODO: readOnly={!(privilegeUpdateImage || privilegeAdd)}
+                            readOnly={!(privilegeUpdateImage || privilegeAdd)}
                             
                             
                             
