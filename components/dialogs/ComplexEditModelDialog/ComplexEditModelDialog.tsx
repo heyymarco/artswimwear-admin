@@ -163,9 +163,9 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
         
         
         // privileges:
-        privilegeModelAdd,
-        privilegeModelUpdate,
-        privilegeModelDelete,
+        privilegeModelAdd    : privilegeModelAddRaw,
+        privilegeModelUpdate : privilegeModelUpdateRaw,
+        privilegeModelDelete : privilegeModelDeleteRaw,
         
         
         
@@ -202,7 +202,10 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
         // children:
         children : childrenFn,
     ...restModalCardProps} = props;
-    const privilegeModelWrite : boolean = (
+    const privilegeModelAdd    : boolean = privilegeModelAddRaw    &&  !model?.id;
+    const privilegeModelUpdate : boolean = privilegeModelUpdateRaw && !!model?.id;
+    const privilegeModelDelete : boolean = privilegeModelDeleteRaw && !!model?.id;
+    const privilegeModelWrite  : boolean = (
         privilegeModelAdd
         || privilegeModelUpdate
         /* || privilegeModelDelete */ // except for delete
