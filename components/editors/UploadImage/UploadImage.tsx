@@ -668,6 +668,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         // classes:
         styleSheet.main,
+        (readOnly ? 'readonly' : null),
     );
     
     

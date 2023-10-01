@@ -1,6 +1,7 @@
 // cssfn:
 import {
     // writes css in javascript:
+    rule,
     descendants,
     children,
     style,
@@ -119,6 +120,13 @@ export const usesUploadImageLayout = () => {
             '/',
             '1fr 1fr'
         ]],
+        ...rule('.readonly', {
+            gridTemplate : [[
+                '"mediaGroup" auto',
+                '/',
+                '1fr'
+            ]],
+        }),
         
         
         
