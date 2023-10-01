@@ -94,7 +94,7 @@ export interface EditModelDialogExpandedChangeEvent extends ModalExpandedChangeE
     result: EditModelDialogResult
 }
 
-export type UpdateModelHandler                               = (args: { id: string|null, privilegeModelAdd: boolean, privilegeModelUpdate: boolean }) => Promise<string>
+export type UpdateModelHandler                               = (args: { id: string|null, privilegeModelAdd: boolean, privilegeModelUpdate: Record<string, boolean> }) => Promise<string>
 export type AfterUpdateModelHandler                          = () => Promise<void>
 
 export type DeleteModelHandler                               = (args: { id: string }) => Promise<void>
@@ -122,7 +122,7 @@ export interface ComplexEditModelDialogProps<TModel extends Model>
     
     // privileges:
     privilegeModelAdd        : boolean
-    privilegeModelUpdate     : boolean
+    privilegeModelUpdate     : Record<string, boolean>
     privilegeModelDelete     : boolean
     
     
@@ -161,7 +161,7 @@ export interface ComplexEditModelDialogProps<TModel extends Model>
     
     
     // children:
-    children                 : (args: { privilegeModelAdd: boolean, privilegeModelUpdate: boolean }) => React.ReactNode
+    children                 : (args: { privilegeModelAdd: boolean, privilegeModelUpdate: Record<string, boolean> }) => React.ReactNode
 }
 export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDialogProps<TModel>): JSX.Element|null => {
     // styles:
@@ -223,12 +223,12 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
         // children:
         children : childrenFn,
     ...restModalCardProps} = props;
-    const privilegeModelAdd    : boolean = privilegeModelAddRaw    &&  !model?.id;
-    const privilegeModelUpdate : boolean = privilegeModelUpdateRaw && !!model?.id;
-    const privilegeModelDelete : boolean = privilegeModelDeleteRaw && !!model?.id;
-    const privilegeModelWrite  : boolean = (
+    const privilegeModelAdd    : boolean                 =   !model?.id && privilegeModelAddRaw;
+    const privilegeModelUpdate : Record<string, boolean> =  !!model?.id ?  privilegeModelUpdateRaw : {};
+    const privilegeModelDelete : boolean                 =  !!model?.id && privilegeModelDeleteRaw;
+    const privilegeModelWrite  : boolean                 = (
         privilegeModelAdd
-        || privilegeModelUpdate
+        || !!privilegeModelUpdate
         /* || privilegeModelDelete */ // except for delete
     );
     const isLoading = isCommitingModel || isRevertingModel || isDeletingModel;
