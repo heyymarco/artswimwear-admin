@@ -56,6 +56,13 @@ import {
     
     
     
+    // dialog-components:
+    ModalExpandedChangeEvent,
+    ModalCardProps,
+    ModalCard,
+    
+    
+    
     // composite-components:
     TabPanel,
     Tab,
@@ -65,12 +72,6 @@ import {
     // utility-components:
     useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
-
-// internal components:
-import type {
-    // types:
-    CloseEvent,
-}                           from '@/components/SectionModelEditor'
 
 // internals:
 import type {
@@ -88,7 +89,17 @@ import './ComplexEditModelDialogStyles'
 
 
 // react components:
-export interface ComplexEditModelDialogProps<TModel extends Model> {
+export type EditModelDialogResult = string|false|null
+export interface EditModelDialogExpandedChangeEvent extends ModalExpandedChangeEvent {
+    result: EditModelDialogResult
+}
+export interface ComplexEditModelDialogProps<TModel extends Model>
+    extends
+        Omit<ModalCardProps<HTMLElement, EditModelDialogExpandedChangeEvent>,
+            // children:
+            |'children'      // already taken over
+        >
+{
     // data:
     modelName                : string
     modelEntryName          ?: string|null
@@ -129,8 +140,6 @@ export interface ComplexEditModelDialogProps<TModel extends Model> {
     
     onDeleteModelConfirm     : (args: { model: TModel }) => { title?: React.ReactNode, message: React.ReactNode }
     onUnsavedModelConfirm    : (args: { model: TModel }) => { title?: React.ReactNode, message: React.ReactNode }
-    
-    onClose                  : EventHandler<CloseEvent>
     
     
     
@@ -186,13 +195,13 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
         onDeleteModelConfirm,
         onUnsavedModelConfirm,
         
-        onClose,
+        onExpandedChange,
         
         
         
         // children:
         children : childrenFn,
-    } = props;
+    ...restModalCardProps} = props;
     const privilegeModelWrite : boolean = (
         privilegeModelAdd
         || privilegeModelUpdate
@@ -315,19 +324,6 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
         } // if
     });
     
-    const handleKeyDown        : React.KeyboardEventHandler<HTMLElement> = useEvent((event) => {
-        switch (event.key) {
-            // case 'Enter':
-            //     event.preventDefault();
-            //     handleSaveModel();
-            //     break;
-            
-            case 'Escape':
-                event.preventDefault();
-                // handleCloseDialog();
-                break;
-        } // switch
-    });
     const handleCloseDialog    = useEvent(async () => {
         if (privilegeModelWrite && isModelModified) {
             // conditions:
@@ -372,12 +368,28 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
             await handleFinalizing(null, /*commitImages = */false); // result: no changes
         } // if
     });
-    const handleFinalizing     = useEvent(async (event: CloseEvent|Promise<CloseEvent>, commitImages : boolean, otherTasks : Promise<any>[] = []) => {
+    const handleFinalizing     = useEvent(async (event: EditModelDialogResult|Promise<EditModelDialogResult>, commitImages : boolean, otherTasks : Promise<any>[] = []) => {
         await Promise.all([
             handleSaveSideModels(commitImages),
             ...otherTasks,
         ]);
-        onClose(await event);
+        onExpandedChange?.({
+            expanded   : false,
+            actionType : 'ui',
+            result     : await event,
+        });
+    });
+    const handleExpandedChange  : EventHandler<EditModelDialogExpandedChangeEvent> = useEvent((event) => {
+        // conditions:
+        if (event.actionType === 'shortcut') return; // prevents closing modal by accidentally pressing [esc]
+        
+        
+        
+        // actions:
+        onExpandedChange?.({
+            ...event,
+            result : event.result ?? null,
+        });
     });
     
     
@@ -385,59 +397,68 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
     // jsx:
     return (
         <AccessibilityProvider enabled={!isLoading}>
-            <CardHeader
+            <ModalCard
+                // other props:
+                {...restModalCardProps}
+                
+                
+                
+                // variants:
+                theme          = {props.theme          ?? 'primary'   }
+                backdropStyle  = {props.backdropStyle  ?? 'static'    }
+                modalCardStyle = {props.modalCardStyle ?? 'scrollable'}
+                
+                
+                
                 // handlers:
-                onKeyDown={handleKeyDown}
+                onExpandedChange={handleExpandedChange}
             >
-                <h1>{!!modelEntryName ? `Create New ${modelName}` : `Edit ${modelName}`}</h1>
-                <CloseButton onClick={handleCloseDialog} />
-            </CardHeader>
-            <ValidationProvider enableValidation={enableValidation} inheritValidation={false}>
-                <Tab
-                    // refs:
-                    elmRef={editorRef}
-                    
-                    
-                    
-                    // variants:
-                    mild='inherit'
-                    
-                    
-                    
-                    // classes:
-                    className={styleSheet.cardBody}
-                    
-                    
-                    
-                    // values:
-                    defaultExpandedTabIndex={defaultExpandedTabIndex}
-                    
-                    
-                    
-                    // components:
-                    listComponent={<List className={styleSheet.tabList} />}
-                    bodyComponent={<Content className={styleSheet.tabBody} />}
-                    
-                    
-                    
-                    // handlers:
-                    onKeyDown={handleKeyDown}
-                >
-                    {childrenFn?.({
-                        privilegeModelAdd,
-                        privilegeModelUpdate,
-                    })}
-                    {privilegeModelDelete && <TabPanel label={tabDelete} panelComponent={<Content theme='warning' className={styleSheet.tabDelete} />}>
-                        <ButtonIcon icon={isDeletingModel ? 'busy' : 'delete'} theme='danger' onClick={handleDeleteModel}>
-                            Delete <strong>{modelEntryName}</strong>
-                        </ButtonIcon>
-                    </TabPanel>}
-                </Tab>
-            </ValidationProvider>
-            <CardFooter onKeyDown={handleKeyDown}>
-                {privilegeModelWrite && <ButtonIcon className='btnSave'   icon={isCommitingModel ? 'busy' : 'save'  } theme='success' onClick={handleSaveModel}>Save</ButtonIcon>}
-                <ButtonIcon className='btnCancel' icon={privilegeModelWrite ? (isRevertingModel ? 'busy' : 'cancel') : 'done'} theme={privilegeModelWrite ? 'danger' : 'primary'}  onClick={handleCloseDialog}>{isRevertingModel ? 'Reverting' : (privilegeModelWrite ? 'Cancel' : 'Close')}</ButtonIcon>
-            </CardFooter>
+                <CardHeader>
+                    <h1>{!!modelEntryName ? `Create New ${modelName}` : `Edit ${modelName}`}</h1>
+                    <CloseButton onClick={handleCloseDialog} />
+                </CardHeader>
+                <ValidationProvider enableValidation={enableValidation} inheritValidation={false}>
+                    <Tab
+                        // refs:
+                        elmRef={editorRef}
+                        
+                        
+                        
+                        // variants:
+                        mild='inherit'
+                        
+                        
+                        
+                        // classes:
+                        className={styleSheet.cardBody}
+                        
+                        
+                        
+                        // values:
+                        defaultExpandedTabIndex={defaultExpandedTabIndex}
+                        
+                        
+                        
+                        // components:
+                        listComponent={<List className={styleSheet.tabList} />}
+                        bodyComponent={<Content className={styleSheet.tabBody} />}
+                    >
+                        {childrenFn?.({
+                            privilegeModelAdd,
+                            privilegeModelUpdate,
+                        })}
+                        {privilegeModelDelete && <TabPanel label={tabDelete} panelComponent={<Content theme='warning' className={styleSheet.tabDelete} />}>
+                            <ButtonIcon icon={isDeletingModel ? 'busy' : 'delete'} theme='danger' onClick={handleDeleteModel}>
+                                Delete <strong>{modelEntryName}</strong>
+                            </ButtonIcon>
+                        </TabPanel>}
+                    </Tab>
+                </ValidationProvider>
+                <CardFooter>
+                    {privilegeModelWrite && <ButtonIcon className='btnSave'   icon={isCommitingModel ? 'busy' : 'save'  } theme='success' onClick={handleSaveModel}>Save</ButtonIcon>}
+                    <ButtonIcon className='btnCancel' icon={privilegeModelWrite ? (isRevertingModel ? 'busy' : 'cancel') : 'done'} theme={privilegeModelWrite ? 'danger' : 'primary'}  onClick={handleCloseDialog}>{isRevertingModel ? 'Reverting' : (privilegeModelWrite ? 'Cancel' : 'Close')}</ButtonIcon>
+                </CardFooter>
+            </ModalCard>
         </AccessibilityProvider>
     );
 };
