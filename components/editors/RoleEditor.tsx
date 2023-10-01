@@ -57,20 +57,20 @@ interface RoleEditorProps<TElement extends Element = HTMLElement>
         // bases:
         Pick<EditorProps<TElement, string|null>,
             // values:
-            |'defaultValue'
+            |'defaultValue' // not supported, controllable only
             |'value'
             |'onChange'
         >,
         Omit<ListProps<TElement>,
             // values:
-            |'defaultValue'
-            |'value'
-            |'onChange'
+            |'defaultValue' // already taken over
+            |'value'        // already taken over
+            |'onChange'     // already taken over
             
             
             
             // children:
-            |'children'                // already taken over
+            |'children'     // already taken over
         >,
         // data:
         Partial<Omit<ModelCreateOuterProps, keyof ListItemProps>>
