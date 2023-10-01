@@ -104,7 +104,6 @@ export interface ComplexEditModelDialogProps<TModel extends Model>
     modelName                : string
     modelEntryName          ?: string|null
     model                    : TModel|null
-    defaultExpandedTabIndex ?: number
     
     
     
@@ -125,6 +124,11 @@ export interface ComplexEditModelDialogProps<TModel extends Model>
     
     // tabs:
     tabDelete                : React.ReactNode
+    
+    
+    
+    // states:
+    defaultExpandedTabIndex ?: number
     
     
     
@@ -158,7 +162,6 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
         modelName,
         modelEntryName,
         model,
-        defaultExpandedTabIndex,
         
         
         
@@ -179,6 +182,11 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
         
         // tabs:
         tabDelete,
+        
+        
+        
+        // states:
+        defaultExpandedTabIndex,
         
         
         
@@ -437,7 +445,7 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
                         
                         
                         
-                        // values:
+                        // states:
                         defaultExpandedTabIndex={defaultExpandedTabIndex}
                         
                         
