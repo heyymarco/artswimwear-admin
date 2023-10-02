@@ -65,6 +65,7 @@ import {
     
     // composite-components:
     TabPanel,
+    TabProps,
     Tab,
     
     
@@ -108,60 +109,62 @@ export type UnsavedModelConfirmHandler<TModel extends Model> = (args: { model: T
 
 export interface ComplexEditModelDialogProps<TModel extends Model>
     extends
+        // bases:
         Omit<ModalCardProps<HTMLElement, EditModelDialogExpandedChangeEvent>,
             // children:
             |'children'      // already taken over
+        >,
+        
+        // components:
+        Pick<TabProps,
+            // states:
+            |'defaultExpandedTabIndex'
         >
 {
     // data:
-    modelName                : string
-    modelEntryName          ?: string|null
-    model                    : TModel|null
+    modelName              : string
+    modelEntryName        ?: string|null
+    model                  : TModel|null
     
     
     
     // privileges:
-    privilegeModelAdd        : boolean
-    privilegeModelUpdate     : Record<string, boolean>
-    privilegeModelDelete     : boolean
+    privilegeModelAdd      : boolean
+    privilegeModelUpdate   : Record<string, boolean>
+    privilegeModelDelete   : boolean
     
     
     
     // stores:
-    isModelModified          : boolean
-    isCommitingModel         : boolean
-    isRevertingModel         : boolean
-    isDeletingModel          : boolean
+    isModelModified        : boolean
+    isCommitingModel       : boolean
+    isRevertingModel       : boolean
+    isDeletingModel        : boolean
     
     
     
     // tabs:
-    tabDelete                : React.ReactNode
-    
-    
-    
-    // states:
-    defaultExpandedTabIndex ?: number
+    tabDelete              : React.ReactNode
     
     
     
     // handlers:
-    onUpdateModel            : UpdateModelHandler
-    onAfterUpdateModel      ?: AfterUpdateModelHandler
+    onUpdateModel          : UpdateModelHandler
+    onAfterUpdateModel    ?: AfterUpdateModelHandler
     
-    onDeleteModel            : DeleteModelHandler
-    onAfterDeleteModel      ?: AfterDeleteModelHandler
+    onDeleteModel          : DeleteModelHandler
+    onAfterDeleteModel    ?: AfterDeleteModelHandler
     
-    onUpdateSideModel       ?: UpdateSideModelHandler
-    onDeleteSideModel       ?: DeleteSideModelHandler
+    onUpdateSideModel     ?: UpdateSideModelHandler
+    onDeleteSideModel     ?: DeleteSideModelHandler
     
-    onDeleteModelConfirm     : DeleteModelConfirmHandler<TModel>
-    onUnsavedModelConfirm    : UnsavedModelConfirmHandler<TModel>
+    onDeleteModelConfirm   : DeleteModelConfirmHandler<TModel>
+    onUnsavedModelConfirm  : UnsavedModelConfirmHandler<TModel>
     
     
     
     // children:
-    children                 : (args: { privilegeModelAdd: boolean, privilegeModelUpdate: Record<string, boolean> }) => React.ReactNode
+    children               : (args: { privilegeModelAdd: boolean, privilegeModelUpdate: Record<string, boolean> }) => React.ReactNode
 }
 export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDialogProps<TModel>): JSX.Element|null => {
     // styles:
@@ -451,7 +454,11 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
                     }</h1>
                     <CloseButton onClick={handleCloseDialog} />
                 </CardHeader>
-                <ValidationProvider enableValidation={enableValidation} inheritValidation={false}>
+                <ValidationProvider
+                    // validations:
+                    enableValidation={enableValidation}
+                    inheritValidation={false}
+                >
                     <Tab
                         // refs:
                         elmRef={editorRef}
