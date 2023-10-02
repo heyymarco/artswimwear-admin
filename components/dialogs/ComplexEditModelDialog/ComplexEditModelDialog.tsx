@@ -490,7 +490,13 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
                         })}
                         {privilegeModelDelete && <TabPanel label={tabDelete} panelComponent={<Content theme='warning' className={styleSheet.tabDelete} />}>
                             <ButtonIcon icon={isDeletingModel ? 'busy' : 'delete'} theme='danger' onClick={handleDeleteModel}>
-                                Delete <strong>{modelEntryName}</strong>
+                                Delete {!modelEntryName ? 'this ' : ''}<strong>{
+                                    // the model name is entered:
+                                    modelEntryName
+                                    ||
+                                    // the model name is blank:
+                                    modelName
+                                }</strong>
                             </ButtonIcon>
                         </TabPanel>}
                     </Tab>
