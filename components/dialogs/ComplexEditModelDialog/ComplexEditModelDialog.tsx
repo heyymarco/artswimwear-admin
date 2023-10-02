@@ -107,12 +107,20 @@ export type DeleteSideModelHandler                           = () => Promise<voi
 export type DeleteModelConfirmHandler<TModel extends Model>  = (args: { model: TModel }) => { title?: React.ReactNode, message: React.ReactNode }
 export type UnsavedModelConfirmHandler<TModel extends Model> = (args: { model: TModel }) => { title?: React.ReactNode, message: React.ReactNode }
 
+export interface CollapseEvent {
+    result: EditModelDialogResult
+}
+
 export interface ComplexEditModelDialogProps<TModel extends Model>
     extends
         // bases:
         Omit<ModalCardProps<HTMLElement, EditModelDialogExpandedChangeEvent>,
+            // handlers:
+            |'onCollapseStart' // already taken over
+            |'onCollapseEnd'   // already taken over
+            
             // children:
-            |'children'      // already taken over
+            |'children'        // already taken over
         >,
         
         // components:
@@ -160,6 +168,9 @@ export interface ComplexEditModelDialogProps<TModel extends Model>
     
     onDeleteModelConfirm   : DeleteModelConfirmHandler<TModel>
     onUnsavedModelConfirm  : UnsavedModelConfirmHandler<TModel>
+    
+    onCollapseStart       ?: EventHandler<CollapseEvent>
+    onCollapseEnd         ?: EventHandler<CollapseEvent>
     
     
     
@@ -220,6 +231,8 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
         onUnsavedModelConfirm,
         
         onExpandedChange,
+        onCollapseStart,
+        onCollapseEnd,
         
         
         
@@ -258,7 +271,8 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
     
     
     // refs:
-    const editorRef = useRef<HTMLFormElement|null>(null);
+    const editorRef       = useRef<HTMLFormElement|null>(null);
+    const dialogResultRef = useRef<EditModelDialogResult>(null);
     
     
     
@@ -400,12 +414,17 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
             handleSaveSideModel(commitImages),
             ...otherTasks,
         ]);
+        
+        
+        
+        dialogResultRef.current = await event;
         onExpandedChange?.({
             expanded   : false,
             actionType : 'ui',
-            result     : await event,
+            result     : dialogResultRef.current,
         });
     });
+    
     const handleExpandedChange : EventHandler<EditModelDialogExpandedChangeEvent> = useEvent((event) => {
         // conditions:
         if (event.actionType === 'shortcut') return; // prevents closing modal by accidentally pressing [esc]
@@ -415,7 +434,19 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
         // actions:
         onExpandedChange?.({
             ...event,
-            result : event.result ?? null,
+            result : dialogResultRef.current,
+        });
+    });
+    const handleCollapseStart  : EventHandler<void> = useEvent(() => {
+        // actions:
+        onCollapseStart?.({
+            result : dialogResultRef.current,
+        });
+    });
+    const handleCollapseEnd    : EventHandler<void> = useEvent(() => {
+        // actions:
+        onCollapseEnd?.({
+            result : dialogResultRef.current,
         });
     });
     
@@ -438,7 +469,9 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
                 
                 
                 // handlers:
-                onExpandedChange={handleExpandedChange}
+                onExpandedChange = {handleExpandedChange}
+                onCollapseStart  = {handleCollapseStart }
+                onCollapseEnd    = {handleCollapseEnd   }
             >
                 <CardHeader>
                     <h1>{
