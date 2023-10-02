@@ -438,7 +438,17 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
                 onExpandedChange={handleExpandedChange}
             >
                 <CardHeader>
-                    <h1>{!!modelEntryName ? `Create New ${modelName}` : `Edit ${modelName}`}</h1>
+                    <h1>{
+                        // the model name is entered:
+                        modelEntryName
+                        ||
+                        // the model name is blank:
+                        (
+                            !model?.id
+                            ? `Create New ${modelName}` // create new model, if no  id
+                            : `Edit ${modelName}`       // edit model      , if has id
+                        )
+                    }</h1>
                     <CloseButton onClick={handleCloseDialog} />
                 </CardHeader>
                 <ValidationProvider enableValidation={enableValidation} inheritValidation={false}>
