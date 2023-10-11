@@ -11,6 +11,7 @@ import {
     useRef,
     useState,
     useEffect,
+    useMemo,
 }                           from 'react'
 
 // next-auth:
@@ -29,17 +30,6 @@ import {
     // react helper hooks:
     useEvent,
     EventHandler,
-    useMountedFlag,
-    
-    
-    
-    // an accessibility management system:
-    AccessibilityProvider,
-    
-    
-    
-    // a validation management system:
-    ValidationProvider,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -49,41 +39,27 @@ import {
     
     
     
-    // base-content-components:
-    Content,
-    
-    
-    
     // simple-components:
     Icon,
-    ButtonIcon,
-    CloseButton,
     
     
     
     // layout-components:
     ListItem,
-    List,
-    CardHeader,
-    CardFooter,
     
     
     
     // composite-components:
     TabPanel,
-    Tab,
-    
-    
-    
-    // utility-components:
-    ModalStatus,
-    useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // heymarco components:
 import {
     Image,
 }                           from '@heymarco/image'
+import {
+    LoadingBar,
+}                           from '@heymarco/loading-bar'
 
 // internal components:
 import {
@@ -108,11 +84,6 @@ import {
     RoleEditor,
 }                           from '@/components/editors/RoleEditor'
 import type {
-    // types:
-    CloseEvent,
-    
-    
-    
     // react components:
     ModelCreateProps,
     ModelPreviewProps,
@@ -120,6 +91,28 @@ import type {
 import {
     RadioDecorator,
 }                           from '@/components/RadioDecorator'
+import {
+    CollapsibleSuspense,
+}                           from '@/components/CollapsibleSuspense'
+import {
+    // types:
+    UpdateModelHandler,
+    AfterUpdateModelHandler,
+    
+    DeleteModelHandler,
+    
+    UpdateSideModelHandler,
+    DeleteSideModelHandler,
+    
+    DeleteModelConfirmHandler,
+    UnsavedModelConfirmHandler,
+    
+    
+    
+    // react components:
+    ImplementedComplexEditModelDialogProps,
+    ComplexEditModelDialog,
+}                           from '@/components/dialogs/ComplexEditModelDialog'
 
 // private components:
 import {
@@ -151,8 +144,6 @@ import {
 
 // configs:
 import {
-    STORE_WEBSITE_URL,
-    
     PAGE_USER_TAB_ACCOUNT,
     PAGE_USER_TAB_IMAGE,
     PAGE_USER_TAB_ROLE,
@@ -166,22 +157,6 @@ const useEditUserDialogStyleSheet = dynamicStyleSheets(
     () => import(/* webpackPrefetch: true */'./EditUserDialogStyles')
 , { id: 'm4oi6itiaq' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 import './EditUserDialogStyles';
-import LoadingBar from '@heymarco/loading-bar'
-
-
-
-// utilities:
-const emptyUser : UserDetail = {
-    id       : '',
-    
-    name     : '',
-    email    : '',
-    image    : null,
-    
-    roleId   : null,
-    
-    username : null,
-};
 
 
 
@@ -192,7 +167,15 @@ interface RoleCreateProps extends ModelCreateProps {}
 const RoleCreate = (props: RoleCreateProps): JSX.Element|null => {
     // jsx:
     return (
-        <EditRoleDialog role={undefined} onClose={props.onClose} />
+        <EditRoleDialog
+            // other props:
+            {...props}
+            
+            
+            
+            // data:
+            model={null} // create a new model
+        />
     );
 };
 
@@ -262,11 +245,8 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleEditDialogClose = useEvent((): void => {
-        setEditMode(null);
-    });
     const handleClick = useEvent<React.MouseEventHandler<HTMLElement>>((event) => {
-        if (!!editMode) return; // ignore bubbling from <EditRoleDialog>
+        if (!event.currentTarget.contains(event.target as Node)) return; // ignore bubbling from <portal> ... <EditRoleDialog>
         onChange?.(id || null);
     });
     
@@ -356,25 +336,34 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
                 onClick={(event) => { setEditMode('full'); event.stopPropagation(); }}
             />}
             {/* edit dialog: */}
-            {!!id && <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {!!editMode && (editMode === 'full') && <EditRoleDialog role={model} onClose={handleEditDialogClose} />}
-            </ModalStatus>}
+            <CollapsibleSuspense>
+                <EditRoleDialog
+                    // data:
+                    model={model} // modify current model
+                    
+                    
+                    
+                    // states:
+                    expanded={(editMode === 'full')}
+                    
+                    
+                    
+                    // handlers:
+                    onExpandedChange={({expanded}) => !expanded && setEditMode(null)}
+                />
+            </CollapsibleSuspense>
         </ListItem>
     );
 };
 
 /* <EditUserDialog> */
-export interface EditUserDialogProps {
-    // data:
-    user                    ?: UserDetail
-    defaultExpandedTabIndex ?: number
-    
-    
-    
-    // handlers:
-    onClose                  : EventHandler<CloseEvent>
+export interface EditUserDialogProps
+    extends
+        // bases:
+        ImplementedComplexEditModelDialogProps<UserDetail>
+{
 }
-export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
+const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
     // styles:
     const styleSheet = useEditUserDialogStyleSheet();
     
@@ -383,57 +372,37 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
     // rest props:
     const {
         // data:
-        user = emptyUser,
-        defaultExpandedTabIndex,
+        model = null,
         
         
         
-        // handlers:
-        onClose,
-    } = props;
+        // states:
+        defaultExpandedTabIndex = 0,
+    ...restComplexEditModelDialogProps} = props;
     
     
     
     // states:
-    const [isTabRoleShown  , setIsTabRoleShown   ] = useState<boolean>(() => (defaultExpandedTabIndex === 2));
+    const [isModelModified , setIsModelModified] = useState<boolean>(false);
     
-    const [isModified      , setIsModified       ] = useState<boolean>(false);
+    const [name            , setName           ] = useState<string     >(model?.name     ?? ''  );
+    const [email           , setEmail          ] = useState<string     >(model?.email    ?? ''  );
+    const [image           , setImage          ] = useState<string|null>(model?.image    ?? null); // optional field
+    const [roleId          , setRoleId         ] = useState<string|null>(model?.roleId   ?? null); // optional field
+    const [username        , setUsername       ] = useState<string|null>(model?.username ?? null); // optional field
     
-    const [enableValidation, setEnableValidation ] = useState<boolean>(false);
-    const [name            , setName             ] = useState<string>(user.name);
-    const [email           , setEmail            ] = useState<string>(user.email);
-    const [image           , setImage            ] = useState<string|null>(user.image);
-    const [roleId          , setRoleId           ] = useState<string|null>(user.roleId);
-    const [username        , setUsername         ] = useState<string|null>(user.username);
+    const initialEmailRef                        = useRef  <string     >(model?.email    ?? ''  );
     
-    const initialEmailRef                          = useRef<string>(user.email);
+    const initialImageRef                        = useRef  <string|null>(model?.image    ?? null); // optional field
+    const [draftDeletedImages                  ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
     
-    const initialImageRef                          = useRef<string|null>(user.image);
-    const [draftDeletedImages                    ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
+    const [isTabRoleShown  , setIsTabRoleShown ] = useState<boolean>(() => (defaultExpandedTabIndex === 2));
     
     
     
     // sessions:
     const { data: session, update : updateSession} = useSession();
     const role = session?.role;
-    const privilegeAdd               = !!role?.user_c && !user.id;
-    const privilegeUpdateName        = !!role?.user_un;
-    const privilegeUpdateUsername    = !!role?.user_uu;
-    const privilegeUpdateEmail       = !!role?.user_ue;
-    const privilegeUpdatePassword    = !!role?.user_up;
-    const privilegeUpdateImage       = !!role?.user_ui;
-    const privilegeUpdateRole        = !!role?.user_ur;
-    const privilegeDelete            = !!role?.user_d;
-    const privilegeWrite             = (
-        privilegeAdd
-        || privilegeUpdateName
-        || privilegeUpdateUsername
-        || privilegeUpdateEmail
-        || privilegeUpdatePassword
-        || privilegeUpdateImage
-        || privilegeUpdateRole
-        /* || privilegeDelete */ // except for delete
-    );
     
     
     
@@ -443,163 +412,46 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
     const [postImage                                                  ] = usePostImage();
     const [commitDeleteImage, {isLoading : isLoadingCommitDeleteImage}] = useDeleteImage();
     const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
-    const isCommiting = isLoadingModelUpdate || isLoadingCommitDeleteImage;
-    const isReverting = isLoadingRevertDeleteImage;
-    const isLoading   = isCommiting || isReverting || isLoadingModelDelete;
     
     const {data: roleList, isLoading: isLoadingRole, isError: isErrorRole} = useGetRoleList();
     
     
     
     // refs:
-    const firstEditorRef = useRef<HTMLInputElement|null>(null); // TODO: finish this
-    const editorFormRef  = useRef<HTMLFormElement|null>(null);
-    
-    
-    
-    // dom effects:
-    const isMounted = useMountedFlag();
-    
-    
-    
-    // dialogs:
-    const {
-        showMessage,
-        showMessageFieldError,
-        showMessageFetchError,
-    } = useDialogMessage();
+    const firstEditorRef = useRef<HTMLInputElement|null>(null);
     
     
     
     // handlers:
-    const tabRoleHandleCollapseStart = useEvent<EventHandler<void>>(() => {
-        setIsTabRoleShown(false);
+    const handleUpdateModel          = useEvent<UpdateModelHandler>(async ({id, privilegeModelAdd, privilegeModelUpdate}) => {
+        return (await updateUser({
+            id       : model?.id ?? '',
+            
+            name     : (privilegeModelUpdate.name     || privilegeModelAdd) ? name               : undefined,
+            email    : (privilegeModelUpdate.email    || privilegeModelAdd) ? email              : undefined,
+            image    : (privilegeModelUpdate.image    || privilegeModelAdd) ? image              : undefined,
+            roleId   : (privilegeModelUpdate.role                         ) ? roleId             : ((!id && privilegeModelAdd) ? null : undefined),
+            username : (privilegeModelUpdate.username || privilegeModelAdd) ? (username || null) : undefined, // convert empty string to null
+        }).unwrap()).id;
     });
-    const tabRoleHandleExpandEnd     = useEvent<EventHandler<void>>(() => {
-        setIsTabRoleShown(true);
+    const handleAfterUpdateModel     = useEvent<AfterUpdateModelHandler>(async () => {
+        const sessionEmail = session?.user?.email;
+        if (!!sessionEmail && (sessionEmail.toLowerCase() === initialEmailRef.current.toLowerCase())) await updateSession(); // update the session if updated current user
     });
     
-    const handleSave       = useEvent(async () => {
-        if (!privilegeWrite) return;
-        
-        
-        
-        setEnableValidation(true);
-        await new Promise<void>((resolve) => { // wait for a validation state applied
-            setTimeout(() => {
-                setTimeout(() => {
-                    resolve();
-                }, 0);
-            }, 0);
-        });
-        const fieldErrors = editorFormRef?.current?.querySelectorAll?.(':is(.invalidating, .invalidated)');
-        if (fieldErrors?.length) { // there is an/some invalid field
-            showMessageFieldError(fieldErrors);
-            return;
-        } // if
-        
-        
-        
-        try {
-            const updatingModelTask = updateUser({
-                id             : user.id,
-                
-                name     : (privilegeUpdateName     || privilegeAdd) ? name               : undefined,
-                email    : (privilegeUpdateEmail    || privilegeAdd) ? email              : undefined,
-                image    : (privilegeUpdateImage    || privilegeAdd) ? image              : undefined,
-                roleId   : (privilegeUpdateRole                    ) ? roleId             : ((!user.id && privilegeAdd) ? null : undefined),
-                username : (privilegeUpdateUsername || privilegeAdd) ? (username || null) : undefined, // convert empty string to null
-            }).unwrap().then((model) => model.id);
-            
-            const updatingSessionTask = updatingModelTask.then(async (): Promise<void> => {
-                if (session?.user?.email?.toLowerCase() === initialEmailRef.current.toLowerCase()) await updateSession(); // update the session if updated current user
-            });
-            
-            await handleClose(updatingModelTask, /*commitImages = */true, [updatingSessionTask]); // result: created|mutated
-        }
-        catch (error: any) {
-            showMessageFetchError(error);
-        } // try
+    const handleDeleteModel          = useEvent<DeleteModelHandler>(async ({id}) => {
+        await deleteUser({
+            id : id,
+        }).unwrap();
     });
-    const handleDelete     = useEvent(async () => {
-        // conditions:
-        if (
-            (await showMessage<'yes'|'no'>({
-                theme    : 'warning',
-                title    : <h1>Delete Confirmation</h1>,
-                message  : <>
-                    <p>
-                        Are you sure to delete user <strong>{user.name}</strong>?
-                    </p>
-                </>,
-                options  : {
-                    yes  : <ButtonIcon icon='check'          theme='primary'>Yes</ButtonIcon>,
-                    no   : <ButtonIcon icon='not_interested' theme='secondary' autoFocus={true}>No</ButtonIcon>,
-                },
-            }))
-            !==
-            'yes'
-        ) return false;
-        if (!isMounted.current) return false; // the component was unloaded before awaiting returned => do nothing
-        
-        
-        
-        // actions:
-        try {
-            await deleteUser({
-                id : user.id,
-            }).unwrap();
-            
-            await handleClose(false, /*commitImages = */false); // result: deleted
-        }
-        catch (error: any) {
-            showMessageFetchError(error);
-        } // try
+    
+    const handleUpdateSideModel      = useEvent<UpdateSideModelHandler>(async () => {
+        await handleSaveSideModel(/*commitImages = */true);
     });
-    const handleClosing    = useEvent(async () => {
-        if (privilegeWrite && isModified) {
-            // conditions:
-            const answer = await showMessage<'save'|'dontSave'|'continue'>({
-                theme         : 'warning',
-                title         : <h1>Unsaved Data</h1>,
-                message       : <p>
-                    Do you want to save the changes?
-                </p>,
-                options       : {
-                    save      : <ButtonIcon icon='save'   theme='success' autoFocus={true}>Save</ButtonIcon>,
-                    dontSave  : <ButtonIcon icon='cancel' theme='danger' >Don&apos;t Save</ButtonIcon>,
-                    continue  : <ButtonIcon icon='edit'   theme='secondary'>Continue Editing</ButtonIcon>,
-                },
-                backdropStyle : 'static',
-            });
-            if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
-            
-            
-            
-            // actions:
-            switch (answer) {
-                case 'save':
-                    // then do a save (it will automatically close the editor after successfully saving):
-                    handleSave();
-                    break;
-                case 'dontSave':
-                    // then close the editor (without saving):
-                    await handleClose(null, /*commitImages = */false); // result: discard changes
-                    break;
-                default:
-                    // do nothing (continue editing)
-                    break;
-            } // switch
-        }
-        else {
-            await handleClose(null, /*commitImages = */false); // result: no changes
-        } // if
+    const handleDeleteSideModel      = useEvent<DeleteSideModelHandler>(async () => {
+        await handleSaveSideModel(/*commitImages = */false);
     });
-    const handleSaveImages = useEvent(async (commitImages : boolean) => {
-        if (!privilegeWrite) return;
-        
-        
-        
+    const handleSaveSideModel        = useEvent(async (commitImages : boolean) => {
         // initial_image have been replaced with new image:
         if (commitImages && initialImageRef.current && (initialImageRef.current !== image)) {
             // register to actual_delete the initial_image when committed:
@@ -638,279 +490,280 @@ export const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => 
         // substract the drafts:
         for (const unusedImageId of unusedImageIds) draftDeletedImages.delete(unusedImageId);
     });
-    const handleClose      = useEvent(async (event: CloseEvent|Promise<CloseEvent>, commitImages : boolean, otherTasks : Promise<any>[] = []) => {
-        await Promise.all([
-            handleSaveImages(commitImages),
-            ...otherTasks,
-        ]);
-        onClose(await event);
-    });
-    const handleKeyDown : React.KeyboardEventHandler<HTMLElement> = useEvent((event) => {
-        switch (event.key) {
-            // case 'Enter':
-            //     event.preventDefault();
-            //     handleSave();
-            //     break;
-            
-            case 'Escape':
-                event.preventDefault();
-                // handleClosing();
-                break;
-        } // switch
-    });
     
-    
-    
-    // dom effects:
-    
-    // autoFocus on first editor:
-    useEffect(() => {
-        // setups:
-        const cancelFocus = setTimeout(() => {
-            // conditions:
-            const firstEditorElm = firstEditorRef.current;
-            if (!firstEditorElm) return;
-            
-            
-            
-            firstEditorElm.setSelectionRange(0, -1);
-            firstEditorElm.focus({ preventScroll: true });
-        }, 100);
-        
-        
-        
-        // cleanups:
-        return () => {
-            clearTimeout(cancelFocus);
+    const handleDeleteModelConfirm   = useEvent<DeleteModelConfirmHandler<UserDetail>>(({model}) => {
+        return {
+            title   : <h1>Delete Confirmation</h1>,
+            message : <p>
+                Are you sure to delete user <strong>{model.name}</strong>?
+            </p>,
         };
-    }, []);
+    });
+    const handleUnsavedModelConfirm  = useEvent<UnsavedModelConfirmHandler<UserDetail>>(() => {
+        return {
+            title   : <h1>Unsaved Data</h1>,
+            message : <p>
+                Do you want to save the changes?
+            </p>,
+        };
+    });
+    
+    const tabRoleHandleCollapseStart = useEvent<EventHandler<void>>(() => {
+        setIsTabRoleShown(false);
+    });
+    const tabRoleHandleExpandEnd     = useEvent<EventHandler<void>>(() => {
+        setIsTabRoleShown(true);
+    });
     
     
     
     // jsx:
     return (
-        <AccessibilityProvider enabled={!isLoading}>
-            <CardHeader
-                // handlers:
-                onKeyDown={handleKeyDown}
-            >
-                <h1>{name || ((user === emptyUser) ? 'Create New User' : 'Edit User')}</h1>
-                <CloseButton onClick={handleClosing} />
-            </CardHeader>
-            <ValidationProvider enableValidation={enableValidation} inheritValidation={false}>
-                <Tab
+        <ComplexEditModelDialog<UserDetail>
+            // other props:
+            {...restComplexEditModelDialogProps}
+            
+            
+            
+            // data:
+            modelName='User'
+            modelEntryName={model?.name}
+            model={model}
+            
+            
+            
+            // privileges:
+            privilegeModelAdd    = {!!role?.user_c}
+            privilegeModelUpdate = {useMemo(() => ({
+                name     : !!role?.user_un,
+                username : !!role?.user_uu,
+                email    : !!role?.user_ue,
+                password : !!role?.user_up,
+                image    : !!role?.user_ui,
+                role     : !!role?.user_ur,
+            }), [role])}
+            privilegeModelDelete = {!!role?.user_d}
+            
+            
+            
+            // stores:
+            isModelModified  = {isModelModified}
+            
+            isCommitingModel = {isLoadingModelUpdate || isLoadingCommitDeleteImage}
+            isRevertingModel = {                        isLoadingRevertDeleteImage}
+            isDeletingModel  = {isLoadingModelDelete || isLoadingCommitDeleteImage}
+            
+            
+            
+            // tabs:
+            tabDelete={PAGE_USER_TAB_DELETE}
+            
+            
+            
+            // states:
+            defaultExpandedTabIndex={defaultExpandedTabIndex}
+            
+            
+            
+            // auto focusable:
+            autoFocusOn={props.autoFocusOn ?? firstEditorRef}
+            
+            
+            
+            // handlers:
+            onUpdateModel={handleUpdateModel}
+            onAfterUpdateModel={handleAfterUpdateModel}
+            
+            onDeleteModel={handleDeleteModel}
+            // onAfterDeleteModel={undefined}
+            
+            onUpdateSideModel={handleUpdateSideModel}
+            onDeleteSideModel={handleDeleteSideModel}
+            
+            onDeleteModelConfirm={handleDeleteModelConfirm}
+            onUnsavedModelConfirm={handleUnsavedModelConfirm}
+        >{({privilegeModelAdd, privilegeModelUpdate}) => <>
+            <TabPanel label={PAGE_USER_TAB_ACCOUNT} panelComponent={<Generic className={styleSheet.accountTab} />}>
+                <form>
+                    <span className='name label'>Name:</span>
+                    <NameEditor
+                        // refs:
+                        elmRef={firstEditorRef}
+                        
+                        
+                        
+                        // classes:
+                        className='name editor'
+                        
+                        
+                        
+                        // accessibilities:
+                        enabled={privilegeModelUpdate.name || privilegeModelAdd}
+                        
+                        
+                        
+                        // values:
+                        value={name}
+                        onChange={(value) => {
+                            setName(value);
+                            setIsModelModified(true);
+                        }}
+                    />
+                    
+                    <span className='username label'>Username:</span>
+                    <UniqueUsernameEditor
+                        // classes:
+                        className='username editor'
+                        
+                        
+                        
+                        // accessibilities:
+                        enabled={privilegeModelUpdate.username || privilegeModelAdd}
+                        
+                        
+                        
+                        // values:
+                        currentValue={model?.username ?? ''}
+                        value={username ?? ''}
+                        onChange={(value) => {
+                            setUsername(value);
+                            setIsModelModified(true);
+                        }}
+                    />
+                    
+                    <span className='email label'>Email:</span>
+                    <UniqueEmailEditor
+                        // classes:
+                        className='email editor'
+                        
+                        
+                        
+                        // accessibilities:
+                        enabled={privilegeModelUpdate.email || privilegeModelAdd}
+                        
+                        
+                        
+                        // values:
+                        currentValue={model?.email ?? ''}
+                        value={email}
+                        onChange={(value) => {
+                            setEmail(value);
+                            setIsModelModified(true);
+                        }}
+                    />
+                </form>
+            </TabPanel>
+            <TabPanel label={PAGE_USER_TAB_IMAGE}   panelComponent={<Generic className={styleSheet.imageTab} />}>
+                <UploadImage<HTMLElement, string>
                     // variants:
-                    mild='inherit'
+                    nude={true}
                     
                     
                     
-                    // classes:
-                    className={styleSheet.cardBody}
+                    // accessibilities:
+                    readOnly={!(privilegeModelUpdate.image || privilegeModelAdd)}
                     
                     
                     
                     // values:
-                    defaultExpandedTabIndex={defaultExpandedTabIndex}
+                    value={image}
+                    onChange={(value) => {
+                        setImage(value);
+                        setIsModelModified(true);
+                    }}
                     
                     
                     
                     // components:
-                    listComponent={<List className={styleSheet.tabList} />}
-                    bodyComponent={<Content className={styleSheet.tabBody} />}
+                    imageComponent={
+                        // @ts-ignore
+                        <Image
+                            priority={true}
+                        />
+                    }
                     
                     
                     
                     // handlers:
-                    onKeyDown={handleKeyDown}
-                >
-                    <TabPanel label={PAGE_USER_TAB_ACCOUNT} panelComponent={<Generic className={styleSheet.accountTab} />}>
-                        <form ref={editorFormRef}>
-                            <span className='name label'>Name:</span>
-                            <NameEditor
-                                // refs:
-                                elmRef={firstEditorRef}
-                                
-                                
-                                
-                                // classes:
-                                className='name editor'
-                                
-                                
-                                
-                                // accessibilities:
-                                enabled={privilegeUpdateName || privilegeAdd}
-                                
-                                
-                                
-                                // values:
-                                value={name}
-                                onChange={(value) => {
-                                    setName(value);
-                                    setIsModified(true);
-                                }}
-                            />
+                    onUploadImage={async ({ imageFile, reportProgress, abortSignal }) => {
+                        try {
+                            const imageId = await postImage({
+                                image            : imageFile,
+                                folder           : 'users',
+                                onUploadProgress : reportProgress,
+                                abortSignal      : abortSignal,
+                            }).unwrap();
                             
-                            <span className='username label'>Username:</span>
-                            <UniqueUsernameEditor
-                                // classes:
-                                className='username editor'
-                                
-                                
-                                
-                                // accessibilities:
-                                enabled={privilegeUpdateUsername || privilegeAdd}
-                                
-                                
-                                
-                                // values:
-                                currentValue={user.username ?? ''}
-                                value={username ?? ''}
-                                onChange={(value) => {
-                                    setUsername(value);
-                                    setIsModified(true);
-                                }}
-                            />
+                            // replace => delete prev drafts:
+                            await handleDeleteSideModel();
                             
-                            <span className='email label'>Email:</span>
-                            <UniqueEmailEditor
-                                // classes:
-                                className='email editor'
-                                
-                                
-                                
-                                // accessibilities:
-                                enabled={privilegeUpdateEmail || privilegeAdd}
-                                
-                                
-                                
-                                // values:
-                                currentValue={user.email}
-                                value={email}
-                                onChange={(value) => {
-                                    setEmail(value);
-                                    setIsModified(true);
-                                }}
-                            />
-                        </form>
-                    </TabPanel>
-                    <TabPanel label={PAGE_USER_TAB_IMAGE}        panelComponent={<Generic className={styleSheet.imageTab} />}>
-                        <UploadImage<HTMLElement, string>
-                            // variants:
-                            nude={true}
+                            // register to actual_delete the new_image when reverted:
+                            draftDeletedImages.set(imageId, false /* false: delete when reverted, noop when committed */);
                             
-                            
-                            
-                            // accessibilities:
-                            readOnly={!(privilegeUpdateImage || privilegeAdd)}
-                            
-                            
-                            
-                            // values:
-                            value={image}
-                            onChange={(value) => {
-                                setImage(value);
-                                setIsModified(true);
-                            }}
-                            
-                            
-                            
-                            // components:
-                            imageComponent={
-                                // @ts-ignore
-                                <Image
-                                    priority={true}
-                                />
-                            }
-                            
-                            
-                            
-                            // handlers:
-                            onUploadImage={async ({ imageFile, reportProgress, abortSignal }) => {
-                                try {
-                                    const imageId = await postImage({
-                                        image            : imageFile,
-                                        folder           : 'users',
-                                        onUploadProgress : reportProgress,
-                                        abortSignal      : abortSignal,
-                                    }).unwrap();
-                                    
-                                    // replace => delete prev drafts:
-                                    await handleSaveImages(/*commitImages = */false);
-                                    
-                                    // register to actual_delete the new_image when reverted:
-                                    draftDeletedImages.set(imageId, false /* false: delete when reverted, noop when committed */);
-                                    
-                                    return imageId;
-                                }
-                                catch (error : any) {
-                                    if (error.status === 0) { // non_standard HTTP status code: a request was aborted
-                                        // TODO: try to cleanup a prematurely image (if any)
-                                        
-                                        return null; // prevents showing error
-                                    } // if
-                                    
-                                    throw error;     // shows the error detail
-                                } // try
-                            }}
-                            onDeleteImage={async ({ imageData: imageId }) => {
-                                // register to actual_delete the deleted_image when committed:
-                                draftDeletedImages.set(imageId,
-                                    draftDeletedImages.has(imageId) // if has been created but not saved
-                                    ? null /* null: delete when committed, delete when reverted */
-                                    : true /* true: delete when committed, noop when reverted */
-                                );
+                            return imageId;
+                        }
+                        catch (error : any) {
+                            if (error.status === 0) { // non_standard HTTP status code: a request was aborted
+                                // TODO: try to cleanup a prematurely image (if any)
                                 
-                                return true;
-                            }}
-                            onResolveImageUrl={resolveMediaUrl<never>}
-                        />
-                    </TabPanel>
-                    <TabPanel label={PAGE_USER_TAB_ROLE}         panelComponent={<Generic className={styleSheet.roleTab} />} onCollapseStart={tabRoleHandleCollapseStart} onExpandEnd={tabRoleHandleExpandEnd}>{
-                        isLoadingRole
-                        ? <LoadingBar />
-                        : isErrorRole
-                            ? 'Error getting role data'
-                            : <RoleEditor
-                                // values:
-                                roleList={roleList}
-                                value={roleId}
-                                onChange={(value) => {
-                                    setRoleId(value);
-                                    setIsModified(true);
-                                }}
-                                
-                                
-                                
-                                // components:
-                                modelPreviewComponent={
-                                    ({id}) => <RolePreview model={undefined as any} selectedRoleId={roleId} isShown={isTabRoleShown} readOnly={!(privilegeUpdateRole /* || privilegeAdd */) && !(!id && privilegeAdd)} />
-                                }
-                                modelCreateComponent={
-                                    !!role?.role_c
-                                    ? <RoleCreate onClose={undefined as any} />
-                                    : undefined
-                                }
-                                
-                                
-                                
-                                // handlers:
-                                onModelCreated={(value) => {
-                                    setRoleId(value);
-                                    setIsModified(true);
-                                }}
-                            />
-                    }</TabPanel>
-                    {privilegeDelete && <TabPanel label={PAGE_USER_TAB_DELETE} panelComponent={<Content theme='warning' className={styleSheet.deleteTab} />}>
-                        <ButtonIcon icon={isLoadingModelDelete ? 'busy' : 'delete'} theme='danger' onClick={handleDelete}>
-                            Delete User <strong>{user.name}</strong>
-                        </ButtonIcon>
-                    </TabPanel>}
-                </Tab>
-            </ValidationProvider>
-            <CardFooter onKeyDown={handleKeyDown}>
-                {privilegeWrite && <ButtonIcon className='btnSave'   icon={isCommiting ? 'busy' : 'save'  } theme='success' onClick={handleSave}>Save</ButtonIcon>}
-                <ButtonIcon className='btnCancel' icon={privilegeWrite ? (isReverting ? 'busy' : 'cancel') : 'done'} theme={privilegeWrite ? 'danger' : 'primary'}  onClick={handleClosing}>{isReverting ? 'Reverting' : (privilegeWrite ? 'Cancel' : 'Close')}</ButtonIcon>
-            </CardFooter>
-        </AccessibilityProvider>
+                                return null; // prevents showing error
+                            } // if
+                            
+                            throw error;     // shows the error detail
+                        } // try
+                    }}
+                    onDeleteImage={async ({ imageData: imageId }) => {
+                        // register to actual_delete the deleted_image when committed:
+                        draftDeletedImages.set(imageId,
+                            draftDeletedImages.has(imageId) // if has been created but not saved
+                            ? null /* null: delete when committed, delete when reverted */
+                            : true /* true: delete when committed, noop when reverted */
+                        );
+                        
+                        return true;
+                    }}
+                    onResolveImageUrl={resolveMediaUrl<never>}
+                />
+            </TabPanel>
+            <TabPanel label={PAGE_USER_TAB_ROLE}    panelComponent={<Generic className={styleSheet.roleTab} />} onCollapseStart={tabRoleHandleCollapseStart} onExpandEnd={tabRoleHandleExpandEnd}>{
+                isLoadingRole
+                ? <LoadingBar />
+                : isErrorRole
+                    ? 'Error getting role data'
+                    : <RoleEditor
+                        // values:
+                        roleList={roleList}
+                        value={roleId}
+                        onChange={(value) => {
+                            setRoleId(value);
+                            setIsModelModified(true);
+                        }}
+                        
+                        
+                        
+                        // components:
+                        modelPreviewComponent={
+                            ({id}) => <RolePreview model={undefined as any} selectedRoleId={roleId} isShown={isTabRoleShown} readOnly={!(privilegeModelUpdate.role /* || privilegeModelAdd */) && !(!id && privilegeModelAdd)} />
+                        }
+                        modelCreateComponent={
+                            !!role?.role_c
+                            ? <RoleCreate />
+                            : undefined
+                        }
+                        
+                        
+                        
+                        // handlers:
+                        onModelCreated={(value) => {
+                            setRoleId(value);
+                            setIsModelModified(true);
+                        }}
+                    />
+            }</TabPanel>
+        </>}</ComplexEditModelDialog>
     );
 };
+export {
+    EditUserDialog,
+    EditUserDialog as default,
+}

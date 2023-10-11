@@ -12,10 +12,10 @@ import {
     useState,
 }                           from 'react'
 
-// next-js:
-import type {
-    Metadata,
-}                           from 'next'
+// // next-js:
+// import type {
+//     Metadata,
+// }                           from 'next'
 
 // next-auth:
 import {
@@ -42,11 +42,6 @@ import {
     
     
     
-    // base-content-components:
-    Content,
-    
-    
-    
     // simple-components:
     Icon,
     
@@ -68,9 +63,6 @@ import {
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // heymarco components:
-import {
-    Image,
-}                           from '@heymarco/image'
 import {
     Main,
 }                           from '@heymarco/section'
@@ -100,20 +92,11 @@ import {
     UniqueEmailEditor,
 }                           from '@/components/editors/UniqueEmailEditor'
 import {
-    CurrencyEditor,
-}                           from '@/components/editors/CurrencyEditor'
-import {
-    StockEditor,
-}                           from '@/components/editors/StockEditor'
-import {
-    VisibilityEditor,
-}                           from '@/components/editors/VisibilityEditor'
-import {
     CompoundWithBadge,
 }                           from '@/components/CompoundWithBadge'
 import {
-    MiniCarousel,
-}                           from '@/components/MiniCarousel'
+    CollapsibleSuspense,
+}                           from '@/components/CollapsibleSuspense'
 import {
     SimpleEditModelDialog,
 }                           from '@/components/dialogs/SimpleEditModelDialog'
@@ -139,26 +122,14 @@ import {
 
 // internals:
 import {
-    formatCurrency,
-    getCurrencySign,
-}                           from '@/libs/formatters'
-import {
     resolveMediaUrl,
 }                           from '@/libs/mediaStorage.client'
 
-// configs:
-import {
-    PAGE_USER_TITLE,
-    PAGE_USER_DESCRIPTION,
-}                           from '@/website.config' // TODO: will be used soon
-import {
-    COMMERCE_CURRENCY_FRACTION_MAX,
-}                           from '@/commerce.config'
-
-
-
-// defaults:
-const imageSize = 128;  // 128px
+// // configs:
+// import {
+//     PAGE_USER_TITLE,
+//     PAGE_USER_DESCRIPTION,
+// }                           from '@/website.config' // TODO: will be used soon
 
 
 
@@ -177,7 +148,15 @@ interface UserCreateProps extends ModelCreateProps {}
 const UserCreate = (props: UserCreateProps): JSX.Element|null => {
     // jsx:
     return (
-        <EditUserDialog user={undefined} onClose={props.onClose} />
+        <EditUserDialog
+            // other props:
+            {...props}
+            
+            
+            
+            // data:
+            model={null} // create a new model
+        />
     );
 };
 
@@ -217,7 +196,7 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
     // sessions:
     const { data: session } = useSession();
     const role = session?.role;
-    const privilegeAdd               = !!role?.user_c;
+ // const privilegeAdd               = !!role?.user_c;
     const privilegeUpdateName        = !!role?.user_un;
     const privilegeUpdateUsername    = !!role?.user_uu;
     const privilegeUpdateEmail       = !!role?.user_ue;
@@ -234,9 +213,6 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
         || privilegeUpdateImage
         || privilegeUpdateRole
         || privilegeDelete
-        // TODO: || privilegeRoleAdd
-        // TODO: || privilegeRoleUpdate
-        // TODO: || privilegeRoleDelete
     );
     
     
@@ -245,11 +221,7 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
     const {
         data       : roles,
         isLoading  : isRoleLoadingAndNoData,
-        isFetching : isRoleFetching,
-        isError    : isRoleError,
-        refetch    : refetchRole,
     } = getRolePaginationApi;
-    const isErrorAndNoData = isRoleError && !roles;
     
     
     
@@ -331,7 +303,7 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
                 </p>
                 <p className='role'>
                     { isRoleLoadingAndNoData && <Busy />}
-                    {!isRoleLoadingAndNoData && !!roleId && roles?.entities?.[roleId]?.name || <span className='noValue'>No Access</span>}
+                    {!isRoleLoadingAndNoData && !!roles && !!roleId && roles?.entities?.[roleId]?.name || <span className='noValue'>No Access</span>}
                     {privilegeUpdateRole     && <EditButton onClick={() => setEditMode('roleId')} />}
                 </p>
                 <p className='fullEditor'>
@@ -342,22 +314,36 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
             </div>
             {/* edit dialog: */}
             <ModalStatus theme='primary' viewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {!!editMode && (editMode !== 'full') && <>
+                {!!editMode && !((editMode === 'image') || (editMode === 'roleId') || (editMode === 'full')) && <>
                     {(editMode === 'name'      ) && <SimpleEditModelDialog<UserDetail> model={model} updateModelApi={useUpdateUser} edit={editMode} onClose={handleEditDialogClose} editorComponent={<NameEditor />} />}
                     {(editMode === 'username'  ) && <SimpleEditModelDialog<UserDetail> model={model} updateModelApi={useUpdateUser} edit={editMode} onClose={handleEditDialogClose} editorComponent={<UniqueUsernameEditor currentValue={username ?? ''} />} />}
                     {(editMode === 'email'     ) && <SimpleEditModelDialog<UserDetail> model={model} updateModelApi={useUpdateUser} edit={editMode} onClose={handleEditDialogClose} editorComponent={<UniqueEmailEditor    currentValue={email} />} />}
                 </>}
             </ModalStatus>
-            <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {!!editMode && ((editMode === 'image') || (editMode === 'roleId') || (editMode === 'full')) && <EditUserDialog user={model} onClose={handleEditDialogClose} defaultExpandedTabIndex={((): number|undefined => {
-                    // switch (editMode === 'roleId') ? 2 : undefined
-                    switch (editMode) {
-                        case 'image' : return 1;
-                        case 'roleId': return 2;
-                        default      : return undefined;
-                    } // switch
-                })()} />}
-            </ModalStatus>
+            <CollapsibleSuspense>
+                <EditUserDialog
+                    // data:
+                    model={model} // modify current model
+                    
+                    
+                    
+                    // states:
+                    expanded={(editMode === 'image') || (editMode === 'roleId') || (editMode === 'full')}
+                    defaultExpandedTabIndex={((): number|undefined => {
+                        // switch (editMode === 'roleId') ? 2 : undefined
+                        switch (editMode) {
+                            case 'image' : return 1;
+                            case 'roleId': return 2;
+                            default      : return undefined;
+                        } // switch
+                    })()}
+                    
+                    
+                    
+                    // handlers:
+                    onExpandedChange={({expanded}) => !expanded && setEditMode(null)}
+                />
+            </CollapsibleSuspense>
         </ListItem>
     );
 };
@@ -417,7 +403,7 @@ export default function UserPage(): JSX.Element|null {
                 }
                 modelCreateComponent={
                     privilegeAdd
-                    ? <UserCreate onClose={undefined as any} />
+                    ? <UserCreate />
                     : undefined
                 }
             />
