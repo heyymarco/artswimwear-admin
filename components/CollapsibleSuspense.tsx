@@ -16,6 +16,7 @@ import {
 import {
     // react helper hooks:
     useEvent,
+    EventHandler,
     useMergeEvents,
     
     
@@ -23,8 +24,18 @@ import {
     // a capability of UI to expand/reduce its size or toggle the visibility:
     ExpandedChangeEvent,
     CollapsibleProps,
-    CollapsibleEventProps,
+    // CollapsibleEventProps,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
+
+
+// types:
+export interface CollapsibleEventProps {
+    onExpandStart   ?: EventHandler<any>
+    onExpandEnd     ?: EventHandler<any>
+    onCollapseStart ?: EventHandler<any>
+    onCollapseEnd   ?: EventHandler<any>
+}
 
 
 
