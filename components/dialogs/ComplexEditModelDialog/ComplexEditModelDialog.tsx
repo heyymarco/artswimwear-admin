@@ -146,7 +146,7 @@ export interface ComplexEditModelDialogProps<TModel extends Model>
     // stores:
     isModelModified        : boolean
     isCommitingModel       : boolean
-    isRevertingModel       : boolean
+    isRevertingModel      ?: boolean
     isDeletingModel        : boolean
     
     
@@ -177,6 +177,38 @@ export interface ComplexEditModelDialogProps<TModel extends Model>
     // children:
     children               : (args: { privilegeModelAdd: boolean, privilegeModelUpdate: Record<string, boolean> }) => React.ReactNode
 }
+export type ImplementedComplexEditModelDialogProps<TModel extends Model> = Omit<ComplexEditModelDialogProps<TModel>,
+    // data:
+    |'modelName'             // already taken over
+    |'modelEntryName'        // already taken over
+    
+    // privileges:
+    |'privilegeModelAdd'     // already taken over
+    |'privilegeModelUpdate'  // already taken over
+    |'privilegeModelDelete'  // already taken over
+    
+    // stores:
+    |'isModelModified'       // already taken over
+    |'isCommitingModel'      // already taken over
+    |'isRevertingModel'      // already taken over
+    |'isDeletingModel'       // already taken over
+    
+    // tabs:
+    |'tabDelete'             // already taken over
+    
+    // handlers:
+    |'onUpdateModel'         // already taken over
+    |'onAfterUpdateModel'    // already taken over
+    |'onDeleteModel'         // already taken over
+    |'onAfterDeleteModel'    // already taken over
+    |'onUpdateSideModel'     // already taken over
+    |'onDeleteSideModel'     // already taken over
+    |'onDeleteModelConfirm'  // already taken over
+    |'onUnsavedModelConfirm' // already taken over
+    
+    // children:
+    |'children'              // already taken over
+>
 export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDialogProps<TModel>): JSX.Element|null => {
     // styles:
     const styleSheet = useComplexEditModelDialogStyleSheet();
@@ -202,7 +234,7 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
         // stores:
         isModelModified,
         isCommitingModel,
-        isRevertingModel,
+        isRevertingModel = false,
         isDeletingModel,
         
         
