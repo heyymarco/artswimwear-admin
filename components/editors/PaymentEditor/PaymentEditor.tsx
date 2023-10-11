@@ -36,6 +36,8 @@ import {
     // simple-components:
     Icon,
     Label,
+    EditableButton,
+    ButtonIcon,
     Form,
     
     
@@ -53,12 +55,6 @@ import {
     // composite-components:
     Group,
 }                           from '@reusable-ui/components'  // a set of official Reusable-UI components
-
-// heymarco components:
-import {
-    // react components:
-    EditableButton,
-}                           from '@heymarco/editable-button'
 
 // internals:
 import type {
@@ -270,9 +266,24 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                         // components:
                         buttonComponent={
                             <EditableButton
+                                // accessibilities:
+                                assertiveFocusable={true}
+                                
+                                
+                                
                                 // validations:
                                 isValid={!!brand}
-                                assertiveFocusable={true}
+                                
+                                
+                                
+                                // components:
+                                buttonComponent={
+                                    <ButtonIcon
+                                        // appearances:
+                                        icon='dropdown'
+                                        iconPosition='end'
+                                    />
+                                }
                             />
                         }
                         
