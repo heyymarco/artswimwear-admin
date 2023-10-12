@@ -61,7 +61,7 @@ const CollapsibleSuspense = (props: CollapsibleSuspenseProps): JSX.Element|null 
     
     // handlers:
     const handleCollapseEndInternal = useEvent(() => {
-        setIsVisible(false)
+        setIsVisible(false);
     });
     const handleCollapseEnd         = useMergeEvents(
         // preserves the original `onCollapseEnd`:
