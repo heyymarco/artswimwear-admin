@@ -36,6 +36,12 @@ export interface CollapsibleEventProps {
     onCollapseStart ?: EventHandler<any>
     onCollapseEnd   ?: EventHandler<any>
 }
+const enum VisibilityState {
+    CollapseEnd   = 0,
+    // CollapseStart = 1, // no need render transition of collapsing
+    ExpandStart   = 1,
+    ExpandEnd     = 2,
+}
 
 
 
@@ -55,13 +61,14 @@ const CollapsibleSuspense = (props: CollapsibleSuspenseProps): JSX.Element|null 
     
     
     // states:
-    const [isVisible, setIsVisible] = useState<boolean|null>(isComponentExpanded);
+    const [visibilityState, setVisibilityState] = useState<VisibilityState>(isComponentExpanded ? VisibilityState.ExpandEnd : VisibilityState.CollapseEnd);
+    // const [isVisibleDelayed, setIsVisibleDelayed] = useState<boolean>
     
     
     
     // handlers:
     const handleCollapseEndInternal = useEvent(() => {
-        setIsVisible(false);
+        setVisibilityState(VisibilityState.CollapseEnd);
     });
     const handleCollapseEnd         = useMergeEvents(
         // preserves the original `onCollapseEnd`:
@@ -76,18 +83,29 @@ const CollapsibleSuspense = (props: CollapsibleSuspenseProps): JSX.Element|null 
     
     
     // dom effects:
+    
+    // handle initiate to render the <Collapsible>:
     useEffect(() => {
-        if (isComponentExpanded) setIsVisible(null);
+        if (isComponentExpanded) setVisibilityState(VisibilityState.ExpandStart);
     }, [isComponentExpanded]);
     
+    // handle render transition from [ExpandStart => ExpandEnd]:
     useEffect(() => {
-        if (isVisible === null) setIsVisible(true);
-    }, [isVisible]);
+        switch (visibilityState) {
+            case VisibilityState.ExpandStart:
+                setVisibilityState(VisibilityState.ExpandEnd);
+                break;
+            
+            // case VisibilityState.CollapseStart:
+            //     setVisibilityState(VisibilityState.CollapseEnd);
+            //     break;
+        } // switch
+    }, [visibilityState]);
     
     
     
     // jsx:
-    if (isVisible === false) return null; // causing to discard (lost) the <EditUserDialogInternal>'s states
+    if (visibilityState === VisibilityState.CollapseEnd) return null; // causing to discard (lost) the <EditUserDialogInternal>'s states
     return React.cloneElement<CollapsibleProps<ExpandedChangeEvent> & CollapsibleEventProps>(collapsibleComponent,
         // props:
         {
@@ -97,7 +115,7 @@ const CollapsibleSuspense = (props: CollapsibleSuspenseProps): JSX.Element|null 
             
             
             // states:
-            expanded      : (isVisible === null) ? false : collapsibleComponent?.props?.expanded,
+            expanded      : (visibilityState === VisibilityState.ExpandStart) ? false /* render as collapsed first, then next re-render render as expanded */ : isComponentExpanded,
             
             
             
