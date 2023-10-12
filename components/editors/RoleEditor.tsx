@@ -9,12 +9,6 @@ import type {
     EntityState
 }                           from '@reduxjs/toolkit'
 
-// reusable-ui core:
-import {
-    // react helper hooks:
-    useEvent,
-}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
-
 // reusable-ui components:
 import {
     // layout-components:
@@ -144,7 +138,7 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
                             
                             
                             // states:
-                            active   : modelPreviewComponent.props.active ?? (!!value && (value === model.id)),
+                            active   : modelPreviewComponent.props.active ?? ((value ?? '') === model.id),
                             
                             
                             

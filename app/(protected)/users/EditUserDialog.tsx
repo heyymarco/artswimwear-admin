@@ -96,6 +96,7 @@ import {
 }                           from '@/components/CollapsibleSuspense'
 import {
     // types:
+    EditModelDialogExpandedChangeEvent,
     UpdateModelHandler,
     AfterUpdateModelHandler,
     
@@ -245,9 +246,31 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleClick = useEvent<React.MouseEventHandler<HTMLElement>>((event) => {
-        if (!event.currentTarget.contains(event.target as Node)) return; // ignore bubbling from <portal> ... <EditRoleDialog>
-        onChange?.(id || null);
+    const handleClick          = useEvent<React.MouseEventHandler<HTMLElement>>((event) => {
+        // conditions:
+        if (!event.currentTarget.contains(event.target as Node)) return; // ignore bubbling from <portal> of <EditRoleDialog>
+        
+        
+        
+        // actions:
+        onChange?.(id || null); // null (no selection) if the id is an empty string
+    });
+    
+    const handleExpandedChange = useEvent<EventHandler<EditModelDialogExpandedChangeEvent>>(({expanded, result}) => {
+        if (!expanded) {
+            // first: trigger the change (if any), before this <RolePreview> will be deleted:
+            if (result === false) { // onModelDeleted
+                if (active) { // if currently selected
+                    // the related role was deleted => set to null (no selection):
+                    onChange?.(null);
+                } // if
+            } // if
+            
+            
+            
+            // second: close the dialog:
+            setEditMode(null);
+        } // if
     });
     
     
@@ -349,7 +372,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
                     
                     
                     // handlers:
-                    onExpandedChange={({expanded}) => !expanded && setEditMode(null)}
+                    onExpandedChange={handleExpandedChange}
                 />
             </CollapsibleSuspense>
         </ListItem>
