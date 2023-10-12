@@ -183,17 +183,18 @@ const RoleCreate = (props: RoleCreateProps): JSX.Element|null => {
 /* <RolePreview> */
 interface RolePreviewProps extends Omit<ModelPreviewProps<RoleDetail>, 'onChange'> {
     // data:
-    selectedRoleId : string|null
+    selectedRoleId  : string|null
     
     
     
     // appearances:
-    isShown        : boolean
+    isShown         : boolean
     
     
     
     // handlers:
-    onChange      ?: EditorChangeEventHandler<string|null>
+    onChange       ?: EditorChangeEventHandler<string|null>
+    onModelDeleted ?: EventHandler<string>
 }
 const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     // styles:
@@ -226,6 +227,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         
         // handlers:
         onChange,
+        onModelDeleted,
     ...restListItemProps} = props;
     const {
         id,
@@ -260,10 +262,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         if (!expanded) {
             // first: trigger the change (if any), before this <RolePreview> will be deleted:
             if (result === false) { // onModelDeleted
-                if (active) { // if currently selected
-                    // the related role was deleted => set to null (no selection):
-                    onChange?.(null);
-                } // if
+                onModelDeleted?.(id);
             } // if
             
             
@@ -766,7 +765,33 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                         
                         // components:
                         modelPreviewComponent={
-                            ({id}) => <RolePreview model={undefined as any} selectedRoleId={roleId} isShown={isTabRoleShown} readOnly={!(privilegeModelUpdate.role /* || privilegeModelAdd */) && !(!id && privilegeModelAdd)} />
+                            ({id}) => <RolePreview
+                                // data:
+                                model={undefined as any}
+                                selectedRoleId={roleId}
+                                
+                                
+                                
+                                // accessibilities:
+                                readOnly={!(privilegeModelUpdate.role /* || privilegeModelAdd */) && !(!id && privilegeModelAdd)}
+                                
+                                
+                                
+                                // states:
+                                isShown={isTabRoleShown}
+                                
+                                
+                                
+                                // handlers:
+                                onModelDeleted={(value) => {
+                                    if (value && (value === roleId)) { // if currently selected
+                                        // the related role was deleted => set to null (no selection):
+                                        setRoleId(null);
+                                        setIsModelModified(true);
+                                        console.log('related role deleted'); // TODO: refresh the user model
+                                    } // if
+                                }}
+                            />
                         }
                         modelCreateComponent={
                             !!role?.role_c
