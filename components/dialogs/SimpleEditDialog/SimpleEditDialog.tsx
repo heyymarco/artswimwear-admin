@@ -21,7 +21,7 @@ const useSimpleEditDialogStyleSheet = dynamicStyleSheet(
 
 // react components:
 export type InitialValueEventHandler<TValue extends any, TModel extends {}, TEdit extends string> = (edit: TEdit, model: TModel) => TValue
-export type UpdateModelEventHandler<TValue extends any, TModel extends {}, TEdit extends string> = (value: TValue, edit: TEdit, model: TModel) => Promise<void>
+export type UpdateModelHandler<TValue extends any, TModel extends {}, TEdit extends string> = (value: TValue, edit: TEdit, model: TModel) => Promise<void>
 export interface SimpleEditDialogProps<TValue extends any, TModel extends {}, TEdit extends string> {
     // states:
     isLoading       : boolean
@@ -42,7 +42,7 @@ export interface SimpleEditDialogProps<TValue extends any, TModel extends {}, TE
     
     // handlers:
     onClose         : () => void
-    onUpdate        : UpdateModelEventHandler<TValue, TModel, TEdit>
+    onUpdate        : UpdateModelHandler<TValue, TModel, TEdit>
 }
 export type ImplementedSimpleEditDialogProps<TValue extends any, TModel extends {}, TEdit extends string> = Omit<SimpleEditDialogProps<TValue, TModel, TEdit>,
     // states:

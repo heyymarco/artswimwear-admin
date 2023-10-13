@@ -18,7 +18,7 @@ import {
 // internal components:
 import {
     InitialValueEventHandler,
-    UpdateModelEventHandler,
+    UpdateModelHandler,
     ImplementedSimpleEditDialogProps,
     SimpleEditDialog,
 }                           from '@/components/dialogs/SimpleEditDialog'
@@ -67,7 +67,7 @@ export const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditMod
     const handleInitialValue = useEvent<InitialValueEventHandler<TModel[keyof TModel], TModel, Extract<keyof TModel, string>>>((edit, model) => {
         return model[edit] as TModel[keyof TModel];
     });
-    const handleUpdate       = useEvent<UpdateModelEventHandler<TModel[keyof TModel], TModel, Extract<keyof TModel, string>>>(async (value, edit, model) => {
+    const handleUpdate       = useEvent<UpdateModelHandler<TModel[keyof TModel], TModel, Extract<keyof TModel, string>>>(async (value, edit, model) => {
         if (value === '') value = null as typeof value; // auto convert empty string to null
         await updateModel({
             // @ts-ignore

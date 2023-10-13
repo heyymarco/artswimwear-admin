@@ -9,7 +9,7 @@ import {
 // internal components:
 import {
     InitialValueEventHandler,
-    UpdateModelEventHandler,
+    UpdateModelHandler,
     ImplementedSimpleEditDialogProps,
     SimpleEditDialog,
 }                           from '@/components/dialogs/SimpleEditDialog'
@@ -43,7 +43,7 @@ export const SimpleEditCustomerDialog = <TValue extends any>(props: SimpleEditCu
     const handleInitialValue = useEvent<InitialValueEventHandler<TValue, OrderDetail, keyof NonNullable<OrderDetail['customer']>>>((edit, model) => {
         return model.customer?.[edit] as TValue;
     });
-    const handleUpdate       = useEvent<UpdateModelEventHandler<TValue, OrderDetail, keyof NonNullable<OrderDetail['customer']>>>(async (value, edit, model) => {
+    const handleUpdate       = useEvent<UpdateModelHandler<TValue, OrderDetail, keyof NonNullable<OrderDetail['customer']>>>(async (value, edit, model) => {
         await updateOrder({
             id         : model.id,
             
