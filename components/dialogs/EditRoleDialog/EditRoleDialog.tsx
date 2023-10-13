@@ -183,7 +183,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleUpdateModel          = useEvent<UpdateModelHandler>(async () => {
+    const handleUpdate               = useEvent<UpdateModelHandler>(async () => {
         return (await updateRole({
             id : model?.id ?? '',
             
@@ -213,7 +213,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             role_d,
         }).unwrap()).id;
     });
-    const handleAfterUpdateModel     = useEvent<AfterUpdateModelHandler>(async () => {
+    const handleAfterUpdate          = useEvent<AfterUpdateModelHandler>(async () => {
         const currentRoleId = session?.role?.id;
         if (!!currentRoleId && (currentRoleId === model?.id)) await updateSession(); // update the session if updated current role
     });
@@ -297,8 +297,8 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             
             
             // handlers:
-            onUpdateModel={handleUpdateModel}
-            onAfterUpdateModel={handleAfterUpdateModel}
+            onUpdate={handleUpdate}
+            onAfterUpdate={handleAfterUpdate}
             
             onDelete={handleDelete}
             // onAfterDelete={undefined}

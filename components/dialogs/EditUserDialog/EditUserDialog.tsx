@@ -202,7 +202,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleUpdateModel          = useEvent<UpdateModelHandler>(async ({id, privilegeModelAdd, privilegeModelUpdate}) => {
+    const handleUpdate               = useEvent<UpdateModelHandler>(async ({id, privilegeModelAdd, privilegeModelUpdate}) => {
         return (await updateUser({
             id       : model?.id ?? '',
             
@@ -213,7 +213,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
             username : (privilegeModelUpdate.username || privilegeModelAdd) ? (username || null) : undefined, // convert empty string to null
         }).unwrap()).id;
     });
-    const handleAfterUpdateModel     = useEvent<AfterUpdateModelHandler>(async () => {
+    const handleAfterUpdate          = useEvent<AfterUpdateModelHandler>(async () => {
         const sessionEmail = session?.user?.email;
         if (!!sessionEmail && (sessionEmail.toLowerCase() === initialEmailRef.current.toLowerCase())) await updateSession(); // update the session if updated current user
     });
@@ -363,8 +363,8 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
             
             
             // handlers:
-            onUpdateModel={handleUpdateModel}
-            onAfterUpdateModel={handleAfterUpdateModel}
+            onUpdate={handleUpdate}
+            onAfterUpdate={handleAfterUpdate}
             
             onDelete={handleDelete}
             // onAfterDelete={undefined}

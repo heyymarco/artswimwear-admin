@@ -157,8 +157,8 @@ export interface ComplexEditModelDialogProps<TModel extends Model>
     
     
     // handlers:
-    onUpdateModel          : UpdateModelHandler
-    onAfterUpdateModel    ?: AfterUpdateModelHandler
+    onUpdate               : UpdateModelHandler
+    onAfterUpdate         ?: AfterUpdateModelHandler
     
     onDelete               : DeleteModelHandler
     onAfterDelete         ?: AfterDeleteModelHandler
@@ -197,8 +197,8 @@ export type ImplementedComplexEditModelDialogProps<TModel extends Model> = Omit<
     |'tabDelete'             // already taken over
     
     // handlers:
-    |'onUpdateModel'         // already taken over
-    |'onAfterUpdateModel'    // already taken over
+    |'onUpdate'              // already taken over
+    |'onAfterUpdate'         // already taken over
     |'onDelete'              // already taken over
     |'onAfterDelete'         // already taken over
     |'onUpdateSideModel'     // already taken over
@@ -250,8 +250,8 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
         
         
         // handlers:
-        onUpdateModel,
-        onAfterUpdateModel,
+        onUpdate,
+        onAfterUpdate,
         
         onDelete,
         onAfterDelete,
@@ -331,14 +331,14 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
         
         
         try {
-            const updatingModelTask = onUpdateModel({
+            const updatingModelTask = onUpdate({
                 id : model?.id || null,
                 
                 privilegeModelAdd,
                 privilegeModelUpdate,
             });
             
-            const updatingModelAndOthersTask = onAfterUpdateModel ? updatingModelTask.then(onAfterUpdateModel) : updatingModelTask;
+            const updatingModelAndOthersTask = onAfterUpdate ? updatingModelTask.then(onAfterUpdate) : updatingModelTask;
             
             await handleFinalizing(updatingModelTask, /*commitImages = */true, [updatingModelAndOthersTask]); // result: created|mutated
         }
