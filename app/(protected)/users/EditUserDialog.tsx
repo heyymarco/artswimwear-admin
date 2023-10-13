@@ -88,8 +88,8 @@ import {
 
 // private components:
 import {
-    RoleCreate,
-}                           from './RoleCreate'
+    EditRoleDialog,
+}                           from './EditRoleDialog'
 import {
     RolePreview,
 }                           from './RolePreview'
@@ -551,7 +551,15 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                         }
                         modelCreateComponent={
                             !!role?.role_c
-                            ? <RoleCreate />
+                            ? <EditRoleDialog
+                                // other props:
+                                {...props}
+                                
+                                
+                                
+                                // data:
+                                model={null} // create a new model
+                            />
                             : undefined
                         }
                         
