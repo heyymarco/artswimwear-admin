@@ -17,6 +17,11 @@ import {
     // react helper hooks:
     useEvent,
     useMergeEvents,
+    
+    
+    
+    // a capability of UI to expand/reduce its size or toggle the visibility:
+    ExpandedChangeEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // internals:
@@ -37,16 +42,20 @@ const enum VisibilityState {
 
 
 // react components:
-export interface SuspendableWithSuspenseProps {
+export interface SuspendableWithSuspenseProps<TExpandedChangeEvent extends ExpandedChangeEvent = ExpandedChangeEvent>
+    extends
+        // bases:
+        SuspendableProps<TExpandedChangeEvent>
+{
     // components:
-    suspendableComponent : React.ReactComponentElement<any, SuspendableProps>
+    suspendableComponent : React.ReactComponentElement<any, SuspendableProps<TExpandedChangeEvent>>
 }
-const SuspendableWithSuspense = (props: SuspendableWithSuspenseProps): JSX.Element|null => {
+const SuspendableWithSuspense = <TExpandedChangeEvent extends ExpandedChangeEvent = ExpandedChangeEvent>(props: SuspendableWithSuspenseProps): JSX.Element|null => {
     // rest props:
     const {
         // components:
         suspendableComponent,
-    } = props;
+    ...restSuspendableProps} = props;
     const isComponentExpanded = !!(suspendableComponent.props.expanded ?? false);
     
     
@@ -63,6 +72,11 @@ const SuspendableWithSuspense = (props: SuspendableWithSuspenseProps): JSX.Eleme
     const handleCollapseEnd         = useMergeEvents(
         // preserves the original `onCollapseEnd` from `suspendableComponent`:
         suspendableComponent.props.onCollapseEnd,
+        
+        
+        
+        // preserves the original `onCollapseEnd` from `props`:
+        props.onCollapseEnd,
         
         
         
@@ -103,9 +117,15 @@ const SuspendableWithSuspense = (props: SuspendableWithSuspenseProps): JSX.Eleme
     
     // jsx:
     if (visibilityState === VisibilityState.CollapseEnd) return null; // causing to discard (lost) the <CollapsibleComponent>'s states
-    return React.cloneElement<SuspendableProps>(suspendableComponent,
+    return React.cloneElement<SuspendableProps<TExpandedChangeEvent>>(suspendableComponent,
         // props:
         {
+            // other props:
+            ...restSuspendableProps,
+            ...suspendableComponent.props, // overwrites restSuspendableProps (if any conflics)
+            
+            
+            
             // states:
             expanded      : (visibilityState === VisibilityState.ExpandStart) ? false /* render as collapsed first, then next re-render render as expanded */ : isComponentExpanded,
             
