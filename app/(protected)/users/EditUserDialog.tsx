@@ -85,11 +85,11 @@ import {
     ImplementedComplexEditModelDialogProps,
     ComplexEditModelDialog,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
-
-// private components:
 import {
     EditRoleDialog,
-}                           from './EditRoleDialog'
+}                           from '@/components/dialogs/EditRoleDialog'
+
+// private components:
 import {
     RolePreview,
 }                           from './RolePreview'

@@ -58,11 +58,9 @@ import type {
     // types:
     EditModelDialogExpandedChangeEvent,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
-
-// private components:
 import {
     EditRoleDialog,
-}                           from './EditRoleDialog'
+}                           from '@/components/dialogs/EditRoleDialog'
 
 // stores:
 import type {
