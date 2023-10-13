@@ -32,6 +32,7 @@ import {
 import {
     // react helper hooks:
     useEvent,
+    EventHandler,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -58,8 +59,8 @@ import {
     
     
     
-    // utility-components:
-    ModalStatus,
+    // dialog-components:
+    ModalExpandedChangeEvent,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // internal components:
@@ -196,7 +197,13 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleEditDialogClose = useEvent((): void => {
+    const handleExpandedChange = useEvent<EventHandler<ModalExpandedChangeEvent>>(({expanded}): void => {
+        // conditions:
+        if (expanded) return; // ignore if expanded
+        
+        
+        
+        // actions:
         setEditMode(null);
     });
     
@@ -276,14 +283,86 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
                 </EditButton>}
             </p>
             {/* edit dialog: */}
-            <ModalStatus theme='primary' viewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {!!editMode && !((editMode === 'image') || (editMode === 'roleId') || (editMode === 'full')) && <>
-                    {(editMode === 'name'      ) && <SimpleEditModelDialog<UserDetail> model={model} updateModelApi={useUpdateUser} edit={editMode} onClose={handleEditDialogClose} editorComponent={<NameEditor />} />}
-                    {(editMode === 'username'  ) && <SimpleEditModelDialog<UserDetail> model={model} updateModelApi={useUpdateUser} edit={editMode} onClose={handleEditDialogClose} editorComponent={<UniqueUsernameEditor currentValue={username ?? ''} />} />}
-                    {(editMode === 'email'     ) && <SimpleEditModelDialog<UserDetail> model={model} updateModelApi={useUpdateUser} edit={editMode} onClose={handleEditDialogClose} editorComponent={<UniqueEmailEditor    currentValue={email} />} />}
-                </>}
-            </ModalStatus>
             <CollapsibleSuspense>
+                <SimpleEditModelDialog<UserDetail>
+                    // data:
+                    model={model}
+                    edit='name'
+                    
+                    
+                    
+                    // stores:
+                    updateModelApi={useUpdateUser}
+                    
+                    
+                    
+                    // states:
+                    expanded={editMode === 'name'}
+                    onExpandedChange={handleExpandedChange}
+                    
+                    
+                    
+                    // global stackable:
+                    viewport={listItemRef}
+                    
+                    
+                    
+                    // components:
+                    editorComponent={<NameEditor />}
+                />
+                <SimpleEditModelDialog<UserDetail>
+                    // data:
+                    model={model}
+                    edit='username'
+                    
+                    
+                    
+                    // stores:
+                    updateModelApi={useUpdateUser}
+                    
+                    
+                    
+                    // states:
+                    expanded={editMode === 'username'}
+                    onExpandedChange={handleExpandedChange}
+                    
+                    
+                    
+                    // global stackable:
+                    viewport={listItemRef}
+                    
+                    
+                    
+                    // components:
+                    editorComponent={<UniqueUsernameEditor currentValue={username ?? ''} />}
+                />
+                <SimpleEditModelDialog<UserDetail>
+                    // data:
+                    model={model}
+                    edit='email'
+                    
+                    
+                    
+                    // stores:
+                    updateModelApi={useUpdateUser}
+                    
+                    
+                    
+                    // states:
+                    expanded={editMode === 'email'}
+                    onExpandedChange={handleExpandedChange}
+                    
+                    
+                    
+                    // global stackable:
+                    viewport={listItemRef}
+                    
+                    
+                    
+                    // components:
+                    editorComponent={<UniqueEmailEditor    currentValue={email} />}
+                />
+                
                 <EditUserDialog
                     // data:
                     model={model} // modify current model
@@ -292,6 +371,7 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
                     
                     // states:
                     expanded={(editMode === 'image') || (editMode === 'roleId') || (editMode === 'full')}
+                    onExpandedChange={handleExpandedChange}
                     defaultExpandedTabIndex={((): number|undefined => {
                         // switch (editMode === 'roleId') ? 2 : undefined
                         switch (editMode) {
@@ -300,11 +380,6 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
                             default      : return undefined;
                         } // switch
                     })()}
-                    
-                    
-                    
-                    // handlers:
-                    onExpandedChange={({expanded}) => !expanded && setEditMode(null)}
                 />
             </CollapsibleSuspense>
         </ListItem>
