@@ -8,121 +8,92 @@ import {
     
     
     // hooks:
-    useState,
-    useEffect,
+    useMemo,
 }                           from 'react'
 
 // reusable-ui core:
 import {
-    // react helper hooks:
-    useEvent,
-    EventHandler,
-    useMergeEvents,
-    
-    
-    
-    // a capability of UI to expand/reduce its size or toggle the visibility:
-    ExpandedChangeEvent,
-    CollapsibleProps,
-    // CollapsibleEventProps,
+    // a set of React node utility functions:
+    flattenChildren,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
-
-
-// types:
-export interface CollapsibleEventProps {
-    onExpandStart   ?: EventHandler<any>
-    onExpandEnd     ?: EventHandler<any>
-    onCollapseStart ?: EventHandler<any>
-    onCollapseEnd   ?: EventHandler<any>
-}
-const enum VisibilityState {
-    CollapseEnd   = 0,
-    // CollapseStart = 1, // no need render transition of collapsing
-    ExpandStart   = 1,
-    ExpandEnd     = 2,
-}
+// internals:
+import type {
+    SuspendableProps,
+}                           from './types'
+import {
+    // react components:
+    CollapsibleWithSuspense,
+}                           from './CollapsibleWithSuspense'
 
 
 
 // react components:
 export interface CollapsibleSuspenseProps {
     // components:
-    children : React.ReactComponentElement<any, CollapsibleProps<ExpandedChangeEvent> & CollapsibleEventProps>
+    children : React.ReactNode
 }
 const CollapsibleSuspense = (props: CollapsibleSuspenseProps): JSX.Element|null => {
     // rest props:
     const {
         // components:
-        children : collapsibleComponent,
+        children,
     } = props;
-    const isComponentExpanded = !!(collapsibleComponent?.props?.expanded ?? false);
     
     
     
-    // states:
-    const [visibilityState, setVisibilityState] = useState<VisibilityState>(isComponentExpanded ? VisibilityState.ExpandEnd : VisibilityState.CollapseEnd);
-    // const [isVisibleDelayed, setIsVisibleDelayed] = useState<boolean>
-    
-    
-    
-    // handlers:
-    const handleCollapseEndInternal = useEvent(() => {
-        setVisibilityState(VisibilityState.CollapseEnd);
-    });
-    const handleCollapseEnd         = useMergeEvents(
-        // preserves the original `onCollapseEnd`:
-        collapsibleComponent?.props?.onCollapseEnd,
-        
-        
-        
-        // actions:
-        handleCollapseEndInternal,
-    );
-    
-    
-    
-    // dom effects:
-    
-    // handle initiate to render the <Collapsible>:
-    useEffect(() => {
-        if (isComponentExpanded) setVisibilityState(VisibilityState.ExpandStart);
-    }, [isComponentExpanded]);
-    
-    // handle render transition from [ExpandStart => ExpandEnd]:
-    useEffect(() => {
-        switch (visibilityState) {
-            case VisibilityState.ExpandStart:
-                setVisibilityState(VisibilityState.ExpandEnd);
-                break;
+    // children:
+    const wrappedChildren = useMemo<React.ReactNode[]>(() =>
+        flattenChildren(children)
+        .map<React.ReactNode>((suspendable, index) => {
+            // conditions:
+            if (!React.isValidElement<SuspendableProps>(suspendable)) return suspendable; // not a <SuspendableProps> => place it anyway
             
-            // case VisibilityState.CollapseStart:
-            //     setVisibilityState(VisibilityState.CollapseEnd);
-            //     break;
-        } // switch
-    }, [visibilityState]);
+            
+            
+            // props:
+            const suspendableProps = suspendable.props;
+            
+            
+            
+            // jsx:
+            return (
+                /* wrap suspendable with <CollapsibleWithSuspense> */
+                <CollapsibleWithSuspense
+                    // other props:
+                    {...suspendableProps} // steals all suspendable's props, so the <Owner> can recognize the <CollapsibleWithSuspense> as <TheirChild>
+                    
+                    
+                    
+                    // components:
+                    suspendableComponent={
+                        // clone suspendable element with (almost) blank props:
+                        <suspendable.type
+                            // identifiers:
+                            key={suspendable.key}
+                            
+                            
+                            
+                            //#region restore conflicting props
+                            {...{
+                                ...(('suspendableComponent' in suspendableProps) ? { suspendableComponent : suspendableProps.suspendableComponent } : undefined),
+                            }}
+                            //#endregion restore conflicting props
+                        />
+                    }
+                />
+            );
+        })
+    , [children]);
     
     
     
     // jsx:
-    if (visibilityState === VisibilityState.CollapseEnd) return null; // causing to discard (lost) the <CollapsibleComponent>'s states
-    return React.cloneElement<CollapsibleProps<ExpandedChangeEvent> & CollapsibleEventProps>(collapsibleComponent,
-        // props:
-        {
-            // other props:
-            ...props,
-            
-            
-            
-            // states:
-            expanded      : (visibilityState === VisibilityState.ExpandStart) ? false /* render as collapsed first, then next re-render render as expanded */ : isComponentExpanded,
-            
-            
-            
-            // handlers:
-            onCollapseEnd : handleCollapseEnd,
-        },
-    );
+    return (
+        <>
+            {wrappedChildren}
+        </>
+    )
 };
 export {
     CollapsibleSuspense,
