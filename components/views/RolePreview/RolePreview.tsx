@@ -57,7 +57,7 @@ import {
 import type {
     // types:
     EditModelDialogExpandedChangeEvent,
-    DeleteModelHandler,
+    DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
     EditRoleDialog,
@@ -93,7 +93,7 @@ export interface RolePreviewProps extends Omit<ModelPreviewProps<RoleDetail>, 'o
     
     // handlers:
     onChange       ?: EditorChangeEventHandler<string|null>
-    onDelete       ?: DeleteModelHandler
+    onDelete       ?: DeleteHandler
 }
 const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     // styles:
