@@ -16,26 +16,17 @@ import {
 import {
     // react helper hooks:
     useEvent,
-    EventHandler,
     useMergeEvents,
-    
-    
-    
-    // a capability of UI to expand/reduce its size or toggle the visibility:
-    ExpandedChangeEvent,
-    CollapsibleProps,
-    // CollapsibleEventProps,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
+// internals:
+import type {
+    SuspendableProps,
+}                           from './types'
 
 
 
 // types:
-export interface CollapsibleEventProps {
-    onExpandStart   ?: EventHandler<any>
-    onExpandEnd     ?: EventHandler<any>
-    onCollapseStart ?: EventHandler<any>
-    onCollapseEnd   ?: EventHandler<any>
-}
 const enum VisibilityState {
     CollapseEnd   = 0,
     // CollapseStart = 1, // no need render transition of collapsing
@@ -48,7 +39,7 @@ const enum VisibilityState {
 // react components:
 export interface CollapsibleWithSuspenseProps {
     // components:
-    collapsibleComponent : React.ReactComponentElement<any, CollapsibleProps<ExpandedChangeEvent> & CollapsibleEventProps>
+    collapsibleComponent : React.ReactComponentElement<any, SuspendableProps>
 }
 const CollapsibleWithSuspense = (props: CollapsibleWithSuspenseProps): JSX.Element|null => {
     // rest props:
@@ -112,7 +103,7 @@ const CollapsibleWithSuspense = (props: CollapsibleWithSuspenseProps): JSX.Eleme
     
     // jsx:
     if (visibilityState === VisibilityState.CollapseEnd) return null; // causing to discard (lost) the <CollapsibleComponent>'s states
-    return React.cloneElement<CollapsibleProps<ExpandedChangeEvent> & CollapsibleEventProps>(collapsibleComponent,
+    return React.cloneElement<SuspendableProps>(collapsibleComponent,
         // props:
         {
             // states:
