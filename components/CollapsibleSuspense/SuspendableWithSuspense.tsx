@@ -107,16 +107,16 @@ const SuspendableWithSuspense = <TExpandedChangeEvent extends ExpandedChangeEven
         
         
         // setups:
-        // const asyncDelayedTransition = setTimeout(() => { // a brief moment for rendering `collapsed state`
+        const asyncDelayedTransition = setTimeout(() => { // a brief moment for rendering `collapsed state`
             setVisibilityState(VisibilityState.ExpandEnd);
-        // }, 0);
+        }, 0);
         
         
         
-        // // cleanups:
-        // return () => {
-        //     clearTimeout(asyncDelayedTransition);
-        // };
+        // cleanups:
+        return () => {
+            clearTimeout(asyncDelayedTransition);
+        };
     }, [visibilityState]);
     
     
