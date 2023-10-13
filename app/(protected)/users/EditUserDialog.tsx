@@ -552,11 +552,6 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                         modelCreateComponent={
                             !!role?.role_c
                             ? <EditRoleDialog
-                                // other props:
-                                {...props}
-                                
-                                
-                                
                                 // data:
                                 model={null} // create a new model
                             />
