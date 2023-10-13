@@ -202,15 +202,15 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleUpdate               = useEvent<UpdateModelHandler>(async ({id, privilegeModelAdd, privilegeModelUpdate}) => {
+    const handleUpdate               = useEvent<UpdateModelHandler>(async ({id, privilegeAdd, privilegeUpdate}) => {
         return (await updateUser({
             id       : model?.id ?? '',
             
-            name     : (privilegeModelUpdate.name     || privilegeModelAdd) ? name               : undefined,
-            email    : (privilegeModelUpdate.email    || privilegeModelAdd) ? email              : undefined,
-            image    : (privilegeModelUpdate.image    || privilegeModelAdd) ? image              : undefined,
-            roleId   : (privilegeModelUpdate.role                         ) ? roleId             : ((!id && privilegeModelAdd) ? null : undefined),
-            username : (privilegeModelUpdate.username || privilegeModelAdd) ? (username || null) : undefined, // convert empty string to null
+            name     : (privilegeUpdate.name     || privilegeAdd) ? name               : undefined,
+            email    : (privilegeUpdate.email    || privilegeAdd) ? email              : undefined,
+            image    : (privilegeUpdate.image    || privilegeAdd) ? image              : undefined,
+            roleId   : (privilegeUpdate.role                    ) ? roleId             : ((!id && privilegeAdd) ? null : undefined),
+            username : (privilegeUpdate.username || privilegeAdd) ? (username || null) : undefined, // convert empty string to null
         }).unwrap()).id;
     });
     const handleAfterUpdate          = useEvent<AfterUpdateModelHandler>(async () => {
@@ -325,8 +325,8 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
             
             
             // privileges:
-            privilegeModelAdd    = {!!role?.user_c}
-            privilegeModelUpdate = {useMemo(() => ({
+            privilegeAdd    = {!!role?.user_c}
+            privilegeUpdate = {useMemo(() => ({
                 name     : !!role?.user_un,
                 username : !!role?.user_uu,
                 email    : !!role?.user_ue,
@@ -334,7 +334,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                 image    : !!role?.user_ui,
                 role     : !!role?.user_ur,
             }), [role])}
-            privilegeModelDelete = {!!role?.user_d}
+            privilegeDelete = {!!role?.user_d}
             
             
             
@@ -374,7 +374,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
             
             onConfirmDelete={handleConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}
-        >{({privilegeModelAdd, privilegeModelUpdate}) => <>
+        >{({privilegeAdd, privilegeUpdate}) => <>
             <TabPanel label={PAGE_USER_TAB_ACCOUNT} panelComponent={<Generic className={styleSheet.accountTab} />}>
                 <form>
                     <span className='name label'>Name:</span>
@@ -390,7 +390,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                         
                         
                         // accessibilities:
-                        enabled={privilegeModelUpdate.name || privilegeModelAdd}
+                        enabled={privilegeUpdate.name || privilegeAdd}
                         
                         
                         
@@ -410,7 +410,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                         
                         
                         // accessibilities:
-                        enabled={privilegeModelUpdate.username || privilegeModelAdd}
+                        enabled={privilegeUpdate.username || privilegeAdd}
                         
                         
                         
@@ -431,7 +431,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                         
                         
                         // accessibilities:
-                        enabled={privilegeModelUpdate.email || privilegeModelAdd}
+                        enabled={privilegeUpdate.email || privilegeAdd}
                         
                         
                         
@@ -453,7 +453,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                     
                     
                     // accessibilities:
-                    readOnly={!(privilegeModelUpdate.image || privilegeModelAdd)}
+                    readOnly={!(privilegeUpdate.image || privilegeAdd)}
                     
                     
                     
@@ -543,7 +543,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                                 
                                 
                                 // accessibilities:
-                                readOnly={!(privilegeModelUpdate.role /* || privilegeModelAdd */) && !(!id && privilegeModelAdd)}
+                                readOnly={!(privilegeUpdate.role /* || privilegeAdd */) && !(!id && privilegeAdd)}
                                 
                                 
                                 

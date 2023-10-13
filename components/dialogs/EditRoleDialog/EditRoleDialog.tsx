@@ -265,11 +265,11 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             
             
             // privileges:
-            privilegeModelAdd    = {!!role?.role_c}
-            privilegeModelUpdate = {useMemo(() => ({
+            privilegeAdd    = {!!role?.role_c}
+            privilegeUpdate = {useMemo(() => ({
                 update : !!role?.role_u,
             }), [role])}
-            privilegeModelDelete = {!!role?.role_d}
+            privilegeDelete = {!!role?.role_d}
             
             
             
@@ -305,7 +305,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             
             onConfirmDelete={handleConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}
-        >{({privilegeModelAdd, privilegeModelUpdate}) => <>
+        >{({privilegeAdd, privilegeUpdate}) => <>
             <TabPanel label={PAGE_ROLE_TAB_ROLE} panelComponent={<Generic className={styleSheet.roleTab} />}>
                 <form>
                     <span className='name label'>Name:</span>
@@ -321,7 +321,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
                         
                         
                         // accessibilities:
-                        enabled={privilegeModelUpdate.update || privilegeModelAdd}
+                        enabled={privilegeUpdate.update || privilegeAdd}
                         
                         
                         
@@ -344,7 +344,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
                         <AccessibilityProvider
                             // accessibilities:
                             /* enable|disable accessibility for all <Check> */
-                            enabled={privilegeModelUpdate.update || privilegeModelAdd}
+                            enabled={privilegeUpdate.update || privilegeAdd}
                         >
                             <ExclusiveAccordion className='privileges list' defaultExpandedListIndex={0}>
                                 <AccordionItem label='Products' inheritEnabled={false}>

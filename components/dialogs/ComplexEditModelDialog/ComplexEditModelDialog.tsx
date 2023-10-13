@@ -95,7 +95,7 @@ export interface EditModelDialogExpandedChangeEvent extends ModalExpandedChangeE
     result: EditModelDialogResult
 }
 
-export type UpdateModelHandler                               = (args: { id: string|null, privilegeModelAdd: boolean, privilegeModelUpdate: Record<string, boolean> }) => Promise<string>
+export type UpdateModelHandler                               = (args: { id: string|null, privilegeAdd: boolean, privilegeUpdate: Record<string, boolean> }) => Promise<string>
 export type AfterUpdateModelHandler                          = () => Promise<void>
 
 export type DeleteModelHandler                               = (args: { id: string }) => Promise<void>
@@ -130,84 +130,84 @@ export interface ComplexEditModelDialogProps<TModel extends Model>
         >
 {
     // data:
-    modelName            : string
-    modelEntryName      ?: string|null
-    model                : TModel|null
+    modelName         : string
+    modelEntryName   ?: string|null
+    model             : TModel|null
     
     
     
     // privileges:
-    privilegeModelAdd    : boolean
-    privilegeModelUpdate : Record<string, boolean>
-    privilegeModelDelete : boolean
+    privilegeAdd      : boolean
+    privilegeUpdate   : Record<string, boolean>
+    privilegeDelete   : boolean
     
     
     
     // stores:
-    isModified           : boolean
-    isCommiting          : boolean
-    isReverting         ?: boolean
-    isDeleting           : boolean
+    isModified        : boolean
+    isCommiting       : boolean
+    isReverting      ?: boolean
+    isDeleting        : boolean
     
     
     
     // tabs:
-    tabDelete            : React.ReactNode
+    tabDelete         : React.ReactNode
     
     
     
     // handlers:
-    onUpdate             : UpdateModelHandler
-    onAfterUpdate       ?: AfterUpdateModelHandler
+    onUpdate          : UpdateModelHandler
+    onAfterUpdate    ?: AfterUpdateModelHandler
     
-    onDelete             : DeleteModelHandler
-    onAfterDelete       ?: AfterDeleteModelHandler
+    onDelete          : DeleteModelHandler
+    onAfterDelete    ?: AfterDeleteModelHandler
     
-    onSideUpdate        ?: UpdateSideModelHandler
-    onSideDelete        ?: DeleteSideModelHandler
+    onSideUpdate     ?: UpdateSideModelHandler
+    onSideDelete     ?: DeleteSideModelHandler
     
-    onConfirmDelete      : DeleteModelConfirmHandler<TModel>
-    onConfirmUnsaved     : UnsavedModelConfirmHandler<TModel>
+    onConfirmDelete   : DeleteModelConfirmHandler<TModel>
+    onConfirmUnsaved  : UnsavedModelConfirmHandler<TModel>
     
-    onCollapseStart     ?: EventHandler<CollapseEvent>
-    onCollapseEnd       ?: EventHandler<CollapseEvent>
+    onCollapseStart  ?: EventHandler<CollapseEvent>
+    onCollapseEnd    ?: EventHandler<CollapseEvent>
     
     
     
     // children:
-    children             : (args: { privilegeModelAdd: boolean, privilegeModelUpdate: Record<string, boolean> }) => React.ReactNode
+    children          : (args: { privilegeAdd: boolean, privilegeUpdate: Record<string, boolean> }) => React.ReactNode
 }
 export type ImplementedComplexEditModelDialogProps<TModel extends Model> = Omit<ComplexEditModelDialogProps<TModel>,
     // data:
-    |'modelName'            // already taken over
-    |'modelEntryName'       // already taken over
+    |'modelName'        // already taken over
+    |'modelEntryName'   // already taken over
     
     // privileges:
-    |'privilegeModelAdd'    // already taken over
-    |'privilegeModelUpdate' // already taken over
-    |'privilegeModelDelete' // already taken over
+    |'privilegeAdd'     // already taken over
+    |'privilegeUpdate'  // already taken over
+    |'privilegeDelete'  // already taken over
     
     // stores:
-    |'isModified'           // already taken over
-    |'isCommiting'          // already taken over
-    |'isReverting'          // already taken over
-    |'isDeleting'           // already taken over
+    |'isModified'       // already taken over
+    |'isCommiting'      // already taken over
+    |'isReverting'      // already taken over
+    |'isDeleting'       // already taken over
     
     // tabs:
-    |'tabDelete'            // already taken over
+    |'tabDelete'        // already taken over
     
     // handlers:
-    |'onUpdate'             // already taken over
-    |'onAfterUpdate'        // already taken over
-    |'onDelete'             // already taken over
-    |'onAfterDelete'        // already taken over
-    |'onSideUpdate'         // already taken over
-    |'onSideDelete'         // already taken over
-    |'onConfirmDelete'      // already taken over
-    |'onConfirmUnsaved'     // already taken over
+    |'onUpdate'         // already taken over
+    |'onAfterUpdate'    // already taken over
+    |'onDelete'         // already taken over
+    |'onAfterDelete'    // already taken over
+    |'onSideUpdate'     // already taken over
+    |'onSideDelete'     // already taken over
+    |'onConfirmDelete'  // already taken over
+    |'onConfirmUnsaved' // already taken over
     
     // children:
-    |'children'             // already taken over
+    |'children'         // already taken over
 >
 export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDialogProps<TModel>): JSX.Element|null => {
     // styles:
@@ -225,9 +225,9 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
         
         
         // privileges:
-        privilegeModelAdd    : privilegeModelAddRaw,
-        privilegeModelUpdate : privilegeModelUpdateRaw,
-        privilegeModelDelete : privilegeModelDeleteRaw,
+        privilegeAdd    : privilegeAddRaw,
+        privilegeUpdate : privilegeUpdateRaw,
+        privilegeDelete : privilegeDeleteRaw,
         
         
         
@@ -271,13 +271,13 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
         // children:
         children : childrenFn,
     ...restModalCardProps} = props;
-    const privilegeModelAdd    : boolean                 =   !model?.id && privilegeModelAddRaw;
-    const privilegeModelUpdate : Record<string, boolean> =  !!model?.id ?  privilegeModelUpdateRaw : {};
-    const privilegeModelDelete : boolean                 =  !!model?.id && privilegeModelDeleteRaw;
-    const privilegeModelWrite  : boolean                 = (
-        privilegeModelAdd
-        || !!privilegeModelUpdate
-        /* || privilegeModelDelete */ // except for delete
+    const privilegeAdd    : boolean                 =   !model?.id && privilegeAddRaw;
+    const privilegeUpdate : Record<string, boolean> =  !!model?.id ?  privilegeUpdateRaw : {};
+    const privilegeDelete : boolean                 =  !!model?.id && privilegeDeleteRaw;
+    const privilegeWrite  : boolean                 = (
+        privilegeAdd
+        || !!privilegeUpdate
+        /* || privilegeDelete */ // except for delete
     );
     const isLoading = isCommiting || isReverting || isDeleting;
     
@@ -310,7 +310,7 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
     
     // handlers:
     const handleSaveModel      = useEvent(async () => {
-        if (!privilegeModelWrite) return;
+        if (!privilegeWrite) return;
         
         
         
@@ -334,8 +334,8 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
             const updatingModelTask = onUpdate({
                 id : model?.id || null,
                 
-                privilegeModelAdd,
-                privilegeModelUpdate,
+                privilegeAdd,
+                privilegeUpdate,
             });
             
             const updatingModelAndOthersTask = onAfterUpdate ? updatingModelTask.then(onAfterUpdate) : updatingModelTask;
@@ -385,7 +385,7 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
         } // try
     });
     const handleSaveSideModel  = useEvent(async (commitImages : boolean) => {
-        if (!privilegeModelWrite) return;
+        if (!privilegeWrite) return;
         
         
         
@@ -398,7 +398,7 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
     });
     
     const handleCloseDialog    = useEvent(async () => {
-        if (privilegeModelWrite && isModified) {
+        if (privilegeWrite && isModified) {
             // conditions:
             if (!model) return; // no model to update => ignore
             const {
@@ -550,10 +550,10 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
                         bodyComponent={<Content className={styleSheet.tabBody} />}
                     >
                         {childrenFn?.({
-                            privilegeModelAdd,
-                            privilegeModelUpdate,
+                            privilegeAdd,
+                            privilegeUpdate,
                         })}
-                        {privilegeModelDelete && <TabPanel label={tabDelete} panelComponent={<Content theme='warning' className={styleSheet.tabDelete} />}>
+                        {privilegeDelete && <TabPanel label={tabDelete} panelComponent={<Content theme='warning' className={styleSheet.tabDelete} />}>
                             <ButtonIcon icon={isDeleting ? 'busy' : 'delete'} theme='danger' onClick={handleDelete}>
                                 Delete {!modelEntryName ? 'this ' : ''}<strong>{
                                     // the model name is entered:
@@ -567,8 +567,8 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
                     </Tab>
                 </ValidationProvider>
                 <CardFooter>
-                    {privilegeModelWrite && <ButtonIcon className='btnSave'   icon={isCommiting ? 'busy' : 'save'  } theme='success' onClick={handleSaveModel}>Save</ButtonIcon>}
-                    <ButtonIcon className='btnCancel' icon={privilegeModelWrite ? (isReverting ? 'busy' : 'cancel') : 'done'} theme={privilegeModelWrite ? 'danger' : 'primary'}  onClick={handleCloseDialog}>{isReverting ? 'Reverting' : (privilegeModelWrite ? 'Cancel' : 'Close')}</ButtonIcon>
+                    {privilegeWrite && <ButtonIcon className='btnSave'   icon={isCommiting ? 'busy' : 'save'  } theme='success' onClick={handleSaveModel}>Save</ButtonIcon>}
+                    <ButtonIcon className='btnCancel' icon={privilegeWrite ? (isReverting ? 'busy' : 'cancel') : 'done'} theme={privilegeWrite ? 'danger' : 'primary'}  onClick={handleCloseDialog}>{isReverting ? 'Reverting' : (privilegeWrite ? 'Cancel' : 'Close')}</ButtonIcon>
                 </CardFooter>
             </ModalCard>
         </AccessibilityProvider>
