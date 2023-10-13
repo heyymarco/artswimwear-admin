@@ -108,8 +108,6 @@ import './EditRoleDialogStyles';
 
 
 // react components:
-
-/* <EditRoleDialog> */
 export interface EditRoleDialogProps
     extends
         // bases:
