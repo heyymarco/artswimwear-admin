@@ -19,20 +19,16 @@ import {
 
 // internal components:
 import type {
-    // types:
-    EditorChangeEventHandler,
-    
-    
-    
     // react components:
     EditorProps,
 }                           from '@/components/editors/Editor'
 import {
     ModelCreateOuterProps,
     ModelCreateOuter,
-    
-    ModelPreviewProps,
 }                           from '@/components/SectionModelEditor'
+import type {
+    RolePreviewProps,
+}                           from '@/components/views/RolePreview'
 
 
 
@@ -45,7 +41,6 @@ export interface RoleEntry {
 
 
 // react components:
-export type RolePreviewProps = Omit<ModelPreviewProps<RoleEntry, Element>, 'onChange'> & { onChange ?: EditorChangeEventHandler<string|null> }
 interface RoleEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
@@ -128,22 +123,22 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
                         // props:
                         {
                             // identifiers:
-                            key      : modelPreviewComponent.key          ?? model.id,
+                            key           : modelPreviewComponent.key          ?? model.id,
                             
                             
                             
                             // data:
-                            model    : modelPreviewComponent.props.model  ?? model,
+                            model         : modelPreviewComponent.props.model  ?? model,
                             
                             
                             
                             // states:
-                            active   : modelPreviewComponent.props.active ?? ((value ?? '') === model.id),
+                            active        : modelPreviewComponent.props.active ?? ((value ?? '') === model.id),
                             
                             
                             
                             // handlers:
-                            onChange : onChange,
+                            onModelChange : onChange,
                         },
                     )
                 );
