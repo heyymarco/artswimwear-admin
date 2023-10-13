@@ -26,11 +26,11 @@ import {
 
 
 // styles:
-const usePrintDialogLayout = () => {
+const usePrintOrderDialogLayout = () => {
     return style({
         // positions:
-        position : 'fixed', // global <PrintDialog>: directly inside `body > portal` => fixed position
-        inset        : 0,   // span the <PrintDialog> to the edges of <container>
+        position : 'fixed', // global <PrintOrderDialog>: directly inside `body > portal` => fixed position
+        inset        : 0,   // span the <PrintOrderDialog> to the edges of <container>
         zIndex       : globalStacks.modalBackdrop,
         
         
@@ -76,8 +76,8 @@ const useCloseButtonLayout = () => {
 };
 
 export default () => [
-    scope('printDialog', {
-        ...usePrintDialogLayout(),
+    scope('printOrderDialog', {
+        ...usePrintOrderDialogLayout(),
     }, { specificityWeight: 2 }),
     scope('closeButton', {
         ...useCloseButtonLayout(),

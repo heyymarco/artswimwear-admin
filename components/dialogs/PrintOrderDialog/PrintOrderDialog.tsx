@@ -49,25 +49,25 @@ import {
 
 
 // styles:
-const usePrintDialogStyleSheet = dynamicStyleSheets(
-    () => import(/* webpackPrefetch: true */'./PrintDialogStyles')
+const usePrintOrderDialogStyleSheet = dynamicStyleSheets(
+    () => import(/* webpackPrefetch: true */'./PrintOrderDialogStyles')
 , { id: 'yffn5x8ff7' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 
 
 
 // react components:
 
-/* <PrintDialog> */
-export interface PrintDialogProps
+/* <PrintOrderDialog> */
+export interface PrintOrderDialogProps
     extends
         ContentProps
 {
     // handlers:
     onDone ?: () => void
 }
-const PrintDialog = (props: PrintDialogProps): JSX.Element|null => {
+const PrintOrderDialog = (props: PrintOrderDialogProps): JSX.Element|null => {
     // styles:
-    const styleSheets = usePrintDialogStyleSheet();
+    const styleSheets = usePrintOrderDialogStyleSheet();
     
     
     
@@ -130,7 +130,7 @@ const PrintDialog = (props: PrintDialogProps): JSX.Element|null => {
         
         
         // classes:
-        props.mainClass ?? styleSheets.printDialog,
+        props.mainClass ?? styleSheets.printOrderDialog,
     );
     
     
@@ -154,6 +154,6 @@ const PrintDialog = (props: PrintDialogProps): JSX.Element|null => {
     , portalElm);
 };
 export {
-    PrintDialog,
-    PrintDialog as default,
+    PrintOrderDialog,
+    PrintOrderDialog as default,
 }
