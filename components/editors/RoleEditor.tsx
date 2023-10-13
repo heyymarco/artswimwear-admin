@@ -138,7 +138,7 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
                             
                             
                             // handlers:
-                            onModelChange : onChange,
+                            onChangeModel : onChange,
                         },
                     )
                 );

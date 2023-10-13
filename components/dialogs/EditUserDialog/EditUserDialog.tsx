@@ -537,7 +537,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                                 
                                 
                                 // handlers:
-                                onModelDeleted={(value) => {
+                                onDeleteModel={(value) => {
                                     if (value && (value === roleId)) { // if currently selected
                                         // the related role was deleted => set to null (no selection):
                                         setRoleId(null);

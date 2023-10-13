@@ -91,8 +91,8 @@ export interface RolePreviewProps extends Omit<ModelPreviewProps<RoleDetail>, 'o
     
     
     // handlers:
-    onModelChange  ?: EditorChangeEventHandler<string|null>
-    onModelDeleted ?: EventHandler<string>
+    onChangeModel  ?: EditorChangeEventHandler<string|null>
+    onDeleteModel  ?: EventHandler<string>
 }
 const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     // styles:
@@ -124,8 +124,8 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         
         
         // handlers:
-        onModelChange,
-        onModelDeleted,
+        onChangeModel,
+        onDeleteModel,
     ...restListItemProps} = props;
     const {
         id,
@@ -153,14 +153,14 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         
         
         // actions:
-        onModelChange?.(id || null); // null (no selection) if the id is an empty string
+        onChangeModel?.(id || null); // null (no selection) if the id is an empty string
     });
     
     const handleExpandedChange = useEvent<EventHandler<EditModelDialogExpandedChangeEvent>>(({expanded, result}) => {
         if (!expanded) {
             // first: trigger the change (if any), before this <RolePreview> will be deleted:
-            if (result === false) { // onModelDeleted
-                onModelDeleted?.(id);
+            if (result === false) {
+                onDeleteModel?.(id);
             } // if
             
             
