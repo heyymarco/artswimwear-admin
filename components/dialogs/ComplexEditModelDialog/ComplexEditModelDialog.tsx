@@ -209,7 +209,7 @@ export type ImplementedComplexEditModelDialogProps<TModel extends Model> = Omit<
     // children:
     |'children'         // already taken over
 >
-export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDialogProps<TModel>): JSX.Element|null => {
+const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDialogProps<TModel>): JSX.Element|null => {
     // styles:
     const styleSheet = useComplexEditModelDialogStyleSheet();
     
@@ -574,3 +574,7 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
         </AccessibilityProvider>
     );
 };
+export {
+    ComplexEditModelDialog,
+    ComplexEditModelDialog as default,
+}
