@@ -95,17 +95,17 @@ export interface EditModelDialogExpandedChangeEvent extends ModalExpandedChangeE
     result: EditModelDialogResult
 }
 
-export type UpdateModelHandler                               = (args: { id: string|null, privilegeAdd: boolean, privilegeUpdate: Record<string, boolean> }) => Promise<string>
-export type AfterUpdateModelHandler                          = () => Promise<void>
+export type UpdateHandler                               = (args: { id: string|null, privilegeAdd: boolean, privilegeUpdate: Record<string, boolean> }) => Promise<string>
+export type AfterUpdateHandler                          = () => Promise<void>
 
-export type DeleteModelHandler                               = (args: { id: string }) => Promise<void>
-export type AfterDeleteModelHandler                          = () => Promise<void>
+export type DeleteHandler                               = (args: { id: string }) => Promise<void>
+export type AfterDeleteHandler                          = () => Promise<void>
 
-export type UpdateSideModelHandler                           = () => Promise<void>
-export type DeleteSideModelHandler                           = () => Promise<void>
+export type UpdateSideHandler                           = () => Promise<void>
+export type DeleteSideHandler                           = () => Promise<void>
 
-export type ConfirmDeleteModelHandler<TModel extends Model>  = (args: { model: TModel }) => { title?: React.ReactNode, message: React.ReactNode }
-export type ConfirmUnsavedModelHandler<TModel extends Model> = (args: { model: TModel }) => { title?: React.ReactNode, message: React.ReactNode }
+export type ConfirmDeleteHandler<TModel extends Model>  = (args: { model: TModel }) => { title?: React.ReactNode, message: React.ReactNode }
+export type ConfirmUnsavedHandler<TModel extends Model> = (args: { model: TModel }) => { title?: React.ReactNode, message: React.ReactNode }
 
 export interface CollapseEvent {
     result: EditModelDialogResult
@@ -157,17 +157,17 @@ export interface ComplexEditModelDialogProps<TModel extends Model>
     
     
     // handlers:
-    onUpdate          : UpdateModelHandler
-    onAfterUpdate    ?: AfterUpdateModelHandler
+    onUpdate          : UpdateHandler
+    onAfterUpdate    ?: AfterUpdateHandler
     
-    onDelete          : DeleteModelHandler
-    onAfterDelete    ?: AfterDeleteModelHandler
+    onDelete          : DeleteHandler
+    onAfterDelete    ?: AfterDeleteHandler
     
-    onSideUpdate     ?: UpdateSideModelHandler
-    onSideDelete     ?: DeleteSideModelHandler
+    onSideUpdate     ?: UpdateSideHandler
+    onSideDelete     ?: DeleteSideHandler
     
-    onConfirmDelete   : ConfirmDeleteModelHandler<TModel>
-    onConfirmUnsaved  : ConfirmUnsavedModelHandler<TModel>
+    onConfirmDelete   : ConfirmDeleteHandler<TModel>
+    onConfirmUnsaved  : ConfirmUnsavedHandler<TModel>
     
     onCollapseStart  ?: EventHandler<CollapseEvent>
     onCollapseEnd    ?: EventHandler<CollapseEvent>

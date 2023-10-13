@@ -64,13 +64,13 @@ import {
 }                           from '@/components/editors/UniqueRolenameEditor'
 import {
     // types:
-    UpdateModelHandler,
-    AfterUpdateModelHandler,
+    UpdateHandler,
+    AfterUpdateHandler,
     
-    DeleteModelHandler,
+    DeleteHandler,
     
-    ConfirmDeleteModelHandler,
-    ConfirmUnsavedModelHandler,
+    ConfirmDeleteHandler,
+    ConfirmUnsavedHandler,
     
     
     
@@ -183,7 +183,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleUpdate         = useEvent<UpdateModelHandler>(async () => {
+    const handleUpdate         = useEvent<UpdateHandler>(async () => {
         return (await updateRole({
             id : model?.id ?? '',
             
@@ -213,18 +213,18 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             role_d,
         }).unwrap()).id;
     });
-    const handleAfterUpdate    = useEvent<AfterUpdateModelHandler>(async () => {
+    const handleAfterUpdate    = useEvent<AfterUpdateHandler>(async () => {
         const currentRoleId = session?.role?.id;
         if (!!currentRoleId && (currentRoleId === model?.id)) await updateSession(); // update the session if updated current role
     });
     
-    const handleDelete         = useEvent<DeleteModelHandler>(async ({id}) => {
+    const handleDelete         = useEvent<DeleteHandler>(async ({id}) => {
         await deleteRole({
             id : id,
         }).unwrap();
     });
     
-    const handleConfirmDelete  = useEvent<ConfirmDeleteModelHandler<RoleDetail>>(({model}) => {
+    const handleConfirmDelete  = useEvent<ConfirmDeleteHandler<RoleDetail>>(({model}) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
@@ -238,7 +238,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             </>,
         };
     });
-    const handleConfirmUnsaved = useEvent<ConfirmUnsavedModelHandler<RoleDetail>>(() => {
+    const handleConfirmUnsaved = useEvent<ConfirmUnsavedHandler<RoleDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>

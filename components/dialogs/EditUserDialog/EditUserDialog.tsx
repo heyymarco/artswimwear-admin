@@ -71,16 +71,16 @@ import type {
 }                           from '@/components/SectionModelEditor'
 import {
     // types:
-    UpdateModelHandler,
-    AfterUpdateModelHandler,
+    UpdateHandler,
+    AfterUpdateHandler,
     
-    DeleteModelHandler,
+    DeleteHandler,
     
-    UpdateSideModelHandler,
-    DeleteSideModelHandler,
+    UpdateSideHandler,
+    DeleteSideHandler,
     
-    ConfirmDeleteModelHandler,
-    ConfirmUnsavedModelHandler,
+    ConfirmDeleteHandler,
+    ConfirmUnsavedHandler,
     
     
     
@@ -202,7 +202,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleUpdate               = useEvent<UpdateModelHandler>(async ({id, privilegeAdd, privilegeUpdate}) => {
+    const handleUpdate               = useEvent<UpdateHandler>(async ({id, privilegeAdd, privilegeUpdate}) => {
         return (await updateUser({
             id       : model?.id ?? '',
             
@@ -213,12 +213,12 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
             username : (privilegeUpdate.username || privilegeAdd) ? (username || null) : undefined, // convert empty string to null
         }).unwrap()).id;
     });
-    const handleAfterUpdate          = useEvent<AfterUpdateModelHandler>(async () => {
+    const handleAfterUpdate          = useEvent<AfterUpdateHandler>(async () => {
         const sessionEmail = session?.user?.email;
         if (!!sessionEmail && (sessionEmail.toLowerCase() === initialEmailRef.current.toLowerCase())) await updateSession(); // update the session if updated current user
     });
     
-    const handleDelete               = useEvent<DeleteModelHandler>(async ({id}) => {
+    const handleDelete               = useEvent<DeleteHandler>(async ({id}) => {
         await deleteUser({
             id : id,
         }).unwrap();
@@ -228,7 +228,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
         setRoleId(id);
         setIsModified(true);
     });
-    const handleRoleDelete           = useEvent<DeleteModelHandler>(async ({id}) => {
+    const handleRoleDelete           = useEvent<DeleteHandler>(async ({id}) => {
         if (id && (id === roleId)) { // if currently selected
             // the related role was deleted => set to null (no selection):
             setRoleId(null);
@@ -237,10 +237,10 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
         } // if
     });
     
-    const handleSideUpdate           = useEvent<UpdateSideModelHandler>(async () => {
+    const handleSideUpdate           = useEvent<UpdateSideHandler>(async () => {
         await handleSideSave(/*commitImages = */true);
     });
-    const handleSideDelete           = useEvent<DeleteSideModelHandler>(async () => {
+    const handleSideDelete           = useEvent<DeleteSideHandler>(async () => {
         await handleSideSave(/*commitImages = */false);
     });
     const handleSideSave             = useEvent(async (commitImages : boolean) => {
@@ -283,7 +283,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
         for (const unusedImageId of unusedImageIds) draftDeletedImages.delete(unusedImageId);
     });
     
-    const handleConfirmDelete        = useEvent<ConfirmDeleteModelHandler<UserDetail>>(({model}) => {
+    const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<UserDetail>>(({model}) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <p>
@@ -291,7 +291,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
             </p>,
         };
     });
-    const handleConfirmUnsaved       = useEvent<ConfirmUnsavedModelHandler<UserDetail>>(() => {
+    const handleConfirmUnsaved       = useEvent<ConfirmUnsavedHandler<UserDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>
