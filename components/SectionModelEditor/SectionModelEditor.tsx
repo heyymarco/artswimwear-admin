@@ -120,7 +120,7 @@ export interface ModelCreateProps
     onCollapseEnd         ?: EventHandler<CollapseEvent>
 }
 
-export type CreateModelHandler = (args: { id: string }) => void|Promise<void>
+export type CreateHandler = (args: { id: string }) => void|Promise<void>
 
 /* <ModelCreateOuter> */
 export interface ModelCreateOuterProps
@@ -139,7 +139,7 @@ export interface ModelCreateOuterProps
     
     
     // handlers:
-    onCreate             ?: CreateModelHandler
+    onCreate             ?: CreateHandler
 }
 export const ModelCreateOuter = (props: ModelCreateOuterProps) => {
     // styles:

@@ -67,7 +67,7 @@ import {
     RoleEditor,
 }                           from '@/components/editors/RoleEditor'
 import type {
-    CreateModelHandler,
+    CreateHandler,
 }                           from '@/components/SectionModelEditor'
 import {
     // types:
@@ -224,7 +224,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
         }).unwrap();
     });
     
-    const handleRoleCreate           = useEvent<CreateModelHandler>(async ({id}) => {
+    const handleRoleCreate           = useEvent<CreateHandler>(async ({id}) => {
         setRoleId(id);
         setIsModified(true);
     });
