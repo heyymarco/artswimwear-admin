@@ -10,7 +10,6 @@ import {
     // hooks:
     useRef,
     useState,
-    useEffect,
     useMemo,
 }                           from 'react'
 
@@ -39,16 +38,6 @@ import {
     
     
     
-    // simple-components:
-    Icon,
-    
-    
-    
-    // layout-components:
-    ListItem,
-    
-    
-    
     // composite-components:
     TabPanel,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
@@ -62,12 +51,6 @@ import {
 }                           from '@heymarco/loading-bar'
 
 // internal components:
-import {
-    EditButton,
-}                           from '@/components/EditButton'
-import type {
-    EditorChangeEventHandler,
-}                           from '@/components/editors/Editor'
 import {
     NameEditor,
 }                           from '@/components/editors/NameEditor'
@@ -83,20 +66,8 @@ import {
 import {
     RoleEditor,
 }                           from '@/components/editors/RoleEditor'
-import type {
-    // react components:
-    ModelCreateProps,
-    ModelPreviewProps,
-}                           from '@/components/SectionModelEditor'
-import {
-    RadioDecorator,
-}                           from '@/components/RadioDecorator'
-import {
-    CollapsibleSuspense,
-}                           from '@/components/CollapsibleSuspense'
 import {
     // types:
-    EditModelDialogExpandedChangeEvent,
     UpdateModelHandler,
     AfterUpdateModelHandler,
     
@@ -117,14 +88,16 @@ import {
 
 // private components:
 import {
-    EditRoleDialog,
-}                           from './EditRoleDialog'
+    RoleCreate,
+}                           from './RoleCreate'
+import {
+    RolePreview,
+}                           from './RolePreview'
 
 // stores:
 import {
     // types:
     UserDetail,
-    RoleDetail,
     
     
     
@@ -162,223 +135,6 @@ import './EditUserDialogStyles';
 
 
 // react components:
-
-/* <RoleCreate> */
-interface RoleCreateProps extends ModelCreateProps {}
-const RoleCreate = (props: RoleCreateProps): JSX.Element|null => {
-    // jsx:
-    return (
-        <EditRoleDialog
-            // other props:
-            {...props}
-            
-            
-            
-            // data:
-            model={null} // create a new model
-        />
-    );
-};
-
-/* <RolePreview> */
-interface RolePreviewProps extends Omit<ModelPreviewProps<RoleDetail>, 'onChange'> {
-    // data:
-    selectedRoleId  : string|null
-    
-    
-    
-    // appearances:
-    isShown         : boolean
-    
-    
-    
-    // handlers:
-    onChange       ?: EditorChangeEventHandler<string|null>
-    onModelDeleted ?: EventHandler<string>
-}
-const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
-    // styles:
-    const styleSheet = useEditUserDialogStyleSheet();
-    
-    
-    
-    // rest props:
-    const {
-        // data:
-        model,
-        selectedRoleId,
-        
-        
-        
-        // appearances:
-        isShown,
-        
-        
-        
-        // accessibilities:
-        readOnly = false,
-        
-        
-        
-        // states:
-        active = false,
-        
-        
-        
-        // handlers:
-        onChange,
-        onModelDeleted,
-    ...restListItemProps} = props;
-    const {
-        id,
-        name,
-    } = model;
-    
-    
-    
-    // states:
-    type EditMode = 'full'
-    const [editMode, setEditMode] = useState<EditMode|null>(null);
-    
-    
-    
-    // refs:
-    const listItemRef = useRef<HTMLElement|null>(null);
-    
-    
-    
-    // handlers:
-    const handleClick          = useEvent<React.MouseEventHandler<HTMLElement>>((event) => {
-        // conditions:
-        if (!event.currentTarget.contains(event.target as Node)) return; // ignore bubbling from <portal> of <EditRoleDialog>
-        
-        
-        
-        // actions:
-        onChange?.(id || null); // null (no selection) if the id is an empty string
-    });
-    
-    const handleExpandedChange = useEvent<EventHandler<EditModelDialogExpandedChangeEvent>>(({expanded, result}) => {
-        if (!expanded) {
-            // first: trigger the change (if any), before this <RolePreview> will be deleted:
-            if (result === false) { // onModelDeleted
-                onModelDeleted?.(id);
-            } // if
-            
-            
-            
-            // second: close the dialog:
-            setEditMode(null);
-        } // if
-    });
-    
-    
-    
-    // dom effects:
-    
-    // initial-focus on initial-tab-is-role:
-    useEffect(() => {
-        // conditions:
-        if (!isShown)     return;
-        if (!active)      return;
-        const listItemElm = listItemRef.current;
-        if (!listItemElm) return;
-        
-        
-        
-        // actions:
-        setTimeout(() => {
-            listItemElm.scrollIntoView({
-                behavior : 'smooth',
-                
-                inline   : 'nearest',
-                block    : 'nearest',
-            });
-        }, 500); // a delay to compensate <Modal> showing => <Modal> shown
-        // @ts-ignore
-    }, []);
-    
-    // re-focus on selected tab changed:
-    useEffect(() => {
-        // conditions:
-        if (!isShown)     return;
-        if (!active)      return;
-        const listItemElm = listItemRef.current;
-        if (!listItemElm) return;
-        
-        
-        
-        // actions:
-        listItemElm.scrollIntoView({
-            behavior : 'smooth',
-            
-            inline   : 'nearest',
-            block    : 'nearest',
-        });
-        // @ts-ignore
-    }, [isShown, /* active // do not re-focus on re-selected */]);
-    
-    
-    
-    // jsx:
-    return (
-        <ListItem
-            // other props:
-            {...restListItemProps}
-            
-            
-            
-            // refs:
-            elmRef={listItemRef}
-            
-            
-            
-            // classes:
-            className={styleSheet.roleItem}
-            
-            
-            
-            // behaviors:
-            actionCtrl={!readOnly}
-            
-            
-            
-            // states:
-            active={active}
-            
-            
-            
-            // handlers:
-            onClick={!readOnly ? handleClick : undefined}
-        >
-            <RadioDecorator enabled={!readOnly} />
-            <p className='name'>{!!id ? name : <span className='noValue'>No Access</span>}</p>
-            {!!id && <EditButton
-                iconComponent={<Icon icon='edit' mild={active} />}
-                onClick={(event) => { setEditMode('full'); event.stopPropagation(); }}
-            />}
-            {/* edit dialog: */}
-            <CollapsibleSuspense>
-                <EditRoleDialog
-                    // data:
-                    model={model} // modify current model
-                    
-                    
-                    
-                    // states:
-                    expanded={(editMode === 'full')}
-                    
-                    
-                    
-                    // handlers:
-                    onExpandedChange={handleExpandedChange}
-                />
-            </CollapsibleSuspense>
-        </ListItem>
-    );
-};
-
-/* <EditUserDialog> */
 export interface EditUserDialogProps
     extends
         // bases:
