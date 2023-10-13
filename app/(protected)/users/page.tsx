@@ -100,11 +100,9 @@ import {
 import {
     SimpleEditModelDialog,
 }                           from '@/components/dialogs/SimpleEditModelDialog'
-
-// private components:
 import {
     EditUserDialog,
-}                           from './EditUserDialog'
+}                           from '@/components/dialogs/EditUserDialog'
 
 // stores:
 import {
