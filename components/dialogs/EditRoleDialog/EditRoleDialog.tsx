@@ -224,7 +224,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
         }).unwrap();
     });
     
-    const handleDeleteModelConfirm   = useEvent<DeleteModelConfirmHandler<RoleDetail>>(({model}) => {
+    const handleConfirmDelete        = useEvent<DeleteModelConfirmHandler<RoleDetail>>(({model}) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
@@ -238,7 +238,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             </>,
         };
     });
-    const handleUnsavedModelConfirm  = useEvent<UnsavedModelConfirmHandler<RoleDetail>>(() => {
+    const handleConfirmUnsaved       = useEvent<UnsavedModelConfirmHandler<RoleDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>
@@ -303,8 +303,8 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             onDelete={handleDelete}
             // onAfterDelete={undefined}
             
-            onDeleteModelConfirm={handleDeleteModelConfirm}
-            onUnsavedModelConfirm={handleUnsavedModelConfirm}
+            onConfirmDelete={handleConfirmDelete}
+            onConfirmUnsaved={handleConfirmUnsaved}
         >{({privilegeModelAdd, privilegeModelUpdate}) => <>
             <TabPanel label={PAGE_ROLE_TAB_ROLE} panelComponent={<Generic className={styleSheet.roleTab} />}>
                 <form>

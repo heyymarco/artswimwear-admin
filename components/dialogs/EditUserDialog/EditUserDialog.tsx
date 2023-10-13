@@ -283,7 +283,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
         for (const unusedImageId of unusedImageIds) draftDeletedImages.delete(unusedImageId);
     });
     
-    const handleDeleteModelConfirm   = useEvent<DeleteModelConfirmHandler<UserDetail>>(({model}) => {
+    const handleConfirmDelete        = useEvent<DeleteModelConfirmHandler<UserDetail>>(({model}) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <p>
@@ -291,7 +291,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
             </p>,
         };
     });
-    const handleUnsavedModelConfirm  = useEvent<UnsavedModelConfirmHandler<UserDetail>>(() => {
+    const handleConfirmUnsaved       = useEvent<UnsavedModelConfirmHandler<UserDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>
@@ -372,8 +372,8 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
             onSideUpdate={handleSideUpdate}
             onSideDelete={handleSideDelete}
             
-            onDeleteModelConfirm={handleDeleteModelConfirm}
-            onUnsavedModelConfirm={handleUnsavedModelConfirm}
+            onConfirmDelete={handleConfirmDelete}
+            onConfirmUnsaved={handleConfirmUnsaved}
         >{({privilegeModelAdd, privilegeModelUpdate}) => <>
             <TabPanel label={PAGE_USER_TAB_ACCOUNT} panelComponent={<Generic className={styleSheet.accountTab} />}>
                 <form>

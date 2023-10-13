@@ -166,8 +166,8 @@ export interface ComplexEditModelDialogProps<TModel extends Model>
     onSideUpdate          ?: UpdateSideModelHandler
     onSideDelete          ?: DeleteSideModelHandler
     
-    onDeleteModelConfirm   : DeleteModelConfirmHandler<TModel>
-    onUnsavedModelConfirm  : UnsavedModelConfirmHandler<TModel>
+    onConfirmDelete        : DeleteModelConfirmHandler<TModel>
+    onConfirmUnsaved       : UnsavedModelConfirmHandler<TModel>
     
     onCollapseStart       ?: EventHandler<CollapseEvent>
     onCollapseEnd         ?: EventHandler<CollapseEvent>
@@ -179,35 +179,35 @@ export interface ComplexEditModelDialogProps<TModel extends Model>
 }
 export type ImplementedComplexEditModelDialogProps<TModel extends Model> = Omit<ComplexEditModelDialogProps<TModel>,
     // data:
-    |'modelName'             // already taken over
-    |'modelEntryName'        // already taken over
+    |'modelName'            // already taken over
+    |'modelEntryName'       // already taken over
     
     // privileges:
-    |'privilegeModelAdd'     // already taken over
-    |'privilegeModelUpdate'  // already taken over
-    |'privilegeModelDelete'  // already taken over
+    |'privilegeModelAdd'    // already taken over
+    |'privilegeModelUpdate' // already taken over
+    |'privilegeModelDelete' // already taken over
     
     // stores:
-    |'isModelModified'       // already taken over
-    |'isCommitingModel'      // already taken over
-    |'isRevertingModel'      // already taken over
-    |'isDeletingModel'       // already taken over
+    |'isModelModified'      // already taken over
+    |'isCommitingModel'     // already taken over
+    |'isRevertingModel'     // already taken over
+    |'isDeletingModel'      // already taken over
     
     // tabs:
-    |'tabDelete'             // already taken over
+    |'tabDelete'            // already taken over
     
     // handlers:
-    |'onUpdate'              // already taken over
-    |'onAfterUpdate'         // already taken over
-    |'onDelete'              // already taken over
-    |'onAfterDelete'         // already taken over
-    |'onSideUpdate'          // already taken over
-    |'onSideDelete'          // already taken over
-    |'onDeleteModelConfirm'  // already taken over
-    |'onUnsavedModelConfirm' // already taken over
+    |'onUpdate'             // already taken over
+    |'onAfterUpdate'        // already taken over
+    |'onDelete'             // already taken over
+    |'onAfterDelete'        // already taken over
+    |'onSideUpdate'         // already taken over
+    |'onSideDelete'         // already taken over
+    |'onConfirmDelete'      // already taken over
+    |'onConfirmUnsaved'     // already taken over
     
     // children:
-    |'children'              // already taken over
+    |'children'             // already taken over
 >
 export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDialogProps<TModel>): JSX.Element|null => {
     // styles:
@@ -259,8 +259,8 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
         onSideUpdate,
         onSideDelete,
         
-        onDeleteModelConfirm,
-        onUnsavedModelConfirm,
+        onConfirmDelete,
+        onConfirmUnsaved,
         
         onExpandedChange,
         onCollapseStart,
@@ -352,7 +352,7 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
         const {
             title   = <h1>Delete Confirmation</h1>,
             message,
-        } = onDeleteModelConfirm({model});
+        } = onConfirmDelete({model});
         if (
             (await showMessage<'yes'|'no'>({
                 theme    : 'warning',
@@ -406,7 +406,7 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
                 message = <p>
                     Do you want to save the changes?
                 </p>,
-            } = onUnsavedModelConfirm({model});
+            } = onConfirmUnsaved({model});
             const answer = await showMessage<'save'|'dontSave'|'continue'>({
                 theme         : 'warning',
                 title         : title,
