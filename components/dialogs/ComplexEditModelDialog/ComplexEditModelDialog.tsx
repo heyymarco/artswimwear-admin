@@ -340,7 +340,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
             
             const updatingModelAndOthersTask = onAfterUpdate ? updatingModelTask.then(onAfterUpdate) : updatingModelTask;
             
-            await handleFinalizing(updatingModelTask, /*commitImages = */true, [updatingModelAndOthersTask]); // result: created|mutated
+            await handleFinalizing(updatingModelTask, /*commitSides = */true, [updatingModelAndOthersTask]); // result: created|mutated
         }
         catch (error: any) {
             showMessageFetchError(error);
@@ -378,18 +378,18 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
             
             const deletingModelAndOthersTask = onAfterDelete ? deletingModelTask.then(onAfterDelete) : deletingModelTask;
             
-            await handleFinalizing(false, /*commitImages = */false, [deletingModelAndOthersTask]); // result: deleted
+            await handleFinalizing(false, /*commitSides = */false, [deletingModelAndOthersTask]); // result: deleted
         }
         catch (error: any) {
             showMessageFetchError(error);
         } // try
     });
-    const handleSideSave       = useEvent(async (commitImages : boolean) => {
+    const handleSideSave       = useEvent(async (commitSides : boolean) => {
         if (!privilegeWrite) return;
         
         
         
-        if (commitImages) {
+        if (commitSides) {
             await onSideUpdate?.();
         }
         else {
@@ -430,7 +430,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
                     break;
                 case 'dontSave':
                     // then close the editor (without saving):
-                    await handleFinalizing(null, /*commitImages = */false); // result: discard changes
+                    await handleFinalizing(null, /*commitSides = */false); // result: discard changes
                     break;
                 default:
                     // do nothing (continue editing)
@@ -438,12 +438,12 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
             } // switch
         }
         else {
-            await handleFinalizing(null, /*commitImages = */false); // result: no changes
+            await handleFinalizing(null, /*commitSides = */false); // result: no changes
         } // if
     });
-    const handleFinalizing     = useEvent(async (event: EditModelDialogResult|Promise<EditModelDialogResult>, commitImages : boolean, otherTasks : Promise<any>[] = []) => {
+    const handleFinalizing     = useEvent(async (event: EditModelDialogResult|Promise<EditModelDialogResult>, commitSides : boolean, otherTasks : Promise<any>[] = []) => {
         await Promise.all([
-            handleSideSave(commitImages),
+            handleSideSave(commitSides),
             ...otherTasks,
         ]);
         
