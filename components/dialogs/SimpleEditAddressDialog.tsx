@@ -8,7 +8,7 @@ import {
 
 // internal components:
 import {
-    InitialValueEventHandler,
+    InitialValueHandler,
     UpdateModelHandler,
     ImplementedSimpleEditDialogProps,
     SimpleEditDialog,
@@ -44,7 +44,7 @@ export const SimpleEditAddressDialog = (props: SimpleEditAddressDialogProps) => 
     
     
     // handlers:
-    const handleInitialValue = useEvent<InitialValueEventHandler<AddressValue, OrderDetail, 'shippingAddress'|'billingAddress'>>((edit, model) => {
+    const handleInitialValue = useEvent<InitialValueHandler<AddressValue, OrderDetail, 'shippingAddress'|'billingAddress'>>((edit, model) => {
         return model[edit] ?? emptyAddressValue;
     });
     const handleUpdate       = useEvent<UpdateModelHandler<AddressValue, OrderDetail, 'shippingAddress'|'billingAddress'>>(async (value, edit, model) => {

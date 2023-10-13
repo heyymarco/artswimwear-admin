@@ -8,7 +8,7 @@ import {
 
 // internal components:
 import {
-    InitialValueEventHandler,
+    InitialValueHandler,
     UpdateModelHandler,
     ImplementedSimpleEditDialogProps,
     SimpleEditDialog,
@@ -43,7 +43,7 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
     
     
     // handlers:
-    const handleInitialValue = useEvent<InitialValueEventHandler<PaymentValue, OrderDetail, 'paymentMethod'>>((edit, model) => {
+    const handleInitialValue = useEvent<InitialValueHandler<PaymentValue, OrderDetail, 'paymentMethod'>>((edit, model) => {
         return model[edit];
     });
     const handleUpdate       = useEvent<UpdateModelHandler<PaymentValue, OrderDetail, 'paymentMethod'>>(async (value, edit, model) => {

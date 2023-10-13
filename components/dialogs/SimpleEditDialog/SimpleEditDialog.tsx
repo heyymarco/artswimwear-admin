@@ -20,7 +20,7 @@ const useSimpleEditDialogStyleSheet = dynamicStyleSheet(
 
 
 // react components:
-export type InitialValueEventHandler<TValue extends any, TModel extends {}, TEdit extends string> = (edit: TEdit, model: TModel) => TValue
+export type InitialValueHandler<TValue extends any, TModel extends {}, TEdit extends string> = (edit: TEdit, model: TModel) => TValue
 export type UpdateModelHandler<TValue extends any, TModel extends {}, TEdit extends string> = (value: TValue, edit: TEdit, model: TModel) => Promise<void>
 export interface SimpleEditDialogProps<TValue extends any, TModel extends {}, TEdit extends string> {
     // states:
@@ -31,7 +31,7 @@ export interface SimpleEditDialogProps<TValue extends any, TModel extends {}, TE
     // data:
     model           : TModel
     edit            : TEdit
-    initialValue    : InitialValueEventHandler<TValue, TModel, TEdit>
+    initialValue    : InitialValueHandler<TValue, TModel, TEdit>
     
     
     
