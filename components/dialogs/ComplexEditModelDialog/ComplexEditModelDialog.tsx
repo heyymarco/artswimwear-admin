@@ -104,8 +104,8 @@ export type AfterDeleteModelHandler                          = () => Promise<voi
 export type UpdateSideModelHandler                           = () => Promise<void>
 export type DeleteSideModelHandler                           = () => Promise<void>
 
-export type DeleteModelConfirmHandler<TModel extends Model>  = (args: { model: TModel }) => { title?: React.ReactNode, message: React.ReactNode }
-export type UnsavedModelConfirmHandler<TModel extends Model> = (args: { model: TModel }) => { title?: React.ReactNode, message: React.ReactNode }
+export type ConfirmDeleteModelHandler<TModel extends Model>  = (args: { model: TModel }) => { title?: React.ReactNode, message: React.ReactNode }
+export type ConfirmUnsavedModelHandler<TModel extends Model> = (args: { model: TModel }) => { title?: React.ReactNode, message: React.ReactNode }
 
 export interface CollapseEvent {
     result: EditModelDialogResult
@@ -166,8 +166,8 @@ export interface ComplexEditModelDialogProps<TModel extends Model>
     onSideUpdate     ?: UpdateSideModelHandler
     onSideDelete     ?: DeleteSideModelHandler
     
-    onConfirmDelete   : DeleteModelConfirmHandler<TModel>
-    onConfirmUnsaved  : UnsavedModelConfirmHandler<TModel>
+    onConfirmDelete   : ConfirmDeleteModelHandler<TModel>
+    onConfirmUnsaved  : ConfirmUnsavedModelHandler<TModel>
     
     onCollapseStart  ?: EventHandler<CollapseEvent>
     onCollapseEnd    ?: EventHandler<CollapseEvent>

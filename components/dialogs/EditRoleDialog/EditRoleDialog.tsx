@@ -69,8 +69,8 @@ import {
     
     DeleteModelHandler,
     
-    DeleteModelConfirmHandler,
-    UnsavedModelConfirmHandler,
+    ConfirmDeleteModelHandler,
+    ConfirmUnsavedModelHandler,
     
     
     
@@ -224,7 +224,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
         }).unwrap();
     });
     
-    const handleConfirmDelete  = useEvent<DeleteModelConfirmHandler<RoleDetail>>(({model}) => {
+    const handleConfirmDelete  = useEvent<ConfirmDeleteModelHandler<RoleDetail>>(({model}) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
@@ -238,7 +238,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             </>,
         };
     });
-    const handleConfirmUnsaved = useEvent<UnsavedModelConfirmHandler<RoleDetail>>(() => {
+    const handleConfirmUnsaved = useEvent<ConfirmUnsavedModelHandler<RoleDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>

@@ -79,8 +79,8 @@ import {
     UpdateSideModelHandler,
     DeleteSideModelHandler,
     
-    DeleteModelConfirmHandler,
-    UnsavedModelConfirmHandler,
+    ConfirmDeleteModelHandler,
+    ConfirmUnsavedModelHandler,
     
     
     
@@ -283,7 +283,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
         for (const unusedImageId of unusedImageIds) draftDeletedImages.delete(unusedImageId);
     });
     
-    const handleConfirmDelete        = useEvent<DeleteModelConfirmHandler<UserDetail>>(({model}) => {
+    const handleConfirmDelete        = useEvent<ConfirmDeleteModelHandler<UserDetail>>(({model}) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <p>
@@ -291,7 +291,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
             </p>,
         };
     });
-    const handleConfirmUnsaved       = useEvent<UnsavedModelConfirmHandler<UserDetail>>(() => {
+    const handleConfirmUnsaved       = useEvent<ConfirmUnsavedModelHandler<UserDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>
