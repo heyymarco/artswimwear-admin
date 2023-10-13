@@ -152,7 +152,7 @@ export interface ComplexEditModelDialogProps<TModel extends Model>
     
     
     // tabs:
-    tabDelete         : React.ReactNode
+    tabDelete        ?: React.ReactNode
     
     
     
