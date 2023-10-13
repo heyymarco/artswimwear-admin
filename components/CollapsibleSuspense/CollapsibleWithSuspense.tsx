@@ -39,15 +39,15 @@ const enum VisibilityState {
 // react components:
 export interface CollapsibleWithSuspenseProps {
     // components:
-    collapsibleComponent : React.ReactComponentElement<any, SuspendableProps>
+    suspendableComponent : React.ReactComponentElement<any, SuspendableProps>
 }
 const CollapsibleWithSuspense = (props: CollapsibleWithSuspenseProps): JSX.Element|null => {
     // rest props:
     const {
         // components:
-        collapsibleComponent,
+        suspendableComponent,
     } = props;
-    const isComponentExpanded = !!(collapsibleComponent.props.expanded ?? false);
+    const isComponentExpanded = !!(suspendableComponent.props.expanded ?? false);
     
     
     
@@ -61,8 +61,8 @@ const CollapsibleWithSuspense = (props: CollapsibleWithSuspenseProps): JSX.Eleme
         setVisibilityState(VisibilityState.CollapseEnd);
     });
     const handleCollapseEnd         = useMergeEvents(
-        // preserves the original `onCollapseEnd` from `collapsibleComponent`:
-        collapsibleComponent.props.onCollapseEnd,
+        // preserves the original `onCollapseEnd` from `suspendableComponent`:
+        suspendableComponent.props.onCollapseEnd,
         
         
         
@@ -103,7 +103,7 @@ const CollapsibleWithSuspense = (props: CollapsibleWithSuspenseProps): JSX.Eleme
     
     // jsx:
     if (visibilityState === VisibilityState.CollapseEnd) return null; // causing to discard (lost) the <CollapsibleComponent>'s states
-    return React.cloneElement<SuspendableProps>(collapsibleComponent,
+    return React.cloneElement<SuspendableProps>(suspendableComponent,
         // props:
         {
             // states:
