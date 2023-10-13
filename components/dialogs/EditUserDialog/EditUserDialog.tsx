@@ -300,10 +300,10 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
         };
     });
     
-    const tabRoleHandleCollapseStart = useEvent<EventHandler<void>>(() => {
+    const handleTabRoleCollapseStart = useEvent<EventHandler<void>>(() => {
         setIsTabRoleShown(false);
     });
-    const tabRoleHandleExpandEnd     = useEvent<EventHandler<void>>(() => {
+    const handleTabRoleExpandEnd     = useEvent<EventHandler<void>>(() => {
         setIsTabRoleShown(true);
     });
     
@@ -517,7 +517,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                     onResolveImageUrl={resolveMediaUrl<never>}
                 />
             </TabPanel>
-            <TabPanel label={PAGE_USER_TAB_ROLE}    panelComponent={<Generic className={styleSheet.roleTab} />} onCollapseStart={tabRoleHandleCollapseStart} onExpandEnd={tabRoleHandleExpandEnd}>{
+            <TabPanel label={PAGE_USER_TAB_ROLE}    panelComponent={<Generic className={styleSheet.roleTab} />} onCollapseStart={handleTabRoleCollapseStart} onExpandEnd={handleTabRoleExpandEnd}>{
                 isLoadingRole
                 ? <LoadingBar />
                 : isErrorRole
