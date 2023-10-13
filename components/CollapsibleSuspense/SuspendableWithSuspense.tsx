@@ -56,7 +56,7 @@ const SuspendableWithSuspense = <TExpandedChangeEvent extends ExpandedChangeEven
         // components:
         suspendableComponent,
     ...restSuspendableProps} = props;
-    const isComponentExpanded = !!(suspendableComponent.props.expanded ?? false);
+    const isComponentExpanded = !!(props.expanded ?? suspendableComponent.props.expanded ?? false);
     
     
     
@@ -90,7 +90,14 @@ const SuspendableWithSuspense = <TExpandedChangeEvent extends ExpandedChangeEven
     
     // handle initiate to render the <Collapsible>:
     useEffect(() => {
-        if (isComponentExpanded) setVisibilityState(VisibilityState.ExpandStart);
+        // conditions:
+        if (!isComponentExpanded) return; // ignores if not expanded
+        
+        
+        
+        // actions:
+        setVisibilityState(VisibilityState.ExpandStart);
+        console.log('VisibilityState.ExpandStart')
     }, [isComponentExpanded]);
     
     // handle render transition from [ExpandStart => delay => ExpandEnd]:
@@ -101,16 +108,16 @@ const SuspendableWithSuspense = <TExpandedChangeEvent extends ExpandedChangeEven
         
         
         // setups:
-        const asyncDelayedTransition = setTimeout(() => { // a brief moment for rendering `collapsed state`
+        // const asyncDelayedTransition = setTimeout(() => { // a brief moment for rendering `collapsed state`
             setVisibilityState(VisibilityState.ExpandEnd);
-        }, 0);
+        // }, 0);
         
         
         
-        // cleanups:
-        return () => {
-            clearTimeout(asyncDelayedTransition);
-        };
+        // // cleanups:
+        // return () => {
+        //     clearTimeout(asyncDelayedTransition);
+        // };
     }, [visibilityState]);
     
     

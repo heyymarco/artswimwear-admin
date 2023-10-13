@@ -43,7 +43,7 @@ const CollapsibleSuspense = (props: CollapsibleSuspenseProps): JSX.Element|null 
     // children:
     const wrappedChildren = useMemo<React.ReactNode[]>(() =>
         flattenChildren(children)
-        .map<React.ReactNode>((suspendable, index) => {
+        .map<React.ReactNode>((suspendable, childIndex) => {
             // conditions:
             if (!React.isValidElement<SuspendableProps>(suspendable)) return suspendable; // not a <SuspendableProps> => place it anyway
             
@@ -60,6 +60,11 @@ const CollapsibleSuspense = (props: CollapsibleSuspenseProps): JSX.Element|null 
                 <SuspendableWithSuspense
                     // other props:
                     {...suspendableProps} // steals all suspendable's props, so the <Owner> can recognize the <SuspendableWithSuspense> as <TheirChild>
+                    
+                    
+                    
+                    // identifiers:
+                    key={suspendable.key ?? childIndex}
                     
                     
                     
