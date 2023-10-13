@@ -91,7 +91,7 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
         
         
         // handlers:
-        onCreateModel,
+        onCreate,
     ...restListProps} = props;
     
     const filteredRoleList = !roleList ? undefined : Object.values(roleList.entities).filter((roleEntry): roleEntry is Exclude<typeof roleEntry, undefined> => !!roleEntry);
@@ -112,7 +112,7 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
             {...restListProps}
         >
             {/* <ModelCreate> */}
-            {!!modelCreateComponent  && <ModelCreateOuter className='solid' createItemText='Add New Role' modelCreateComponent={modelCreateComponent} onCreateModel={onCreateModel} />}
+            {!!modelCreateComponent  && <ModelCreateOuter className='solid' createItemText='Add New Role' modelCreateComponent={modelCreateComponent} onCreate={onCreate} />}
             
             {roleListWithNone.map((model) => {
                 const modelPreviewComponent = modelPreviewComponentFn(model);

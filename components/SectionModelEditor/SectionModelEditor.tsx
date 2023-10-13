@@ -120,6 +120,8 @@ export interface ModelCreateProps
     onCollapseEnd         ?: EventHandler<CollapseEvent>
 }
 
+export type CreateModelHandler = (args: { id: string }) => void|Promise<void>
+
 /* <ModelCreateOuter> */
 export interface ModelCreateOuterProps
     extends
@@ -137,7 +139,7 @@ export interface ModelCreateOuterProps
     
     
     // handlers:
-    onCreateModel        ?: EventHandler<string>
+    onCreate             ?: CreateModelHandler
 }
 export const ModelCreateOuter = (props: ModelCreateOuterProps) => {
     // styles:
@@ -158,7 +160,7 @@ export const ModelCreateOuter = (props: ModelCreateOuterProps) => {
         
         
         // handlers:
-        onCreateModel,
+        onCreate,
     ...restListItemProps} = props;
     
     
@@ -188,7 +190,9 @@ export const ModelCreateOuter = (props: ModelCreateOuterProps) => {
     const handleCollapseEndInternal = useEvent<EventHandler<CollapseEvent>>(({result}) => {
         // actions:
         if (result) { // if closed of created Model (ignores of canceled or deleted Model)
-            onCreateModel?.(result);
+            onCreate?.({
+                id: result,
+            });
         } // if
     });
     const handleCollapseEnd         = useMergeEvents(

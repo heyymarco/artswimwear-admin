@@ -66,6 +66,9 @@ import {
 import {
     RoleEditor,
 }                           from '@/components/editors/RoleEditor'
+import type {
+    CreateModelHandler,
+}                           from '@/components/SectionModelEditor'
 import {
     // types:
     UpdateModelHandler,
@@ -219,6 +222,10 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
         await deleteUser({
             id : id,
         }).unwrap();
+    });
+    const handleCreate               = useEvent<CreateModelHandler>(async ({id}) => {
+        setRoleId(id);
+        setIsModelModified(true);
     });
     
     const handleUpdateSideModel      = useEvent<UpdateSideModelHandler>(async () => {
@@ -559,10 +566,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                         
                         
                         // handlers:
-                        onCreateModel={(value) => {
-                            setRoleId(value);
-                            setIsModelModified(true);
-                        }}
+                        onCreate={handleCreate}
                     />
             }</TabPanel>
         </>}</ComplexEditModelDialog>
