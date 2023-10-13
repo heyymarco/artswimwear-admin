@@ -367,7 +367,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
             onAfterUpdateModel={handleAfterUpdateModel}
             
             onDelete={handleDelete}
-            // onAfterDeleteModel={undefined}
+            // onAfterDelete={undefined}
             
             onUpdateSideModel={handleUpdateSideModel}
             onDeleteSideModel={handleDeleteSideModel}

@@ -161,7 +161,7 @@ export interface ComplexEditModelDialogProps<TModel extends Model>
     onAfterUpdateModel    ?: AfterUpdateModelHandler
     
     onDelete               : DeleteModelHandler
-    onAfterDeleteModel    ?: AfterDeleteModelHandler
+    onAfterDelete         ?: AfterDeleteModelHandler
     
     onUpdateSideModel     ?: UpdateSideModelHandler
     onDeleteSideModel     ?: DeleteSideModelHandler
@@ -200,7 +200,7 @@ export type ImplementedComplexEditModelDialogProps<TModel extends Model> = Omit<
     |'onUpdateModel'         // already taken over
     |'onAfterUpdateModel'    // already taken over
     |'onDelete'              // already taken over
-    |'onAfterDeleteModel'    // already taken over
+    |'onAfterDelete'         // already taken over
     |'onUpdateSideModel'     // already taken over
     |'onDeleteSideModel'     // already taken over
     |'onDeleteModelConfirm'  // already taken over
@@ -254,7 +254,7 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
         onAfterUpdateModel,
         
         onDelete,
-        onAfterDeleteModel,
+        onAfterDelete,
         
         onUpdateSideModel,
         onDeleteSideModel,
@@ -376,7 +376,7 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
                 id : model.id,
             });
             
-            const deletingModelAndOthersTask = onAfterDeleteModel ? deletingModelTask.then(onAfterDeleteModel) : deletingModelTask;
+            const deletingModelAndOthersTask = onAfterDelete ? deletingModelTask.then(onAfterDelete) : deletingModelTask;
             
             await handleFinalizing(false, /*commitImages = */false, [deletingModelAndOthersTask]); // result: deleted
         }
