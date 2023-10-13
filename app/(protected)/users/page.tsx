@@ -141,23 +141,6 @@ import './pageStyles';
 
 // react components:
 
-/* <UserCreate> */
-interface UserCreateProps extends ModelCreateProps {}
-const UserCreate = (props: UserCreateProps): JSX.Element|null => {
-    // jsx:
-    return (
-        <EditUserDialog
-            // other props:
-            {...props}
-            
-            
-            
-            // data:
-            model={null} // create a new model
-        />
-    );
-};
-
 /* <UserPreview> */
 interface UserPreviewProps extends ModelPreviewProps<UserDetail> {
     getRolePaginationApi : ReturnType<typeof useGetRoleList>
@@ -401,7 +384,10 @@ export default function UserPage(): JSX.Element|null {
                 }
                 modelCreateComponent={
                     privilegeAdd
-                    ? <UserCreate />
+                    ? <EditUserDialog
+                        // data:
+                        model={null} // create a new model
+                    />
                     : undefined
                 }
             />
