@@ -162,20 +162,20 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
     
     
     // states:
-    const [isModelModified , setIsModelModified] = useState<boolean>(false);
+    const [isModified    , setIsModified    ] = useState<boolean>(false);
     
-    const [name            , setName           ] = useState<string     >(model?.name     ?? ''  );
-    const [email           , setEmail          ] = useState<string     >(model?.email    ?? ''  );
-    const [image           , setImage          ] = useState<string|null>(model?.image    ?? null); // optional field
-    const [roleId          , setRoleId         ] = useState<string|null>(model?.roleId   ?? null); // optional field
-    const [username        , setUsername       ] = useState<string|null>(model?.username ?? null); // optional field
+    const [name          , setName          ] = useState<string     >(model?.name     ?? ''  );
+    const [email         , setEmail         ] = useState<string     >(model?.email    ?? ''  );
+    const [image         , setImage         ] = useState<string|null>(model?.image    ?? null); // optional field
+    const [roleId        , setRoleId        ] = useState<string|null>(model?.roleId   ?? null); // optional field
+    const [username      , setUsername      ] = useState<string|null>(model?.username ?? null); // optional field
     
-    const initialEmailRef                        = useRef  <string     >(model?.email    ?? ''  );
+    const initialEmailRef                     = useRef  <string     >(model?.email    ?? ''  );
     
-    const initialImageRef                        = useRef  <string|null>(model?.image    ?? null); // optional field
-    const [draftDeletedImages                  ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
+    const initialImageRef                     = useRef  <string|null>(model?.image    ?? null); // optional field
+    const [draftDeletedImages               ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
     
-    const [isTabRoleShown  , setIsTabRoleShown ] = useState<boolean>(() => (defaultExpandedTabIndex === 2));
+    const [isTabRoleShown, setIsTabRoleShown] = useState<boolean>(() => (defaultExpandedTabIndex === 2));
     
     
     
@@ -186,8 +186,8 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
     
     
     // stores:
-    const [updateUser       , {isLoading : isLoadingModelUpdate      }] = useUpdateUser();
-    const [deleteUser       , {isLoading : isLoadingModelDelete      }] = useDeleteUser();
+    const [updateUser       , {isLoading : isLoadingUpdate           }] = useUpdateUser();
+    const [deleteUser       , {isLoading : isLoadingDelete           }] = useDeleteUser();
     const [postImage                                                  ] = usePostImage();
     const [commitDeleteImage, {isLoading : isLoadingCommitDeleteImage}] = useDeleteImage();
     const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
@@ -226,13 +226,13 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
     
     const handleRoleCreate           = useEvent<CreateModelHandler>(async ({id}) => {
         setRoleId(id);
-        setIsModelModified(true);
+        setIsModified(true);
     });
     const handleRoleDelete           = useEvent<DeleteModelHandler>(async ({id}) => {
         if (id && (id === roleId)) { // if currently selected
             // the related role was deleted => set to null (no selection):
             setRoleId(null);
-            setIsModelModified(true);
+            setIsModified(true);
             console.log('related role deleted'); // TODO: refresh the user model
         } // if
     });
@@ -339,11 +339,11 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
             
             
             // stores:
-            isModelModified  = {isModelModified}
+            isModified  = {isModified}
             
-            isCommitingModel = {isLoadingModelUpdate || isLoadingCommitDeleteImage}
-            isRevertingModel = {                        isLoadingRevertDeleteImage}
-            isDeletingModel  = {isLoadingModelDelete || isLoadingCommitDeleteImage}
+            isCommiting = {isLoadingUpdate || isLoadingCommitDeleteImage}
+            isReverting = {                   isLoadingRevertDeleteImage}
+            isDeleting  = {isLoadingDelete || isLoadingCommitDeleteImage}
             
             
             
@@ -398,7 +398,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                         value={name}
                         onChange={(value) => {
                             setName(value);
-                            setIsModelModified(true);
+                            setIsModified(true);
                         }}
                     />
                     
@@ -419,7 +419,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                         value={username ?? ''}
                         onChange={(value) => {
                             setUsername(value);
-                            setIsModelModified(true);
+                            setIsModified(true);
                         }}
                     />
                     
@@ -440,7 +440,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                         value={email}
                         onChange={(value) => {
                             setEmail(value);
-                            setIsModelModified(true);
+                            setIsModified(true);
                         }}
                     />
                 </form>
@@ -461,7 +461,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                     value={image}
                     onChange={(value) => {
                         setImage(value);
-                        setIsModelModified(true);
+                        setIsModified(true);
                     }}
                     
                     
@@ -528,7 +528,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                         value={roleId}
                         onChange={(value) => {
                             setRoleId(value);
-                            setIsModelModified(true);
+                            setIsModified(true);
                         }}
                         
                         

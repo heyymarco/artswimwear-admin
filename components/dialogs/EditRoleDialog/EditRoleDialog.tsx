@@ -136,32 +136,32 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
     
     
     // states:
-    const [isModelModified , setIsModelModified] = useState<boolean>(false);
+    const [isModified, setIsModified] = useState<boolean>(false);
     
-    const [name            , setName           ] = useState<string >(model?.name       ?? ''   );
+    const [name      , setName      ] = useState<string >(model?.name       ?? ''   );
     
-    const [product_r       , setProduct_r      ] = useState<boolean>(model?.product_r  ?? false);
-    const [product_c       , setProduct_c      ] = useState<boolean>(model?.product_c  ?? false);
-    const [product_ud      , setProduct_ud     ] = useState<boolean>(model?.product_ud ?? false);
-    const [product_ui      , setProduct_ui     ] = useState<boolean>(model?.product_ui ?? false);
-    const [product_up      , setProduct_up     ] = useState<boolean>(model?.product_up ?? false);
-    const [product_us      , setProduct_us     ] = useState<boolean>(model?.product_us ?? false);
-    const [product_uv      , setProduct_uv     ] = useState<boolean>(model?.product_uv ?? false);
-    const [product_d       , setProduct_d      ] = useState<boolean>(model?.product_d  ?? false);
+    const [product_r , setProduct_r ] = useState<boolean>(model?.product_r  ?? false);
+    const [product_c , setProduct_c ] = useState<boolean>(model?.product_c  ?? false);
+    const [product_ud, setProduct_ud] = useState<boolean>(model?.product_ud ?? false);
+    const [product_ui, setProduct_ui] = useState<boolean>(model?.product_ui ?? false);
+    const [product_up, setProduct_up] = useState<boolean>(model?.product_up ?? false);
+    const [product_us, setProduct_us] = useState<boolean>(model?.product_us ?? false);
+    const [product_uv, setProduct_uv] = useState<boolean>(model?.product_uv ?? false);
+    const [product_d , setProduct_d ] = useState<boolean>(model?.product_d  ?? false);
     
-    const [user_r          , setUser_r         ] = useState<boolean>(model?.user_r     ?? false);
-    const [user_c          , setUser_c         ] = useState<boolean>(model?.user_c     ?? false);
-    const [user_un         , setUser_un        ] = useState<boolean>(model?.user_un    ?? false);
-    const [user_uu         , setUser_uu        ] = useState<boolean>(model?.user_uu    ?? false);
-    const [user_ue         , setUser_ue        ] = useState<boolean>(model?.user_ue    ?? false);
-    const [user_up         , setUser_up        ] = useState<boolean>(model?.user_up    ?? false);
-    const [user_ui         , setUser_ui        ] = useState<boolean>(model?.user_ui    ?? false);
-    const [user_ur         , setUser_ur        ] = useState<boolean>(model?.user_ur    ?? false);
-    const [user_d          , setUser_d         ] = useState<boolean>(model?.user_d     ?? false);
+    const [user_r    , setUser_r    ] = useState<boolean>(model?.user_r     ?? false);
+    const [user_c    , setUser_c    ] = useState<boolean>(model?.user_c     ?? false);
+    const [user_un   , setUser_un   ] = useState<boolean>(model?.user_un    ?? false);
+    const [user_uu   , setUser_uu   ] = useState<boolean>(model?.user_uu    ?? false);
+    const [user_ue   , setUser_ue   ] = useState<boolean>(model?.user_ue    ?? false);
+    const [user_up   , setUser_up   ] = useState<boolean>(model?.user_up    ?? false);
+    const [user_ui   , setUser_ui   ] = useState<boolean>(model?.user_ui    ?? false);
+    const [user_ur   , setUser_ur   ] = useState<boolean>(model?.user_ur    ?? false);
+    const [user_d    , setUser_d    ] = useState<boolean>(model?.user_d     ?? false);
     
-    const [role_c          , setRole_c         ] = useState<boolean>(model?.role_c     ?? false);
-    const [role_u          , setRole_u         ] = useState<boolean>(model?.role_u     ?? false);
-    const [role_d          , setRole_d         ] = useState<boolean>(model?.role_d     ?? false);
+    const [role_c    , setRole_c    ] = useState<boolean>(model?.role_c     ?? false);
+    const [role_u    , setRole_u    ] = useState<boolean>(model?.role_u     ?? false);
+    const [role_d    , setRole_d    ] = useState<boolean>(model?.role_d     ?? false);
     
     
     
@@ -172,8 +172,8 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
     
     
     // stores:
-    const [updateRole, {isLoading : isLoadingModelUpdate}] = useUpdateRole();
-    const [deleteRole, {isLoading : isLoadingModelDelete}] = useDeleteRole();
+    const [updateRole, {isLoading : isLoadingUpdate}] = useUpdateRole();
+    const [deleteRole, {isLoading : isLoadingDelete}] = useDeleteRole();
     
     
     
@@ -274,10 +274,10 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             
             
             // stores:
-            isModelModified  = {isModelModified}
+            isModified  = {isModified}
             
-            isCommitingModel = {isLoadingModelUpdate}
-            isDeletingModel  = {isLoadingModelDelete}
+            isCommiting = {isLoadingUpdate}
+            isDeleting  = {isLoadingDelete}
             
             
             
@@ -330,7 +330,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
                         value={name}
                         onChange={(value) => {
                             setName(value);
-                            setIsModelModified(true);
+                            setIsModified(true);
                         }}
                     />
                     
@@ -348,68 +348,68 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
                         >
                             <ExclusiveAccordion className='privileges list' defaultExpandedListIndex={0}>
                                 <AccordionItem label='Products' inheritEnabled={false}>
-                                    <Check className='check editor' active={product_r}  onActiveChange={({active}) => { setProduct_r(active);  setIsModelModified(true); }}>
+                                    <Check className='check editor' active={product_r}  onActiveChange={({active}) => { setProduct_r(active);  setIsModified(true); }}>
                                         View
                                     </Check>
-                                    <Check className='check editor' active={product_c}  onActiveChange={({active}) => { setProduct_c(active);  setIsModelModified(true); }}>
+                                    <Check className='check editor' active={product_c}  onActiveChange={({active}) => { setProduct_c(active);  setIsModified(true); }}>
                                         Add New
                                     </Check>
-                                    <Check className='check editor' active={product_ud} onActiveChange={({active}) => { setProduct_ud(active); setIsModelModified(true); }}>
+                                    <Check className='check editor' active={product_ud} onActiveChange={({active}) => { setProduct_ud(active); setIsModified(true); }}>
                                         Change Name, Path &amp; Description
                                     </Check>
-                                    <Check className='check editor' active={product_ui} onActiveChange={({active}) => { setProduct_ui(active); setIsModelModified(true); }}>
+                                    <Check className='check editor' active={product_ui} onActiveChange={({active}) => { setProduct_ui(active); setIsModified(true); }}>
                                         Change Images
                                     </Check>
-                                    <Check className='check editor' active={product_up} onActiveChange={({active}) => { setProduct_up(active); setIsModelModified(true); }}>
+                                    <Check className='check editor' active={product_up} onActiveChange={({active}) => { setProduct_up(active); setIsModified(true); }}>
                                         Change Price &amp; Shipping Weight
                                     </Check>
-                                    <Check className='check editor' active={product_us} onActiveChange={({active}) => { setProduct_us(active); setIsModelModified(true); }}>
+                                    <Check className='check editor' active={product_us} onActiveChange={({active}) => { setProduct_us(active); setIsModified(true); }}>
                                         Change Stock
                                     </Check>
-                                    <Check className='check editor' active={product_uv} onActiveChange={({active}) => { setProduct_uv(active); setIsModelModified(true); }}>
+                                    <Check className='check editor' active={product_uv} onActiveChange={({active}) => { setProduct_uv(active); setIsModified(true); }}>
                                         Change Visibility
                                     </Check>
-                                    <Check className='check editor' active={product_d}  onActiveChange={({active}) => { setProduct_d(active);  setIsModelModified(true); }}>
+                                    <Check className='check editor' active={product_d}  onActiveChange={({active}) => { setProduct_d(active);  setIsModified(true); }}>
                                         Delete
                                     </Check>
                                 </AccordionItem>
                                 <AccordionItem label='Users'    inheritEnabled={false}>
-                                    <Check className='check editor' active={user_r}     onActiveChange={({active}) => { setUser_r(active);     setIsModelModified(true); }}>
+                                    <Check className='check editor' active={user_r}     onActiveChange={({active}) => { setUser_r(active);     setIsModified(true); }}>
                                         View
                                     </Check>
-                                    <Check className='check editor' active={user_c}     onActiveChange={({active}) => { setUser_c(active);     setIsModelModified(true); }}>
+                                    <Check className='check editor' active={user_c}     onActiveChange={({active}) => { setUser_c(active);     setIsModified(true); }}>
                                         Add New
                                     </Check>
-                                    <Check className='check editor' active={user_un}    onActiveChange={({active}) => { setUser_un(active);    setIsModelModified(true); }}>
+                                    <Check className='check editor' active={user_un}    onActiveChange={({active}) => { setUser_un(active);    setIsModified(true); }}>
                                         Change Name
                                     </Check>
-                                    <Check className='check editor' active={user_uu}    onActiveChange={({active}) => { setUser_uu(active);    setIsModelModified(true); }}>
+                                    <Check className='check editor' active={user_uu}    onActiveChange={({active}) => { setUser_uu(active);    setIsModified(true); }}>
                                         Change Username
                                     </Check>
-                                    <Check className='check editor' active={user_ue}    onActiveChange={({active}) => { setUser_ue(active);    setIsModelModified(true); }}>
+                                    <Check className='check editor' active={user_ue}    onActiveChange={({active}) => { setUser_ue(active);    setIsModified(true); }}>
                                         Change Email
                                     </Check>
-                                    <Check className='check editor' active={user_up}    onActiveChange={({active}) => { setUser_up(active);    setIsModelModified(true); }}>
+                                    <Check className='check editor' active={user_up}    onActiveChange={({active}) => { setUser_up(active);    setIsModified(true); }}>
                                         Change Password
                                     </Check>
-                                    <Check className='check editor' active={user_ui}    onActiveChange={({active}) => { setUser_ui(active);    setIsModelModified(true); }}>
+                                    <Check className='check editor' active={user_ui}    onActiveChange={({active}) => { setUser_ui(active);    setIsModified(true); }}>
                                         Change Image
                                     </Check>
-                                    <Check className='check editor' active={user_ur}    onActiveChange={({active}) => { setUser_ur(active);    setIsModelModified(true); }}>
+                                    <Check className='check editor' active={user_ur}    onActiveChange={({active}) => { setUser_ur(active);    setIsModified(true); }}>
                                         Change Role
                                     </Check>
-                                    <Check className='check editor' active={user_d}     onActiveChange={({active}) => { setUser_d(active);     setIsModelModified(true); }}>
+                                    <Check className='check editor' active={user_d}     onActiveChange={({active}) => { setUser_d(active);     setIsModified(true); }}>
                                         Delete
                                     </Check>
                                 </AccordionItem>
                                 <AccordionItem label='Roles'    inheritEnabled={false}>
-                                    <Check className='check editor' active={role_c}     onActiveChange={({active}) => { setRole_c(active);     setIsModelModified(true); }}>
+                                    <Check className='check editor' active={role_c}     onActiveChange={({active}) => { setRole_c(active);     setIsModified(true); }}>
                                         Add New
                                     </Check>
-                                    <Check className='check editor' active={role_u}     onActiveChange={({active}) => { setRole_u(active);     setIsModelModified(true); }}>
+                                    <Check className='check editor' active={role_u}     onActiveChange={({active}) => { setRole_u(active);     setIsModified(true); }}>
                                         Change
                                     </Check>
-                                    <Check className='check editor' active={role_d}     onActiveChange={({active}) => { setRole_d(active);     setIsModelModified(true); }}>
+                                    <Check className='check editor' active={role_d}     onActiveChange={({active}) => { setRole_d(active);     setIsModified(true); }}>
                                         Delete
                                     </Check>
                                 </AccordionItem>
