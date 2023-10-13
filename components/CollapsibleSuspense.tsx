@@ -105,7 +105,7 @@ const CollapsibleSuspense = (props: CollapsibleSuspenseProps): JSX.Element|null 
     
     
     // jsx:
-    if (visibilityState === VisibilityState.CollapseEnd) return null; // causing to discard (lost) the <EditUserDialogInternal>'s states
+    if (visibilityState === VisibilityState.CollapseEnd) return null; // causing to discard (lost) the <CollapsibleComponent>'s states
     return React.cloneElement<CollapsibleProps<ExpandedChangeEvent> & CollapsibleEventProps>(collapsibleComponent,
         // props:
         {
