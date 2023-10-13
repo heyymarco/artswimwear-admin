@@ -62,7 +62,6 @@ const CollapsibleWithSuspense = (props: CollapsibleWithSuspenseProps): JSX.Eleme
     
     // states:
     const [visibilityState, setVisibilityState] = useState<VisibilityState>(isComponentExpanded ? VisibilityState.ExpandEnd : VisibilityState.CollapseEnd);
-    // const [isVisibleDelayed, setIsVisibleDelayed] = useState<boolean>
     
     
     
@@ -89,17 +88,24 @@ const CollapsibleWithSuspense = (props: CollapsibleWithSuspenseProps): JSX.Eleme
         if (isComponentExpanded) setVisibilityState(VisibilityState.ExpandStart);
     }, [isComponentExpanded]);
     
-    // handle render transition from [ExpandStart => ExpandEnd]:
+    // handle render transition from [ExpandStart => delay => ExpandEnd]:
     useEffect(() => {
-        switch (visibilityState) {
-            case VisibilityState.ExpandStart:
-                setVisibilityState(VisibilityState.ExpandEnd);
-                break;
-            
-            // case VisibilityState.CollapseStart:
-            //     setVisibilityState(VisibilityState.CollapseEnd);
-            //     break;
-        } // switch
+        // conditions:
+        if (visibilityState !== VisibilityState.ExpandStart) return; // ignores states other than `ExpandStart`
+        
+        
+        
+        // setups:
+        const asyncDelayedTransition = setTimeout(() => { // a brief moment for rendering `collapsed state`
+            setVisibilityState(VisibilityState.ExpandEnd);
+        }, 0);
+        
+        
+        
+        // cleanups:
+        return () => {
+            clearTimeout(asyncDelayedTransition);
+        };
     }, [visibilityState]);
     
     
