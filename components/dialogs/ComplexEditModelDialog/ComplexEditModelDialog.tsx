@@ -309,7 +309,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
     
     
     // handlers:
-    const handleSaveModel      = useEvent(async () => {
+    const handleSave           = useEvent(async () => {
         if (!privilegeWrite) return;
         
         
@@ -384,7 +384,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
             showMessageFetchError(error);
         } // try
     });
-    const handleSaveSideModel  = useEvent(async (commitImages : boolean) => {
+    const handleSideSave       = useEvent(async (commitImages : boolean) => {
         if (!privilegeWrite) return;
         
         
@@ -426,7 +426,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
             switch (answer) {
                 case 'save':
                     // then do a save (it will automatically close the editor after successfully saving):
-                    handleSaveModel();
+                    handleSave();
                     break;
                 case 'dontSave':
                     // then close the editor (without saving):
@@ -443,7 +443,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
     });
     const handleFinalizing     = useEvent(async (event: EditModelDialogResult|Promise<EditModelDialogResult>, commitImages : boolean, otherTasks : Promise<any>[] = []) => {
         await Promise.all([
-            handleSaveSideModel(commitImages),
+            handleSideSave(commitImages),
             ...otherTasks,
         ]);
         
@@ -567,7 +567,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
                     </Tab>
                 </ValidationProvider>
                 <CardFooter>
-                    {privilegeWrite && <ButtonIcon className='btnSave'   icon={isCommiting ? 'busy' : 'save'  } theme='success' onClick={handleSaveModel}>Save</ButtonIcon>}
+                    {privilegeWrite && <ButtonIcon className='btnSave'   icon={isCommiting ? 'busy' : 'save'  } theme='success' onClick={handleSave}>Save</ButtonIcon>}
                     <ButtonIcon className='btnCancel' icon={privilegeWrite ? (isReverting ? 'busy' : 'cancel') : 'done'} theme={privilegeWrite ? 'danger' : 'primary'}  onClick={handleCloseDialog}>{isReverting ? 'Reverting' : (privilegeWrite ? 'Cancel' : 'Close')}</ButtonIcon>
                 </CardFooter>
             </ModalCard>
