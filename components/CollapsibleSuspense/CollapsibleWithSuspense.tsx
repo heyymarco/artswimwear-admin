@@ -41,7 +41,7 @@ export interface CollapsibleWithSuspenseProps {
     // components:
     suspendableComponent : React.ReactComponentElement<any, SuspendableProps>
 }
-const CollapsibleWithSuspense = (props: CollapsibleWithSuspenseProps): JSX.Element|null => {
+const SuspendableWithSuspense = (props: CollapsibleWithSuspenseProps): JSX.Element|null => {
     // rest props:
     const {
         // components:
@@ -117,6 +117,6 @@ const CollapsibleWithSuspense = (props: CollapsibleWithSuspenseProps): JSX.Eleme
     );
 };
 export {
-    CollapsibleWithSuspense,
-    CollapsibleWithSuspense as default,
+    SuspendableWithSuspense,
+    SuspendableWithSuspense as default,
 }
