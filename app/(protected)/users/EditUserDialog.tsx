@@ -88,11 +88,9 @@ import {
 import {
     EditRoleDialog,
 }                           from '@/components/dialogs/EditRoleDialog'
-
-// private components:
 import {
     RolePreview,
-}                           from './RolePreview'
+}                           from '@/components/views//RolePreview'
 
 // stores:
 import {
