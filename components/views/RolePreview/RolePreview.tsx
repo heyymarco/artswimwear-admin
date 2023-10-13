@@ -79,7 +79,7 @@ import './RolePreviewStyles';
 
 
 // react components:
-interface RolePreviewProps extends Omit<ModelPreviewProps<RoleDetail>, 'onChange'> {
+export interface RolePreviewProps extends Omit<ModelPreviewProps<RoleDetail>, 'onChange'> {
     // data:
     selectedRoleId  : string|null
     
