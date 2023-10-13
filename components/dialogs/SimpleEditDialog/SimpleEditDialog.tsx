@@ -42,8 +42,22 @@ export interface SimpleEditDialogProps<TValue extends any, TModel extends {}, TE
     
     // handlers:
     onClose         : () => void
-    onUpdateModel   : UpdateModelEventHandler<TValue, TModel, TEdit>
+    onUpdate        : UpdateModelEventHandler<TValue, TModel, TEdit>
 }
+export type ImplementedSimpleEditDialogProps<TValue extends any, TModel extends {}, TEdit extends string> = Omit<SimpleEditDialogProps<TValue, TModel, TEdit>,
+    // states:
+    |'isLoading'
+    
+    
+    
+    // data:
+    |'initialValue'
+    
+    
+    
+    // handlers:
+    |'onUpdate'
+>
 export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit extends string>(props: SimpleEditDialogProps<TValue, TModel, TEdit>) => {
     // styles:
     const styleSheet = useSimpleEditDialogStyleSheet();
@@ -71,7 +85,7 @@ export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit ex
         
         // handlers:
         onClose,
-        onUpdateModel,
+        onUpdate,
     } = props;
     
     
@@ -129,7 +143,7 @@ export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit ex
         
         
         try {
-            await onUpdateModel(editorValue, edit, model);
+            await onUpdate(editorValue, edit, model);
             
             onClose();
         }

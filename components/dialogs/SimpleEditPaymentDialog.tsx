@@ -1,30 +1,39 @@
 'use client'
 
-import { useEvent } from '@reusable-ui/core'
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useEvent,
+}                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
-import { InitialValueEventHandler, UpdateModelEventHandler, SimpleEditDialogProps, SimpleEditDialog } from '@/components/dialogs/SimpleEditDialog'
-import { OrderDetail, useUpdateOrder } from '@/store/features/api/apiSlice'
-import type { PaymentValue } from '../editors/PaymentEditor/PaymentEditor';
+// internal components:
+import {
+    InitialValueEventHandler,
+    UpdateModelEventHandler,
+    ImplementedSimpleEditDialogProps,
+    SimpleEditDialog,
+}                           from '@/components/dialogs/SimpleEditDialog'
+import type {
+    PaymentValue,
+}                           from '@/components/editors/PaymentEditor/PaymentEditor'
+
+// stores:
+import {
+    // types:
+    OrderDetail,
+    
+    
+    
+    // hooks:
+    useUpdateOrder,
+}                           from '@/store/features/api/apiSlice'
 
 
 
 // react components:
 export interface SimpleEditPaymentDialogProps
     extends
-        Omit<SimpleEditDialogProps<PaymentValue, OrderDetail, 'paymentMethod'>,
-            // states:
-            |'isLoading'
-            
-            
-            
-            // data:
-            |'initialValue'
-            
-            
-            
-            // handlers:
-            |'onUpdateModel'
-        >
+        ImplementedSimpleEditDialogProps<PaymentValue, OrderDetail, 'paymentMethod'>
 {
 }
 export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => {
@@ -37,7 +46,7 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
     const handleInitialValue = useEvent<InitialValueEventHandler<PaymentValue, OrderDetail, 'paymentMethod'>>((edit, model) => {
         return model[edit];
     });
-    const handleUpdateModel  = useEvent<UpdateModelEventHandler<PaymentValue, OrderDetail, 'paymentMethod'>>(async (value, edit, model) => {
+    const handleUpdate       = useEvent<UpdateModelEventHandler<PaymentValue, OrderDetail, 'paymentMethod'>>(async (value, edit, model) => {
         await updateOrder({
             id     : model.id,
             
@@ -71,7 +80,7 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
             
             
             // handlers:
-            onUpdateModel={handleUpdateModel}
+            onUpdate={handleUpdate}
         />
     );
 };

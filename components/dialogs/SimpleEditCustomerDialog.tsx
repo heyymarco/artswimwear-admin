@@ -1,29 +1,36 @@
 'use client'
 
-import { useEvent } from '@reusable-ui/core'
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useEvent,
+}                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
-import { InitialValueEventHandler, UpdateModelEventHandler, SimpleEditDialogProps, SimpleEditDialog } from '@/components/dialogs/SimpleEditDialog'
-import { OrderDetail, useUpdateOrder } from '@/store/features/api/apiSlice'
+// internal components:
+import {
+    InitialValueEventHandler,
+    UpdateModelEventHandler,
+    ImplementedSimpleEditDialogProps,
+    SimpleEditDialog,
+}                           from '@/components/dialogs/SimpleEditDialog'
+
+// stores:
+import {
+    // types:
+    OrderDetail,
+    
+    
+    
+    // hooks:
+    useUpdateOrder,
+}                           from '@/store/features/api/apiSlice'
 
 
 
 // react components:
 export interface SimpleEditCustomerDialogProps<TValue extends any>
     extends
-        Omit<SimpleEditDialogProps<TValue, OrderDetail, keyof NonNullable<OrderDetail['customer']>>,
-            // states:
-            |'isLoading'
-            
-            
-            
-            // data:
-            |'initialValue'
-            
-            
-            
-            // handlers:
-            |'onUpdateModel'
-        >
+        ImplementedSimpleEditDialogProps<TValue, OrderDetail, keyof NonNullable<OrderDetail['customer']>>
 {
 }
 export const SimpleEditCustomerDialog = <TValue extends any>(props: SimpleEditCustomerDialogProps<TValue>) => {
@@ -36,7 +43,7 @@ export const SimpleEditCustomerDialog = <TValue extends any>(props: SimpleEditCu
     const handleInitialValue = useEvent<InitialValueEventHandler<TValue, OrderDetail, keyof NonNullable<OrderDetail['customer']>>>((edit, model) => {
         return model.customer?.[edit] as TValue;
     });
-    const handleUpdateModel  = useEvent<UpdateModelEventHandler<TValue, OrderDetail, keyof NonNullable<OrderDetail['customer']>>>(async (value, edit, model) => {
+    const handleUpdate       = useEvent<UpdateModelEventHandler<TValue, OrderDetail, keyof NonNullable<OrderDetail['customer']>>>(async (value, edit, model) => {
         await updateOrder({
             id         : model.id,
             
@@ -67,7 +74,7 @@ export const SimpleEditCustomerDialog = <TValue extends any>(props: SimpleEditCu
             
             
             // handlers:
-            onUpdateModel={handleUpdateModel}
+            onUpdate={handleUpdate}
         />
     );
 };

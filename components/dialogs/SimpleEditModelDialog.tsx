@@ -4,9 +4,6 @@
 import type {
     MutationDefinition,
     BaseQueryFn,
-    FetchArgs,
-    FetchBaseQueryError,
-    FetchBaseQueryMeta,
 }                           from '@reduxjs/toolkit/dist/query'
 import type {
     MutationTrigger,
@@ -22,7 +19,7 @@ import {
 import {
     InitialValueEventHandler,
     UpdateModelEventHandler,
-    SimpleEditDialogProps,
+    ImplementedSimpleEditDialogProps,
     SimpleEditDialog,
 }                           from '@/components/dialogs/SimpleEditDialog'
 
@@ -47,20 +44,7 @@ export type UpdateModelApi<TModel extends Model> = readonly [
 // react components:
 export interface SimpleEditModelDialogProps<TModel extends Model>
     extends
-        Omit<SimpleEditDialogProps<TModel[keyof TModel], TModel, Extract<keyof TModel, string>>,
-            // states:
-            |'isLoading'
-            
-            
-            
-            // data:
-            |'initialValue'
-            
-            
-            
-            // handlers:
-            |'onUpdateModel'
-        >
+        ImplementedSimpleEditDialogProps<TModel[keyof TModel], TModel, Extract<keyof TModel, string>>
 {
     // data:
     updateModelApi : UpdateModelApi<TModel> | (() => UpdateModelApi<TModel>)
@@ -83,7 +67,7 @@ export const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditMod
     const handleInitialValue = useEvent<InitialValueEventHandler<TModel[keyof TModel], TModel, Extract<keyof TModel, string>>>((edit, model) => {
         return model[edit] as TModel[keyof TModel];
     });
-    const handleUpdateModel  = useEvent<UpdateModelEventHandler<TModel[keyof TModel], TModel, Extract<keyof TModel, string>>>(async (value, edit, model) => {
+    const handleUpdate       = useEvent<UpdateModelEventHandler<TModel[keyof TModel], TModel, Extract<keyof TModel, string>>>(async (value, edit, model) => {
         if (value === '') value = null as typeof value; // auto convert empty string to null
         await updateModel({
             // @ts-ignore
@@ -114,7 +98,7 @@ export const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditMod
             
             
             // handlers:
-            onUpdateModel={handleUpdateModel}
+            onUpdate={handleUpdate}
         />
     );
 };
