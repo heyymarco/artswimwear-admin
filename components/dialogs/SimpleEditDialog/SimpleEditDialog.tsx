@@ -1,14 +1,68 @@
 'use client'
 
-import { default as React } from 'react'
-import { useEffect, useRef, useState } from 'react'
+// react:
+import {
+    // react:
+    default as React,
+    
+    
+    
+    // hooks:
+    useRef,
+    useState,
+}                           from 'react'
 
-import { dynamicStyleSheet } from '@cssfn/cssfn-react'
+// cssfn:
+import {
+    // style sheets:
+    dynamicStyleSheet,
+}                           from '@cssfn/cssfn-react'               // writes css in react hook
 
-import { AccessibilityProvider, ValidationProvider, useEvent, useMountedFlag } from '@reusable-ui/core'
-import { ButtonIcon, CardBody, useDialogMessage } from '@reusable-ui/components'
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useEvent,
+    EventHandler,
+    useMountedFlag,
+    
+    
+    
+    // an accessibility management system:
+    AccessibilityProvider,
+    
+    
+    
+    // a validation management system:
+    ValidationProvider,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
-import type { EditorProps } from '@/components/editors/Editor'
+// reusable-ui components:
+import {
+    // simple-components:
+    ButtonIcon,
+    
+    
+    
+    // layout-components:
+    CardBody,
+    
+    
+    
+    // dialog-components:
+    ModalExpandedChangeEvent,
+    ModalCardProps,
+    ModalCard,
+    
+    
+    
+    // utility-components:
+    useDialogMessage,
+}                           from '@reusable-ui/components'          // a set of official Reusable-UI components
+
+// internal components:
+import type {
+    EditorProps,
+}                           from '@/components/editors/Editor'
 
 
 
@@ -22,7 +76,14 @@ const useSimpleEditDialogStyleSheet = dynamicStyleSheet(
 // react components:
 export type InitialValueHandler<TValue extends any, TModel extends {}, TEdit extends string> = (edit: TEdit, model: TModel) => TValue
 export type UpdateHandler<TValue extends any, TModel extends {}, TEdit extends string> = (value: TValue, edit: TEdit, model: TModel) => Promise<void>
-export interface SimpleEditDialogProps<TValue extends any, TModel extends {}, TEdit extends string> {
+export interface SimpleEditDialogProps<TValue extends any, TModel extends {}, TEdit extends string>
+    extends
+        // bases:
+        Omit<ModalCardProps<HTMLElement, ModalExpandedChangeEvent>,
+            // children:
+            |'children'        // already taken over
+        >
+{
     // states:
     isLoading       : boolean
     
@@ -41,7 +102,6 @@ export interface SimpleEditDialogProps<TValue extends any, TModel extends {}, TE
     
     
     // handlers:
-    onClose         : () => void
     onUpdate        : UpdateHandler<TValue, TModel, TEdit>
 }
 export type ImplementedSimpleEditDialogProps<TValue extends any, TModel extends {}, TEdit extends string> = Omit<SimpleEditDialogProps<TValue, TModel, TEdit>,
@@ -58,7 +118,7 @@ export type ImplementedSimpleEditDialogProps<TValue extends any, TModel extends 
     // handlers:
     |'onUpdate'
 >
-export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit extends string>(props: SimpleEditDialogProps<TValue, TModel, TEdit>) => {
+const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit extends string>(props: SimpleEditDialogProps<TValue, TModel, TEdit>) => {
     // styles:
     const styleSheet = useSimpleEditDialogStyleSheet();
     
@@ -84,9 +144,10 @@ export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit ex
         
         
         // handlers:
-        onClose,
         onUpdate,
-    } = props;
+        
+        onExpandedChange,
+    ...restModalCardProps} = props;
     
     
     
@@ -143,15 +204,16 @@ export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit ex
         
         
         try {
-            await onUpdate(editorValue, edit, model);
+            const updatingModelTask = onUpdate(editorValue, edit, model);
             
-            onClose();
+            await handleFinalizing([updatingModelTask]); // result: created|mutated
         }
         catch (error: any) {
             showMessageFetchError(error);
         } // try
     });
-    const handleClosing = useEvent(async () => {
+    
+    const handleCloseDialog = useEvent(async () => {
         if (isModified) {
             // conditions:
             const answer = await showMessage<'save'|'dontSave'|'continue'>({
@@ -179,7 +241,7 @@ export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit ex
                     break;
                 case 'dontSave':
                     // then close the editor (without saving):
-                    onClose();
+                    await handleFinalizing(); // result: discard changes
                     break;
                 default:
                     // do nothing (continue editing)
@@ -187,85 +249,86 @@ export const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit ex
             } // switch
         }
         else {
-            onClose();
+            await handleFinalizing(); // result: no changes
         } // if
     });
-    const handleKeyDown : React.KeyboardEventHandler<HTMLElement> = useEvent((event) => {
-        switch (event.key) {
-            case 'Enter':
-                event.preventDefault();
-                handleSave();
-                break;
-            
-            case 'Escape':
-                event.preventDefault();
-                handleClosing();
-                break;
-        } // switch
+    const handleFinalizing     = useEvent(async (otherTasks : Promise<any>[] = []) => {
+        await Promise.all(otherTasks);
+        
+        
+        
+        onExpandedChange?.({
+            expanded   : false,
+            actionType : 'ui',
+        });
     });
     
-    
-    
-    // dom effects:
-    useEffect(() => {
+    const handleExpandedChange : EventHandler<ModalExpandedChangeEvent> = useEvent((event) => {
         // conditions:
-        const editorElm = editorRef.current;
-        if (!editorElm) return;
-        if (typeof(editorElm.setSelectionRange) !== 'function') return;
+        if (event.actionType === 'shortcut') return; // prevents closing modal by accidentally pressing [esc]
         
         
         
-        // setups:
-        const cancelFocus = setTimeout(() => {
-            const originType = editorElm.type;
-            try {
-                if (originType !== 'text') editorElm.type = 'text';
-                editorElm.setSelectionRange(0, -1);
-            }
-            finally {
-                if (originType !== 'text') editorElm.type = originType;
-            } // try
-            editorElm.focus({ preventScroll: true });
-        }, 0);
-        
-        
-        
-        // cleanups:
-        return () => {
-            clearTimeout(cancelFocus);
-        }
-    }, []);
+        // actions:
+        onExpandedChange?.(event);
+    });
     
     
     
     // jsx:
     return (
-        <CardBody className={styleSheet.main} onKeyDown={handleKeyDown}>
-            <AccessibilityProvider enabled={!isLoading}>
-                <ValidationProvider enableValidation={enableValidation} inheritValidation={false}>
-                    {React.cloneElement<EditorProps<Element, TValue>>(editorComponent,
-                        // props:
-                        {
-                            elmRef    : editorRef,
-                            
-                            
-                            
-                            size      : 'sm',
-                            
-                            
-                            
-                            className : 'editor',
-                            
-                            
-                            
-                            value     : editorValue,
-                            onChange  : (value: TValue) => { setEditorValue(value); setIsModified(true); },
-                        },
-                    )}
-                </ValidationProvider>
-                <ButtonIcon className='btnSave' icon={isLoading ? 'busy' : 'save'} theme='success' size='sm' onClick={handleSave}>Save</ButtonIcon>
-                <ButtonIcon className='btnCancel' icon='cancel' theme='danger' size='sm' onClick={handleClosing}>Cancel</ButtonIcon>
-            </AccessibilityProvider>
-        </CardBody>
+        <AccessibilityProvider enabled={!isLoading}>
+            <ModalCard
+                // other props:
+                {...restModalCardProps}
+                
+                
+                
+                // variants:
+                theme          = {props.theme          ?? 'primary'   }
+                backdropStyle  = {props.backdropStyle  ?? 'static'    }
+                modalCardStyle = {props.modalCardStyle ?? 'scrollable'}
+                
+                
+                
+                // auto focusable:
+                autoFocusOn={props.autoFocusOn ?? editorRef}
+                
+                
+                
+                // handlers:
+                onExpandedChange = {handleExpandedChange}
+            >
+                <CardBody className={styleSheet.main}>
+                    <ValidationProvider enableValidation={enableValidation} inheritValidation={false}>
+                        {React.cloneElement<EditorProps<Element, TValue>>(editorComponent,
+                            // props:
+                            {
+                                elmRef    : editorRef,
+                                
+                                
+                                
+                                size      : 'sm',
+                                
+                                
+                                
+                                className : 'editor',
+                                
+                                
+                                
+                                value     : editorValue,
+                                onChange  : (value: TValue) => { setEditorValue(value); setIsModified(true); },
+                            },
+                        )}
+                    </ValidationProvider>
+                    <ButtonIcon className='btnSave' icon={isLoading ? 'busy' : 'save'} theme='success' size='sm' onClick={handleSave}>Save</ButtonIcon>
+                    <ButtonIcon className='btnCancel' icon='cancel' theme='danger' size='sm' onClick={handleCloseDialog}>Cancel</ButtonIcon>
+                </CardBody>
+            </ModalCard>
+        </AccessibilityProvider>
     );
+};
+export {
+    SimpleEditDialog,
+    SimpleEditDialog as default,
 }
