@@ -97,7 +97,6 @@ const SuspendableWithSuspense = <TExpandedChangeEvent extends ExpandedChangeEven
         
         // actions:
         setVisibilityState(VisibilityState.ExpandStart);
-        console.log('VisibilityState.ExpandStart')
     }, [isComponentExpanded]);
     
     // handle render transition from [ExpandStart => delay => ExpandEnd]:
