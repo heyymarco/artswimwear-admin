@@ -37,11 +37,11 @@ const enum VisibilityState {
 
 
 // react components:
-export interface CollapsibleWithSuspenseProps {
+export interface SuspendableWithSuspenseProps {
     // components:
     suspendableComponent : React.ReactComponentElement<any, SuspendableProps>
 }
-const SuspendableWithSuspense = (props: CollapsibleWithSuspenseProps): JSX.Element|null => {
+const SuspendableWithSuspense = (props: SuspendableWithSuspenseProps): JSX.Element|null => {
     // rest props:
     const {
         // components:

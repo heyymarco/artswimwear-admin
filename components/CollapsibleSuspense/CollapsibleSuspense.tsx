@@ -23,8 +23,8 @@ import type {
 }                           from './types'
 import {
     // react components:
-    CollapsibleWithSuspense,
-}                           from './CollapsibleWithSuspense'
+    SuspendableWithSuspense,
+}                           from './SuspendableWithSuspense'
 
 
 
@@ -58,10 +58,10 @@ const CollapsibleSuspense = (props: CollapsibleSuspenseProps): JSX.Element|null 
             
             // jsx:
             return (
-                /* wrap suspendable with <CollapsibleWithSuspense> */
-                <CollapsibleWithSuspense
+                /* wrap suspendable with <SuspendableWithSuspense> */
+                <SuspendableWithSuspense
                     // other props:
-                    {...suspendableProps} // steals all suspendable's props, so the <Owner> can recognize the <CollapsibleWithSuspense> as <TheirChild>
+                    {...suspendableProps} // steals all suspendable's props, so the <Owner> can recognize the <SuspendableWithSuspense> as <TheirChild>
                     
                     
                     
