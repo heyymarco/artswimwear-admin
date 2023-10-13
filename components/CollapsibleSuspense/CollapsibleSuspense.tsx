@@ -17,7 +17,7 @@ import {
 
 // internals:
 import type {
-    SuspendableProps,
+    CollapsibleSuspendableProps,
 }                           from './types'
 import {
     // react components:
@@ -43,37 +43,37 @@ const CollapsibleSuspense = (props: CollapsibleSuspenseProps): JSX.Element|null 
     // children:
     const wrappedChildren = useMemo<React.ReactNode[]>(() =>
         flattenChildren(children)
-        .map<React.ReactNode>((suspendable, childIndex) => {
+        .map<React.ReactNode>((collapsibleSuspendable, childIndex) => {
             // conditions:
-            if (!React.isValidElement<SuspendableProps>(suspendable)) return suspendable; // not a <SuspendableProps> => place it anyway
+            if (!React.isValidElement<CollapsibleSuspendableProps>(collapsibleSuspendable)) return collapsibleSuspendable; // not a <CollapsibleSuspendableProps> => place it anyway
             
             
             
             // props:
-            const suspendableProps = suspendable.props;
+            const suspendableProps = collapsibleSuspendable.props;
             
             
             
             // jsx:
             return (
-                /* wrap suspendable with <SuspendableWithSuspense> */
+                /* wrap collapsibleSuspendable with <SuspendableWithSuspense> */
                 <SuspendableWithSuspense
                     // other props:
-                    {...suspendableProps} // steals all suspendable's props, so the <Owner> can recognize the <SuspendableWithSuspense> as <TheirChild>
+                    {...suspendableProps} // steals all collapsibleSuspendable's props, so the <Owner> can recognize the <SuspendableWithSuspense> as <TheirChild>
                     
                     
                     
                     // identifiers:
-                    key={suspendable.key ?? childIndex}
+                    key={collapsibleSuspendable.key ?? childIndex}
                     
                     
                     
                     // components:
                     suspendableComponent={
-                        // clone suspendable element with (almost) blank props:
-                        <suspendable.type
+                        // clone collapsibleSuspendable element with (almost) blank props:
+                        <collapsibleSuspendable.type
                             // identifiers:
-                            key={suspendable.key}
+                            key={collapsibleSuspendable.key}
                             
                             
                             

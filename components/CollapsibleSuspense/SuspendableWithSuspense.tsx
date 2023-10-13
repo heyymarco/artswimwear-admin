@@ -26,7 +26,7 @@ import {
 
 // internals:
 import type {
-    SuspendableProps,
+    CollapsibleSuspendableProps,
 }                           from './types'
 
 
@@ -45,10 +45,10 @@ const enum VisibilityState {
 export interface SuspendableWithSuspenseProps<TExpandedChangeEvent extends ExpandedChangeEvent = ExpandedChangeEvent>
     extends
         // bases:
-        SuspendableProps<TExpandedChangeEvent>
+        CollapsibleSuspendableProps<TExpandedChangeEvent>
 {
     // components:
-    suspendableComponent : React.ReactComponentElement<any, SuspendableProps<TExpandedChangeEvent>>
+    suspendableComponent : React.ReactComponentElement<any, CollapsibleSuspendableProps<TExpandedChangeEvent>>
 }
 const SuspendableWithSuspense = <TExpandedChangeEvent extends ExpandedChangeEvent = ExpandedChangeEvent>(props: SuspendableWithSuspenseProps): JSX.Element|null => {
     // rest props:
@@ -123,7 +123,7 @@ const SuspendableWithSuspense = <TExpandedChangeEvent extends ExpandedChangeEven
     
     // jsx:
     if (visibilityState === VisibilityState.CollapseEnd) return null; // causing to discard (lost) the <CollapsibleComponent>'s states
-    return React.cloneElement<SuspendableProps<TExpandedChangeEvent>>(suspendableComponent,
+    return React.cloneElement<CollapsibleSuspendableProps<TExpandedChangeEvent>>(suspendableComponent,
         // props:
         {
             // other props:

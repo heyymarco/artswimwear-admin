@@ -14,10 +14,10 @@ import {
 
 
 // types:
-export interface CollapsibleEventProps {
+interface CollapsibleEventProps {
     onExpandStart   ?: EventHandler<any>
     onExpandEnd     ?: EventHandler<any>
     onCollapseStart ?: EventHandler<any>
     onCollapseEnd   ?: EventHandler<any>
 }
-export type SuspendableProps<TExpandedChangeEvent extends ExpandedChangeEvent = ExpandedChangeEvent> = CollapsibleProps<TExpandedChangeEvent> & CollapsibleEventProps
+export type CollapsibleSuspendableProps<TExpandedChangeEvent extends ExpandedChangeEvent = ExpandedChangeEvent> = CollapsibleProps<TExpandedChangeEvent> & CollapsibleEventProps
