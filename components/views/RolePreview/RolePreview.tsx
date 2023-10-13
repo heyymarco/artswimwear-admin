@@ -74,7 +74,7 @@ import type {
 // styles:
 const useRolePreviewStyleSheet = dynamicStyleSheet(
     () => import(/* webpackPrefetch: true */'./RolePreviewStyles')
-, { id: 'r52809dkaf' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
+, { specificityWeight: 2, id: 'r52809dkaf' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 import './RolePreviewStyles';
 
 
