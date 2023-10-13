@@ -237,13 +237,13 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
         } // if
     });
     
-    const handleUpdateSideModel      = useEvent<UpdateSideModelHandler>(async () => {
-        await handleSaveSideModel(/*commitImages = */true);
+    const handleSideUpdate           = useEvent<UpdateSideModelHandler>(async () => {
+        await handleSideSave(/*commitImages = */true);
     });
-    const handleDeleteSideModel      = useEvent<DeleteSideModelHandler>(async () => {
-        await handleSaveSideModel(/*commitImages = */false);
+    const handleSideDelete           = useEvent<DeleteSideModelHandler>(async () => {
+        await handleSideSave(/*commitImages = */false);
     });
-    const handleSaveSideModel        = useEvent(async (commitImages : boolean) => {
+    const handleSideSave             = useEvent(async (commitImages : boolean) => {
         // initial_image have been replaced with new image:
         if (commitImages && initialImageRef.current && (initialImageRef.current !== image)) {
             // register to actual_delete the initial_image when committed:
@@ -369,8 +369,8 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
             onDelete={handleDelete}
             // onAfterDelete={undefined}
             
-            onUpdateSideModel={handleUpdateSideModel}
-            onDeleteSideModel={handleDeleteSideModel}
+            onSideUpdate={handleSideUpdate}
+            onSideDelete={handleSideDelete}
             
             onDeleteModelConfirm={handleDeleteModelConfirm}
             onUnsavedModelConfirm={handleUnsavedModelConfirm}
@@ -487,7 +487,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                             }).unwrap();
                             
                             // replace => delete prev drafts:
-                            await handleDeleteSideModel();
+                            await handleSideDelete();
                             
                             // register to actual_delete the new_image when reverted:
                             draftDeletedImages.set(imageId, false /* false: delete when reverted, noop when committed */);
