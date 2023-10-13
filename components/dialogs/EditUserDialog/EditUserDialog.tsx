@@ -559,7 +559,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                         
                         
                         // handlers:
-                        onModelCreated={(value) => {
+                        onCreateModel={(value) => {
                             setRoleId(value);
                             setIsModelModified(true);
                         }}

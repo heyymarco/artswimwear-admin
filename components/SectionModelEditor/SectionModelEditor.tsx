@@ -137,7 +137,7 @@ export interface ModelCreateOuterProps
     
     
     // handlers:
-    onModelCreated       ?: EventHandler<string>
+    onCreateModel        ?: EventHandler<string>
 }
 export const ModelCreateOuter = (props: ModelCreateOuterProps) => {
     // styles:
@@ -158,7 +158,7 @@ export const ModelCreateOuter = (props: ModelCreateOuterProps) => {
         
         
         // handlers:
-        onModelCreated,
+        onCreateModel,
     ...restListItemProps} = props;
     
     
@@ -188,7 +188,7 @@ export const ModelCreateOuter = (props: ModelCreateOuterProps) => {
     const handleCollapseEndInternal = useEvent<EventHandler<CollapseEvent>>(({result}) => {
         // actions:
         if (result) { // if closed of created Model (ignores of canceled or deleted Model)
-            onModelCreated?.(result);
+            onCreateModel?.(result);
         } // if
     });
     const handleCollapseEnd         = useMergeEvents(
