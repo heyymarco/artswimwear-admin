@@ -57,6 +57,7 @@ import {
 import type {
     // types:
     EditModelDialogExpandedChangeEvent,
+    DeleteModelHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
     EditRoleDialog,
@@ -92,7 +93,7 @@ export interface RolePreviewProps extends Omit<ModelPreviewProps<RoleDetail>, 'o
     
     // handlers:
     onChangeModel ?: EditorChangeEventHandler<string|null>
-    onDeleteModel ?: EventHandler<string>
+    onDelete      ?: DeleteModelHandler
 }
 const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     // styles:
@@ -125,7 +126,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         
         // handlers:
         onChangeModel,
-        onDeleteModel,
+        onDelete,
     ...restListItemProps} = props;
     const {
         id,
@@ -160,7 +161,9 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         if (!expanded) {
             // first: trigger the change (if any), before this <RolePreview> will be deleted:
             if (result === false) {
-                onDeleteModel?.(id);
+                onDelete?.({
+                    id : id,
+                });
             } // if
             
             

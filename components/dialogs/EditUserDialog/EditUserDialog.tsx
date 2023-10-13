@@ -218,14 +218,23 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
         if (!!sessionEmail && (sessionEmail.toLowerCase() === initialEmailRef.current.toLowerCase())) await updateSession(); // update the session if updated current user
     });
     
-    const handleDeleteModel          = useEvent<DeleteModelHandler>(async ({id}) => {
+    const handleDelete               = useEvent<DeleteModelHandler>(async ({id}) => {
         await deleteUser({
             id : id,
         }).unwrap();
     });
-    const handleCreate               = useEvent<CreateModelHandler>(async ({id}) => {
+    
+    const handleRoleCreate           = useEvent<CreateModelHandler>(async ({id}) => {
         setRoleId(id);
         setIsModelModified(true);
+    });
+    const handleRoleDelete           = useEvent<DeleteModelHandler>(async ({id}) => {
+        if (id && (id === roleId)) { // if currently selected
+            // the related role was deleted => set to null (no selection):
+            setRoleId(null);
+            setIsModelModified(true);
+            console.log('related role deleted'); // TODO: refresh the user model
+        } // if
     });
     
     const handleUpdateSideModel      = useEvent<UpdateSideModelHandler>(async () => {
@@ -357,7 +366,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
             onUpdateModel={handleUpdateModel}
             onAfterUpdateModel={handleAfterUpdateModel}
             
-            onDeleteModel={handleDeleteModel}
+            onDelete={handleDelete}
             // onAfterDeleteModel={undefined}
             
             onUpdateSideModel={handleUpdateSideModel}
@@ -544,14 +553,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                                 
                                 
                                 // handlers:
-                                onDeleteModel={(value) => {
-                                    if (value && (value === roleId)) { // if currently selected
-                                        // the related role was deleted => set to null (no selection):
-                                        setRoleId(null);
-                                        setIsModelModified(true);
-                                        console.log('related role deleted'); // TODO: refresh the user model
-                                    } // if
-                                }}
+                                onDelete={handleRoleDelete}
                             />
                         }
                         modelCreateComponent={
@@ -566,7 +568,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                         
                         
                         // handlers:
-                        onCreate={handleCreate}
+                        onCreate={handleRoleCreate}
                     />
             }</TabPanel>
         </>}</ComplexEditModelDialog>

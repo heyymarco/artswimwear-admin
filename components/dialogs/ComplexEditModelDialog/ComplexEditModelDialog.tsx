@@ -160,7 +160,7 @@ export interface ComplexEditModelDialogProps<TModel extends Model>
     onUpdateModel          : UpdateModelHandler
     onAfterUpdateModel    ?: AfterUpdateModelHandler
     
-    onDeleteModel          : DeleteModelHandler
+    onDelete               : DeleteModelHandler
     onAfterDeleteModel    ?: AfterDeleteModelHandler
     
     onUpdateSideModel     ?: UpdateSideModelHandler
@@ -199,7 +199,7 @@ export type ImplementedComplexEditModelDialogProps<TModel extends Model> = Omit<
     // handlers:
     |'onUpdateModel'         // already taken over
     |'onAfterUpdateModel'    // already taken over
-    |'onDeleteModel'         // already taken over
+    |'onDelete'              // already taken over
     |'onAfterDeleteModel'    // already taken over
     |'onUpdateSideModel'     // already taken over
     |'onDeleteSideModel'     // already taken over
@@ -253,7 +253,7 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
         onUpdateModel,
         onAfterUpdateModel,
         
-        onDeleteModel,
+        onDelete,
         onAfterDeleteModel,
         
         onUpdateSideModel,
@@ -346,7 +346,7 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
             showMessageFetchError(error);
         } // try
     });
-    const handleDeleteModel    = useEvent(async () => {
+    const handleDelete         = useEvent(async () => {
         // conditions:
         if (!model) return; // no model to delete => ignore
         const {
@@ -372,7 +372,7 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
         
         // actions:
         try {
-            const deletingModelTask = onDeleteModel({
+            const deletingModelTask = onDelete({
                 id : model.id,
             });
             
@@ -554,7 +554,7 @@ export const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditM
                             privilegeModelUpdate,
                         })}
                         {privilegeModelDelete && <TabPanel label={tabDelete} panelComponent={<Content theme='warning' className={styleSheet.tabDelete} />}>
-                            <ButtonIcon icon={isDeletingModel ? 'busy' : 'delete'} theme='danger' onClick={handleDeleteModel}>
+                            <ButtonIcon icon={isDeletingModel ? 'busy' : 'delete'} theme='danger' onClick={handleDelete}>
                                 Delete {!modelEntryName ? 'this ' : ''}<strong>{
                                     // the model name is entered:
                                     modelEntryName

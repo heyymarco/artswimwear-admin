@@ -218,7 +218,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
         if (!!currentRoleId && (currentRoleId === model?.id)) await updateSession(); // update the session if updated current role
     });
     
-    const handleDeleteModel          = useEvent<DeleteModelHandler>(async ({id}) => {
+    const handleDelete               = useEvent<DeleteModelHandler>(async ({id}) => {
         await deleteRole({
             id : id,
         }).unwrap();
@@ -300,7 +300,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             onUpdateModel={handleUpdateModel}
             onAfterUpdateModel={handleAfterUpdateModel}
             
-            onDeleteModel={handleDeleteModel}
+            onDelete={handleDelete}
             // onAfterDeleteModel={undefined}
             
             onDeleteModelConfirm={handleDeleteModelConfirm}
