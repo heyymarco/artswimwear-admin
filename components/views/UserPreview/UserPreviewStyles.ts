@@ -175,6 +175,11 @@ const usesUserPreviewLayout = () => { // the <ListItem> of user list
             ...children('.fullEditor', {
                 gridArea: 'fullEditor',
             }),
+            ...descendants('[role="dialog"]', {
+                // remove the padding of <Dialog>'s backdrop:
+                [paddingVars.paddingInline] : '0px',
+                [paddingVars.paddingBlock ] : '0px',
+            }),
         }),
         
         
