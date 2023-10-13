@@ -82,18 +82,18 @@ import './RolePreviewStyles';
 // react components:
 export interface RolePreviewProps extends Omit<ModelPreviewProps<RoleDetail>, 'onChange'> {
     // data:
-    selectedRoleId : string|null
+    selectedRoleId  : string|null
     
     
     
     // appearances:
-    isShown        : boolean
+    isShown         : boolean
     
     
     
     // handlers:
-    onChangeModel ?: EditorChangeEventHandler<string|null>
-    onDelete      ?: DeleteModelHandler
+    onChange       ?: EditorChangeEventHandler<string|null>
+    onDelete       ?: DeleteModelHandler
 }
 const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     // styles:
@@ -125,7 +125,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         
         
         // handlers:
-        onChangeModel,
+        onChange,
         onDelete,
     ...restListItemProps} = props;
     const {
@@ -154,7 +154,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         
         
         // actions:
-        onChangeModel?.(id || null); // null (no selection) if the id is an empty string
+        onChange?.(id || null); // null (no selection) if the id is an empty string
     });
     
     const handleExpandedChange = useEvent<EventHandler<EditModelDialogExpandedChangeEvent>>(({expanded, result}) => {

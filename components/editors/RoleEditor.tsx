@@ -123,22 +123,22 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
                         // props:
                         {
                             // identifiers:
-                            key           : modelPreviewComponent.key          ?? model.id,
+                            key      : modelPreviewComponent.key          ?? model.id,
                             
                             
                             
                             // data:
-                            model         : modelPreviewComponent.props.model  ?? model,
+                            model    : modelPreviewComponent.props.model  ?? model,
                             
                             
                             
                             // states:
-                            active        : modelPreviewComponent.props.active ?? ((value ?? '') === model.id),
+                            active   : modelPreviewComponent.props.active ?? ((value ?? '') === model.id),
                             
                             
                             
                             // handlers:
-                            onChangeModel : onChange,
+                            onChange : onChange,
                         },
                     )
                 );
