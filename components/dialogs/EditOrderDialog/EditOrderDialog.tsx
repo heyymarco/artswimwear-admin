@@ -246,9 +246,6 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         setEditMode('printOrder');
         handleMarkAsProcessing();
     });
-    const handlePrintDone         = useEvent(() => {
-        setEditMode(null);
-    });
     
     const handleMarkAsProcessing  = useEvent(() => {
         // TODO
@@ -261,26 +258,26 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     // dom effects:
     
-    // a fix for <Badge>'s position:
-    const [showBadge, setShowBadge] = useState<boolean>(false);
-    useEffect(() => {
-        // setups:
-        const cancelTimeout = setTimeout(() => {
-            setShowBadge(true);
-        }, 250);
-        
-        
-        
-        // cleanups:
-        return () => {
-            clearTimeout(cancelTimeout);
-        }
-    }, []);
-    
-    
-    
     // jsx:
     const OrderAndShipping = ({printMode = false}): JSX.Element|null => {
+        // a fix for <Badge>'s position:
+        const [showBadge, setShowBadge] = useState<boolean>(false);
+        useEffect(() => {
+            // setups:
+            const cancelTimeout = setTimeout(() => {
+                setShowBadge(true);
+            }, 250);
+            
+            
+            
+            // cleanups:
+            return () => {
+                clearTimeout(cancelTimeout);
+            }
+        }, []);
+        
+        
+        
         // jsx:
         return (
             <>
