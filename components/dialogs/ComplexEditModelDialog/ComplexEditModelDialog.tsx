@@ -144,10 +144,10 @@ export interface ComplexEditModelDialogProps<TModel extends Model>
     
     
     // stores:
-    isModified        : boolean
-    isCommiting       : boolean
+    isModified       ?: boolean
+    isCommiting      ?: boolean
     isReverting      ?: boolean
-    isDeleting        : boolean
+    isDeleting       ?: boolean
     
     
     
@@ -232,10 +232,10 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
         
         
         // stores:
-        isModified,
-        isCommiting,
+        isModified  = false,
+        isCommiting = false,
         isReverting = false,
-        isDeleting,
+        isDeleting  = false,
         
         
         
