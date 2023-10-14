@@ -97,7 +97,7 @@ const usePrintCaptionLayout = () => {
         }),
     });
 };
-const usePrintDialogLayout = () => {
+const usePrintDialogLayout  = () => {
     return style({
         // layouts:
         display        : 'flex',
