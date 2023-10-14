@@ -20,6 +20,11 @@ import {
     // react helper hooks:
     useEvent,
     useMergeClasses,
+    
+    
+    
+    // a set of client-side functions:
+    isClientSide,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -88,15 +93,10 @@ const PrintOrderDialog = (props: PrintOrderDialogProps): JSX.Element|null => {
     // hides the website's page, only show the print dialog:
     useEffect(() => {
         // setups:
+        const bodyElm = isClientSide ? document.body : undefined;
+        
         const visuallyHiddenClass = styleSheets.visuallyHidden;
-        
-        const headerElm = document.body.getElementsByTagName('header')?.[0];
-        const mainElm   = document.body.getElementsByTagName('main')?.[0];
-        const footerElm = document.body.getElementsByTagName('footer')?.[0];
-        
-        headerElm?.classList.add(visuallyHiddenClass);
-        mainElm?.classList.add(visuallyHiddenClass);
-        footerElm?.classList.add(visuallyHiddenClass);
+        bodyElm?.classList.add(visuallyHiddenClass);
         
         const cancelPrint = setTimeout(() => {
             window.print();
@@ -106,9 +106,7 @@ const PrintOrderDialog = (props: PrintOrderDialogProps): JSX.Element|null => {
         
         // cleanups:
         return () => {
-            headerElm?.classList.remove(visuallyHiddenClass);
-            mainElm?.classList.remove(visuallyHiddenClass);
-            footerElm?.classList.remove(visuallyHiddenClass);
+            bodyElm?.classList.remove(visuallyHiddenClass);
             
             clearTimeout(cancelPrint);
         };
@@ -140,13 +138,18 @@ const PrintOrderDialog = (props: PrintOrderDialogProps): JSX.Element|null => {
     
     
     // jsx:
-    const cardComponent  = <Card className={styleSheets.card} />;
-    const modalComponent = <Modal className={styleSheets.backdrop}>{cardComponent}</Modal>;
-    const popupComponent = <Popup className={styleSheets.popup} />
+    const cardComponent  = props.cardComponent  ?? <Card className={styleSheets.card} />;
+    const modalComponent = props.modalComponent ?? <Modal className={styleSheets.backdrop}>{cardComponent}</Modal>;
+    const popupComponent = props.popupComponent ?? <Popup className={styleSheets.popup} />;
     return (
         <ModalCard
             // other props:
             {...restModalCardProps}
+            
+            
+            
+            // global stackable:
+            viewport={props.viewport ?? (isClientSide ? document.documentElement : undefined)}
             
             
             
