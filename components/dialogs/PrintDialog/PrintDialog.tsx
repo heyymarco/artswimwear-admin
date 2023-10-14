@@ -36,10 +36,13 @@ import {
     
     // simple-components:
     ButtonIcon,
+    CloseButton,
     
     
     
     // layout-components:
+    CardHeader,
+    CardFooter,
     Card,
     
     
@@ -128,16 +131,20 @@ const PrintDialog = (props: PrintDialogProps): JSX.Element|null => {
         
         // classes:
         props.mainClass ?? styleSheets.printDialog,
+        'body',
     );
     
     
     
     // handlers:
-    const handleCloseDialog = useEvent(async () => {
+    const handleCloseDialog = useEvent(() => {
         props.onExpandedChange?.({
             expanded   : false,
             actionType : 'ui',
-        })
+        });
+    });
+    const handlePrintDialog = useEvent(() => {
+        window.print();
     });
     
     
@@ -163,15 +170,20 @@ const PrintDialog = (props: PrintDialogProps): JSX.Element|null => {
             modalComponent = {modalComponent}
             popupComponent = {popupComponent}
         >
+            <CardHeader className={styleSheets.printCaption}>
+                <h1>Print</h1>
+                <CloseButton icon='close' theme='primary' onClick={handleCloseDialog} />
+            </CardHeader>
             <Content
                 // classes:
                 classes={classes}
-                // theme='light'
             >
-                <ButtonIcon className={styleSheets.closeButton} icon='close' theme='primary' onClick={handleCloseDialog}>Close</ButtonIcon>
                 {children}
-                <ButtonIcon className={styleSheets.closeButton} icon='close' theme='primary' onClick={handleCloseDialog}>Close</ButtonIcon>
             </Content>
+            <CardFooter className={styleSheets.printCaption}>
+                <ButtonIcon icon='print' theme='primary' onClick={handlePrintDialog}>Print Again</ButtonIcon>
+                <ButtonIcon icon='done' theme='primary' onClick={handleCloseDialog}>Close</ButtonIcon>
+            </CardFooter>
         </ModalCard>
     );
 };

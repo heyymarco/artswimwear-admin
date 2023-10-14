@@ -8,9 +8,9 @@ import {
 
 // reusable-ui core:
 import {
-    // a spacer (gap) management system:
-    spacers,
-}                           from '@reusable-ui/core'    // a set of reusable-ui packages which are responsible for building any component
+    // border (stroke) stuff of UI:
+    usesBorder,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
 import {
@@ -65,6 +65,13 @@ const usePopupLayout    = () => {
     });
 };
 const useCardLayout     = () => {
+    // dependencies:
+    
+    // features:
+    const {borderVars} = usesBorder();
+    
+    
+    
     return style({
         // sizes:
         inlineSize     : '100%',
@@ -79,10 +86,22 @@ const useCardLayout     = () => {
         
         
         // borders:
-        borderWidth    : '0px',
+        [borderVars.borderWidth           ] : '0px',
+        [borderVars.borderStartStartRadius] : '0px',
+        [borderVars.borderStartEndRadius  ] : '0px',
+        [borderVars.borderEndStartRadius  ] : '0px',
+        [borderVars.borderEndEndRadius    ] : '0px',
     });
 };
 
+const usePrintCaptionLayout = () => {
+    return style({
+        // layouts:
+        ...rule('@media print', {
+            display    : 'none',     // hide the <CardHeader> & <CardFooter> if [print mode]
+        }),
+    });
+};
 const usePrintDialogLayout = () => {
     return style({
         // layouts:
@@ -104,19 +123,6 @@ const usePrintDialogLayout = () => {
         borderRadius   : 0,
     });
 };
-const useCloseButtonLayout      = () => {
-    return style({
-        // layouts:
-        ...rule('@media print', {
-            display    : 'none',     // hide the <Button> if [print mode]
-        }),
-        
-        
-        
-        // spacings:
-        margin         : spacers.default,
-    });
-};
 
 export default () => [
     scope('document', {
@@ -136,10 +142,10 @@ export default () => [
         ...usesVisuallyHiddenLayout(),
     }),
     
+    scope('printCaption', {
+        ...usePrintCaptionLayout(),
+    }, { specificityWeight: 4 }),
     scope('printDialog', {
         ...usePrintDialogLayout(),
-    }, { specificityWeight: 2 }),
-    scope('closeButton', {
-        ...useCloseButtonLayout(),
     }, { specificityWeight: 2 }),
 ];
