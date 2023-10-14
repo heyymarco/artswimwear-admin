@@ -8,14 +8,13 @@ import {
     
     
     // hooks:
-    useRef,
     useState,
 }                           from 'react'
 
-// next-js:
-import type {
-    Metadata,
-}                           from 'next'
+// // next-js:
+// import type {
+//     Metadata,
+// }                           from 'next'
 
 // cssfn:
 import {
@@ -23,40 +22,10 @@ import {
     dynamicStyleSheets,
 }                           from '@cssfn/cssfn-react'               // writes css in react hook
 
-// reusable-ui core:
-import {
-    // react helper hooks:
-    useEvent,
-}                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
-
-// reusable-ui components:
-import {
-    // base-content-components:
-    Content,
-    
-    
-    
-    // layout-components:
-    ListItem,
-    
-    
-    
-    // status-components:
-    Badge,
-    
-    
-    
-    // utility-components:
-    ModalStatus,
-}                           from '@reusable-ui/components'          // a set of official Reusable-UI components
-
 // heymarco components:
 import {
     Main,
 }                           from '@heymarco/section'
-import {
-    Image,
-}                           from '@heymarco/image'
 
 // internal components:
 import {
@@ -66,32 +35,11 @@ import {
     PageError,
 }                           from '@/components/PageError'
 import {
-    ModelPreviewProps,
     SectionModelEditor,
 }                           from '@/components/SectionModelEditor'
 import {
-    EditButton,
-}                           from '@/components/EditButton'
-import {
-    NameEditor,
-}                           from '@/components/editors/NameEditor'
-import {
-    EmailEditor,
-}                           from '@/components/editors/EmailEditor'
-import {
-    CompoundWithBadge,
-}                           from '@/components/CompoundWithBadge'
-import {
-    MiniCarousel,
-}                           from '@/components/MiniCarousel'
-import {
-    SimpleEditCustomerDialog,
-}                           from '@/components/dialogs/SimpleEditCustomerDialog'
-
-// private components:
-import {
-    EditOrderDialog,
-}                           from './EditOrderDialog'
+    OrderPreview,
+}                           from '@/components/views//OrderPreview'
 
 // stores:
 import {
@@ -102,33 +50,15 @@ import {
     
     // hooks:
     useGetOrderPage,
-    useGetProductList,
 }                           from '@/store/features/api/apiSlice';
 
 // internals:
-import {
-    resolveMediaUrl,
-}                           from '@/libs/mediaStorage.client'
 
-// configs:
-import {
-    PAGE_ORDER_TITLE,
-    PAGE_ORDER_DESCRIPTION,
-}                           from '@/website.config' // TODO: will be used soon
-
-
-
-// defaults:
-const imageSize = 128;  // 128px
-
-
-
-// utilities:
-const getTotalQuantity = (items: OrderDetail['items']): number => {
-    return items.reduce((counter, item) => {
-        return counter + item.quantity;
-    }, 0);
-};
+// // configs:
+// import {
+//     PAGE_ORDER_TITLE,
+//     PAGE_ORDER_DESCRIPTION,
+// }                           from '@/website.config' // TODO: will be used soon
 
 
 
@@ -140,184 +70,6 @@ const usePageStyleSheet = dynamicStyleSheets(
 
 
 // react components:
-
-/* <OrderPreview> */
-interface OrderPreviewProps extends ModelPreviewProps<OrderDetail> {}
-const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
-    // styles:
-    const styleSheet = usePageStyleSheet();
-    
-    
-    
-    // rest props:
-    const {
-        model,
-    ...restListItemProps} = props;
-    const {
-        orderId,
-        
-        customer : customerDetail,
-        items,
-    } = model;
-    const {
-        nickName : customerNickName,
-        email    : customerEmail,
-    } = customerDetail ?? {};
-    
-    
-    
-    // states:
-    type EditMode = keyof NonNullable<OrderDetail['customer']>|'full'
-    const [editMode, setEditMode] = useState<EditMode|null>(null);
-    
-    
-    
-    // stores:
-    const {data: productList, isLoading: isLoadingProduct, isError: isErrorProduct } = useGetProductList();
-    
-    
-    
-    // refs:
-    const listItemRef = useRef<HTMLElement|null>(null);
-    
-    
-    
-    // handlers:
-    const handleEditDialogClose = useEvent((): void => {
-        setEditMode(null);
-    });
-    
-    
-    
-    // jsx:
-    return (
-        <ListItem
-            // other props:
-            {...restListItemProps}
-            
-            
-            
-            // refs:
-            elmRef={listItemRef}
-            
-            
-            
-            // classes:
-            className={styleSheet.orderItem}
-        >
-            <div className={styleSheet.orderItemWrapper}>
-                <h3 className='orderId'>
-                    #ORDER-{orderId}
-                </h3>
-                <p className='customer'>
-                    <span className='name'>
-                        <strong>{customerNickName}</strong>
-                        <EditButton onClick={() => setEditMode('nickName')} />
-                    </span>
-                    <span className='email'>
-                        <em>{customerEmail}</em>
-                        <EditButton onClick={() => setEditMode('email')} />
-                    </span>
-                </p>
-                
-                {/* carousel + total quantity */}
-                <CompoundWithBadge
-                    // components:
-                    wrapperComponent={<React.Fragment />}
-                    badgeComponent={
-                        <Badge
-                            // floatable:
-                            floatingPlacement='left-start'
-                            floatingShift={10}
-                            floatingOffset={-40}
-                        >
-                            {getTotalQuantity(items)} Item(s)
-                        </Badge>
-                    }
-                    elementComponent={
-                        <MiniCarousel
-                            // variants:
-                            theme='danger'
-                            
-                            
-                            
-                            // classes:
-                            className='images'
-                            
-                            
-                            
-                            // components:
-                            basicComponent={<Content theme='primary' />}
-                        >
-                            {items.map(({quantity, productId}, index: number) => {
-                                const product = productList?.entities?.[`${productId}`];
-                                
-                                
-                                
-                                // jsx:
-                                return (
-                                    /* image + quantity */
-                                    <CompoundWithBadge
-                                        // identifiers:
-                                        key={index}
-                                        
-                                        
-                                        
-                                        // components:
-                                        wrapperComponent={<React.Fragment />}
-                                        badgeComponent={
-                                            <Badge
-                                                // variants:
-                                                theme='danger'
-                                                
-                                                
-                                                
-                                                // variants:
-                                                floatingPlacement='right-start'
-                                                floatingShift={10}
-                                                floatingOffset={-40}
-                                            >
-                                                {quantity}x
-                                            </Badge>
-                                        }
-                                        elementComponent={
-                                            <Image
-                                                className='prodImg'
-                                                
-                                                alt={`image #${index + 1} of ${product?.name ?? 'unknown product'}`}
-                                                src={resolveMediaUrl(product?.image)}
-                                                sizes={`${imageSize}px`}
-                                                
-                                                priority={true}
-                                            />
-                                        }
-                                    />
-                                );
-                            })}
-                        </MiniCarousel>
-                    }
-                />
-                <p className='fullEditor'>
-                    <EditButton icon='table_view' buttonStyle='regular' onClick={() => setEditMode('full')}>
-                        View Details
-                    </EditButton>
-                </p>
-            </div>
-            {/* edit dialog: */}
-            <ModalStatus theme='primary' viewport={listItemRef} backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {!!editMode && (editMode !== 'full') && <>
-                    {(editMode === 'nickName'       ) && <SimpleEditCustomerDialog model={model} edit={editMode} onClose={handleEditDialogClose} editorComponent={<NameEditor />} />}
-                    {(editMode === 'email'          ) && <SimpleEditCustomerDialog model={model} edit={editMode} onClose={handleEditDialogClose} editorComponent={<EmailEditor />} />}
-                </>}
-            </ModalStatus>
-            <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {(editMode === 'full') && <EditOrderDialog order={model} onClose={handleEditDialogClose} />}
-            </ModalStatus>
-        </ListItem>
-    );
-};
-
-/* <OrderPage> */
 export default function OrderPage(): JSX.Element|null {
     // styles:
     const styleSheet = usePageStyleSheet();
@@ -358,7 +110,10 @@ export default function OrderPage(): JSX.Element|null {
                 
                 // components:
                 modelPreviewComponent={
-                    <OrderPreview model={undefined as any} />
+                    <OrderPreview
+                        // data:
+                        model={undefined as any}
+                    />
                 }
             />
         </Main>
