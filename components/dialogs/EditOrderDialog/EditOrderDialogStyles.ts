@@ -5,7 +5,6 @@ import {
     descendants,
     children,
     style,
-    vars,
     scope,
 }                           from '@cssfn/core'          // writes css in javascript
 import {
@@ -31,19 +30,12 @@ import {
     
     // border (stroke) stuff of UI:
     usesBorder,
-    
-    
-    
-    // padding (inner spacing) stuff of UI:
-    usesPadding,
 }                           from '@reusable-ui/core'    // a set of reusable-ui packages which are responsible for building any component
 
-// reusable-ui components:
+// configs:
 import {
-    // configs:
-    lists,
-}                           from '@reusable-ui/components'      // a set of official Reusable-UI components
-import { commerces } from '@/config';
+    commerces,
+}                           from '@/config'
 
 
 
@@ -53,71 +45,6 @@ const imageSize = 48;  // 48px
 
 
 // styles:
-const usesCardBodyLayout = () => {
-    // dependencies:
-    
-    // features:
-    const {borderVars} = usesBorder();
-    
-    
-    
-    return style({
-        // layouts:
-        ...style({
-            // layouts:
-            display        : 'flex',
-            flexDirection  : 'column',
-            justifyContent : 'start',       // if items are not growable, the excess space (if any) placed at the end, and if no sufficient space available => the first item should be visible first
-            alignItems     : 'stretch',     // items width are 100% of the parent (for variant `.block`) or height (for variant `.inline`)
-            flexWrap       : 'nowrap',      // no wrapping
-            
-            
-            
-            // sizes:
-            // the default <Card>'s body height is resizeable, ensuring footers are aligned to the bottom:
-            flex           : [[1, 1, 'auto']], // growable, shrinkable, initial from it's width (for variant `.inline`) or height (for variant `.block`)
-            
-            
-            
-            // scrolls:
-            overflow       : 'hidden', // force <TabBody> to scroll
-            
-            
-            
-            // borders:
-            [borderVars.borderStartStartRadius] : '0px',
-            [borderVars.borderStartEndRadius  ] : '0px',
-            [borderVars.borderEndStartRadius  ] : '0px',
-            [borderVars.borderEndEndRadius    ] : '0px',
-        }),
-    });
-};
-const usesTabListLayout = () => {
-    return vars({
-        // configs:
-        [lists.borderRadius] : '0px',
-    });
-};
-const usesTabBodyLayout = () => {
-    // dependencies:
-    
-    // features:
-    const {borderVars } = usesBorder();
-    const {paddingVars} = usesPadding();
-    
-    
-    
-    return style({
-        // borders:
-        [borderVars.borderWidth]: '0px',
-        
-        
-        
-        // spacings:
-        [paddingVars.paddingInline]: '0px',
-        [paddingVars.paddingBlock ]: '0px',
-    });
-};
 const usesTyposLayout = () => {
     return style({
         // children:
@@ -500,17 +427,6 @@ const usesPrintSpacerLayout = () => {
 };
 
 export default () => [
-    scope('cardBody', {
-        ...usesCardBodyLayout(),
-    }, { specificityWeight: 3 }),
-    
-    scope('tabList', {
-        ...usesTabListLayout(),
-    }, { specificityWeight: 2 }),
-    
-    scope('tabBody', {
-        ...usesTabBodyLayout(),
-    }, { specificityWeight: 2 }),
     scope('typos', {
         ...usesTyposLayout(),
     }),

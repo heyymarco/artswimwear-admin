@@ -12,6 +12,12 @@ import {
     useEffect,
 }                           from 'react'
 
+// TODO: add privileges
+// // next-auth:
+// import {
+//     useSession,
+// }                           from 'next-auth/react'
+
 // cssfn:
 import {
     // style sheets:
@@ -23,7 +29,6 @@ import {
     // react helper hooks:
     useEvent,
     EventHandler,
-    useMountedFlag,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -42,15 +47,12 @@ import {
     // simple-components:
     Icon,
     ButtonIcon,
-    CloseButton,
     
     
     
     // layout-components:
     ListItem,
     List,
-    CardHeader,
-    CardFooter,
     
     
     
@@ -60,14 +62,13 @@ import {
     
     
     
+    // dialog-components:
+    ModalExpandedChangeEvent,
+    
+    
+    
     // composite-components:
     TabPanel,
-    Tab,
-    
-    
-    
-    // utility-components:
-    ModalStatus,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // heymarco components:
@@ -92,20 +93,22 @@ import {
     PaymentEditor,
 }                           from '@/components/editors/PaymentEditor'
 import {
+    CollapsibleSuspense,
+}                           from '@/components/CollapsibleSuspense'
+import {
     SimpleEditAddressDialog,
 }                           from '@/components/dialogs/SimpleEditAddressDialog'
 import {
     SimpleEditPaymentDialog,
 }                           from '@/components/dialogs/SimpleEditPaymentDialog'
-import type {
-    // types:
-    CloseEvent,
-}                           from '@/components/SectionModelEditor'
-
-// private components:
 import {
-    PrintDialog,
-}                           from './PrintDialog'
+    // react components:
+    ImplementedComplexEditModelDialogProps,
+    ComplexEditModelDialog,
+}                           from '@/components/dialogs/ComplexEditModelDialog'
+import {
+    PrintOrderDialog,
+}                           from '@/components/dialogs/PrintOrderDialog'
 
 // stores:
 import {
@@ -147,22 +150,18 @@ const imageSize = 48;  // 48px
 const useEditOrderDialogStyleSheet = dynamicStyleSheets(
     () => import(/* webpackPrefetch: true */'./EditOrderDialogStyles')
 , { id: 'wz8sbhtojl' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names`
+import './EditOrderDialogStyles';
 
 
 
 // react components:
-
-/* <EditOrderDialog> */
-export interface EditOrderDialogProps {
-    // data:
-    order   : OrderDetail
-    
-    
-    
-    // handlers:
-    onClose : EventHandler<CloseEvent>
+export interface EditOrderDialogProps
+    extends
+        // bases:
+        ImplementedComplexEditModelDialogProps<OrderDetail>
+{
 }
-export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
+const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     // styles:
     const styleSheet = useEditOrderDialogStyleSheet();
     
@@ -171,13 +170,8 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
     // rest props:
     const {
         // data:
-        order,
-        
-        
-        
-        // handlers:
-        onClose,
-    } = props;
+        model = null,
+    ...restComplexEditModelDialogProps} = props;
     
     
     
@@ -188,6 +182,9 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
     
     
     // sessions:
+    // TODO: add privileges
+    // const { data: session, update : updateSession} = useSession();
+    // const role = session?.role;
     
     
     
@@ -195,8 +192,6 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
     const {data: shippingList, isLoading: isLoadingShipping, isError: isErrorShipping } = useGetShippingList();
     const {data: productList, isLoading: isLoadingProduct, isError: isErrorProduct } = useGetProductList();
     const {
-        orderId,
-        
         items,
         
         shippingAddress    : shippingAddressDetail,
@@ -210,7 +205,7 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
             amount         : paymentAmount,
             fee            : paymentFee,
         },
-    } = order;
+    } = model ?? { paymentMethod: {} };
     const {
         firstName      : shippingFirstName,
         lastName       : shippingLastName,
@@ -224,50 +219,42 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
     
     const shippingProvider = shippingList?.entities?.[shippingProviderId ?? ''];
     
-    const totalProductPrices  = items.reduce((accum, item) => {
+    const totalProductPrices  = items?.reduce((accum, item) => {
         const productUnitPrice = productList?.entities?.[`${item.productId}` || '']?.price;
         if (!productUnitPrice) return accum;
         return accum + (productUnitPrice * item.quantity);
-    }, 0);
+    }, 0) ?? 0;
     
-    const paymentTypeUppercased = paymentType.toUpperCase();
-    const isPaid                = (paymentTypeUppercased !== 'MANUAL');
+    const paymentTypeUppercased = paymentType?.toUpperCase();
+    const isPaid                = !!paymentTypeUppercased && (paymentTypeUppercased !== 'MANUAL');
     const isManualPaid          = (paymentTypeUppercased === 'MANUAL_PAID');
     
     
     
     // dialogs:
-    const [showPrintDialog, setShowPrintDialog] = useState<boolean>(false);
+    const [showPrintOrderDialog, setShowPrintOrderDialog] = useState<boolean>(false);
     
     
     
     // handlers:
-    const handleClosing = useEvent(() => {
-        onClose(null); // result: discard changes
-    });
-    const handleKeyDown : React.KeyboardEventHandler<HTMLElement> = useEvent((event) => {
-        switch (event.key) {
-            // case 'Enter':
-            //     event.preventDefault();
-            //     handleSave();
-            //     break;
-            
-            case 'Escape':
-                event.preventDefault();
-                // handleClosing();
-                break;
-        } // switch
-    });
-    const handleEditDialogClose   = useEvent((): void => {
+    const handleExpandedChange    = useEvent<EventHandler<ModalExpandedChangeEvent>>(({expanded}): void => {
+        // conditions:
+        if (expanded) return; // ignore if expanded
+        
+        
+        
+        // actions:
         setEditMode(null);
     });
-    const handlePrint             = useEvent(() => {
-        setShowPrintDialog(true);
+    
+    const handlePrintShow         = useEvent(() => {
+        setShowPrintOrderDialog(true);
         handleMarkAsProcessing();
     });
     const handlePrintDone         = useEvent(() => {
-        setShowPrintDialog(false);
+        setShowPrintOrderDialog(false);
     });
+    
     const handleMarkAsProcessing  = useEvent(() => {
         // TODO
     });
@@ -309,7 +296,7 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
                         : 'UNPAID'
                     }</Basic>
                     <List className={styleSheet.orderList} listStyle={['flat', 'numbered']}>
-                        {items.map(({quantity, price: unitPrice, productId}, index) => {
+                        {items?.map(({quantity, price: unitPrice, productId}, index) => {
                             const product = productList?.entities?.[`${productId}`];
                             
                             
@@ -425,37 +412,21 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
     };
     return (
         <>
-            <CardHeader
-                // handlers:
-                onKeyDown={handleKeyDown}
-            >
-                <h1>#ORDER-{orderId}</h1>
-                <CloseButton onClick={handleClosing} />
-            </CardHeader>
-            <Tab
-                // variants:
-                mild='inherit'
+            <ComplexEditModelDialog<OrderDetail>
+                // other props:
+                {...restComplexEditModelDialogProps}
                 
                 
                 
-                // classes:
-                className={styleSheet.cardBody}
-                
-                
-                
-                // components:
-                listComponent={<List className={styleSheet.tabList} />}
-                bodyComponent={<Content className={`${styleSheet.tabBody} ${styleSheet.typos}`} />}
-                
-                
-                
-                // handlers:
-                onKeyDown={handleKeyDown}
+                // data:
+                modelName='Order'
+                modelEntryName={`#ORDER-${model?.orderId}`}
+                model={model}
             >
                 <TabPanel label={PAGE_ORDER_TAB_ORDER_N_SHIPPING} panelComponent={<Generic className={styleSheet.orderShippingTab} />}>
                     <OrderAndShipping />
                     <Section theme='primary' className={styleSheet.actionSection}>
-                        <ButtonIcon className='btnPrint' icon='print' theme='primary' onClick={handlePrint}>
+                        <ButtonIcon className='btnPrint' icon='print' theme='primary' onClick={handlePrintShow}>
                             Print and Mark as Processing
                         </ButtonIcon>
                         <ButtonIcon className='btnPrint' icon='directions_run' theme='primary' onClick={handleMarkAsProcessing}>
@@ -522,7 +493,7 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
                                         </th>
                                         <td>
                                             <strong>
-                                                {formatCurrency(paymentAmount - paymentFee)}
+                                                {formatCurrency((paymentAmount !== undefined) ? (paymentAmount - (paymentFee ?? 0)) : undefined)}
                                             </strong>
                                         </td>
                                     </tr>
@@ -534,23 +505,67 @@ export const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null =
                         </ButtonIcon>}
                     </Section>
                 </TabPanel>
-            </Tab>
-            <CardFooter onKeyDown={handleKeyDown}>
-                <ButtonIcon className='btnClose' icon='close' theme='primary' onClick={handleClosing}>Close</ButtonIcon>
-            </CardFooter>
+            </ComplexEditModelDialog>
+            
             {/* edit dialog: */}
-            <ModalStatus theme='primary' modalCardStyle='scrollable' backdropStyle='static' onExpandedChange={({expanded}) => !expanded && setEditMode(null)}>
-                {!!editMode && <>
-                    {(editMode === 'shippingAddress') && <SimpleEditAddressDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<AddressEditor countryList={countryList} />} />}
-                    {(editMode === 'paymentMethod'  ) && <SimpleEditPaymentDialog model={order} edit={editMode} onClose={handleEditDialogClose} editorComponent={<PaymentEditor />} />}
-                </>}
-            </ModalStatus>
-            {showPrintDialog && <PrintDialog
-                className={`${styleSheet.orderShippingTab} ${styleSheet.typos}`}
-                onDone={handlePrintDone}
-            >
-                <OrderAndShipping printMode={true} />
-            </PrintDialog>}
+            <CollapsibleSuspense>
+                <SimpleEditAddressDialog
+                    // data:
+                    model={model!}
+                    edit='shippingAddress'
+                    
+                    
+                    
+                    // states:
+                    expanded={editMode === 'shippingAddress'}
+                    onExpandedChange={handleExpandedChange}
+                    
+                    
+                    
+                    // components:
+                    editorComponent={
+                        <AddressEditor
+                            countryList={countryList}
+                        />
+                    }
+                />
+                <SimpleEditPaymentDialog
+                    // data:
+                    model={model!}
+                    edit='paymentMethod'
+                    
+                    
+                    
+                    // states:
+                    expanded={editMode === 'paymentMethod'}
+                    onExpandedChange={handleExpandedChange}
+                    
+                    
+                    
+                    // components:
+                    editorComponent={
+                        <PaymentEditor />
+                    }
+                />
+                {showPrintOrderDialog && <PrintOrderDialog
+                    // classes:
+                    className={`${styleSheet.orderShippingTab} ${styleSheet.typos}`}
+                    
+                    
+                    
+                    // states:
+                    onDone={handlePrintDone}
+                >
+                    <OrderAndShipping
+                        // appearances:
+                        printMode={true}
+                    />
+                </PrintOrderDialog>}
+            </CollapsibleSuspense>
         </>
     );
 };
+export {
+    EditOrderDialog,
+    EditOrderDialog as default,
+}
