@@ -19,7 +19,7 @@ import {
 // cssfn:
 import {
     // style sheets:
-    dynamicStyleSheets,
+    dynamicStyleSheet,
 }                           from '@cssfn/cssfn-react'               // writes css in react hook
 
 // heymarco components:
@@ -63,7 +63,7 @@ import {
 
 
 // styles:
-const usePageStyleSheet = dynamicStyleSheets(
+const usePageStyleSheet = dynamicStyleSheet(
     () => import(/* webpackPrefetch: true */'./pageStyles')
 , { id: 'nxhip40jm2' });
 
@@ -97,7 +97,7 @@ export default function OrderPage(): JSX.Element|null {
     if (isLoadingAndNoData) return <PageLoading />;
     if (isErrorAndNoData  ) return <PageError onRetry={refetch} />;
     return (
-        <Main className={styleSheet.page}>
+        <Main className={styleSheet.main}>
             <SectionModelEditor<OrderDetail>
                 // data:
                 page={page}
