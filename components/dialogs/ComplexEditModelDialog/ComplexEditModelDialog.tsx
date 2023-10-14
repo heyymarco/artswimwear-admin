@@ -137,9 +137,9 @@ export interface ComplexEditModelDialogProps<TModel extends Model>
     
     
     // privileges:
-    privilegeAdd      : boolean
-    privilegeUpdate   : Record<string, boolean>
-    privilegeDelete   : boolean
+    privilegeAdd     ?: boolean
+    privilegeUpdate  ?: Record<string, boolean>
+    privilegeDelete  ?: boolean
     
     
     
@@ -225,9 +225,9 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
         
         
         // privileges:
-        privilegeAdd    : privilegeAddRaw,
-        privilegeUpdate : privilegeUpdateRaw,
-        privilegeDelete : privilegeDeleteRaw,
+        privilegeAdd    : privilegeAddRaw    = false,
+        privilegeUpdate : privilegeUpdateRaw = {},
+        privilegeDelete : privilegeDeleteRaw = false,
         
         
         
@@ -276,7 +276,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
     const privilegeDelete : boolean                 =  !!model?.id && privilegeDeleteRaw;
     const privilegeWrite  : boolean                 = (
         privilegeAdd
-        || !!privilegeUpdate
+        || !!Object.keys(privilegeUpdate).length
         /* || privilegeDelete */ // except for delete
     );
     const isLoading = isCommiting || isReverting || isDeleting;
