@@ -57,11 +57,6 @@ const usePopupLayout    = () => {
         // sizes:
         inlineSize     : '100%',
         maxBlockSize   : '100%',
-        
-        
-        
-        // scrolls:
-        overflow       : 'auto',
     });
 };
 const useCardLayout     = () => {
