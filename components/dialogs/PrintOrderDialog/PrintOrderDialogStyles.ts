@@ -24,7 +24,9 @@ import {
 const useBackdropLayout = () => {
     return style({
         // positions:
-        position     : 'relative', // overwrite of `position: fixed`
+        ...rule('@media print', {
+            position : 'relative', // relative position on paper, keeps the default on screen
+        }),
         
         
         
@@ -57,12 +59,19 @@ const usePopupLayout = () => {
 const useCardLayout = () => {
     return style({
         // sizes:
-        inlineSize : '100%',
+        inlineSize   : '100%',
+        
+        
+        
+        // scrolls:
+        ...rule('@media not print', {
+            overflow : 'auto', // enable scrolling on screen, disabled on paper
+        }),
         
         
         
         // borders:
-        borderWidth : '0px',
+        borderWidth  : '0px',
     });
 };
 
@@ -74,13 +83,6 @@ const usePrintOrderDialogLayout = () => {
         justifyContent : 'start',   // if items are not growable, the excess space (if any) placed at the end, and if no sufficient space available => the first item should be visible first
         alignItems     : 'stretch', // items width are 100% of the parent (for variant `.block`) or height (for variant `.inline`)
         flexWrap       : 'nowrap',  // no wrapping
-        
-        
-        
-        // scrolls:
-        ...rule('@media not print', {
-            overflow : 'auto',
-        }),
         
         
         
