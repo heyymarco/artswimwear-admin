@@ -175,7 +175,7 @@ export interface ComplexEditModelDialogProps<TModel extends Model>
     
     
     // children:
-    children          : (args: { privilegeAdd: boolean, privilegeUpdate: Record<string, boolean> }) => React.ReactNode
+    children          : React.ReactNode | ((args: { privilegeAdd: boolean, privilegeUpdate: Record<string, boolean> }) => React.ReactNode)
 }
 export type ImplementedComplexEditModelDialogProps<TModel extends Model> = Omit<ComplexEditModelDialogProps<TModel>,
     // data:
@@ -570,10 +570,10 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
                         listComponent={<List className={styleSheet.tabList} />}
                         bodyComponent={<Content className={styleSheet.tabBody} />}
                     >
-                        {childrenFn?.({
+                        {(typeof(childrenFn) === 'function') ? childrenFn?.({
                             privilegeAdd,
                             privilegeUpdate,
-                        })}
+                        }) : childrenFn}
                         {privilegeDelete && <TabPanel label={tabDelete} panelComponent={<Content theme='warning' className={styleSheet.tabDelete} />}>
                             <ButtonIcon icon={isDeleting ? 'busy' : 'delete'} theme='danger' onClick={handleDelete}>
                                 Delete {!modelEntryName ? 'this ' : ''}<strong>{
