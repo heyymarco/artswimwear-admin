@@ -166,8 +166,8 @@ export interface ComplexEditModelDialogProps<TModel extends Model>
     onSideUpdate     ?: UpdateSideHandler
     onSideDelete     ?: DeleteSideHandler
     
-    onConfirmDelete   : ConfirmDeleteHandler<TModel>
-    onConfirmUnsaved  : ConfirmUnsavedHandler<TModel>
+    onConfirmDelete  ?: ConfirmDeleteHandler<TModel>
+    onConfirmUnsaved ?: ConfirmUnsavedHandler<TModel>
     
     onCollapseStart  ?: EventHandler<CollapseEvent>
     onCollapseEnd    ?: EventHandler<CollapseEvent>
@@ -357,24 +357,26 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
     const handleDelete         = useEvent(async () => {
         // conditions:
         if (!model) return; // no model to delete => ignore
-        const {
-            title   = <h1>Delete Confirmation</h1>,
-            message,
-        } = onConfirmDelete({model});
-        if (
-            (await showMessage<'yes'|'no'>({
-                theme    : 'warning',
-                title    : title,
-                message  : message,
-                options  : {
-                    yes  : <ButtonIcon icon='check'          theme='primary'>Yes</ButtonIcon>,
-                    no   : <ButtonIcon icon='not_interested' theme='secondary' autoFocus={true}>No</ButtonIcon>,
-                },
-            }))
-            !==
-            'yes'
-        ) return false;
-        if (!isMounted.current) return false; // the component was unloaded before awaiting returned => do nothing
+        if (onConfirmDelete) {
+            const {
+                title   = <h1>Delete Confirmation</h1>,
+                message,
+            } = onConfirmDelete({model});
+            if (
+                (await showMessage<'yes'|'no'>({
+                    theme    : 'warning',
+                    title    : title,
+                    message  : message,
+                    options  : {
+                        yes  : <ButtonIcon icon='check'          theme='primary'>Yes</ButtonIcon>,
+                        no   : <ButtonIcon icon='not_interested' theme='secondary' autoFocus={true}>No</ButtonIcon>,
+                    },
+                }))
+                !==
+                'yes'
+            ) return false;
+            if (!isMounted.current) return false; // the component was unloaded before awaiting returned => do nothing
+        } // if
         
         
         
@@ -417,24 +419,27 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
         if (privilegeWrite && isModified) {
             // conditions:
             if (!model) return; // no model to update => ignore
-            const {
-                title   = <h1>Unsaved Data</h1>,
-                message = <p>
-                    Do you want to save the changes?
-                </p>,
-            } = onConfirmUnsaved({model});
-            const answer = await showMessage<'save'|'dontSave'|'continue'>({
-                theme         : 'warning',
-                title         : title,
-                message       : message,
-                options       : {
-                    save      : <ButtonIcon icon='save'   theme='success' autoFocus={true}>Save</ButtonIcon>,
-                    dontSave  : <ButtonIcon icon='cancel' theme='danger' >Don&apos;t Save</ButtonIcon>,
-                    continue  : <ButtonIcon icon='edit'   theme='secondary'>Continue Editing</ButtonIcon>,
-                },
-                backdropStyle : 'static',
-            });
-            if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
+            let answer : 'save'|'dontSave'|'continue'|undefined = 'save';
+            if (onConfirmUnsaved) {
+                const {
+                    title   = <h1>Unsaved Data</h1>,
+                    message = <p>
+                        Do you want to save the changes?
+                    </p>,
+                } = onConfirmUnsaved({model});
+                answer = await showMessage<'save'|'dontSave'|'continue'>({
+                    theme         : 'warning',
+                    title         : title,
+                    message       : message,
+                    options       : {
+                        save      : <ButtonIcon icon='save'   theme='success' autoFocus={true}>Save</ButtonIcon>,
+                        dontSave  : <ButtonIcon icon='cancel' theme='danger' >Don&apos;t Save</ButtonIcon>,
+                        continue  : <ButtonIcon icon='edit'   theme='secondary'>Continue Editing</ButtonIcon>,
+                    },
+                    backdropStyle : 'static',
+                });
+                if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
+            } // if
             
             
             
