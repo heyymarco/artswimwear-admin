@@ -23,6 +23,11 @@ import {
 // styles:
 const useBackdropLayout = () => {
     return style({
+        // positions:
+        position     : 'relative', // overwrite of `position: fixed`
+        
+        
+        
         // layouts:
         display      : 'grid', // use css grid for layouting
         gridTemplate : [[
@@ -30,6 +35,11 @@ const useBackdropLayout = () => {
             '/',
             '100%'
         ]],
+        
+        
+        
+        // sizes:
+        minBlockSize : 'unset', // overwrite of `minBlockSize: 100svh`
     });
 };
 const usePopupLayout = () => {
