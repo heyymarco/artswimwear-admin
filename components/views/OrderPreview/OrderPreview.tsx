@@ -126,8 +126,6 @@ import './OrderPreviewStyles';
 
 
 // react components:
-
-/* <OrderPreview> */
 export interface OrderPreviewProps extends ModelPreviewProps<OrderDetail> {}
 const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
     // styles:
