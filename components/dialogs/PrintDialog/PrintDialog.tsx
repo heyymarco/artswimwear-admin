@@ -7,6 +7,7 @@ import {
     
     // hooks:
     useEffect,
+    useMemo,
 }                           from 'react'
 
 // cssfn:
@@ -124,7 +125,9 @@ const PrintDialog = (props: PrintDialogProps): JSX.Element|null => {
     
     
     // classes:
-    const cardComponentOri  : React.ReactComponentElement<any, CardProps<Element>> = props.cardComponent  ?? <Card  />;
+    const cardComponentOri = useMemo<React.ReactComponentElement<any, CardProps<Element>>>(() =>
+        props.cardComponent  ?? <Card  />
+    , [props.cardComponent]);
     const mergedCardClasses = useMergeClasses(
         // preserves the original `classes` from `cardComponentOri`:
         cardComponentOri.props.classes,
@@ -156,13 +159,15 @@ const PrintDialog = (props: PrintDialogProps): JSX.Element|null => {
     
     
     // jsx:
-    const cardComponent  = React.cloneElement<CardProps<Element>>(cardComponentOri,
-        // props:
-        {
-            // classes:
-            classes : mergedCardClasses,
-        },
-    )
+    const cardComponent  = useMemo<React.ReactComponentElement<any, CardProps<Element>>>(() =>
+        React.cloneElement<CardProps<Element>>(cardComponentOri,
+            // props:
+            {
+                // classes:
+                classes : mergedCardClasses,
+            },
+        )
+    , [cardComponentOri]);
     const modalComponent = props.modalComponent ?? <Modal className={styleSheets.backdrop}>{cardComponent}</Modal>;
     const popupComponent = props.popupComponent ?? <Popup className={styleSheets.popup} />;
     return (
