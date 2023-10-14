@@ -87,26 +87,26 @@ const usePrintOrderDialogLayout = () => {
         
         
         // backgrounds:
-        backg        : 'white',
+        backg          : 'white',
         
         
         
         // borders:
-        border       : 'none',
-        borderRadius : 0,
+        border         : 'none',
+        borderRadius   : 0,
     });
 };
 const useCloseButtonLayout = () => {
     return style({
         // layouts:
         ...rule('@media print', {
-            display: 'none', // hide the <Button> if [print mode]
+            display : 'none', // hide the <Button> if [print mode]
         }),
         
         
         
         // spacings:
-        margin : spacers.default,
+        margin      : spacers.default,
     });
 };
 
