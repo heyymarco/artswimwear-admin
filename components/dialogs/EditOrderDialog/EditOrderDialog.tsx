@@ -543,6 +543,11 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                     }
                 />
                 <PrintDialog
+                    // variants:
+                    theme='primary'
+                    
+                    
+                    
                     // classes:
                     className={`${styleSheet.orderShippingTab} ${styleSheet.typos}`}
                     
