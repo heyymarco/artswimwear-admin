@@ -83,7 +83,7 @@ const useCardLayout     = () => {
     });
 };
 
-const usePrintOrderDialogLayout = () => {
+const usePrintDialogLayout = () => {
     return style({
         // layouts:
         display        : 'flex',
@@ -136,8 +136,8 @@ export default () => [
         ...usesVisuallyHiddenLayout(),
     }),
     
-    scope('printOrderDialog', {
-        ...usePrintOrderDialogLayout(),
+    scope('printDialog', {
+        ...usePrintDialogLayout(),
     }, { specificityWeight: 2 }),
     scope('closeButton', {
         ...useCloseButtonLayout(),

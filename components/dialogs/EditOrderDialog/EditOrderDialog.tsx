@@ -108,7 +108,7 @@ import {
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
     PrintOrderDialog,
-}                           from '@/components/dialogs/PrintOrderDialog'
+}                           from '@/components/dialogs/PrintDialog'
 
 // stores:
 import {

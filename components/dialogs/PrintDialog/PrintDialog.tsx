@@ -59,24 +59,24 @@ import {
 
 
 // styles:
-const usePrintOrderDialogStyleSheet = dynamicStyleSheets(
-    () => import(/* webpackPrefetch: true */'./PrintOrderDialogStyles')
+const usePrintDialogStyleSheet = dynamicStyleSheets(
+    () => import(/* webpackPrefetch: true */'./PrintDialogStyles')
 , { id: 'yffn5x8ff7' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 
 
 
 // react components:
 
-/* <PrintOrderDialog> */
-export interface PrintOrderDialogProps
+/* <PrintDialog> */
+export interface PrintDialogProps
     extends
         // bases:
         ModalCardProps<HTMLElement, ModalExpandedChangeEvent>
 {
 }
-const PrintOrderDialog = (props: PrintOrderDialogProps): JSX.Element|null => {
+const PrintDialog = (props: PrintDialogProps): JSX.Element|null => {
     // styles:
-    const styleSheets = usePrintOrderDialogStyleSheet();
+    const styleSheets = usePrintDialogStyleSheet();
     
     
     
@@ -127,7 +127,7 @@ const PrintOrderDialog = (props: PrintOrderDialogProps): JSX.Element|null => {
         
         
         // classes:
-        props.mainClass ?? styleSheets.printOrderDialog,
+        props.mainClass ?? styleSheets.printDialog,
     );
     
     
@@ -176,6 +176,6 @@ const PrintOrderDialog = (props: PrintOrderDialogProps): JSX.Element|null => {
     );
 };
 export {
-    PrintOrderDialog,
-    PrintOrderDialog as default,
+    PrintDialog,
+    PrintDialog as default,
 }
