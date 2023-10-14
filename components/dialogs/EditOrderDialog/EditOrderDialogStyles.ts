@@ -80,14 +80,19 @@ const usesOrderShippingTabLayout = () => {
         
         
         
+        // sizes:
+        boxSizing          : 'content-box',
+        minInlineSize      : '32rem',
+        
+        
+        
         // scrolls:
         overscrollBehavior : 'none',
         
         
         
-        // sizes:
-        boxSizing          : 'content-box',
-        minInlineSize      : '32rem',
+        // spacings:
+        padding            : '0px',
     });
 };
 const usesOrderShippingSectionLayout = () => {
@@ -433,7 +438,7 @@ export default () => [
     
     scope('orderShippingTab', {
         ...usesOrderShippingTabLayout(),
-    }),
+    }, { specificityWeight: 3 }),
     scope('orderShippingSection', {
         ...usesOrderShippingSectionLayout(),
     }),
