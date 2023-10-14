@@ -71,8 +71,6 @@ const usePrintDialogStyleSheet = dynamicStyleSheets(
 
 
 // react components:
-
-/* <PrintDialog> */
 export interface PrintDialogProps
     extends
         // bases:
