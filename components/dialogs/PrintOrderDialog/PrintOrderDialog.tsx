@@ -8,43 +8,48 @@ import {
     // hooks:
     useEffect,
 }                           from 'react'
-import {
-    createPortal,
-}                           from 'react-dom'
-
-// cssfn:
-import {
-    // style sheets:
-    dynamicStyleSheet,
-}                           from '@cssfn/cssfn-react'               // writes css in react hook
-
-// reusable-ui core:
-import {
-    // react helper hooks:
-    useMergeClasses,
-    
-    
-    
-    // a capability of UI to stack on top-most of another UI(s) regardless of DOM's stacking context:
-    useGlobalStackable,
-}                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
 // cssfn:
 import {
     // style sheets:
     dynamicStyleSheets,
-}                           from '@cssfn/cssfn-react'           // writes css in react hook
+}                           from '@cssfn/cssfn-react'               // writes css in react hook
+
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useEvent,
+    useMergeClasses,
+}                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
 import {
-    // react components:
-    ContentProps,
+    // base-content-components:
     Content,
-}                           from '@reusable-ui/content'             // a base component
-import {
-    // react components:
+    
+    
+    
+    // simple-components:
     ButtonIcon,
-}                           from '@reusable-ui/button-icon'         // a button component with a nice icon
+    
+    
+    
+    // layout-components:
+    Card,
+    
+    
+    
+    // status-components:
+    Popup,
+    
+    
+    
+    // dialog-components:
+    ModalExpandedChangeEvent,
+    Modal,
+    ModalCardProps,
+    ModalCard,
+}                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 
 
@@ -60,10 +65,9 @@ const usePrintOrderDialogStyleSheet = dynamicStyleSheets(
 /* <PrintOrderDialog> */
 export interface PrintOrderDialogProps
     extends
-        ContentProps
+        // bases:
+        ModalCardProps<HTMLElement, ModalExpandedChangeEvent>
 {
-    // handlers:
-    onDone ?: () => void
 }
 const PrintOrderDialog = (props: PrintOrderDialogProps): JSX.Element|null => {
     // styles:
@@ -73,14 +77,9 @@ const PrintOrderDialog = (props: PrintOrderDialogProps): JSX.Element|null => {
     
     // rest props:
     const {
-        // handlers:
-        onDone,
-        
-        
-        
         // children:
         children,
-    ...restContentProps} = props;
+    ...restModalCardProps} = props;
     
     
     
@@ -117,11 +116,6 @@ const PrintOrderDialog = (props: PrintOrderDialogProps): JSX.Element|null => {
     
     
     
-    // capabilities:
-    const {portalElm} = useGlobalStackable({});
-    
-    
-    
     // classes:
     const classes = useMergeClasses(
         // preserves the original `classes`:
@@ -135,23 +129,43 @@ const PrintOrderDialog = (props: PrintOrderDialogProps): JSX.Element|null => {
     
     
     
+    // handlers:
+    const handleCloseDialog = useEvent(async () => {
+        props.onExpandedChange?.({
+            expanded   : false,
+            actionType : 'ui',
+        })
+    });
+    
+    
+    
     // jsx:
-    if (!portalElm) return null; // server side -or- client side but not already hydrated => nothing to render
-    return createPortal( // workaround for zIndex stacking context
-        <Content
+    const cardComponent  = <Card className={styleSheets.card} />;
+    const modalComponent = <Modal className={styleSheets.backdrop}>{cardComponent}</Modal>;
+    const popupComponent = <Popup className={styleSheets.popup} />
+    return (
+        <ModalCard
             // other props:
-            {...restContentProps}
+            {...restModalCardProps}
             
             
             
-            // classes:
-            classes={classes}
+            // components:
+            cardComponent  = {cardComponent}
+            modalComponent = {modalComponent}
+            popupComponent = {popupComponent}
         >
-            <ButtonIcon className={styleSheets.closeButton} icon='close' theme='primary' onClick={onDone}>Close</ButtonIcon>
-            {children}
-            <ButtonIcon className={styleSheets.closeButton} icon='close' theme='primary' onClick={onDone}>Close</ButtonIcon>
-        </Content>
-    , portalElm);
+            <Content
+                // classes:
+                classes={classes}
+                // theme='light'
+            >
+                <ButtonIcon className={styleSheets.closeButton} icon='close' theme='primary' onClick={handleCloseDialog}>Close</ButtonIcon>
+                {children}
+                <ButtonIcon className={styleSheets.closeButton} icon='close' theme='primary' onClick={handleCloseDialog}>Close</ButtonIcon>
+            </Content>
+        </ModalCard>
+    );
 };
 export {
     PrintOrderDialog,

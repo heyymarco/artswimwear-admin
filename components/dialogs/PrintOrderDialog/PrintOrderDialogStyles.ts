@@ -10,11 +10,6 @@ import {
 import {
     // a spacer (gap) management system:
     spacers,
-    
-    
-    
-    // a capability of UI to stack on top-most of another UI(s) regardless of DOM's stacking context:
-    globalStacks,
 }                           from '@reusable-ui/core'    // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -26,15 +21,43 @@ import {
 
 
 // styles:
+const useBackdropLayout = () => {
+    return style({
+        // layouts:
+        display      : 'grid', // use css grid for layouting
+        gridTemplate : [[
+            '"content" 100%',
+            '/',
+            '100%'
+        ]],
+    });
+};
+const usePopupLayout = () => {
+    return style({
+        // sizes:
+        inlineSize   : '100%',
+        maxBlockSize : '100%',
+        
+        
+        
+        // scrolls:
+        overflow     : 'auto',
+    });
+};
+const useCardLayout = () => {
+    return style({
+        // sizes:
+        inlineSize : '100%',
+        
+        
+        
+        // borders:
+        borderWidth : '0px',
+    });
+};
+
 const usePrintOrderDialogLayout = () => {
     return style({
-        // positions:
-        position : 'fixed', // global <PrintOrderDialog>: directly inside `body > portal` => fixed position
-        inset        : 0,   // span the <PrintOrderDialog> to the edges of <container>
-        zIndex       : globalStacks.modalBackdrop,
-        
-        
-        
         // layouts:
         display        : 'flex',
         flexDirection  : 'column',
@@ -76,6 +99,16 @@ const useCloseButtonLayout = () => {
 };
 
 export default () => [
+    scope('backdrop', {
+        ...useBackdropLayout(),
+    }, { specificityWeight: 2 }),
+    scope('popup', {
+        ...usePopupLayout(),
+    }, { specificityWeight: 4 }),
+    scope('card', {
+        ...useCardLayout(),
+    }, { specificityWeight: 3 }),
+    
     scope('printOrderDialog', {
         ...usePrintOrderDialogLayout(),
     }, { specificityWeight: 2 }),
