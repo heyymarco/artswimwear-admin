@@ -107,7 +107,7 @@ import {
     ComplexEditModelDialog,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
-    PrintOrderDialog,
+    PrintDialog,
 }                           from '@/components/dialogs/PrintDialog'
 
 // stores:
@@ -542,7 +542,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         <PaymentEditor />
                     }
                 />
-                <PrintOrderDialog
+                <PrintDialog
                     // classes:
                     className={`${styleSheet.orderShippingTab} ${styleSheet.typos}`}
                     
@@ -556,7 +556,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         // appearances:
                         printMode={true}
                     />
-                </PrintOrderDialog>
+                </PrintDialog>
             </CollapsibleSuspense>
         </>
     );
