@@ -43,6 +43,7 @@ import {
     // layout-components:
     CardHeader,
     CardFooter,
+    CardProps,
     Card,
     
     
@@ -123,15 +124,20 @@ const PrintDialog = (props: PrintDialogProps): JSX.Element|null => {
     
     
     // classes:
-    const classes = useMergeClasses(
-        // preserves the original `classes`:
+    const cardComponentOri  : React.ReactComponentElement<any, CardProps<Element>> = props.cardComponent  ?? <Card  />;
+    const mergedCardClasses = useMergeClasses(
+        // preserves the original `classes` from `cardComponentOri`:
+        cardComponentOri.props.classes,
+        
+        
+        
+        // preserves the original `classes` from `props`:
         props.classes,
         
         
         
         // classes:
-        props.mainClass ?? styleSheets.printDialog,
-        'body',
+        styleSheets.card,
     );
     
     
@@ -150,7 +156,13 @@ const PrintDialog = (props: PrintDialogProps): JSX.Element|null => {
     
     
     // jsx:
-    const cardComponent  = props.cardComponent  ?? <Card className={styleSheets.card} />;
+    const cardComponent  = React.cloneElement<CardProps<Element>>(cardComponentOri,
+        // props:
+        {
+            // classes:
+            classes : mergedCardClasses,
+        },
+    )
     const modalComponent = props.modalComponent ?? <Modal className={styleSheets.backdrop}>{cardComponent}</Modal>;
     const popupComponent = props.popupComponent ?? <Popup className={styleSheets.popup} />;
     return (
@@ -172,17 +184,14 @@ const PrintDialog = (props: PrintDialogProps): JSX.Element|null => {
         >
             <CardHeader className={styleSheets.printCaption}>
                 <h1>Print</h1>
-                <CloseButton icon='close' theme='primary' onClick={handleCloseDialog} />
+                <CloseButton icon='close' onClick={handleCloseDialog} />
             </CardHeader>
-            <Content
-                // classes:
-                classes={classes}
-            >
+            <Content    className={`body ${styleSheets.printDialog}`}>
                 {children}
             </Content>
             <CardFooter className={styleSheets.printCaption}>
-                <ButtonIcon icon='print' theme='primary' onClick={handlePrintDialog}>Print Again</ButtonIcon>
-                <ButtonIcon icon='done' theme='primary' onClick={handleCloseDialog}>Close</ButtonIcon>
+                <ButtonIcon icon='print' onClick={handlePrintDialog}>Print Again</ButtonIcon>
+                <ButtonIcon icon='done' onClick={handleCloseDialog}>Close</ButtonIcon>
             </CardFooter>
         </ModalCard>
     );
