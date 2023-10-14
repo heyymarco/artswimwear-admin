@@ -21,18 +21,26 @@ import {
 
 
 // styles:
+const useDocumentLayout = () => {
+    return style({
+        // backgrounds:
+        ...rule('@media print', {
+            backg      : 'white',    // use white paper on out of printable area
+        }),
+    });
+};
 const useBackdropLayout = () => {
     return style({
         // positions:
         ...rule('@media print', {
-            position : 'relative', // relative position on paper, keeps the default on screen
+            position   : 'relative', // relative position on paper, keeps the default on screen
         }),
         
         
         
         // layouts:
-        display      : 'grid', // use css grid for layouting
-        gridTemplate : [[
+        display        : 'grid',     // use css grid for layouting
+        gridTemplate   : [[
             '"content" 100%',
             '/',
             '100%'
@@ -41,37 +49,37 @@ const useBackdropLayout = () => {
         
         
         // sizes:
-        minBlockSize : 'unset', // overwrite of `minBlockSize: 100svh`
+        minBlockSize   : 'unset',    // overwrite of `minBlockSize: 100svh`
     });
 };
-const usePopupLayout = () => {
+const usePopupLayout    = () => {
     return style({
         // sizes:
-        inlineSize   : '100%',
-        maxBlockSize : '100%',
+        inlineSize     : '100%',
+        maxBlockSize   : '100%',
         
         
         
         // scrolls:
-        overflow     : 'auto',
+        overflow       : 'auto',
     });
 };
-const useCardLayout = () => {
+const useCardLayout     = () => {
     return style({
         // sizes:
-        inlineSize   : '100%',
+        inlineSize     : '100%',
         
         
         
         // scrolls:
         ...rule('@media not print', {
-            overflow : 'auto', // enable scrolling on screen, disabled on paper
+            overflow   : 'auto',     // enable scrolling on screen, disabled on paper
         }),
         
         
         
         // borders:
-        borderWidth  : '0px',
+        borderWidth    : '0px',
     });
 };
 
@@ -80,37 +88,40 @@ const usePrintOrderDialogLayout = () => {
         // layouts:
         display        : 'flex',
         flexDirection  : 'column',
-        justifyContent : 'start',   // if items are not growable, the excess space (if any) placed at the end, and if no sufficient space available => the first item should be visible first
-        alignItems     : 'stretch', // items width are 100% of the parent (for variant `.block`) or height (for variant `.inline`)
-        flexWrap       : 'nowrap',  // no wrapping
+        justifyContent : 'start',    // if items are not growable, the excess space (if any) placed at the end, and if no sufficient space available => the first item should be visible first
+        alignItems     : 'stretch',  // items width are 100% of the parent (for variant `.block`) or height (for variant `.inline`)
+        flexWrap       : 'nowrap',   // no wrapping
         
         
         
         // backgrounds:
-        backg          : 'white',
+        backg          : 'white',    // use white paper on printable area
         
         
         
         // borders:
-        border         : 'none',
+        borderWidth    : '0px',
         borderRadius   : 0,
     });
 };
-const useCloseButtonLayout = () => {
+const useCloseButtonLayout      = () => {
     return style({
         // layouts:
         ...rule('@media print', {
-            display : 'none', // hide the <Button> if [print mode]
+            display    : 'none',     // hide the <Button> if [print mode]
         }),
         
         
         
         // spacings:
-        margin      : spacers.default,
+        margin         : spacers.default,
     });
 };
 
 export default () => [
+    scope('document', {
+        ...useDocumentLayout(),
+    }, { specificityWeight: 2 }), // overcome the specificity of `:root`
     scope('backdrop', {
         ...useBackdropLayout(),
     }, { specificityWeight: 2 }),
@@ -121,13 +132,14 @@ export default () => [
         ...useCardLayout(),
     }, { specificityWeight: 3 }),
     
+    scope('body', {
+        ...usesVisuallyHiddenLayout(),
+    }),
+    
     scope('printOrderDialog', {
         ...usePrintOrderDialogLayout(),
     }, { specificityWeight: 2 }),
     scope('closeButton', {
         ...useCloseButtonLayout(),
     }, { specificityWeight: 2 }),
-    scope('visuallyHidden', {
-        ...usesVisuallyHiddenLayout(),
-    }),
 ];

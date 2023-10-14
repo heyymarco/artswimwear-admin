@@ -93,10 +93,14 @@ const PrintOrderDialog = (props: PrintOrderDialogProps): JSX.Element|null => {
     // hides the website's page, only show the print dialog:
     useEffect(() => {
         // setups:
-        const bodyElm = isClientSide ? document.body : undefined;
+        const documentElm = isClientSide ? document.documentElement : undefined;
+        const bodyElm     = isClientSide ? document.body            : undefined;
         
-        const visuallyHiddenClass = styleSheets.visuallyHidden;
-        bodyElm?.classList.add(visuallyHiddenClass);
+        const documentClass = styleSheets.document;
+        documentElm?.classList.add(documentClass);
+        
+        const bodyClass = styleSheets.body;
+        bodyElm?.classList.add(bodyClass);
         
         const cancelPrint = setTimeout(() => {
             window.print();
@@ -106,7 +110,8 @@ const PrintOrderDialog = (props: PrintOrderDialogProps): JSX.Element|null => {
         
         // cleanups:
         return () => {
-            bodyElm?.classList.remove(visuallyHiddenClass);
+            documentElm?.classList.remove(documentClass);
+            bodyElm?.classList.remove(bodyClass);
             
             clearTimeout(cancelPrint);
         };
