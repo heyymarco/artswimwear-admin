@@ -176,7 +176,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     
     // states:
-    type EditMode = 'shippingAddress'|'paymentMethod'
+    type EditMode = 'shippingAddress'|'paymentMethod'|'printOrder'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     
@@ -231,11 +231,6 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     
     
-    // dialogs:
-    const [showPrintOrderDialog, setShowPrintOrderDialog] = useState<boolean>(false);
-    
-    
-    
     // handlers:
     const handleExpandedChange    = useEvent<EventHandler<ModalExpandedChangeEvent>>(({expanded}): void => {
         // conditions:
@@ -248,11 +243,11 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     });
     
     const handlePrintShow         = useEvent(() => {
-        setShowPrintOrderDialog(true);
+        setEditMode('printOrder');
         handleMarkAsProcessing();
     });
     const handlePrintDone         = useEvent(() => {
-        setShowPrintOrderDialog(false);
+        setEditMode(null);
     });
     
     const handleMarkAsProcessing  = useEvent(() => {
@@ -547,20 +542,21 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         <PaymentEditor />
                     }
                 />
-                {showPrintOrderDialog && <PrintOrderDialog
+                <PrintOrderDialog
                     // classes:
                     className={`${styleSheet.orderShippingTab} ${styleSheet.typos}`}
                     
                     
                     
                     // states:
-                    onDone={handlePrintDone}
+                    expanded={editMode === 'printOrder'}
+                    onExpandedChange={handleExpandedChange}
                 >
                     <OrderAndShipping
                         // appearances:
                         printMode={true}
                     />
-                </PrintOrderDialog>}
+                </PrintOrderDialog>
             </CollapsibleSuspense>
         </>
     );
