@@ -157,10 +157,10 @@ export interface ComplexEditModelDialogProps<TModel extends Model>
     
     
     // handlers:
-    onUpdate          : UpdateHandler
+    onUpdate         ?: UpdateHandler
     onAfterUpdate    ?: AfterUpdateHandler
     
-    onDelete          : DeleteHandler
+    onDelete         ?: DeleteHandler
     onAfterDelete    ?: AfterDeleteHandler
     
     onSideUpdate     ?: UpdateSideHandler
@@ -331,16 +331,24 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
         
         
         try {
-            const updatingModelTask = onUpdate({
+            const updatingModelTask = onUpdate?.({
                 id : model?.id || null,
                 
                 privilegeAdd,
                 privilegeUpdate,
             });
             
-            const updatingModelAndOthersTask = onAfterUpdate ? updatingModelTask.then(onAfterUpdate) : updatingModelTask;
+            const updatingModelAndOthersTask = (
+                updatingModelTask
+                ? (
+                    onAfterUpdate
+                    ? updatingModelTask.then(onAfterUpdate)
+                    : updatingModelTask
+                )
+                : Promise.resolve(onAfterUpdate)
+            );
             
-            await handleFinalizing(updatingModelTask, /*commitSides = */true, [updatingModelAndOthersTask]); // result: created|mutated
+            await handleFinalizing(updatingModelTask ?? '', /*commitSides = */true, [updatingModelAndOthersTask]); // result: created|mutated
         }
         catch (error: any) {
             showMessageFetchError(error);
@@ -372,11 +380,19 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
         
         // actions:
         try {
-            const deletingModelTask = onDelete({
+            const deletingModelTask = onDelete?.({
                 id : model.id,
             });
             
-            const deletingModelAndOthersTask = onAfterDelete ? deletingModelTask.then(onAfterDelete) : deletingModelTask;
+            const deletingModelAndOthersTask = (
+                deletingModelTask
+                ? (
+                    onAfterDelete
+                    ? deletingModelTask.then(onAfterDelete)
+                    : deletingModelTask
+                )
+                : Promise.resolve(onAfterDelete)
+            );
             
             await handleFinalizing(false, /*commitSides = */false, [deletingModelAndOthersTask]); // result: deleted
         }
