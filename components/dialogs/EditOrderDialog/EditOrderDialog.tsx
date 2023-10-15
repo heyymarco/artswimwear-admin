@@ -248,10 +248,10 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     });
     
     const handleMarkAsProcessing  = useEvent(() => {
-        // TODO
+        // TODO: mark order as processing
     });
     const handleMarkAsUnprocessed = useEvent(() => {
-        // TODO
+        // TODO: unmark order as processing
     });
     
     
@@ -418,10 +418,10 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                 <TabPanel label={PAGE_ORDER_TAB_ORDER_N_SHIPPING} panelComponent={<Generic className={styleSheet.orderShippingTab} />}>
                     <OrderAndShipping />
                     <Section theme='primary' className={styleSheet.actionSection}>
-                        <ButtonIcon className='btnPrint' icon='print' theme='primary' onClick={handlePrintShow}>
+                        <ButtonIcon className='btnPrint' icon='print'             theme='primary'   onClick={handlePrintShow}>
                             Print and Mark as Processing
                         </ButtonIcon>
-                        <ButtonIcon className='btnPrint' icon='directions_run' theme='primary' onClick={handleMarkAsProcessing}>
+                        <ButtonIcon className='btnPrint' icon='directions_run'    theme='primary'   onClick={handleMarkAsProcessing}>
                             Mark as Processing
                         </ButtonIcon>
                         <ButtonIcon className='btnPrint' icon='mark_email_unread' theme='secondary' onClick={handleMarkAsUnprocessed}>
@@ -429,7 +429,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         </ButtonIcon>
                     </Section>
                 </TabPanel>
-                <TabPanel label={PAGE_ORDER_TAB_PAYMENT} panelComponent={<Generic className={styleSheet.paymentTab} />}>
+                <TabPanel label={PAGE_ORDER_TAB_PAYMENT}          panelComponent={<Generic className={styleSheet.paymentTab} />}>
                     <Section className={styleSheet.paymentSection}>
                         <table>
                             <tbody>
