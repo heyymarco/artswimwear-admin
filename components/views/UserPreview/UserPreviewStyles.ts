@@ -104,6 +104,7 @@ const usesUserPreviewLayout = () => { // the <ListItem> of user list
                     opacity: 'unset',
                     transform: 'scale(105%)',
                 }),
+                // invert the edit overlay, so the edit overlay can be seen on busy background
                 ...rule('.overlay', {
                     opacity : 0.8,
                     
