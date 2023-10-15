@@ -52,8 +52,6 @@ import {
     useGetOrderPage,
 }                           from '@/store/features/api/apiSlice';
 
-// internals:
-
 // // configs:
 // import {
 //     PAGE_ORDER_TITLE,
@@ -66,6 +64,7 @@ import {
 const usePageStyleSheet = dynamicStyleSheet(
     () => import(/* webpackPrefetch: true */'./pageStyles')
 , { id: 'nxhip40jm2' });
+import './pageStyles';
 
 
 
@@ -117,7 +116,7 @@ export default function OrderPage(): JSX.Element|null {
                 }
             />
         </Main>
-    )
+    );
 }
 
 
