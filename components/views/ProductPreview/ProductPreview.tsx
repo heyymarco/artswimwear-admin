@@ -126,7 +126,7 @@ const imageSize = 128;  // 128px
 const usePageStyleSheet = dynamicStyleSheet(
     () => import(/* webpackPrefetch: true */'./ProductPreviewStyles')
 , { specificityWeight: 2, id: 'u76xb8csqd' });
-import './OrderPreviewStyles';
+import './ProductPreviewStyles';
 
 
 
