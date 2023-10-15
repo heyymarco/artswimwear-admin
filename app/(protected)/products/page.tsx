@@ -150,16 +150,6 @@ const usePageStyleSheet = dynamicStyleSheets(
 
 
 // react components:
-
-/* <ProductCreate> */
-interface ProductCreateProps extends ModelCreateProps {}
-const ProductCreate = (props: ProductCreateProps): JSX.Element|null => {
-    // jsx:
-    return (
-        <EditProductDialog product={undefined} onClose={props.onClose} />
-    );
-};
-
 /* <ProductPreview> */
 interface ProductPreviewProps extends ModelPreviewProps<ProductDetail> {}
 const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
@@ -330,8 +320,6 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
         </ListItem>
     );
 };
-
-/* <ProductPage> */
 export default function ProductPage(): JSX.Element|null {
     // styles:
     const styleSheet = usePageStyleSheet();
@@ -384,7 +372,10 @@ export default function ProductPage(): JSX.Element|null {
                 }
                 modelCreateComponent={
                     privilegeAdd
-                    ? <ProductCreate onClose={undefined as any} />
+                    ? <EditProductDialog
+                        // data:
+                        model={null} // create a new model
+                    />
                     : undefined
                 }
             />
