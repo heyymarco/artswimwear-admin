@@ -60,6 +60,12 @@ import {
     useGetProductPage,
 }                           from '@/store/features/api/apiSlice'
 
+// // configs:
+// import {
+//     PAGE_PRODUCT_TITLE,
+//     PAGE_PRODUCT_DESCRIPTION,
+// }                           from '@/website.config' // TODO: will be used soon
+
 
 
 // styles:
@@ -119,7 +125,10 @@ export default function ProductPage(): JSX.Element|null {
                 
                 // components:
                 modelPreviewComponent={
-                    <ProductPreview model={undefined as any} />
+                    <ProductPreview
+                        // data:
+                        model={undefined as any}
+                    />
                 }
                 modelCreateComponent={
                     privilegeAdd
@@ -131,7 +140,7 @@ export default function ProductPage(): JSX.Element|null {
                 }
             />
         </Main>
-    )
+    );
 }
 
 
