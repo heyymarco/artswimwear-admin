@@ -232,7 +232,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleExpandedChange    = useEvent<EventHandler<ModalExpandedChangeEvent>>(({expanded}): void => {
+    const handleExpandedChange      = useEvent<EventHandler<ModalExpandedChangeEvent>>(({expanded}): void => {
         // conditions:
         if (expanded) return; // ignore if expanded
         
@@ -242,16 +242,24 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         setEditMode(null);
     });
     
-    const handlePrintShow         = useEvent(() => {
+    const handleEditShippingAddress = useEvent(() => {
+        setEditMode('shippingAddress');
+    });
+    
+    const handlePrintShow           = useEvent(() => {
         setEditMode('printOrder');
         handleMarkAsProcessing();
     });
     
-    const handleMarkAsProcessing  = useEvent(() => {
+    const handleMarkAsProcessing    = useEvent(() => {
         // TODO: mark order as processing
     });
-    const handleMarkAsUnprocessed = useEvent(() => {
+    const handleMarkAsUnprocessed   = useEvent(() => {
         // TODO: unmark order as processing
+    });
+    
+    const handleConfirmPayment      = useEvent(() => {
+        setEditMode('paymentMethod');
     });
     
     
@@ -381,7 +389,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             : (shippingProvider?.name ?? 'DELETED SHIPPING PROVIDER')
                     }</Basic>
                     <div className={styleSheet.shippingAddress}>
-                        {!printMode && <EditButton className={styleSheet.editShippingAddress} onClick={() => setEditMode('shippingAddress')} />}
+                        {!printMode && <EditButton className={styleSheet.editShippingAddress} onClick={handleEditShippingAddress} />}
                         <p>
                             <strong>{shippingFirstName} {shippingLastName}</strong>
                         </p>
@@ -492,7 +500,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                 </>}
                             </tbody>
                         </table>
-                        {!isPaid && <ButtonIcon icon='payment' size='lg' gradient={true} onClick={() => setEditMode('paymentMethod')}>
+                        {!isPaid && <ButtonIcon icon='payment' size='lg' gradient={true} onClick={handleConfirmPayment}>
                             Confirm Payment
                         </ButtonIcon>}
                     </Section>
