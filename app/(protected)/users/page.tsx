@@ -149,7 +149,7 @@ export default function UserPage(): JSX.Element|null {
                 }
             />
         </Main>
-    )
+    );
 }
 
 
