@@ -17,6 +17,11 @@ import {
 //     Metadata,
 // }                           from 'next'
 
+// // next-auth:
+// import {
+//     useSession,
+// }                           from 'next-auth/react'
+
 // cssfn:
 import {
     // style sheets:
@@ -130,6 +135,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
     
     // rest props:
     const {
+        // data:
         model,
     ...restListItemProps} = props;
     const {
@@ -148,6 +154,23 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
     // states:
     type EditMode = keyof NonNullable<OrderDetail['customer']>|'full'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
+    
+    
+    
+    // TODO: add privilege for orders:
+    // // sessions:
+    // const { data: session } = useSession();
+    // const role = session?.role;
+ // // const privilegeAdd               = !!role?.user_c;
+    // const privilegeUpdateFoo         = !!role?.user_uf;
+    // const privilegeUpdateBoo         = !!role?.user_ub;
+    // const privilegeDelete            = !!role?.user_d;
+    // const privilegeWrite             = (
+    //     /* privilegeAdd */ // except for add
+    //     privilegeUpdateFoo
+    //     || privilegeUpdateBoo
+    //     || privilegeDelete
+    // );
     
     
     
