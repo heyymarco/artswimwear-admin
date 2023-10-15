@@ -181,9 +181,9 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleUpdate         = useEvent<UpdateHandler>(async () => {
+    const handleUpdate         = useEvent<UpdateHandler>(async ({id}) => {
         return (await updateRole({
-            id : model?.id ?? '',
+            id : id ?? '',
             
             name,
             
