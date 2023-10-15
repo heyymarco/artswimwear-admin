@@ -100,20 +100,15 @@ import {
 import {
     resolveMediaUrl,
 }                           from '@/libs/mediaStorage.client'
+import {
+    // utilities:
+    getTotalQuantity,
+}                           from './utilities'
 
 
 
 // defaults:
 const imageSize = 128;  // 128px
-
-
-
-// utilities:
-const getTotalQuantity = (items: OrderDetail['items']): number => {
-    return items.reduce((counter, item) => {
-        return counter + item.quantity;
-    }, 0);
-};
 
 
 
@@ -159,7 +154,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
     // stores:
     const {
         data      : productList,
-        isLoading : isProductLoadingAndNoData,
+     // isLoading : isProductLoadingAndNoData,
     } = useGetProductList();
     
     
