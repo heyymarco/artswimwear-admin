@@ -204,7 +204,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
     // handlers:
     const handleUpdate               = useEvent<UpdateHandler>(async ({id, privilegeAdd, privilegeUpdate}) => {
         return (await updateUser({
-            id       : model?.id ?? '',
+            id       : id ?? '',
             
             name     : (privilegeUpdate.name     || privilegeAdd) ? name               : undefined,
             email    : (privilegeUpdate.email    || privilegeAdd) ? email              : undefined,
