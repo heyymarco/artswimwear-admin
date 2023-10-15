@@ -13,7 +13,7 @@ import { commerces } from '@/config';
 
 // styles:
 const imageSize = 128;  // 128px
-const usesProductPreviewLayout = () => { // the <ListItem> of user list
+const usesProductPreviewLayout = () => { // the <ListItem> of product list
     // dependencies:
     
     // capabilities:
@@ -99,6 +99,7 @@ const usesProductPreviewLayout = () => { // the <ListItem> of user list
                     opacity: 'unset',
                     transform: 'scale(105%)',
                 }),
+                // no need to invert the edit overlay, assumes the product backgrounds are solid color
                 // ...rule('.overlay', {
                 //     opacity : 0.8,
                 //     
@@ -113,12 +114,15 @@ const usesProductPreviewLayout = () => { // the <ListItem> of user list
                 // }),
             }),
             ...children('.images', {
+                // positions:
                 gridArea    : 'images',
+                
+                justifySelf : 'stretch', // stretch the self horizontally
+                alignSelf   : 'stretch', // stretch the self vertically
                 
                 
                 
                 // sizes:
-                alignSelf   : 'stretch',
                 aspectRatio : commerces.defaultProductAspectRatio,
                 
                 
