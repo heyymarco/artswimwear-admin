@@ -9,6 +9,11 @@ import {
     getServerSession,
 }                           from 'next-auth'
 
+// heymarco:
+import type {
+    Session,
+}                           from '@heymarco/next-auth/server'
+
 // next-connect:
 import {
     createEdgeRouter,
@@ -84,6 +89,7 @@ router
     // conditions:
     const session = await getServerSession(authOptions);
     if (!session) return NextResponse.json({ error: 'Please sign in.' }, { status: 401 }); // handled with error: unauthorized
+    (req as any).session = session;
     
     
     
@@ -91,6 +97,10 @@ router
     return await next();
 })
 .post(async (req) => {
+    /* required for displaying products page */
+    
+    
+    
     if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
         await new Promise<void>((resolve) => {
             setTimeout(() => {
@@ -122,6 +132,17 @@ router
         }, { status: 400 }); // handled with error
     } // if
     //#endregion validating request
+    
+    
+    
+    //#region validating privileges
+    const session = (req as any).session as Session;
+    if (!session.role?.order_r) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to view the orders.`
+    }, { status: 403 }); // handled with error: forbidden
+    //#endregion validating privileges
     
     
     
@@ -265,6 +286,51 @@ router
         }, { status: 400 }); // handled with error
     } // if
     //#endregion validating request
+    
+    
+    
+    //#region validating privileges
+    const session = (req as any).session as Session;
+    if (!id) {
+//         if (!session.role?.order_c) return NextResponse.json({ error:
+// `Access denied.
+// 
+// You do not have the privilege to add new order.`
+//         }, { status: 403 }); // handled with error: forbidden
+    }
+    else {
+        if (!session.role?.order_usa && (shippingAddress !== undefined)) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the order's shippingAddress.`
+        }, { status: 403 }); // handled with error: forbidden
+        
+        if (paymentMethod !== undefined) {
+            const {paymentMethod: {type: currentPaymentType}} = await prisma.order.findUnique({
+                where  : {
+                    id : id,
+                },
+                select : {
+                    paymentMethod : true,
+                },
+            }) ?? {paymentMethod:{}};
+            
+            if (currentPaymentType) {
+                if (!session.role?.order_upmu && (currentPaymentType === 'MANUAL')) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the order's paymentMethod of unpaid manualPayment.`
+                }, { status: 403 }); // handled with error: forbidden
+                
+                if (!session.role?.order_upmp && (currentPaymentType === 'MANUAL_PAID')) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the order's paymentMethod of paid manualPayment.`
+                }, { status: 403 }); // handled with error: forbidden
+            } // if
+        } // if
+    } // if
+    //#endregion validating privileges
     
     
     
