@@ -12,11 +12,10 @@ import {
     useEffect,
 }                           from 'react'
 
-// TODO: add privileges
-// // next-auth:
-// import {
-//     useSession,
-// }                           from 'next-auth/react'
+// next-auth:
+import {
+    useSession,
+}                           from 'next-auth/react'
 
 // cssfn:
 import {
@@ -182,9 +181,8 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     
     // sessions:
-    // TODO: add privileges
-    // const { data: session, update : updateSession} = useSession();
-    // const role = session?.role;
+    const { data: session, update : updateSession} = useSession();
+    const role = session?.role;
     
     
     
@@ -376,10 +374,12 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         </span>
                     </p>
                 </Section>
+                
                 {printMode && <Content theme='danger' outlined={true} nude={true} className={styleSheet.printSpacer}>
                     <Icon className='scissors' icon='content_cut' />
                     <hr className='line' />
                 </Content>}
+                
                 <Section title='Deliver To' theme={!printMode ? 'secondary' : 'light'} className={styleSheet.orderDeliverySection}>
                     <Basic tag='strong' className={styleSheet.badge}>{
                         isLoadingShipping
@@ -389,7 +389,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             : (shippingProvider?.name ?? 'DELETED SHIPPING PROVIDER')
                     }</Basic>
                     <div className={styleSheet.shippingAddress}>
-                        {!printMode && <EditButton className={styleSheet.editShippingAddress} onClick={handleEditShippingAddress} />}
+                        {!printMode && !!role?.order_usa && <EditButton className={styleSheet.editShippingAddress} onClick={handleEditShippingAddress} />}
                         <p>
                             <strong>{shippingFirstName} {shippingLastName}</strong>
                         </p>
@@ -403,6 +403,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         </p>
                     </div>
                 </Section>
+                
                 {printMode && <Content theme='danger' outlined={true} nude={true} className={styleSheet.printSpacer}>
                     <Icon className='scissors' icon='content_cut' />
                     <hr className='line' />

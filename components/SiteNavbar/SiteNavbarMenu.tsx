@@ -118,7 +118,7 @@ const SiteNavbarMenu = ({
                 <Nav tag='ul' role='' {...basicVariantProps} listStyle='flat' gradient={navbarExpanded ? 'inherit' : false} orientation={navbarExpanded ? 'inline' : 'block'}>
                     {isFullySignedIn && <NavItem><Link href='/'>Dashboard</Link></NavItem>}
                     {isFullySignedIn && !!role?.product_r && <NavItem><Link href='/products'>Products</Link></NavItem>}
-                    {isFullySignedIn && <NavItem><Link href='/orders'>Orders</Link></NavItem>}
+                    {isFullySignedIn && !!role?.order_r   && <NavItem><Link href='/orders'>Orders</Link></NavItem>}
                     {isFullySignedIn && !!role?.user_r    && <NavItem><Link href='/users'>Users</Link></NavItem>}
                     
                     {isBusy && <NavItem active={true}>
