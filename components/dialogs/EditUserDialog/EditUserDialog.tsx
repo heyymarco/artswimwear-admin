@@ -171,8 +171,8 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
     const [username      , setUsername      ] = useState<string|null>(model?.username ?? null); // optional field
     
     const initialEmailRef                     = useRef  <string     >(model?.email    ?? ''  );
-    
     const initialImageRef                     = useRef  <string|null>(model?.image    ?? null); // optional field
+    
     const [draftDeletedImages               ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
     
     const [isTabRoleShown, setIsTabRoleShown] = useState<boolean>(() => (defaultExpandedTabIndex === 2));
