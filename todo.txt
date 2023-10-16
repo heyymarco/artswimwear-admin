@@ -4,4 +4,3 @@
 protect Admin role from deletion
 protect change user role from himself
 protect delete user from himself
-update UploadImage to support readOnly
