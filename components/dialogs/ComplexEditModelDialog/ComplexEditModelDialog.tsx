@@ -104,8 +104,8 @@ export type AfterDeleteHandler                          = () => Promise<void>
 export type UpdateSideHandler                           = () => Promise<void>
 export type DeleteSideHandler                           = () => Promise<void>
 
-export type ConfirmDeleteHandler<TModel extends Model>  = (args: { model: TModel }) => { title?: React.ReactNode, message: React.ReactNode }
-export type ConfirmUnsavedHandler<TModel extends Model> = (args: { model: TModel }) => { title?: React.ReactNode, message: React.ReactNode }
+export type ConfirmDeleteHandler<TModel extends Model>  = (args: { model: TModel      }) => { title?: React.ReactNode, message: React.ReactNode }
+export type ConfirmUnsavedHandler<TModel extends Model> = (args: { model: TModel|null }) => { title?: React.ReactNode, message: React.ReactNode }
 
 export interface CollapseEvent {
     result: EditModelDialogResult
@@ -418,7 +418,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
     const handleCloseDialog    = useEvent(async () => {
         if (privilegeWrite && isModified) {
             // conditions:
-            if (!model) return; // no model to update => ignore
+            // if (!model) return; // no model to update => ignore // no need this condition, has model => save changes; no model => create new record
             let answer : 'save'|'dontSave'|'continue'|undefined = 'save';
             if (onConfirmUnsaved) {
                 const {
