@@ -108,6 +108,11 @@ router
                 user_ur    : true,
                 user_d     : true,
                 
+                order_r    : true,
+                order_usa  : true,
+                order_upmu : true,
+                order_upmp : true,
+                
                 role_c     : true,
                 role_u     : true,
                 role_d     : true,
@@ -156,6 +161,11 @@ router
         user_ui,
         user_ur,
         user_d,
+        
+        order_r,
+        order_usa,
+        order_upmu,
+        order_upmp,
         
         role_c,
         role_u,
@@ -226,6 +236,11 @@ You do not have the privilege to modify the role.`
             user_ur,
             user_d,
             
+            order_r,
+            order_usa,
+            order_upmu,
+            order_upmp,
+            
             role_c,
             role_u,
             role_d,
@@ -253,6 +268,11 @@ You do not have the privilege to modify the role.`
             user_ui    : true,
             user_ur    : true,
             user_d     : true,
+            
+            order_r    : true,
+            order_usa  : true,
+            order_upmu : true,
+            order_upmp : true,
             
             role_c     : true,
             role_u     : true,

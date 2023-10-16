@@ -157,6 +157,11 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
     const [user_ur   , setUser_ur   ] = useState<boolean>(model?.user_ur    ?? false);
     const [user_d    , setUser_d    ] = useState<boolean>(model?.user_d     ?? false);
     
+    const [order_r   , setOrder_r   ] = useState<boolean>(model?.order_r    ?? false);
+    const [order_usa , setOrder_usa ] = useState<boolean>(model?.order_usa  ?? false);
+    const [order_upmu, setOrder_upmu] = useState<boolean>(model?.order_upmu ?? false);
+    const [order_upmp, setOrder_upmp] = useState<boolean>(model?.order_upmp ?? false);
+    
     const [role_c    , setRole_c    ] = useState<boolean>(model?.role_c     ?? false);
     const [role_u    , setRole_u    ] = useState<boolean>(model?.role_u     ?? false);
     const [role_d    , setRole_d    ] = useState<boolean>(model?.role_d     ?? false);
@@ -205,6 +210,11 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             user_ui,
             user_ur,
             user_d,
+            
+            order_r,
+            order_usa,
+            order_upmu,
+            order_upmp,
             
             role_c,
             role_u,
@@ -398,6 +408,20 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
                                     </Check>
                                     <Check className='check editor' active={user_d}     onActiveChange={({active}) => { setUser_d(active);     setIsModified(true); }}>
                                         Delete
+                                    </Check>
+                                </AccordionItem>
+                                <AccordionItem label='Orders'    inheritEnabled={false}>
+                                    <Check className='check editor' active={order_r}    onActiveChange={({active}) => { setOrder_r(active);    setIsModified(true); }}>
+                                        View
+                                    </Check>
+                                    <Check className='check editor' active={order_usa}  onActiveChange={({active}) => { setOrder_usa(active);  setIsModified(true); }}>
+                                        Change Shipping Address
+                                    </Check>
+                                    <Check className='check editor' active={order_upmu} onActiveChange={({active}) => { setOrder_upmu(active); setIsModified(true); }}>
+                                        Approve Manual Payment
+                                    </Check>
+                                    <Check className='check editor' active={order_upmp} onActiveChange={({active}) => { setOrder_upmp(active); setIsModified(true); }}>
+                                        Change Manual Payment
                                     </Check>
                                 </AccordionItem>
                                 <AccordionItem label='Roles'    inheritEnabled={false}>

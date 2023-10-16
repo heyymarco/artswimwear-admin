@@ -377,6 +377,11 @@ model Role {
     user_ur                 Boolean                 @default(false)
     user_d                  Boolean                 @default(false)
     
+    order_r                 Boolean                 @default(false)
+    order_usa               Boolean                 @default(false)
+    order_upmu              Boolean                 @default(false)
+    order_upmp              Boolean                 @default(false)
+    
     role_c                  Boolean                 @default(false)
     role_u                  Boolean                 @default(false)
     role_d                  Boolean                 @default(false)
