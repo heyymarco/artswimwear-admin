@@ -259,6 +259,9 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     const handleConfirmPayment      = useEvent(() => {
         setEditMode('paymentMethod');
     });
+    const handleEditPayment         = useEvent(() => {
+        setEditMode('paymentMethod');
+    });
     
     
     
@@ -466,36 +469,40 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                             <span className='paymentIdentifier'>
                                                 {!!paymentIdentifier && <>&nbsp;({paymentIdentifier})</>}
                                             </span>
+                                            {!!role?.order_upmp && <EditButton className='edit' onClick={handleEditPayment} />}
                                         </td>
                                     </tr>
                                     <tr>
                                         <th>
                                             Amount
                                         </th>
-                                        <td>
-                                            <strong>
+                                        <td className='currencyData'>
+                                            <strong className='currencyNumber'>
                                                 {formatCurrency(paymentAmount)}
                                             </strong>
+                                            {!!role?.order_upmp && <EditButton className='edit' onClick={handleEditPayment} />}
                                         </td>
                                     </tr>
                                     <tr>
                                         <th>
                                             Fee
                                         </th>
-                                        <td>
-                                            <span>
+                                        <td className='currencyData'>
+                                            <span className='currencyNumber'>
                                                 {formatCurrency(paymentFee)}
                                             </span>
+                                            {!!role?.order_upmp && <EditButton className='edit' onClick={handleEditPayment} />}
                                         </td>
                                     </tr>
                                     <tr>
                                         <th>
                                             Net
                                         </th>
-                                        <td>
-                                            <strong>
+                                        <td className='currencyData'>
+                                            <strong className='currencyNumber'>
                                                 {formatCurrency((paymentAmount !== undefined) ? (paymentAmount - (paymentFee ?? 0)) : undefined)}
                                             </strong>
+                                            {!!role?.order_upmp && <EditButton className='hidden' />}
                                         </td>
                                     </tr>
                                 </>}

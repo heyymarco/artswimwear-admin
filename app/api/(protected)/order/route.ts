@@ -312,7 +312,7 @@ You do not have the privilege to approve payment of the order.`
                 if (!session.role?.order_upmp && (currentPaymentType === 'MANUAL_PAID')) return NextResponse.json({ error:
 `Access denied.
 
-You do not have the privilege to modify the order's paymentMethod of paid manualPayment.`
+You do not have the privilege to modify the payment of the order.`
                 }, { status: 403 }); // handled with error: forbidden
             } // if
         } // if

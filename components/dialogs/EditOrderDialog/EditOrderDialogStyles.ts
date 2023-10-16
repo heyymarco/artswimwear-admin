@@ -291,6 +291,21 @@ const usesPaymentSectionLayout = () => {
                             textAlign  : 'end',
                         }),
                         ...children('td', {
+                            display       : 'flex',
+                            flexDirection : 'row',
+                            flexWrap      : 'nowrap',
+                            
+                            gap           : '0.5em',
+                            
+                            ...rule('.currencyData', {
+                                ...children('.currencyNumber', {
+                                    flex      : [[1, 1, '100%']],
+                                    textAlign : 'end',
+                                }),
+                                ...children('.hidden', {
+                                    visibility : 'hidden',
+                                }),
+                            }),
                             ...children('.paymentProvider', {
                                 width         : '42px',
                                 verticalAlign : 'middle',
