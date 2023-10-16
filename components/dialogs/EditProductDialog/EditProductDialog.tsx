@@ -157,7 +157,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         
         
         // states:
-        defaultExpandedTabIndex,
+        defaultExpandedTabIndex = 0,
     ...restComplexEditModelDialogProps} = props;
     
     
@@ -166,14 +166,14 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     const [isModified      , setIsModified      ] = useState<boolean>(false);
     const [isPathModified  , setIsPathModified  ] = useState<boolean>(false);
     
-    const [visibility      , setVisibility      ] = useState<ProductVisibility>(model?.visibility     ?? 'DRAFT');
-    const [name            , setName            ] = useState<string           >(model?.name           ?? ''     );
-    const [path            , setPath            ] = useState<string           >(model?.path           ?? ''     );
-    const [price           , setPrice           ] = useState<number           >(model?.price          ?? 0      );
-    const [shippingWeight  , setShippingWeight  ] = useState<number|null      >(model?.shippingWeight ?? null   );
-    const [stock           , setStock           ] = useState<number|null      >(model?.stock          ?? null   );
-    const [images          , setImages          ] = useState<string[]         >(model?.images         ?? []     );
-    const [description     , setDescription     ] = useState<WysiwygEditorState|null>(() => {
+    const [visibility      , setVisibility      ] = useState<ProductVisibility      >(model?.visibility     ?? 'DRAFT');
+    const [name            , setName            ] = useState<string                 >(model?.name           ?? ''     );
+    const [path            , setPath            ] = useState<string                 >(model?.path           ?? ''     );
+    const [price           , setPrice           ] = useState<number                 >(model?.price          ?? 0      );
+    const [shippingWeight  , setShippingWeight  ] = useState<number            |null>(model?.shippingWeight ?? null   ); // optional field
+    const [stock           , setStock           ] = useState<number            |null>(model?.stock          ?? null   ); // optional field
+    const [images          , setImages          ] = useState<string[]               >(model?.images         ?? []     );
+    const [description     , setDescription     ] = useState<WysiwygEditorState|null>(() => {                            // optional field
         const description = model?.description;
         if (!description) return null;
         if (typeof(description) === 'object') return description as any;
@@ -214,13 +214,13 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         return (await updateProduct({
             id             : id ?? '',
             
-            visibility     : (privilegeUpdate.visibility  || privilegeAdd) ? visibility     : undefined,
-            name           : (privilegeUpdate.description || privilegeAdd) ? name           : undefined,
-            path           : (privilegeUpdate.description || privilegeAdd) ? path           : undefined,
-            price          : (privilegeUpdate.price       || privilegeAdd) ? price          : undefined,
-            shippingWeight : (privilegeUpdate.price       || privilegeAdd) ? shippingWeight : undefined,
-            stock          : (privilegeUpdate.stock       || privilegeAdd) ? stock          : undefined,
-            images         : (privilegeUpdate.images      || privilegeAdd) ? images         : undefined,
+            visibility     : (privilegeUpdate.visibility  || privilegeAdd) ? visibility                                        : undefined,
+            name           : (privilegeUpdate.description || privilegeAdd) ? name                                              : undefined,
+            path           : (privilegeUpdate.description || privilegeAdd) ? path                                              : undefined,
+            price          : (privilegeUpdate.price       || privilegeAdd) ? price                                             : undefined,
+            shippingWeight : (privilegeUpdate.price       || privilegeAdd) ? shippingWeight                                    : undefined,
+            stock          : (privilegeUpdate.stock       || privilegeAdd) ? stock                                             : undefined,
+            images         : (privilegeUpdate.images      || privilegeAdd) ? images                                            : undefined,
             description    : (privilegeUpdate.description || privilegeAdd) ? ((description?.toJSON?.() ?? description) as any) : undefined,
         }).unwrap()).id;
     });
@@ -375,7 +375,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                     <span className='name label'>Name:</span>
                     <NameEditor
                         // refs:
-                        elmRef={((defaultExpandedTabIndex ?? 0) === 0) ? firstEditorRef : undefined}
+                        elmRef={(defaultExpandedTabIndex === 0) ? firstEditorRef : undefined}
                         
                         
                         
@@ -582,7 +582,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             <TabPanel label={PAGE_PRODUCT_TAB_DESCRIPTION}  panelComponent={<Generic className={styleSheet.descriptionTab} />}>
                 <WysiwygEditor
                     // refs:
-                    elmRef={((defaultExpandedTabIndex ?? 0) === 2) ? firstEditorRef : undefined}
+                    elmRef={(defaultExpandedTabIndex === 2) ? firstEditorRef : undefined}
                     
                     
                     
