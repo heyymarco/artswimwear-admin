@@ -237,7 +237,23 @@ You do not have the privilege to view the orders.`
         ||
         ((customer?.email        !== undefined) && ((typeof(customer.email)        !== 'string') || (customer.email.length    < 5) || (customer.email.length    > 50)))
         
-        // TODO: validating data type & constraints
+        ||
+        
+        (
+            (paymentMethod !== undefined)
+            &&
+            (
+                ((typeof(paymentMethod?.type) !== 'string') || !['MANUAL', 'MANUAL_PAID'].includes(paymentMethod?.type))
+                ||
+                ((typeof(paymentMethod?.brand) !== 'string') || !['BANK_TRANSFER', 'CHECK', 'OTHER'].includes(paymentMethod?.brand)) // must be filled
+                ||
+                (paymentMethod?.identifier !== null) // must be null
+                ||
+                ((typeof(paymentMethod?.amount) !== 'number') || (paymentMethod?.amount < 0) || !isFinite(paymentMethod?.amount)) // the amount must be finite & non_negative
+                ||
+                ((typeof(paymentMethod?.fee) !== 'number') || (paymentMethod?.fee < 0) || !isFinite(paymentMethod?.fee)) // the fee must be finite & non_negative
+            )
+        )
     ) {
         return NextResponse.json({
             error: 'Invalid data.',
@@ -245,40 +261,11 @@ You do not have the privilege to view the orders.`
     } // if
     const order = await prisma.order.findUnique({
         where  : {
-            id: id,
+            id : id,
         },
-            select : {
-                id                     : true,
-                orderId                : true,
-                
-                items                  : {
-                    select: {
-                        productId      : true,
-                        
-                        price          : true,
-                        shippingWeight : true,
-                        quantity       : true,
-                    },
-                },
-                
-                customer               : {
-                    select: {
-                        id             : true,
-                        
-                        marketingOpt   : true,
-                        
-                        nickName       : true,
-                        email          : true,
-                    },
-                },
-                
-                shippingAddress        : true,
-                shippingCost           : true,
-                shippingProviderId     : true,
-                
-                billingAddress         : true,
-                paymentMethod          : true,
-            },
+        select : {
+            id : true,
+        },
     });
     if (!order) {
         return NextResponse.json({
@@ -319,7 +306,7 @@ You do not have the privilege to modify the order's shippingAddress.`
                 if (!session.role?.order_upmu && (currentPaymentType === 'MANUAL')) return NextResponse.json({ error:
 `Access denied.
 
-You do not have the privilege to modify the order's paymentMethod of unpaid manualPayment.`
+You do not have the privilege to approve payment of the order.`
                 }, { status: 403 }); // handled with error: forbidden
                 
                 if (!session.role?.order_upmp && (currentPaymentType === 'MANUAL_PAID')) return NextResponse.json({ error:

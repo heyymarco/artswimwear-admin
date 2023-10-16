@@ -501,7 +501,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                 </>}
                             </tbody>
                         </table>
-                        {!isPaid && <ButtonIcon icon='payment' size='lg' gradient={true} onClick={handleConfirmPayment}>
+                        {!isPaid && !!role?.order_upmu && <ButtonIcon icon='payment' size='lg' gradient={true} onClick={handleConfirmPayment}>
                             Confirm Payment
                         </ButtonIcon>}
                     </Section>
