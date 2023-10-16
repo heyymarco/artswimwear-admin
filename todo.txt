@@ -1,4 +1,5 @@
 // TODO: refresh the user model
+// TODO: update SimpleEditDialog to support payment_type validation of SimpleEditPaymentDialog
 protect Admin role from deletion
 protect change user role from himself
 protect delete user from himself
