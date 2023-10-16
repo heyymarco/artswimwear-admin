@@ -43,7 +43,8 @@ export const usesInfoTabLayout = () => {
         
         
         // children:
-        ...children('form', {// layouts:
+        ...children('form', {
+            // layouts:
             display            : 'grid',
             alignContent       : 'start',
             gridTemplate       : [[
