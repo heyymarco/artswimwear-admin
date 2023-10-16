@@ -225,7 +225,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
     });
     
     const handleRoleCreate           = useEvent<CreateHandler>(async ({id}) => {
-        setRoleId(id);
+        setRoleId(id); // select the last created role
         setIsModified(true);
     });
     const handleRoleDelete           = useEvent<DeleteHandler>(async ({id}) => {
@@ -234,6 +234,9 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
             setRoleId(null);
             setIsModified(true);
             console.log('related role deleted'); // TODO: refresh the user model
+        }
+        else {
+            // TODO: refresh the user models where (user.roleId === id)
         } // if
     });
     
