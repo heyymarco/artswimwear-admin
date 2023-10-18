@@ -6,18 +6,14 @@ import {
     scope,
 }                           from '@cssfn/core'                  // writes css in javascript
 import {
-    // border (stroke) stuff of UI:
-    usesBorder,
-    
-    
-    
     // a responsive management system:
+    breakpoints,
     ifScreenWidthAtLeast,
     
     
     
-    // groups a list of UIs into a single UI:
-    breakpoints,
+    // border (stroke) stuff of UI:
+    usesBorder,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
