@@ -80,15 +80,17 @@ export default function RootLayout({
             </head>
             <body>
                 <NextAuthSessionProvider>
-                    <Header />
                     <Provider store={store}>
                         <DialogMessageProvider
                             fetchErrorMessageDefault={fetchErrorMessageDefault}
                         >
+                            <Header />
+                            
                             {children}
+                            
+                            <Footer />
                         </DialogMessageProvider>
                     </Provider>
-                    <Footer />
                 </NextAuthSessionProvider>
             </body>
         </html>
