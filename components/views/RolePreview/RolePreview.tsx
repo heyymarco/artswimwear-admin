@@ -252,7 +252,15 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
             // handlers:
             onClick={!readOnly ? handleClick : undefined}
         >
-            <RadioDecorator enabled={!readOnly} />
+            <RadioDecorator
+                // classes:
+                className='decorator'
+                
+                
+                
+                // accessibilities:
+                enabled={!readOnly}
+            />
             <p className='name'>{!!id ? name : <span className='noValue'>No Access</span>}</p>
             {!!id && <EditButton
                 iconComponent={<Icon icon='edit' mild={active} />}

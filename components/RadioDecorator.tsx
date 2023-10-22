@@ -37,11 +37,6 @@ const RadioDecorator = (props: RadioProps) => {
             
             
             
-            // classes:
-            className={props.className ?? 'decorator'}
-            
-            
-            
             // accessibilities:
             enableValidation={props.enableValidation ?? false}
             inheritActive={props.inheritActive ?? true}
