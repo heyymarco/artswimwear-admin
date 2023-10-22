@@ -30,12 +30,14 @@ const usesRolePreviewLayout = () => { // the <ListItem> of role list
         // children:
         ...children('.decorator', {
             // positions:
-            gridArea : 'decorator',
+            gridArea    : 'decorator',
+            justifySelf : 'center',
+            alignSelf   : 'center',
             
             
             
             // sizes:
-            flex : [[0, 0, 'auto']], // ungrowable, unshrinkable, initial from it's width
+            flex        : [[0, 0, 'auto']], // ungrowable, unshrinkable, initial from it's width
             
             
             
