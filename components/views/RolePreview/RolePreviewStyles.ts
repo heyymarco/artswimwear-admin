@@ -31,20 +31,6 @@ const usesRolePreviewLayout = () => { // the <ListItem> of role list
         ...children('.decorator', {
             // positions:
             gridArea    : 'decorator',
-            justifySelf : 'center',
-            alignSelf   : 'center',
-            
-            
-            
-            // sizes:
-            flex        : [[0, 0, 'auto']], // ungrowable, unshrinkable, initial from it's width
-            
-            
-            
-            // children:
-            ...children('input', {
-                borderColor: 'currentcolor',
-            }),
         }),
         ...children('.name', {
             // positions:
