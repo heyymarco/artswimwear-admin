@@ -349,13 +349,13 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
                         enableValidation={false}
                         inheritValidation={false}
                     >
-                        <AccessibilityProvider
-                            // accessibilities:
-                            /* enable|disable accessibility for all <Check> */
-                            enabled={privilegeUpdate.update || privilegeAdd}
-                        >
-                            <ExclusiveAccordion className='privileges list' defaultExpandedListIndex={0}>
-                                <AccordionItem label='Products' inheritEnabled={false}>
+                        <ExclusiveAccordion className='privileges list' defaultExpandedListIndex={0}>
+                            <AccordionItem label='Products' inheritEnabled={false}>
+                                <AccessibilityProvider
+                                    // accessibilities:
+                                    /* enable|disable accessibility for all <Check> */
+                                    enabled={privilegeUpdate.update || privilegeAdd}
+                                >
                                     <Check className='check editor' active={product_r}  onActiveChange={({active}) => { setProduct_r(active);  setIsModified(true); }}>
                                         View
                                     </Check>
@@ -380,8 +380,15 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
                                     <Check className='check editor' active={product_d}  onActiveChange={({active}) => { setProduct_d(active);  setIsModified(true); }}>
                                         Delete
                                     </Check>
-                                </AccordionItem>
-                                <AccordionItem label='Users'    inheritEnabled={false}>
+                                </AccessibilityProvider>
+                            </AccordionItem>
+                            
+                            <AccordionItem label='Users'    inheritEnabled={false}>
+                                <AccessibilityProvider
+                                    // accessibilities:
+                                    /* enable|disable accessibility for all <Check> */
+                                    enabled={privilegeUpdate.update || privilegeAdd}
+                                >
                                     <Check className='check editor' active={user_r}     onActiveChange={({active}) => { setUser_r(active);     setIsModified(true); }}>
                                         View
                                     </Check>
@@ -409,8 +416,15 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
                                     <Check className='check editor' active={user_d}     onActiveChange={({active}) => { setUser_d(active);     setIsModified(true); }}>
                                         Delete
                                     </Check>
-                                </AccordionItem>
-                                <AccordionItem label='Orders'    inheritEnabled={false}>
+                                </AccessibilityProvider>
+                            </AccordionItem>
+                            
+                            <AccordionItem label='Orders'    inheritEnabled={false}>
+                                <AccessibilityProvider
+                                    // accessibilities:
+                                    /* enable|disable accessibility for all <Check> */
+                                    enabled={privilegeUpdate.update || privilegeAdd}
+                                >
                                     <Check className='check editor' active={order_r}    onActiveChange={({active}) => { setOrder_r(active);    setIsModified(true); }}>
                                         View
                                     </Check>
@@ -423,8 +437,15 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
                                     <Check className='check editor' active={order_upmp} onActiveChange={({active}) => { setOrder_upmp(active); setIsModified(true); }}>
                                         Change Manual Payment
                                     </Check>
-                                </AccordionItem>
-                                <AccordionItem label='Roles'    inheritEnabled={false}>
+                                </AccessibilityProvider>
+                            </AccordionItem>
+                            
+                            <AccordionItem label='Roles'    inheritEnabled={false}>
+                                <AccessibilityProvider
+                                    // accessibilities:
+                                    /* enable|disable accessibility for all <Check> */
+                                    enabled={privilegeUpdate.update || privilegeAdd}
+                                >
                                     <Check className='check editor' active={role_c}     onActiveChange={({active}) => { setRole_c(active);     setIsModified(true); }}>
                                         Add New
                                     </Check>
@@ -434,9 +455,9 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
                                     <Check className='check editor' active={role_d}     onActiveChange={({active}) => { setRole_d(active);     setIsModified(true); }}>
                                         Delete
                                     </Check>
-                                </AccordionItem>
-                            </ExclusiveAccordion>
-                        </AccessibilityProvider>
+                                </AccessibilityProvider>
+                            </AccordionItem>
+                        </ExclusiveAccordion>
                     </ValidationProvider>
                 </form>
             </TabPanel>
