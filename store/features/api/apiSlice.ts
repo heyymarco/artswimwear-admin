@@ -12,18 +12,18 @@ import type {
 }                           from '@/libs/types'
 
 // apis:
-import type { ProductPreview, ProductDetail }   from '@/app/api/(protected)/product/route'
-export type { ProductPreview, ProductDetail }   from '@/app/api/(protected)/product/route'
-import type { OrderDetail }                     from '@/app/api/(protected)/order/route'
-export type { OrderDetail }                     from '@/app/api/(protected)/order/route'
-import type { ShippingPreview }                 from '@/app/api/(protected)/shipping/route'
-export type { ShippingPreview }                 from '@/app/api/(protected)/shipping/route'
-import type { UserDetail }                      from '@/app/api/(protected)/user/route'
-export type { UserDetail }                      from '@/app/api/(protected)/user/route'
-import type { RoleDetail }                      from '@/app/api/(protected)/role/route'
-export type { RoleDetail }                      from '@/app/api/(protected)/role/route'
-import type { ImageId }                         from '@/app/api/(protected)/upload/route'
-export type { ImageId }                         from '@/app/api/(protected)/upload/route'
+import type { ProductPreview, ProductDetail }   from '@/app/api/(protected)/products/route'
+export type { ProductPreview, ProductDetail }   from '@/app/api/(protected)/products/route'
+import type { OrderDetail }                     from '@/app/api/(protected)/orders/route'
+export type { OrderDetail }                     from '@/app/api/(protected)/orders/route'
+import type { ShippingPreview }                 from '@/app/api/(protected)/shippings/route'
+export type { ShippingPreview }                 from '@/app/api/(protected)/shippings/route'
+import type { UserDetail }                      from '@/app/api/(protected)/users/route'
+export type { UserDetail }                      from '@/app/api/(protected)/users/route'
+import type { RoleDetail }                      from '@/app/api/(protected)/roles/route'
+export type { RoleDetail }                      from '@/app/api/(protected)/roles/route'
+import type { ImageId }                         from '@/app/api/(protected)/uploads/route'
+export type { ImageId }                         from '@/app/api/(protected)/uploads/route'
 
 // other libs:
 import {
@@ -100,7 +100,7 @@ export const apiSlice = createApi({
     endpoints : (builder) => ({
         getProductList    : builder.query<EntityState<ProductPreview>, void>({
             query : () => ({
-                url    : 'product',
+                url    : 'products',
                 method : 'GET',
             }),
             transformResponse(response: ProductPreview[]) {
@@ -109,7 +109,7 @@ export const apiSlice = createApi({
         }),
         getProductPage    : builder.query<Pagination<ProductDetail>, PaginationArgs>({
             query : (params) => ({
-                url    : 'product',
+                url    : 'products',
                 method : 'POST',
                 body   : params,
             }),
@@ -129,7 +129,7 @@ export const apiSlice = createApi({
         }),
         updateProduct     : builder.mutation<ProductDetail, MutationArgs<ProductDetail>>({
             query: (patch) => ({
-                url    : 'product',
+                url    : 'products',
                 method : 'PATCH',
                 body   : patch
             }),
@@ -149,7 +149,7 @@ export const apiSlice = createApi({
         }),
         deleteProduct     : builder.mutation<Pick<ProductDetail, 'id'>, MutationArgs<Pick<ProductDetail, 'id'>>>({
             query: (params) => ({
-                url    : 'product',
+                url    : 'products',
                 method : 'DELETE',
                 body   : params
             }),
@@ -165,14 +165,14 @@ export const apiSlice = createApi({
         }),
         availablePath     : builder.mutation<boolean, string>({
             query: (path) => ({
-                url    : `product/check-path?path=${encodeURIComponent(path)}`,
+                url    : `products/check-path?path=${encodeURIComponent(path)}`,
                 method : 'GET',
             }),
         }),
         
         getOrderPage      : builder.query<Pagination<OrderDetail>, PaginationArgs>({
             query : (params) => ({
-                url    : 'order',
+                url    : 'orders',
                 method : 'POST',
                 body   : params,
             }),
@@ -192,7 +192,7 @@ export const apiSlice = createApi({
         }),
         updateOrder       : builder.mutation<OrderDetail, MutationArgs<OrderDetail>>({
             query: (patch) => ({
-                url    : 'order',
+                url    : 'orders',
                 method : 'PATCH',
                 body   : patch
             }),
@@ -213,7 +213,7 @@ export const apiSlice = createApi({
         
         getShippingList   : builder.query<EntityState<ShippingPreview>, void>({
             query : () => ({
-                url    : 'shipping',
+                url    : 'shippings',
                 method : 'GET',
             }),
             transformResponse(response: ShippingPreview[]) {
@@ -223,7 +223,7 @@ export const apiSlice = createApi({
         
         getUserPage       : builder.query<Pagination<UserDetail>, PaginationArgs>({
             query : (params) => ({
-                url    : 'user',
+                url    : 'users',
                 method : 'POST',
                 body   : params,
             }),
@@ -243,7 +243,7 @@ export const apiSlice = createApi({
         }),
         updateUser        : builder.mutation<UserDetail, MutationArgs<UserDetail>>({
             query: (patch) => ({
-                url    : 'user',
+                url    : 'users',
                 method : 'PATCH',
                 body   : patch
             }),
@@ -263,7 +263,7 @@ export const apiSlice = createApi({
         }),
         deleteUser        : builder.mutation<Pick<UserDetail, 'id'>, MutationArgs<Pick<UserDetail, 'id'>>>({
             query: (params) => ({
-                url    : 'user',
+                url    : 'users',
                 method : 'DELETE',
                 body   : params
             }),
@@ -279,20 +279,20 @@ export const apiSlice = createApi({
         }),
         availableUsername : builder.mutation<boolean, string>({
             query: (username) => ({
-                url    : `user/check-username?username=${encodeURIComponent(username)}`,
+                url    : `users/check-username?username=${encodeURIComponent(username)}`,
                 method : 'GET',
             }),
         }),
         availableEmail    : builder.mutation<boolean, string>({
             query: (email) => ({
-                url    : `user/check-email?email=${encodeURIComponent(email)}`,
+                url    : `users/check-email?email=${encodeURIComponent(email)}`,
                 method : 'GET',
             }),
         }),
         
         getRoleList       : builder.query<EntityState<RoleDetail>, void>({
             query : () => ({
-                url    : 'role',
+                url    : 'roles',
                 method : 'GET',
             }),
             transformResponse(response: RoleDetail[]) {
@@ -314,7 +314,7 @@ export const apiSlice = createApi({
         }),
         updateRole        : builder.mutation<RoleDetail, MutationArgs<RoleDetail>>({
             query: (patch) => ({
-                url    : 'role',
+                url    : 'roles',
                 method : 'PATCH',
                 body   : patch
             }),
@@ -330,7 +330,7 @@ export const apiSlice = createApi({
         }),
         deleteRole        : builder.mutation<Pick<RoleDetail, 'id'>, MutationArgs<Pick<RoleDetail, 'id'>>>({
             query: (params) => ({
-                url    : 'role',
+                url    : 'roles',
                 method : 'DELETE',
                 body   : params
             }),
@@ -346,14 +346,14 @@ export const apiSlice = createApi({
         }),
         availableRolename : builder.mutation<boolean, string>({
             query: (name) => ({
-                url    : `role/check-name?name=${encodeURIComponent(name)}`,
+                url    : `roles/check-name?name=${encodeURIComponent(name)}`,
                 method : 'GET',
             }),
         }),
         
         postImage         : builder.mutation<ImageId, { image: File, folder?: string, onUploadProgress?: (percentage: number) => void, abortSignal?: AbortSignal }>({
             query: ({ image, folder, onUploadProgress, abortSignal }) => ({
-                url     : 'upload',
+                url     : 'uploads',
                 method  : 'POST',
                 headers : { 'content-type': 'multipart/form-data' },
                 body    : ((): FormData => {
@@ -372,7 +372,7 @@ export const apiSlice = createApi({
         }),
         deleteImage       : builder.mutation<ImageId[], { imageId: string[] }>({
             query: ({ imageId: imageIds }) => ({
-                url     : 'upload',
+                url     : 'uploads',
                 method  : 'PATCH',
                 headers : { 'content-type': 'multipart/form-data' },
                 body    : ((): FormData => {
