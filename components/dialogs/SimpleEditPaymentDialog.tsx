@@ -33,7 +33,7 @@ import {
 // react components:
 export interface SimpleEditPaymentDialogProps
     extends
-        ImplementedSimpleEditDialogProps<PaymentValue, OrderDetail, 'paymentMethod'>
+        ImplementedSimpleEditDialogProps<PaymentValue, OrderDetail, 'payment'>
 {
 }
 export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => {
@@ -43,10 +43,10 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
     
     
     // handlers:
-    const handleInitialValue = useEvent<InitialValueHandler<PaymentValue, OrderDetail, 'paymentMethod'>>((edit, model) => {
+    const handleInitialValue = useEvent<InitialValueHandler<PaymentValue, OrderDetail, 'payment'>>((edit, model) => {
         return model[edit];
     });
-    const handleUpdate       = useEvent<UpdateHandler<PaymentValue, OrderDetail, 'paymentMethod'>>(async (value, edit, model) => {
+    const handleUpdate       = useEvent<UpdateHandler<PaymentValue, OrderDetail, 'payment'>>(async (value, edit, model) => {
         await updateOrder({
             id     : model.id,
             
@@ -63,7 +63,7 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
     
     // jsx:
     return (
-        <SimpleEditDialog<PaymentValue, OrderDetail, 'paymentMethod'>
+        <SimpleEditDialog<PaymentValue, OrderDetail, 'payment'>
             // other props:
             {...props}
             

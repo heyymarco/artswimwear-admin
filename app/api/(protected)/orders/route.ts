@@ -178,8 +178,7 @@ You do not have the privilege to view the orders.`
                 shippingCost           : true,
                 shippingProviderId     : true,
                 
-                billingAddress         : true,
-                paymentMethod          : true,
+                payment                : true,
             },
             orderBy : {
                 createdAt: 'desc',
@@ -208,6 +207,7 @@ You do not have the privilege to view the orders.`
     // return NextResponse.json({ message: 'server error' }, { status: 500 }); // handled with error
     
     //#region parsing request
+    const body = await req.json();
     const {
         id,
         
@@ -220,8 +220,15 @@ You do not have the privilege to view the orders.`
         shippingProviderId,
         
         billingAddress,
-        paymentMethod,
-    } = await req.json();
+    } = body;
+    const payment = (
+        (billingAddress === undefined)
+        ? body.payment
+        : {
+            ...body.payment,
+            billingAddress,
+        }
+    );
     //#endregion parsing request
     
     
@@ -240,18 +247,18 @@ You do not have the privilege to view the orders.`
         ||
         
         (
-            (paymentMethod !== undefined)
+            (payment !== undefined)
             &&
             (
-                ((typeof(paymentMethod?.type) !== 'string') || !['MANUAL', 'MANUAL_PAID'].includes(paymentMethod?.type))
+                ((typeof(payment?.type) !== 'string') || !['MANUAL', 'MANUAL_PAID'].includes(payment?.type))
                 ||
-                ((typeof(paymentMethod?.brand) !== 'string') || !['BANK_TRANSFER', 'CHECK', 'OTHER'].includes(paymentMethod?.brand)) // must be filled
+                ((typeof(payment?.brand) !== 'string') || !['BANK_TRANSFER', 'CHECK', 'OTHER'].includes(payment?.brand)) // must be filled
                 ||
-                (paymentMethod?.identifier !== null) // must be null
+                (payment?.identifier !== null) // must be null
                 ||
-                ((typeof(paymentMethod?.amount) !== 'number') || (paymentMethod?.amount < 0) || !isFinite(paymentMethod?.amount)) // the amount must be finite & non_negative
+                ((typeof(payment?.amount) !== 'number') || (payment?.amount < 0) || !isFinite(payment?.amount)) // the amount must be finite & non_negative
                 ||
-                ((typeof(paymentMethod?.fee) !== 'number') || (paymentMethod?.fee < 0) || !isFinite(paymentMethod?.fee)) // the fee must be finite & non_negative
+                ((typeof(payment?.fee) !== 'number') || (payment?.fee < 0) || !isFinite(payment?.fee)) // the fee must be finite & non_negative
             )
         )
     ) {
@@ -292,15 +299,15 @@ You do not have the privilege to view the orders.`
 You do not have the privilege to modify the order's shippingAddress.`
         }, { status: 403 }); // handled with error: forbidden
         
-        if (paymentMethod !== undefined) {
-            const {paymentMethod: {type: currentPaymentType}} = await prisma.order.findUnique({
+        if (payment !== undefined) {
+            const {payment: {type: currentPaymentType}} = await prisma.order.findUnique({
                 where  : {
                     id : id,
                 },
                 select : {
-                    paymentMethod : true,
+                    payment : true,
                 },
-            }) ?? {paymentMethod:{}};
+            }) ?? {payment:{}};
             
             if (currentPaymentType) {
                 if (!session.role?.order_upmu && (currentPaymentType === 'MANUAL')) return NextResponse.json({ error:
@@ -351,8 +358,7 @@ You do not have the privilege to modify the payment of the order.`
                 shippingCost,
                 shippingProviderId,
                 
-                billingAddress,
-                paymentMethod,
+                payment,
             },
             select : {
                 id                     : true,
@@ -383,8 +389,7 @@ You do not have the privilege to modify the payment of the order.`
                 shippingCost           : true,
                 shippingProviderId     : true,
                 
-                billingAddress         : true,
-                paymentMethod          : true,
+                payment                : true,
             },
         });
         return NextResponse.json(orderDetail); // handled with success

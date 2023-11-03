@@ -72,7 +72,7 @@ import {
 
 // models:
 import type {
-    PaymentMethod,
+    Payment,
 }                           from '@prisma/client'
 
 
@@ -86,12 +86,14 @@ export const usePaymentEditorStyleSheet = dynamicStyleSheet(
 
 // utilities:
 const emptyPaymentValue : PaymentValue = {
-    type       : 'MANUAL_PAID',
-    brand      : '',
-    identifier : '',
+    type           : 'MANUAL_PAID',
+    brand          : '',
+    identifier     : '',
     
-    amount     : null,
-    fee        : null,
+    amount         : null,
+    fee            : null,
+    
+    billingAddress : null,
 };
 Object.freeze(emptyPaymentValue);
 
@@ -99,7 +101,7 @@ Object.freeze(emptyPaymentValue);
 
 // react components:
 export type PaymentValue =
-    Omit<PaymentMethod, 'id'|'amount'|'fee'>
+    Omit<Payment, 'id'|'amount'|'fee'>
     & {
         amount : number|null
         fee    : number|null

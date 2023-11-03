@@ -45,7 +45,12 @@ export const SimpleEditAddressDialog = (props: SimpleEditAddressDialogProps) => 
     
     // handlers:
     const handleInitialValue = useEvent<InitialValueHandler<AddressValue, OrderDetail, 'shippingAddress'|'billingAddress'>>((edit, model) => {
-        return model[edit] ?? emptyAddressValue;
+        if (edit === 'billingAddress') {
+            return model.payment[edit] ?? emptyAddressValue;
+        }
+        else {
+            return model[edit] ?? emptyAddressValue;
+        } // if
     });
     const handleUpdate       = useEvent<UpdateHandler<AddressValue, OrderDetail, 'shippingAddress'|'billingAddress'>>(async (value, edit, model) => {
         await updateOrder({

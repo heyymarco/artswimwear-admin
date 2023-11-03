@@ -175,7 +175,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     
     // states:
-    type EditMode = 'shippingAddress'|'paymentMethod'|'printOrder'
+    type EditMode = 'shippingAddress'|'payment'|'printOrder'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     
@@ -195,7 +195,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         shippingAddress    : shippingAddressDetail,
         shippingProviderId : shippingProviderId,
         shippingCost       : totalShippingCosts,
-        paymentMethod      : {
+        payment            : {
             type           : paymentType,
             brand          : paymentBrand,
             identifier     : paymentIdentifier,
@@ -203,7 +203,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
             amount         : paymentAmount,
             fee            : paymentFee,
         },
-    } = model ?? { paymentMethod: {} };
+    } = model ?? { payment: {} };
     const {
         firstName      : shippingFirstName,
         lastName       : shippingLastName,
@@ -257,10 +257,10 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     });
     
     const handleConfirmPayment      = useEvent(() => {
-        setEditMode('paymentMethod');
+        setEditMode('payment');
     });
     const handleEditPayment         = useEvent(() => {
-        setEditMode('paymentMethod');
+        setEditMode('payment');
     });
     
     
@@ -540,12 +540,12 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                 <SimpleEditPaymentDialog
                     // data:
                     model={model!}
-                    edit='paymentMethod'
+                    edit='payment'
                     
                     
                     
                     // states:
-                    expanded={editMode === 'paymentMethod'}
+                    expanded={editMode === 'payment'}
                     onExpandedChange={handleExpandedChange}
                     
                     
