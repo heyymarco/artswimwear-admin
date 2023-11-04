@@ -28,8 +28,8 @@ export const authConfig : AuthConfig = {
     
     USER_SIGNUP_ENABLE                 : true,
     
-    EMAIL_SIGNUP_SUBJECT               : `Your Account Registration at ${process.env.BUSINESS_NAME || process.env.WEBSITE_URL || 'our website'}`,
-    EMAIL_SIGNUP_MESSAGE               : <>
+    EMAIL_SIGNUP_SUBJECT               : <>Your Account Registration at {process.env.BUSINESS_NAME || process.env.WEBSITE_URL || 'our website'}</>,
+    EMAIL_SIGNUP_MESSAGE               : <article>
         <p>
             Hi <User.Name />.
         </p>
@@ -54,7 +54,7 @@ export const authConfig : AuthConfig = {
         <p>
             If you did not signed up on our website then please ignore this email.
         </p>
-    </>,
+    </article>,
     
     
     
@@ -69,8 +69,8 @@ export const authConfig : AuthConfig = {
     
     
     
-    EMAIL_RESET_SUBJECT                : 'Password Reset Request',
-    EMAIL_RESET_MESSAGE                : <>
+    EMAIL_RESET_SUBJECT                : <>Password Reset Request</>,
+    EMAIL_RESET_MESSAGE                : <article>
         <p>
             Hi <User.Name />.
         </p>
@@ -98,7 +98,7 @@ export const authConfig : AuthConfig = {
         <p>
             If you did not make this request then please ignore this email.
         </p>
-    </>,
+    </article>,
     EMAIL_RESET_LIMITS                 : 0.25 /* hours */,
     EMAIL_RESET_MAX_AGE                : 24   /* hours */,
     
