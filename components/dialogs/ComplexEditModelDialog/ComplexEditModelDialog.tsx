@@ -350,8 +350,8 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
             
             await handleFinalizing(updatingModelTask ?? '', /*commitSides = */true, [updatingModelAndOthersTask]); // result: created|mutated
         }
-        catch (error: any) {
-            showMessageFetchError(error);
+        catch (fetchError: any) {
+            showMessageFetchError(fetchError);
         } // try
     });
     const handleDelete         = useEvent(async () => {
@@ -398,8 +398,8 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
             
             await handleFinalizing(false, /*commitSides = */false, [deletingModelAndOthersTask]); // result: deleted
         }
-        catch (error: any) {
-            showMessageFetchError(error);
+        catch (fetchError: any) {
+            showMessageFetchError(fetchError);
         } // try
     });
     const handleSideSave       = useEvent(async (commitSides : boolean) => {

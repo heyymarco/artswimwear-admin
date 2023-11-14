@@ -208,8 +208,8 @@ const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit extends s
             
             await handleFinalizing([updatingModelTask]); // result: created|mutated
         }
-        catch (error: any) {
-            showMessageFetchError(error);
+        catch (fetchError: any) {
+            showMessageFetchError(fetchError);
         } // try
     });
     
