@@ -7,6 +7,8 @@ import {
     style,
     scope,
 }                           from '@cssfn/core'          // writes css in javascript
+
+// reusable-ui core:
 import {
     // a border (stroke) management system:
     borders,
@@ -19,7 +21,8 @@ import {
     
     
     
-    // a responsive management system
+    // a responsive management system:
+    breakpoints,
     ifScreenWidthAtLeast,
     ifScreenWidthSmallerThan,
     
@@ -34,6 +37,12 @@ import {
     usesBorder,
 }                           from '@reusable-ui/core'    // a set of reusable-ui packages which are responsible for building any component
 
+// reusable-ui components:
+import {
+    // base-content-components:
+    contents,
+}                           from '@reusable-ui/components'      // a set of official Reusable-UI components
+
 // configs:
 import {
     commerces,
@@ -42,7 +51,8 @@ import {
 
 
 // defaults:
-const imageSize = 48;  // 48px
+const imageSize = 64;  // 64px
+const maxMobileTextWidth = `calc(${breakpoints.sm}px - (2 * ${contents.paddingInline}))`;
 
 
 
@@ -111,7 +121,7 @@ const usesOrderListLayout = () => {
         gap: '0.5rem',
     });
 }
-const usesProductItemLayout = () => {
+const usesViewCartItemLayout = () => {
     return style({
         // positions:
         gridArea: 'orderSummary',
@@ -119,62 +129,168 @@ const usesProductItemLayout = () => {
         
         
         // layouts:
-        display: 'grid',
-        gridTemplate: [[
-            '"num image     title" max-content',
-            '"num image unitPrice" max-content',
-            '"num image  subPrice" max-content',
-            '"num image  ........" auto',
+        display      : 'grid',
+        gridTemplate : [[
+            '"title    title              title    title" max-content',
+            '"image    image              image    image" max-content',
+            '".....    labelUnitPrice unitPrice ........" max-content',
+            '".....    labelQuantity   quantity ........" max-content',
+            '"subPrice subPrice        subPrice subPrice" max-content',
             '/',
-            `1.25rem ${imageSize}px auto`,
+            `1fr auto auto 1fr`,
         ]],
+        ...ifScreenWidthAtLeast('sm', {
+            gridTemplate : [[
+                '"number image title              title" max-content',
+                '"number image labelUnitPrice unitPrice" max-content',
+                '"number image labelQuantity   quantity" max-content',
+                '"number image subPrice        subPrice" max-content',
+                '/',
+                `min-content min-content min-content auto`,
+            ]],
+        }),
         
         
         
         // spacings:
-        gapInline: '1rem',
-        gapBlock: '0.25rem',
-        padding: 0,
+        gapInline     : spacers.sm,
+        ...ifScreenWidthAtLeast('sm', {
+            gapInline : 0, // different gap between prodImg and label
+        }),
+        gapBlock      : '0.5rem',
+        paddingInline : '0px',
         
         
         
         // children:
         ...children('::before', {
-            gridArea    : 'num',
-            textAlign   : 'end',
+            display : 'none',
+            ...ifScreenWidthAtLeast('sm', {
+                gridArea        : 'number',
+                display         : 'grid',
+                justifyContent  : 'end',
+                alignContent    : 'center',
+                
+                
+                
+                // spacings:
+                marginInlineEnd : spacers.sm,
+            }),
         }),
-        ...children('.image', {
+        ...children('.prodImg', {
+            // positions:
             gridArea    : 'image',
-            alignSelf   : 'center',
+            justifySelf : 'center', // center horizontally
+            alignSelf   : 'center', // center vertically
             
-            background  : 'white',
+            
+            
+            // sizes:
             width       : `${imageSize}px`,
             aspectRatio : commerces.defaultProductAspectRatio,
+            
+            
+            
+            // backgrounds:
+            background  : 'white',
+            
+            
+            
+            // spacings:
+            ...ifScreenWidthAtLeast('sm', {
+                marginInlineEnd : spacers.default,
+            }),
+            
+            
+            
+            // children:
+            ...children('img', {
+                // sizes:
+                width  : '100% !important',
+                height : '100% !important',
+            }),
         }),
         ...children('.title', {
-            gridArea: 'title',
+            // positions:
+            gridArea    : 'title',
+            justifySelf : 'center', // center horizontally
+            ...ifScreenWidthAtLeast('sm', {
+                justifySelf : 'stretch', // stretch horizontally
+            }),
             
-            fontWeight: typos.fontWeightNormal,
-            margin: 0,
-            // maxInlineSize: '15em',
-            whiteSpace: 'normal',
+            
+            
+            // sizes:
+            ...ifScreenWidthSmallerThan('sm', {
+                boxSizing     : 'border-box',
+                maxInlineSize : maxMobileTextWidth,
+            }),
+            
+            
+            
+            // typos:
+            whiteSpace   : 'normal',
             textOverflow : 'ellipsis', // long text...
             wordBreak    : 'break-word',
             overflowWrap : 'break-word',
-            // overflow: 'hidden',
+            overflow     : 'hidden',
+            ...ifScreenWidthSmallerThan('sm', {
+                textAlign: 'center',
+            }),
+        }),
+        ...children(['.unitPrice', '.quantity'], {
+            display             : 'grid',
+            gridTemplateColumns : 'subgrid',
+            
+            
+            
+            // children:
+            ...children('.label', {
+                // spacings:
+                marginInlineEnd : spacers.sm,
+                
+                
+                
+                // typos:
+                textAlign       : 'end',   // right_most
+            }),
+            ...children('.value', {
+                // typos:
+                textAlign   : 'start', // left_most
+            }),
         }),
         ...children('.unitPrice', {
-            gridArea: 'unitPrice',
+            // positions:
+            gridArea    : 'labelUnitPrice/labelUnitPrice / unitPrice/unitPrice',
+            justifySelf : 'center', // center horizontally
+            ...ifScreenWidthAtLeast('sm', {
+                justifySelf : 'start', // place to the left
+            }),
             
-            margin: 0,
             
-            fontSize: typos.fontSizeSm,
-            fontWeight: typos.fontWeightLight,
+            
+            // typos:
+            fontWeight  : typos.fontWeightLight,
+        }),
+        ...children('.quantity', {
+            // positions:
+            gridArea    : 'labelQuantity/labelQuantity / quantity/quantity',
+            justifySelf : 'center', // center horizontally
+            ...ifScreenWidthAtLeast('sm', {
+                justifySelf : 'start', // place to the left
+            }),
+            
+            
+            
+            // children:
+            ...children('.label', {
+                fontWeight  : typos.fontWeightLight,
+            }),
         }),
         ...children('.subPrice', {
-            gridArea: 'subPrice',
-            
-            margin: 0,
+            // positions:
+            gridArea    : 'subPrice',
+            justifySelf : 'end',
         }),
     });
 };
@@ -629,8 +745,8 @@ export default () => [
     scope('orderList', {
         ...usesOrderListLayout(),
     }, { specificityWeight: 2 }),
-    scope('productItem', {
-        ...usesProductItemLayout(),
+    scope('viewCartItem', {
+        ...usesViewCartItemLayout(),
     }, { specificityWeight: 2 }),
     scope('orderDeliverySection', {
         ...usesOrderDeliverySectionLayout(),

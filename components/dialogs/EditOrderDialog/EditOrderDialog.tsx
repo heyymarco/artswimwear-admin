@@ -9,19 +9,12 @@ import {
     
     // hooks:
     useState,
-    useEffect,
 }                           from 'react'
 
 // next-auth:
 import {
     useSession,
 }                           from 'next-auth/react'
-
-// cssfn:
-import {
-    // style sheets:
-    dynamicStyleSheets,
-}                           from '@cssfn/cssfn-react'               // writes css in react hook
 
 // reusable-ui core:
 import {
@@ -50,13 +43,11 @@ import {
     
     
     // layout-components:
-    ListItem,
     List,
     
     
     
     // status-components:
-    Badge,
     Busy,
     
     
@@ -83,9 +74,6 @@ import {
     EditButton,
 }                           from '@/components/EditButton'
 import {
-    CompoundWithBadge,
-}                           from '@/components/CompoundWithBadge'
-import {
     AddressEditor,
 }                           from '@/components/editors/AddressEditor'
 import {
@@ -108,6 +96,9 @@ import {
 import {
     PrintDialog,
 }                           from '@/components/dialogs/PrintDialog'
+import {
+    ViewCartItem,
+}                           from './ViewCartItem'
 
 // stores:
 import {
@@ -123,11 +114,11 @@ import {
 
 // internals:
 import {
+    useEditOrderDialogStyleSheet,
+}                           from './styles/loader'
+import {
     formatCurrency,
 }                           from '@/libs/formatters'
-import {
-    resolveMediaUrl,
-}                           from '@/libs/mediaStorage.client'
 import {
     countryList,
 }                           from '@/libs/countryList'
@@ -137,19 +128,6 @@ import {
     PAGE_ORDER_TAB_ORDER_N_SHIPPING,
     PAGE_ORDER_TAB_PAYMENT,
 }                           from '@/website.config'
-
-
-
-// defaults:
-const imageSize = 48;  // 48px
-
-
-
-// styles:
-const useEditOrderDialogStyleSheet = dynamicStyleSheets(
-    () => import(/* webpackPrefetch: true */'./EditOrderDialogStyles')
-, { id: 'wz8sbhtojl' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names`
-import './EditOrderDialogStyles';
 
 
 
@@ -181,7 +159,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     
     // sessions:
-    const { data: session, update : updateSession} = useSession();
+    const { data: session } = useSession();
     const role = session?.role;
     
     
@@ -267,26 +245,6 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     // jsx:
     const OrderAndShipping = ({printMode = false}): JSX.Element|null => {
-        // dom effects:
-        
-        // a fix for <Badge>'s position:
-        const [showBadge, setShowBadge] = useState<boolean>(false);
-        useEffect(() => {
-            // setups:
-            const cancelTimeout = setTimeout(() => {
-                setShowBadge(true);
-            }, 250);
-            
-            
-            
-            // cleanups:
-            return () => {
-                clearTimeout(cancelTimeout);
-            }
-        }, []);
-        
-        
-        
         // jsx:
         return (
             <>
@@ -296,68 +254,25 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         ? 'PAID'
                         : 'UNPAID'
                     }</Basic>
-                    <List className={styleSheet.orderList} listStyle={['flat', 'numbered']}>
-                        {items?.map(({quantity, price: unitPrice, productId}, index) => {
-                            const product = productList?.entities?.[`${productId}`];
-                            
-                            
-                            
-                            // jsx:
-                            return (
-                                <ListItem key={`${productId}`} className={styleSheet.productItem}>
-                                    <h3 className='title h6'>{
-                                        isLoadingProduct
-                                        ? <Busy />
-                                        : isErrorProduct
-                                            ? 'Error getting product data'
-                                            : (product?.name ?? 'DELETED PRODUCT')
-                                    }</h3>
-                                    
-                                    {/* image + quantity */}
-                                    <CompoundWithBadge
-                                        // components:
-                                        wrapperComponent={<React.Fragment />}
-                                        badgeComponent={
-                                            <Badge
-                                                // variants:
-                                                theme='danger'
-                                                
-                                                
-                                                
-                                                // states:
-                                                expanded={showBadge}
-                                                
-                                                
-                                                
-                                                // floatable:
-                                                floatingPlacement='right-start'
-                                                floatingShift={-3}
-                                                floatingOffset={-20}
-                                            >
-                                                {quantity}x
-                                            </Badge>
-                                        }
-                                        elementComponent={
-                                            <Image
-                                                className='image'
-                                                
-                                                alt={`image #${index + 1} of ${product?.name ?? 'unknown product'}`}
-                                                src={resolveMediaUrl(product?.image)}
-                                                sizes={`${imageSize}px`}
-                                                
-                                                priority={true}
-                                            />
-                                        }
-                                    />
-                                    <p className='unitPrice'>
-                                        @ <span className='currency secondary'>{formatCurrency(unitPrice)}</span>
-                                    </p>
-                                    <p className='subPrice currencyBlock'>
-                                        <span className='currency'>{formatCurrency(quantity * unitPrice)}</span>
-                                    </p>
-                                </ListItem>
-                            );
-                        })}
+                    <List className={styleSheet.orderList} listStyle={['flush', 'numbered']}>
+                        {items?.map(({price: unitPrice, quantity, productId}, itemIndex) =>
+                            <ViewCartItem
+                                // identifiers:
+                                key={productId || itemIndex}
+                                
+                                
+                                
+                                // data:
+                                unitPrice={unitPrice}
+                                quantity={quantity}
+                                
+                                
+                                
+                                // relation data:
+                                productId={productId}
+                                productList={productList}
+                            />
+                        )}
                     </List>
                     <hr />
                     <p className='currencyBlock'>
