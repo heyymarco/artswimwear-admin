@@ -257,6 +257,13 @@ const usesPaymentSectionLayout = () => {
                 
                 
                 
+                // sizes:
+                ...ifScreenWidthSmallerThan('sm', {
+                    inlineSize : '100%',
+                }),
+                
+                
+                
                 // children:
                 ...children(['thead', 'tbody'], {
                     // border strokes & radiuses:
