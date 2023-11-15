@@ -10,6 +10,7 @@ import {
 import {
     // a border (stroke) management system:
     borders,
+    borderRadiuses,
     
     
     
@@ -19,6 +20,7 @@ import {
     
     
     // a responsive management system
+    ifScreenWidthAtLeast,
     ifScreenWidthSmallerThan,
     
     
@@ -249,58 +251,245 @@ const usesPaymentSectionLayout = () => {
             // children:
             ...children('table', {
                 // layouts:
-                borderCollapse : 'collapse',
+                borderCollapse : 'separate',
+                borderSpacing  : 0,
                 tableLayout    : 'auto',
-                // tableLayout : 'fixed',
-                
-                
-                
-                // borders:
-                border         : borderVars.border,
-                borderWidth    : borders.defaultWidth,
                 
                 
                 
                 // children:
-                ...children('tbody', {
+                ...children(['thead', 'tbody'], {
+                    // border strokes & radiuses:
                     ...children('tr', {
-                        borderBlockEnd      : borderVars.border,
-                        borderBlockEndWidth : borders.defaultWidth,
+                        ...children(['th', 'td'], {
+                            ...rule(':first-child', {
+                                borderInlineStart              : borderVars.border,
+                                borderInlineStartWidth         : borders.defaultWidth,
+                            }),
+                            ...rule(':last-child', {
+                                borderInlineEnd                : borderVars.border,
+                                borderInlineEndWidth           : borders.defaultWidth,
+                            }),
+                        }),
+                    }),
+                    ...rule(':first-child', {
+                        ...children('tr', {
+                            ...rule(':first-child', {
+                                ...children(['th', 'td'], {
+                                    borderBlockStart           : borderVars.border,
+                                    borderBlockStartWidth      : borders.defaultWidth,
+                                    
+                                    
+                                    
+                                    ...rule(':first-child', {
+                                        borderStartStartRadius : borderRadiuses.default,
+                                    }),
+                                    ...rule(':last-child', {
+                                        borderStartEndRadius   : borderRadiuses.default,
+                                    }),
+                                }),
+                            }),
+                        }),
+                    }),
+                    ...rule(':last-child', {
+                        ...children('tr', {
+                            ...rule(':last-child', {
+                                ...children(['th', 'td'], {
+                                    borderBlockEnd             : borderVars.border,
+                                    borderBlockEndWidth        : borders.defaultWidth,
+                                    
+                                    
+                                    
+                                    ...rule(':first-child', {
+                                        borderEndStartRadius   : borderRadiuses.default,
+                                    }),
+                                    ...rule(':last-child', {
+                                        borderEndEndRadius     : borderRadiuses.default,
+                                    }),
+                                }),
+                            }),
+                        }),
+                    }),
+                    
+                    
+                    
+                    // border separators:
+                    ...children('tr', { // border as separator between row(s)
+                        ...rule(':not(:last-child)', {
+                            ...children(['th', 'td'], {
+                                borderBlockEnd      : borderVars.border,
+                                borderBlockEndWidth : borders.defaultWidth,
+                            }),
+                        }),
+                    }),
+                    ...rule(':not(:last-child)', { // border as separator between thead|tbody
+                        ...children('tr', {
+                            ...rule(':last-child', {
+                                ...children(['th', 'td'], {
+                                    borderBlockEnd      : borderVars.border,
+                                    borderBlockEndWidth : borders.defaultWidth,
+                                }),
+                            }),
+                        }),
+                    }),
+                    
+                    
+                    
+                    // children:
+                    ...children('tr', {
+                        // children:
+                        ...children(['th', 'td'], { // spacing for all cells
+                            // spacings:
+                            padding        : '0.75rem',
+                        }),
+                        ...children('th', { // default title formatting
+                            // typos:
+                            fontWeight     : typos.fontWeightSemibold,
+                            textAlign      : 'center', // center the title horizontally
+                        }),
+                    }),
+                }),
+                ...children('tbody', {
+                    // conditional border strokes & radiuses:
+                    ...ifScreenWidthSmallerThan('sm', {
+                        ...children('tr', {
+                            ...children(['th', 'td'], {
+                                borderInline      : borderVars.border,
+                                borderInlineWidth : borders.defaultWidth,
+                            }),
+                        }),
+                        ...rule(':first-child', {
+                            ...children('tr', {
+                                ...rule(':first-child', {
+                                    ...children(['th', 'td'], {
+                                        ...rule(':not(:first-child)', {
+                                            borderBlockStartWidth  : 0, // kill the separator
+                                            
+                                            borderStartStartRadius : 0,
+                                            borderStartEndRadius   : 0,
+                                        }),
+                                        ...rule(':first-child', {
+                                            borderStartStartRadius : borderRadiuses.default,
+                                            borderStartEndRadius   : borderRadiuses.default,
+                                        }),
+                                    }),
+                                }),
+                            }),
+                        }),
+                        ...rule(':last-child', {
+                            ...children('tr', {
+                                ...rule(':last-child', {
+                                    ...children(['th', 'td'], {
+                                        ...rule(':not(:last-child)', {
+                                            borderEndStartRadius   : 0,
+                                            borderEndEndRadius     : 0,
+                                        }),
+                                        ...rule(':last-child', {
+                                            borderEndStartRadius   : borderRadiuses.default,
+                                            borderEndEndRadius     : borderRadiuses.default,
+                                        }),
+                                    }),
+                                }),
+                            }),
+                        }),
+                    }),
+                    
+                    
+                    
+                    // conditional border separators:
+                    ...ifScreenWidthSmallerThan('sm', {
+                        ...children('tr', {
+                            ...rule(':nth-child(n)', { // increase specificity
+                                ...children(['th', 'td'], {
+                                    ...rule(':not(:last-child)', {
+                                        borderBlockEnd : 0,
+                                    }),
+                                }),
+                            }),
+                        }),
+                    }),
+                    
+                    
+                    
+                    ...children('tr', {
+                        // layouts:
+                        // the table cells is set to 'grid'|'block', causing the table structure broken,
+                        // to fix this we set the table row to flex:
+                        display               : 'flex',
+                        
+                        flexDirection         : 'column',
+                        justifyContent        : 'start',   // top_most the items vertically
+                        alignItems            : 'stretch', // stretch  the items horizontally
+                        ...ifScreenWidthAtLeast('sm', {
+                            flexDirection     : 'row',
+                            // justifyContent : 'start',   // top_most the items horizontally
+                            // alignItems     : 'stretch', // stretch  the items vertically
+                        }),
+                        
+                        flexWrap              : 'nowrap',  // no wrapping
                         
                         
                         
                         // children:
-                        ...children(['th', 'td'], {
-                            padding: '0.75rem',
-                        }),
-                        ...children('th', {
-                            textAlign: 'end',
-                            ...ifScreenWidthSmallerThan('sm', {
-                                textAlign: 'center',
-                            }),
-                        }),
-                        ...children('td', {
-                            textAlign: 'start',
-                            ...ifScreenWidthSmallerThan('sm', {
-                                textAlign: 'center',
-                            }),
-                        }),
-                        
-                        ...children('th', {
-                            fontWeight : typos.fontWeightSemibold,
-                            textAlign  : 'end',
-                        }),
-                        ...children('td', {
-                            display       : 'flex',
-                            flexDirection : 'row',
-                            flexWrap      : 'nowrap',
+                        ...children('th', { // special title formatting
+                            // layouts:
+                            display            : 'grid',
                             
-                            gap           : '0.5em',
+                            justifyContent     : 'center',  // center     the items horizontally
+                            ...ifScreenWidthAtLeast('sm', {
+                                justifyContent : 'end',     // right_most the items horizontally
+                            }),
+                            
+                            alignContent       : 'center',  // center     the items vertically
+                            
+                            
+                            
+                            // sizes:
+                            ...ifScreenWidthAtLeast('sm', {
+                                // fixed size accross table(s), simulating subgrid:
+                                boxSizing      : 'content-box',
+                                inlineSize     : '4em', // a fixed size by try n error
+                                flex           : [[0, 0, 'auto']], // ungrowable, unshrinkable, initial from it's width
+                            }),
+                        }),
+                        ...children('td', { // special data formatting
+                            // sizes:
+                            
+                            // fill the remaining width for data cells:
+                            ...rule(':nth-child(2)', {
+                                flex       : [[1, 1, 'auto']], // growable, shrinkable, initial from it's width
+                            }),
+                        }),
+                        ...children('td', {
+                            // layouts:
+                            display            : 'grid',
+                                    
+                            justifyContent     : 'center', // center    the items horizontally
+                            ...ifScreenWidthAtLeast('sm', {
+                                justifyContent : 'start',  // left_most the items horizontally
+                            }),
+                            
+                            alignItems         : 'center', // center    the each item vertically
+                            justifyItems       : 'center', // center    the each item horizontally
+                            
+                            gridAutoFlow       : 'row',
+                            ...ifScreenWidthAtLeast('sm', {
+                                gridAutoFlow   : 'column',
+                            }),
+                            
+                            
+                            
+                            // spacings:
+                            gap                : spacers.sm,
+                            
+                            
                             
                             ...rule('.currencyData', {
+                                ...ifScreenWidthAtLeast('sm', {
+                                    justifyContent : 'end',  // right_most the items horizontally
+                                }),
                                 ...children('.currencyNumber', {
-                                    flex      : [[1, 1, '100%']],
-                                    textAlign : 'end',
+                                    // marginInlineStart : 'auto',
                                 }),
                                 ...children('.hidden', {
                                     visibility : 'hidden',
@@ -308,40 +497,19 @@ const usesPaymentSectionLayout = () => {
                             }),
                             ...children('.paymentProvider', {
                                 width         : '42px',
-                                verticalAlign : 'middle',
+                                height         : 'auto',
+                                
+                                
+                                
+                                // borders:
+                                border         : borderVars.border,
+                                borderWidth    : borders.defaultWidth,
+                                borderRadius   : borderRadiuses.sm,
                             }),
                             ...children('.paymentIdentifier', {
-                                // positions:
-                                verticalAlign     : 'middle',
-                                
-                                
-                                
-                                // layouts:
-                                display           : 'inline-block',
-                                
-                                
-                                
-                                // sizes:
-                                boxSizing         : 'content-box',
-                                maxInlineSize     : '25em',
-                                
-                                
-                                
-                                // scrolls:
-                                overflow          : 'hidden',   // hide the rest text if overflowed
-                                whiteSpace        : 'nowrap',   // do not break word on [space]
-                                overflowWrap      : 'normal',   // do not break word for long_word
-                                textOverflow      : 'ellipsis', // put triple_dot after long_word...
-                                
-                                
-                                
-                                // spacings:
-                                marginInlineStart : '0.5em',
-                                
-                                
-                                
                                 // typos:
-                                fontSize          : typos.fontSizeSm,
+                                fontSize       : typos.fontSizeSm,
+                                fontWeight     : typos.fontWeightNormal,
                             }),
                         }),
                     }),
