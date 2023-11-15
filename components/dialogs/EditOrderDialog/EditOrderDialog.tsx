@@ -361,18 +361,18 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                     </List>
                     <hr />
                     <p className='currencyBlock'>
-                        Subtotal products: <span className='currency'>
+                        Subtotal <span className='currency'>
                             {formatCurrency(totalProductPrices)}
                         </span>
                     </p>
                     <p className='currencyBlock'>
-                        Shipping: <span className='currency'>
+                        Shipping <span className='currency'>
                             {formatCurrency(totalShippingCosts)}
                         </span>
                     </p>
                     <hr />
                     <p className='currencyBlock totalCost'>
-                        Total: <span className='currency'>
+                        Total <span className='currency'>
                             {formatCurrency(totalProductPrices + (totalShippingCosts ?? 0))}
                         </span>
                     </p>
@@ -562,7 +562,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                     
                     
                     // classes:
-                    className={`${styleSheet.orderShippingTab} ${styleSheet.typos}`}
+                    className={styleSheet.orderShippingTab}
                     
                     
                     

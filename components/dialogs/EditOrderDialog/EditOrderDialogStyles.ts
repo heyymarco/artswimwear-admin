@@ -47,30 +47,6 @@ const imageSize = 48;  // 48px
 
 
 // styles:
-const usesTyposLayout = () => {
-    return style({
-        // children:
-        ...descendants('.currencyBlock', {
-            display: 'flex',
-            
-            ...rule('.totalCost', {
-                ...descendants(['&', '.currency'], {
-                    fontSize: typos.fontSizeLg,
-                    fontWeight: typos.fontWeightSemibold,
-                }),
-            })
-        }),
-        ...descendants('.currency', {
-            marginInlineStart: 'auto',
-            fontSize: typos.fontSizeMd,
-            fontWeight: typos.fontWeightSemibold,
-            ...rule('.secondary', {
-                fontSize: typos.fontSizeSm,
-                fontWeight: typos.fontWeightLight,
-            }),
-        }),
-    });
-};
 const usesOrderShippingTabLayout = () => {
     return style({
         // layouts:
@@ -103,6 +79,28 @@ const usesOrderShippingSectionLayout = () => {
         ...children('article', {
             ...children('h3', {
                 textAlign: 'center',
+            }),
+            ...descendants('p', {
+                margin: 0,
+            }),
+            ...descendants('.currencyBlock', {
+                display: 'flex',
+                
+                ...rule('.totalCost', {
+                    ...descendants(['&', '.currency'], {
+                        fontSize: typos.fontSizeLg,
+                        fontWeight: typos.fontWeightSemibold,
+                    }),
+                })
+            }),
+            ...descendants('.currency', {
+                marginInlineStart: 'auto',
+                fontSize: typos.fontSizeMd,
+                fontWeight: typos.fontWeightSemibold,
+                ...rule('.secondary', {
+                    fontSize: typos.fontSizeSm,
+                    fontWeight: typos.fontWeightLight,
+                }),
             }),
         }),
     });
@@ -622,10 +620,6 @@ const usesPrintSpacerLayout = () => {
 };
 
 export default () => [
-    scope('typos', {
-        ...usesTyposLayout(),
-    }),
-    
     scope('orderShippingTab', {
         ...usesOrderShippingTabLayout(),
     }, { specificityWeight: 3 }),
