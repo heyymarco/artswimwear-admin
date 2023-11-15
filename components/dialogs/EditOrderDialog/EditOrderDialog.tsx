@@ -254,7 +254,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         ? 'PAID'
                         : 'UNPAID'
                     }</Basic>
-                    <List className={styleSheet.orderList} listStyle={['flush', 'numbered']}>
+                    <List className={styleSheet.viewCart} listStyle={['flush', 'numbered']}>
                         {items?.map(({price: unitPrice, quantity, productId}, itemIndex) =>
                             <ViewCartItem
                                 // identifiers:
@@ -280,11 +280,11 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             {formatCurrency(totalProductPrices)}
                         </span>
                     </p>
-                    <p className='currencyBlock'>
+                    {!!shippingAddressDetail && <p className='currencyBlock'>
                         Shipping <span className='currency'>
                             {formatCurrency(totalShippingCosts)}
                         </span>
-                    </p>
+                    </p>}
                     <hr />
                     <p className='currencyBlock totalCost'>
                         Total <span className='currency'>
@@ -293,34 +293,36 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                     </p>
                 </Section>
                 
-                {printMode && <Content theme='danger' outlined={true} nude={true} className={styleSheet.printSpacer}>
-                    <Icon className='scissors' icon='content_cut' />
-                    <hr className='line' />
-                </Content>}
-                
-                <Section title='Deliver To' theme={!printMode ? 'secondary' : 'light'} className={styleSheet.orderDeliverySection}>
-                    <Basic tag='strong' className={styleSheet.badge}>{
-                        isLoadingShipping
-                        ? <Busy />
-                        : isErrorShipping
-                            ? 'Error getting shipping data'
-                            : (shippingProvider?.name ?? 'DELETED SHIPPING PROVIDER')
-                    }</Basic>
-                    <div className={styleSheet.shippingAddress}>
-                        {!printMode && !!role?.order_usa && <EditButton className={styleSheet.editShippingAddress} onClick={handleEditShippingAddress} />}
-                        <p>
-                            <strong>{shippingFirstName} {shippingLastName}</strong>
-                        </p>
-                        <p>
-                            {shippingAddress}
-                            <br />
-                            {`${shippingCity}, ${shippingZone} (${shippingZip}), ${countryList?.entities?.[shippingCountry ?? '']?.name}`}
-                        </p>
-                        <p>
-                            Phone: {shippingPhone}
-                        </p>
-                    </div>
-                </Section>
+                {!!shippingAddressDetail && <>
+                    {printMode && <Content theme='danger' outlined={true} nude={true} className={styleSheet.printSpacer}>
+                        <Icon className='scissors' icon='content_cut' />
+                        <hr className='line' />
+                    </Content>}
+                    
+                    <Section title='Deliver To' theme={!printMode ? 'secondary' : 'light'} className={styleSheet.orderDeliverySection}>
+                        <Basic tag='strong' className={styleSheet.badge}>{
+                            isLoadingShipping
+                            ? <Busy />
+                            : isErrorShipping
+                                ? 'Error getting shipping data'
+                                : (shippingProvider?.name ?? 'DELETED SHIPPING PROVIDER')
+                        }</Basic>
+                        <div className={styleSheet.shippingAddress}>
+                            {!printMode && !!role?.order_usa && <EditButton className={styleSheet.editShippingAddress} onClick={handleEditShippingAddress} />}
+                            <p>
+                                <strong>{shippingFirstName} {shippingLastName}</strong>
+                            </p>
+                            <p>
+                                {shippingAddress}
+                                <br />
+                                {`${shippingCity}, ${shippingZone} (${shippingZip}), ${countryList?.entities?.[shippingCountry ?? '']?.name}`}
+                            </p>
+                            <p>
+                                Phone: {shippingPhone}
+                            </p>
+                        </div>
+                    </Section>
+                </>}
                 
                 {printMode && <Content theme='danger' outlined={true} nude={true} className={styleSheet.printSpacer}>
                     <Icon className='scissors' icon='content_cut' />

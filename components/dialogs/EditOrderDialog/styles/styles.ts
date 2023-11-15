@@ -30,6 +30,7 @@ import {
     
     // a typography management system:
     typos,
+    horzRules,
     
     
     
@@ -115,10 +116,13 @@ const usesOrderShippingSectionLayout = () => {
         }),
     });
 };
-const usesOrderListLayout = () => {
+const usesViewCartLayout = () => {
     return style({
-        // spacings:
-        gap: '0.5rem',
+        // children:
+        ...children('*', { // <li>
+            // appearances:
+            borderColor : `color-mix(in srgb, currentcolor calc(${horzRules.opacity} * 100%), transparent)`,
+        }),
     });
 }
 const usesViewCartItemLayout = () => {
@@ -742,8 +746,8 @@ export default () => [
     scope('orderShippingSection', {
         ...usesOrderShippingSectionLayout(),
     }),
-    scope('orderList', {
-        ...usesOrderListLayout(),
+    scope('viewCart', {
+        ...usesViewCartLayout(),
     }, { specificityWeight: 2 }),
     scope('viewCartItem', {
         ...usesViewCartItemLayout(),
