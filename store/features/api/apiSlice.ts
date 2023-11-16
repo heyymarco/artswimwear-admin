@@ -12,6 +12,7 @@ import type {
 }                           from '@/libs/types'
 
 // apis:
+export type { CountryPreview }                  from '@/app/api/(protected)/countries/route'
 import type { ProductPreview, ProductDetail }   from '@/app/api/(protected)/products/route'
 export type { ProductPreview, ProductDetail }   from '@/app/api/(protected)/products/route'
 import type { OrderDetail }                     from '@/app/api/(protected)/orders/route'
