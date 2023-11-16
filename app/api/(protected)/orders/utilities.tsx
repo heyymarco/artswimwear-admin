@@ -234,7 +234,7 @@ export const sendConfirmationEmail = async (orderId: string): Promise<void> => {
                             {checkoutEmail.subject}
                         </BusinessContextProvider>
                     </OrderDataContextProvider>
-                ),
+                ).replace(/[\r\n]/g, ' ').trim(),
                 html        : renderToStaticMarkup(
                     <OrderDataContextProvider {...orderDataContextProviderProps}>
                         <BusinessContextProvider {...businessContextProviderProps}>
