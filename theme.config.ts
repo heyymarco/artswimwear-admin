@@ -4,7 +4,7 @@ import { galleryEditors } from '@/components/editors/GalleryEditor/styles/config
 import { commerces } from '@/config'
 import { imageValues } from '@heymarco/image'
 import { carouselValues } from '@reusable-ui/components'
-import './theme.basic.config'
+import './theme.basics.config'
 
 
 
