@@ -17,11 +17,14 @@ const nextConfig = {
     ],
   },
   
-  // experimental: {
-  //   appDir: true,
-  //   esmExternals: 'loose',
-  // },
+  experimental: {
+    // appDir: true,
+    esmExternals: 'loose',
+  },
   
+  // reactStrictMode: true,
+  // // swcMinify: false,
+  // 
   // webpack: (config) => {
   //   config.experiments = {
   //     ...config.experiments,
