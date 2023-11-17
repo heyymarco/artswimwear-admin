@@ -29,6 +29,7 @@ import {
 // reusable-ui components:
 import {
     // base-components:
+    Basic,
     IndicatorProps,
     
     
@@ -56,7 +57,7 @@ import {
     Group,
 }                           from '@reusable-ui/components'  // a set of official Reusable-UI components
 
-// internals:
+// internals components:
 import type {
     // types:
     EditorChangeEventHandler,
@@ -74,6 +75,11 @@ import {
 import type {
     Payment,
 }                           from '@prisma/client'
+
+// internals:
+import {
+    formatCurrency,
+}                           from '@/libs/formatters'
 
 
 
@@ -127,6 +133,10 @@ export interface PaymentEditorProps
             |'children'     // not supported
         >
 {
+    // accessibilities:
+    expectedAmount ?: number
+    amountLabel    ?: string
+    feeLabel       ?: string
 }
 const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     // styles:
@@ -136,6 +146,13 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     
     // rest props:
     const {
+        // accessibilities:
+        expectedAmount,
+        amountLabel = 'Received Amount',
+        feeLabel    = 'Fee (if any)',
+        
+        
+        
         // values:
         defaultValue,
         value,
@@ -240,6 +257,16 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                 readOnly        = {readOnly       }
                 inheritReadOnly = {inheritReadOnly}
             >
+                {(expectedAmount !== undefined) && <Basic
+                    // variants:
+                    theme='warning'
+                    mild={true}
+                >
+                    <p>
+                        Expected amount: <strong>{formatCurrency(expectedAmount)}</strong>.
+                    </p>
+                </Basic>}
+                
                 <Group className='provider'>
                     <Label theme='secondary' mild={false} className='solid'>
                         <Icon
@@ -322,7 +349,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     
                     
                     // accessibilities:
-                    aria-label='Amount'
+                    aria-label={amountLabel}
                     
                     
                     
@@ -338,7 +365,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     
                     
                     // formats:
-                    placeholder='Amount'
+                    placeholder={amountLabel}
                 />
                 
                 <PriceEditor
@@ -348,7 +375,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     
                     
                     // accessibilities:
-                    aria-label='Fee'
+                    aria-label={feeLabel}
                     
                     
                     
@@ -364,7 +391,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     
                     
                     // formats:
-                    placeholder='Fee (if any)'
+                    placeholder={feeLabel}
                 />
             </AccessibilityProvider>
         </Form>

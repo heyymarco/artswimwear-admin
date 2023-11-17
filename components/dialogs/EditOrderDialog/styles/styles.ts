@@ -613,9 +613,6 @@ const usesPaymentSectionLayout = () => {
                                 ...ifScreenWidthAtLeast('sm', {
                                     justifyContent : 'end',  // right_most the items horizontally
                                 }),
-                                ...children('.currencyNumber', {
-                                    // marginInlineStart : 'auto',
-                                }),
                                 ...children('.hidden', {
                                     visibility : 'hidden',
                                 }),

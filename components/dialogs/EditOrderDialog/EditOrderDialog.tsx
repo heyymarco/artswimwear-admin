@@ -394,7 +394,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                             Amount
                                         </th>
                                         <td className='currencyData'>
-                                            <strong className='currencyNumber'>
+                                            <strong>
                                                 {formatCurrency(paymentAmount)}
                                             </strong>
                                             {isManualPaid && !!role?.order_upmp && <EditButton className='edit' onClick={handleEditPayment} />}
@@ -405,7 +405,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                             Fee
                                         </th>
                                         <td className='currencyData'>
-                                            <span className='currencyNumber'>
+                                            <span>
                                                 {formatCurrency(paymentFee)}
                                             </span>
                                             {isManualPaid && !!role?.order_upmp && <EditButton className='edit' onClick={handleEditPayment} />}
@@ -416,7 +416,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                             Net
                                         </th>
                                         <td className='currencyData'>
-                                            <strong className='currencyNumber'>
+                                            <strong>
                                                 {formatCurrency((paymentAmount !== undefined) ? (paymentAmount - (paymentFee ?? 0)) : undefined)}
                                             </strong>
                                             {isManualPaid && !!role?.order_upmp && <EditButton className='hidden' />}
@@ -469,7 +469,12 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                     
                     // components:
                     editorComponent={
-                        <PaymentEditor />
+                        <PaymentEditor
+                            // accessibilities:
+                            expectedAmount={
+                                totalProductPrices + (totalShippingCosts ?? 0)
+                            }
+                        />
                     }
                 />
                 <PrintDialog
