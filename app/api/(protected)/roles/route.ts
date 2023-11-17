@@ -109,7 +109,9 @@ router
                 user_d     : true,
                 
                 order_r    : true,
+                order_us   : true,
                 order_usa  : true,
+                order_usn  : true,
                 order_upmu : true,
                 order_upmp : true,
                 
@@ -163,7 +165,9 @@ router
         user_d,
         
         order_r,
+        order_us,
         order_usa,
+        order_usn,
         order_upmu,
         order_upmp,
         
@@ -237,7 +241,9 @@ You do not have the privilege to modify the role.`
             user_d,
             
             order_r,
+            order_us,
             order_usa,
+            order_usn,
             order_upmu,
             order_upmp,
             
@@ -270,7 +276,9 @@ You do not have the privilege to modify the role.`
             user_d     : true,
             
             order_r    : true,
+            order_us   : true,
             order_usa  : true,
+            order_usn  : true,
             order_upmu : true,
             order_upmp : true,
             
