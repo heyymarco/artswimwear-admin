@@ -47,6 +47,8 @@ export const orderStatusNext = (orderStatus : OrderStatus): OrderStatus => {
         case 'NEW_ORDER': return 'PROCESSED';
         case 'PROCESSED': return 'SHIPPED';
         case 'SHIPPED'  : return 'COMPLETED';
+        case 'ON_HOLD'  : return 'COMPLETED';
+        case 'COMPLETED': return 'COMPLETED';
         default         : return 'PROCESSED';
     } // switch
 }
