@@ -474,6 +474,8 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             expectedAmount={
                                 totalProductPrices + (totalShippingCosts ?? 0)
                             }
+                            amountMinThreshold={20 /* percent */}
+                            amountMaxThreshold={20 /* percent */}
                         />
                     }
                 />

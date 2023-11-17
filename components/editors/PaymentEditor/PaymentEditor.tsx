@@ -7,6 +7,8 @@ import {
     
     // hooks:
     useState,
+    useEffect,
+    useRef,
 }                           from 'react'
 
 // cssfn:
@@ -45,6 +47,11 @@ import {
     
     // layout-components:
     ListItem,
+    
+    
+    
+    // notification-components:
+    Tooltip,
     
     
     
@@ -134,9 +141,12 @@ export interface PaymentEditorProps
         >
 {
     // accessibilities:
-    expectedAmount ?: number
-    amountLabel    ?: string
-    feeLabel       ?: string
+    expectedAmount     ?: number
+    amountMinThreshold ?: number
+    amountMaxThreshold ?: number
+    
+    amountLabel        ?: string
+    feeLabel           ?: string
 }
 const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     // styles:
@@ -148,6 +158,9 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     const {
         // accessibilities:
         expectedAmount,
+        amountMinThreshold,
+        amountMaxThreshold,
+        
         amountLabel = 'Received Amount',
         feeLabel    = 'Fee (if any)',
         
@@ -175,6 +188,9 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     
     // states:
     const [valueDn, setValueDn] = useState<PaymentValue>(((value !== undefined) ? value : defaultValue) ?? emptyPaymentValue);
+    
+    const [amountWarning, setAmountWarning] = useState<React.ReactNode>(null);
+    const [amountFocused, setAmountFocused] = useState<boolean>(false);
     
     
     
@@ -227,6 +243,62 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     const handleFeeChange      = useEvent<EditorChangeEventHandler<number|null>>((value) => {
         setValue((current) => ({ ...current, type: emptyPaymentValue.type, fee    : value }));
     });
+    
+    const handleAmountFocus    = useEvent<React.FocusEventHandler<Element>>((event) => {
+        setAmountFocused(true);
+    });
+    const handleAmountBlur     = useEvent<React.FocusEventHandler<Element>>((event) => {
+        setAmountFocused(false);
+    });
+    
+    
+    
+    // dom effects:
+    useEffect(() => {
+        // conditions:
+        if (
+            (amount === null)              // the amount is blank => ignore
+            ||
+            (expectedAmount === undefined) // the expected amount is not defined => ignore
+            ||
+            (amount === expectedAmount)    // exact the same => ignore
+        ) {
+            setAmountWarning(null);        // clear the warning
+            return;
+        } // if
+        
+        
+        
+        // setups:
+        const cancelWarning = setTimeout(() => {
+            if (amount < expectedAmount) {
+                if ((amountMinThreshold !== undefined) && (((expectedAmount - amount) * 100 / amount) > amountMinThreshold)) {
+                    setAmountWarning(<>
+                        The entered amount is <strong>much smaller</strong> than the expected amount. Are you sure?
+                    </>);
+                } // if
+            }
+            else if (amount > expectedAmount) {
+                if ((amountMaxThreshold !== undefined) && (((amount - expectedAmount) * 100 / amount) > amountMaxThreshold)) {
+                    setAmountWarning(<>
+                        The entered amount is <strong>much greater</strong> than the expected amount. Are you sure?
+                    </>);
+                } // if
+            } // if
+        }, 500);
+        
+        
+        
+        // cleanups:
+        return () => {
+            clearTimeout(cancelWarning);
+        };
+    }, [amount, expectedAmount]);
+    
+    
+    
+    // refs:
+    const amountInputRef = useRef<HTMLInputElement|null>(null);
     
     
     
@@ -343,6 +415,11 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                 </Group>
                 
                 <PriceEditor
+                    // refs:
+                    elmRef={amountInputRef}
+                    
+                    
+                    
                     // classes:
                     className='amount'
                     
@@ -350,6 +427,11 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     
                     // accessibilities:
                     aria-label={amountLabel}
+                    
+                    
+                    
+                    // variants:
+                    theme={!!amountWarning ? 'warning' : undefined}
                     
                     
                     
@@ -366,7 +448,30 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     
                     // formats:
                     placeholder={amountLabel}
+                    
+                    
+                    
+                    // handlers:
+                    onFocus={handleAmountFocus}
+                    onBlur={handleAmountBlur}
                 />
+                <Tooltip
+                    // variants:
+                    theme='warning'
+                    
+                    
+                    
+                    // states:
+                    expanded={amountFocused && !!amountWarning}
+                    
+                    
+                    
+                    // floatable:
+                    floatingOn={amountInputRef}
+                    floatingPlacement='bottom'
+                >
+                    {amountWarning}
+                </Tooltip>
                 
                 <PriceEditor
                     // classes:
