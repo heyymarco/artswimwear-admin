@@ -372,13 +372,7 @@ You do not have the privilege to modify the payment of the order.`
                 id : id,
             },
             data   : {
-                // items    : {
-                //     update : {
-                //         data : {
-                //             //
-                //         },
-                //     },
-                // },
+                orderStatus,
                 
                 customer : {
                     update : {
