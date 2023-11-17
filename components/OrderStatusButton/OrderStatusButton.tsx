@@ -106,9 +106,18 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
                 </>}
             </ButtonIcon>
             <DropdownListButton
-            
                 // variants:
                 theme='secondary'
+                
+                
+                
+                // classes:
+                className='solid'
+                
+                
+                
+                // floatable:
+                floatingPlacement='bottom-end'
             >
                 {orderStatusValues.map((orderStatusValue, listItemIndex) =>
                     <ListItem
