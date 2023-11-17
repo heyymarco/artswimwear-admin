@@ -40,7 +40,7 @@ export const orderStatusTheme = (orderStatus : OrderStatus, paymentType?: Paymen
 export const orderStatusText = (orderStatus : OrderStatus, paymentType?: PaymentType): ThemeName => {
     switch (orderStatus) {
         case 'NEW_ORDER':
-            if ((paymentType !== undefined) && (paymentType === 'MANUAL')) return 'Unpaid';
+            if ((paymentType !== undefined) && (paymentType === 'MANUAL')) return 'Waiting for Payment';
             return 'New Order';
         case 'PROCESSED': return 'Being Processed';
         case 'SHIPPED'  : return 'Shipped';
