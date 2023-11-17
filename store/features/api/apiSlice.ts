@@ -10,6 +10,7 @@ import type {
     
     MutationArgs,
 }                           from '@/libs/types'
+export type OrderDetailWithOptions = OrderDetail & { sendConfirmationEmail?: boolean }
 
 // apis:
 export type { CountryPreview }                  from '@/app/api/(protected)/countries/route'
@@ -191,7 +192,7 @@ export const apiSlice = createApi({
                 ];
             },
         }),
-        updateOrder       : builder.mutation<OrderDetail, MutationArgs<OrderDetail>>({
+        updateOrder       : builder.mutation<OrderDetailWithOptions, MutationArgs<OrderDetail>>({
             query: (patch) => ({
                 url    : 'orders',
                 method : 'PATCH',

@@ -20,7 +20,7 @@ import type {
 // stores:
 import {
     // types:
-    OrderDetail,
+    OrderDetailWithOptions,
     
     
     
@@ -33,7 +33,7 @@ import {
 // react components:
 export interface SimpleEditPaymentDialogProps
     extends
-        ImplementedSimpleEditDialogProps<PaymentValue, OrderDetail, 'payment'>
+        ImplementedSimpleEditDialogProps<PaymentValue, OrderDetailWithOptions, 'payment'>
 {
 }
 export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => {
@@ -43,18 +43,21 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
     
     
     // handlers:
-    const handleInitialValue = useEvent<InitialValueHandler<PaymentValue, OrderDetail, 'payment'>>((edit, model) => {
+    const handleInitialValue = useEvent<InitialValueHandler<PaymentValue, OrderDetailWithOptions, 'payment'>>((edit, model) => {
         return model[edit];
     });
-    const handleUpdate       = useEvent<UpdateHandler<PaymentValue, OrderDetail, 'payment'>>(async (value, edit, model) => {
+    const handleUpdate       = useEvent<UpdateHandler<PaymentValue, OrderDetailWithOptions, 'payment'>>(async (value, edit, model) => {
         await updateOrder({
             id     : model.id,
             
             [edit] : {
                 // original:
                 ...value,
-                amount : value.amount ?? 0,
-                fee    : value.fee    ?? 0,
+                amount                : value.amount ?? 0,
+                fee                   : value.fee    ?? 0,
+                
+                // @ts-ignore
+                sendConfirmationEmail : value.sendConfirmationEmail ?? true,
             },
         }).unwrap();
     });
@@ -63,7 +66,7 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
     
     // jsx:
     return (
-        <SimpleEditDialog<PaymentValue, OrderDetail, 'payment'>
+        <SimpleEditDialog<PaymentValue, OrderDetailWithOptions, 'payment'>
             // other props:
             {...props}
             

@@ -21,11 +21,17 @@ import {
 import {
     // react helper hooks:
     useEvent,
+    EventHandler,
     
     
     
     // an accessibility management system:
     AccessibilityProvider,
+    
+    
+    
+    // a capability of UI to be highlighted/selected/activated:
+    ActiveChangeEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -42,6 +48,7 @@ import {
     EditableButton,
     ButtonIcon,
     Form,
+    Check,
     
     
     
@@ -99,14 +106,15 @@ export const usePaymentEditorStyleSheet = dynamicStyleSheet(
 
 // utilities:
 const emptyPaymentValue : PaymentValue = {
-    type           : 'MANUAL_PAID',
-    brand          : '',
-    identifier     : '',
+    type                  : 'MANUAL_PAID',
+    brand                 : '',
+    identifier            : '',
     
-    amount         : null,
-    fee            : null,
+    amount                : null,
+    fee                   : null,
+    sendConfirmationEmail : true,
     
-    billingAddress : null,
+    billingAddress        : null,
 };
 Object.freeze(emptyPaymentValue);
 
@@ -116,8 +124,9 @@ Object.freeze(emptyPaymentValue);
 export type PaymentValue =
     Omit<Payment, 'id'|'amount'|'fee'>
     & {
-        amount : number|null
-        fee    : number|null
+        amount                 : number|null
+        fee                    : number|null
+        sendConfirmationEmail ?: boolean
     }
 export interface PaymentEditorProps
     extends
@@ -198,9 +207,10 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
      * value state is based on [controllable value] (if set) and fallback to [uncontrollable value]
      */
     const valueFn : PaymentValue = (value !== undefined) ? value /*controllable*/ : valueDn /*uncontrollable*/;
-    const brand  = valueFn.brand;
-    const amount = valueFn.amount || null;
-    const fee    = valueFn.fee    || null;
+    const brand                  = valueFn.brand;
+    const amount                 = valueFn.amount || null;
+    const fee                    = valueFn.fee    || null;
+    const sendConfirmationEmail  = valueFn.sendConfirmationEmail ?? emptyPaymentValue.sendConfirmationEmail ?? true;
     
     
     
@@ -234,14 +244,17 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleProviderChange = useEvent((value: string) => {
-        setValue((current) => ({ ...current, type: emptyPaymentValue.type, brand  : value }));
+    const handleProviderChange          = useEvent((value: string) => {
+        setValue((current) => ({ ...current, type: emptyPaymentValue.type, brand                 : value  }));
     });
-    const handleAmountChange   = useEvent<EditorChangeEventHandler<number|null>>((value) => {
-        setValue((current) => ({ ...current, type: emptyPaymentValue.type, amount : value }));
+    const handleAmountChange            = useEvent<EditorChangeEventHandler<number|null>>((value) => {
+        setValue((current) => ({ ...current, type: emptyPaymentValue.type, amount                : value  }));
     });
-    const handleFeeChange      = useEvent<EditorChangeEventHandler<number|null>>((value) => {
-        setValue((current) => ({ ...current, type: emptyPaymentValue.type, fee    : value }));
+    const handleFeeChange               = useEvent<EditorChangeEventHandler<number|null>>((value) => {
+        setValue((current) => ({ ...current, type: emptyPaymentValue.type, fee                   : value  }));
+    });
+    const handleConfirmationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active}) => {
+        setValue((current) => ({ ...current, type: emptyPaymentValue.type, sendConfirmationEmail : active }));
     });
     
     const handleAmountFocus    = useEvent<React.FocusEventHandler<Element>>((event) => {
@@ -498,6 +511,19 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     // formats:
                     placeholder={feeLabel}
                 />
+                
+                <Check
+                    // values:
+                    active={sendConfirmationEmail}
+                    onActiveChange={handleConfirmationEmailChange}
+                    
+                    
+                    
+                    // validations:
+                    enableValidation={false}
+                >
+                    Send confirmation email to customer
+                </Check>
             </AccessibilityProvider>
         </Form>
     );
