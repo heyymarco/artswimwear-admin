@@ -268,36 +268,28 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     
     // dom effects:
     useEffect(() => {
-        // conditions:
-        if (
-            (amount === null)              // the amount is blank => ignore
-            ||
-            (expectedAmount === undefined) // the expected amount is not defined => ignore
-            ||
-            (amount === expectedAmount)    // exact the same => ignore
-        ) {
-            setAmountWarning(null);        // clear the warning
-            return;
-        } // if
-        
-        
-        
         // setups:
         const cancelWarning = setTimeout(() => {
-            if (amount < expectedAmount) {
-                if ((amountMinThreshold !== undefined) && (((expectedAmount - amount) * 100 / amount) > amountMinThreshold)) {
-                    setAmountWarning(<>
-                        The entered amount is <strong>much smaller</strong> than the expected amount. Are you sure?
-                    </>);
-                } // if
-            }
-            else if (amount > expectedAmount) {
-                if ((amountMaxThreshold !== undefined) && (((amount - expectedAmount) * 100 / amount) > amountMaxThreshold)) {
-                    setAmountWarning(<>
-                        The entered amount is <strong>much greater</strong> than the expected amount. Are you sure?
-                    </>);
+            let amountWarning : React.ReactNode = null;
+            
+            if ((amount !== null) && (expectedAmount !== undefined)) {
+                if (amount < expectedAmount) {
+                    if ((amountMinThreshold !== undefined) && (((expectedAmount - amount) * 100 / amount) > amountMinThreshold)) {
+                        amountWarning = <>
+                            The entered amount is <strong>much smaller</strong> than the expected amount. Are you sure?
+                        </>;
+                    } // if
+                }
+                else if (amount > expectedAmount) {
+                    if ((amountMaxThreshold !== undefined) && (((amount - expectedAmount) * 100 / amount) > amountMaxThreshold)) {
+                        amountWarning = <>
+                            The entered amount is <strong>much greater</strong> than the expected amount. Are you sure?
+                        </>;
+                    } // if
                 } // if
             } // if
+            
+            setAmountWarning(amountWarning);
         }, 500);
         
         
