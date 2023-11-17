@@ -158,7 +158,9 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
     const [user_d    , setUser_d    ] = useState<boolean>(model?.user_d     ?? false);
     
     const [order_r   , setOrder_r   ] = useState<boolean>(model?.order_r    ?? false);
+    const [order_us  , setOrder_us  ] = useState<boolean>(model?.order_us   ?? false);
     const [order_usa , setOrder_usa ] = useState<boolean>(model?.order_usa  ?? false);
+    const [order_usn , setOrder_usn ] = useState<boolean>(model?.order_usn  ?? false);
     const [order_upmu, setOrder_upmu] = useState<boolean>(model?.order_upmu ?? false);
     const [order_upmp, setOrder_upmp] = useState<boolean>(model?.order_upmp ?? false);
     
@@ -212,7 +214,9 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             user_d,
             
             order_r,
+            order_us,
             order_usa,
+            order_usn,
             order_upmu,
             order_upmp,
             
@@ -428,8 +432,14 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
                                     <Check className='check editor' active={order_r}    onActiveChange={({active}) => { setOrder_r(active);    setIsModified(true); }}>
                                         View
                                     </Check>
+                                    <Check className='check editor' active={order_us}   onActiveChange={({active}) => { setOrder_us(active);   setIsModified(true); }}>
+                                        Change Status
+                                    </Check>
                                     <Check className='check editor' active={order_usa}  onActiveChange={({active}) => { setOrder_usa(active);  setIsModified(true); }}>
                                         Change Shipping Address
+                                    </Check>
+                                    <Check className='check editor' active={order_usn}  onActiveChange={({active}) => { setOrder_usn(active);  setIsModified(true); }}>
+                                        Change Shipping Number
                                     </Check>
                                     <Check className='check editor' active={order_upmu} onActiveChange={({active}) => { setOrder_upmu(active); setIsModified(true); }}>
                                         Approve Manual Payment

@@ -156,7 +156,9 @@ You do not have the privilege to view the orders.`
         prisma.order.findMany({
             select : {
                 id                     : true,
+                
                 orderId                : true,
+                orderStatus            : true,
                 
                 items                  : {
                     select: {
@@ -181,6 +183,7 @@ You do not have the privilege to view the orders.`
                 
                 shippingAddress        : true,
                 shippingCost           : true,
+                shippingNumber         : true,
                 shippingProviderId     : true,
                 
                 payment                : true,
@@ -216,12 +219,13 @@ You do not have the privilege to view the orders.`
     const {
         id,
         
-     // items,
+        orderStatus,
         
         customer,
         
         shippingAddress,
         shippingCost,
+        shippingNumber,
         shippingProviderId,
         
         billingAddress : optionalBillingAddress,
@@ -243,6 +247,18 @@ You do not have the privilege to view the orders.`
     
     
     //#region validating request
+    if ((orderStatus !== undefined) && (typeof(orderStatus) !== 'string') && !['NEW_ORDER', 'PROCESSED', 'SHIPPED', 'ON_HOLD', 'COMPLETED'].includes(orderStatus)) {
+        return NextResponse.json({
+            error: 'Invalid data.',
+        }, { status: 400 }); // handled with error
+    } // if
+    
+    if ((shippingNumber !== undefined) && (((typeof(shippingNumber) !== 'string') && !!shippingNumber) || (shippingNumber === null))) {
+        return NextResponse.json({
+            error: 'Invalid data.',
+        }, { status: 400 }); // handled with error
+    } // if
+    
     if ((typeof(id) !== 'string') || (id.length < 1)
         ||
         ((customer !== undefined) && ((typeof(customer) !== 'object') || Object.keys(customer).some((prop) => !['nickName', 'email'].includes(prop))))
@@ -302,10 +318,22 @@ You do not have the privilege to view the orders.`
 //         }, { status: 403 }); // handled with error: forbidden
     }
     else {
+        if (!session.role?.order_us && (orderStatus !== undefined)) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the order's status.`
+        }, { status: 403 }); // handled with error: forbidden
+        
         if (!session.role?.order_usa && (shippingAddress !== undefined)) return NextResponse.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the order's shippingAddress.`
+        }, { status: 403 }); // handled with error: forbidden
+        
+        if (!session.role?.order_usn && (orderStatus !== undefined)) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the order's shippingNumber.`
         }, { status: 403 }); // handled with error: forbidden
         
         if (payment !== undefined) {
@@ -365,13 +393,16 @@ You do not have the privilege to modify the payment of the order.`
                 
                 shippingAddress,
                 shippingCost,
+                shippingNumber,
                 shippingProviderId,
                 
                 payment,
             },
             select : {
                 id                     : true,
+                
                 orderId                : true,
+                orderStatus            : true,
                 
                 items                  : {
                     select: {
@@ -396,6 +427,7 @@ You do not have the privilege to modify the payment of the order.`
                 
                 shippingAddress        : true,
                 shippingCost           : true,
+                shippingNumber         : true,
                 shippingProviderId     : true,
                 
                 payment                : true,
