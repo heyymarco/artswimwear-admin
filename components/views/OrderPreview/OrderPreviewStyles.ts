@@ -96,8 +96,33 @@ const usesOrderPreviewLayout = () => { // the <ListItem> of order list
                 }),
             }),
             ...children('.orderId', {
-                gridArea: 'orderId',
+                // positions:
+                gridArea   : 'orderId',
+                
+                
+                
+                // layouts:
+                display    : 'flex',
+                flexWrap   : 'wrap',
+                alignItems : 'center',
+                
+                
+                
+                // spacings:
+                gap        : '0.25em',
+                
+                
+                
+                // typos:
                 fontSize: typos.fontSizeXl,
+                
+                
+                
+                // children:
+                ...children('.orderStatus', {
+                    // typos:
+                    fontSize: typos.fontSizeSm,
+                }),
             }),
             ...children('.customer', {
                 gridArea: 'customer',

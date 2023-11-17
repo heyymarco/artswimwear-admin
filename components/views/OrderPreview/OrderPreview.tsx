@@ -89,6 +89,10 @@ import {
 import {
     EditOrderDialog,
 }                           from '@/components/dialogs/EditOrderDialog'
+import {
+    orderStatusTheme,
+    OrderStatusBadge,
+}                           from './OrderStatusBadge'
 
 // stores:
 import {
@@ -140,6 +144,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
     ...restListItemProps} = props;
     const {
         orderId,
+        orderStatus,
         
         customer : customerDetail,
         items,
@@ -213,12 +218,28 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
             
             
             
+            // variants:
+            theme={orderStatusTheme(orderStatus)}
+            
+            
+            
             // classes:
             className={styleSheet.main}
         >
             <h3 className='orderId'>
                 #ORDER-{orderId}
+                
+                <OrderStatusBadge
+                    // data:
+                    orderStatus={orderStatus}
+                    
+                    
+                    
+                    // classes:
+                    className='orderStatus'
+                />
             </h3>
+            
             <p className='customer'>
                 <span className='name'>
                     <strong>{customerNickName}</strong>
