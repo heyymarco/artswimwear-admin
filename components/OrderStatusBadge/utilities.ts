@@ -13,6 +13,14 @@ import type {
 
 
 // utilities:
+export const orderStatusValues : OrderStatus[] = [
+    'NEW_ORDER',
+    'PROCESSED',
+    'SHIPPED',
+    'ON_HOLD',
+    'COMPLETED',
+];
+
 export const orderStatusTheme = (orderStatus : OrderStatus, paymentType?: PaymentType): ThemeName => {
     switch (orderStatus) {
         case 'NEW_ORDER':
@@ -33,3 +41,15 @@ export const orderStatusText = (orderStatus : OrderStatus, paymentType?: Payment
         case 'COMPLETED': return 'Completed';
     } // switch
 };
+
+export const orderStatusNext = (orderStatus : OrderStatus): OrderStatus => {
+    switch (orderStatus) {
+        case 'NEW_ORDER': return 'PROCESSED';
+        case 'PROCESSED': return 'SHIPPED';
+        case 'SHIPPED'  : return 'COMPLETED';
+        default         : return 'PROCESSED';
+    } // switch
+}
+export const orderStatusTextNext = (orderStatus : OrderStatus, paymentType?: PaymentType): ThemeName => {
+    return orderStatusText(orderStatusNext(orderStatus));
+}
