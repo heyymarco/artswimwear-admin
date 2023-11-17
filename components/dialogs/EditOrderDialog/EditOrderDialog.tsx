@@ -28,6 +28,7 @@ import {
     // base-components:
     Generic,
     Basic,
+    Indicator,
     
     
     
@@ -235,9 +236,6 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     const handleMarkAsProcessing    = useEvent(() => {
         // TODO: mark order as processing
     });
-    const handleMarkAsUnprocessed   = useEvent(() => {
-        // TODO: unmark order as processing
-    });
     
     const handleConfirmPayment      = useEvent(() => {
         setEditMode('payment');
@@ -253,7 +251,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         // jsx:
         return (
             <>
-                <Section title='Order List' theme={!printMode ? 'primary' : 'light'} className={styleSheet.orderShippingSection}>
+                <Section title='Order List' theme={!printMode ? (isPaid ? 'primary' : 'danger') : 'light'} className={styleSheet.orderShippingSection}>
                     <Basic tag='strong' theme={!printMode ? (isPaid ? 'success' : 'danger') : undefined} className={styleSheet.badge}>{
                         isPaid
                         ? 'PAID'
@@ -363,12 +361,6 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         />
                         <ButtonIcon className='btnPrint' icon='print'             theme='primary'   onClick={handlePrintShow}>
                             Print and Mark as Processing
-                        </ButtonIcon>
-                        <ButtonIcon className='btnPrint' icon='directions_run'    theme='primary'   onClick={handleMarkAsProcessing}>
-                            Mark as Processing
-                        </ButtonIcon>
-                        <ButtonIcon className='btnPrint' icon='mark_email_unread' theme='secondary' onClick={handleMarkAsUnprocessed}>
-                            Mark as Unprocessed
                         </ButtonIcon>
                     </Section>
                 </TabPanel>
