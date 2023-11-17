@@ -228,7 +228,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         setEditMode('shippingAddress');
     });
     
-    const handlePrintShow           = useEvent(() => {
+    const handlePrint               = useEvent(() => {
         setEditMode('printOrder');
         handleMarkAsProcessing();
     });
@@ -358,9 +358,32 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             
                             // variants:
                             theme='primary'
+                            
+                            
+                            
+                            // handlers:
+                            onPrint={handlePrint}
                         />
-                        <ButtonIcon className='btnPrint' icon='print'             theme='primary'   onClick={handlePrintShow}>
-                            Print and Mark as Processing
+                        <ButtonIcon
+                            // variants:
+                            theme='secondary'
+                            
+                            
+                            
+                            // classes:
+                            className='btnPrint'
+                            
+                            
+                            
+                            // components:
+                            iconComponent={<Icon icon='print' theme='primary' mild={true} />}
+                            
+                            
+                            
+                            // handlers:
+                            onClick={handlePrint}
+                        >
+                            Print
                         </ButtonIcon>
                     </Section>
                 </TabPanel>

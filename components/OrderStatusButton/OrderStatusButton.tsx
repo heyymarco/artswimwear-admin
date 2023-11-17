@@ -58,6 +58,11 @@ export interface OrderStatusButtonProps
 {
     // data:
     orderStatus  : OrderStatus
+    
+    
+    
+    // handlers:
+    onPrint     ?: () => void
 }
 const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
     // rest props:
@@ -73,6 +78,11 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
         gradient,
         outlined,
         mild,
+        
+        
+        
+        // handlers:
+        onPrint,
         
         
         
