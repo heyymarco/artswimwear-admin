@@ -85,14 +85,16 @@ const usesOrderPreviewLayout = () => { // the <ListItem> of order list
                 margin: 0,
             }),
             ...descendants('.edit', {
-                marginInlineStart: '0.25em',
-                opacity: 0.5,
-                transition: [
-                    ['transform', '300ms', 'ease-out'],
-                ],
-                ...rule(':hover', {
-                    opacity: 'unset',
-                    transform: 'scale(105%)',
+                ...rule(':not(.fullEditor)', {
+                    marginInlineStart: '0.25em',
+                    opacity: 0.5,
+                    transition: [
+                        ['transform', '300ms', 'ease-out'],
+                    ],
+                    ...rule(':hover', {
+                        opacity: 'unset',
+                        transform: 'scale(105%)',
+                    }),
                 }),
             }),
             ...children('.orderId', {

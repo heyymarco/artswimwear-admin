@@ -272,18 +272,8 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                 }
                 elementComponent={
                     <MiniCarousel
-                        // variants:
-                        theme='danger'
-                        
-                        
-                        
                         // classes:
                         className='images'
-                        
-                        
-                        
-                        // components:
-                        basicComponent={<Content theme='primary' />}
                     >
                         {items.map(({quantity, productId}, index: number) => {
                             const product = productList?.entities?.[`${productId}`];
@@ -303,11 +293,6 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                                     wrapperComponent={<React.Fragment />}
                                     badgeComponent={
                                         <Badge
-                                            // variants:
-                                            theme='danger'
-                                            
-                                            
-                                            
                                             // variants:
                                             floatingPlacement='right-start'
                                             floatingShift={10}
@@ -334,7 +319,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                 }
             />
             <p className='fullEditor'>
-                <EditButton icon='table_view' buttonStyle='regular' onClick={() => setEditMode('full')}>
+                <EditButton icon='table_view' className='fullEditor' buttonStyle='regular' onClick={() => setEditMode('full')}>
                     View Details
                 </EditButton>
             </p>
