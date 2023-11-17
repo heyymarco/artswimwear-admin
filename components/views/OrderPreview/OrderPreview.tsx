@@ -92,7 +92,7 @@ import {
 import {
     orderStatusTheme,
     OrderStatusBadge,
-}                           from './OrderStatusBadge'
+}                           from '@/components/OrderStatusBadge'
 
 // stores:
 import {
