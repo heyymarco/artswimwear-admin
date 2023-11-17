@@ -189,15 +189,23 @@ const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit extends s
             }, 0);
         });
         const editorElm = editorRef.current;
-        const fieldError = (
+        console.log({editorElm})
+        const fieldErrors = (
             // for <Form>:
-            (editorElm?.matches?.(':is(.invalidating, .invalidated)') ? editorElm : null)
+            (() => {
+                const matches = editorRef?.current?.querySelectorAll?.(':is(.invalidating, .invalidated)');
+                if (!matches?.length) return null;
+                return matches;
+            })()
+            ??
+            // for <input>:
+            (editorElm?.matches?.(':is(.invalidating, .invalidated)') ? [editorElm] : null)
             ??
             // for <Input>:
-            (editorElm?.parentElement?.matches?.(':is(.invalidating, .invalidated)') ? editorElm.parentElement : null)
+            (editorElm?.parentElement?.matches?.(':is(.invalidating, .invalidated)') ? [editorElm.parentElement] : null)
         );
-        if (fieldError) { // there is an invalid field
-            showMessageFieldError([fieldError]);
+        if (fieldErrors?.length) { // there is an invalid field
+            showMessageFieldError(fieldErrors);
             return;
         } // if
         
