@@ -330,7 +330,7 @@ You do not have the privilege to modify the order's status.`
 You do not have the privilege to modify the order's shippingAddress.`
         }, { status: 403 }); // handled with error: forbidden
         
-        if (!session.role?.order_usn && (orderStatus !== undefined)) return NextResponse.json({ error:
+        if (!session.role?.order_usn && (shippingNumber !== undefined)) return NextResponse.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the order's shippingNumber.`
