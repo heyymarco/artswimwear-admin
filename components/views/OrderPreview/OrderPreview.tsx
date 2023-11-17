@@ -148,6 +148,10 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
         
         customer : customerDetail,
         items,
+        
+        payment : {
+            type : paymentType,
+        },
     } = model;
     const {
         nickName : customerNickName,
@@ -219,7 +223,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
             
             
             // variants:
-            theme={orderStatusTheme(orderStatus)}
+            theme={orderStatusTheme(orderStatus, paymentType)}
             
             
             
@@ -232,6 +236,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                 <OrderStatusBadge
                     // data:
                     orderStatus={orderStatus}
+                    paymentType={paymentType}
                     
                     
                     

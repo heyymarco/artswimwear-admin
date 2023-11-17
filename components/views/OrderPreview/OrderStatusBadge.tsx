@@ -21,22 +21,27 @@ import {
 
 // models:
 import type {
+    PaymentType,
     OrderStatus,
 }                           from '@prisma/client'
 
 
 
 // utilities:
-export const orderStatusTheme = (orderStatus : OrderStatus): ThemeName => {
+export const orderStatusTheme = (orderStatus : OrderStatus, paymentType?: PaymentType): ThemeName => {
     switch (orderStatus) {
-        case 'NEW_ORDER': return 'danger';
+        case 'NEW_ORDER':
+            if ((paymentType !== undefined) && (paymentType === 'MANUAL')) return 'secondary';
+            return 'danger';
         case 'COMPLETED': return 'success';
         default         : return 'warning';
     } // switch
 };
-export const orderStatusText = (orderStatus : OrderStatus): ThemeName => {
+export const orderStatusText = (orderStatus : OrderStatus, paymentType?: PaymentType): ThemeName => {
     switch (orderStatus) {
-        case 'NEW_ORDER': return 'New Order';
+        case 'NEW_ORDER':
+            if ((paymentType !== undefined) && (paymentType === 'MANUAL')) return 'Unpaid';
+            return 'New Order';
         case 'PROCESSED': return 'Being Processed';
         case 'SHIPPED'  : return 'Shipped';
         case 'ON_HOLD'  : return 'On Hold';
@@ -53,13 +58,15 @@ export interface OrderStatusBadgeProps
         BadgeProps
 {
     // data:
-    orderStatus : OrderStatus
+    orderStatus  : OrderStatus
+    paymentType ?: PaymentType
 }
 const OrderStatusBadge = (props: OrderStatusBadgeProps): JSX.Element|null => {
     // rest props:
     const {
         // data:
         orderStatus,
+        paymentType,
         
         
         
@@ -79,9 +86,9 @@ const OrderStatusBadge = (props: OrderStatusBadgeProps): JSX.Element|null => {
             
             // variants:
             size={props.size ?? 'sm'}
-            theme={props.theme ?? orderStatusTheme(orderStatus)}
+            theme={props.theme ?? orderStatusTheme(orderStatus, paymentType)}
         >
-            {children ?? orderStatusText(orderStatus)}
+            {children ?? orderStatusText(orderStatus, paymentType)}
         </Badge>
     );
 };
