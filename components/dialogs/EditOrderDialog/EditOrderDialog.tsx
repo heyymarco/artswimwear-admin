@@ -74,6 +74,9 @@ import {
     EditButton,
 }                           from '@/components/EditButton'
 import {
+    OrderStatusButton,
+}                           from '@/components/OrderStatusButton'
+import {
     AddressEditor,
 }                           from '@/components/editors/AddressEditor'
 import {
@@ -168,6 +171,8 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     const {data: shippingList, isLoading: isLoadingShipping, isError: isErrorShipping } = useGetShippingList();
     const {data: productList, isLoading: isLoadingProduct, isError: isErrorProduct } = useGetProductList();
     const {
+        orderStatus,
+        
         items,
         
         shippingAddress    : shippingAddressDetail,
@@ -347,6 +352,15 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                 <TabPanel label={PAGE_ORDER_TAB_ORDER_N_SHIPPING} panelComponent={<Generic className={styleSheet.orderShippingTab} />}>
                     <OrderAndShipping />
                     <Section theme='primary' className={styleSheet.actionSection}>
+                        <OrderStatusButton
+                            // data:
+                            orderStatus={orderStatus ?? 'NEW_ORDER'}
+                            
+                            
+                            
+                            // variants:
+                            theme='primary'
+                        />
                         <ButtonIcon className='btnPrint' icon='print'             theme='primary'   onClick={handlePrintShow}>
                             Print and Mark as Processing
                         </ButtonIcon>
