@@ -112,9 +112,15 @@ import {
     
     
     // hooks:
+    useUpdateOrder,
     useGetProductList,
     useGetShippingList,
 }                           from '@/store/features/api/apiSlice'
+
+// models:
+import type {
+    OrderStatus,
+}                           from '@prisma/client'
 
 // internals:
 import {
@@ -169,8 +175,9 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     
     // stores:
-    const {data: shippingList, isLoading: isLoadingShipping, isError: isErrorShipping } = useGetShippingList();
-    const {data: productList, isLoading: isLoadingProduct, isError: isErrorProduct } = useGetProductList();
+    const [updateOrder,       {isLoading: isUpdatingOrder                             }] = useUpdateOrder();
+    const {data: shippingList, isLoading: isLoadingShipping, isError: isErrorShipping }  = useGetShippingList();
+    const {data: productList , isLoading: isLoadingProduct , isError: isErrorProduct  }  = useGetProductList();
     const {
         orderStatus,
         
@@ -231,6 +238,18 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     const handlePrint               = useEvent(() => {
         setEditMode('printOrder');
         handleMarkAsProcessing();
+    });
+    const handleChangeOrderStatus   = useEvent(async (newOrderStatus: OrderStatus) => {
+        // conditions:
+        if (!model) return; // the model is not exist => nothing to update
+        
+        
+        
+        // actions:
+        await updateOrder({
+            id          : model.id,
+            orderStatus : newOrderStatus,
+        }).unwrap();
     });
     
     const handleMarkAsProcessing    = useEvent(() => {
@@ -346,6 +365,11 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                 modelName='Order'
                 modelEntryName={`#ORDER-${model?.orderId}`}
                 model={model}
+                
+                
+                
+                // stores:
+                isCommiting = {isUpdatingOrder}
             >
                 <TabPanel label={PAGE_ORDER_TAB_ORDER_N_SHIPPING} panelComponent={<Generic className={styleSheet.orderShippingTab} />}>
                     <OrderAndShipping />
@@ -363,6 +387,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             
                             // handlers:
                             onPrint={handlePrint}
+                            onChange={handleChangeOrderStatus}
                         />
                         <ButtonIcon
                             // variants:
