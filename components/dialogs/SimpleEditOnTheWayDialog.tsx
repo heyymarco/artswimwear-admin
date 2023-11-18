@@ -49,17 +49,23 @@ export const SimpleEditOnTheWayDialog = (props: SimpleEditOnTheWayDialogProps) =
         };
     });
     const handleUpdate       = useEvent<UpdateHandler<OnTheWayValue, OrderDetailWithOptions, 'shippingNumber'>>(async (value, edit, model) => {
+        const {
+            sendConfirmationEmail = true,
+            shippingNumber,
+        ...restPayment} = value;
+        
         await updateOrder({
-            id     : model.id,
+            id          : model.id,
             
+            orderStatus : 'ON_THE_WAY',
             ...{
                 // original:
-                ...value,
-                [edit]                : value.shippingNumber || null,
-                
-                // @ts-ignore
-                sendConfirmationEmail : value.sendConfirmationEmail ?? true,
+                ...restPayment,
+                [edit] : shippingNumber || null,
             },
+            
+            //@ts-ignore
+            sendConfirmationEmail,
         }).unwrap();
     });
     
