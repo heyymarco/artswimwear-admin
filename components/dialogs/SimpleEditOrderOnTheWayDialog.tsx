@@ -52,7 +52,7 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
         const {
             sendConfirmationEmail = true,
             shippingNumber,
-        ...restPayment} = value;
+        ...restValue} = value;
         
         await updateOrder({
             id          : model.id,
@@ -60,7 +60,7 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
             orderStatus : 'ON_THE_WAY',
             ...{
                 // original:
-                ...restPayment,
+                ...restValue,
                 [edit] : shippingNumber || null,
             },
             
