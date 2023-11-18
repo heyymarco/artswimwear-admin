@@ -59,6 +59,10 @@ import {
     // react components:
     IfPhysicalProduct,
 }                           from '@/components/Checkout/templates/IfPhysicalProduct'
+import {
+    // react components:
+    IfNotPhysicalProduct,
+}                           from '@/components/Checkout/templates/IfNotPhysicalProduct'
 
 // configs:
 import type {
@@ -652,6 +656,175 @@ export const checkoutConfig : CheckoutConfig = {
                 Your Order Status Is Now Complete!
             </>,
             message  : <article style={styles.article}>
+                <div style={styles.sectionDummy}></div>
+                
+                <section
+                    // styles:
+                    style={{
+                        // layouts:
+                        ...styles.sectionBase,
+                        
+                        
+                        
+                        // backgrounds & foregrounds:
+                        ...styles.theme('primary'),
+                        
+                        
+                        
+                        // borders:
+                        border       : styles.borderStroke('primary'),
+                        borderRadius : `${borderRadiusValues.xxl}`,
+                        
+                        
+                        
+                        // spacings:
+                        margin       : `${spacerValues.md}`,
+                        padding      : `calc(${spacerValues.md} * 1.5)`,
+                    }}
+                >
+                    <h1 style={styles.heading1}>
+                        <IfPhysicalProduct>
+                            Your Order Has Arrived
+                        </IfPhysicalProduct>
+                        <IfNotPhysicalProduct>
+                            Your Order Has Been Processed
+                        </IfNotPhysicalProduct>
+                    </h1>
+                    
+                    <p style={styles.paragraph}>
+                        Dear <Customer.Name />,
+                    </p>
+                    
+                    <p style={styles.paragraphLast}>
+                        <IfPhysicalProduct>
+                            It looks like you have received your order package.
+                        </IfPhysicalProduct>
+                        <IfNotPhysicalProduct>
+                            Your order has been fully processed.
+                        </IfNotPhysicalProduct>
+                        <br />
+                        Now your order status is marked as <strong>complete</strong>.
+                    </p>
+                    <p>
+                        If you need help, please contact us by replying to this email.
+                    </p>
+                </section>
+                
+                <section style={styles.section}>
+                    <h2 style={styles.heading2}>
+                        Order Summary
+                    </h2>
+                    
+                    <div
+                        // styles:
+                        style={{
+                            // positions:
+                            ...styles.selfCenterHorz, // center self horizontally
+                            
+                            
+                            
+                            // layouts:
+                            display : 'grid',
+                            
+                            
+                            
+                            // sizes:
+                            width   : 'fit-content',
+                        }}
+                    >
+                        <table
+                            // styles:
+                            style={{
+                                // positions:
+                                ...styles.selfCenterHorz, // center self horizontally
+                                
+                                
+                                
+                                // layouts:
+                                ...styles.tableReset,
+                                
+                                
+                                
+                                // spacings:
+                                marginBottom : '0.5rem',
+                            }}
+                        >
+                            <tbody>
+                                <tr>
+                                    {/* label */}
+                                    <td style={styles.tableLabelSide}>
+                                        Order Number
+                                    </td>
+                                    
+                                    {/* colon */}
+                                    <td style={styles.tableColonSeparator}>
+                                        :
+                                    </td>
+                                    
+                                    {/* value */}
+                                    <td style={styles.textBold}>
+                                        <Order.Id />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    {/* label */}
+                                    <td  style={styles.tableLabelSide}>
+                                        Order Date
+                                    </td>
+                                    
+                                    {/* colon */}
+                                    <td style={styles.tableColonSeparator}>
+                                        :
+                                    </td>
+                                    
+                                    {/* value */}
+                                    <td>
+                                        <Order.CreatedAt />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <hr style={styles.horzRule} />
+                        
+                        <Order.Items />
+                        
+                        <hr style={styles.horzRule} />
+                        
+                        <Order.Subtotal />
+                        <Order.Shipping />
+                        
+                        <hr style={styles.horzRule} />
+                        
+                        <Order.Total />
+                    </div>
+                </section>
+                
+                <section style={styles.section}>
+                    <h2 style={styles.heading2}>
+                        Shipping Info
+                    </h2>
+                    
+                    <Shipping.Info style={styles.selfCenterHorz} />
+                </section>
+                
+                <section style={styles.section}>
+                    <h2 style={styles.heading2}>
+                        Customer Info
+                    </h2>
+                    
+                    <Customer.Info style={styles.selfCenterHorz} />
+                </section>
+                
+                <section style={styles.sectionLast}>
+                    <h2 style={styles.heading2}>
+                        Customer Care Support
+                    </h2>
+                    
+                    <p style={styles.paragraphLast}>
+                        Need help? Please reply this email.
+                    </p>
+                </section>
             </article>,
         },
     },
