@@ -79,6 +79,9 @@ export const usesPaymentEditorLayout = () => {
                     gridColumnEnd: 'span 2',
                 }),
             }),
+            
+            
+            
             // customize:
             ...usesCssProps(paymentEditors), // apply config's cssProps
         }),
