@@ -21,6 +21,7 @@ import {
 // reusable-ui components:
 import {
     // simple-components:
+    Icon,
     ButtonIconProps,
     ButtonIcon,
     
@@ -28,6 +29,7 @@ import {
     
     // layout-components:
     ListItem,
+    List,
     
     
     
@@ -49,7 +51,9 @@ import {
 // internal components:
 import {
     orderStatusValues,
+    orderStatusTheme,
     orderStatusText,
+    orderStatusIcon,
     orderStatusNext,
     orderStatusTextNext,
 }                           from '@/components/OrderStatusBadge'
@@ -122,7 +126,8 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
         children,
     ...restButtonIconProps} = props;
     const orderStatus           = model?.orderStatus ?? 'NEW_ORDER';
-    const paymentTypeUppercased = model?.payment?.type?.toUpperCase();
+    const paymentType           = model?.payment.type;
+    const paymentTypeUppercased = paymentType?.toUpperCase();
     const isPaid                = !!paymentTypeUppercased && (paymentTypeUppercased !== 'MANUAL');
     
     
@@ -220,7 +225,12 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
                 
                 
                 // appearances:
-                icon={isBusy ? 'busy' : 'print'}
+                icon={isBusy ? 'busy' : orderStatusIcon(orderStatusNext(orderStatus))}
+                
+                
+                
+                // states:
+                enabled={(orderStatus !== 'COMPLETED')}
                 
                 
                 
@@ -228,7 +238,9 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
                 onClick={handleNextStatus}
             >
                 {children ?? <>
-                    {(orderStatus === 'NEW_ORDER') && <>Print and </>}Mark as {orderStatusTextNext(orderStatus)}
+                    {(orderStatus === 'NEW_ORDER') && <>Print and </>}
+                    {(orderStatus !== 'COMPLETED') && <>Mark as {orderStatusTextNext(orderStatus)}</>}
+                    {(orderStatus === 'COMPLETED') && <>Order Completed</>}
                 </>}
             </ButtonIcon>
             <DropdownListButton
@@ -244,8 +256,13 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
                 
                 // floatable:
                 floatingPlacement='bottom-end'
+                
+                
+                
+                // components:
+                listComponent={<List theme='primary' />}
             >
-                {orderStatusValues.map((orderStatusValue, listItemIndex) =>
+                {orderStatusValues.map((orderStatusOption, listItemIndex) =>
                     <ListItem
                         // identifiers:
                         key={listItemIndex}
@@ -253,21 +270,21 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
                         
                         
                         // behaviors:
-                        actionCtrl={(orderStatusValue !== orderStatus)}
+                        actionCtrl={(orderStatusOption !== orderStatus)}
                         
                         
                         
                         // states:
-                        active={(orderStatusValue === orderStatus)}
+                        active={(orderStatusOption === orderStatus)}
                         
                         
                         
                         // handlers:
                         onClick={() => {
-                            handleChangeStatus(orderStatusValue);
+                            handleChangeStatus(orderStatusOption);
                         }}
                     >
-                        <RadioDecorator />&nbsp;&nbsp;Mark as {orderStatusText(orderStatusValue)}
+                        <RadioDecorator />&nbsp;&nbsp;<Icon icon={orderStatusIcon(orderStatusOption)} />&nbsp;Mark as {orderStatusText(orderStatusOption)}
                     </ListItem>
                 )}
             </DropdownListButton>

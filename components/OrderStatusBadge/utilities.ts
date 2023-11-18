@@ -4,6 +4,12 @@ import type {
     ThemeName,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
+// reusable-ui components:
+import type {
+    // simple-components:
+    IconList,
+}                           from '@reusable-ui/components'          // a set of official Reusable-UI components
+
 // models:
 import type {
     PaymentType,
@@ -39,6 +45,17 @@ export const orderStatusText = (orderStatus : OrderStatus, paymentType?: Payment
         case 'SHIPPED'  : return 'Shipped';
         case 'ON_HOLD'  : return 'On Hold';
         case 'COMPLETED': return 'Completed';
+    } // switch
+};
+export const orderStatusIcon = (orderStatus : OrderStatus, paymentType?: PaymentType): IconList => {
+    switch (orderStatus) {
+        case 'NEW_ORDER':
+            if ((paymentType !== undefined) && (paymentType === 'MANUAL')) return 'timer';
+            return 'mark_as_unread';
+        case 'PROCESSED': return 'directions_run';
+        case 'SHIPPED'  : return 'local_shipping';
+        case 'ON_HOLD'  : return 'report_problem';
+        case 'COMPLETED': return 'done';
     } // switch
 };
 
