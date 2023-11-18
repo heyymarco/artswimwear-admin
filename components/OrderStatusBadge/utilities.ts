@@ -22,7 +22,7 @@ import type {
 export const orderStatusValues : OrderStatus[] = [
     'NEW_ORDER',
     'PROCESSED',
-    'SHIPPED',
+    'ON_THE_WAY',
     'IN_TROUBLE',
     'COMPLETED',
 ];
@@ -42,7 +42,7 @@ export const orderStatusText = (orderStatus : OrderStatus, paymentType?: Payment
             if ((paymentType !== undefined) && (paymentType === 'MANUAL')) return 'Waiting for Payment';
             return 'New Order';
         case 'PROCESSED'  : return 'Being Processed';
-        case 'SHIPPED'    : return 'Shipped';
+        case 'ON_THE_WAY' : return 'On The Way';
         case 'IN_TROUBLE' : return 'In Trouble';
         case 'COMPLETED'  : return 'Completed';
     } // switch
@@ -53,7 +53,7 @@ export const orderStatusIcon = (orderStatus : OrderStatus, paymentType?: Payment
             if ((paymentType !== undefined) && (paymentType === 'MANUAL')) return 'timer';
             return 'mark_as_unread';
         case 'PROCESSED'  : return 'directions_run';
-        case 'SHIPPED'    : return 'local_shipping';
+        case 'ON_THE_WAY' : return 'local_shipping';
         case 'IN_TROUBLE' : return 'report_problem';
         case 'COMPLETED'  : return 'done';
     } // switch
@@ -62,8 +62,8 @@ export const orderStatusIcon = (orderStatus : OrderStatus, paymentType?: Payment
 export const orderStatusNext = (orderStatus : OrderStatus): OrderStatus => {
     switch (orderStatus) {
         case 'NEW_ORDER'  : return 'PROCESSED';
-        case 'PROCESSED'  : return 'SHIPPED';
-        case 'SHIPPED'    : return 'COMPLETED';
+        case 'PROCESSED'  : return 'ON_THE_WAY';
+        case 'ON_THE_WAY' : return 'COMPLETED';
         case 'IN_TROUBLE' : return 'COMPLETED';
         case 'COMPLETED'  : return 'COMPLETED';
         default           : return 'PROCESSED';
