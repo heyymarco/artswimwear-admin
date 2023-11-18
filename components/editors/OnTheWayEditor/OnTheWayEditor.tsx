@@ -55,6 +55,7 @@ import type {
     EditorProps,
 }                           from '@/components/editors/Editor'
 import {
+    TextEditorProps,
     TextEditor,
 }                           from '@/components/editors/TextEditor'
 
@@ -91,6 +92,11 @@ export interface OnTheWayEditorProps
             |'onChange'     // supported
         >,
         Omit<IndicatorProps<HTMLFormElement>,
+            // refs:
+            |'elmRef'       // overriden
+            
+            
+            
             // values:
             |'defaultValue' // taken over by EditorProps
             |'value'        // taken over by EditorProps
@@ -102,6 +108,11 @@ export interface OnTheWayEditorProps
             |'children'     // not supported
         >
 {
+    // refs:
+    elmRef              ?: TextEditorProps['elmRef']
+    
+    
+    
     // accessibilities:
     shippingNumberLabel ?: string
 }
@@ -113,6 +124,11 @@ const OnTheWayEditor = (props: OnTheWayEditorProps): JSX.Element|null => {
     
     // rest props:
     const {
+        // refs:
+        elmRef,
+        
+        
+        
         // accessibilities:
         shippingNumberLabel = 'Shipping Tracking Number (if any)',
         
@@ -219,6 +235,11 @@ const OnTheWayEditor = (props: OnTheWayEditorProps): JSX.Element|null => {
                 inheritReadOnly = {inheritReadOnly}
             >
                 <TextEditor
+                    // refs:
+                    elmRef={elmRef}
+                    
+                    
+                    
                     // classes:
                     className='shippingNumber'
                     

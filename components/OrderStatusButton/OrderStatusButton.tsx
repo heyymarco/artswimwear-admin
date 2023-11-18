@@ -15,6 +15,7 @@ import {
 import {
     // react helper hooks:
     useEvent,
+    EventHandler,
     useMountedFlag,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
@@ -35,6 +36,11 @@ import {
     
     // menu-components:
     DropdownListButton,
+    
+    
+    
+    // dialog-components:
+    ModalExpandedChangeEvent,
     
     
     
@@ -60,6 +66,15 @@ import {
 import {
     RadioDecorator,
 }                           from '@/components/RadioDecorator'
+import {
+    OnTheWayEditor,
+}                           from '@/components/editors/OnTheWayEditor'
+import {
+    CollapsibleSuspense,
+}                           from '@/components/CollapsibleSuspense'
+import {
+    SimpleEditOnTheWayDialog,
+}                           from '@/components/dialogs/SimpleEditOnTheWayDialog'
 
 // stores:
 import type {
@@ -145,6 +160,9 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
     // states:
     const [isBusy, setIsBusy] = useState<boolean>(false);
     
+    type EditMode = 'shippingNumber'
+    const [editMode, setEditMode] = useState<EditMode|null>(null);
+    
     
     
     // dom effects:
@@ -161,7 +179,7 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleChangeStatus = useEvent(async (newOrderStatus: OrderStatus): Promise<boolean> => {
+    const handleChangeStatus   = useEvent(async (newOrderStatus: OrderStatus): Promise<boolean> => {
         // conditions:
         if (orderStatus === newOrderStatus) return false;
         
@@ -187,6 +205,13 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
         
         
         
+        if (newOrderStatus === 'ON_THE_WAY') {
+            setEditMode('shippingNumber');
+            return true;
+        } // if
+        
+        
+        
         setIsBusy(true);
         try {
             try {
@@ -202,7 +227,7 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
             setIsBusy(false);
         } // try
     });
-    const handleNextStatus   = useEvent(async () => {
+    const handleNextStatus     = useEvent(async () => {
         if (!(await handleChangeStatus(orderStatusNext(orderStatus)))) return;
         if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
         
@@ -211,100 +236,134 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
         if (orderStatus === 'NEW_ORDER') onPrint?.();
     });
     
+    const handleExpandedChange = useEvent<EventHandler<ModalExpandedChangeEvent>>(({expanded}): void => {
+        // conditions:
+        if (expanded) return; // ignore if expanded
+        
+        
+        
+        // actions:
+        setEditMode(null);
+    });
+    
     
     
     // jsx:
     return (
-        <Group
-            // variants:
-            size={size}
-            theme={theme}
-            gradient={gradient}
-            outlined={outlined}
-            mild={mild}
-            
-            
-            
-            // states:
-            enabled={!isBusy}
-        >
-            <ButtonIcon
-                // other props:
-                {...restButtonIconProps}
-                
-                
-                
-                // refs:
-                elmRef={elmRef}
-                
-                
-                
-                // appearances:
-                icon={isBusy ? 'busy' : orderStatusIcon(orderStatusNext(orderStatus))}
+        <>
+            <Group
+                // variants:
+                size={size}
+                theme={theme}
+                gradient={gradient}
+                outlined={outlined}
+                mild={mild}
                 
                 
                 
                 // states:
-                enabled={(orderStatus !== 'COMPLETED')}
-                assertiveFocusable={assertiveFocusable}
-                
-                
-                
-                // handlers:
-                onClick={handleNextStatus}
+                enabled={!isBusy}
             >
-                {children ?? <>
-                    {(orderStatus === 'NEW_ORDER') && <>Print and </>}
-                    {(orderStatus !== 'COMPLETED') && <>Mark as {orderStatusTextNext(orderStatus)}</>}
-                    {(orderStatus === 'COMPLETED') && <>Order Completed</>}
-                </>}
-            </ButtonIcon>
-            <DropdownListButton
-                // variants:
-                theme='secondary'
-                
-                
-                
-                // classes:
-                className='solid'
-                
-                
-                
-                // floatable:
-                floatingPlacement='bottom-end'
-                
-                
-                
-                // components:
-                listComponent={<List theme='primary' />}
-            >
-                {orderStatusValues.map((orderStatusOption, listItemIndex) =>
-                    <ListItem
-                        // identifiers:
-                        key={listItemIndex}
-                        
-                        
-                        
-                        // behaviors:
-                        actionCtrl={(orderStatusOption !== orderStatus)}
-                        
-                        
-                        
-                        // states:
-                        active={(orderStatusOption === orderStatus)}
-                        
-                        
-                        
-                        // handlers:
-                        onClick={() => {
-                            handleChangeStatus(orderStatusOption);
-                        }}
-                    >
-                        <RadioDecorator />&nbsp;&nbsp;<Icon icon={orderStatusIcon(orderStatusOption)} />&nbsp;Mark as {orderStatusText(orderStatusOption)}
-                    </ListItem>
-                )}
-            </DropdownListButton>
-        </Group>
+                <ButtonIcon
+                    // other props:
+                    {...restButtonIconProps}
+                    
+                    
+                    
+                    // refs:
+                    elmRef={elmRef}
+                    
+                    
+                    
+                    // appearances:
+                    icon={isBusy ? 'busy' : orderStatusIcon(orderStatusNext(orderStatus))}
+                    
+                    
+                    
+                    // states:
+                    enabled={(orderStatus !== 'COMPLETED')}
+                    assertiveFocusable={assertiveFocusable}
+                    
+                    
+                    
+                    // handlers:
+                    onClick={handleNextStatus}
+                >
+                    {children ?? <>
+                        {(orderStatus === 'NEW_ORDER') && <>Print and </>}
+                        {(orderStatus !== 'COMPLETED') && <>Mark as {orderStatusTextNext(orderStatus)}</>}
+                        {(orderStatus === 'COMPLETED') && <>Order Completed</>}
+                    </>}
+                </ButtonIcon>
+                <DropdownListButton
+                    // variants:
+                    theme='secondary'
+                    
+                    
+                    
+                    // classes:
+                    className='solid'
+                    
+                    
+                    
+                    // floatable:
+                    floatingPlacement='bottom-end'
+                    
+                    
+                    
+                    // components:
+                    listComponent={<List theme='primary' />}
+                >
+                    {orderStatusValues.map((orderStatusOption, listItemIndex) =>
+                        <ListItem
+                            // identifiers:
+                            key={listItemIndex}
+                            
+                            
+                            
+                            // behaviors:
+                            actionCtrl={(orderStatusOption !== orderStatus)}
+                            
+                            
+                            
+                            // states:
+                            active={(orderStatusOption === orderStatus)}
+                            
+                            
+                            
+                            // handlers:
+                            onClick={() => {
+                                handleChangeStatus(orderStatusOption);
+                            }}
+                        >
+                            <RadioDecorator />&nbsp;&nbsp;<Icon icon={orderStatusIcon(orderStatusOption)} />&nbsp;Mark as {orderStatusText(orderStatusOption)}
+                        </ListItem>
+                    )}
+                </DropdownListButton>
+            </Group>
+            
+            {/* edit dialog: */}
+            <CollapsibleSuspense>
+                <SimpleEditOnTheWayDialog
+                    // data:
+                    model={model!}
+                    edit='shippingNumber'
+                    
+                    
+                    
+                    // states:
+                    expanded={editMode === 'shippingNumber'}
+                    onExpandedChange={handleExpandedChange}
+                    
+                    
+                    
+                    // components:
+                    editorComponent={
+                        <OnTheWayEditor />
+                    }
+                />
+            </CollapsibleSuspense>
+        </>
     );
 };
 export {
