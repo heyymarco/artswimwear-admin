@@ -425,13 +425,13 @@ You do not have the privilege to modify the payment of the order.`
         
         //#region send email confirmation
         if (
+            !!performSendConfirmationEmail
+            &&
             (
                 (payment?.type === 'MANUAL_PAID') // payment confirmation
                 ||
                 (orderStatus === 'ON_THE_WAY')    // shipping tracking number confirmation
             )
-            &&
-            !!performSendConfirmationEmail
         ) {
             try {
                 await sendConfirmationEmail(orderDetail.orderId);
