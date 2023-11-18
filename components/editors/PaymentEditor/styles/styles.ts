@@ -1,7 +1,6 @@
 // cssfn:
 import {
     // writes css in javascript:
-    children,
     style,
     
     
@@ -17,11 +16,6 @@ import {
 
 // reusable-ui core:
 import {
-    // a responsive management system:
-    ifScreenWidthAtLeast,
-    
-    
-    
     // size options of UI:
     usesResizable,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
@@ -53,32 +47,9 @@ export const usesPaymentEditorLayout = () => {
         ...usesIndicatorLayout(),
         ...style({
             // layouts:
-            display             : 'grid',
-            gridTemplateColumns : 'repeat(6, 1fr)',
-            gridAutoRows        : 'auto',
-            gridAutoFlow        : 'row',
-            
-            
-            
-            // children:
-            ...children('*', {
-                gridColumnEnd: 'span 6',
-            }),
-            ...ifScreenWidthAtLeast('sm', {
-                ...children(['.firstName', '.lastName'], {
-                    gridColumnEnd: 'span 3',
-                }),
-            }),
-            ...ifScreenWidthAtLeast('lg', {
-                ...children(['.zone', '.zip'], {
-                    gridColumnEnd: 'span 3',
-                }),
-            }),
-            ...ifScreenWidthAtLeast('xl', {
-                ...children(['.city', '.zone', '.zip'], {
-                    gridColumnEnd: 'span 2',
-                }),
-            }),
+            display      : 'grid',
+            gridAutoRows : 'auto',
+            gridAutoFlow : 'row',
             
             
             
