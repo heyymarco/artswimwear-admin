@@ -63,6 +63,7 @@ import {
     
     
     // menu-components:
+    DropdownListButtonProps,
     DropdownListButton,
     
     
@@ -138,6 +139,11 @@ export interface PaymentEditorProps
             |'onChange'     // supported
         >,
         Omit<IndicatorProps<HTMLFormElement>,
+            // refs:
+            |'elmRef'       // overriden
+            
+            
+            
             // values:
             |'defaultValue' // taken over by EditorProps
             |'value'        // taken over by EditorProps
@@ -149,6 +155,11 @@ export interface PaymentEditorProps
             |'children'     // not supported
         >
 {
+    // refs:
+    elmRef             ?: DropdownListButtonProps['elmRef']
+    
+    
+    
     // accessibilities:
     expectedAmount     ?: number
     amountMinThreshold ?: number
@@ -165,6 +176,11 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     
     // rest props:
     const {
+        // refs:
+        elmRef,
+        
+        
+        
         // accessibilities:
         expectedAmount,
         amountMinThreshold,
@@ -358,6 +374,11 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                         />
                     </Label>
                     <DropdownListButton
+                        // refs:
+                        elmRef={elmRef}
+                        
+                        
+                        
                         // variants:
                         theme='primary'
                         mild={true}
