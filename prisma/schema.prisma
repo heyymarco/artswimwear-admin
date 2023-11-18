@@ -390,7 +390,6 @@ model Role {
     order_r                 Boolean                 @default(false)
     order_us                Boolean                 @default(false)
     order_usa               Boolean                 @default(false)
-    order_usn               Boolean                 @default(false)
     order_upmu              Boolean                 @default(false)
     order_upmp              Boolean                 @default(false)
     

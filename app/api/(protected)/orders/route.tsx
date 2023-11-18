@@ -318,7 +318,7 @@ You do not have the privilege to view the orders.`
 //         }, { status: 403 }); // handled with error: forbidden
     }
     else {
-        if (!session.role?.order_us && (orderStatus !== undefined)) return NextResponse.json({ error:
+        if (!session.role?.order_us && ((orderStatus !== undefined) || (shippingNumber !== undefined))) return NextResponse.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the order's status.`
@@ -328,12 +328,6 @@ You do not have the privilege to modify the order's status.`
 `Access denied.
 
 You do not have the privilege to modify the order's shippingAddress.`
-        }, { status: 403 }); // handled with error: forbidden
-        
-        if (!session.role?.order_usn && (shippingNumber !== undefined)) return NextResponse.json({ error:
-`Access denied.
-
-You do not have the privilege to modify the order's shippingNumber.`
         }, { status: 403 }); // handled with error: forbidden
         
         if (payment !== undefined) {
