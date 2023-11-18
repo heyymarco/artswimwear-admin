@@ -70,11 +70,17 @@ import {
     OrderOnTheWayEditor,
 }                           from '@/components/editors/OrderOnTheWayEditor'
 import {
+    OrderCompletedEditor,
+}                           from '@/components/editors/OrderCompletedEditor'
+import {
     CollapsibleSuspense,
 }                           from '@/components/CollapsibleSuspense'
 import {
     SimpleEditOrderOnTheWayDialog,
 }                           from '@/components/dialogs/SimpleEditOrderOnTheWayDialog'
+import {
+    SimpleEditOrderCompletedDialog,
+}                           from '@/components/dialogs/SimpleEditOrderCompletedDialog'
 
 // stores:
 import type {
@@ -160,7 +166,7 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
     // states:
     const [isBusy, setIsBusy] = useState<boolean>(false);
     
-    type EditMode = 'shippingNumber'
+    type EditMode = 'onTheWay'|'completed'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     
@@ -205,10 +211,14 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
         
         
         
-        if (newOrderStatus === 'ON_THE_WAY') {
-            setEditMode('shippingNumber');
-            return true;
-        } // if
+        switch(newOrderStatus) {
+            case 'ON_THE_WAY':
+                setEditMode('onTheWay');
+                return true;
+            case 'COMPLETED':
+                setEditMode('completed');
+                return true;
+        } // switch
         
         
         
@@ -352,7 +362,7 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
                     
                     
                     // states:
-                    expanded={editMode === 'shippingNumber'}
+                    expanded={editMode === 'onTheWay'}
                     onExpandedChange={handleExpandedChange}
                     
                     
@@ -360,6 +370,24 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
                     // components:
                     editorComponent={
                         <OrderOnTheWayEditor />
+                    }
+                />
+                <SimpleEditOrderCompletedDialog
+                    // data:
+                    model={model!}
+                    edit=''
+                    
+                    
+                    
+                    // states:
+                    expanded={editMode === 'completed'}
+                    onExpandedChange={handleExpandedChange}
+                    
+                    
+                    
+                    // components:
+                    editorComponent={
+                        <OrderCompletedEditor />
                     }
                 />
             </CollapsibleSuspense>
