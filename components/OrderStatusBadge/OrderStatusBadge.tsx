@@ -10,6 +10,7 @@ import {
 import {
     // simple-components:
     Icon,
+    ButtonIcon,
     
     
     
@@ -37,7 +38,7 @@ import {
 export interface OrderStatusBadgeProps
     extends
         // bases:
-        BadgeProps
+        BadgeProps<HTMLButtonElement>
 {
     // data:
     orderStatus  : OrderStatus
@@ -61,7 +62,7 @@ const OrderStatusBadge = (props: OrderStatusBadgeProps): JSX.Element|null => {
     
     // jsx:
     return (
-        <Badge
+        <ButtonIcon
             // other props:
             {...restBadgeProps}
             
@@ -70,8 +71,11 @@ const OrderStatusBadge = (props: OrderStatusBadgeProps): JSX.Element|null => {
             // variants:
             size={props.size ?? 'sm'}
             theme={props.theme ?? preferedTheme}
-        >
-            {children ?? <>
+            
+            
+            
+            // components:
+            iconComponent={
                 <Icon
                     // appearances:
                     icon={orderStatusIcon(orderStatus, paymentType)}
@@ -83,10 +87,10 @@ const OrderStatusBadge = (props: OrderStatusBadgeProps): JSX.Element|null => {
                     theme={hasAlternateTheme ? 'dark' : preferedTheme}
                     mild={hasAlternateTheme ? true : undefined}
                 />
-                &nbsp;
-                {orderStatusText(orderStatus, paymentType)}
-            </>}
-        </Badge>
+            }
+        >
+            {orderStatusText(orderStatus, paymentType)}
+        </ButtonIcon>
     );
 };
 export {
