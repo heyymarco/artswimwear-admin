@@ -653,7 +653,7 @@ export const checkoutConfig : CheckoutConfig = {
             
             from     : process.env.EMAILS_COMPLETED_FROM ?? '',
             subject  : <>
-                Your Order Status Is Now Complete!
+                Your Order Status Is Now Complete
             </>,
             message  : <article style={styles.article}>
                 <div style={styles.sectionDummy}></div>
@@ -684,10 +684,10 @@ export const checkoutConfig : CheckoutConfig = {
                 >
                     <h1 style={styles.heading1}>
                         <IfPhysicalProduct>
-                            Your Order Has Arrived
+                            Your Order Has Arrived!
                         </IfPhysicalProduct>
                         <IfNotPhysicalProduct>
-                            Your Order Has Been Processed
+                            Your Order Has Been Processed!
                         </IfNotPhysicalProduct>
                     </h1>
                     
