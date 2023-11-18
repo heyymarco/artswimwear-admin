@@ -47,18 +47,22 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
         return model[edit];
     });
     const handleUpdate       = useEvent<UpdateHandler<PaymentValue, OrderDetailWithOptions, 'payment'>>(async (value, edit, model) => {
+        const {
+            sendConfirmationEmail = true,
+        ...restPayment} = value;
+        
         await updateOrder({
             id     : model.id,
             
             [edit] : {
                 // original:
-                ...value,
-                amount                : value.amount ?? 0,
-                fee                   : value.fee    ?? 0,
-                
-                // @ts-ignore
-                sendConfirmationEmail : value.sendConfirmationEmail ?? true,
+                ...restPayment,
+                amount : restPayment.amount ?? 0,
+                fee    : restPayment.fee    ?? 0,
             },
+            
+            //@ts-ignore
+            sendConfirmationEmail,
         }).unwrap();
     });
     
