@@ -8,6 +8,11 @@ import {
 
 // reusable-ui components:
 import {
+    // simple-components:
+    Icon,
+    
+    
+    
     // status-components:
     BadgeProps,
     Badge,
@@ -23,6 +28,7 @@ import type {
 import {
     orderStatusTheme,
     orderStatusText,
+    orderStatusIcon,
 }                           from './utilities'
 
 
@@ -49,7 +55,8 @@ const OrderStatusBadge = (props: OrderStatusBadgeProps): JSX.Element|null => {
         // children:
         children,
     ...restBadgeProps} = props;
-    
+    const preferedTheme = orderStatusTheme(orderStatus, paymentType);
+    const hasAlternateTheme = ((preferedTheme === 'warning') || (preferedTheme === 'secondary'));
     
     
     // jsx:
@@ -62,9 +69,23 @@ const OrderStatusBadge = (props: OrderStatusBadgeProps): JSX.Element|null => {
             
             // variants:
             size={props.size ?? 'sm'}
-            theme={props.theme ?? orderStatusTheme(orderStatus, paymentType)}
+            theme={props.theme ?? preferedTheme}
         >
-            {children ?? orderStatusText(orderStatus, paymentType)}
+            {children ?? <>
+                <Icon
+                    // appearances:
+                    icon={orderStatusIcon(orderStatus, paymentType)}
+                    
+                    
+                    
+                    // variants:
+                    size='sm'
+                    theme={hasAlternateTheme ? 'dark' : preferedTheme}
+                    mild={hasAlternateTheme ? true : undefined}
+                />
+                &nbsp;&nbsp;
+                {orderStatusText(orderStatus, paymentType)}
+            </>}
         </Badge>
     );
 };
