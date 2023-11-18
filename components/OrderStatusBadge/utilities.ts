@@ -42,7 +42,7 @@ export const orderStatusText = (orderStatus : OrderStatus, paymentType?: Payment
             if ((paymentType !== undefined) && (paymentType === 'MANUAL')) return 'Waiting for Payment';
             return 'New Order';
         case 'PROCESSED'  : return 'Being Processed';
-        case 'ON_THE_WAY' : return 'On The Way';
+        case 'ON_THE_WAY' : return 'On the Way';
         case 'IN_TROUBLE' : return 'In Trouble';
         case 'COMPLETED'  : return 'Completed';
     } // switch
