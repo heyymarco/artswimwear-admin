@@ -25,6 +25,8 @@ export interface EmailConfig {
 export interface CheckoutConfig {
     business : BusinessConfig
     emails : {
-        checkout : EmailConfig
+        checkout  : EmailConfig
+        shipping  : EmailConfig
+        completed : EmailConfig
     }
 }

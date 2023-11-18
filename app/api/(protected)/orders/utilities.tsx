@@ -59,6 +59,9 @@ import {
 }                           from '@/libs/images'
 
 // configs:
+import type {
+    EmailConfig,
+}                           from '@/components/Checkout/types'
 import {
     checkoutConfig,
 }                           from '@/checkout.config.server'
@@ -124,7 +127,7 @@ const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof p
         ),
     };
 };
-export const sendConfirmationEmail = async (orderId: string): Promise<void> => {
+export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailConfig): Promise<void> => {
     const [newOrder, countryList] = await prisma.$transaction(async (prismaTransaction) => {
         return await Promise.all([
             getOrderAndData(prismaTransaction, orderId),
@@ -188,9 +191,6 @@ export const sendConfirmationEmail = async (orderId: string): Promise<void> => {
     try {
         const {
             business,
-            emails : {
-                checkout : checkoutEmail,
-            },
         } = checkoutConfig;
         
         
@@ -215,30 +215,30 @@ export const sendConfirmationEmail = async (orderId: string): Promise<void> => {
         
         
         const transporter = nodemailer.createTransport({
-            host     : checkoutEmail.host,
-            port     : checkoutEmail.port,
-            secure   : checkoutEmail.secure,
+            host     : emailConfig.host,
+            port     : emailConfig.port,
+            secure   : emailConfig.secure,
             auth     : {
-                user : checkoutEmail.username,
-                pass : checkoutEmail.password,
+                user : emailConfig.username,
+                pass : emailConfig.password,
             },
         });
         try {
             console.log('sending email...');
             await transporter.sendMail({
-                from        : checkoutEmail.from,
+                from        : emailConfig.from,
                 to          : customer.email,
                 subject     : renderToStaticMarkup(
                     <OrderDataContextProvider {...orderDataContextProviderProps}>
                         <BusinessContextProvider {...businessContextProviderProps}>
-                            {checkoutEmail.subject}
+                            {emailConfig.subject}
                         </BusinessContextProvider>
                     </OrderDataContextProvider>
                 ).replace(/[\r\n\t]+/g, ' ').trim(),
                 html        : renderToStaticMarkup(
                     <OrderDataContextProvider {...orderDataContextProviderProps}>
                         <BusinessContextProvider {...businessContextProviderProps}>
-                            {checkoutEmail.message}
+                            {emailConfig.message}
                         </BusinessContextProvider>
                     </OrderDataContextProvider>
                 ),

@@ -46,6 +46,14 @@ import {
     sendConfirmationEmail,
 }                           from './utilities'
 
+// configs:
+import type {
+    EmailConfig,
+}                           from '@/components/Checkout/types'
+import {
+    checkoutConfig,
+}                           from '@/checkout.config.server'
+
 
 
 // types:
@@ -424,23 +432,27 @@ You do not have the privilege to modify the payment of the order.`
         
         
         //#region send email confirmation
-        if (
-            !!performSendConfirmationEmail
-            &&
-            (
-                (payment?.type === 'MANUAL_PAID') // payment confirmation
-                ||
-                (orderStatus === 'ON_THE_WAY')    // shipping tracking number confirmation
-                ||
-                (orderStatus === 'COMPLETED')     // order completed confirmation
-            )
-        ) {
-            try {
-                await sendConfirmationEmail(orderDetail.orderId);
+        if (performSendConfirmationEmail) {
+            let emailConfig : EmailConfig|undefined = undefined;
+            
+            if (payment?.type === 'MANUAL_PAID') {   // payment confirmation
+                emailConfig = checkoutConfig.emails.checkout;
             }
-            catch {
-                // ignore send email error
+            else if (orderStatus === 'ON_THE_WAY') { // shipping tracking number confirmation
+                emailConfig = checkoutConfig.emails.shipping;
             }
+            else if (orderStatus === 'COMPLETED') {  // order completed confirmation
+                emailConfig = checkoutConfig.emails.completed;
+            } // if
+            
+            if (emailConfig) {
+                try {
+                    await sendConfirmationEmail(orderDetail.orderId, emailConfig);
+                }
+                catch {
+                    // ignore send email error
+                }
+            } // if
         } // if
         //#endregion send email confirmation
         
