@@ -170,7 +170,7 @@ enum OrderStatus {
     NEW_ORDER
     PROCESSED
     SHIPPED
-    ON_HOLD
+    IN_TROUBLE
     COMPLETED
 }
 model Order {

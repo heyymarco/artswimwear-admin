@@ -247,7 +247,7 @@ You do not have the privilege to view the orders.`
     
     
     //#region validating request
-    if ((orderStatus !== undefined) && (typeof(orderStatus) !== 'string') && !['NEW_ORDER', 'PROCESSED', 'SHIPPED', 'ON_HOLD', 'COMPLETED'].includes(orderStatus)) {
+    if ((orderStatus !== undefined) && (typeof(orderStatus) !== 'string') && !['NEW_ORDER', 'PROCESSED', 'SHIPPED', 'IN_TROUBLE', 'COMPLETED'].includes(orderStatus)) {
         return NextResponse.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
