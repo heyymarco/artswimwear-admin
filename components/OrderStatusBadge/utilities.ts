@@ -29,11 +29,12 @@ export const orderStatusValues : OrderStatus[] = [
 
 export const orderStatusTheme = (orderStatus : OrderStatus, paymentType?: PaymentType): ThemeName => {
     switch (orderStatus) {
-        case 'NEW_ORDER':
+        case 'NEW_ORDER'  :
             if ((paymentType !== undefined) && (paymentType === 'MANUAL')) return 'secondary';
             return 'danger';
-        case 'COMPLETED': return 'success';
-        default         : return 'warning';
+        case 'COMPLETED'  : return 'success';
+        case 'IN_TROUBLE' : return 'danger';
+        default           : return 'warning';
     } // switch
 };
 export const orderStatusText = (orderStatus : OrderStatus, paymentType?: PaymentType): ThemeName => {
