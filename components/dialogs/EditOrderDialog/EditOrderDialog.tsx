@@ -28,7 +28,6 @@ import {
     // base-components:
     Generic,
     Basic,
-    Indicator,
     
     
     
@@ -376,7 +375,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                     <Section theme='primary' className={styleSheet.actionSection}>
                         <OrderStatusButton
                             // data:
-                            orderStatus={orderStatus ?? 'NEW_ORDER'}
+                            model={model}
                             
                             
                             

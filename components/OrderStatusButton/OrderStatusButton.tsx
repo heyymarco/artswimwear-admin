@@ -53,6 +53,15 @@ import {
     orderStatusNext,
     orderStatusTextNext,
 }                           from '@/components/OrderStatusBadge'
+import {
+    RadioDecorator,
+}                           from '@/components/RadioDecorator'
+
+// stores:
+import type {
+    // types:
+    OrderDetail,
+}                           from '@/store/features/api/apiSlice'
 
 // models:
 import type {
@@ -78,7 +87,7 @@ export interface OrderStatusButtonProps
         >
 {
     // data:
-    orderStatus  : OrderStatus
+    model        : OrderDetail|null
     
     
     
@@ -90,7 +99,7 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
     // rest props:
     const {
         // data:
-        orderStatus,
+        model,
         
         
         
@@ -112,6 +121,9 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
         // children:
         children,
     ...restButtonIconProps} = props;
+    const orderStatus           = model?.orderStatus ?? 'NEW_ORDER';
+    const paymentTypeUppercased = model?.payment?.type?.toUpperCase();
+    const isPaid                = !!paymentTypeUppercased && (paymentTypeUppercased !== 'MANUAL');
     
     
     
@@ -127,6 +139,7 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
     
     // dialogs:
     const {
+        showMessage,
         showMessageFetchError,
     } = useDialogMessage();
     
@@ -134,6 +147,31 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
     
     // handlers:
     const handleChangeStatus = useEvent(async (newOrderStatus: OrderStatus): Promise<boolean> => {
+        // conditions:
+        if (orderStatus === newOrderStatus) return false;
+        
+        // show warning message if increase_status of unpaid order (no warning if decrease_status):
+        if ((orderStatus === 'NEW_ORDER') && (newOrderStatus !== 'NEW_ORDER') && !isPaid) {
+            if ((await showMessage<'yes'|'no'>({
+                theme   : 'warning',
+                title   : <h1>Process Unpaid Order</h1>,
+                message : <>
+                    <p>
+                        This order <strong>has not been paid for</strong> by the customer.
+                    </p>
+                    <p>
+                        Are you sure to process this order?
+                    </p>
+                </>,
+                options : {
+                    yes  : <ButtonIcon icon='check'          theme='primary'>Yes</ButtonIcon>,
+                    no   : <ButtonIcon icon='not_interested' theme='secondary' autoFocus={true}>No</ButtonIcon>,
+                },
+            })) !== 'yes') return false;
+        } // if
+        
+        
+        
         setIsBusy(true);
         try {
             try {
@@ -149,7 +187,7 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
             setIsBusy(false);
         } // try
     });
-    const handleNextStatus = useEvent(async () => {
+    const handleNextStatus   = useEvent(async () => {
         if (!(await handleChangeStatus(orderStatusNext(orderStatus)))) return;
         if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
         
@@ -214,12 +252,22 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
                         
                         
                         
+                        // behaviors:
+                        actionCtrl={(orderStatusValue !== orderStatus)}
+                        
+                        
+                        
+                        // states:
+                        active={(orderStatusValue === orderStatus)}
+                        
+                        
+                        
                         // handlers:
                         onClick={() => {
                             handleChangeStatus(orderStatusValue);
                         }}
                     >
-                        Mark as {orderStatusText(orderStatusValue)}
+                        <RadioDecorator />&nbsp;&nbsp;Mark as {orderStatusText(orderStatusValue)}
                     </ListItem>
                 )}
             </DropdownListButton>
