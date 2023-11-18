@@ -428,7 +428,7 @@ You do not have the privilege to modify the payment of the order.`
             (
                 (payment?.type === 'MANUAL_PAID') // payment confirmation
                 ||
-                (orderStatus !== 'ON_THE_WAY')    // shipping tracking number confirmation
+                (orderStatus === 'ON_THE_WAY')    // shipping tracking number confirmation
             )
             &&
             !!performSendConfirmationEmail
