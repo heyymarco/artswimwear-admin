@@ -229,6 +229,8 @@ You do not have the privilege to view the orders.`
         shippingProviderId,
         
         billingAddress : optionalBillingAddress,
+        
+        sendConfirmationEmail : performSendConfirmationEmail = false,
     } = body;
     const mergedPayment = {
         ...body.payment,
@@ -238,10 +240,7 @@ You do not have the privilege to view the orders.`
             billingAddress : optionalBillingAddress,
         } : undefined),
     };
-    const {
-        sendConfirmationEmail : performSendConfirmationEmail = false,
-    ...unmergedPayment} = mergedPayment;
-    const payment = Object.keys(unmergedPayment).length ? unmergedPayment : undefined;
+    const payment = Object.keys(mergedPayment).length ? mergedPayment : undefined;
     //#endregion parsing request
     
     
@@ -425,7 +424,15 @@ You do not have the privilege to modify the payment of the order.`
         
         
         //#region send email confirmation
-        if ((payment?.type === 'MANUAL_PAID') && !!performSendConfirmationEmail) {
+        if (
+            (
+                (payment?.type === 'MANUAL_PAID') // payment confirmation
+                ||
+                (orderStatus !== 'ON_THE_WAY')    // shipping tracking number confirmation
+            )
+            &&
+            !!performSendConfirmationEmail
+        ) {
             try {
                 await sendConfirmationEmail(orderDetail.orderId);
             }
