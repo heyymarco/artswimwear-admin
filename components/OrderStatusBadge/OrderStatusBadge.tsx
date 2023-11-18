@@ -83,7 +83,7 @@ const OrderStatusBadge = (props: OrderStatusBadgeProps): JSX.Element|null => {
                     theme={hasAlternateTheme ? 'dark' : preferedTheme}
                     mild={hasAlternateTheme ? true : undefined}
                 />
-                &nbsp;&nbsp;
+                &nbsp;
                 {orderStatusText(orderStatus, paymentType)}
             </>}
         </Badge>
