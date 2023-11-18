@@ -189,7 +189,6 @@ const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit extends s
             }, 0);
         });
         const editorElm = editorRef.current;
-        console.log({editorElm})
         const fieldErrors = (
             // for <Form>:
             (() => {
