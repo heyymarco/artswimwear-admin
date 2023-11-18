@@ -67,14 +67,14 @@ import {
     RadioDecorator,
 }                           from '@/components/RadioDecorator'
 import {
-    OnTheWayEditor,
-}                           from '@/components/editors/OnTheWayEditor'
+    OrderOnTheWayEditor,
+}                           from '@/components/editors/OrderOnTheWayEditor'
 import {
     CollapsibleSuspense,
 }                           from '@/components/CollapsibleSuspense'
 import {
-    SimpleEditOnTheWayDialog,
-}                           from '@/components/dialogs/SimpleEditOnTheWayDialog'
+    SimpleEditOrderOnTheWayDialog,
+}                           from '@/components/dialogs/SimpleEditOrderOnTheWayDialog'
 
 // stores:
 import type {
@@ -344,7 +344,7 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
             
             {/* edit dialog: */}
             <CollapsibleSuspense>
-                <SimpleEditOnTheWayDialog
+                <SimpleEditOrderOnTheWayDialog
                     // data:
                     model={model!}
                     edit='shippingNumber'
@@ -359,7 +359,7 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
                     
                     // components:
                     editorComponent={
-                        <OnTheWayEditor />
+                        <OrderOnTheWayEditor />
                     }
                 />
             </CollapsibleSuspense>

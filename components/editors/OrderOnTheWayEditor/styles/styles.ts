@@ -32,16 +32,16 @@ import {
 // internals:
 import {
     // configs:
-    onTheWayEditors,
-    cssOnTheWayEditorConfig,
+    orderOnTheWayEditors,
+    cssOrderOnTheWayEditorConfig,
 }                           from './config'
 
 
 
 // styles:
-export const onOnTheWayEditorStylesChange = watchChanges(onIndicatorStylesChange, cssOnTheWayEditorConfig.onChange);
+export const onOrderOnTheWayEditorStylesChange = watchChanges(onIndicatorStylesChange, cssOrderOnTheWayEditorConfig.onChange);
 
-export const usesOnTheWayEditorLayout = () => {
+export const usesOrderOnTheWayEditorLayout = () => {
     return style({
         // layouts:
         ...usesIndicatorLayout(),
@@ -54,16 +54,16 @@ export const usesOnTheWayEditorLayout = () => {
             
             
             // customize:
-            ...usesCssProps(onTheWayEditors), // apply config's cssProps
+            ...usesCssProps(orderOnTheWayEditors), // apply config's cssProps
         }),
     });
 };
 
-export const usesOnTheWayEditorVariants = () => {
+export const usesOrderOnTheWayEditorVariants = () => {
     // dependencies:
     
     // variants:
-    const {resizableRule} = usesResizable(onTheWayEditors);
+    const {resizableRule} = usesResizable(orderOnTheWayEditors);
     
     
     
@@ -74,15 +74,15 @@ export const usesOnTheWayEditorVariants = () => {
     });
 };
 
-export const usesOnTheWayEditorStates = usesIndicatorStates;
+export const usesOrderOnTheWayEditorStates = usesIndicatorStates;
 
 export default style({
     // layouts:
-    ...usesOnTheWayEditorLayout(),
+    ...usesOrderOnTheWayEditorLayout(),
     
     // variants:
-    ...usesOnTheWayEditorVariants(),
+    ...usesOrderOnTheWayEditorVariants(),
     
     // states:
-    ...usesOnTheWayEditorStates(),
+    ...usesOrderOnTheWayEditorStates(),
 });

@@ -14,8 +14,8 @@ import {
     SimpleEditDialog,
 }                           from '@/components/dialogs/SimpleEditDialog'
 import type {
-    OnTheWayValue,
-}                           from '@/components/editors/OnTheWayEditor/OnTheWayEditor'
+    OrderOnTheWayValue,
+}                           from '@/components/editors/OrderOnTheWayEditor'
 
 // stores:
 import {
@@ -31,24 +31,24 @@ import {
 
 
 // react components:
-export interface SimpleEditOnTheWayDialogProps
+export interface SimpleEditOrderOnTheWayDialogProps
     extends
-        ImplementedSimpleEditDialogProps<OnTheWayValue, OrderDetailWithOptions, 'shippingNumber'>
+        ImplementedSimpleEditDialogProps<OrderOnTheWayValue, OrderDetailWithOptions, 'shippingNumber'>
 {
 }
-export const SimpleEditOnTheWayDialog = (props: SimpleEditOnTheWayDialogProps) => {
+export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDialogProps) => {
     // stores:
     const [updateOrder, {isLoading}] = useUpdateOrder();
     
     
     
     // handlers:
-    const handleInitialValue = useEvent<InitialValueHandler<OnTheWayValue, OrderDetailWithOptions, 'shippingNumber'>>((edit, model) => {
+    const handleInitialValue = useEvent<InitialValueHandler<OrderOnTheWayValue, OrderDetailWithOptions, 'shippingNumber'>>((edit, model) => {
         return {
             shippingNumber : model[edit],
         };
     });
-    const handleUpdate       = useEvent<UpdateHandler<OnTheWayValue, OrderDetailWithOptions, 'shippingNumber'>>(async (value, edit, model) => {
+    const handleUpdate       = useEvent<UpdateHandler<OrderOnTheWayValue, OrderDetailWithOptions, 'shippingNumber'>>(async (value, edit, model) => {
         const {
             sendConfirmationEmail = true,
             shippingNumber,
@@ -73,7 +73,7 @@ export const SimpleEditOnTheWayDialog = (props: SimpleEditOnTheWayDialogProps) =
     
     // jsx:
     return (
-        <SimpleEditDialog<OnTheWayValue, OrderDetailWithOptions, 'shippingNumber'>
+        <SimpleEditDialog<OrderOnTheWayValue, OrderDetailWithOptions, 'shippingNumber'>
             // other props:
             {...props}
             

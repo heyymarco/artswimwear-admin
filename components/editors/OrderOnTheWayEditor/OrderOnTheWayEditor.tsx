@@ -62,30 +62,30 @@ import {
 
 
 // styles:
-export const useOnTheWayEditorStyleSheet = dynamicStyleSheet(
+export const useOrderOnTheWayEditorStyleSheet = dynamicStyleSheet(
     () => import(/* webpackPrefetch: true */ './styles/styles')
 , { id: 'j4503d5vfx' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 
 
 
 // utilities:
-const emptyOnTheWayValue : OnTheWayValue = {
+const emptyOrderOnTheWayValue : OrderOnTheWayValue = {
     shippingNumber        : null,
     sendConfirmationEmail : true,
 };
-Object.freeze(emptyOnTheWayValue);
+Object.freeze(emptyOrderOnTheWayValue);
 
 
 
 // react components:
-export type OnTheWayValue = {
+export type OrderOnTheWayValue = {
     shippingNumber         : string|null
     sendConfirmationEmail ?: boolean
 }
-export interface OnTheWayEditorProps
+export interface OrderOnTheWayEditorProps
     extends
         // bases:
-        Pick<EditorProps<HTMLElement, OnTheWayValue>,
+        Pick<EditorProps<HTMLElement, OrderOnTheWayValue>,
             // values:
             |'defaultValue' // supported
             |'value'        // supported
@@ -116,9 +116,9 @@ export interface OnTheWayEditorProps
     // accessibilities:
     shippingNumberLabel ?: string
 }
-const OnTheWayEditor = (props: OnTheWayEditorProps): JSX.Element|null => {
+const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null => {
     // styles:
-    const styleSheet = useOnTheWayEditorStyleSheet();
+    const styleSheet = useOrderOnTheWayEditorStyleSheet();
     
     
     
@@ -155,16 +155,16 @@ const OnTheWayEditor = (props: OnTheWayEditorProps): JSX.Element|null => {
     
     
     // states:
-    const [valueDn, setValueDn] = useState<OnTheWayValue>(((value !== undefined) ? value : defaultValue) ?? emptyOnTheWayValue);
+    const [valueDn, setValueDn] = useState<OrderOnTheWayValue>(((value !== undefined) ? value : defaultValue) ?? emptyOrderOnTheWayValue);
     
     
     
     /*
      * value state is based on [controllable value] (if set) and fallback to [uncontrollable value]
      */
-    const valueFn : OnTheWayValue = (value !== undefined) ? value /*controllable*/ : valueDn /*uncontrollable*/;
+    const valueFn : OrderOnTheWayValue = (value !== undefined) ? value /*controllable*/ : valueDn /*uncontrollable*/;
     const shippingNumber         = valueFn.shippingNumber || null;
-    const sendConfirmationEmail  = valueFn.sendConfirmationEmail ?? emptyOnTheWayValue.sendConfirmationEmail ?? true;
+    const sendConfirmationEmail  = valueFn.sendConfirmationEmail ?? emptyOrderOnTheWayValue.sendConfirmationEmail ?? true;
     
     
     
@@ -173,7 +173,7 @@ const OnTheWayEditor = (props: OnTheWayEditorProps): JSX.Element|null => {
           controllable : setValue(new) => update state(old => old) => trigger Event(new)
         uncontrollable : setValue(new) => update state(old => new) => trigger Event(new)
     */
-    const triggerValueChange = useEvent<EditorChangeEventHandler<OnTheWayValue>>((value) => {
+    const triggerValueChange = useEvent<EditorChangeEventHandler<OrderOnTheWayValue>>((value) => {
         if (onChange) {
             // fire `onChange` react event:
             onChange(value);
@@ -183,7 +183,7 @@ const OnTheWayEditor = (props: OnTheWayEditorProps): JSX.Element|null => {
     
     
     // callbacks:
-    const setValue = useEvent<React.Dispatch<React.SetStateAction<OnTheWayValue>>>((value) => {
+    const setValue = useEvent<React.Dispatch<React.SetStateAction<OrderOnTheWayValue>>>((value) => {
         // conditions:
         const newValue = (typeof(value) === 'function') ? value(valueFn) : value;
         if (newValue === valueFn) return; // still the same => nothing to update
@@ -282,6 +282,6 @@ const OnTheWayEditor = (props: OnTheWayEditorProps): JSX.Element|null => {
     );
 };
 export {
-    OnTheWayEditor,
-    OnTheWayEditor as default,
+    OrderOnTheWayEditor,
+    OrderOnTheWayEditor as default,
 }

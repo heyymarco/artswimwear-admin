@@ -18,9 +18,9 @@ import {
 
 
 // configs:
-export const [onTheWayEditors, onTheWayEditorValues, cssOnTheWayEditorConfig] = cssConfig(() => {
+export const [orderOnTheWayEditors, orderOnTheWayEditorValues, cssOrderOnTheWayEditorConfig] = cssConfig(() => {
     return {
         gapInline : spacers.default     as CssKnownProps['gapInline'],
         gapBlock  : spacers.default     as CssKnownProps['gapInline'],
     };
-}, { prefix: 'onTheWayEditor' });
+}, { prefix: 'orderOnTheWayEditor' });
