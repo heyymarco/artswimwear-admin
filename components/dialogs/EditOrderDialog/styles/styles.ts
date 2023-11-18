@@ -687,7 +687,13 @@ const usesProgressBadgeLayout = () => {
         
         
         // sizes:
+        contain          : 'inline-size', // do not take up space of width
         alignSelf        : 'start',
+        
+        
+        
+        // typos:
+        whiteSpace        : 'nowrap',
     });
 };
 const usesShippingAddressLayout = () => {
