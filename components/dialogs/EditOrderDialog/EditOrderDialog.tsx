@@ -74,6 +74,9 @@ import {
     EditButton,
 }                           from '@/components/EditButton'
 import {
+    OrderStatusProgress,
+}                           from '@/components/OrderStatusProgress'
+import {
     OrderStatusButton,
 }                           from '@/components/OrderStatusButton'
 import {
@@ -373,6 +376,15 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                 <TabPanel label={PAGE_ORDER_TAB_ORDER_N_SHIPPING} panelComponent={<Generic className={styleSheet.orderShippingTab} />}>
                     <OrderAndShipping />
                     <Section theme='primary' className={styleSheet.actionSection}>
+                        <OrderStatusProgress
+                            // data:
+                            model={model}
+                            
+                            
+                            
+                            // classes:
+                            className={styleSheet.progressBadge}
+                        />
                         <OrderStatusButton
                             // data:
                             model={model}

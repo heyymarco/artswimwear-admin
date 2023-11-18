@@ -41,6 +41,7 @@ import {
 // reusable-ui components:
 import {
     // base-content-components:
+    containers,
     contents,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
@@ -644,7 +645,7 @@ const usesBadgeLayout = () => {
     return style({
         // positions:
         position         : 'absolute',
-        insetInlineStart : '0',
+        insetInlineStart : 0,
         insetBlockStart  : 0,
         
         
@@ -676,6 +677,19 @@ const usesBadgeLayout = () => {
         textAlign  : 'center',
     });
 };
+const usesProgressBadgeLayout = () => {
+    return style({
+        // positions:
+        position         : 'relative',
+        insetInlineStart : `calc(0px - ${containers.paddingInline} + ${contents.paddingInline})`,
+        insetBlockStart  : `calc(0px - ${containers.paddingBlock } + ${contents.paddingBlock })`,
+        
+        
+        
+        // sizes:
+        alignSelf        : 'start',
+    });
+};
 const usesShippingAddressLayout = () => {
     return style({
         // positions:
@@ -686,7 +700,7 @@ const usesEditShippingAddressLayout = () => {
     return style({
         // positions:
         position        : 'absolute',
-        insetInlineEnd  : '0',
+        insetInlineEnd  : 0,
         insetBlockStart : 0,
         
         
@@ -765,6 +779,9 @@ export default () => [
     
     scope('badge', {
         ...usesBadgeLayout(),
+    }, { specificityWeight: 2 }),
+    scope('progressBadge', {
+        ...usesProgressBadgeLayout(),
     }, { specificityWeight: 2 }),
     
     scope('shippingAddress', {
