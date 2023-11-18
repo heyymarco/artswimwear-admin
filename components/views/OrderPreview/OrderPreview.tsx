@@ -161,7 +161,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
     
     
     // states:
-    type EditMode = keyof NonNullable<OrderDetail['customer']>|'full'
+    type EditMode = keyof NonNullable<OrderDetail['customer']>|'full'|'full-status'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     
@@ -242,6 +242,11 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                     
                     // classes:
                     className='orderStatus'
+                    
+                    
+                    
+                    // handlers:
+                    onClick={() => setEditMode('full-status')}
                 />
             </h3>
             
@@ -375,8 +380,13 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                     
                     
                     // states:
-                    expanded={(editMode === 'full')}
+                    expanded={(editMode === 'full') || (editMode === 'full-status')}
                     onExpandedChange={handleExpandedChange}
+                    
+                    
+                    
+                    // auto focusable:
+                    autoFocusOn={(editMode === 'full-status') ? 'OrderStatusButton' : undefined}
                 />
             </CollapsibleSuspense>
         </ListItem>

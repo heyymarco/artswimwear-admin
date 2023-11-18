@@ -9,6 +9,8 @@ import {
     
     // hooks:
     useState,
+    useRef,
+    useEffect,
 }                           from 'react'
 
 // next-auth:
@@ -147,8 +149,12 @@ import {
 export interface EditOrderDialogProps
     extends
         // bases:
-        ImplementedComplexEditModelDialogProps<OrderDetail>
+        Omit<ImplementedComplexEditModelDialogProps<OrderDetail>,
+            // auto focusable:
+            |'autoFocusOn'
+        >
 {
+    autoFocusOn ?: ImplementedComplexEditModelDialogProps<OrderDetail>['autoFocusOn'] | 'OrderStatusButton'
 }
 const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     // styles:
@@ -160,6 +166,11 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     const {
         // data:
         model = null,
+        
+        
+        
+        // auto focusable:
+        autoFocusOn,
     ...restComplexEditModelDialogProps} = props;
     
     
@@ -167,6 +178,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     // states:
     type EditMode = 'shippingAddress'|'payment'|'printOrder'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
+    const [shouldTriggerAutoFocus, setShouldTriggerAutoFocus] = useState<boolean>(false);
     
     
     
@@ -264,6 +276,46 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     const handleEditPayment         = useEvent(() => {
         setEditMode('payment');
     });
+    
+    const handleExpandedEnd         = useEvent(() => {
+        setShouldTriggerAutoFocus(true);
+    });
+    
+    
+    
+    // refs:
+    const orderStatusButtonRef = useRef<HTMLButtonElement|null>(null);
+    
+    
+    
+    // dom effects:
+    useEffect(() => {
+        // conditions:
+        if (!shouldTriggerAutoFocus) return;
+        if (autoFocusOn !== 'OrderStatusButton') return;
+        
+        
+        
+        // setups:
+        let cancelAutoFocus = setTimeout(() => {
+            orderStatusButtonRef.current?.scrollIntoView({
+                behavior : 'smooth',
+            });
+            let cancelAutoFocus = setTimeout(() => {
+                orderStatusButtonRef.current?.focus({
+                    preventScroll : true,
+                });
+                setShouldTriggerAutoFocus(false);
+            }, 500);
+        }, 100);
+        
+        
+        
+        // cleanups:
+        return () => {
+            clearTimeout(cancelAutoFocus);
+        };
+    }, [shouldTriggerAutoFocus, autoFocusOn]);
     
     
     
@@ -372,6 +424,20 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                 
                 // stores:
                 isCommiting = {isUpdatingOrder}
+                
+                
+                
+                // auto focusable:
+                autoFocusOn={
+                    (autoFocusOn !== 'OrderStatusButton')
+                    ? autoFocusOn
+                    : undefined
+                }
+                
+                
+                
+                // handlers:
+                onExpandEnd={handleExpandedEnd}
             >
                 <TabPanel label={PAGE_ORDER_TAB_ORDER_N_SHIPPING} panelComponent={<Generic className={styleSheet.orderShippingTab} />}>
                     <OrderAndShipping />
@@ -386,6 +452,11 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             className={styleSheet.progressBadge}
                         />
                         <OrderStatusButton
+                            // refs:
+                            elmRef={orderStatusButtonRef}
+                            
+                            
+                            
                             // data:
                             model={model}
                             
@@ -393,6 +464,11 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             
                             // variants:
                             theme='primary'
+                            
+                            
+                            
+                            // states:
+                            assertiveFocusable={shouldTriggerAutoFocus && (autoFocusOn === 'OrderStatusButton')}
                             
                             
                             

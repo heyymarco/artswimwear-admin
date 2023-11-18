@@ -102,6 +102,11 @@ export interface OrderStatusButtonProps
 const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
     // rest props:
     const {
+        // refs:
+        elmRef,
+        
+        
+        
         // data:
         model,
         
@@ -113,6 +118,11 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
         gradient,
         outlined,
         mild,
+        
+        
+        
+        // states:
+        assertiveFocusable,
         
         
         
@@ -224,6 +234,11 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
                 
                 
                 
+                // refs:
+                elmRef={elmRef}
+                
+                
+                
                 // appearances:
                 icon={isBusy ? 'busy' : orderStatusIcon(orderStatusNext(orderStatus))}
                 
@@ -231,6 +246,7 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
                 
                 // states:
                 enabled={(orderStatus !== 'COMPLETED')}
+                assertiveFocusable={assertiveFocusable}
                 
                 
                 
