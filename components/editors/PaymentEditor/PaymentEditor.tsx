@@ -106,7 +106,7 @@ export const usePaymentEditorStyleSheet = dynamicStyleSheet(
 
 
 // utilities:
-const emptyPaymentValue : PaymentValue = {
+const emptyPaymentValue : Required<PaymentValue> = {
     type                  : 'MANUAL_PAID',
     brand                 : '',
     identifier            : '',
