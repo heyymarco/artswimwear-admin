@@ -57,8 +57,8 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
             [edit] : {
                 // original:
                 ...restPayment,
-                amount : restPayment.amount ?? 0,
-                fee    : restPayment.fee    ?? 0,
+                amount : restPayment.amount ?? 0, // normalize to zero if null
+                fee    : restPayment.fee    ?? 0, // normalize to zero if null
             },
             
             //@ts-ignore
