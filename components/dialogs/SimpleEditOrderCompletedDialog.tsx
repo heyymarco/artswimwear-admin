@@ -55,10 +55,9 @@ export const SimpleEditOrderCompletedDialog = (props: SimpleEditOrderCompletedDi
             id          : model.id,
             
             orderStatus : 'COMPLETED',
-            ...{
-                // original:
-                ...restValue,
-            },
+            
+            // original:
+            ...restValue,
             
             //@ts-ignore
             sendConfirmationEmail,
