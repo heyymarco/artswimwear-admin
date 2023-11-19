@@ -61,7 +61,7 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
             ...{
                 // original:
                 ...restValue,
-                [edit] : shippingNumber || null,
+                [edit] : shippingNumber?.trim() || null, // normalize to null if empty_string or only_spaces
             },
             
             //@ts-ignore
