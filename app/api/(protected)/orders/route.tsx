@@ -167,6 +167,7 @@ You do not have the privilege to view the orders.`
                 
                 orderId                : true,
                 orderStatus            : true,
+                orderTrouble           : true,
                 
                 items                  : {
                     select: {
@@ -228,6 +229,7 @@ You do not have the privilege to view the orders.`
         id,
         
         orderStatus,
+        orderTrouble,
         
         customer,
         
@@ -259,8 +261,13 @@ You do not have the privilege to view the orders.`
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
+    if ((orderTrouble !== undefined) && (orderTrouble !== null) && (typeof(orderTrouble) !== 'object')) {
+        return NextResponse.json({
+            error: 'Invalid data.',
+        }, { status: 400 }); // handled with error
+    } // if
     
-    if ((shippingNumber !== undefined) && (((typeof(shippingNumber) !== 'string') && !!shippingNumber) || (shippingNumber === null))) {
+    if ((shippingNumber !== undefined) && (shippingNumber !== null) && typeof(shippingNumber) !== 'string') {
         return NextResponse.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
@@ -325,7 +332,7 @@ You do not have the privilege to view the orders.`
 //         }, { status: 403 }); // handled with error: forbidden
     }
     else {
-        if (!session.role?.order_us && ((orderStatus !== undefined) || (shippingNumber !== undefined))) return NextResponse.json({ error:
+        if (!session.role?.order_us && ((orderStatus !== undefined) || (orderTrouble !== undefined) || (shippingNumber !== undefined))) return NextResponse.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the order's status.`
@@ -374,6 +381,7 @@ You do not have the privilege to modify the payment of the order.`
             },
             data   : {
                 orderStatus,
+                orderTrouble,
                 
                 customer : {
                     update : {
@@ -398,6 +406,7 @@ You do not have the privilege to modify the payment of the order.`
                 
                 orderId                : true,
                 orderStatus            : true,
+                orderTrouble           : true,
                 
                 items                  : {
                     select: {

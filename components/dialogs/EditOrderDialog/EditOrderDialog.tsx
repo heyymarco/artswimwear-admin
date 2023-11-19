@@ -50,7 +50,13 @@ import {
     
     
     // status-components:
+    Badge,
     Busy,
+    
+    
+    
+    // menu-components:
+    Collapse,
     
     
     
@@ -60,6 +66,7 @@ import {
     
     
     // composite-components:
+    Group,
     TabPanel,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
@@ -72,6 +79,9 @@ import {
 }                           from '@heymarco/section'
 
 // internal components:
+import {
+    CompoundWithBadge,
+}                           from '@/components/CompoundWithBadge'
 import {
     EditButton,
 }                           from '@/components/EditButton'
@@ -87,6 +97,10 @@ import {
 import {
     PaymentEditor,
 }                           from '@/components/editors/PaymentEditor'
+import {
+    WysiwygEditorState,
+    WysiwygViewer,
+}                           from '@/components/editors/WysiwygEditor'
 import {
     CollapsibleSuspense,
 }                           from '@/components/CollapsibleSuspense'
@@ -181,7 +195,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     
     // states:
-    type EditMode = 'shippingAddress'|'payment'|'printOrder'
+    type EditMode = 'shippingAddress'|'trouble'|'payment'|'printOrder'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     const [shouldTriggerAutoFocus, setShouldTriggerAutoFocus] = useState<boolean>(false);
     
@@ -199,6 +213,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     const {data: productList , isLoading: isLoadingProduct , isError: isErrorProduct  }  = useGetProductList();
     const {
         orderStatus,
+        orderTrouble,
         
         items,
         
@@ -256,7 +271,6 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     const handlePrint               = useEvent(() => {
         setEditMode('printOrder');
-        handleMarkAsProcessing();
     });
     const handleChangeOrderStatus   = useEvent(async (newOrderStatus: OrderStatus) => {
         // conditions:
@@ -271,8 +285,8 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         }).unwrap();
     });
     
-    const handleMarkAsProcessing    = useEvent(() => {
-        // TODO: mark order as processing
+    const handleEditTrouble         = useEvent(() => {
+        setEditMode('trouble');
     });
     
     const handleConfirmPayment      = useEvent(() => {
@@ -457,6 +471,42 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             // classes:
                             className={styleSheet.progressBadge}
                         />
+                        <Collapse
+                            // states:
+                            expanded={(orderStatus === 'IN_TROUBLE')}
+                        >
+                            <Group
+                                // variants:
+                                orientation='block'
+                            >
+                                <Basic
+                                    // classes:
+                                    className={styleSheet.troubleHeader}
+                                >
+                                    Trouble Note
+                                </Basic>
+                                <Content
+                                    // classes:
+                                    className={styleSheet.troubleBody}
+                                >
+                                    <WysiwygViewer
+                                        // variants:
+                                        nude={true}
+                                        
+                                        
+                                        
+                                        // classes:
+                                        className={styleSheet.troubleContent}
+                                        
+                                        
+                                        
+                                        // values:
+                                        value={(orderTrouble ?? undefined) as unknown as WysiwygEditorState|undefined}
+                                    />
+                                    <EditButton className={styleSheet.editTrouble} onClick={handleEditTrouble} />
+                                </Content>
+                            </Group>
+                        </Collapse>
                         <OrderStatusButton
                             // refs:
                             elmRef={(autoFocusOn === 'OrderStatusButton') ? autoFocusButtonRef : undefined}
@@ -533,7 +583,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                             <span className='paymentIdentifier'>
                                                 {!!paymentIdentifier && <>&nbsp;({paymentIdentifier})</>}
                                             </span>
-                                            {isManualPaid && !!role?.order_upmp && <EditButton className='edit' onClick={handleEditPayment} />}
+                                            {isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />}
                                         </td>
                                     </tr>
                                     <tr>
@@ -544,7 +594,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                             <strong>
                                                 {formatCurrency(paymentAmount)}
                                             </strong>
-                                            {isManualPaid && !!role?.order_upmp && <EditButton className='edit' onClick={handleEditPayment} />}
+                                            {isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />}
                                         </td>
                                     </tr>
                                     <tr>
@@ -555,7 +605,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                             <span>
                                                 {formatCurrency(paymentFee)}
                                             </span>
-                                            {isManualPaid && !!role?.order_upmp && <EditButton className='edit' onClick={handleEditPayment} />}
+                                            {isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />}
                                         </td>
                                     </tr>
                                     <tr>

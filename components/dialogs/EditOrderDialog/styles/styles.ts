@@ -755,6 +755,47 @@ const usesPrintSpacerLayout = () => {
         }),
     });
 };
+const usesTroubleHeaderLayout = () => {
+    return style({
+        display: 'grid',
+        justifyContent : 'center',
+    });
+};
+const usesTroubleBodyLayout = () => {
+    return style({
+        // layouts:
+        display : 'grid',
+        
+        
+        
+        // children:
+        ...children('*', {
+            gridArea : '1 / 1 / 1 / 1',
+        }),
+    });
+};
+const usesTroubleContentLayout = () => {
+    return style({
+        ...children('*', {
+            ...rule(':empty', {
+                ...children('::before', {
+                    // layouts:
+                    display        : 'grid',
+                    justifyContent : 'center',
+                    alignContent   : 'center',
+                    content        : '"-- no trouble note --"',
+                }),
+            }),
+        }),
+    });
+};
+const usesEditTroubleLayout = () => {
+    return style({
+        // positions:
+        justifySelf : 'end',
+        alignSelf   : 'center',
+    });
+};
 
 export default () => [
     scope('orderShippingTab', {
@@ -799,5 +840,18 @@ export default () => [
     
     scope('printSpacer', {
         ...usesPrintSpacerLayout(),
+    }, { specificityWeight: 2 }),
+    
+    scope('troubleHeader', {
+        ...usesTroubleHeaderLayout(),
+    }),
+    scope('troubleBody', {
+        ...usesTroubleBodyLayout(),
+    }),
+    scope('troubleContent', {
+        ...usesTroubleContentLayout(),
+    }),
+    scope('editTrouble', {
+        ...usesEditTroubleLayout(),
     }, { specificityWeight: 2 }),
 ];
