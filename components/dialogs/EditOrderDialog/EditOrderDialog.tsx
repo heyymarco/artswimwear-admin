@@ -498,20 +498,21 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     // classes:
                                     className={styleSheet.troubleBody}
                                 >
-                                    <WysiwygViewer
+                                    {!orderTrouble && <span
+                                        // classes:
+                                        className={`${styleSheet.troubleEmpty} txt-sec`}
+                                    >
+                                        -- no trouble note --
+                                    </span>}
+                                    {!!orderTrouble && <WysiwygViewer
                                         // variants:
                                         nude={true}
                                         
                                         
                                         
-                                        // classes:
-                                        className={styleSheet.troubleContent}
-                                        
-                                        
-                                        
                                         // values:
-                                        value={(orderTrouble ?? undefined) as unknown as WysiwygEditorState|undefined}
-                                    />
+                                        value={(orderTrouble ?? null) as unknown as WysiwygEditorState|undefined}
+                                    />}
                                     <EditButton className={styleSheet.editTrouble} onClick={handleEditTrouble} />
                                 </Content>
                             </Group>

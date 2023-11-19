@@ -774,19 +774,11 @@ const usesTroubleBodyLayout = () => {
         }),
     });
 };
-const usesTroubleContentLayout = () => {
+const usesTroubleEmptyLayout = () => {
     return style({
-        ...children('*', {
-            ...rule(':empty', {
-                ...children('::before', {
-                    // layouts:
-                    display        : 'grid',
-                    justifyContent : 'center',
-                    alignContent   : 'center',
-                    content        : '"-- no trouble note --"',
-                }),
-            }),
-        }),
+        // positions:
+        justifySelf : 'center',
+        alignSelf   : 'center',
     });
 };
 const usesEditTroubleLayout = () => {
@@ -848,8 +840,8 @@ export default () => [
     scope('troubleBody', {
         ...usesTroubleBodyLayout(),
     }),
-    scope('troubleContent', {
-        ...usesTroubleContentLayout(),
+    scope('troubleEmpty', {
+        ...usesTroubleEmptyLayout(),
     }),
     scope('editTrouble', {
         ...usesEditTroubleLayout(),
