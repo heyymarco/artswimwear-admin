@@ -154,7 +154,7 @@ export interface EditOrderDialogProps
             |'autoFocusOn'
         >
 {
-    autoFocusOn ?: ImplementedComplexEditModelDialogProps<OrderDetail>['autoFocusOn'] | 'OrderStatusButton'
+    autoFocusOn ?: ImplementedComplexEditModelDialogProps<OrderDetail>['autoFocusOn'] | 'OrderStatusButton' | 'ConfirmPaymentButton'
 }
 const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     // styles:
@@ -171,6 +171,11 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         
         // auto focusable:
         autoFocusOn,
+        
+        
+        
+        // states:
+        defaultExpandedTabIndex = (autoFocusOn === 'ConfirmPaymentButton') ? 1 : undefined,
     ...restComplexEditModelDialogProps} = props;
     
     
@@ -284,7 +289,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     
     // refs:
-    const orderStatusButtonRef = useRef<HTMLButtonElement|null>(null);
+    const autoFocusButtonRef = useRef<HTMLButtonElement|null>(null);
     
     
     
@@ -292,17 +297,17 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     useEffect(() => {
         // conditions:
         if (!shouldTriggerAutoFocus) return;
-        if (autoFocusOn !== 'OrderStatusButton') return;
+        if (typeof(autoFocusOn) !== 'string') return;
         
         
         
         // setups:
         let cancelAutoFocus = setTimeout(() => {
-            orderStatusButtonRef.current?.scrollIntoView({
+            autoFocusButtonRef.current?.scrollIntoView({
                 behavior : 'smooth',
             });
-            let cancelAutoFocus = setTimeout(() => {
-                orderStatusButtonRef.current?.focus({
+            cancelAutoFocus = setTimeout(() => {
+                autoFocusButtonRef.current?.focus({
                     preventScroll : true,
                 });
                 setShouldTriggerAutoFocus(false);
@@ -427,12 +432,13 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                 
                 
                 
+                // states:
+                defaultExpandedTabIndex={defaultExpandedTabIndex}
+                
+                
+                
                 // auto focusable:
-                autoFocusOn={
-                    (autoFocusOn !== 'OrderStatusButton')
-                    ? autoFocusOn
-                    : undefined
-                }
+                autoFocusOn={(typeof(autoFocusOn) === 'string') ? undefined : autoFocusOn}
                 
                 
                 
@@ -453,7 +459,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         />
                         <OrderStatusButton
                             // refs:
-                            elmRef={orderStatusButtonRef}
+                            elmRef={(autoFocusOn === 'OrderStatusButton') ? autoFocusButtonRef : undefined}
                             
                             
                             
@@ -566,7 +572,31 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                 </>}
                             </tbody>
                         </table>
-                        {!isPaid && !!role?.order_upmu && <ButtonIcon icon='payment' size='lg' gradient={true} onClick={handleConfirmPayment}>
+                        {!isPaid && !!role?.order_upmu && <ButtonIcon
+                            // refs:
+                            elmRef={(autoFocusOn === 'ConfirmPaymentButton') ? autoFocusButtonRef : undefined}
+                            
+                            
+                            
+                            // appearances:
+                            icon='payment'
+                            
+                            
+                            
+                            // variants:
+                            size='lg'
+                            gradient={true}
+                            
+                            
+                            
+                            // states:
+                            assertiveFocusable={shouldTriggerAutoFocus && (autoFocusOn === 'ConfirmPaymentButton')}
+                            
+                            
+                            
+                            // handlers:
+                            onClick={handleConfirmPayment}
+                        >
                             Confirm Payment
                         </ButtonIcon>}
                     </Section>
