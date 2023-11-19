@@ -69,7 +69,7 @@ export const useOrderOnTheWayEditorStyleSheet = dynamicStyleSheet(
 
 
 // utilities:
-const emptyOrderOnTheWayValue : OrderOnTheWayValue = {
+const emptyOrderOnTheWayValue : Required<OrderOnTheWayValue> = {
     shippingNumber        : null,
     sendConfirmationEmail : true,
 };
@@ -163,8 +163,8 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
      * value state is based on [controllable value] (if set) and fallback to [uncontrollable value]
      */
     const valueFn : OrderOnTheWayValue = (value !== undefined) ? value /*controllable*/ : valueDn /*uncontrollable*/;
-    const shippingNumber         = valueFn.shippingNumber || null;
-    const sendConfirmationEmail  = valueFn.sendConfirmationEmail ?? emptyOrderOnTheWayValue.sendConfirmationEmail ?? true;
+    const shippingNumber         = valueFn.shippingNumber?.trim() || null; // normalize to null if empty_string or only_spaces
+    const sendConfirmationEmail  = valueFn.sendConfirmationEmail ?? emptyOrderOnTheWayValue.sendConfirmationEmail;
     
     
     
