@@ -161,7 +161,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
     
     
     // states:
-    type EditMode = keyof NonNullable<OrderDetail['customer']>|'full'|'full-status'
+    type EditMode = keyof NonNullable<OrderDetail['customer']>|'full'|'full-status'|'full-payment'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     
@@ -246,7 +246,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                     
                     
                     // handlers:
-                    onClick={() => setEditMode('full-status')}
+                    onClick={({isPaid}) => setEditMode(isPaid ? 'full-status' : 'full-payment')}
                 />
             </h3>
             
@@ -380,13 +380,19 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                     
                     
                     // states:
-                    expanded={(editMode === 'full') || (editMode === 'full-status')}
+                    expanded={editMode?.startsWith('full')}
                     onExpandedChange={handleExpandedChange}
                     
                     
                     
                     // auto focusable:
-                    autoFocusOn={(editMode === 'full-status') ? 'OrderStatusButton' : undefined}
+                    autoFocusOn={(() => {
+                        switch (editMode) {
+                            case 'full-status'  : return 'OrderStatusButton';
+                            case 'full-payment' : return 'ConfirmPaymentButton';
+                            default             : return undefined;
+                        } // switch
+                    })()}
                 />
             </CollapsibleSuspense>
         </ListItem>

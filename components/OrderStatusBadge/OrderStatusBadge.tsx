@@ -6,6 +6,12 @@ import {
     default as React,
 }                           from 'react'
 
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useEvent,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
 // reusable-ui components:
 import {
     // simple-components:
@@ -16,7 +22,6 @@ import {
     
     // status-components:
     BadgeProps,
-    Badge,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // models:
@@ -38,11 +43,19 @@ import {
 export interface OrderStatusBadgeProps
     extends
         // bases:
-        BadgeProps<HTMLButtonElement>
+        Omit<BadgeProps<HTMLButtonElement>,
+            // handlers:
+            |'onClick' // overriden
+        >
 {
     // data:
     orderStatus  : OrderStatus
     paymentType ?: PaymentType
+    
+    
+    
+    // handlers:
+    onClick      : (params: { orderStatus: OrderStatus, isPaid: boolean }) => void
 }
 const OrderStatusBadge = (props: OrderStatusBadgeProps): JSX.Element|null => {
     // rest props:
@@ -55,9 +68,25 @@ const OrderStatusBadge = (props: OrderStatusBadgeProps): JSX.Element|null => {
         
         // children:
         children,
+        
+        
+        
+        // handlers:
+        onClick,
     ...restBadgeProps} = props;
     const preferedTheme = orderStatusTheme(orderStatus, paymentType);
     const hasAlternateTheme = ((preferedTheme === 'warning') || (preferedTheme === 'secondary'));
+    
+    
+    
+    // handlers:
+    const handleClick = useEvent(() => {
+        onClick?.({
+            orderStatus,
+            isPaid : (paymentType !== 'MANUAL'),
+        });
+    });
+    
     
     
     // jsx:
@@ -88,6 +117,11 @@ const OrderStatusBadge = (props: OrderStatusBadgeProps): JSX.Element|null => {
                     mild={hasAlternateTheme ? true : undefined}
                 />
             }
+            
+            
+            
+            // handlers:
+            onClick={handleClick}
         >
             {orderStatusText(orderStatus, paymentType)}
         </ButtonIcon>
