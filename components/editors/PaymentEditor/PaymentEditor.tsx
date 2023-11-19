@@ -223,10 +223,11 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
      * value state is based on [controllable value] (if set) and fallback to [uncontrollable value]
      */
     const valueFn : PaymentValue = (value !== undefined) ? value /*controllable*/ : valueDn /*uncontrollable*/;
+    const isEmptyPayment         = (valueFn.type === 'MANUAL')
     const brand                  = valueFn.brand;
-    const amount                 = valueFn.amount || null;
-    const fee                    = valueFn.fee    || null;
-    const sendConfirmationEmail  = valueFn.sendConfirmationEmail ?? emptyPaymentValue.sendConfirmationEmail ?? true;
+    const amount                 = (isEmptyPayment ? null : valueFn.amount               );
+    const fee                    = (isEmptyPayment ? null : valueFn.fee                  ) || null; // normalize to null if zero
+    const sendConfirmationEmail  = (isEmptyPayment ? true : valueFn.sendConfirmationEmail);
     
     
     
