@@ -49,16 +49,16 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
     const handleUpdate       = useEvent<UpdateHandler<PaymentValue, OrderDetailWithOptions, 'payment'>>(async (value, edit, model) => {
         const {
             sendConfirmationEmail = true,
-        ...restPayment} = value;
+        ...restValue} = value;
         
         await updateOrder({
             id     : model.id,
             
             [edit] : {
                 // original:
-                ...restPayment,
-                amount : restPayment.amount ?? 0, // normalize to zero if null
-                fee    : restPayment.fee    ?? 0, // normalize to zero if null
+                ...restValue,
+                amount : restValue.amount ?? 0, // normalize to zero if null
+                fee    : restValue.fee    ?? 0, // normalize to zero if null
             },
             
             //@ts-ignore
