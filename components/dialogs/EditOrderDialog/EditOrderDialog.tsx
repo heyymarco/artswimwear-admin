@@ -99,6 +99,11 @@ import {
 }                           from '@/components/editors/PaymentEditor'
 import {
     WysiwygEditorState,
+    
+    ToolbarPlugin,
+    EditorPlugin,
+    WysiwygEditor,
+    
     WysiwygViewer,
 }                           from '@/components/editors/WysiwygEditor'
 import {
@@ -107,6 +112,9 @@ import {
 import {
     SimpleEditAddressDialog,
 }                           from '@/components/dialogs/SimpleEditAddressDialog'
+import {
+    SimpleEditOrderTroubleDialog,
+}                           from '@/components/dialogs/SimpleEditOrderTroubleDialog'
 import {
     SimpleEditPaymentDialog,
 }                           from '@/components/dialogs/SimpleEditPaymentDialog'
@@ -477,6 +485,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         >
                             <Group
                                 // variants:
+                                theme='danger'
                                 orientation='block'
                             >
                                 <Basic
@@ -673,6 +682,30 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         <AddressEditor
                             countryList={countryList}
                         />
+                    }
+                />
+                <SimpleEditOrderTroubleDialog
+                    // data:
+                    model={model!}
+                    edit='orderTrouble'
+                    
+                    
+                    
+                    // states:
+                    expanded={editMode === 'trouble'}
+                    onExpandedChange={handleExpandedChange}
+                    
+                    
+                    
+                    // components:
+                    editorComponent={
+                        <WysiwygEditor>
+                            <ToolbarPlugin className='solid' theme='primary' />
+                            <EditorPlugin
+                                // accessibilities:
+                                placeholder='Type product description here...'
+                            />
+                        </WysiwygEditor>
                     }
                 />
                 <SimpleEditPaymentDialog
