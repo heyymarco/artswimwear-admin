@@ -61,7 +61,7 @@ export const useOrderCompletedEditorStyleSheet = dynamicStyleSheet(
 
 
 // utilities:
-const emptyOrderCompletedValue : OrderCompletedValue = {
+const emptyOrderCompletedValue : Required<OrderCompletedValue> = {
     sendConfirmationEmail : true,
 };
 Object.freeze(emptyOrderCompletedValue);
@@ -131,7 +131,7 @@ const OrderCompletedEditor = (props: OrderCompletedEditorProps): JSX.Element|nul
      * value state is based on [controllable value] (if set) and fallback to [uncontrollable value]
      */
     const valueFn : OrderCompletedValue = (value !== undefined) ? value /*controllable*/ : valueDn /*uncontrollable*/;
-    const sendConfirmationEmail  = valueFn.sendConfirmationEmail ?? emptyOrderCompletedValue.sendConfirmationEmail ?? true;
+    const sendConfirmationEmail  = valueFn.sendConfirmationEmail ?? emptyOrderCompletedValue.sendConfirmationEmail;
     
     
     
