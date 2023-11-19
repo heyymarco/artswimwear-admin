@@ -30,7 +30,7 @@ export const orderStatusValues : OrderStatus[] = [
 export const orderStatusTheme = (orderStatus : OrderStatus, paymentType?: PaymentType): ThemeName => {
     switch (orderStatus) {
         case 'NEW_ORDER'  :
-            if ((paymentType !== undefined) && (paymentType === 'MANUAL')) return 'secondary';
+            if (paymentType === 'MANUAL') return 'secondary';
             return 'danger';
         case 'COMPLETED'  : return 'success';
         case 'IN_TROUBLE' : return 'danger';
@@ -40,7 +40,7 @@ export const orderStatusTheme = (orderStatus : OrderStatus, paymentType?: Paymen
 export const orderStatusText = (orderStatus : OrderStatus, paymentType?: PaymentType): ThemeName => {
     switch (orderStatus) {
         case 'NEW_ORDER'  :
-            if ((paymentType !== undefined) && (paymentType === 'MANUAL')) return 'Waiting for Payment';
+            if (paymentType === 'MANUAL') return 'Waiting for Payment';
             return 'New Order';
         case 'PROCESSED'  : return 'Being Processed';
         case 'ON_THE_WAY' : return 'On the Way';
@@ -51,7 +51,7 @@ export const orderStatusText = (orderStatus : OrderStatus, paymentType?: Payment
 export const orderStatusIcon = (orderStatus : OrderStatus, paymentType?: PaymentType): IconList => {
     switch (orderStatus) {
         case 'NEW_ORDER'  :
-            if ((paymentType !== undefined) && (paymentType === 'MANUAL')) return 'timer';
+            if (paymentType === 'MANUAL') return 'timer';
             return 'mark_as_unread';
         case 'PROCESSED'  : return 'directions_run';
         case 'ON_THE_WAY' : return 'local_shipping';
@@ -71,5 +71,5 @@ export const orderStatusNext = (orderStatus : OrderStatus): OrderStatus => {
     } // switch
 }
 export const orderStatusTextNext = (orderStatus : OrderStatus, paymentType?: PaymentType): ThemeName => {
-    return orderStatusText(orderStatusNext(orderStatus));
+    return orderStatusText(orderStatusNext(orderStatus), paymentType);
 }
