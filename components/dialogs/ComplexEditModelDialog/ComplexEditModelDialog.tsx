@@ -323,6 +323,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
             }, 0);
         });
         const fieldErrors = editorRef?.current?.querySelectorAll?.(':is(.invalidating, .invalidated)');
+        console.log({fieldErrors, ref: editorRef?.current});
         if (fieldErrors?.length) { // there is an/some invalid field
             showMessageFieldError(fieldErrors);
             return;
@@ -546,11 +547,6 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
                     inheritValidation={false}
                 >
                     <Tab
-                        // refs:
-                        elmRef={editorRef} // use elmRef, to validate all input(s) inside <Tab>
-                        
-                        
-                        
                         // variants:
                         mild='inherit'
                         
@@ -567,8 +563,23 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
                         
                         
                         // components:
-                        listComponent={<List className={styleSheet.tabList} />}
-                        bodyComponent={<Content className={styleSheet.tabBody} />}
+                        listComponent={
+                            <List
+                                // classes:
+                                className={styleSheet.tabList}
+                            />
+                        }
+                        bodyComponent={
+                            <Content
+                                // refs:
+                                elmRef={editorRef} // use elmRef, to validate all input(s) inside <Tab>'s body
+                                
+                                
+                                
+                                // classes:
+                                className={styleSheet.tabBody}
+                            />
+                        }
                     >
                         {(typeof(childrenFn) === 'function') ? childrenFn?.({
                             privilegeAdd,
