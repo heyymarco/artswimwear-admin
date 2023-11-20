@@ -311,7 +311,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     
     // refs:
-    const autoFocusButtonRef = useRef<HTMLButtonElement|null>(null);
+    const autoFocusRef = useRef<HTMLElement|null>(null);
     
     
     
@@ -320,16 +320,18 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         // conditions:
         if (!shouldTriggerAutoFocus) return;
         if (typeof(autoFocusOn) !== 'string') return;
+        const autoFocusElm = autoFocusRef.current;
+        if (!autoFocusElm) return;
         
         
         
         // setups:
         let cancelAutoFocus = setTimeout(() => {
-            autoFocusButtonRef.current?.scrollIntoView({
+            autoFocusElm.scrollIntoView({
                 behavior : 'smooth',
             });
             cancelAutoFocus = setTimeout(() => {
-                autoFocusButtonRef.current?.focus({
+                autoFocusElm.focus({
                     preventScroll : true,
                 });
                 setShouldTriggerAutoFocus(false);
@@ -469,7 +471,20 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
             >
                 <TabPanel label={PAGE_ORDER_TAB_ORDER_N_SHIPPING} panelComponent={<Generic className={styleSheet.orderShippingTab} />}>
                     <OrderAndShipping />
-                    <Section theme='primary' className={styleSheet.actionSection}>
+                    <Section
+                        // refs:
+                        elmRef={(!role?.order_us && (autoFocusOn === 'OrderStatusButton')) ? autoFocusRef : undefined}
+                        
+                        
+                        
+                        // variants:
+                        theme='primary'
+                        
+                        
+                        
+                        // classes:
+                        className={styleSheet.actionSection}
+                    >
                         <OrderStatusProgress
                             // data:
                             model={model}
@@ -517,9 +532,9 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                 </Content>
                             </Group>
                         </Collapse>
-                        <OrderStatusButton
+                        {!!role?.order_us && <OrderStatusButton
                             // refs:
-                            elmRef={(autoFocusOn === 'OrderStatusButton') ? autoFocusButtonRef : undefined}
+                            elmRef={(autoFocusOn === 'OrderStatusButton') ? (autoFocusRef as React.MutableRefObject<HTMLButtonElement|null>) : undefined}
                             
                             
                             
@@ -541,7 +556,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             // handlers:
                             onPrint={handlePrint}
                             onChange={handleChangeOrderStatus}
-                        />
+                        />}
                         <ButtonIcon
                             // variants:
                             theme='secondary'
@@ -634,7 +649,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         </table>
                         {!isPaid && !!role?.order_upmu && <ButtonIcon
                             // refs:
-                            elmRef={(autoFocusOn === 'ConfirmPaymentButton') ? autoFocusButtonRef : undefined}
+                            elmRef={(autoFocusOn === 'ConfirmPaymentButton') ? (autoFocusRef as React.MutableRefObject<HTMLButtonElement|null>) : undefined}
                             
                             
                             
