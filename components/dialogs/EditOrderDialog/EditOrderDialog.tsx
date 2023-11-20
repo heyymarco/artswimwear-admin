@@ -95,6 +95,9 @@ import {
     AddressEditor,
 }                           from '@/components/editors/AddressEditor'
 import {
+    OrderOnTheWayEditor,
+}                           from '@/components/editors/OrderOnTheWayEditor'
+import {
     PaymentEditor,
 }                           from '@/components/editors/PaymentEditor'
 import {
@@ -112,6 +115,9 @@ import {
 import {
     SimpleEditAddressDialog,
 }                           from '@/components/dialogs/SimpleEditAddressDialog'
+import {
+    SimpleEditOrderOnTheWayDialog,
+}                           from '@/components/dialogs/SimpleEditOrderOnTheWayDialog'
 import {
     SimpleEditOrderTroubleDialog,
 }                           from '@/components/dialogs/SimpleEditOrderTroubleDialog'
@@ -203,7 +209,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     
     // states:
-    type EditMode = 'shippingAddress'|'trouble'|'payment'|'printOrder'
+    type EditMode = 'shippingAddress'|'onTheWay'|'trouble'|'payment'|'printOrder'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     const [shouldTriggerAutoFocus, setShouldTriggerAutoFocus] = useState<boolean>(false);
     
@@ -228,6 +234,8 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         shippingAddress    : shippingAddressDetail,
         shippingProviderId : shippingProviderId,
         shippingCost       : totalShippingCosts,
+        shippingNumber,
+        
         payment            : {
             type           : paymentType,
             brand          : paymentBrand,
@@ -291,6 +299,10 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
             id          : model.id,
             orderStatus : newOrderStatus,
         }).unwrap();
+    });
+    
+    const handleEditShippingNumber  = useEvent(() => {
+        setEditMode('onTheWay');
     });
     
     const handleEditTrouble         = useEvent(() => {
@@ -496,6 +508,40 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         />
                         <Collapse
                             // states:
+                            expanded={(orderStatus === 'ON_THE_WAY')}
+                        >
+                            <Group
+                                // variants:
+                                orientation='block'
+                            >
+                                <Basic
+                                    // classes:
+                                    className={styleSheet.noteHeader}
+                                >
+                                    Shipping Tracking Number
+                                </Basic>
+                                <Content
+                                    // classes:
+                                    className={styleSheet.noteBody}
+                                >
+                                    {!shippingNumber && <span
+                                        // classes:
+                                        className={`${styleSheet.noteEmpty} txt-sec`}
+                                    >
+                                        -- no shipping tracking number --
+                                    </span>}
+                                    <span
+                                        // classes:
+                                        className={styleSheet.noteContentCenter}
+                                    >
+                                        {shippingNumber}
+                                    </span>
+                                    <EditButton className={styleSheet.editTrouble} onClick={handleEditShippingNumber} />
+                                </Content>
+                            </Group>
+                        </Collapse>
+                        <Collapse
+                            // states:
                             expanded={(orderStatus === 'IN_TROUBLE')}
                         >
                             <Group
@@ -505,17 +551,17 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             >
                                 <Basic
                                     // classes:
-                                    className={styleSheet.troubleHeader}
+                                    className={styleSheet.noteHeader}
                                 >
                                     Trouble Note
                                 </Basic>
                                 <Content
                                     // classes:
-                                    className={styleSheet.troubleBody}
+                                    className={styleSheet.noteBody}
                                 >
                                     {!orderTrouble && <span
                                         // classes:
-                                        className={`${styleSheet.troubleEmpty} txt-sec`}
+                                        className={`${styleSheet.noteEmpty} txt-sec`}
                                     >
                                         -- no trouble note --
                                     </span>}
@@ -555,6 +601,8 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             
                             // handlers:
                             onPrint={handlePrint}
+                            
+                            onChangeOnTheWay={handleEditShippingNumber}
                             onChange={handleChangeOrderStatus}
                         />}
                         <ButtonIcon
@@ -698,6 +746,24 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         <AddressEditor
                             countryList={countryList}
                         />
+                    }
+                />
+                <SimpleEditOrderOnTheWayDialog
+                    // data:
+                    model={model!}
+                    edit='shippingNumber'
+                    
+                    
+                    
+                    // states:
+                    expanded={editMode === 'onTheWay'}
+                    onExpandedChange={handleExpandedChange}
+                    
+                    
+                    
+                    // components:
+                    editorComponent={
+                        <OrderOnTheWayEditor />
                     }
                 />
                 <SimpleEditOrderTroubleDialog

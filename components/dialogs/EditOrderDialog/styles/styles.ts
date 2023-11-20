@@ -755,13 +755,13 @@ const usesPrintSpacerLayout = () => {
         }),
     });
 };
-const usesTroubleHeaderLayout = () => {
+const usesNoteHeaderLayout = () => {
     return style({
         display: 'grid',
         justifyContent : 'center',
     });
 };
-const usesTroubleBodyLayout = () => {
+const usesNoteBodyLayout = () => {
     return style({
         // layouts:
         display : 'grid',
@@ -774,7 +774,14 @@ const usesTroubleBodyLayout = () => {
         }),
     });
 };
-const usesTroubleEmptyLayout = () => {
+const usesNoteEmptyLayout = () => {
+    return style({
+        // positions:
+        justifySelf : 'center',
+        alignSelf   : 'center',
+    });
+};
+const usesNoteContentCenterLayout = () => {
     return style({
         // positions:
         justifySelf : 'center',
@@ -834,14 +841,17 @@ export default () => [
         ...usesPrintSpacerLayout(),
     }, { specificityWeight: 2 }),
     
-    scope('troubleHeader', {
-        ...usesTroubleHeaderLayout(),
+    scope('noteHeader', {
+        ...usesNoteHeaderLayout(),
     }),
-    scope('troubleBody', {
-        ...usesTroubleBodyLayout(),
+    scope('noteBody', {
+        ...usesNoteBodyLayout(),
     }),
-    scope('troubleEmpty', {
-        ...usesTroubleEmptyLayout(),
+    scope('noteEmpty', {
+        ...usesNoteEmptyLayout(),
+    }),
+    scope('noteContentCenter', {
+        ...usesNoteContentCenterLayout(),
     }),
     scope('editTrouble', {
         ...usesEditTroubleLayout(),

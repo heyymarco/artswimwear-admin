@@ -57,7 +57,6 @@ import {
 // internal components:
 import {
     orderStatusValues,
-    orderStatusTheme,
     orderStatusText,
     orderStatusIcon,
     orderStatusNext,
@@ -67,17 +66,11 @@ import {
     RadioDecorator,
 }                           from '@/components/RadioDecorator'
 import {
-    OrderOnTheWayEditor,
-}                           from '@/components/editors/OrderOnTheWayEditor'
-import {
     OrderCompletedEditor,
 }                           from '@/components/editors/OrderCompletedEditor'
 import {
     CollapsibleSuspense,
 }                           from '@/components/CollapsibleSuspense'
-import {
-    SimpleEditOrderOnTheWayDialog,
-}                           from '@/components/dialogs/SimpleEditOrderOnTheWayDialog'
 import {
     SimpleEditOrderCompletedDialog,
 }                           from '@/components/dialogs/SimpleEditOrderCompletedDialog'
@@ -112,13 +105,15 @@ export interface OrderStatusButtonProps
         >
 {
     // data:
-    model        : OrderDetail|null
+    model             : OrderDetail|null
     
     
     
     // handlers:
-    onPrint     ?: () => void
-    onChange    ?: (newOrderStatus: OrderStatus) => void|Promise<void>
+    onPrint          ?: () => void
+    
+    onChangeOnTheWay ?: () => void
+    onChange         ?: (newOrderStatus: OrderStatus) => void|Promise<void>
 }
 const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
     // rest props:
@@ -149,6 +144,8 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
         
         // handlers:
         onPrint,
+        
+        onChangeOnTheWay,
         onChange,
         
         
@@ -166,7 +163,7 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
     // states:
     const [isBusy, setIsBusy] = useState<boolean>(false);
     
-    type EditMode = 'onTheWay'|'completed'
+    type EditMode = 'completed'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     
@@ -213,7 +210,7 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
         
         switch(newOrderStatus) {
             case 'ON_THE_WAY':
-                setEditMode('onTheWay');
+                onChangeOnTheWay?.();
                 return true;
             case 'COMPLETED':
                 setEditMode('completed');
@@ -354,24 +351,6 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
             
             {/* edit dialog: */}
             <CollapsibleSuspense>
-                <SimpleEditOrderOnTheWayDialog
-                    // data:
-                    model={model!}
-                    edit='shippingNumber'
-                    
-                    
-                    
-                    // states:
-                    expanded={editMode === 'onTheWay'}
-                    onExpandedChange={handleExpandedChange}
-                    
-                    
-                    
-                    // components:
-                    editorComponent={
-                        <OrderOnTheWayEditor />
-                    }
-                />
                 <SimpleEditOrderCompletedDialog
                     // data:
                     model={model!}
