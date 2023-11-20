@@ -15,7 +15,6 @@ import {
 import {
     // react helper hooks:
     useEvent,
-    EventHandler,
     useMountedFlag,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
@@ -36,11 +35,6 @@ import {
     
     // menu-components:
     DropdownListButton,
-    
-    
-    
-    // dialog-components:
-    ModalExpandedChangeEvent,
     
     
     
@@ -65,15 +59,6 @@ import {
 import {
     RadioDecorator,
 }                           from '@/components/RadioDecorator'
-import {
-    OrderCompletedEditor,
-}                           from '@/components/editors/OrderCompletedEditor'
-import {
-    CollapsibleSuspense,
-}                           from '@/components/CollapsibleSuspense'
-import {
-    SimpleEditOrderCompletedDialog,
-}                           from '@/components/dialogs/SimpleEditOrderCompletedDialog'
 
 // stores:
 import type {
@@ -105,15 +90,16 @@ export interface OrderStatusButtonProps
         >
 {
     // data:
-    model             : OrderDetail|null
+    model              : OrderDetail|null
     
     
     
     // handlers:
-    onPrint          ?: () => void
+    onPrint           ?: () => void
     
-    onChangeOnTheWay ?: () => void
-    onChange         ?: (newOrderStatus: OrderStatus) => void|Promise<void>
+    onChangeOnTheWay  ?: () => void
+    onChangeCompleted ?: () => void
+    onChange          ?: (newOrderStatus: OrderStatus) => void|Promise<void>
 }
 const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
     // rest props:
@@ -146,6 +132,7 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
         onPrint,
         
         onChangeOnTheWay,
+        onChangeCompleted,
         onChange,
         
         
@@ -162,9 +149,6 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
     
     // states:
     const [isBusy, setIsBusy] = useState<boolean>(false);
-    
-    type EditMode = 'completed'
-    const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     
     
@@ -213,7 +197,7 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
                 onChangeOnTheWay?.();
                 return true;
             case 'COMPLETED':
-                setEditMode('completed');
+                onChangeCompleted?.();
                 return true;
         } // switch
         
@@ -243,134 +227,100 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
         if (orderStatus === 'NEW_ORDER') onPrint?.();
     });
     
-    const handleExpandedChange = useEvent<EventHandler<ModalExpandedChangeEvent>>(({expanded}): void => {
-        // conditions:
-        if (expanded) return; // ignore if expanded
-        
-        
-        
-        // actions:
-        setEditMode(null);
-    });
-    
     
     
     // jsx:
     return (
-        <>
-            <Group
-                // variants:
-                size={size}
-                theme={theme}
-                gradient={gradient}
-                outlined={outlined}
-                mild={mild}
+        <Group
+            // variants:
+            size={size}
+            theme={theme}
+            gradient={gradient}
+            outlined={outlined}
+            mild={mild}
+            
+            
+            
+            // states:
+            enabled={!isBusy}
+        >
+            <ButtonIcon
+                // other props:
+                {...restButtonIconProps}
+                
+                
+                
+                // refs:
+                elmRef={elmRef}
+                
+                
+                
+                // appearances:
+                icon={isBusy ? 'busy' : orderStatusIcon(orderStatusNext(orderStatus))}
                 
                 
                 
                 // states:
-                enabled={!isBusy}
+                enabled={(orderStatus !== 'COMPLETED')}
+                assertiveFocusable={assertiveFocusable}
+                
+                
+                
+                // handlers:
+                onClick={handleNextStatus}
             >
-                <ButtonIcon
-                    // other props:
-                    {...restButtonIconProps}
-                    
-                    
-                    
-                    // refs:
-                    elmRef={elmRef}
-                    
-                    
-                    
-                    // appearances:
-                    icon={isBusy ? 'busy' : orderStatusIcon(orderStatusNext(orderStatus))}
-                    
-                    
-                    
-                    // states:
-                    enabled={(orderStatus !== 'COMPLETED')}
-                    assertiveFocusable={assertiveFocusable}
-                    
-                    
-                    
-                    // handlers:
-                    onClick={handleNextStatus}
-                >
-                    {children ?? <>
-                        {(orderStatus === 'NEW_ORDER') && <>Print and </>}
-                        {(orderStatus !== 'COMPLETED') && <>Mark as {orderStatusTextNext(orderStatus)}</>}
-                        {(orderStatus === 'COMPLETED') && <>Order Completed</>}
-                    </>}
-                </ButtonIcon>
-                <DropdownListButton
-                    // variants:
-                    theme='secondary'
-                    
-                    
-                    
-                    // classes:
-                    className='solid'
-                    
-                    
-                    
-                    // floatable:
-                    floatingPlacement='bottom-end'
-                    
-                    
-                    
-                    // components:
-                    listComponent={<List theme='primary' />}
-                >
-                    {orderStatusValues.map((orderStatusOption, listItemIndex) =>
-                        <ListItem
-                            // identifiers:
-                            key={listItemIndex}
-                            
-                            
-                            
-                            // behaviors:
-                            actionCtrl={(orderStatusOption !== orderStatus)}
-                            
-                            
-                            
-                            // states:
-                            active={(orderStatusOption === orderStatus)}
-                            
-                            
-                            
-                            // handlers:
-                            onClick={() => {
-                                handleChangeStatus(orderStatusOption);
-                            }}
-                        >
-                            <RadioDecorator />&nbsp;&nbsp;<Icon icon={orderStatusIcon(orderStatusOption)} />&nbsp;Mark as {orderStatusText(orderStatusOption)}
-                        </ListItem>
-                    )}
-                </DropdownListButton>
-            </Group>
-            
-            {/* edit dialog: */}
-            <CollapsibleSuspense>
-                <SimpleEditOrderCompletedDialog
-                    // data:
-                    model={model!}
-                    edit=''
-                    
-                    
-                    
-                    // states:
-                    expanded={editMode === 'completed'}
-                    onExpandedChange={handleExpandedChange}
-                    
-                    
-                    
-                    // components:
-                    editorComponent={
-                        <OrderCompletedEditor />
-                    }
-                />
-            </CollapsibleSuspense>
-        </>
+                {children ?? <>
+                    {(orderStatus === 'NEW_ORDER') && <>Print and </>}
+                    {(orderStatus !== 'COMPLETED') && <>Mark as {orderStatusTextNext(orderStatus)}</>}
+                    {(orderStatus === 'COMPLETED') && <>Order Completed</>}
+                </>}
+            </ButtonIcon>
+            <DropdownListButton
+                // variants:
+                theme='secondary'
+                
+                
+                
+                // classes:
+                className='solid'
+                
+                
+                
+                // floatable:
+                floatingPlacement='bottom-end'
+                
+                
+                
+                // components:
+                listComponent={<List theme='primary' />}
+            >
+                {orderStatusValues.map((orderStatusOption, listItemIndex) =>
+                    <ListItem
+                        // identifiers:
+                        key={listItemIndex}
+                        
+                        
+                        
+                        // behaviors:
+                        actionCtrl={(orderStatusOption !== orderStatus)}
+                        
+                        
+                        
+                        // states:
+                        active={(orderStatusOption === orderStatus)}
+                        
+                        
+                        
+                        // handlers:
+                        onClick={() => {
+                            handleChangeStatus(orderStatusOption);
+                        }}
+                    >
+                        <RadioDecorator />&nbsp;&nbsp;<Icon icon={orderStatusIcon(orderStatusOption)} />&nbsp;Mark as {orderStatusText(orderStatusOption)}
+                    </ListItem>
+                )}
+            </DropdownListButton>
+        </Group>
     );
 };
 export {

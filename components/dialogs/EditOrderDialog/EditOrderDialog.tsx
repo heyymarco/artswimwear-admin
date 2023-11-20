@@ -98,6 +98,9 @@ import {
     OrderOnTheWayEditor,
 }                           from '@/components/editors/OrderOnTheWayEditor'
 import {
+    OrderCompletedEditor,
+}                           from '@/components/editors/OrderCompletedEditor'
+import {
     PaymentEditor,
 }                           from '@/components/editors/PaymentEditor'
 import {
@@ -118,6 +121,9 @@ import {
 import {
     SimpleEditOrderOnTheWayDialog,
 }                           from '@/components/dialogs/SimpleEditOrderOnTheWayDialog'
+import {
+    SimpleEditOrderCompletedDialog,
+}                           from '@/components/dialogs/SimpleEditOrderCompletedDialog'
 import {
     SimpleEditOrderTroubleDialog,
 }                           from '@/components/dialogs/SimpleEditOrderTroubleDialog'
@@ -209,7 +215,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     
     // states:
-    type EditMode = 'shippingAddress'|'onTheWay'|'trouble'|'payment'|'printOrder'
+    type EditMode = 'shippingAddress'|'onTheWay'|'completed'|'trouble'|'payment'|'printOrder'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     const [shouldTriggerAutoFocus, setShouldTriggerAutoFocus] = useState<boolean>(false);
     
@@ -303,6 +309,10 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     const handleEditShippingNumber  = useEvent(() => {
         setEditMode('onTheWay');
+    });
+    
+    const handleOrderCompleted      = useEvent(() => {
+        setEditMode('completed');
     });
     
     const handleEditTrouble         = useEvent(() => {
@@ -603,6 +613,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             onPrint={handlePrint}
                             
                             onChangeOnTheWay={handleEditShippingNumber}
+                            onChangeCompleted={handleOrderCompleted}
                             onChange={handleChangeOrderStatus}
                         />}
                         <ButtonIcon
@@ -764,6 +775,24 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                     // components:
                     editorComponent={
                         <OrderOnTheWayEditor />
+                    }
+                />
+                <SimpleEditOrderCompletedDialog
+                    // data:
+                    model={model!}
+                    edit=''
+                    
+                    
+                    
+                    // states:
+                    expanded={editMode === 'completed'}
+                    onExpandedChange={handleExpandedChange}
+                    
+                    
+                    
+                    // components:
+                    editorComponent={
+                        <OrderCompletedEditor />
                     }
                 />
                 <SimpleEditOrderTroubleDialog
