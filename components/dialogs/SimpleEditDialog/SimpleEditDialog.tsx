@@ -311,7 +311,7 @@ const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit extends s
                         {React.cloneElement<EditorProps<Element, TValue>>(editorComponent,
                             // props:
                             {
-                                elmRef    : editorRef,
+                                outerRef  : editorRef, // use outerRef instead of elmRef, to validate all input(s) if the editor is a <form>, not the primary input
                                 
                                 
                                 
