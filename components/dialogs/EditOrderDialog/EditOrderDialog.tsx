@@ -536,7 +536,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     >
                                         {shippingNumber}
                                     </span>
-                                    <EditButton className={styleSheet.editTrouble} onClick={handleEditShippingNumber} />
+                                    {!!role?.order_us && <EditButton className={styleSheet.editTrouble} onClick={handleEditShippingNumber} />}
                                 </Content>
                             </Group>
                         </Collapse>
@@ -574,7 +574,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                         // values:
                                         value={(orderTrouble ?? null) as unknown as WysiwygEditorState|undefined}
                                     />}
-                                    <EditButton className={styleSheet.editTrouble} onClick={handleEditTrouble} />
+                                    {!!role?.order_us && <EditButton className={styleSheet.editTrouble} onClick={handleEditTrouble} />}
                                 </Content>
                             </Group>
                         </Collapse>
