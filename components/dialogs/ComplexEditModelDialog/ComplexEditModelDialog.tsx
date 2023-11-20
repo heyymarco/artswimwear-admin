@@ -547,7 +547,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
                 >
                     <Tab
                         // refs:
-                        elmRef={editorRef}
+                        elmRef={editorRef} // use elmRef, to validate all input(s) inside <Tab>
                         
                         
                         
