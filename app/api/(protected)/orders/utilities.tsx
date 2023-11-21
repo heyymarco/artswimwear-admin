@@ -21,9 +21,8 @@ import type {
 
 // stores:
 import type {
-    // types:
     CountryPreview,
-}                           from '@/store/features/api/apiSlice'
+}                           from '@/app/api/(protected)/countries/route'
 
 // templates:
 import {
