@@ -19,7 +19,7 @@ import type {
     Customer,
 }                           from '@prisma/client'
 
-// stores:
+// apis:
 import type {
     CountryPreview,
 }                           from '@/app/api/(protected)/countries/route'
