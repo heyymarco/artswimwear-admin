@@ -6,3 +6,4 @@ TODO: add billingAddress to Orders > Payment > billingAddress
 protect Admin role from deletion
 protect change user role from himself
 protect delete user from himself
+[high prior] create a random value of @unique nullable data of DraftOrder::paypalOrderId & Credentials::username
