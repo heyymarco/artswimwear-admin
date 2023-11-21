@@ -468,7 +468,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                 
                 // data:
                 modelName='Order'
-                modelEntryName={`#ORDER-${model?.orderId}`}
+                modelEntryName={`#ORDER_${model?.orderId}`}
                 model={model}
                 
                 

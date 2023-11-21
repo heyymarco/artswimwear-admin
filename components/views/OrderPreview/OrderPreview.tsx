@@ -231,7 +231,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
             className={styleSheet.main}
         >
             <h3 className='orderId'>
-                #ORDER-{orderId}
+                #ORDER_{orderId}
                 
                 <OrderStatusBadge
                     // data:
