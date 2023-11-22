@@ -412,13 +412,10 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                                         iconPosition='end'
                                     />
                                 }
-                            />
+                            >
+                                {brand || 'Payment Type'}
+                            </EditableButton>
                         }
-                        
-                        
-                        
-                        // children:
-                        buttonChildren={brand || 'Payment Type'}
                     >
                         {['BANK_TRANSFER', 'CHECK', 'OTHER'].map((provider, index) =>
                             <ListItem
