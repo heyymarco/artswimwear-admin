@@ -433,7 +433,7 @@ You do not have the privilege to modify the payment of the order.`
                         where : {
                             OR : [
                                 { reviewedAt      : { equals: null } }, // never approved or rejected
-                                { rejectionReason : { not   : null } }, // has been reviewed as rejected (prevents to *approve_twice*)
+                                { rejectionReason : { not   : null } }, // has been reviewed as rejected (prevents to approve the *already_approved_payment_confirmation*)
                             ],
                         },
                         data: {
