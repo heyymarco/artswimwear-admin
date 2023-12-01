@@ -427,6 +427,21 @@ You do not have the privilege to modify the payment of the order.`
                 shippingProviderId,
                 
                 payment,
+                
+                paymentConfirmation    : {
+                    update : (payment?.type === 'MANUAL_PAID') ? {
+                        where : {
+                            OR : [
+                                { reviewedAt      : { equals: null } }, // not has been reviewed (never approved or rejected)
+                                { rejectionReason : { not   : null } }, //     has been reviewed as rejected (prevents to be approved twice)
+                            ],
+                        },
+                        data: {
+                            reviewedAt      : new Date(), // the approval date
+                            rejectionReason : null,       // remove because it's approved now
+                        },
+                    } : undefined,
+                },
             },
             select : {
                 id                     : true,
