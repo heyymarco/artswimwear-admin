@@ -55,6 +55,11 @@ import {
     
     
     
+    // notification-components:
+    Alert,
+    
+    
+    
     // menu-components:
     Collapse,
     
@@ -250,6 +255,8 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
             amount         : paymentAmount,
             fee            : paymentFee,
         },
+        
+        paymentConfirmation,
     } = model ?? { payment: {} };
     const {
         firstName      : shippingFirstName,
@@ -641,7 +648,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                 </TabPanel>
                 <TabPanel label={PAGE_ORDER_TAB_PAYMENT}          panelComponent={<Generic className={styleSheet.paymentTab} />}>
                     <Section className={styleSheet.paymentSection}>
-                        <table>
+                        {isPaid && <table>
                             <tbody>
                                 <tr>
                                     <th>
@@ -653,86 +660,231 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                         </span>
                                     </td>
                                 </tr>
-                                {isPaid && <>
-                                    <tr>
-                                        <th>
-                                            {isManualPaid ? 'Type' : 'Provider'}
-                                        </th>
-                                        <td>
-                                            {
-                                                !!paymentBrand
-                                                ? (isManualPaid ? paymentBrand : <Image className='paymentProvider' alt={paymentBrand} src={`/brands/${paymentBrand}.svg`} width={42} height={26} />)
-                                                : '-'
-                                            }
-                                            <span className='paymentIdentifier'>
-                                                {!!paymentIdentifier && <>&nbsp;({paymentIdentifier})</>}
-                                            </span>
-                                            {isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>
-                                            Amount
-                                        </th>
-                                        <td className='currencyData'>
-                                            <strong>
-                                                {formatCurrency(paymentAmount)}
-                                            </strong>
-                                            {isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>
-                                            Fee
-                                        </th>
-                                        <td className='currencyData'>
-                                            <span>
-                                                {formatCurrency(paymentFee)}
-                                            </span>
-                                            {isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>
-                                            Net
-                                        </th>
-                                        <td className='currencyData'>
-                                            <strong>
-                                                {formatCurrency((paymentAmount !== undefined) ? (paymentAmount - (paymentFee ?? 0)) : undefined)}
-                                            </strong>
-                                            {isManualPaid && !!role?.order_upmp && <EditButton className='hidden' />}
-                                        </td>
-                                    </tr>
-                                </>}
+                                <tr>
+                                    <th>
+                                        {isManualPaid ? 'Type' : 'Provider'}
+                                    </th>
+                                    <td>
+                                        {
+                                            !!paymentBrand
+                                            ? (isManualPaid ? paymentBrand : <Image className='paymentProvider' alt={paymentBrand} src={`/brands/${paymentBrand}.svg`} width={42} height={26} />)
+                                            : '-'
+                                        }
+                                        <span className='paymentIdentifier'>
+                                            {!!paymentIdentifier && <>&nbsp;({paymentIdentifier})</>}
+                                        </span>
+                                        {isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        Amount
+                                    </th>
+                                    <td className='currencyData'>
+                                        <strong>
+                                            {formatCurrency(paymentAmount)}
+                                        </strong>
+                                        {isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        Fee
+                                    </th>
+                                    <td className='currencyData'>
+                                        <span>
+                                            {formatCurrency(paymentFee)}
+                                        </span>
+                                        {isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        Net
+                                    </th>
+                                    <td className='currencyData'>
+                                        <strong>
+                                            {formatCurrency((paymentAmount !== undefined) ? (paymentAmount - (paymentFee ?? 0)) : undefined)}
+                                        </strong>
+                                        {isManualPaid && !!role?.order_upmp && <EditButton className='hidden' />}
+                                    </td>
+                                </tr>
                             </tbody>
-                        </table>
-                        {!isPaid && !!role?.order_upmu && <ButtonIcon
-                            // refs:
-                            elmRef={(autoFocusOn === 'ConfirmPaymentButton') ? (autoFocusRef as React.MutableRefObject<HTMLButtonElement|null>) : undefined}
+                        </table>}
+                        
+                        {!isPaid && !!role?.order_upmu && <>
+                            {!paymentConfirmation && <Alert
+                                // variants:
+                                theme='warning'
+                                
+                                
+                                
+                                // classes:
+                                className={styleSheet.paymentConfirmationAlert}
+                                
+                                
+                                
+                                // states:
+                                expanded={true}
+                                
+                                
+                                
+                                // components:
+                                controlComponent={<React.Fragment />}
+                            >
+                                <p>
+                                    Attention: The buyer has <strong>not confirmed the payment</strong> yet.
+                                </p>
+                                <p>
+                                    However, you can immediately approve the payment if you are sure that the buyer has completed the payment.
+                                </p>
+                            </Alert>}
                             
+                            {!!paymentConfirmation && <>
+                                <Alert
+                                    // variants:
+                                    theme='warning'
+                                    
+                                    
+                                    
+                                    // classes:
+                                    className={styleSheet.paymentConfirmationAlert}
+                                    
+                                    
+                                    
+                                    // states:
+                                    expanded={true}
+                                    
+                                    
+                                    
+                                    // components:
+                                    controlComponent={<React.Fragment />}
+                                >
+                                    <p>
+                                        The buyer has <strong>confirmed the payment</strong>.
+                                    </p>
+                                    <p>
+                                        Please review to take approval or rejection action.
+                                    </p>
+                                </Alert>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th colSpan={2}>
+                                                Payment Confirmation
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                Reviewed At
+                                            </td>
+                                            <td>
+                                                {
+                                                    paymentConfirmation.reviewedAt
+                                                    ? <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(paymentConfirmation.reviewedAt)).toISOString().slice(0, 16)} />
+                                                    : <span className='txt-sec'>not yet reviewed</span>}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Updated At
+                                            </td>
+                                            <td>
+                                                {!!paymentConfirmation.updatedAt && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(paymentConfirmation.updatedAt)).toISOString().slice(0, 16)} />}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Amount
+                                            </td>
+                                            <td>
+                                                <strong>
+                                                    {formatCurrency(paymentConfirmation.amount)}
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Payer
+                                            </td>
+                                            <td>
+                                                {paymentConfirmation.payerName}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Payment Date
+                                            </td>
+                                            <td>
+                                                {!!paymentConfirmation.paymentDate && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(paymentConfirmation.paymentDate)).toISOString().slice(0, 16)} />}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Originating Bank
+                                            </td>
+                                            <td>
+                                                {paymentConfirmation.originatingBank}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Destination Bank
+                                            </td>
+                                            <td>
+                                                {paymentConfirmation.destinationBank}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </>}
                             
-                            
-                            // appearances:
-                            icon='payment'
-                            
-                            
-                            
-                            // variants:
-                            size='lg'
-                            gradient={true}
-                            
-                            
-                            
-                            // states:
-                            assertiveFocusable={shouldTriggerAutoFocus && (autoFocusOn === 'ConfirmPaymentButton')}
-                            
-                            
-                            
-                            // handlers:
-                            onClick={handleConfirmPayment}
-                        >
-                            Confirm Payment
-                        </ButtonIcon>}
+                            <div className={styleSheet.paymentConfirmActions}>
+                                <ButtonIcon
+                                    // refs:
+                                    elmRef={(autoFocusOn === 'ConfirmPaymentButton') ? (autoFocusRef as React.MutableRefObject<HTMLButtonElement|null>) : undefined}
+                                    
+                                    
+                                    
+                                    // appearances:
+                                    icon='payment'
+                                    
+                                    
+                                    
+                                    // variants:
+                                    size='lg'
+                                    theme='success'
+                                    gradient={true}
+                                    
+                                    
+                                    
+                                    // states:
+                                    assertiveFocusable={shouldTriggerAutoFocus && (autoFocusOn === 'ConfirmPaymentButton')}
+                                    
+                                    
+                                    
+                                    // handlers:
+                                    onClick={handleConfirmPayment}
+                                >
+                                    Approve Payment
+                                </ButtonIcon>
+                                <ButtonIcon
+                                    // appearances:
+                                    icon='not_interested'
+                                    
+                                    
+                                    
+                                    // variants:
+                                    size='lg'
+                                    theme='danger'
+                                    gradient={true}
+                                >
+                                    Decline Payment
+                                </ButtonIcon>
+                            </div>
+                        </>}
                     </Section>
                 </TabPanel>
             </ComplexEditModelDialog>

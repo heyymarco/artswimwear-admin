@@ -29,6 +29,7 @@ import type {
     Customer,
     Order,
     OrdersOnProducts,
+    PaymentConfirmation,
 }                           from '@prisma/client'
 
 // ORMs:
@@ -75,6 +76,14 @@ export interface OrderDetail
     customer : null|Omit<Customer,
         |'createdAt'
         |'updatedAt'
+    >
+    
+    paymentConfirmation : null|Omit<PaymentConfirmation,
+        |'id'
+        
+        |'token'
+        
+        |'orderId'
     >
 }
 
@@ -196,6 +205,24 @@ You do not have the privilege to view the orders.`
                 shippingProviderId     : true,
                 
                 payment                : true,
+                
+                paymentConfirmation    : {
+                    select : {
+                        updatedAt        : true,
+                        reviewedAt       : true,
+                        
+                        currency         : true,
+                        amount           : true,
+                        payerName        : true,
+                        paymentDate      : true,
+                        preferedTimezone : true,
+                        
+                        originatingBank  : true,
+                        destinationBank  : true,
+                        
+                        rejectionReason  : true,
+                    },
+                },
             },
             orderBy : {
                 createdAt: 'desc',
@@ -435,6 +462,24 @@ You do not have the privilege to modify the payment of the order.`
                 shippingProviderId     : true,
                 
                 payment                : true,
+                
+                paymentConfirmation    : {
+                    select : {
+                        updatedAt        : true,
+                        reviewedAt       : true,
+                        
+                        currency         : true,
+                        amount           : true,
+                        payerName        : true,
+                        paymentDate      : true,
+                        preferedTimezone : true,
+                        
+                        originatingBank  : true,
+                        destinationBank  : true,
+                        
+                        rejectionReason  : true,
+                    },
+                },
             },
         });
         

@@ -34,6 +34,11 @@ import {
     
     
     
+    // removes browser's default stylesheet:
+    stripoutTextbox,
+    
+    
+    
     // border (stroke) stuff of UI:
     usesBorder,
 }                           from '@reusable-ui/core'    // a set of reusable-ui packages which are responsible for building any component
@@ -641,6 +646,24 @@ const usesPaymentSectionLayout = () => {
         }),
     });
 };
+const usesPaymentConfirmationAlertLayout = () => {
+    return style({
+        // sizes:
+        contain: 'inline-size', // do not take up the <Dialog>'s width, just fill the available width
+        width: '100%',
+    });
+};
+const usesOutputDateLayout = () => {
+    return style({
+        ...stripoutTextbox(),
+    });
+};
+const usesPaymentConfirmActionsLayout = () => {
+    return style({
+        display: 'grid',
+        gap: spacers.default,
+    });
+};
 const usesBadgeLayout = () => {
     return style({
         // positions:
@@ -821,6 +844,15 @@ export default () => [
     }),
     scope('paymentSection', {
         ...usesPaymentSectionLayout(),
+    }),
+    scope('paymentConfirmationAlert', {
+        ...usesPaymentConfirmationAlertLayout(),
+    }),
+    scope('outputDate', {
+        ...usesOutputDateLayout(),
+    }),
+    scope('paymentConfirmActions', {
+        ...usesPaymentConfirmActionsLayout(),
     }),
     
     scope('badge', {
