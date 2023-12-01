@@ -47,41 +47,6 @@ export const SimpleEditOrderTroubleDialog = (props: SimpleEditOrderTroubleDialog
         return (model[edit] as any) ?? null;
     });
     const handleUpdate       = useEvent<UpdateHandler<WysiwygEditorState|null, OrderDetail, 'orderTrouble'>>(async (value, edit, model) => {
-        // detect for empty value:
-        if (value) {
-            if ('root' in value) { // value as plain JSON
-                const firstChild = (value.root as any)?.children?.[0];
-                if (!firstChild || ((firstChild?.type === 'paragraph') && !firstChild?.children?.length)) {
-                    // empty paragraph => empty content => null:
-                    value = null;
-                } // if
-            }
-            else { // value as EditorState
-                const nodeMap = value?._nodeMap;
-                const root = nodeMap?.get('root');
-                if (!root) {
-                    // no root => empty content => null:
-                    value = null;
-                }
-                else {
-                    const firstKey = root?.__first;
-                    if (!firstKey) {
-                        // no child => empty content => null:
-                        value = null;
-                    }
-                    else {
-                        const firstChild = nodeMap?.get(firstKey);
-                        if (!firstChild || ((firstChild?.__type === 'paragraph') && !firstChild?.__first)) {
-                            // empty paragraph => empty content => null:
-                            value = null;
-                        } // if
-                    } // if
-                } // if
-            } // if
-        } // if
-        
-        
-        
         await updateOrder({
             id     : model.id,
             
