@@ -432,8 +432,8 @@ You do not have the privilege to modify the payment of the order.`
                     update : (payment?.type === 'MANUAL_PAID') ? {
                         where : {
                             OR : [
-                                { reviewedAt      : { equals: null } }, // not has been reviewed (never approved or rejected)
-                                { rejectionReason : { not   : null } }, //     has been reviewed as rejected (prevents to be approved twice)
+                                { reviewedAt      : { equals: null } }, // never approved or rejected
+                                { rejectionReason : { not   : null } }, // has been reviewed as rejected (prevents to be approved twice)
                             ],
                         },
                         data: {
