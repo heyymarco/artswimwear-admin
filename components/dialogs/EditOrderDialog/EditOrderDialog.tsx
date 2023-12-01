@@ -277,9 +277,10 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         return accum + (productUnitPrice * item.quantity);
     }, 0) ?? 0;
     
-    const paymentTypeUppercased = paymentType?.toUpperCase();
-    const isPaid                = !!paymentTypeUppercased && (paymentTypeUppercased !== 'MANUAL');
-    const isManualPaid          = (paymentTypeUppercased === 'MANUAL_PAID');
+    const paymentTypeUppercased  = paymentType?.toUpperCase();
+    const isPaid                 = !!paymentTypeUppercased && (paymentTypeUppercased !== 'MANUAL');
+    const isManualPaid           = (paymentTypeUppercased === 'MANUAL_PAID');
+    const hasPaymentConfirmation = !!paymentConfirmation?.updatedAt;
     
     
     
@@ -713,7 +714,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         </table>}
                         
                         {!isPaid && !!role?.order_upmu && <>
-                            {!paymentConfirmation && <Alert
+                            {!hasPaymentConfirmation && <Alert
                                 // variants:
                                 theme='warning'
                                 
@@ -740,7 +741,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                 </p>
                             </Alert>}
                             
-                            {!!paymentConfirmation && <>
+                            {hasPaymentConfirmation && <>
                                 <Alert
                                     // variants:
                                     theme='warning'
@@ -764,7 +765,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                         The buyer has <strong>confirmed the payment</strong>.
                                     </p>
                                     <p>
-                                        Please review to take approval or rejection action.
+                                        Please <strong>review</strong> to take approval or rejection action.
                                     </p>
                                 </Alert>
                                 <table>
@@ -870,7 +871,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                 >
                                     Approve Payment
                                 </ButtonIcon>
-                                <ButtonIcon
+                                {hasPaymentConfirmation && <ButtonIcon
                                     // appearances:
                                     icon='not_interested'
                                     
@@ -882,7 +883,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     gradient={true}
                                 >
                                     Decline Payment
-                                </ButtonIcon>
+                                </ButtonIcon>}
                             </div>
                         </>}
                     </Section>
