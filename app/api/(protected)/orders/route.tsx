@@ -402,101 +402,105 @@ You do not have the privilege to modify the payment of the order.`
     
     //#region save changes
     try {
-        const orderDetail : OrderDetail = await prisma.order.update({
-            where  : {
-                id : id,
-            },
-            data   : {
-                orderStatus,
-                orderTrouble,
-                
-                customer : {
-                    update : {
-                        data : {
-                            marketingOpt : customer?.marketingOpt,
+        const [orderDetail, paymentConfirmationDetail] = await prisma.$transaction([
+            prisma.order.update({
+                where  : {
+                    id : id,
+                },
+                data   : {
+                    orderStatus,
+                    orderTrouble,
+                    
+                    customer : {
+                        update : {
+                            data : {
+                                marketingOpt : customer?.marketingOpt,
+                                
+                                nickName     : customer?.nickName,
+                                email        : customer?.email,
+                            },
+                        },
+                    },
+                    
+                    shippingAddress,
+                    shippingCost,
+                    shippingNumber,
+                    shippingProviderId,
+                    
+                    payment,
+                },
+                select : {
+                    id                     : true,
+                    
+                    orderId                : true,
+                    orderStatus            : true,
+                    orderTrouble           : true,
+                    
+                    items                  : {
+                        select: {
+                            productId      : true,
                             
-                            nickName     : customer?.nickName,
-                            email        : customer?.email,
+                            price          : true,
+                            shippingWeight : true,
+                            quantity       : true,
+                        },
+                    },
+                    
+                    customer               : {
+                        select: {
+                            id             : true,
+                            
+                            marketingOpt   : true,
+                            
+                            nickName       : true,
+                            email          : true,
+                        },
+                    },
+                    
+                    shippingAddress        : true,
+                    shippingCost           : true,
+                    shippingNumber         : true,
+                    shippingProviderId     : true,
+                    
+                    payment                : true,
+                    
+                    paymentConfirmation    : {
+                        select : {
+                            updatedAt        : true,
+                            reviewedAt       : true,
+                            
+                            currency         : true,
+                            amount           : true,
+                            payerName        : true,
+                            paymentDate      : true,
+                            preferedTimezone : true,
+                            
+                            originatingBank  : true,
+                            destinationBank  : true,
+                            
+                            rejectionReason  : true,
                         },
                     },
                 },
-                
-                shippingAddress,
-                shippingCost,
-                shippingNumber,
-                shippingProviderId,
-                
-                payment,
-                
-                paymentConfirmation    : {
-                    update : (payment?.type === 'MANUAL_PAID') ? {
-                        where : {
-                            OR : [
-                                { reviewedAt      : { equals: null } }, // never approved or rejected
-                                { rejectionReason : { not   : null } }, // has been reviewed as rejected (prevents to approve the *already_approved_payment_confirmation*)
-                            ],
-                        },
-                        data: {
-                            reviewedAt      : new Date(), // the approval date
-                            rejectionReason : null,       // remove because it's approved now
-                        },
-                    } : undefined,
-                },
-            },
-            select : {
-                id                     : true,
-                
-                orderId                : true,
-                orderStatus            : true,
-                orderTrouble           : true,
-                
-                items                  : {
-                    select: {
-                        productId      : true,
-                        
-                        price          : true,
-                        shippingWeight : true,
-                        quantity       : true,
+            }),
+            ...(
+                (payment?.type === 'MANUAL_PAID')
+                ? [prisma.paymentConfirmation.updateMany({
+                    where  : {
+                        orderId : id,
+                        OR : [
+                            { reviewedAt      : { equals: null } }, // never approved or rejected
+                            { rejectionReason : { not   : null } }, // has been reviewed as rejected (prevents to approve the *already_approved_payment_confirmation*)
+                        ],
                     },
-                },
-                
-                customer               : {
-                    select: {
-                        id             : true,
-                        
-                        marketingOpt   : true,
-                        
-                        nickName       : true,
-                        email          : true,
+                    data: {
+                        reviewedAt      : new Date(), // the approval date
+                        rejectionReason : null,       // remove because it's approved now
                     },
-                },
-                
-                shippingAddress        : true,
-                shippingCost           : true,
-                shippingNumber         : true,
-                shippingProviderId     : true,
-                
-                payment                : true,
-                
-                paymentConfirmation    : {
-                    select : {
-                        updatedAt        : true,
-                        reviewedAt       : true,
-                        
-                        currency         : true,
-                        amount           : true,
-                        payerName        : true,
-                        paymentDate      : true,
-                        preferedTimezone : true,
-                        
-                        originatingBank  : true,
-                        destinationBank  : true,
-                        
-                        rejectionReason  : true,
-                    },
-                },
-            },
-        });
+                })]
+                : []
+            ),
+        ]);
         
         
         
