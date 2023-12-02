@@ -27,7 +27,13 @@ export const orderStatusValues : OrderStatus[] = [
     'COMPLETED',
 ];
 
-export const orderStatusTheme = (orderStatus : OrderStatus, paymentType?: PaymentType): ThemeName => {
+export const orderStatusTheme = (orderStatus : OrderStatus, paymentType?: PaymentType, reviewedAt?: Date|null): ThemeName => {
+    if (reviewedAt === null) { // not undefined but null (never reviewed)
+        return 'danger';
+    } // if
+    
+    
+    
     switch (orderStatus) {
         case 'NEW_ORDER'  :
             if (paymentType === 'MANUAL') return 'secondary';
@@ -37,7 +43,13 @@ export const orderStatusTheme = (orderStatus : OrderStatus, paymentType?: Paymen
         default           : return 'warning';
     } // switch
 };
-export const orderStatusText = (orderStatus : OrderStatus, paymentType?: PaymentType): ThemeName => {
+export const orderStatusText = (orderStatus : OrderStatus, paymentType?: PaymentType, reviewedAt?: Date|null): ThemeName => {
+    if (reviewedAt === null) { // not undefined but null (never reviewed)
+        return 'Payment Confirmed';
+    } // if
+    
+    
+    
     switch (orderStatus) {
         case 'NEW_ORDER'  :
             if (paymentType === 'MANUAL') return 'Waiting for Payment';
@@ -48,11 +60,17 @@ export const orderStatusText = (orderStatus : OrderStatus, paymentType?: Payment
         case 'COMPLETED'  : return 'Completed';
     } // switch
 };
-export const orderStatusIcon = (orderStatus : OrderStatus, paymentType?: PaymentType): IconList => {
+export const orderStatusIcon = (orderStatus : OrderStatus, paymentType?: PaymentType, reviewedAt?: Date|null): IconList => {
+    if (reviewedAt === null) { // not undefined but null (never reviewed)
+        return 'chat';
+    } // if
+    
+    
+    
     switch (orderStatus) {
         case 'NEW_ORDER'  :
             if (paymentType === 'MANUAL') return 'timer';
-            return 'mark_as_unread';
+            return 'shopping_cart';
         case 'PROCESSED'  : return 'directions_run';
         case 'ON_THE_WAY' : return 'local_shipping';
         case 'IN_TROUBLE' : return 'report_problem';
@@ -69,7 +87,4 @@ export const orderStatusNext = (orderStatus : OrderStatus): OrderStatus => {
         case 'COMPLETED'  : return 'COMPLETED';
         default           : return 'PROCESSED';
     } // switch
-}
-export const orderStatusTextNext = (orderStatus : OrderStatus, paymentType?: PaymentType): ThemeName => {
-    return orderStatusText(orderStatusNext(orderStatus), paymentType);
 }

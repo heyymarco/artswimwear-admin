@@ -54,7 +54,6 @@ import {
     orderStatusText,
     orderStatusIcon,
     orderStatusNext,
-    orderStatusTextNext,
 }                           from '@/components/OrderStatusBadge'
 import {
     RadioDecorator,
@@ -271,7 +270,7 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
             >
                 {children ?? <>
                     {(orderStatus === 'NEW_ORDER') && <>Print and </>}
-                    {(orderStatus !== 'COMPLETED') && <>Mark as {orderStatusTextNext(orderStatus)}</>}
+                    {(orderStatus !== 'COMPLETED') && <>Mark as {orderStatusText(orderStatusNext(orderStatus))}</>}
                     {(orderStatus === 'COMPLETED') && <>Order Completed</>}
                 </>}
             </ButtonIcon>

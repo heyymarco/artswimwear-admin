@@ -152,6 +152,8 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
         payment : {
             type : paymentType,
         },
+        
+        paymentConfirmation,
     } = model;
     const {
         nickName : customerNickName,
@@ -223,7 +225,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
             
             
             // variants:
-            theme={orderStatusTheme(orderStatus, paymentType)}
+            theme={orderStatusTheme(orderStatus, paymentType, paymentConfirmation?.reviewedAt)}
             
             
             
@@ -237,6 +239,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                     // data:
                     orderStatus={orderStatus}
                     paymentType={paymentType}
+                    reviewedAt={paymentConfirmation?.reviewedAt}
                     
                     
                     
