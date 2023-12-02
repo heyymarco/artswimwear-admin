@@ -17,12 +17,32 @@ const currencyFormatter = new Intl.NumberFormat(COMMERCE_LOCALE, {
 
 
 
-export const formatCurrency = (value?: number|null|undefined): string => {
+export const formatCurrency = (value?: number|null|undefined, currencyCode?: string): string => {
+    // conditions:
     if ((value === null) || (value === undefined) || isNaN(value)) return '-';
-    return currencyFormatter.format(value)
+    
+    
+    
+    let currentCurrencyFormatter = currencyFormatter;
+    if (currencyCode) {
+        const customCurrencyFormatter = new Intl.NumberFormat(COMMERCE_LOCALE, {
+            style    : 'currency',
+            currency : currencyCode,
+        });
+        currentCurrencyFormatter = customCurrencyFormatter;
+    } // if
+    return currentCurrencyFormatter.format(value)
 };
-export const getCurrencySign = () => {
-    return currencyFormatter.formatToParts(1)[0].value;
+export const getCurrencySign = (currencyCode?: string) => {
+    let currentCurrencyFormatter = currencyFormatter;
+    if (currencyCode) {
+        const customCurrencyFormatter = new Intl.NumberFormat(COMMERCE_LOCALE, {
+            style    : 'currency',
+            currency : currencyCode,
+        });
+        currentCurrencyFormatter = customCurrencyFormatter;
+    } // if
+    return currentCurrencyFormatter.formatToParts(1)[0].value;
 }
 
 

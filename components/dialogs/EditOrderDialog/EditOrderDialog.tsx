@@ -802,7 +802,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                             </td>
                                             <td>
                                                 <strong>
-                                                    {formatCurrency(paymentConfirmation.amount)}
+                                                    {formatCurrency(paymentConfirmation.amount, paymentConfirmation.currency ?? undefined)}
                                                 </strong>
                                             </td>
                                         </tr>
