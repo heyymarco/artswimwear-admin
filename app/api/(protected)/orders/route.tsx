@@ -402,7 +402,7 @@ You do not have the privilege to modify the payment of the order.`
     
     //#region save changes
     try {
-        const [orderDetail, paymentConfirmationDetail] = await prisma.$transaction([
+        const [orderDetail] = await prisma.$transaction([
             prisma.order.update({
                 where  : {
                     id : id,
