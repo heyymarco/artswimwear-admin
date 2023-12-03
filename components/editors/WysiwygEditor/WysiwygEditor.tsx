@@ -12,7 +12,10 @@ import {
 // reusable-ui core:
 import {
     // react helper hooks:
+    useIsomorphicLayoutEffect,
     useEvent,
+    useMergeEvents,
+    useMergeClasses,
     
     
     
@@ -24,6 +27,11 @@ import {
     
     // basic variants of UI:
     useBasicVariantProps,
+    
+    
+    
+    // a possibility of UI having an invalid state:
+    useInvalidable,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -69,6 +77,11 @@ import type {
     // types:
     WysiwygEditorState,
 }                           from './types'
+import {
+    // states:
+    CustomValidatorHandler,
+    useWysiwygValidator,
+}                           from './states/WysiwygValidator'
 
 // theme:
 import {
@@ -85,6 +98,7 @@ import {
 // behaviors:
 import {
     // updates the state for the editor.
+    normalizeWysiwygEditorState,
     UpdateStatePlugin,
 }                           from './plugins/UpdateStatePlugin'
 import {
@@ -108,6 +122,16 @@ export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
             |'defaultValue' // supported
             |'value'        // supported
             |'onChange'     // supported
+            
+            
+            
+            // validations:
+            |'enableValidation'
+            |'isValid'
+            |'inheritValidation'
+            |'onValidation'
+            
+            |'required'
         >,
         Omit<IndicatorProps<TElement>,
             // values:
@@ -121,6 +145,11 @@ export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
             |'children'     // not supported
         >
 {
+    // validations:
+    customValidator ?: CustomValidatorHandler
+    
+    
+    
     // plugins:
     children ?: React.ReactNode
 }
@@ -144,9 +173,48 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         
         
         
+        // validations:
+        enableValidation  : _enableValidation,  // remove
+        isValid           : _isValid,           // remove
+        inheritValidation : _inheritValidation, // remove
+        onValidation      : onValidation,       // use
+        customValidator   : customValidator,    // use
+        
+        required          : required,           // use
+        
+        
+        
         // plugins:
         children : plugins,
     ...restIndicatorProps} = props;
+    
+    
+    
+    // states:
+    const wysiwygValidator = useWysiwygValidator({
+        customValidator : props.customValidator,
+        required        : required,
+    });
+    const handleValidation = useMergeEvents(
+        // preserves the original `onValidation`:
+        onValidation,
+        
+        
+        
+        // states:
+        wysiwygValidator.handleValidation,
+    );
+    const invalidableState = useInvalidable<TElement>({
+        enabled           : props.enabled,
+        inheritEnabled    : props.inheritEnabled,
+        readOnly          : props.readOnly,
+        inheritReadOnly   : props.inheritReadOnly,
+        
+        enableValidation  : props.enableValidation,
+        isValid           : props.isValid,
+        inheritValidation : props.inheritValidation,
+        onValidation      : handleValidation,
+    });
     
     
     
@@ -157,10 +225,60 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
     
     
     
+    // classes:
+    const stateClasses = useMergeClasses(
+        // preserves the original `stateClasses`:
+        props.stateClasses,
+        
+        
+        
+        // states:
+        invalidableState.class,
+    );
+    
+    
+    
     // handlers:
-    const handleError       = useEvent<InitialConfigType['onError']>((error, editor) => {
+    const handleError          = useEvent<InitialConfigType['onError']>((error, editor) => {
         // nothing to handle yet
     });
+    const handleChange         = useMergeEvents(
+        // preserves the original `onChange`:
+        onChange,
+        
+        
+        
+        // states:
+        
+        // validations:
+        wysiwygValidator.handleChange,
+    );
+    const handleAnimationStart = useMergeEvents(
+        // preserves the original `onAnimationStart`:
+        props.onAnimationStart,
+        
+        
+        
+        // states:
+        invalidableState.handleAnimationStart,
+    );
+    const handleAnimationEnd   = useMergeEvents(
+        // preserves the original `onAnimationEnd`:
+        props.onAnimationEnd,
+        
+        
+        
+        // states:
+        invalidableState.handleAnimationEnd,
+    );
+    
+    
+    
+    // dom effects:
+    useIsomorphicLayoutEffect(() => {
+        const normalizedValue = normalizeWysiwygEditorState(value ?? null);
+        wysiwygValidator.handleChange(normalizedValue);
+    }, []);
     
     
     
@@ -200,7 +318,7 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
             {!!autoFocus ? <AutoFocusPlugin /> : <></>}
             
             {/* updates the state for the editor. */}
-            <UpdateStatePlugin value={value} defaultValue={defaultValue} onChange={onChange} />
+            <UpdateStatePlugin value={value} defaultValue={defaultValue} onChange={handleChange} />
             
             {/* dynamically setups the editable prop. */}
             <DynamicEditablePlugin editable={!isDisabledOrReadOnly} />
@@ -219,6 +337,17 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
                 
                 // variants:
                 orientation='block'
+                
+                
+                
+                // classes:
+                stateClasses={stateClasses}
+                
+                
+                
+                // handlers:
+                onAnimationStart = {handleAnimationStart}
+                onAnimationEnd   = {handleAnimationEnd  }
             >
                 {React.Children.map<React.ReactNode, React.ReactNode>(plugins, (plugin) => {
                     if (!React.isValidElement<BasicProps<Element>>(plugin)) return plugin; // not an <element> => no modify
