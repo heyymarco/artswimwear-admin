@@ -13,7 +13,7 @@ import {
     ImplementedSimpleEditDialogProps,
     SimpleEditDialog,
 }                           from '@/components/dialogs/SimpleEditDialog'
-import {
+import type {
     WysiwygEditorState,
 }                           from '@/components/editors/WysiwygEditor'
 
