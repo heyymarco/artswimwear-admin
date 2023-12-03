@@ -139,6 +139,9 @@ import {
     SimpleEditPaymentDialog,
 }                           from '@/components/dialogs/SimpleEditPaymentDialog'
 import {
+    SimpleEditPaymentRejectedDialog,
+}                           from '@/components/dialogs/SimpleEditPaymentRejectedDialog'
+import {
     // react components:
     ImplementedComplexEditModelDialogProps,
     ComplexEditModelDialog,
@@ -223,7 +226,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     
     // states:
-    type EditMode = 'shippingAddress'|'onTheWay'|'completed'|'trouble'|'payment'|'printOrder'
+    type EditMode = 'shippingAddress'|'onTheWay'|'completed'|'trouble'|'payment'|'paymentRejected'|'printOrder'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     const [shouldTriggerAutoFocus, setShouldTriggerAutoFocus] = useState<boolean>(false);
     
@@ -332,8 +335,11 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         setEditMode('trouble');
     });
     
-    const handleConfirmPayment      = useEvent(() => {
+    const handleApprovePayment      = useEvent(() => {
         setEditMode('payment');
+    });
+    const handleRejectPayment       = useEvent(() => {
+        setEditMode('paymentRejected');
     });
     const handleEditPayment         = useEvent(() => {
         setEditMode('payment');
@@ -907,10 +913,11 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     
                                     
                                     // handlers:
-                                    onClick={handleConfirmPayment}
+                                    onClick={handleApprovePayment}
                                 >
                                     Approve Payment
                                 </ButtonIcon>
+                                
                                 {hasPaymentConfirmation && <ButtonIcon
                                     // appearances:
                                     icon='not_interested'
@@ -921,8 +928,13 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     size='lg'
                                     theme='danger'
                                     gradient={true}
+                                    
+                                    
+                                    
+                                    // handlers:
+                                    onClick={handleRejectPayment}
                                 >
-                                    Decline Payment
+                                    Reject Payment
                                 </ButtonIcon>}
                             </div>
                         </>}
@@ -1038,6 +1050,30 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             confirmedAmount={paymentConfirmation?.amount ?? undefined}
                             confirmedCurrency={paymentConfirmation?.currency ?? undefined}
                         />
+                    }
+                />
+                <SimpleEditPaymentRejectedDialog
+                    // data:
+                    model={model!}
+                    edit='paymentConfirmation'
+                    
+                    
+                    
+                    // states:
+                    expanded={editMode === 'paymentRejected'}
+                    onExpandedChange={handleExpandedChange}
+                    
+                    
+                    
+                    // components:
+                    editorComponent={
+                        <WysiwygEditor>
+                            <ToolbarPlugin className='solid' theme='primary' />
+                            <EditorPlugin
+                                // accessibilities:
+                                placeholder='Type the reason why the payment confirmation is rejected here...'
+                            />
+                        </WysiwygEditor>
                     }
                 />
                 <PrintDialog

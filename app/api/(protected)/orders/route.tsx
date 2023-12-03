@@ -78,13 +78,13 @@ export interface OrderDetail
         |'updatedAt'
     >
     
-    paymentConfirmation : null|Omit<PaymentConfirmation,
+    paymentConfirmation : null|Partial<Omit<PaymentConfirmation,
         |'id'
         
         |'token'
         
         |'orderId'
-    >
+    >>
 }
 
 
