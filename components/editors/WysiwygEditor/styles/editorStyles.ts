@@ -14,7 +14,7 @@ import {
     
     // writes complex stylesheets in simpler way:
     watchChanges,
-}                           from '@cssfn/core'                  // writes css in javascript
+}                           from '@cssfn/core'                      // writes css in javascript
 
 // reusable-ui core:
 import {
@@ -35,23 +35,23 @@ import {
     
     // size options of UI:
     usesResizable,
-}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+}                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
 import {
     // styles:
-    onControlStylesChange,
-    usesControlLayout,
-    usesControlVariants,
-    usesControlStates,
-}                           from '@reusable-ui/control'         // a base component
+    onEditableControlStylesChange,
+    usesEditableControlLayout,
+    usesEditableControlVariants,
+    usesEditableControlStates,
+}                           from '@reusable-ui/editable-control'    // a base component
 import {
     // styles:
     onContentStylesChange,
     usesContentLayout,
     usesContentVariants,
     usesContentChildren,
-}                           from '@reusable-ui/content'         // a base component
+}                           from '@reusable-ui/content'             // a base component
 
 // internals:
 import {
@@ -68,7 +68,7 @@ import {
 
 
 // styles:
-export const onEditableStylesChange = watchChanges(onControlStylesChange, onContentStylesChange, cssWysiwygEditorConfig.onChange);
+export const onEditableStylesChange = watchChanges(onEditableControlStylesChange, onContentStylesChange, cssWysiwygEditorConfig.onChange);
 
 
 
@@ -83,7 +83,7 @@ export const usesEditableLayout = () => {
     
     return style({
         // layouts:
-        ...usesControlLayout(),
+        ...usesEditableControlLayout(),
         ...usesContentLayout(),
         ...style({
             // layouts:
@@ -185,13 +185,13 @@ export const usesEditableVariants = () => {
     
     return style({
         // variants:
-        ...usesControlVariants(),
+        ...usesEditableControlVariants(),
         ...usesContentVariants(),
         ...resizableRule(),
     });
 };
 
-export const usesEditableStates = usesControlStates;
+export const usesEditableStates = usesEditableControlStates;
 
 export const usesEditableChildren = () => {
     return style({

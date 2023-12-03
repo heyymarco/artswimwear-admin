@@ -25,6 +25,11 @@ import {
     
     
     
+    // a validation management system:
+    ValidationProvider,
+    
+    
+    
     // basic variants of UI:
     useBasicVariantProps,
     
@@ -174,9 +179,9 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         
         
         // validations:
-        enableValidation  : _enableValidation,  // remove
-        isValid           : _isValid,           // remove
-        inheritValidation : _inheritValidation, // remove
+        enableValidation  : enableValidation,   // use
+        isValid           : isValid,            // use
+        inheritValidation : inheritValidation,  // use
         onValidation      : onValidation,       // use
         customValidator   : customValidator,    // use
         
@@ -192,7 +197,7 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
     
     // states:
     const wysiwygValidator = useWysiwygValidator({
-        customValidator : props.customValidator,
+        customValidator : customValidator,
         required        : required,
     });
     const handleValidation = useMergeEvents(
@@ -210,9 +215,9 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         readOnly          : props.readOnly,
         inheritReadOnly   : props.inheritReadOnly,
         
-        enableValidation  : props.enableValidation,
-        isValid           : props.isValid,
-        inheritValidation : props.inheritValidation,
+        enableValidation  : enableValidation,
+        isValid           : isValid,
+        inheritValidation : inheritValidation,
         onValidation      : handleValidation,
     });
     
@@ -222,19 +227,6 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
     const propEnabled          = usePropEnabled(props);
     const propReadOnly         = usePropReadOnly(props);
     const isDisabledOrReadOnly = (!propEnabled || propReadOnly);
-    
-    
-    
-    // classes:
-    const stateClasses = useMergeClasses(
-        // preserves the original `stateClasses`:
-        props.stateClasses,
-        
-        
-        
-        // states:
-        invalidableState.class,
-    );
     
     
     
@@ -252,24 +244,6 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         
         // validations:
         wysiwygValidator.handleChange,
-    );
-    const handleAnimationStart = useMergeEvents(
-        // preserves the original `onAnimationStart`:
-        props.onAnimationStart,
-        
-        
-        
-        // states:
-        invalidableState.handleAnimationStart,
-    );
-    const handleAnimationEnd   = useMergeEvents(
-        // preserves the original `onAnimationEnd`:
-        props.onAnimationEnd,
-        
-        
-        
-        // states:
-        invalidableState.handleAnimationEnd,
     );
     
     
@@ -313,63 +287,59 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
     
     // jsx:
     return (
-        <LexicalComposer initialConfig={initialConfig}>
-            {/* functions: */}
-            {!!autoFocus ? <AutoFocusPlugin /> : <></>}
-            
-            {/* updates the state for the editor. */}
-            <UpdateStatePlugin value={value} defaultValue={defaultValue} onChange={handleChange} />
-            
-            {/* dynamically setups the editable prop. */}
-            <DynamicEditablePlugin editable={!isDisabledOrReadOnly} />
-            
-            {/* adds support for history stack management and undo / redo commands. */}
-            <HistoryPlugin />
-            
-            
-            
-            {/* elements: */}
-            <Group<TElement>
-                // other props:
-                {...restIndicatorProps}
+        <ValidationProvider
+            // validations:
+            enableValidation={enableValidation}
+            isValid={isValid ?? invalidableState.isValid}
+            inheritValidation={inheritValidation}
+        >
+            <LexicalComposer initialConfig={initialConfig}>
+                {/* functions: */}
+                {!!autoFocus ? <AutoFocusPlugin /> : <></>}
+                
+                {/* updates the state for the editor. */}
+                <UpdateStatePlugin value={value} defaultValue={defaultValue} onChange={handleChange} />
+                
+                {/* dynamically setups the editable prop. */}
+                <DynamicEditablePlugin editable={!isDisabledOrReadOnly} />
+                
+                {/* adds support for history stack management and undo / redo commands. */}
+                <HistoryPlugin />
                 
                 
                 
-                // variants:
-                orientation='block'
-                
-                
-                
-                // classes:
-                stateClasses={stateClasses}
-                
-                
-                
-                // handlers:
-                onAnimationStart = {handleAnimationStart}
-                onAnimationEnd   = {handleAnimationEnd  }
-            >
-                {React.Children.map<React.ReactNode, React.ReactNode>(plugins, (plugin) => {
-                    if (!React.isValidElement<BasicProps<Element>>(plugin)) return plugin; // not an <element> => no modify
+                {/* elements: */}
+                <Group<TElement>
+                    // other props:
+                    {...restIndicatorProps}
                     
                     
                     
-                    // jsx:
-                    return React.cloneElement<BasicProps<Element>>(plugin,
-                        // props:
-                        {
-                            // basic variant props:
-                            ...basicVariantProps,
-                            
-                            
-                            
-                            // other props:
-                            ...plugin.props,
-                        },
-                    );
-                })}
-            </Group>
-        </LexicalComposer>
+                    // variants:
+                    orientation='block'
+                >
+                    {React.Children.map<React.ReactNode, React.ReactNode>(plugins, (plugin) => {
+                        if (!React.isValidElement<BasicProps<Element>>(plugin)) return plugin; // not an <element> => no modify
+                        
+                        
+                        
+                        // jsx:
+                        return React.cloneElement<BasicProps<Element>>(plugin,
+                            // props:
+                            {
+                                // basic variant props:
+                                ...basicVariantProps,
+                                
+                                
+                                
+                                // other props:
+                                ...plugin.props,
+                            },
+                        );
+                    })}
+                </Group>
+            </LexicalComposer>
+        </ValidationProvider>
     );
 };
 export {

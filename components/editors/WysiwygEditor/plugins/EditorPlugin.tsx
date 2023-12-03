@@ -18,9 +18,9 @@ import {
 // reusable-ui components:
 import {
     // react components:
-    ControlProps,
-    Control,
-}                           from '@reusable-ui/control'                 // a base component
+    EditableControlProps,
+    EditableControl,
+}                           from '@reusable-ui/editable-control'        // a base component
 
 // plugins:
 import {
@@ -47,7 +47,7 @@ export const useEditorPluginStyleSheet = dynamicStyleSheet(
 export interface EditorPluginProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Omit<ControlProps<TElement>,
+        Omit<EditableControlProps<TElement>,
             // children:
             |'children' // not supported
         >,
@@ -85,7 +85,7 @@ const EditorPlugin = <TElement extends Element = HTMLElement>(props: EditorPlugi
     
     // jsx:
     return (
-        <Control<TElement>
+        <EditableControl<TElement>
             // other props:
             {...restControlProps}
             
@@ -115,7 +115,7 @@ const EditorPlugin = <TElement extends Element = HTMLElement>(props: EditorPlugi
                     placeholderComponent={placeholderComponent}
                 />,
             }), [])}
-        </Control>
+        </EditableControl>
     );
 };
 export {
