@@ -277,7 +277,7 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
     // dom effects:
     useIsomorphicLayoutEffect(() => {
         const normalizedValue = normalizeWysiwygEditorState(value ?? null);
-        wysiwygValidator.handleChange(normalizedValue);
+        wysiwygValidator.handleInit(normalizedValue);
     }, []);
     
     
