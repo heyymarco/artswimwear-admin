@@ -1034,6 +1034,9 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             }
                             amountMinThreshold={20 /* percent */}
                             amountMaxThreshold={20 /* percent */}
+                            
+                            confirmedAmount={paymentConfirmation?.amount ?? undefined}
+                            confirmedCurrency={paymentConfirmation?.currency ?? undefined}
                         />
                     }
                 />

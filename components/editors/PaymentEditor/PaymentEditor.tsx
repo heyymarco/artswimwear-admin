@@ -166,6 +166,9 @@ export interface PaymentEditorProps
     amountMinThreshold ?: number
     amountMaxThreshold ?: number
     
+    confirmedAmount    ?: number
+    confirmedCurrency  ?: string
+    
     amountLabel        ?: string
     feeLabel           ?: string
 }
@@ -186,6 +189,9 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
         expectedAmount,
         amountMinThreshold,
         amountMaxThreshold,
+        
+        confirmedAmount,
+        confirmedCurrency,
         
         amountLabel = 'Received Amount',
         feeLabel    = 'Fee (if any)',
@@ -224,12 +230,11 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
      * value state is based on [controllable value] (if set) and fallback to [uncontrollable value]
      */
     const valueFn : PaymentValue = (value !== undefined) ? value /*controllable*/ : valueDn /*uncontrollable*/;
-    const isEmptyPayment         = (valueFn.type === 'MANUAL');
-    const brand                  = valueFn.brand;
-    const amount                 = (isEmptyPayment ? null : valueFn.amount               );
-    const fee                    = (isEmptyPayment ? null : valueFn.fee                  ) || null; // normalize to null if zero
-    const initialPaymentType     = useRef<PaymentType>(valueFn.type);
-    const sendConfirmationEmail  = ((initialPaymentType.current === 'MANUAL') ? true : valueFn.sendConfirmationEmail);
+    const [isInitiallyUnpaid                              ] = useState<boolean    >(valueFn.type === 'MANUAL');
+    const [brand                , setBrand                ] = useState<string|null>((isInitiallyUnpaid ? null : valueFn.brand ) || null   ); // normalize to null if empty_string
+    const [amount               , setAmount               ] = useState<number|null>((isInitiallyUnpaid ? null : valueFn.amount)           ); // perserve zero
+    const [fee                  , setFee                  ] = useState<number|null>((isInitiallyUnpaid ? null : valueFn.fee   ) || null   ); // normalize to null if zero
+    const [sendConfirmationEmail, setSendConfirmationEmail] = useState<boolean    >(isInitiallyUnpaid); // default to checked if was unpaid, otherwise default to unchecked
     
     
     
@@ -248,14 +253,15 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     
     
     // callbacks:
-    const setValue = useEvent<React.Dispatch<React.SetStateAction<PaymentValue>>>((value) => {
-        // conditions:
-        const newValue = (typeof(value) === 'function') ? value(valueFn) : value;
-        if (newValue === valueFn) return; // still the same => nothing to update
-        
-        
-        
+    const updateValue = useEvent((): void => {
         // update:
+        const newValue : PaymentValue = {
+            ...valueFn,
+            brand,
+            amount,
+            fee,
+            sendConfirmationEmail,
+        };
         setValueDn(newValue);
         triggerValueChange(newValue);
     }); // a stable callback, the `setValue` guaranteed to never change
@@ -263,23 +269,27 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleProviderChange          = useEvent((value: string) => {
-        setValue((current) => ({ ...current, type: emptyPaymentValue.type, brand                 : value  }));
+    const handleProviderChange          = useEvent((newBrand: string) => {
+        setBrand(newBrand);
+        updateValue();
     });
-    const handleAmountChange            = useEvent<EditorChangeEventHandler<number|null>>((value) => {
-        setValue((current) => ({ ...current, type: emptyPaymentValue.type, amount                : value  }));
+    const handleAmountChange            = useEvent<EditorChangeEventHandler<number|null>>((newAmount) => {
+        setAmount(newAmount);
+        updateValue();
     });
-    const handleFeeChange               = useEvent<EditorChangeEventHandler<number|null>>((value) => {
-        setValue((current) => ({ ...current, type: emptyPaymentValue.type, fee                   : value  }));
+    const handleFeeChange               = useEvent<EditorChangeEventHandler<number|null>>((newFee) => {
+        setFee(newFee);
+        updateValue();
     });
-    const handleConfirmationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active}) => {
-        setValue((current) => ({ ...current, type: emptyPaymentValue.type, sendConfirmationEmail : active }));
+    const handleConfirmationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active: newConfirmation}) => {
+        setSendConfirmationEmail(newConfirmation);
+        updateValue();
     });
     
-    const handleAmountFocus    = useEvent<React.FocusEventHandler<Element>>((event) => {
+    const handleAmountFocus             = useEvent<React.FocusEventHandler<Element>>((event) => {
         setAmountFocused(true);
     });
-    const handleAmountBlur     = useEvent<React.FocusEventHandler<Element>>((event) => {
+    const handleAmountBlur              = useEvent<React.FocusEventHandler<Element>>((event) => {
         setAmountFocused(false);
     });
     
@@ -355,11 +365,21 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
             >
                 {(expectedAmount !== undefined) && <Basic
                     // variants:
-                    theme='warning'
+                    theme='success'
                     mild={true}
                 >
                     <p>
                         Expected amount: <strong>{formatCurrency(expectedAmount)}</strong>.
+                    </p>
+                </Basic>}
+                
+                {(confirmedAmount !== undefined) && <Basic
+                    // variants:
+                    theme='warning'
+                    mild={true}
+                >
+                    <p>
+                        Confirmed amount: <strong>{formatCurrency(confirmedAmount, confirmedCurrency)}</strong>.
                     </p>
                 </Basic>}
                 
