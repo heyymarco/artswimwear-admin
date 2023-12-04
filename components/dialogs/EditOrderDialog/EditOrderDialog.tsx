@@ -807,6 +807,9 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     <p>
                                         However you can still change it as <strong>approved</strong>.
                                     </p>
+                                    
+                                    <hr />
+                                    
                                     <p>
                                         Rejection reason:
                                     </p>

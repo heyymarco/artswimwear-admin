@@ -28,5 +28,6 @@ export interface CheckoutConfig {
         checkout  : EmailConfig
         shipping  : EmailConfig
         completed : EmailConfig
+        rejected  : EmailConfig
     }
 }

@@ -555,7 +555,7 @@ You do not have the privilege to modify the payment of the order.`
             let emailConfig : EmailConfig|undefined = undefined;
             
             if (rejectionReason && paymentConfirmationDetail.count) { // payment confirmation declined
-                console.log('TODO: send payment confirmation declined.');
+                emailConfig = checkoutConfig.emails.rejected;
             }
             else if (payment?.type === 'MANUAL_PAID') {   // payment approved (regradless having payment confirmation or not)
                 emailConfig = checkoutConfig.emails.checkout;
