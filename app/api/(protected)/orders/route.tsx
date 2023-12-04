@@ -448,7 +448,7 @@ You do not have the privilege to modify the payment of the order.`
                     ? prisma.paymentConfirmation.updateMany({
                         where  : {
                             orderId : id,
-                            reviewedAt      : { equals: null }, // never approved or rejected
+                            reviewedAt      : { equals: null }, // never approved or rejected (prevents to reject the *already_rejected/approved_payment_confirmation*)
                         },
                         data: {
                             reviewedAt      : new Date(),      // the rejection date
@@ -458,6 +458,9 @@ You do not have the privilege to modify the payment of the order.`
                     : prisma.paymentConfirmation.updateMany({
                         where : {
                             orderId : id,
+                            AND : [
+                                { orderId : { not : id } }, // never match, just for dummy transaction
+                            ],
                         },
                         data : {},
                     })
@@ -551,7 +554,10 @@ You do not have the privilege to modify the payment of the order.`
         if (performSendConfirmationEmail) {
             let emailConfig : EmailConfig|undefined = undefined;
             
-            if (payment?.type === 'MANUAL_PAID') {   // payment confirmation
+            if (rejectionReason && paymentConfirmationDetail.count) { // payment confirmation declined
+                console.log('TODO: send payment confirmation declined.');
+            }
+            else if (payment?.type === 'MANUAL_PAID') {   // payment approved (regradless having payment confirmation or not)
                 emailConfig = checkoutConfig.emails.checkout;
             }
             else if (orderStatus === 'ON_THE_WAY') { // shipping tracking number confirmation
