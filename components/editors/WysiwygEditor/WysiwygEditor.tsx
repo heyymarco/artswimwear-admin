@@ -290,7 +290,7 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         <ValidationProvider
             // validations:
             enableValidation={enableValidation}
-            isValid={isValid ?? invalidableState.isValid}
+            isValid={(isValid !== undefined) ? isValid : invalidableState.isValid}
             inheritValidation={inheritValidation}
         >
             <LexicalComposer initialConfig={initialConfig}>
