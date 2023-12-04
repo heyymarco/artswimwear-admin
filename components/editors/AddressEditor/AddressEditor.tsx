@@ -107,6 +107,11 @@ export interface AddressEditorProps
             |'addressType'
         >,
         Omit<IndicatorProps<HTMLFormElement>,
+            // refs:
+            |'elmRef'       // overriden
+            
+            
+            
             // values:
             |'defaultValue' // taken over by EditorProps
             |'value'        // taken over by EditorProps
@@ -118,6 +123,8 @@ export interface AddressEditorProps
             |'children'     // not supported
         >
 {
+    // refs:
+    elmRef ?: AddressFieldsProps['addressRef']
 }
 const AddressEditor = (props: AddressEditorProps): JSX.Element|null => {
     // styles:
@@ -127,6 +134,11 @@ const AddressEditor = (props: AddressEditorProps): JSX.Element|null => {
     
     // rest props:
     const {
+        // refs:
+        elmRef,
+        
+        
+        
         // values:
         defaultValue,
         value,
@@ -252,6 +264,11 @@ const AddressEditor = (props: AddressEditorProps): JSX.Element|null => {
                 inheritReadOnly = {inheritReadOnly}
             >
                 <AddressFields
+                    // refs:
+                    addressRef={elmRef}
+                    
+                    
+                    
                     // types:
                     addressType       = {addressType}
                     
