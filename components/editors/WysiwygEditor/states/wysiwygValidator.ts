@@ -49,7 +49,7 @@ import type {
 
 // states:
 
-//#region WysiwygValidator
+//#region wysiwygValidator
 export type CustomValidatorHandler = (isValid: ValResult) => ValResult
 
 const isWysiwygValid = (value: WysiwygEditorState|null, required: boolean): ValResult => {
@@ -162,4 +162,4 @@ export const useWysiwygValidator      = (props: WysiwygValidatorProps): WysiwygV
         handleChange,
     };
 };
-//#endregion WysiwygValidator
+//#endregion wysiwygValidator
