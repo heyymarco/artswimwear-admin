@@ -290,6 +290,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     const isPaid                 = !!paymentTypeUppercased && (paymentTypeUppercased !== 'MANUAL');
     const isManualPaid           = (paymentTypeUppercased === 'MANUAL_PAID');
     const hasPaymentConfirmation = !!paymentConfirmation?.updatedAt;
+    const isPaymentRejected      = hasPaymentConfirmation && !!paymentConfirmation.rejectionReason;
     
     
     
@@ -754,7 +755,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             </Alert>}
                             
                             {hasPaymentConfirmation && <>
-                                <Alert
+                                {!isPaymentRejected && <Alert
                                     // variants:
                                     theme='warning'
                                     
@@ -779,7 +780,47 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     <p>
                                         Please <strong>review</strong> to take approval or rejection action.
                                     </p>
-                                </Alert>
+                                </Alert>}
+                                
+                                {isPaymentRejected && <Alert
+                                    // variants:
+                                    theme='warning'
+                                    
+                                    
+                                    
+                                    // classes:
+                                    className={styleSheet.paymentConfirmationAlert}
+                                    
+                                    
+                                    
+                                    // states:
+                                    expanded={true}
+                                    
+                                    
+                                    
+                                    // components:
+                                    controlComponent={<React.Fragment />}
+                                >
+                                    <p>
+                                        You have <strong>rejected</strong> the buyer&apos;s payment confirmation.
+                                    </p>
+                                    <p>
+                                        However you can still change it as <strong>approved</strong>.
+                                    </p>
+                                    <p>
+                                        Rejection reason:
+                                    </p>
+                                    <WysiwygViewer
+                                        // variants:
+                                        nude={true}
+                                        
+                                        
+                                        
+                                        // values:
+                                        value={(paymentConfirmation.rejectionReason ?? null) as WysiwygEditorState|null}
+                                    />
+                                </Alert>}
+                                
                                 <table>
                                     <thead>
                                         <tr>
@@ -928,14 +969,19 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     // variants:
                                     size='lg'
                                     theme='danger'
-                                    gradient={true}
+                                    gradient={!isPaymentRejected}
+                                    
+                                    
+                                    
+                                    // states:
+                                    enabled={!isPaymentRejected}
                                     
                                     
                                     
                                     // handlers:
                                     onClick={handleRejectPayment}
                                 >
-                                    Reject Payment
+                                    {isPaymentRejected ? 'Payment Rejected' : 'Reject Payment'}
                                 </ButtonIcon>}
                             </div>
                         </>}
