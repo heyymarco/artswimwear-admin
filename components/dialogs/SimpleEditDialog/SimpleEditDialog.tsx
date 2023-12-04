@@ -160,7 +160,8 @@ const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit extends s
     
     
     // refs:
-    const editorRef = useRef<HTMLInputElement|null>(null);
+    const editorRef          = useRef<HTMLInputElement|null>(null);
+    const autoFocusEditorRef = useRef<HTMLInputElement|null>(null);
     
     
     
@@ -192,7 +193,7 @@ const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit extends s
         const fieldErrors = (
             // for <Form>:
             (() => {
-                const matches = editorRef?.current?.querySelectorAll?.(':is(.invalidating, .invalidated)');
+                const matches = editorElm?.querySelectorAll?.(':is(.invalidating, .invalidated)');
                 if (!matches?.length) return null;
                 return matches;
             })()
@@ -299,7 +300,7 @@ const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit extends s
                 
                 
                 // auto focusable:
-                autoFocusOn={props.autoFocusOn ?? editorRef}
+                autoFocusOn={props.autoFocusOn ?? autoFocusEditorRef}
                 
                 
                 
@@ -311,7 +312,8 @@ const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit extends s
                         {React.cloneElement<EditorProps<Element, TValue>>(editorComponent,
                             // props:
                             {
-                                outerRef  : editorRef, // use outerRef instead of elmRef, to validate all input(s) if the editor is a <form>, not the primary input
+                                elmRef    : autoFocusEditorRef, // focus on the first_important editor, if the editor is a <form>, not the primary input
+                                outerRef  : editorRef, // use outerRef instead of elmRef, to validate all input(s), if the editor is a <form>, not the primary input
                                 
                                 
                                 
