@@ -86,7 +86,7 @@ import {
     // states:
     CustomValidatorHandler,
     useWysiwygValidator,
-}                           from './states/WysiwygValidator'
+}                           from './states/testWysiwygValidator'
 
 // theme:
 import {
