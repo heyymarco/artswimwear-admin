@@ -839,7 +839,7 @@ export const checkoutConfig : CheckoutConfig = {
             
             from     : process.env.EMAILS_REJECTED_FROM ?? '',
             subject  : <>
-                Payment Confirmation Rejected of Your Order at <Business.Name />
+                Your Payment Confirmation Rejected of Your Order at <Business.Name />
             </>,
             message  : <article style={styles.article}>
                 <div style={styles.sectionDummy}></div>
