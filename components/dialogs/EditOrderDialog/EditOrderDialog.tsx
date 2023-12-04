@@ -39,6 +39,7 @@ import {
     
     
     // simple-components:
+    IconProps,
     Icon,
     ButtonIcon,
     
@@ -1067,10 +1068,15 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                     
                     // components:
                     editorComponent={
-                        <WysiwygEditor>
+                        <WysiwygEditor
+                            // validations:
+                            required={true}
+                        >
                             <ToolbarPlugin className='solid' theme='primary' />
                             <EditorPlugin
                                 // accessibilities:
+                                aria-label='Rejection Reason'
+                                data-icon={'chat' as IconProps['icon']}
                                 placeholder='Type the reason why the payment confirmation is rejected here...'
                             />
                         </WysiwygEditor>
