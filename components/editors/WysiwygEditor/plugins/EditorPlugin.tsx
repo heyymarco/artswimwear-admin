@@ -15,6 +15,18 @@ import {
     dynamicStyleSheet,
 }                           from '@cssfn/cssfn-react'                   // writes css in react hook
 
+// lexical functions:
+import {
+    // hooks:
+    useLexicalComposerContext,
+}                           from '@lexical/react/LexicalComposerContext'
+
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useIsomorphicLayoutEffect,
+}                           from '@reusable-ui/core'                    // a set of reusable-ui packages which are responsible for building any component
+
 // reusable-ui components:
 import {
     // react components:
@@ -33,6 +45,12 @@ import {
     PlaceholderProps,
     Placeholder,
 }                           from './Placeholder'
+
+// internals:
+import {
+    // react components:
+    useWysiwygEditorState,
+}                           from '../states/wysiwygEditorState'
 
 
 
@@ -83,6 +101,48 @@ const EditorPlugin = <TElement extends Element = HTMLElement>(props: EditorPlugi
     
     
     
+    // states:
+    const {
+        editorRef,
+    } = useWysiwygEditorState();
+    
+    
+    
+    // contexts:
+    const [editor] = useLexicalComposerContext();
+    
+    
+    
+    // dom effects:
+    useIsomorphicLayoutEffect(() => {
+        // conditions:
+        if (!editorRef) return;
+        
+        
+        
+        // setups:
+        if (typeof(editorRef) === 'function') {
+            editorRef(editor.getRootElement());
+        }
+        else {
+            (editorRef as React.MutableRefObject<Element|null>).current = editor.getRootElement();
+        } // if
+        
+        
+        
+        // cleanups:
+        return () => {
+            if (typeof(editorRef) === 'function') {
+                editorRef(null);
+            }
+            else {
+                (editorRef as React.MutableRefObject<Element|null>).current = null;
+            } // if
+        };
+    }, []);
+    
+    
+    
     // jsx:
     return (
         <EditableControl<TElement>
@@ -98,6 +158,11 @@ const EditorPlugin = <TElement extends Element = HTMLElement>(props: EditorPlugi
             
             // classes:
             mainClass={props.mainClass ?? styleSheet.main}
+            
+            
+            
+            // accessibilities:
+            tabIndex={-1} // negative [tabIndex] => act as *wrapper* element, if <Placeholder> is `:focus-visible-within` (pseudo) => the wrapper is also `.focus` (synthetic)
         >
             {...useMemo(() => defaultPlugins({
                 placeholder : <Placeholder

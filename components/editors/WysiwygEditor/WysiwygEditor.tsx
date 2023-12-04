@@ -15,7 +15,6 @@ import {
     useIsomorphicLayoutEffect,
     useEvent,
     useMergeEvents,
-    useMergeClasses,
     
     
     
@@ -87,6 +86,10 @@ import {
     CustomValidatorHandler,
     useWysiwygValidator,
 }                           from './states/wysiwygValidator'
+import {
+    // react components:
+    WysiwygEditorStateProvider,
+}                           from './states/wysiwygEditorState'
 
 // theme:
 import {
@@ -166,6 +169,11 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
     
     // rest props:
     const {
+        // refs:
+        elmRef,
+        
+        
+        
         // accessibilities:
         autoFocus,
         
@@ -293,52 +301,57 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
             isValid={(isValid !== undefined) ? isValid : invalidableState.isValid}
             inheritValidation={inheritValidation}
         >
-            <LexicalComposer initialConfig={initialConfig}>
-                {/* functions: */}
-                {!!autoFocus ? <AutoFocusPlugin /> : <></>}
-                
-                {/* updates the state for the editor. */}
-                <UpdateStatePlugin value={value} defaultValue={defaultValue} onChange={handleChange} />
-                
-                {/* dynamically setups the editable prop. */}
-                <DynamicEditablePlugin editable={!isDisabledOrReadOnly} />
-                
-                {/* adds support for history stack management and undo / redo commands. */}
-                <HistoryPlugin />
-                
-                
-                
-                {/* elements: */}
-                <Group<TElement>
-                    // other props:
-                    {...restIndicatorProps}
+            <WysiwygEditorStateProvider
+                // refs:
+                editorRef={elmRef}
+            >
+                <LexicalComposer initialConfig={initialConfig}>
+                    {/* functions: */}
+                    {!!autoFocus ? <AutoFocusPlugin /> : <></>}
+                    
+                    {/* updates the state for the editor. */}
+                    <UpdateStatePlugin value={value} defaultValue={defaultValue} onChange={handleChange} />
+                    
+                    {/* dynamically setups the editable prop. */}
+                    <DynamicEditablePlugin editable={!isDisabledOrReadOnly} />
+                    
+                    {/* adds support for history stack management and undo / redo commands. */}
+                    <HistoryPlugin />
                     
                     
                     
-                    // variants:
-                    orientation='block'
-                >
-                    {React.Children.map<React.ReactNode, React.ReactNode>(plugins, (plugin) => {
-                        if (!React.isValidElement<BasicProps<Element>>(plugin)) return plugin; // not an <element> => no modify
+                    {/* elements: */}
+                    <Group<TElement>
+                        // other props:
+                        {...restIndicatorProps}
                         
                         
                         
-                        // jsx:
-                        return React.cloneElement<BasicProps<Element>>(plugin,
-                            // props:
-                            {
-                                // basic variant props:
-                                ...basicVariantProps,
-                                
-                                
-                                
-                                // other props:
-                                ...plugin.props,
-                            },
-                        );
-                    })}
-                </Group>
-            </LexicalComposer>
+                        // variants:
+                        orientation='block'
+                    >
+                        {React.Children.map<React.ReactNode, React.ReactNode>(plugins, (plugin) => {
+                            if (!React.isValidElement<BasicProps<Element>>(plugin)) return plugin; // not an <element> => no modify
+                            
+                            
+                            
+                            // jsx:
+                            return React.cloneElement<BasicProps<Element>>(plugin,
+                                // props:
+                                {
+                                    // basic variant props:
+                                    ...basicVariantProps,
+                                    
+                                    
+                                    
+                                    // other props:
+                                    ...plugin.props,
+                                },
+                            );
+                        })}
+                    </Group>
+                </LexicalComposer>
+            </WysiwygEditorStateProvider>
         </ValidationProvider>
     );
 };

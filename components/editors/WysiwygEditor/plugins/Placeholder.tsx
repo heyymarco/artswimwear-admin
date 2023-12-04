@@ -4,6 +4,12 @@ import {
     default as React,
 }                           from 'react'
 
+// reusable-ui components:
+import type {
+    // react components:
+    GenericProps,
+}                           from '@reusable-ui/generic'         // a base component
+
 
 
 // react components:
@@ -12,6 +18,10 @@ export interface PlaceholderProps<TElement extends Element = HTMLElement>
         // bases:
         Omit<React.HTMLAttributes<TElement>,
             |'placeholder' // replaced by a more specific type
+        >,
+        Pick<GenericProps<TElement>,
+            // refs:
+            |'elmRef'
         >
 {
     // accessibilities:
@@ -25,6 +35,11 @@ export interface PlaceholderProps<TElement extends Element = HTMLElement>
 const Placeholder = <TElement extends Element = HTMLElement>(props: PlaceholderProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
+        // refs:
+        elmRef,
+        
+        
+        
         // accessibilities:
         placeholder,
         
@@ -43,6 +58,12 @@ const Placeholder = <TElement extends Element = HTMLElement>(props: PlaceholderP
             // other props:
             ...restElementProps,
             ...placeholderComponent.props, // overwrites restElementProps (if any conflics)
+            
+            
+            
+            // refs:
+            // @ts-ignore
+            ref : elmRef,
         },
         
         
