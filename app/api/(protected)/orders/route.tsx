@@ -268,6 +268,8 @@ You do not have the privilege to view the orders.`
         billingAddress : optionalBillingAddress,
         
         sendConfirmationEmail : performSendConfirmationEmail = false,
+        
+        paymentConfirmation,
     } = body;
     const mergedPayment = {
         ...body.payment,
@@ -278,6 +280,7 @@ You do not have the privilege to view the orders.`
         } : undefined),
     };
     const payment = Object.keys(mergedPayment).length ? mergedPayment : undefined;
+    const rejectionReason = paymentConfirmation?.rejectionReason;
     //#endregion parsing request
     
     
@@ -300,8 +303,13 @@ You do not have the privilege to view the orders.`
         }, { status: 400 }); // handled with error
     } // if
     
-    if ((typeof(id) !== 'string') || (id.length < 1)
-        ||
+    if ((typeof(id) !== 'string') || (id.length < 1)) {
+        return NextResponse.json({
+            error: 'Invalid data.',
+        }, { status: 400 }); // handled with error
+    } // if
+    
+    if (
         ((customer !== undefined) && ((typeof(customer) !== 'object') || Object.keys(customer).some((prop) => !['nickName', 'email'].includes(prop))))
         ||
         ((customer?.marketingOpt !== undefined) && ((typeof(customer.marketingOpt) !== 'boolean')))
@@ -309,29 +317,46 @@ You do not have the privilege to view the orders.`
         ((customer?.nickName     !== undefined) && ((typeof(customer.nickName)     !== 'string') || (customer.nickName.length < 2) || (customer.nickName.length > 30)))
         ||
         ((customer?.email        !== undefined) && ((typeof(customer.email)        !== 'string') || (customer.email.length    < 5) || (customer.email.length    > 50)))
-        
-        ||
-        
+    ) {
+        return NextResponse.json({
+            error: 'Invalid data.',
+        }, { status: 400 }); // handled with error
+    } // if
+    
+    if (
+        (payment !== undefined)
+        &&
         (
-            (payment !== undefined)
-            &&
-            (
-                ((typeof(payment?.type) !== 'string') || !['MANUAL', 'MANUAL_PAID'].includes(payment?.type))
-                ||
-                ((typeof(payment?.brand) !== 'string') || !['BANK_TRANSFER', 'CHECK', 'OTHER'].includes(payment?.brand)) // must be filled
-                ||
-                (payment?.identifier !== null) // must be null
-                ||
-                ((typeof(payment?.amount) !== 'number') || (payment?.amount < 0) || !isFinite(payment?.amount)) // the amount must be finite & non_negative
-                ||
-                ((typeof(payment?.fee) !== 'number') || (payment?.fee < 0) || !isFinite(payment?.fee)) // the fee must be finite & non_negative
-            )
+            ((typeof(payment?.type) !== 'string') || !['MANUAL', 'MANUAL_PAID'].includes(payment?.type))
+            ||
+            ((typeof(payment?.brand) !== 'string') || !['BANK_TRANSFER', 'CHECK', 'OTHER'].includes(payment?.brand)) // must be filled
+            ||
+            (payment?.identifier !== null) // must be null
+            ||
+            ((typeof(payment?.amount) !== 'number') || (payment?.amount < 0) || !isFinite(payment?.amount)) // the amount must be finite & non_negative
+            ||
+            ((typeof(payment?.fee) !== 'number') || (payment?.fee < 0) || !isFinite(payment?.fee)) // the fee must be finite & non_negative
         )
     ) {
         return NextResponse.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
+    
+    if (
+            (rejectionReason !== undefined)
+            &&
+            (
+                (payment !== undefined) // cannot update payment & update rejectionReason at the same time
+                ||
+                (typeof(rejectionReason) !== 'object')
+            )
+    ) {
+        return NextResponse.json({
+            error: 'Invalid data.',
+        }, { status: 400 }); // handled with error
+    } // if
+    
     const order = await prisma.order.findUnique({
         where  : {
             id : id,
@@ -371,7 +396,7 @@ You do not have the privilege to modify the order's status.`
 You do not have the privilege to modify the order's shippingAddress.`
         }, { status: 403 }); // handled with error: forbidden
         
-        if (payment !== undefined) {
+        if ((payment !== undefined) || (rejectionReason !== undefined)) {
             const {payment: {type: currentPaymentType}} = await prisma.order.findUnique({
                 where  : {
                     id : id,
@@ -402,7 +427,42 @@ You do not have the privilege to modify the payment of the order.`
     
     //#region save changes
     try {
-        const [orderDetail] = await prisma.$transaction([
+        const [paymentConfirmationDetail, orderDetail] = await prisma.$transaction([
+            (
+                (payment?.type === 'MANUAL_PAID')
+                ? prisma.paymentConfirmation.updateMany({
+                    where  : {
+                        orderId : id,
+                        OR : [
+                            { reviewedAt      : { equals: null } }, // never approved or rejected
+                            { rejectionReason : { not   : null } }, // has been reviewed as rejected (prevents to approve the *already_approved_payment_confirmation*)
+                        ],
+                    },
+                    data: {
+                        reviewedAt      : new Date(), // the approval date
+                        rejectionReason : null,       // remove because it's approved now
+                    },
+                })
+                : (
+                    rejectionReason
+                    ? prisma.paymentConfirmation.updateMany({
+                        where  : {
+                            orderId : id,
+                            reviewedAt      : { equals: null }, // never approved or rejected
+                        },
+                        data: {
+                            reviewedAt      : new Date(),      // the rejection date
+                            rejectionReason : rejectionReason, // set the rejection reason
+                        },
+                    })
+                    : prisma.paymentConfirmation.updateMany({
+                        where : {
+                            orderId : id,
+                        },
+                        data : {},
+                    })
+                )
+            ),
             prisma.order.update({
                 where  : {
                     id : id,
@@ -483,23 +543,6 @@ You do not have the privilege to modify the payment of the order.`
                     },
                 },
             }),
-            ...(
-                (payment?.type === 'MANUAL_PAID')
-                ? [prisma.paymentConfirmation.updateMany({
-                    where  : {
-                        orderId : id,
-                        OR : [
-                            { reviewedAt      : { equals: null } }, // never approved or rejected
-                            { rejectionReason : { not   : null } }, // has been reviewed as rejected (prevents to approve the *already_approved_payment_confirmation*)
-                        ],
-                    },
-                    data: {
-                        reviewedAt      : new Date(), // the approval date
-                        rejectionReason : null,       // remove because it's approved now
-                    },
-                })]
-                : []
-            ),
         ]);
         
         

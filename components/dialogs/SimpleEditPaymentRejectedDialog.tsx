@@ -52,17 +52,16 @@ export const SimpleEditPaymentRejectedDialog = (props: SimpleEditPaymentRejected
         return (model[edit]?.rejectionReason ?? null) as WysiwygEditorState|null;
     });
     const handleUpdate       = useEvent<UpdateHandler<WysiwygEditorState|null, OrderDetailWithOptions, 'paymentConfirmation'>>(async (value, edit, model) => {
-        console.log('update! ', value);
-        //await updateOrder({
-        //    id     : model.id,
-        //    
-        //    [edit] : {
-        //        rejectionReason : value as Prisma.JsonValue,
-        //    },
-        //    
-        //    //@ts-ignore
-        //    sendConfirmationEmail : true,
-        //}).unwrap();
+        await updateOrder({
+            id     : model.id,
+            
+            [edit] : {
+                rejectionReason : value as Prisma.JsonValue,
+            },
+            
+            //@ts-ignore
+            sendConfirmationEmail : true,
+        }).unwrap();
     });
     
     
