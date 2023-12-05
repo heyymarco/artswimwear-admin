@@ -7,9 +7,12 @@ import {
 
 
 export interface BusinessConfig {
-    name     : string
-    url      : string
-    payment ?: React.ReactNode
+    name : string
+    url  : string
+}
+export interface PaymentConfig {
+    bank            ?: React.ReactNode
+    confirmationUrl  : string
 }
 export interface EmailConfig {
     host     : string
@@ -24,7 +27,8 @@ export interface EmailConfig {
 }
 export interface CheckoutConfig {
     business : BusinessConfig
-    emails : {
+    payment  : PaymentConfig
+    emails   : {
         checkout  : EmailConfig
         shipping  : EmailConfig
         completed : EmailConfig

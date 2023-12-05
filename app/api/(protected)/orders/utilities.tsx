@@ -17,6 +17,7 @@ import {
 // models:
 import type {
     Customer,
+    PaymentConfirmation,
 }                           from '@prisma/client'
 
 // apis:
@@ -25,6 +26,11 @@ import type {
 }                           from '@/app/api/(protected)/countries/route'
 
 // templates:
+import {
+    // react components:
+    BusinessContextProviderProps,
+    BusinessContextProvider,
+}                           from '@/components/Checkout/templates/businessDataContext'
 import {
     // types:
     OrderAndData,
@@ -37,9 +43,9 @@ import {
 }                           from '@/components/Checkout/templates/orderDataContext'
 import {
     // react components:
-    BusinessContextProviderProps,
-    BusinessContextProvider,
-}                           from '@/components/Checkout/templates/businessDataContext'
+    PaymentContextProviderProps,
+    PaymentContextProvider,
+}                           from '@/components/Checkout/templates/paymentDataContext'
 
 // ORMs:
 import {
@@ -67,7 +73,7 @@ import {
 
 
 
-const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof prisma.$transaction>[0]>[0], orderId : string): Promise<(OrderAndData & { customer: Customer|null })|null> => {
+const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof prisma.$transaction>[0]>[0], orderId : string): Promise<(OrderAndData & { customer: Customer|null, paymentConfirmation: Pick<PaymentConfirmation, 'rejectionReason'>|null })|null> => {
     const newOrder = await prismaTransaction.order.findUnique({
         where   : {
             orderId : orderId,
@@ -158,6 +164,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
     if (!newOrder) return;
     const {
         customer,
+        paymentConfirmation,
     ...orderAndData} = newOrder;
     if (!customer) return;
     
@@ -195,25 +202,31 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
     try {
         const {
             business,
+            payment,
         } = checkoutConfig;
         
         
         
         const { renderToStaticMarkup } = await import('react-dom/server');
+        const businessContextProviderProps  : BusinessContextProviderProps = {
+            // data:
+            model : business,
+        };
         const orderDataContextProviderProps : OrderDataContextProviderProps = {
             // data:
-            order               : orderAndData,
-            customer            : customer,
-            isPaid              : true,
+            order                : orderAndData,
+            customer             : customer,
+            paymentConfirmation  : paymentConfirmation,
+            isPaid               : true,
             
             
             
             // relation data:
-            countryList         : countryList,
+            countryList          : countryList,
         };
-        const businessContextProviderProps  : BusinessContextProviderProps = {
+        const paymentContextProviderProps  : PaymentContextProviderProps = {
             // data:
-            model : business,
+            model : payment,
         };
         
         
@@ -233,18 +246,22 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
                 from        : emailConfig.from,
                 to          : customer.email,
                 subject     : renderToStaticMarkup(
-                    <OrderDataContextProvider {...orderDataContextProviderProps}>
-                        <BusinessContextProvider {...businessContextProviderProps}>
-                            {emailConfig.subject}
-                        </BusinessContextProvider>
-                    </OrderDataContextProvider>
+                    <BusinessContextProvider {...businessContextProviderProps}>
+                        <OrderDataContextProvider {...orderDataContextProviderProps}>
+                            <PaymentContextProvider {...paymentContextProviderProps}>
+                                {emailConfig.subject}
+                            </PaymentContextProvider>
+                        </OrderDataContextProvider>
+                    </BusinessContextProvider>
                 ).replace(/[\r\n\t]+/g, ' ').trim(),
                 html        : renderToStaticMarkup(
-                    <OrderDataContextProvider {...orderDataContextProviderProps}>
-                        <BusinessContextProvider {...businessContextProviderProps}>
-                            {emailConfig.message}
-                        </BusinessContextProvider>
-                    </OrderDataContextProvider>
+                    <BusinessContextProvider {...businessContextProviderProps}>
+                        <OrderDataContextProvider {...orderDataContextProviderProps}>
+                            <PaymentContextProvider {...paymentContextProviderProps}>
+                                {emailConfig.message}
+                            </PaymentContextProvider>
+                        </OrderDataContextProvider>
+                    </BusinessContextProvider>
                 ),
                 attachments : (
                     newOrderItems

@@ -63,10 +63,6 @@ import {
     // react components:
     IfNotPhysicalProduct,
 }                           from '@/components/Checkout/templates/IfNotPhysicalProduct'
-import {
-    // react components:
-    PaymentRejectionReason,
-}                           from '@/components/Checkout/templates/PaymentRejectionReason'
 
 // configs:
 import type {
@@ -80,7 +76,9 @@ export const checkoutConfig : CheckoutConfig = {
     business : {
         name    : process.env.BUSINESS_NAME ?? '',
         url     : process.env.BUSINESS_URL  ?? '',
-        payment : <article>
+    },
+    payment  : {
+        bank            : <article>
             <table style={{...styles.tableReset, ...styles.selfCenterHorz}}><tbody><tr><td>
                 <table style={styles.tableInfoFill}>
                     <thead>
@@ -140,9 +138,10 @@ export const checkoutConfig : CheckoutConfig = {
                     </tbody>
                 </table>
             </td></tr></tbody></table>
-        </article>
+        </article>,
+        confirmationUrl : '/checkout/payment-confirmation',
     },
-    emails : {
+    emails   : {
         checkout  : {
             host     : process.env.EMAILS_CHECKOUT_HOST     ?? '',
             port     : Number.parseInt(process.env.EMAILS_CHECKOUT_PORT ?? '465'),
@@ -285,7 +284,7 @@ export const checkoutConfig : CheckoutConfig = {
                             <Order.TotalValue />
                         </p>
                         
-                        <Business.Payment />
+                        <Payment.Bank />
                         
                         <p
                             // styles:
@@ -323,7 +322,7 @@ export const checkoutConfig : CheckoutConfig = {
                         >
                             After you make payment, please confirm your payment via this link:
                             <br />
-                            <Business.Url />/payment-confirmation?orderId=<Order.Id />
+                            <Payment.ConfirmationLink />
                         </p>
                     </section>
                 </IfNotPaid>
@@ -889,7 +888,7 @@ export const checkoutConfig : CheckoutConfig = {
                     <p>
                         Reason:
                         <br />
-                        <PaymentRejectionReason />
+                        <Payment.ConfirmationRejection />
                     </p>
                 </section>
                 
@@ -947,7 +946,7 @@ export const checkoutConfig : CheckoutConfig = {
                         <Order.TotalValue />
                     </p>
                     
-                    <Business.Payment />
+                    <Payment.Bank />
                     
                     <p
                         // styles:
@@ -985,7 +984,7 @@ export const checkoutConfig : CheckoutConfig = {
                     >
                         After you make payment, please confirm your payment via this link:
                         <br />
-                        <Business.Url />/payment-confirmation?orderId=<Order.Id />
+                        <Payment.ConfirmationLink />
                     </p>
                 </section>
                 
