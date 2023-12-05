@@ -73,7 +73,7 @@ import {
 
 
 
-const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof prisma.$transaction>[0]>[0], orderId : string): Promise<(OrderAndData & { customer: Customer|null, paymentConfirmation: Pick<PaymentConfirmation, 'rejectionReason'>|null })|null> => {
+const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof prisma.$transaction>[0]>[0], orderId : string): Promise<(OrderAndData & { customer: Customer|null, paymentConfirmation: Pick<PaymentConfirmation, 'token'|'rejectionReason'>|null })|null> => {
     const newOrder = await prismaTransaction.order.findUnique({
         where   : {
             orderId : orderId,
@@ -111,6 +111,7 @@ const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof p
             customer : true,
             paymentConfirmation : {
                 select : {
+                    token           : true,
                     rejectionReason : true,
                 },
             },
