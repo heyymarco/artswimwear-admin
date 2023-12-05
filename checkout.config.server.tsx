@@ -63,6 +63,10 @@ import {
     // react components:
     IfNotPhysicalProduct,
 }                           from '@/components/Checkout/templates/IfNotPhysicalProduct'
+import {
+    // react components:
+    PaymentRejectionReason,
+}                           from '@/components/Checkout/templates/PaymentRejectionReason'
 
 // configs:
 import type {
@@ -880,6 +884,12 @@ export const checkoutConfig : CheckoutConfig = {
                         We are sorry, your payment confirmation was <strong>rejected</strong> because the information you submitted was invalid.
                         <br />
                         But don&apos;t worry, you can <strong>resend</strong> it again. We will check your payment confirmation again.
+                    </p>
+                    
+                    <p>
+                        Reason:
+                        <br />
+                        <PaymentRejectionReason />
                     </p>
                 </section>
                 

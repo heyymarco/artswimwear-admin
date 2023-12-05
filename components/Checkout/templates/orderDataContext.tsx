@@ -13,8 +13,9 @@ import type {
 import type {
     Product,
     Customer,
-    OrdersOnProducts,
+    PaymentConfirmation,
     Order,
+    OrdersOnProducts,
 }                           from '@prisma/client'
 
 // stores:
@@ -50,29 +51,30 @@ export type OrderItemsAndData = Pick<OrdersOnProducts, 'price'|'quantity'> & {
     product : ProductData|null
 }
 export type OrderAndData = Order & {
-    items             : OrderItemsAndData[]
-    shippingProvider  : MatchingShipping|null
+    items                : OrderItemsAndData[]
+    shippingProvider     : MatchingShipping|null
+    paymentConfirmation  : Pick<PaymentConfirmation, 'rejectionReason'>|null
 }
 export interface OrderDataApi {
     // data:
-    order             : OrderAndData
-    customer          : Omit<Customer, 'id'|'createdAt'|'updatedAt'>|null
-    isPaid            : boolean
+    order                : OrderAndData
+    customer             : Omit<Customer, 'id'|'createdAt'|'updatedAt'>|null
+    isPaid               : boolean
     
     
     
     // relation data:
-    countryList      ?: EntityState<CountryPreview>|undefined
+    countryList          : EntityState<CountryPreview>|undefined
 }
 const OrderDataContext = createContext<OrderDataApi>({
-    order             : undefined as any,
-    customer          : null,
-    isPaid            : false,
+    order                : undefined as any,
+    customer             : null,
+    isPaid               : false,
     
     
     
     // relation data:
-    countryList       : undefined,
+    countryList          : undefined,
 });
 
 
@@ -87,14 +89,14 @@ export const useOrderDataContext = () => {
 // react components:
 export interface OrderDataContextProviderProps {
     // data:
-    order             : OrderAndData
-    customer          : Omit<Customer, 'id'|'createdAt'|'updatedAt'>|null
-    isPaid            : boolean
+    order               : OrderAndData
+    customer            : Omit<Customer, 'id'|'createdAt'|'updatedAt'>|null
+    isPaid              : boolean
     
     
     
     // relation data:
-    countryList      ?: EntityState<CountryPreview>|undefined
+    countryList         : EntityState<CountryPreview>|undefined
 }
 export const OrderDataContextProvider = (props: React.PropsWithChildren<OrderDataContextProviderProps>): JSX.Element|null => {
     // jsx:

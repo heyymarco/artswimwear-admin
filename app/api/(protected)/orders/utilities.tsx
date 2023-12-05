@@ -103,6 +103,11 @@ const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof p
                 },
             },
             customer : true,
+            paymentConfirmation : {
+                select : {
+                    rejectionReason : true,
+                },
+            },
         },
     });
     if (!newOrder) return null;
@@ -197,14 +202,14 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
         const { renderToStaticMarkup } = await import('react-dom/server');
         const orderDataContextProviderProps : OrderDataContextProviderProps = {
             // data:
-            order       : orderAndData,
-            customer    : customer,
-            isPaid      : true,
+            order               : orderAndData,
+            customer            : customer,
+            isPaid              : true,
             
             
             
             // relation data:
-            countryList : countryList,
+            countryList         : countryList,
         };
         const businessContextProviderProps  : BusinessContextProviderProps = {
             // data:
