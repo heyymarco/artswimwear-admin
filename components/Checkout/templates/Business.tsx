@@ -34,12 +34,31 @@ const BusinessUrl = (): React.ReactNode => {
         // data:
         model,
     } = useBusinessContext();
+    const url = model?.url;
     
     
     
     // jsx:
     return (
-        model?.url || null
+        url || null
+    );
+};
+const BusinessLink = (): React.ReactNode => {
+    // contexts:
+    const {
+        // data:
+        model,
+    } = useBusinessContext();
+    const url = model?.url;
+    
+    
+    
+    // jsx:
+    if (!url) return null;
+    return (
+        <a href={url}>
+            {url}
+        </a>
     );
 };
 const BusinessPayment = (): React.ReactNode => {
@@ -60,5 +79,6 @@ const BusinessPayment = (): React.ReactNode => {
 export const Business = {
     Name    : BusinessName,
     Url     : BusinessUrl,
+    Link    : BusinessLink,
     Payment : BusinessPayment,
 };
