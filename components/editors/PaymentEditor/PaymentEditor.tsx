@@ -230,26 +230,60 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
      * value state is based on [controllable value] (if set) and fallback to [uncontrollable value]
      */
     const valueFn : PaymentValue = (value !== undefined) ? value /*controllable*/ : valueDn /*uncontrollable*/;
-    const [isInitiallyUnpaid                              ] = useState<boolean    >(valueFn.type === 'MANUAL');
-    const [brand                , setBrand                ] = useState<string|null>((isInitiallyUnpaid ? null : valueFn.brand ) || null   ); // normalize to null if empty_string
-    const [amount               , setAmount               ] = useState<number|null>((isInitiallyUnpaid ? null : valueFn.amount)           ); // perserve zero
-    const [fee                  , setFee                  ] = useState<number|null>((isInitiallyUnpaid ? null : valueFn.fee   ) || null   ); // normalize to null if zero
-    const [sendConfirmationEmail, setSendConfirmationEmail] = useState<boolean    >(isInitiallyUnpaid); // default to checked if was unpaid, otherwise default to unchecked
+    const {
+        brand,
+        amount,
+        fee,
+        sendConfirmationEmail,
+    } = valueFn;
+    // const [isInitiallyUnpaid                              ] = useState<boolean    >(valueFn.type === 'MANUAL');
+    // const [brand                , setBrand                ] = useState<string|null>((isInitiallyUnpaid ? null : valueFn.brand ) || null   ); // normalize to null if empty_string
+    // const [amount               , setAmount               ] = useState<number|null>((isInitiallyUnpaid ? null : valueFn.amount)           ); // perserve zero
+    // const [fee                  , setFee                  ] = useState<number|null>((isInitiallyUnpaid ? null : valueFn.fee   ) || null   ); // normalize to null if zero
+    // const [sendConfirmationEmail, setSendConfirmationEmail] = useState<boolean    >(isInitiallyUnpaid); // default to checked if was unpaid, otherwise default to unchecked
     
     
     
     // handlers:
     const handleProviderChange          = useEvent((newBrand: string) => {
-        setBrand(newBrand);
+        const newValue : PaymentValue = {
+            ...valueFn,
+            type                  : 'MANUAL_PAID',
+            
+            brand                 : newBrand,
+        };
+        setValueDn(newValue);
+        triggerValueChange(newValue);
     });
     const handleAmountChange            = useEvent<EditorChangeEventHandler<number|null>>((newAmount) => {
-        setAmount(newAmount);
+        const newValue : PaymentValue = {
+            ...valueFn,
+            type                  : 'MANUAL_PAID',
+            
+            amount                : newAmount,
+        };
+        setValueDn(newValue);
+        triggerValueChange(newValue);
     });
     const handleFeeChange               = useEvent<EditorChangeEventHandler<number|null>>((newFee) => {
-        setFee(newFee);
+        const newValue : PaymentValue = {
+            ...valueFn,
+            type                  : 'MANUAL_PAID',
+            
+            fee                   : newFee,
+        };
+        setValueDn(newValue);
+        triggerValueChange(newValue);
     });
     const handleConfirmationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active: newConfirmation}) => {
-        setSendConfirmationEmail(newConfirmation);
+        const newValue : PaymentValue = {
+            ...valueFn,
+            type                  : 'MANUAL_PAID',
+            
+            sendConfirmationEmail : newConfirmation,
+        };
+        setValueDn(newValue);
+        triggerValueChange(newValue);
     });
     
     const handleAmountFocus             = useEvent<React.FocusEventHandler<Element>>((event) => {
@@ -308,43 +342,6 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
             clearTimeout(cancelWarning);
         };
     }, [amount, expectedAmount]);
-    
-    useEffect(() => {
-        // conditions:
-        if (
-            (valueFn.brand                 === brand                )
-            &&
-            (valueFn.amount                === amount               )
-            &&
-            (valueFn.fee                   === fee                  )
-            &&
-            (valueFn.sendConfirmationEmail === sendConfirmationEmail)
-        ) {
-            // no diff detected => ignore
-            return;
-        } // if
-        
-        
-        
-        // update:
-        const newValue : PaymentValue = {
-            ...valueFn,
-            type : 'MANUAL_PAID',
-            brand,
-            amount,
-            fee,
-            sendConfirmationEmail,
-        };
-        setValueDn(newValue);
-        triggerValueChange(newValue);
-    }, [
-        valueFn,
-        
-        brand,
-        amount,
-        fee,
-        sendConfirmationEmail,
-    ]);
     
     
     

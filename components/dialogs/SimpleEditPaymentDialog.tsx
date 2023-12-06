@@ -44,7 +44,16 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
     
     // handlers:
     const handleInitialValue = useEvent<InitialValueHandler<PaymentValue, OrderDetailWithOptions, 'payment'>>((edit, model) => {
-        return model[edit];
+        const value = model[edit];
+        const isInitiallyUnpaid = (value.type === 'MANUAL');
+        return {
+            ...value,
+            
+            brand                 : ((isInitiallyUnpaid ? null : value.brand ) || null), // normalize to null if empty_string
+            amount                : ((isInitiallyUnpaid ? null : value.amount)        ), // perserve zero
+            fee                   : ((isInitiallyUnpaid ? null : value.fee   ) || null), // normalize to null if zero
+            sendConfirmationEmail :   isInitiallyUnpaid,
+        };
     });
     const handleUpdate       = useEvent<UpdateHandler<PaymentValue, OrderDetailWithOptions, 'payment'>>(async (value, edit, model) => {
         const {
