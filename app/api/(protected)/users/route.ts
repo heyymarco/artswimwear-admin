@@ -333,11 +333,11 @@ You do not have the privilege to modify the user's role.`
             ? await prisma.user.create({
                 data   : {
                     ...data,
-                    credentials : {
+                    credentials : (username !== undefined) ? {
                         create : {
                             username,
                         },
-                    },
+                    } : undefined,
                 },
                 select : select,
             })
@@ -347,7 +347,7 @@ You do not have the privilege to modify the user's role.`
                 },
                 data   : {
                     ...data,
-                    credentials : {
+                    credentials : (username !== undefined) ? {
                         upsert : {
                             update : {
                                 username,
@@ -356,7 +356,7 @@ You do not have the privilege to modify the user's role.`
                                 username,
                             },
                         },
-                    },
+                    } : undefined,
                 },
                 select : select,
             })
