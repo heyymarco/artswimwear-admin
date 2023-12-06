@@ -434,13 +434,17 @@ You do not have the privilege to modify the payment of the order.`
                     where  : {
                         orderId : id,
                         OR : [
-                            { reviewedAt      : { equals: null } }, // never approved or rejected
-                            { rejectionReason : { not   : null } }, // has been reviewed as rejected (prevents to approve the *already_approved_payment_confirmation*)
+                            { reviewedAt      : { equals : null  } }, // never approved or rejected
+                            { reviewedAt      : { isSet  : false } }, // never approved or rejected
+                            
+                            /* -or- */
+                            
+                            { rejectionReason : { not    : null  } }, // has reviewed as rejected (prevents to approve the *already_approved_payment_confirmation*)
                         ],
                     },
                     data: {
                         reviewedAt      : new Date(), // the approval date
-                        rejectionReason : null,       // remove because it's approved now
+                        rejectionReason : null,       // unset the rejection reason, because it's approved now
                     },
                 })
                 : (
@@ -448,7 +452,11 @@ You do not have the privilege to modify the payment of the order.`
                     ? prisma.paymentConfirmation.updateMany({
                         where  : {
                             orderId : id,
-                            reviewedAt      : { equals: null }, // never approved or rejected (prevents to reject the *already_rejected/approved_payment_confirmation*)
+                            
+                            OR : [
+                                { reviewedAt      : { equals : null  } }, // never approved or rejected (prevents to reject the *already_rejected/approved_payment_confirmation*)
+                                { reviewedAt      : { isSet  : false } }, // never approved or rejected (prevents to reject the *already_rejected/approved_payment_confirmation*)
+                            ],
                         },
                         data: {
                             reviewedAt      : new Date(),      // the rejection date
@@ -457,9 +465,9 @@ You do not have the privilege to modify the payment of the order.`
                     })
                     : prisma.paymentConfirmation.updateMany({
                         where : {
-                            orderId : id,
                             AND : [
-                                { orderId : { not : id } }, // never match, just for dummy transaction
+                                { orderId : { equals : id } }, // never match, just for dummy transaction
+                                { orderId : { not    : id } }, // never match, just for dummy transaction
                             ],
                         },
                         data : {},
