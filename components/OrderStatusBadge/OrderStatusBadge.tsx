@@ -76,8 +76,8 @@ const OrderStatusBadge = (props: OrderStatusBadgeProps): JSX.Element|null => {
         // handlers:
         onClick,
     ...restBadgeProps} = props;
-    const preferedTheme = orderStatusTheme(orderStatus, paymentType, reviewedAt);
-    const hasAlternateTheme = ((preferedTheme === 'warning') || (preferedTheme === 'secondary'));
+    const preferredTheme = orderStatusTheme(orderStatus, paymentType, reviewedAt);
+    const hasAlternateTheme = ((preferredTheme === 'warning') || (preferredTheme === 'secondary'));
     
     
     
@@ -101,7 +101,7 @@ const OrderStatusBadge = (props: OrderStatusBadgeProps): JSX.Element|null => {
             
             // variants:
             size={props.size ?? 'sm'}
-            theme={props.theme ?? preferedTheme}
+            theme={props.theme ?? preferredTheme}
             
             
             
@@ -115,7 +115,7 @@ const OrderStatusBadge = (props: OrderStatusBadgeProps): JSX.Element|null => {
                     
                     // variants:
                     size='sm'
-                    theme={hasAlternateTheme ? 'dark' : preferedTheme}
+                    theme={hasAlternateTheme ? 'dark' : preferredTheme}
                     mild={hasAlternateTheme ? true : undefined}
                 />
             }

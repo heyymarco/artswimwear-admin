@@ -276,7 +276,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         country        : shippingCountry,
     } = shippingAddressDetail ?? {};
     
-    const [preferedTimezone, setPreferedTimezone] = useState<number>(() => paymentConfirmation?.preferedTimezone ?? (0 - (new Date()).getTimezoneOffset()));
+    const [preferredTimezone, setPreferredTimezone] = useState<number>(() => paymentConfirmation?.preferredTimezone ?? (0 - (new Date()).getTimezoneOffset()));
     
     const shippingProvider = shippingList?.entities?.[shippingProviderId ?? ''];
     
@@ -841,7 +841,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                                 {
                                                     paymentConfirmation.reviewedAt
                                                     ? <>
-                                                        <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.reviewedAt).valueOf() + (preferedTimezone * 60 * 1000))).toISOString().slice(0, 16)} />
+                                                        <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.reviewedAt).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} />
                                                         <TimezoneEditor
                                                             // variants:
                                                             theme='primary'
@@ -850,8 +850,8 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                                             
                                                             
                                                             // values:
-                                                            value={preferedTimezone}
-                                                            onChange={setPreferedTimezone}
+                                                            value={preferredTimezone}
+                                                            onChange={setPreferredTimezone}
                                                         />
                                                     </>
                                                     : <span className='txt-sec'>not yet reviewed</span>}
@@ -862,7 +862,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                                 Updated At
                                             </td>
                                             <td>
-                                                {!!paymentConfirmation.updatedAt && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.updatedAt).valueOf() + (preferedTimezone * 60 * 1000))).toISOString().slice(0, 16)} />}
+                                                {!!paymentConfirmation.updatedAt && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.updatedAt).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} />}
                                                 <TimezoneEditor
                                                     // variants:
                                                     theme='primary'
@@ -871,8 +871,8 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                                     
                                                     
                                                     // values:
-                                                    value={preferedTimezone}
-                                                    onChange={setPreferedTimezone}
+                                                    value={preferredTimezone}
+                                                    onChange={setPreferredTimezone}
                                                 />
                                             </td>
                                         </tr>
@@ -899,7 +899,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                                 Payment Date
                                             </td>
                                             <td>
-                                                {!!paymentConfirmation.paymentDate && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.paymentDate).valueOf() + (preferedTimezone * 60 * 1000))).toISOString().slice(0, 16)} />}
+                                                {!!paymentConfirmation.paymentDate && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.paymentDate).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} />}
                                                 <TimezoneEditor
                                                     // variants:
                                                     theme='primary'
@@ -908,8 +908,8 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                                     
                                                     
                                                     // values:
-                                                    value={preferedTimezone}
-                                                    onChange={setPreferedTimezone}
+                                                    value={preferredTimezone}
+                                                    onChange={setPreferredTimezone}
                                                 />
                                             </td>
                                         </tr>

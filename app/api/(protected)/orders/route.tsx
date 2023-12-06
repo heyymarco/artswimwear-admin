@@ -208,19 +208,19 @@ You do not have the privilege to view the orders.`
                 
                 paymentConfirmation    : {
                     select : {
-                        updatedAt        : true,
-                        reviewedAt       : true,
+                        updatedAt         : true,
+                        reviewedAt        : true,
                         
-                        currency         : true,
-                        amount           : true,
-                        payerName        : true,
-                        paymentDate      : true,
-                        preferedTimezone : true,
+                        currency          : true,
+                        amount            : true,
+                        payerName         : true,
+                        paymentDate       : true,
+                        preferredTimezone : true,
                         
-                        originatingBank  : true,
-                        destinationBank  : true,
+                        originatingBank   : true,
+                        destinationBank   : true,
                         
-                        rejectionReason  : true,
+                        rejectionReason   : true,
                     },
                 },
             },
@@ -537,19 +537,19 @@ You do not have the privilege to modify the payment of the order.`
                     
                     paymentConfirmation    : {
                         select : {
-                            updatedAt        : true,
-                            reviewedAt       : true,
+                            updatedAt         : true,
+                            reviewedAt        : true,
                             
-                            currency         : true,
-                            amount           : true,
-                            payerName        : true,
-                            paymentDate      : true,
-                            preferedTimezone : true,
+                            currency          : true,
+                            amount            : true,
+                            payerName         : true,
+                            paymentDate       : true,
+                            preferredTimezone : true,
                             
-                            originatingBank  : true,
-                            destinationBank  : true,
+                            originatingBank   : true,
+                            destinationBank   : true,
                             
-                            rejectionReason  : true,
+                            rejectionReason   : true,
                         },
                     },
                 },
