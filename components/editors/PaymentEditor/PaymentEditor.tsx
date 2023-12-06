@@ -238,6 +238,29 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     
     
     
+    // handlers:
+    const handleProviderChange          = useEvent((newBrand: string) => {
+        setBrand(newBrand);
+    });
+    const handleAmountChange            = useEvent<EditorChangeEventHandler<number|null>>((newAmount) => {
+        setAmount(newAmount);
+    });
+    const handleFeeChange               = useEvent<EditorChangeEventHandler<number|null>>((newFee) => {
+        setFee(newFee);
+    });
+    const handleConfirmationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active: newConfirmation}) => {
+        setSendConfirmationEmail(newConfirmation);
+    });
+    
+    const handleAmountFocus             = useEvent<React.FocusEventHandler<Element>>((event) => {
+        setAmountFocused(true);
+    });
+    const handleAmountBlur              = useEvent<React.FocusEventHandler<Element>>((event) => {
+        setAmountFocused(false);
+    });
+    
+    
+    
     // events:
     /*
           controllable : setValue(new) => update state(old => old) => trigger Event(new)
@@ -248,49 +271,6 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
             // fire `onChange` react event:
             onChange(value);
         };
-    });
-    
-    
-    
-    // callbacks:
-    const updateValue = useEvent((): void => {
-        // update:
-        const newValue : PaymentValue = {
-            ...valueFn,
-            brand,
-            amount,
-            fee,
-            sendConfirmationEmail,
-        };
-        setValueDn(newValue);
-        triggerValueChange(newValue);
-    }); // a stable callback, the `setValue` guaranteed to never change
-    
-    
-    
-    // handlers:
-    const handleProviderChange          = useEvent((newBrand: string) => {
-        setBrand(newBrand);
-        updateValue();
-    });
-    const handleAmountChange            = useEvent<EditorChangeEventHandler<number|null>>((newAmount) => {
-        setAmount(newAmount);
-        updateValue();
-    });
-    const handleFeeChange               = useEvent<EditorChangeEventHandler<number|null>>((newFee) => {
-        setFee(newFee);
-        updateValue();
-    });
-    const handleConfirmationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active: newConfirmation}) => {
-        setSendConfirmationEmail(newConfirmation);
-        updateValue();
-    });
-    
-    const handleAmountFocus             = useEvent<React.FocusEventHandler<Element>>((event) => {
-        setAmountFocused(true);
-    });
-    const handleAmountBlur              = useEvent<React.FocusEventHandler<Element>>((event) => {
-        setAmountFocused(false);
     });
     
     
@@ -328,6 +308,43 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
             clearTimeout(cancelWarning);
         };
     }, [amount, expectedAmount]);
+    
+    useEffect(() => {
+        // conditions:
+        if (
+            (valueFn.brand                 === brand                )
+            &&
+            (valueFn.amount                === amount               )
+            &&
+            (valueFn.fee                   === fee                  )
+            &&
+            (valueFn.sendConfirmationEmail === sendConfirmationEmail)
+        ) {
+            // no diff detected => ignore
+            return;
+        } // if
+        
+        
+        
+        // update:
+        const newValue : PaymentValue = {
+            ...valueFn,
+            type : 'MANUAL_PAID',
+            brand,
+            amount,
+            fee,
+            sendConfirmationEmail,
+        };
+        setValueDn(newValue);
+        triggerValueChange(newValue);
+    }, [
+        valueFn,
+        
+        brand,
+        amount,
+        fee,
+        sendConfirmationEmail,
+    ]);
     
     
     
