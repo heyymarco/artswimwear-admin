@@ -44,8 +44,10 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
     
     // handlers:
     const handleInitialValue = useEvent<InitialValueHandler<OrderOnTheWayValue, OrderDetailWithOptions, 'shippingNumber'>>((edit, model) => {
+        const shippingNumber = model[edit];
         return {
-            shippingNumber : model[edit],
+            shippingNumber        : shippingNumber?.trim() || null, // normalize to null if empty_string or only_spaces
+            sendConfirmationEmail : true,
         };
     });
     const handleUpdate       = useEvent<UpdateHandler<OrderOnTheWayValue, OrderDetailWithOptions, 'shippingNumber'>>(async (value, edit, model) => {

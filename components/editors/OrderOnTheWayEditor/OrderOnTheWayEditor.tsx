@@ -163,8 +163,10 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
      * value state is based on [controllable value] (if set) and fallback to [uncontrollable value]
      */
     const valueFn : OrderOnTheWayValue = (value !== undefined) ? value /*controllable*/ : valueDn /*uncontrollable*/;
-    const shippingNumber         = valueFn.shippingNumber?.trim() || null; // normalize to null if empty_string or only_spaces
-    const sendConfirmationEmail  = valueFn.sendConfirmationEmail ?? emptyOrderOnTheWayValue.sendConfirmationEmail;
+    const {
+        shippingNumber,
+        sendConfirmationEmail,
+    } = valueFn;
     
     
     
@@ -179,30 +181,31 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
             onChange(value);
         };
     });
-    
-    
-    
-    // callbacks:
-    const setValue = useEvent<React.Dispatch<React.SetStateAction<OrderOnTheWayValue>>>((value) => {
-        // conditions:
-        const newValue = (typeof(value) === 'function') ? value(valueFn) : value;
-        if (newValue === valueFn) return; // still the same => nothing to update
+    const setValue           = useEvent((newValue: Partial<OrderOnTheWayValue>) => {
+        const combinedValue : OrderOnTheWayValue = {
+            ...valueFn,
+            ...newValue,
+        };
         
         
         
         // update:
-        setValueDn(newValue);
-        triggerValueChange(newValue);
-    }); // a stable callback, the `setValue` guaranteed to never change
+        setValueDn(combinedValue);
+        triggerValueChange(combinedValue);
+    });
     
     
     
     // handlers:
-    const handleShippingNumberChange    = useEvent<EditorChangeEventHandler<string|null>>((value) => {
-        setValue((current) => ({ ...current, shippingNumber        : value  }));
+    const handleShippingNumberChange    = useEvent<EditorChangeEventHandler<string|null>>((newShippingNumber) => {
+        setValue({
+            shippingNumber        : newShippingNumber,
+        });
     });
-    const handleConfirmationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active}) => {
-        setValue((current) => ({ ...current, sendConfirmationEmail : active }));
+    const handleConfirmationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active: newConfirmation}) => {
+        setValue({
+            sendConfirmationEmail : newConfirmation,
+        });
     });
     
     
