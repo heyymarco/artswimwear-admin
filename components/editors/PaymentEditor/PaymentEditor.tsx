@@ -236,54 +236,39 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
         fee,
         sendConfirmationEmail,
     } = valueFn;
-    // const [isInitiallyUnpaid                              ] = useState<boolean    >(valueFn.type === 'MANUAL');
-    // const [brand                , setBrand                ] = useState<string|null>((isInitiallyUnpaid ? null : valueFn.brand ) || null   ); // normalize to null if empty_string
-    // const [amount               , setAmount               ] = useState<number|null>((isInitiallyUnpaid ? null : valueFn.amount)           ); // perserve zero
-    // const [fee                  , setFee                  ] = useState<number|null>((isInitiallyUnpaid ? null : valueFn.fee   ) || null   ); // normalize to null if zero
-    // const [sendConfirmationEmail, setSendConfirmationEmail] = useState<boolean    >(isInitiallyUnpaid); // default to checked if was unpaid, otherwise default to unchecked
     
     
     
     // handlers:
-    const handleProviderChange          = useEvent((newBrand: string) => {
-        const newValue : PaymentValue = {
+    const handleValueChange             = useEvent((newValue: Partial<PaymentValue>) => {
+        const combinedValue : PaymentValue = {
             ...valueFn,
-            type                  : 'MANUAL_PAID',
+            ...newValue,
             
-            brand                 : newBrand,
+            type : 'MANUAL_PAID',
         };
-        setValueDn(newValue);
-        triggerValueChange(newValue);
+        setValueDn(combinedValue);
+        triggerValueChange(combinedValue);
+    });
+    const handleProviderChange          = useEvent((newBrand: string) => {
+        handleValueChange({
+            brand                 : newBrand,
+        });
     });
     const handleAmountChange            = useEvent<EditorChangeEventHandler<number|null>>((newAmount) => {
-        const newValue : PaymentValue = {
-            ...valueFn,
-            type                  : 'MANUAL_PAID',
-            
+        handleValueChange({
             amount                : newAmount,
-        };
-        setValueDn(newValue);
-        triggerValueChange(newValue);
+        });
     });
     const handleFeeChange               = useEvent<EditorChangeEventHandler<number|null>>((newFee) => {
-        const newValue : PaymentValue = {
-            ...valueFn,
-            type                  : 'MANUAL_PAID',
-            
+        handleValueChange({
             fee                   : newFee,
-        };
-        setValueDn(newValue);
-        triggerValueChange(newValue);
+        });
     });
     const handleConfirmationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active: newConfirmation}) => {
-        const newValue : PaymentValue = {
-            ...valueFn,
-            type                  : 'MANUAL_PAID',
-            
+        handleValueChange({
             sendConfirmationEmail : newConfirmation,
-        };
-        setValueDn(newValue);
-        triggerValueChange(newValue);
+        });
     });
     
     const handleAmountFocus             = useEvent<React.FocusEventHandler<Element>>((event) => {
