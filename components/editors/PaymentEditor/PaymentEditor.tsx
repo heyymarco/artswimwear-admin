@@ -240,33 +240,38 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleValueChange             = useEvent((newValue: Partial<PaymentValue>) => {
+    const setValue                      = useEvent((newValue: Partial<PaymentValue>) => {
         const combinedValue : PaymentValue = {
             ...valueFn,
             ...newValue,
             
             type : 'MANUAL_PAID',
         };
+        
+        
+        
+        // update:
         setValueDn(combinedValue);
         triggerValueChange(combinedValue);
     });
+    
     const handleProviderChange          = useEvent((newBrand: string) => {
-        handleValueChange({
+        setValue({
             brand                 : newBrand,
         });
     });
     const handleAmountChange            = useEvent<EditorChangeEventHandler<number|null>>((newAmount) => {
-        handleValueChange({
+        setValue({
             amount                : newAmount,
         });
     });
     const handleFeeChange               = useEvent<EditorChangeEventHandler<number|null>>((newFee) => {
-        handleValueChange({
+        setValue({
             fee                   : newFee,
         });
     });
     const handleConfirmationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active: newConfirmation}) => {
-        handleValueChange({
+        setValue({
             sendConfirmationEmail : newConfirmation,
         });
     });
