@@ -252,7 +252,6 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         shippingAddress    : shippingAddressDetail,
         shippingProviderId : shippingProviderId,
         shippingCost       : totalShippingCosts,
-        shippingNumber,
         
         payment            : {
             type           : paymentType,
@@ -264,6 +263,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         },
         
         paymentConfirmation,
+        shippingTracking,
     } = model ?? { payment: {} };
     const {
         firstName      : shippingFirstName,
@@ -295,7 +295,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleExpandedChange      = useEvent<EventHandler<ModalExpandedChangeEvent>>(({expanded}): void => {
+    const handleExpandedChange       = useEvent<EventHandler<ModalExpandedChangeEvent>>(({expanded}): void => {
         // conditions:
         if (expanded) return; // ignore if expanded
         
@@ -305,14 +305,14 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         setEditMode(null);
     });
     
-    const handleEditShippingAddress = useEvent(() => {
+    const handleEditShippingAddress  = useEvent(() => {
         setEditMode('shippingAddress');
     });
     
-    const handlePrint               = useEvent(() => {
+    const handlePrint                = useEvent(() => {
         setEditMode('printOrder');
     });
-    const handleChangeOrderStatus   = useEvent(async (newOrderStatus: OrderStatus) => {
+    const handleChangeOrderStatus    = useEvent(async (newOrderStatus: OrderStatus) => {
         // conditions:
         if (!model) return; // the model is not exist => nothing to update
         
@@ -325,29 +325,29 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         }).unwrap();
     });
     
-    const handleEditShippingNumber  = useEvent(() => {
+    const handleEditShippingTracking = useEvent(() => {
         setEditMode('onTheWay');
     });
     
-    const handleOrderCompleted      = useEvent(() => {
+    const handleOrderCompleted       = useEvent(() => {
         setEditMode('completed');
     });
     
-    const handleEditTrouble         = useEvent(() => {
+    const handleEditTrouble          = useEvent(() => {
         setEditMode('trouble');
     });
     
-    const handleApprovePayment      = useEvent(() => {
+    const handleApprovePayment       = useEvent(() => {
         setEditMode('payment');
     });
-    const handleRejectPayment       = useEvent(() => {
+    const handleRejectPayment        = useEvent(() => {
         setEditMode('paymentRejected');
     });
-    const handleEditPayment         = useEvent(() => {
+    const handleEditPayment          = useEvent(() => {
         setEditMode('payment');
     });
     
-    const handleExpandedEnd         = useEvent(() => {
+    const handleExpandedEnd          = useEvent(() => {
         setShouldTriggerAutoFocus(true);
     });
     
@@ -555,7 +555,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     // classes:
                                     className={styleSheet.noteBody}
                                 >
-                                    {!shippingNumber && <span
+                                    {!shippingTracking?.shippingCarrier && !shippingTracking?.shippingNumber && <span
                                         // classes:
                                         className={`${styleSheet.noteEmpty} txt-sec`}
                                     >
@@ -565,9 +565,12 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                         // classes:
                                         className={styleSheet.noteContentCenter}
                                     >
-                                        {shippingNumber}
+                                        {!!shippingTracking?.shippingCarrier && <>
+                                            ({shippingTracking.shippingCarrier})&nbsp;
+                                        </>}
+                                        {shippingTracking?.shippingNumber}
                                     </span>
-                                    {!!role?.order_us && <EditButton className={styleSheet.editTrouble} onClick={handleEditShippingNumber} />}
+                                    {!!role?.order_us && <EditButton className={styleSheet.editTrouble} onClick={handleEditShippingTracking} />}
                                 </Content>
                             </Group>
                         </Collapse>
@@ -633,7 +636,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             // handlers:
                             onPrint={handlePrint}
                             
-                            onChangeOnTheWay={handleEditShippingNumber}
+                            onChangeOnTheWay={handleEditShippingTracking}
                             onChangeCompleted={handleOrderCompleted}
                             onChange={handleChangeOrderStatus}
                         />}
@@ -1017,7 +1020,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                 <SimpleEditOrderOnTheWayDialog
                     // data:
                     model={model!}
-                    edit='shippingNumber'
+                    edit='shippingTracking'
                     
                     
                     

@@ -30,6 +30,7 @@ import type {
     Order,
     OrdersOnProducts,
     PaymentConfirmation,
+    ShippingTracking,
 }                           from '@prisma/client'
 
 // ORMs:
@@ -46,6 +47,11 @@ import {
 import {
     sendConfirmationEmail,
 }                           from './utilities'
+
+// others:
+import {
+    customAlphabet,
+}                           from 'nanoid/async'
 
 // configs:
 import type {
@@ -79,6 +85,14 @@ export interface OrderDetail
     >
     
     paymentConfirmation : null|Partial<Omit<PaymentConfirmation,
+        |'id'
+        
+        |'token'
+        
+        |'orderId'
+    >>
+    
+    shippingTracking : null|Partial<Omit<ShippingTracking,
         |'id'
         
         |'token'
@@ -172,41 +186,40 @@ You do not have the privilege to view the orders.`
         prisma.order.count(),
         prisma.order.findMany({
             select : {
-                id                     : true,
+                id                        : true,
                 
-                orderId                : true,
-                orderStatus            : true,
-                orderTrouble           : true,
+                orderId                   : true,
+                orderStatus               : true,
+                orderTrouble              : true,
                 
-                items                  : {
+                items                     : {
                     select: {
-                        productId      : true,
+                        productId         : true,
                         
-                        price          : true,
-                        shippingWeight : true,
-                        quantity       : true,
+                        price             : true,
+                        shippingWeight    : true,
+                        quantity          : true,
                     },
                 },
                 
-                customer               : {
+                customer                  : {
                     select: {
-                        id             : true,
+                        id                : true,
                         
-                        marketingOpt   : true,
+                        marketingOpt      : true,
                         
-                        nickName       : true,
-                        email          : true,
+                        nickName          : true,
+                        email             : true,
                     },
                 },
                 
-                shippingAddress        : true,
-                shippingCost           : true,
-                shippingNumber         : true,
-                shippingProviderId     : true,
+                shippingAddress           : true,
+                shippingCost              : true,
+                shippingProviderId        : true,
                 
-                payment                : true,
+                payment                   : true,
                 
-                paymentConfirmation    : {
+                paymentConfirmation       : {
                     select : {
                         updatedAt         : true,
                         reviewedAt        : true,
@@ -221,6 +234,13 @@ You do not have the privilege to view the orders.`
                         destinationBank   : true,
                         
                         rejectionReason   : true,
+                    },
+                },
+                shippingTracking          : {
+                    select : {
+                        shippingCarrier   : true,
+                        shippingNumber    : true,
+                        preferredTimezone : true,
                     },
                 },
             },
@@ -262,7 +282,6 @@ You do not have the privilege to view the orders.`
         
         shippingAddress,
         shippingCost,
-        shippingNumber,
         shippingProviderId,
         
         billingAddress : optionalBillingAddress,
@@ -270,6 +289,7 @@ You do not have the privilege to view the orders.`
         sendConfirmationEmail : performSendConfirmationEmail = false,
         
         paymentConfirmation,
+        shippingTracking,
     } = body;
     const mergedPayment = {
         ...body.payment,
@@ -281,6 +301,11 @@ You do not have the privilege to view the orders.`
     };
     const payment = Object.keys(mergedPayment).length ? mergedPayment : undefined;
     const rejectionReason = paymentConfirmation?.rejectionReason;
+    const {
+        shippingCarrier,
+        shippingNumber,
+        // preferredTimezone,
+    } = shippingTracking ?? {};
     //#endregion parsing request
     
     
@@ -297,7 +322,12 @@ You do not have the privilege to view the orders.`
         }, { status: 400 }); // handled with error
     } // if
     
-    if ((shippingNumber !== undefined) && (shippingNumber !== null) && typeof(shippingNumber) !== 'string') {
+    if ((shippingCarrier !== undefined) && (shippingCarrier !== null) && ((typeof(shippingCarrier) !== 'string') || (shippingCarrier.length < 1) || (shippingCarrier.length > 50))) {
+        return NextResponse.json({
+            error: 'Invalid data.',
+        }, { status: 400 }); // handled with error
+    } // if
+    if ((shippingNumber !== undefined) && (shippingNumber !== null) && ((typeof(shippingNumber) !== 'string') || (shippingNumber.length < 1) || (shippingNumber.length > 50))) {
         return NextResponse.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
@@ -384,7 +414,7 @@ You do not have the privilege to view the orders.`
 //         }, { status: 403 }); // handled with error: forbidden
     }
     else {
-        if (!session.role?.order_us && ((orderStatus !== undefined) || (orderTrouble !== undefined) || (shippingNumber !== undefined))) return NextResponse.json({ error:
+        if (!session.role?.order_us && ((orderStatus !== undefined) || (orderTrouble !== undefined) || (shippingCarrier !== undefined) || (shippingNumber !== undefined))) return NextResponse.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the order's status.`
@@ -495,47 +525,62 @@ You do not have the privilege to modify the payment of the order.`
                     
                     shippingAddress,
                     shippingCost,
-                    shippingNumber,
                     shippingProviderId,
                     
                     payment,
+                    
+                    shippingTracking : {
+                        upsert : {
+                            update : {
+                                shippingCarrier : shippingCarrier || null, // null if empty_string
+                                shippingNumber  : shippingNumber  || null, // null if empty_string
+                            },
+                            create : {
+                                token           : await (async (): Promise<string> => {
+                                    const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
+                                    return await nanoid();
+                                })(),
+                                shippingCarrier : shippingCarrier || null, // null if empty_string
+                                shippingNumber  : shippingNumber  || null, // null if empty_string
+                            },
+                        },
+                    },
                 },
                 select : {
-                    id                     : true,
+                    id                        : true,
                     
-                    orderId                : true,
-                    orderStatus            : true,
-                    orderTrouble           : true,
+                    orderId                   : true,
+                    orderStatus               : true,
+                    orderTrouble              : true,
                     
-                    items                  : {
+                    items                     : {
                         select: {
-                            productId      : true,
+                            productId         : true,
                             
-                            price          : true,
-                            shippingWeight : true,
-                            quantity       : true,
+                            price             : true,
+                            shippingWeight    : true,
+                            quantity          : true,
                         },
                     },
                     
-                    customer               : {
+                    customer                  : {
                         select: {
-                            id             : true,
+                            id                : true,
                             
-                            marketingOpt   : true,
+                            marketingOpt      : true,
                             
-                            nickName       : true,
-                            email          : true,
+                            nickName          : true,
+                            email             : true,
                         },
                     },
                     
-                    shippingAddress        : true,
-                    shippingCost           : true,
-                    shippingNumber         : true,
-                    shippingProviderId     : true,
+                    shippingAddress           : true,
+                    shippingCost              : true,
+                    shippingProviderId        : true,
                     
-                    payment                : true,
+                    payment                   : true,
                     
-                    paymentConfirmation    : {
+                    paymentConfirmation       : {
                         select : {
                             updatedAt         : true,
                             reviewedAt        : true,
@@ -550,6 +595,14 @@ You do not have the privilege to modify the payment of the order.`
                             destinationBank   : true,
                             
                             rejectionReason   : true,
+                        },
+                    },
+                    
+                    shippingTracking          : {
+                        select : {
+                            shippingCarrier   : true,
+                            shippingNumber    : true,
+                            preferredTimezone : true,
                         },
                     },
                 },

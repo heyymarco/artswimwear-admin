@@ -70,6 +70,7 @@ export const useOrderOnTheWayEditorStyleSheet = dynamicStyleSheet(
 
 // utilities:
 const emptyOrderOnTheWayValue : Required<OrderOnTheWayValue> = {
+    shippingCarrier       : null,
     shippingNumber        : null,
     sendConfirmationEmail : true,
 };
@@ -79,6 +80,7 @@ Object.freeze(emptyOrderOnTheWayValue);
 
 // react components:
 export type OrderOnTheWayValue = {
+    shippingCarrier        : string|null
     shippingNumber         : string|null
     sendConfirmationEmail ?: boolean
 }
@@ -109,12 +111,13 @@ export interface OrderOnTheWayEditorProps
         >
 {
     // refs:
-    elmRef              ?: TextEditorProps['elmRef']
+    elmRef               ?: TextEditorProps['elmRef']
     
     
     
     // accessibilities:
-    shippingNumberLabel ?: string
+    shippingCarrierLabel ?: string
+    shippingNumberLabel  ?: string
 }
 const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null => {
     // styles:
@@ -130,7 +133,8 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
         
         
         // accessibilities:
-        shippingNumberLabel = 'Shipping Tracking Number (if any)',
+        shippingCarrierLabel = 'Ship By (if any)',
+        shippingNumberLabel  = 'Shipping Tracking Number (if any)',
         
         
         
@@ -164,6 +168,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
      */
     const valueFn : OrderOnTheWayValue = (value !== undefined) ? value /*controllable*/ : valueDn /*uncontrollable*/;
     const {
+        shippingCarrier,
         shippingNumber,
         sendConfirmationEmail,
     } = valueFn;
@@ -197,6 +202,11 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
     
     
     // handlers:
+    const handleShippingCarrierChange   = useEvent<EditorChangeEventHandler<string|null>>((newShippingCarrier) => {
+        setValue({
+            shippingCarrier       : newShippingCarrier,
+        });
+    });
     const handleShippingNumberChange    = useEvent<EditorChangeEventHandler<string|null>>((newShippingNumber) => {
         setValue({
             shippingNumber        : newShippingNumber,
@@ -237,6 +247,36 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                 readOnly        = {readOnly       }
                 inheritReadOnly = {inheritReadOnly}
             >
+                <TextEditor
+                    // refs:
+                    elmRef={elmRef}
+                    
+                    
+                    
+                    // classes:
+                    className='shippingCarrier'
+                    
+                    
+                    
+                    // accessibilities:
+                    aria-label={shippingCarrierLabel}
+                    
+                    
+                    
+                    // values:
+                    value={shippingCarrier || ''}
+                    onChange={handleShippingCarrierChange}
+                    
+                    
+                    
+                    // validations:
+                    required={false}
+                    
+                    
+                    
+                    // formats:
+                    placeholder={shippingCarrierLabel}
+                />
                 <TextEditor
                     // refs:
                     elmRef={elmRef}

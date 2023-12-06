@@ -33,7 +33,7 @@ import {
 // react components:
 export interface SimpleEditOrderOnTheWayDialogProps
     extends
-        ImplementedSimpleEditDialogProps<OrderOnTheWayValue, OrderDetailWithOptions, 'shippingNumber'>
+        ImplementedSimpleEditDialogProps<OrderOnTheWayValue, OrderDetailWithOptions, 'shippingTracking'>
 {
 }
 export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDialogProps) => {
@@ -43,27 +43,30 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
     
     
     // handlers:
-    const handleInitialValue = useEvent<InitialValueHandler<OrderOnTheWayValue, OrderDetailWithOptions, 'shippingNumber'>>((edit, model) => {
-        const shippingNumber = model[edit];
+    const handleInitialValue = useEvent<InitialValueHandler<OrderOnTheWayValue, OrderDetailWithOptions, 'shippingTracking'>>((edit, model) => {
+        const value = model[edit];
         return {
-            shippingNumber        : shippingNumber?.trim() || null, // normalize to null if empty_string or only_spaces
+            ...value,
+            
+            shippingCarrier       : value?.shippingCarrier?.trim() || null, // normalize to null if empty_string or only_spaces
+            shippingNumber        : value?.shippingNumber?.trim()  || null, // normalize to null if empty_string or only_spaces
             sendConfirmationEmail : true,
         };
     });
-    const handleUpdate       = useEvent<UpdateHandler<OrderOnTheWayValue, OrderDetailWithOptions, 'shippingNumber'>>(async (value, edit, model) => {
+    const handleUpdate       = useEvent<UpdateHandler<OrderOnTheWayValue, OrderDetailWithOptions, 'shippingTracking'>>(async (value, edit, model) => {
         const {
             sendConfirmationEmail = true,
-            shippingNumber,
         ...restValue} = value;
         
         await updateOrder({
             id          : model.id,
             
             orderStatus : 'ON_THE_WAY',
-            ...{
+            [edit] : {
                 // original:
                 ...restValue,
-                [edit] : shippingNumber?.trim() || null, // normalize to null if empty_string or only_spaces
+                shippingCarrier : restValue.shippingCarrier?.trim() || null, // normalize to null if empty_string or only_spaces
+                shippingNumber  : restValue.shippingNumber?.trim()  || null, // normalize to null if empty_string or only_spaces
             },
             
             //@ts-ignore
@@ -75,7 +78,7 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
     
     // jsx:
     return (
-        <SimpleEditDialog<OrderOnTheWayValue, OrderDetailWithOptions, 'shippingNumber'>
+        <SimpleEditDialog<OrderOnTheWayValue, OrderDetailWithOptions, 'shippingTracking'>
             // other props:
             {...props}
             
