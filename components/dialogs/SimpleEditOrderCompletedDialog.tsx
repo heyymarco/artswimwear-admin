@@ -44,7 +44,9 @@ export const SimpleEditOrderCompletedDialog = (props: SimpleEditOrderCompletedDi
     
     // handlers:
     const handleInitialValue = useEvent<InitialValueHandler<OrderCompletedValue, OrderDetailWithOptions, ''>>((edit, model) => {
-        return {};
+        return {
+            sendConfirmationEmail : true,
+        };
     });
     const handleUpdate       = useEvent<UpdateHandler<OrderCompletedValue, OrderDetailWithOptions, ''>>(async (value, edit, model) => {
         const {

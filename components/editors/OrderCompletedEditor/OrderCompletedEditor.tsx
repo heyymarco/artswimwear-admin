@@ -131,7 +131,9 @@ const OrderCompletedEditor = (props: OrderCompletedEditorProps): JSX.Element|nul
      * value state is based on [controllable value] (if set) and fallback to [uncontrollable value]
      */
     const valueFn : OrderCompletedValue = (value !== undefined) ? value /*controllable*/ : valueDn /*uncontrollable*/;
-    const sendConfirmationEmail  = valueFn.sendConfirmationEmail ?? emptyOrderCompletedValue.sendConfirmationEmail;
+    const {
+        sendConfirmationEmail,
+    } = valueFn;
     
     
     
@@ -146,27 +148,26 @@ const OrderCompletedEditor = (props: OrderCompletedEditorProps): JSX.Element|nul
             onChange(value);
         };
     });
-    
-    
-    
-    // callbacks:
-    const setValue = useEvent<React.Dispatch<React.SetStateAction<OrderCompletedValue>>>((value) => {
-        // conditions:
-        const newValue = (typeof(value) === 'function') ? value(valueFn) : value;
-        if (newValue === valueFn) return; // still the same => nothing to update
+    const setValue           = useEvent((newValue: Partial<OrderCompletedValue>) => {
+        const combinedValue : OrderCompletedValue = {
+            ...valueFn,
+            ...newValue,
+        };
         
         
         
         // update:
-        setValueDn(newValue);
-        triggerValueChange(newValue);
-    }); // a stable callback, the `setValue` guaranteed to never change
+        setValueDn(combinedValue);
+        triggerValueChange(combinedValue);
+    });
     
     
     
     // handlers:
-    const handleConfirmationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active}) => {
-        setValue((current) => ({ ...current, sendConfirmationEmail : active }));
+    const handleConfirmationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active: newConfirmation}) => {
+        setValue({
+            sendConfirmationEmail : newConfirmation,
+        });
     });
     
     
