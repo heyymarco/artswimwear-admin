@@ -254,8 +254,6 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
         const combinedValue : PaymentValue = {
             ...valueFn,
             ...newValue,
-            
-            type : 'MANUAL_PAID',
         };
         
         
