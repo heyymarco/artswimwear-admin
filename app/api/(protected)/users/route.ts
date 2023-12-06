@@ -348,16 +348,11 @@ You do not have the privilege to modify the user's role.`
                 data   : {
                     ...data,
                     credentials : {
-                        connectOrCreate : {
-                            where  : {
-                                userId : id,
-                            },
-                            create : {
+                        upsert : {
+                            update : {
                                 username,
                             },
-                        },
-                        update : {
-                            data : {
+                            create : {
                                 username,
                             },
                         },
