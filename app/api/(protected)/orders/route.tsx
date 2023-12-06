@@ -513,12 +513,18 @@ You do not have the privilege to modify the payment of the order.`
                     orderTrouble,
                     
                     customer : {
-                        update : {
-                            data : {
+                        upsert : {
+                            update : {
                                 marketingOpt : customer?.marketingOpt,
                                 
                                 nickName     : customer?.nickName,
                                 email        : customer?.email,
+                            },
+                            create : {
+                                marketingOpt : customer?.marketingOpt,
+                                
+                                nickName     : customer?.nickName ?? '', // required field
+                                email        : customer?.email    ?? '', // required field
                             },
                         },
                     },
