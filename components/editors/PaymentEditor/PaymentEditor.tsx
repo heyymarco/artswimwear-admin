@@ -239,8 +239,18 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     
     
     
-    // handlers:
-    const setValue                      = useEvent((newValue: Partial<PaymentValue>) => {
+    // events:
+    /*
+          controllable : setValue(new) => update state(old => old) => trigger Event(new)
+        uncontrollable : setValue(new) => update state(old => new) => trigger Event(new)
+    */
+    const triggerValueChange = useEvent<EditorChangeEventHandler<PaymentValue>>((value) => {
+        if (onChange) {
+            // fire `onChange` react event:
+            onChange(value);
+        };
+    });
+    const setValue           = useEvent((newValue: Partial<PaymentValue>) => {
         const combinedValue : PaymentValue = {
             ...valueFn,
             ...newValue,
@@ -255,6 +265,9 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
         triggerValueChange(combinedValue);
     });
     
+    
+    
+    // handlers:
     const handleProviderChange          = useEvent((newBrand: string) => {
         setValue({
             brand                 : newBrand,
@@ -281,20 +294,6 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     });
     const handleAmountBlur              = useEvent<React.FocusEventHandler<Element>>((event) => {
         setAmountFocused(false);
-    });
-    
-    
-    
-    // events:
-    /*
-          controllable : setValue(new) => update state(old => old) => trigger Event(new)
-        uncontrollable : setValue(new) => update state(old => new) => trigger Event(new)
-    */
-    const triggerValueChange = useEvent<EditorChangeEventHandler<PaymentValue>>((value) => {
-        if (onChange) {
-            // fire `onChange` react event:
-            onChange(value);
-        };
     });
     
     
