@@ -225,7 +225,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
             
             
             // variants:
-            theme={orderStatusTheme(orderStatus, paymentType, paymentConfirmation?.reviewedAt)}
+            theme={orderStatusTheme(orderStatus, paymentType, paymentConfirmation?.reportedAt, paymentConfirmation?.reviewedAt)}
             
             
             
@@ -239,6 +239,8 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                     // data:
                     orderStatus={orderStatus}
                     paymentType={paymentType}
+                    
+                    reportedAt={paymentConfirmation?.reportedAt}
                     reviewedAt={paymentConfirmation?.reviewedAt}
                     
                     

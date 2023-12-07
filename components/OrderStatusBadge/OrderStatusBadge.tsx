@@ -51,6 +51,8 @@ export interface OrderStatusBadgeProps
     // data:
     orderStatus  : OrderStatus
     paymentType ?: PaymentType
+    
+    reportedAt  ?: Date|null
     reviewedAt  ?: Date|null
     
     
@@ -64,6 +66,8 @@ const OrderStatusBadge = (props: OrderStatusBadgeProps): JSX.Element|null => {
         // data:
         orderStatus,
         paymentType,
+        
+        reportedAt,
         reviewedAt,
         
         
@@ -76,7 +80,7 @@ const OrderStatusBadge = (props: OrderStatusBadgeProps): JSX.Element|null => {
         // handlers:
         onClick,
     ...restBadgeProps} = props;
-    const preferredTheme = orderStatusTheme(orderStatus, paymentType, reviewedAt);
+    const preferredTheme = orderStatusTheme(orderStatus, paymentType, reportedAt, reviewedAt);
     const hasAlternateTheme = ((preferredTheme === 'warning') || (preferredTheme === 'secondary'));
     
     
@@ -109,7 +113,7 @@ const OrderStatusBadge = (props: OrderStatusBadgeProps): JSX.Element|null => {
             iconComponent={
                 <Icon
                     // appearances:
-                    icon={orderStatusIcon(orderStatus, paymentType, reviewedAt)}
+                    icon={orderStatusIcon(orderStatus, paymentType, reportedAt, reviewedAt)}
                     
                     
                     
@@ -125,7 +129,7 @@ const OrderStatusBadge = (props: OrderStatusBadgeProps): JSX.Element|null => {
             // handlers:
             onClick={handleClick}
         >
-            {orderStatusText(orderStatus, paymentType, reviewedAt)}
+            {orderStatusText(orderStatus, paymentType, reportedAt, reviewedAt)}
         </ButtonIcon>
     );
 };
