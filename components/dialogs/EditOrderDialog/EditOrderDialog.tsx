@@ -289,7 +289,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     const paymentTypeUppercased  = paymentType?.toUpperCase();
     const isPaid                 = !!paymentTypeUppercased && (paymentTypeUppercased !== 'MANUAL');
     const isManualPaid           = (paymentTypeUppercased === 'MANUAL_PAID');
-    const hasPaymentConfirmation = !!paymentConfirmation?.updatedAt;
+    const hasPaymentConfirmation = !!paymentConfirmation?.reportedAt;
     const isPaymentRejected      = hasPaymentConfirmation && !!paymentConfirmation.rejectionReason;
     
     
@@ -862,10 +862,10 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                         </tr>
                                         <tr>
                                             <td>
-                                                Updated At
+                                                Reported At
                                             </td>
                                             <td>
-                                                {!!paymentConfirmation.updatedAt && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.updatedAt).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} />}
+                                                {!!paymentConfirmation.reportedAt && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.reportedAt).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} />}
                                                 <TimezoneEditor
                                                     // variants:
                                                     theme='primary'

@@ -221,7 +221,7 @@ You do not have the privilege to view the orders.`
                 
                 paymentConfirmation       : {
                     select : {
-                        updatedAt         : true,
+                        reportedAt        : true,
                         reviewedAt        : true,
                         
                         currency          : true,
@@ -588,7 +588,7 @@ You do not have the privilege to modify the payment of the order.`
                     
                     paymentConfirmation       : {
                         select : {
-                            updatedAt         : true,
+                            reportedAt        : true,
                             reviewedAt        : true,
                             
                             currency          : true,
