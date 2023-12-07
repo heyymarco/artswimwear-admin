@@ -28,7 +28,7 @@ export const orderStatusValues : OrderStatus[] = [
 ];
 
 export const orderStatusTheme = (orderStatus : OrderStatus, paymentType?: PaymentType, reviewedAt?: Date|null): ThemeName => {
-    if (reviewedAt === null) { // not undefined but null (never reviewed)
+    if (reviewedAt === null) { // not undefined but null (never approved or rejected)
         return 'danger';
     } // if
     
@@ -44,7 +44,7 @@ export const orderStatusTheme = (orderStatus : OrderStatus, paymentType?: Paymen
     } // switch
 };
 export const orderStatusText = (orderStatus : OrderStatus, paymentType?: PaymentType, reviewedAt?: Date|null): ThemeName => {
-    if (reviewedAt === null) { // not undefined but null (never reviewed)
+    if (reviewedAt === null) { // not undefined but null (never approved or rejected)
         return 'Payment Confirmed';
     } // if
     
@@ -61,7 +61,7 @@ export const orderStatusText = (orderStatus : OrderStatus, paymentType?: Payment
     } // switch
 };
 export const orderStatusIcon = (orderStatus : OrderStatus, paymentType?: PaymentType, reviewedAt?: Date|null): IconList => {
-    if (reviewedAt === null) { // not undefined but null (never reviewed)
+    if (reviewedAt === null) { // not undefined but null (never approved or rejected)
         return 'chat';
     } // if
     
