@@ -18,6 +18,7 @@ import {
 import type {
     Customer,
     PaymentConfirmation,
+    ShippingTracking,
 }                           from '@prisma/client'
 
 // apis:
@@ -46,6 +47,11 @@ import {
     PaymentContextProviderProps,
     PaymentContextProvider,
 }                           from '@/components/Checkout/templates/paymentDataContext'
+import {
+    // react components:
+    ShippingContextProviderProps,
+    ShippingContextProvider,
+}                           from '@/components/Checkout/templates/shippingDataContext'
 
 // ORMs:
 import {
@@ -73,7 +79,7 @@ import {
 
 
 
-const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof prisma.$transaction>[0]>[0], orderId : string): Promise<(OrderAndData & { customer: Customer|null, paymentConfirmation: Pick<PaymentConfirmation, 'token'|'rejectionReason'>|null })|null> => {
+const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof prisma.$transaction>[0]>[0], orderId : string): Promise<(OrderAndData & { customer: Customer|null, paymentConfirmation: Pick<PaymentConfirmation, 'token'|'rejectionReason'>|null, shippingTracking : Pick<ShippingTracking, 'token'|'shippingNumber'>|null })|null> => {
     const newOrder = await prismaTransaction.order.findUnique({
         where   : {
             orderId : orderId,
@@ -113,6 +119,12 @@ const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof p
                 select : {
                     token           : true,
                     rejectionReason : true,
+                },
+            },
+            shippingTracking : {
+                select : {
+                    token          : true,
+                    shippingNumber : true,
                 },
             },
         },
@@ -166,6 +178,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
     const {
         customer,
         paymentConfirmation,
+        shippingTracking,
     ...orderAndData} = newOrder;
     if (!customer) return;
     
@@ -204,6 +217,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
         const {
             business,
             payment,
+            shipping,
         } = checkoutConfig;
         
         
@@ -219,6 +233,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
             customer             : customer,
             paymentConfirmation  : paymentConfirmation,
             isPaid               : true,
+            shippingTracking     : shippingTracking,
             
             
             
@@ -228,6 +243,10 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
         const paymentContextProviderProps  : PaymentContextProviderProps = {
             // data:
             model : payment,
+        };
+        const shippingContextProviderProps  : ShippingContextProviderProps = {
+            // data:
+            model : shipping,
         };
         
         
@@ -250,7 +269,9 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
                     <BusinessContextProvider {...businessContextProviderProps}>
                         <OrderDataContextProvider {...orderDataContextProviderProps}>
                             <PaymentContextProvider {...paymentContextProviderProps}>
-                                {emailConfig.subject}
+                                <ShippingContextProvider {...shippingContextProviderProps}>
+                                    {emailConfig.subject}
+                                </ShippingContextProvider>
                             </PaymentContextProvider>
                         </OrderDataContextProvider>
                     </BusinessContextProvider>
@@ -259,7 +280,9 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
                     <BusinessContextProvider {...businessContextProviderProps}>
                         <OrderDataContextProvider {...orderDataContextProviderProps}>
                             <PaymentContextProvider {...paymentContextProviderProps}>
-                                {emailConfig.message}
+                                <ShippingContextProvider {...shippingContextProviderProps}>
+                                    {emailConfig.message}
+                                </ShippingContextProvider>
                             </PaymentContextProvider>
                         </OrderDataContextProvider>
                     </BusinessContextProvider>
