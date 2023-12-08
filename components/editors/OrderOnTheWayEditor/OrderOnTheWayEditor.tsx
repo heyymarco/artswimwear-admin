@@ -55,6 +55,10 @@ import type {
     EditorProps,
 }                           from '@/components/editors/Editor'
 import {
+    NameEditorProps,
+    NameEditor,
+}                           from '@/components/editors/NameEditor'
+import {
     TextEditorProps,
     TextEditor,
 }                           from '@/components/editors/TextEditor'
@@ -247,7 +251,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                 readOnly        = {readOnly       }
                 inheritReadOnly = {inheritReadOnly}
             >
-                <TextEditor
+                <NameEditor
                     // refs:
                     elmRef={elmRef}
                     
