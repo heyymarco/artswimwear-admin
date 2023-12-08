@@ -1,4 +1,5 @@
 TODO: replace shippingCarrier from <NameEditor> to <Dropdown>
+TODO: notify to email template: shippingCarrier changed if (shippingCarrier !== shippingProvider)
 TODO: fix table layout to use subgrid
 TODO: fix PrintDialog when the document scrolled down
 TODO: add billingAddress to Orders > Payment > billingAddress
