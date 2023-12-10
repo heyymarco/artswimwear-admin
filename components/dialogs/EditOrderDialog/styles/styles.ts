@@ -412,7 +412,7 @@ const usesTableLayout = () => {
             display             : 'grid',
             gridTemplateColumns : 'repeat(1, auto)',
             ...ifScreenWidthAtLeast('sm', {
-                gridTemplateColumns : 'repeat(2, auto)',
+                gridTemplateColumns : 'auto 1fr auto', // <Title>|<Label> + <Content> + <EditButton>
             }),
             ...children(['thead', 'tbody', 'tfoot'], {
                 gridColumn          : '1 / -1', // span the entire columns
@@ -503,6 +503,13 @@ const usesTableLayout = () => {
                     ...children(['td', 'th'], { // spacing for all cells
                         // spacings:
                         padding        : '0.75rem',
+                        
+                        ...rule('[colspan="2"]', {
+                            gridColumnEnd : 'span 2',
+                        }),
+                        ...rule('[colspan="3"]', {
+                            gridColumnEnd : 'span 3',
+                        }),
                     }),
                     ...children(['td', 'th'], { // common features
                         // features:
@@ -593,7 +600,7 @@ const usesTableLayout = () => {
                         }),
                         ...rule(':nth-child(2)', { // <td> as <Data>
                             // layouts:
-                            justifyContent     : 'center',  // center     the items horizontally
+                            justifyContent     : 'center',  // center    the items horizontally
                             ...ifScreenWidthAtLeast('sm', {
                                 justifyContent : 'start',   // left_most the items horizontally
                             }),
@@ -647,8 +654,9 @@ const usesPaymentSectionLayout = () => {
                 
                 
                 // sizes:
+                alignSelf     : 'center',  // center
                 ...ifScreenWidthSmallerThan('sm', {
-                    inlineSize : '100%',
+                    alignSelf : 'stretch', // full width
                 }),
                 
                 
@@ -665,9 +673,6 @@ const usesPaymentSectionLayout = () => {
                             ...rule('.currencyData', {
                                 ...ifScreenWidthAtLeast('sm', {
                                     justifyContent : 'end',  // right_most the items horizontally
-                                }),
-                                ...children('.hidden', {
-                                    visibility : 'hidden',
                                 }),
                             }),
                             ...children('.paymentProvider', {

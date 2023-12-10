@@ -676,6 +676,9 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                             {paymentTypeUppercased}
                                         </span>
                                     </td>
+                                    <td>
+                                        {/* empty */}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>
@@ -690,6 +693,8 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                         <span className='paymentIdentifier'>
                                             {!!paymentIdentifier && <>&nbsp;({paymentIdentifier})</>}
                                         </span>
+                                    </td>
+                                    <td>
                                         {isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />}
                                     </td>
                                 </tr>
@@ -701,6 +706,8 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                         <strong>
                                             {formatCurrency(paymentAmount)}
                                         </strong>
+                                    </td>
+                                    <td>
                                         {isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />}
                                     </td>
                                 </tr>
@@ -712,6 +719,8 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                         <span>
                                             {formatCurrency(paymentFee)}
                                         </span>
+                                    </td>
+                                    <td>
                                         {isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />}
                                     </td>
                                 </tr>
@@ -723,7 +732,9 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                         <strong>
                                             {formatCurrency((paymentAmount !== undefined) ? (paymentAmount - (paymentFee ?? 0)) : undefined)}
                                         </strong>
-                                        {isManualPaid && !!role?.order_upmp && <EditButton className='hidden' />}
+                                    </td>
+                                    <td>
+                                        {/* empty */}
                                     </td>
                                 </tr>
                             </tbody>
