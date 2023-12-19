@@ -671,7 +671,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                 </TabPanel>
                 <TabPanel label={PAGE_ORDER_TAB_PAYMENT}          panelComponent={<Generic className={styleSheet.paymentTab} />}>
                     <Section className={styleSheet.paymentSection}>
-                        {isPaid && <DataTable breakpoint='sm'>
+                        {isPaid && <DataTable className={styleSheet.dataTable} breakpoint='sm'>
                             <DataTableBody>
                                 <DataTableItem
                                     // accessibilities:
@@ -684,6 +684,11 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                 <DataTableItem
                                     // accessibilities:
                                     label={isManualPaid ? 'Type' : 'Provider'}
+                                    
+                                    
+                                    
+                                    // components:
+                                    tableDataComponent={<Generic className={styleSheet.tableDataComposite} />}
                                     
                                     
                                     
@@ -708,7 +713,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     
                                     
                                     // components:
-                                    tableDataComponent={<Generic className='currencyData' />}
+                                    tableDataComponent={<Generic className={`${styleSheet.tableDataComposite} currencyData`} />}
                                     
                                     
                                     
@@ -728,7 +733,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     
                                     
                                     // components:
-                                    tableDataComponent={<Generic className='currencyData' />}
+                                    tableDataComponent={<Generic className={`${styleSheet.tableDataComposite} currencyData`} />}
                                     
                                     
                                     
@@ -748,7 +753,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     
                                     
                                     // components:
-                                    tableDataComponent={<Generic className='currencyData' />}
+                                    tableDataComponent={<Generic className={`${styleSheet.tableDataComposite} currencyData`} />}
                                     
                                     
                                     
@@ -862,8 +867,8 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     />
                                 </Alert>}
                                 
-                                <DataTable>
-                                    <DataTableHeader>
+                                <DataTable className={styleSheet.dataTable} breakpoint='sm'>
+                                    <DataTableHeader tableTitleComponent={<Basic />}>
                                         Payment Confirmation
                                     </DataTableHeader>
                                     <DataTableBody>

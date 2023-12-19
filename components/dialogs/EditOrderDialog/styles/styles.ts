@@ -39,37 +39,12 @@ import {
     
     
     
-    // background stuff of UI:
-    usesBackground,
-    
-    
-    
-    // foreground (text color) stuff of UI:
-    usesForeground,
-    
-    
-    
     // border (stroke) stuff of UI:
     usesBorder,
-    
-    
-    
-    // padding (inner spacing) stuff of UI:
-    usesPadding,
-    
-    
-    
-    // groups a list of UIs into a single UI:
-    usesGroupable,
 }                           from '@reusable-ui/core'    // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
 import {
-    // base-components:
-    basics,
-    
-    
-    
     // base-content-components:
     containers,
     contents,
@@ -373,13 +348,6 @@ const usesPaymentTabLayout = () => {
     });
 };
 const usesPaymentSectionLayout = () => {
-    // dependencies:
-    
-    // features:
-    const {borderVars} = usesBorder();
-    
-    
-    
     return style({
         // children:
         ...children('article', {
@@ -394,53 +362,52 @@ const usesPaymentSectionLayout = () => {
             
             // spacings:
             gap : spacers.lg,
-            
-            
-            
-            // children:
-            ...children('table', {
-                // sizes:
-                alignSelf     : 'center',  // center
-                ...ifScreenWidthSmallerThan('sm', {
-                    alignSelf : 'stretch', // full width
-                }),
-                
-                
-                
-                // children:
-                ...children('tbody', {
-                    ...children('tr', {
-                        ...children('td', { // special data formatting
-                            // spacings:
-                            gap                : spacers.sm,
-                            
-                            
-                            
-                            ...rule('.currencyData', {
-                                ...ifScreenWidthAtLeast('sm', {
-                                    justifyContent : 'end',  // right_most the items horizontally
-                                }),
-                            }),
-                            ...children('.paymentProvider', {
-                                width         : '42px',
-                                height         : 'auto',
-                                
-                                
-                                
-                                // borders:
-                                border         : borderVars.border,
-                                borderWidth    : borders.defaultWidth,
-                                borderRadius   : borderRadiuses.sm,
-                            }),
-                            ...children('.paymentIdentifier', {
-                                // typos:
-                                fontSize       : typos.fontSizeSm,
-                                fontWeight     : typos.fontWeightNormal,
-                            }),
-                        }),
-                    }),
-                }),
+        }),
+    });
+};
+const usesDataTableLayout = () => {
+    return style({
+        // sizes:
+        alignSelf     : 'center',  // center
+        ...ifScreenWidthSmallerThan('sm', {
+            alignSelf : 'stretch', // full width
+        }),
+    });
+};
+const usesTableDataComposite = () => {
+    // dependencies:
+    
+    // features:
+    const {borderVars} = usesBorder();
+    
+    
+    
+    return style({
+        // spacings:
+        gap                : spacers.sm,
+        
+        
+        
+        ...rule('.currencyData', {
+            ...ifScreenWidthAtLeast('sm', {
+                justifyContent : 'end',  // right_most the items horizontally
             }),
+        }),
+        ...children('.paymentProvider', {
+            width         : '42px',
+            height         : 'auto',
+            
+            
+            
+            // borders:
+            border         : borderVars.border,
+            borderWidth    : borders.defaultWidth,
+            borderRadius   : borderRadiuses.sm,
+        }),
+        ...children('.paymentIdentifier', {
+            // typos:
+            fontSize       : typos.fontSizeSm,
+            fontWeight     : typos.fontWeightNormal,
         }),
     });
 };
@@ -643,6 +610,13 @@ export default () => [
     scope('paymentSection', {
         ...usesPaymentSectionLayout(),
     }),
+    
+    scope('dataTable', {
+        ...usesDataTableLayout(),
+    }),
+    scope('tableDataComposite', {
+        ...usesTableDataComposite(),
+    }, {specificityWeight: 2}),
     scope('paymentConfirmationAlert', {
         ...usesPaymentConfirmationAlertLayout(),
     }),
