@@ -83,6 +83,12 @@ import {
 import {
     Section,
 }                           from '@heymarco/section'
+import {
+    DataTableHeader,
+    DataTableBody,
+    DataTableItem,
+    DataTable,
+}                           from '@heymarco/data-table'
 
 // internal components:
 import {
@@ -665,80 +671,98 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                 </TabPanel>
                 <TabPanel label={PAGE_ORDER_TAB_PAYMENT}          panelComponent={<Generic className={styleSheet.paymentTab} />}>
                     <Section className={styleSheet.paymentSection}>
-                        {isPaid && <table>
-                            <tbody>
-                                <tr>
-                                    <th>
-                                        Method
-                                    </th>
-                                    <td>
-                                        <span>
-                                            {paymentTypeUppercased}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        {/* empty */}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        {isManualPaid ? 'Type' : 'Provider'}
-                                    </th>
-                                    <td>
-                                        {
-                                            !!paymentBrand
-                                            ? (isManualPaid ? paymentBrand : <Image className='paymentProvider' alt={paymentBrand} src={`/brands/${paymentBrand}.svg`} width={42} height={26} />)
-                                            : '-'
-                                        }
-                                        <span className='paymentIdentifier'>
-                                            {!!paymentIdentifier && <>&nbsp;({paymentIdentifier})</>}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        {isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        Amount
-                                    </th>
-                                    <td className='currencyData'>
-                                        <strong>
-                                            {formatCurrency(paymentAmount)}
-                                        </strong>
-                                    </td>
-                                    <td>
-                                        {isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        Fee
-                                    </th>
-                                    <td className='currencyData'>
-                                        <span>
-                                            {formatCurrency(paymentFee)}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        {isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        Net
-                                    </th>
-                                    <td className='currencyData'>
-                                        <strong>
-                                            {formatCurrency((paymentAmount !== undefined) ? (paymentAmount - (paymentFee ?? 0)) : undefined)}
-                                        </strong>
-                                    </td>
-                                    <td>
-                                        {/* empty */}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>}
+                        {isPaid && <DataTable breakpoint='sm'>
+                            <DataTableBody>
+                                <DataTableItem
+                                    // accessibilities:
+                                    label='Method'
+                                >
+                                    <span>
+                                        {paymentTypeUppercased}
+                                    </span>
+                                </DataTableItem>
+                                <DataTableItem
+                                    // accessibilities:
+                                    label={isManualPaid ? 'Type' : 'Provider'}
+                                    
+                                    
+                                    
+                                    // children:
+                                    actionChildren={
+                                        isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />
+                                    }
+                                >
+                                    {
+                                        !!paymentBrand
+                                        ? (isManualPaid ? paymentBrand : <Image className='paymentProvider' alt={paymentBrand} src={`/brands/${paymentBrand}.svg`} width={42} height={26} />)
+                                        : '-'
+                                    }
+                                    <span className='paymentIdentifier'>
+                                        {!!paymentIdentifier && <>&nbsp;({paymentIdentifier})</>}
+                                    </span>
+                                </DataTableItem>
+                                <DataTableItem
+                                    // accessibilities:
+                                    label='Amount'
+                                    
+                                    
+                                    
+                                    // components:
+                                    tableDataComponent={<Generic className='currencyData' />}
+                                    
+                                    
+                                    
+                                    // children:
+                                    actionChildren={
+                                        isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />
+                                    }
+                                >
+                                    <strong>
+                                        {formatCurrency(paymentAmount)}
+                                    </strong>
+                                </DataTableItem>
+                                <DataTableItem
+                                    // accessibilities:
+                                    label='Fee'
+                                    
+                                    
+                                    
+                                    // components:
+                                    tableDataComponent={<Generic className='currencyData' />}
+                                    
+                                    
+                                    
+                                    // children:
+                                    actionChildren={
+                                        isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />
+                                    }
+                                >
+                                    <span>
+                                        {formatCurrency(paymentFee)}
+                                    </span>
+                                </DataTableItem>
+                                <DataTableItem
+                                    // accessibilities:
+                                    label='Net'
+                                    
+                                    
+                                    
+                                    // components:
+                                    tableDataComponent={<Generic className='currencyData' />}
+                                    
+                                    
+                                    
+                                    // children:
+                                    actionChildren={
+                                        <></>
+                                    }
+                                >
+                                    <strong>
+                                        {formatCurrency((paymentAmount !== undefined) ? (paymentAmount - (paymentFee ?? 0)) : undefined)}
+                                    </strong>
+                                </DataTableItem>
+                            </DataTableBody>
+                        </DataTable>}
                         
                         {!isPaid && !!role?.order_upmu && <>
                             {!hasPaymentConfirmation && <Alert
@@ -838,113 +862,96 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     />
                                 </Alert>}
                                 
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th colSpan={2}>
-                                                Payment Confirmation
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                Reviewed At
-                                            </td>
-                                            <td>
-                                                {
-                                                    paymentConfirmation.reviewedAt
-                                                    ? <>
-                                                        <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.reviewedAt).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} />
-                                                        <TimezoneEditor
-                                                            // variants:
-                                                            theme='primary'
-                                                            mild={true}
-                                                            
-                                                            
-                                                            
-                                                            // values:
-                                                            value={preferredTimezone}
-                                                            onChange={setPreferredTimezone}
-                                                        />
-                                                    </>
-                                                    : <span className='txt-sec'>not yet reviewed</span>}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                Reported At
-                                            </td>
-                                            <td>
-                                                {!!paymentConfirmation.reportedAt && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.reportedAt).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} />}
-                                                <TimezoneEditor
-                                                    // variants:
-                                                    theme='primary'
-                                                    mild={true}
-                                                    
-                                                    
-                                                    
-                                                    // values:
-                                                    value={preferredTimezone}
-                                                    onChange={setPreferredTimezone}
-                                                />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                Amount
-                                            </td>
-                                            <td>
-                                                <strong>
-                                                    {formatCurrency(paymentConfirmation.amount, paymentConfirmation.currency ?? undefined)}
-                                                </strong>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                Payer
-                                            </td>
-                                            <td>
-                                                {paymentConfirmation.payerName}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                Payment Date
-                                            </td>
-                                            <td>
-                                                {!!paymentConfirmation.paymentDate && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.paymentDate).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} />}
-                                                <TimezoneEditor
-                                                    // variants:
-                                                    theme='primary'
-                                                    mild={true}
-                                                    
-                                                    
-                                                    
-                                                    // values:
-                                                    value={preferredTimezone}
-                                                    onChange={setPreferredTimezone}
-                                                />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                Originating Bank
-                                            </td>
-                                            <td>
-                                                {paymentConfirmation.originatingBank}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                Destination Bank
-                                            </td>
-                                            <td>
-                                                {paymentConfirmation.destinationBank}
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <DataTable>
+                                    <DataTableHeader>
+                                        Payment Confirmation
+                                    </DataTableHeader>
+                                    <DataTableBody>
+                                        <DataTableItem
+                                            // accessibilities:
+                                            label='Reviewed At'
+                                        >
+                                            {
+                                                paymentConfirmation.reviewedAt
+                                                ? <>
+                                                    <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.reviewedAt).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} />
+                                                    <TimezoneEditor
+                                                        // variants:
+                                                        theme='primary'
+                                                        mild={true}
+                                                        
+                                                        
+                                                        
+                                                        // values:
+                                                        value={preferredTimezone}
+                                                        onChange={setPreferredTimezone}
+                                                    />
+                                                </>
+                                                : <span className='txt-sec'>not yet reviewed</span>
+                                            }
+                                        </DataTableItem>
+                                        <DataTableItem
+                                            // accessibilities:
+                                            label='Reported At'
+                                        >
+                                            {!!paymentConfirmation.reportedAt && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.reportedAt).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} />}
+                                            <TimezoneEditor
+                                                // variants:
+                                                theme='primary'
+                                                mild={true}
+                                                
+                                                
+                                                
+                                                // values:
+                                                value={preferredTimezone}
+                                                onChange={setPreferredTimezone}
+                                            />
+                                        </DataTableItem>
+                                        <DataTableItem
+                                            // accessibilities:
+                                            label='Amount'
+                                        >
+                                            <strong>
+                                                {formatCurrency(paymentConfirmation.amount, paymentConfirmation.currency ?? undefined)}
+                                            </strong>
+                                        </DataTableItem>
+                                        <DataTableItem
+                                            // accessibilities:
+                                            label='Payer'
+                                        >
+                                            {paymentConfirmation.payerName}
+                                        </DataTableItem>
+                                        <DataTableItem
+                                            // accessibilities:
+                                            label='Payment Date'
+                                        >
+                                            {!!paymentConfirmation.paymentDate && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.paymentDate).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} />}
+                                            <TimezoneEditor
+                                                // variants:
+                                                theme='primary'
+                                                mild={true}
+                                                
+                                                
+                                                
+                                                // values:
+                                                value={preferredTimezone}
+                                                onChange={setPreferredTimezone}
+                                            />
+                                        </DataTableItem>
+                                        <DataTableItem
+                                            // accessibilities:
+                                            label='Originating Bank'
+                                        >
+                                            {paymentConfirmation.originatingBank}
+                                        </DataTableItem>
+                                        <DataTableItem
+                                            // accessibilities:
+                                            label='Destination Bank'
+                                        >
+                                            {paymentConfirmation.destinationBank}
+                                        </DataTableItem>
+                                    </DataTableBody>
+                                </DataTable>
                             </>}
                             
                             <div className={styleSheet.paymentConfirmActions}>
