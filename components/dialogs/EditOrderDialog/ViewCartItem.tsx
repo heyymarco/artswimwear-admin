@@ -118,8 +118,8 @@ const ViewCartItem = (props: EditCartItemProps): JSX.Element|null => {
             >
                 {
                     !isProductDeleted
-                    ? product?.name
-                    : 'PRODUCT DELETED'
+                    ? (product?.name ?? <em>Unknown Product</em>)
+                    : <em>Deleted Product</em>
                 }
             </h3>
             
