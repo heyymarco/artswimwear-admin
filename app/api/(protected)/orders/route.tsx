@@ -206,8 +206,6 @@ You do not have the privilege to view the orders.`
                     select: {
                         id                : true,
                         
-                        marketingOpt      : true,
-                        
                         name              : true,
                         email             : true,
                     },
@@ -341,8 +339,6 @@ You do not have the privilege to view the orders.`
     
     if (
         ((customer !== undefined) && ((typeof(customer) !== 'object') || Object.keys(customer).some((prop) => !['name', 'email'].includes(prop))))
-        ||
-        ((customer?.marketingOpt !== undefined) && ((typeof(customer.marketingOpt) !== 'boolean')))
         ||
         ((customer?.name         !== undefined) && ((typeof(customer.name)         !== 'string') || (customer.name.length  < 2) || (customer.name.length  > 30)))
         ||
@@ -515,16 +511,12 @@ You do not have the privilege to modify the payment of the order.`
                     customer : {
                         upsert : {
                             update : {
-                                marketingOpt : customer?.marketingOpt,
-                                
-                                name         : customer?.name,
-                                email        : customer?.email,
+                                name  : customer?.name,
+                                email : customer?.email,
                             },
                             create : {
-                                marketingOpt : customer?.marketingOpt,
-                                
-                                name         : customer?.name  ?? '', // required field
-                                email        : customer?.email ?? '', // required field
+                                name  : customer?.name  ?? '', // required field
+                                email : customer?.email ?? '', // required field
                             },
                         },
                     },
@@ -572,8 +564,6 @@ You do not have the privilege to modify the payment of the order.`
                     customer                  : {
                         select: {
                             id                : true,
-                            
-                            marketingOpt      : true,
                             
                             name              : true,
                             email             : true,
