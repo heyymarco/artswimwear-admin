@@ -156,8 +156,8 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
         paymentConfirmation,
     } = model;
     const {
-        nickName : customerNickName,
-        email    : customerEmail,
+        name  : customerName,
+        email : customerEmail,
     } = customerDetail ?? {};
     
     
@@ -257,8 +257,8 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
             
             <p className='customer'>
                 <span className='name'>
-                    <strong>{customerNickName}</strong>
-                    <EditButton onClick={() => setEditMode('nickName')} />
+                    <strong>{customerName}</strong>
+                    <EditButton onClick={() => setEditMode('name')} />
                 </span>
                 <span className='email'>
                     <em>{customerEmail}</em>
@@ -338,12 +338,12 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                 <SimpleEditCustomerDialog
                     // data:
                     model={model}
-                    edit='nickName'
+                    edit='name'
                     
                     
                     
                     // states:
-                    expanded={editMode === 'nickName'}
+                    expanded={editMode === 'name'}
                     onExpandedChange={handleExpandedChange}
                     
                     

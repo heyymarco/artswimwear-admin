@@ -208,7 +208,7 @@ You do not have the privilege to view the orders.`
                         
                         marketingOpt      : true,
                         
-                        nickName          : true,
+                        name              : true,
                         email             : true,
                     },
                 },
@@ -340,13 +340,13 @@ You do not have the privilege to view the orders.`
     } // if
     
     if (
-        ((customer !== undefined) && ((typeof(customer) !== 'object') || Object.keys(customer).some((prop) => !['nickName', 'email'].includes(prop))))
+        ((customer !== undefined) && ((typeof(customer) !== 'object') || Object.keys(customer).some((prop) => !['name', 'email'].includes(prop))))
         ||
         ((customer?.marketingOpt !== undefined) && ((typeof(customer.marketingOpt) !== 'boolean')))
         ||
-        ((customer?.nickName     !== undefined) && ((typeof(customer.nickName)     !== 'string') || (customer.nickName.length < 2) || (customer.nickName.length > 30)))
+        ((customer?.name         !== undefined) && ((typeof(customer.name)         !== 'string') || (customer.name.length  < 2) || (customer.name.length  > 30)))
         ||
-        ((customer?.email        !== undefined) && ((typeof(customer.email)        !== 'string') || (customer.email.length    < 5) || (customer.email.length    > 50)))
+        ((customer?.email        !== undefined) && ((typeof(customer.email)        !== 'string') || (customer.email.length < 5) || (customer.email.length > 50)))
     ) {
         return NextResponse.json({
             error: 'Invalid data.',
@@ -517,14 +517,14 @@ You do not have the privilege to modify the payment of the order.`
                             update : {
                                 marketingOpt : customer?.marketingOpt,
                                 
-                                nickName     : customer?.nickName,
+                                name         : customer?.name,
                                 email        : customer?.email,
                             },
                             create : {
                                 marketingOpt : customer?.marketingOpt,
                                 
-                                nickName     : customer?.nickName ?? '', // required field
-                                email        : customer?.email    ?? '', // required field
+                                name         : customer?.name  ?? '', // required field
+                                email        : customer?.email ?? '', // required field
                             },
                         },
                     },
@@ -575,7 +575,7 @@ You do not have the privilege to modify the payment of the order.`
                             
                             marketingOpt      : true,
                             
-                            nickName          : true,
+                            name              : true,
                             email             : true,
                         },
                     },
