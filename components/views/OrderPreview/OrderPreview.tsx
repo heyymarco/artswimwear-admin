@@ -146,7 +146,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
         orderId,
         orderStatus,
         
-        customer : customerDetail,
+        guest : customerDetail,
         items,
         
         payment : {
@@ -163,7 +163,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
     
     
     // states:
-    type EditMode = keyof NonNullable<OrderDetail['customer']>|'full'|'full-status'|'full-payment'
+    type EditMode = keyof NonNullable<OrderDetail['guest']>|'full'|'full-status'|'full-payment'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     

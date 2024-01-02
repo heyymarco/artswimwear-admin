@@ -26,7 +26,7 @@ import type {
 
 // models:
 import type {
-    Customer,
+    Guest,
     Order,
     OrdersOnProducts,
     PaymentConfirmation,
@@ -70,7 +70,7 @@ export interface OrderDetail
             |'createdAt'
             |'updatedAt'
             
-            |'customerId'
+            |'guestId'
         >
 {
     // relations:
@@ -79,7 +79,7 @@ export interface OrderDetail
         |'orderId'
     >[]
     
-    customer : null|Omit<Customer,
+    guest : null|Omit<Guest,
         |'createdAt'
         |'updatedAt'
     >
@@ -202,7 +202,7 @@ You do not have the privilege to view the orders.`
                     },
                 },
                 
-                customer                  : {
+                guest                  : {
                     select: {
                         id                : true,
                         
@@ -508,7 +508,7 @@ You do not have the privilege to modify the payment of the order.`
                     orderStatus,
                     orderTrouble,
                     
-                    customer : {
+                    guest : {
                         upsert : {
                             update : {
                                 name  : customer?.name,
@@ -561,7 +561,7 @@ You do not have the privilege to modify the payment of the order.`
                         },
                     },
                     
-                    customer                  : {
+                    guest                  : {
                         select: {
                             id                : true,
                             

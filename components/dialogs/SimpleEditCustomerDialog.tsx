@@ -30,7 +30,7 @@ import {
 // react components:
 export interface SimpleEditCustomerDialogProps<TValue extends any>
     extends
-        ImplementedSimpleEditDialogProps<TValue, OrderDetail, keyof NonNullable<OrderDetail['customer']>>
+        ImplementedSimpleEditDialogProps<TValue, OrderDetail, keyof NonNullable<OrderDetail['guest']>>
 {
 }
 export const SimpleEditCustomerDialog = <TValue extends any>(props: SimpleEditCustomerDialogProps<TValue>) => {
@@ -40,14 +40,14 @@ export const SimpleEditCustomerDialog = <TValue extends any>(props: SimpleEditCu
     
     
     // handlers:
-    const handleInitialValue = useEvent<InitialValueHandler<TValue, OrderDetail, keyof NonNullable<OrderDetail['customer']>>>((edit, model) => {
-        return model.customer?.[edit] as TValue;
+    const handleInitialValue = useEvent<InitialValueHandler<TValue, OrderDetail, keyof NonNullable<OrderDetail['guest']>>>((edit, model) => {
+        return model.guest?.[edit] as TValue;
     });
-    const handleUpdate       = useEvent<UpdateHandler<TValue, OrderDetail, keyof NonNullable<OrderDetail['customer']>>>(async (value, edit, model) => {
+    const handleUpdate       = useEvent<UpdateHandler<TValue, OrderDetail, keyof NonNullable<OrderDetail['guest']>>>(async (value, edit, model) => {
         await updateOrder({
             id         : model.id,
             
-            customer   : {
+            guest      : {
                 [edit] : value,
             } as any,
         }).unwrap();
@@ -57,7 +57,7 @@ export const SimpleEditCustomerDialog = <TValue extends any>(props: SimpleEditCu
     
     // jsx:
     return (
-        <SimpleEditDialog<TValue, OrderDetail, keyof NonNullable<OrderDetail['customer']>>
+        <SimpleEditDialog<TValue, OrderDetail, keyof NonNullable<OrderDetail['guest']>>
             // other props:
             {...props}
             

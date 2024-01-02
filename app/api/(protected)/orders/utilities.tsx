@@ -16,7 +16,7 @@ import {
 
 // models:
 import type {
-    Customer,
+    Guest,
     PaymentConfirmation,
     ShippingTracking,
 }                           from '@prisma/client'
@@ -79,7 +79,7 @@ import {
 
 
 
-const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof prisma.$transaction>[0]>[0], orderId : string): Promise<(OrderAndData & { customer: Customer|null, paymentConfirmation: Pick<PaymentConfirmation, 'token'|'rejectionReason'>|null, shippingTracking : Pick<ShippingTracking, 'token'|'shippingNumber'>|null })|null> => {
+const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof prisma.$transaction>[0]>[0], orderId : string): Promise<(OrderAndData & { guest: Guest|null, paymentConfirmation: Pick<PaymentConfirmation, 'token'|'rejectionReason'>|null, shippingTracking : Pick<ShippingTracking, 'token'|'shippingNumber'>|null })|null> => {
     const newOrder = await prismaTransaction.order.findUnique({
         where   : {
             orderId : orderId,
@@ -114,7 +114,7 @@ const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof p
                     countries       : true, // required for calculating `getMatchingShipping()`
                 },
             },
-            customer : true,
+            guest : true,
             paymentConfirmation : {
                 select : {
                     token           : true,
@@ -176,11 +176,11 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
     });
     if (!newOrder) return;
     const {
-        customer,
+        guest,
         paymentConfirmation,
         shippingTracking,
     ...orderAndData} = newOrder;
-    if (!customer) return;
+    if (!guest) return;
     
     
     
@@ -230,7 +230,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
         const orderDataContextProviderProps : OrderDataContextProviderProps = {
             // data:
             order                : orderAndData,
-            customer             : customer,
+            customer             : guest,
             paymentConfirmation  : paymentConfirmation,
             isPaid               : true,
             shippingTracking     : shippingTracking,
@@ -264,7 +264,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
             console.log('sending email...');
             await transporter.sendMail({
                 from        : emailConfig.from,
-                to          : customer.email,
+                to          : guest.email,
                 subject     : renderToStaticMarkup(
                     <BusinessContextProvider {...businessContextProviderProps}>
                         <OrderDataContextProvider {...orderDataContextProviderProps}>
