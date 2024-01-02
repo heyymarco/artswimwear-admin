@@ -70,6 +70,7 @@ export interface OrderDetail
             |'createdAt'
             |'updatedAt'
             
+            |'customerId'
             |'guestId'
         >
 {
