@@ -16,6 +16,7 @@ import {
 
 // models:
 import type {
+    Customer,
     Guest,
     PaymentConfirmation,
     ShippingTracking,
@@ -79,7 +80,7 @@ import {
 
 
 
-const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof prisma.$transaction>[0]>[0], orderId : string): Promise<(OrderAndData & { guest: Guest|null, paymentConfirmation: Pick<PaymentConfirmation, 'token'|'rejectionReason'>|null, shippingTracking : Pick<ShippingTracking, 'token'|'shippingNumber'>|null })|null> => {
+const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof prisma.$transaction>[0]>[0], orderId : string): Promise<(OrderAndData & { customerOrGuest: (Customer & Guest)|null, paymentConfirmation: Pick<PaymentConfirmation, 'token'|'rejectionReason'>|null, shippingTracking : Pick<ShippingTracking, 'token'|'shippingNumber'>|null })|null> => {
     const newOrder = await prismaTransaction.order.findUnique({
         where   : {
             orderId : orderId,
@@ -101,6 +102,10 @@ const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof p
                     },
                 },
             },
+            
+            customer : true,
+            guest    : true,
+            
             shippingProvider : {
                 select : {
                     name            : true, // optional for displaying email report
@@ -114,7 +119,7 @@ const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof p
                     countries       : true, // required for calculating `getMatchingShipping()`
                 },
             },
-            guest : true,
+            
             paymentConfirmation : {
                 select : {
                     token           : true,
@@ -130,11 +135,21 @@ const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof p
         },
     });
     if (!newOrder) return null;
-    const shippingAddress  = newOrder.shippingAddress;
-    const shippingProvider = newOrder.shippingProvider;
+    const {
+        items,
+        
+        customer,
+        guest,
+        
+        shippingAddress,
+        shippingProvider,
+    ...restNewOrderData} = newOrder;
     return {
-        ...newOrder,
-        items: newOrder.items.map((item) => ({
+        ...restNewOrderData,
+        
+        customerOrGuest : customer ?? guest,
+        
+        items: items.map((item) => ({
             ...item,
             product : !!item.product ? {
                 name        : item.product.name,
@@ -143,6 +158,8 @@ const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof p
                 imageId     : undefined,
             } : null,
         })),
+        
+        shippingAddress  : shippingAddress,
         shippingProvider : (
             (shippingAddress && shippingProvider)
             ? getMatchingShipping(shippingProvider, { city: shippingAddress.city, zone: shippingAddress.zone, country: shippingAddress.country })
@@ -176,11 +193,11 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
     });
     if (!newOrder) return;
     const {
-        guest,
+        customerOrGuest,
         paymentConfirmation,
         shippingTracking,
     ...orderAndData} = newOrder;
-    if (!guest) return;
+    if (!customerOrGuest) return;
     
     
     
@@ -230,7 +247,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
         const orderDataContextProviderProps : OrderDataContextProviderProps = {
             // data:
             order                : orderAndData,
-            customer             : guest,
+            customerOrGuest      : customerOrGuest,
             paymentConfirmation  : paymentConfirmation,
             isPaid               : true,
             shippingTracking     : shippingTracking,
@@ -264,7 +281,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
             console.log('sending email...');
             await transporter.sendMail({
                 from        : emailConfig.from,
-                to          : guest.email,
+                to          : customerOrGuest.email,
                 subject     : renderToStaticMarkup(
                     <BusinessContextProvider {...businessContextProviderProps}>
                         <OrderDataContextProvider {...orderDataContextProviderProps}>

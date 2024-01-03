@@ -26,6 +26,7 @@ import type {
 
 // models:
 import type {
+    Customer,
     Guest,
     Order,
     OrdersOnProducts,
@@ -80,7 +81,11 @@ export interface OrderDetail
         |'orderId'
     >[]
     
-    guest : null|Omit<Guest,
+    customer : null|Omit<Customer,
+        |'createdAt'
+        |'updatedAt'
+    >
+    guest    : null|Omit<Guest,
         |'createdAt'
         |'updatedAt'
     >
@@ -203,7 +208,15 @@ You do not have the privilege to view the orders.`
                     },
                 },
                 
-                guest                  : {
+                customer                  : {
+                    select: {
+                        id                : true,
+                        
+                        name              : true,
+                        email             : true,
+                    },
+                },
+                guest                     : {
                     select: {
                         id                : true,
                         
@@ -278,6 +291,7 @@ You do not have the privilege to view the orders.`
         orderTrouble,
         
         customer,
+        guest,
         
         shippingAddress,
         shippingCost,
@@ -338,12 +352,19 @@ You do not have the privilege to view the orders.`
         }, { status: 400 }); // handled with error
     } // if
     
+    if ((customer !== undefined) && (guest !== undefined)) { // conflicting data! must be both undefined -or- one kind is existing
+        return NextResponse.json({
+            error: 'Invalid data.',
+        }, { status: 400 }); // handled with error
+    } // if
+    
+    const customerOrGuest = customer ?? guest;
     if (
-        ((customer !== undefined) && ((typeof(customer) !== 'object') || Object.keys(customer).some((prop) => !['name', 'email'].includes(prop))))
+        ((customerOrGuest !== undefined) && ((typeof(customerOrGuest) !== 'object') || Object.keys(customerOrGuest).some((prop) => !['name', 'email'].includes(prop))))
         ||
-        ((customer?.name         !== undefined) && ((typeof(customer.name)         !== 'string') || (customer.name.length  < 2) || (customer.name.length  > 30)))
+        ((customerOrGuest?.name         !== undefined) && ((typeof(customerOrGuest.name)         !== 'string') || (customerOrGuest.name.length  < 2) || (customerOrGuest.name.length  > 30)))
         ||
-        ((customer?.email        !== undefined) && ((typeof(customer.email)        !== 'string') || (customer.email.length < 5) || (customer.email.length > 50)))
+        ((customerOrGuest?.email        !== undefined) && ((typeof(customerOrGuest.email)        !== 'string') || (customerOrGuest.email.length < 5) || (customerOrGuest.email.length > 50)))
     ) {
         return NextResponse.json({
             error: 'Invalid data.',
@@ -509,18 +530,32 @@ You do not have the privilege to modify the payment of the order.`
                     orderStatus,
                     orderTrouble,
                     
-                    guest : {
-                        upsert : {
+                    customer : (
+                        (customer !== undefined)
+                        ? {
                             update : {
-                                name  : customer?.name,
-                                email : customer?.email,
+                                name  : customer.name,
+                                email : customer.email,
                             },
-                            create : {
-                                name  : customer?.name  ?? '', // required field
-                                email : customer?.email ?? '', // required field
+                        }
+                        : undefined
+                    ),
+                    guest : (
+                        (guest !== undefined)
+                        ? {
+                            upsert : {
+                                update : {
+                                    name  : guest.name,
+                                    email : guest.email,
+                                },
+                                create : {
+                                    name  : guest.name  ?? '', // required field
+                                    email : guest.email ?? '', // required field
+                                },
                             },
-                        },
-                    },
+                        }
+                        : undefined
+                    ),
                     
                     shippingAddress,
                     shippingCost,
@@ -562,7 +597,15 @@ You do not have the privilege to modify the payment of the order.`
                         },
                     },
                     
-                    guest                  : {
+                    customer                  : {
+                        select: {
+                            id                : true,
+                            
+                            name              : true,
+                            email             : true,
+                        },
+                    },
+                    guest                     : {
                         select: {
                             id                : true,
                             

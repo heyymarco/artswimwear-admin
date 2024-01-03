@@ -30,24 +30,34 @@ import {
 // react components:
 export interface SimpleEditCustomerDialogProps<TValue extends any>
     extends
-        ImplementedSimpleEditDialogProps<TValue, OrderDetail, keyof NonNullable<OrderDetail['guest']>>
+        ImplementedSimpleEditDialogProps<TValue, OrderDetail, keyof NonNullable<(OrderDetail['customer'] & OrderDetail['guest'])>>
 {
+    // data:
+    editGroup : keyof Pick<OrderDetail, 'customer'|'guest'>
 }
 export const SimpleEditCustomerDialog = <TValue extends any>(props: SimpleEditCustomerDialogProps<TValue>) => {
+    // rest props:
+    const {
+        // data:
+        editGroup,
+    ...restSimpleEditDialogProps} = props;
+    
+    
+    
     // stores:
     const [updateOrder, {isLoading}] = useUpdateOrder();
     
     
     
     // handlers:
-    const handleInitialValue = useEvent<InitialValueHandler<TValue, OrderDetail, keyof NonNullable<OrderDetail['guest']>>>((edit, model) => {
-        return model.guest?.[edit] as TValue;
+    const handleInitialValue = useEvent<InitialValueHandler<TValue, OrderDetail, keyof NonNullable<(OrderDetail['customer'] & OrderDetail['guest'])>>>((edit, model) => {
+        return model[editGroup]?.[edit] as TValue;
     });
-    const handleUpdate       = useEvent<UpdateHandler<TValue, OrderDetail, keyof NonNullable<OrderDetail['guest']>>>(async (value, edit, model) => {
+    const handleUpdate       = useEvent<UpdateHandler<TValue, OrderDetail, keyof NonNullable<(OrderDetail['customer'] & OrderDetail['guest'])>>>(async (value, edit, model) => {
         await updateOrder({
-            id         : model.id,
+            id          : model.id,
             
-            guest      : {
+            [editGroup] : {
                 [edit] : value,
             } as any,
         }).unwrap();
@@ -57,9 +67,9 @@ export const SimpleEditCustomerDialog = <TValue extends any>(props: SimpleEditCu
     
     // jsx:
     return (
-        <SimpleEditDialog<TValue, OrderDetail, keyof NonNullable<OrderDetail['guest']>>
+        <SimpleEditDialog<TValue, OrderDetail, keyof NonNullable<(OrderDetail['customer'] & OrderDetail['guest'])>>
             // other props:
-            {...props}
+            {...restSimpleEditDialogProps}
             
             
             

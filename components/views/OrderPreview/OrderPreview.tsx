@@ -146,7 +146,9 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
         orderId,
         orderStatus,
         
-        guest : customerDetail,
+        customer,
+        guest,
+        
         items,
         
         payment : {
@@ -158,12 +160,12 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
     const {
         name  : customerName,
         email : customerEmail,
-    } = customerDetail ?? {};
+    } = customer ?? guest ?? {};
     
     
     
     // states:
-    type EditMode = keyof NonNullable<OrderDetail['guest']>|'full'|'full-status'|'full-payment'
+    type EditMode = keyof NonNullable<(OrderDetail['customer'] & OrderDetail['guest'])>|'full'|'full-status'|'full-payment'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     
@@ -339,6 +341,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                     // data:
                     model={model}
                     edit='name'
+                    editGroup={customer ? 'customer' : 'guest'}
                     
                     
                     
@@ -360,6 +363,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                     // data:
                     model={model}
                     edit='email'
+                    editGroup={customer ? 'customer' : 'guest'}
                     
                     
                     
