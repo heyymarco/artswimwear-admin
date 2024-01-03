@@ -137,6 +137,9 @@ You do not have the privilege to modify the user's image.`
         debug += 'phase4\r\n';
         await writeFile(filePath, Buffer.from(await file.arrayBuffer()));
         debug += 'phase5\r\n';
+        debug += `filePath: ${filePath}\r\n`;
+        debug += `originalname: ${file.name}\r\n`;
+        debug += `folder: ${folder}\r\n`;
         const fileId = await uploadMedia({ path: filePath, originalname: file.name } as any, {
             folder,
         });
