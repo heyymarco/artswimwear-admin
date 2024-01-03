@@ -3,6 +3,11 @@ import { createReadStream } from 'streamifier'
 
 
 
+// @ts-ignore
+process.noDeprecation = true;
+
+
+
 cloudinary.v2.config({ 
     cloud_name : process.env.NEXT_PUBLIC_CLOUDINARY_ENV, 
     api_key    : process.env.CLOUDINARY_ID, 
@@ -20,8 +25,6 @@ export const uploadMedia = async (file: File, options?: UploadMediaOptions): Pro
     
     
     
-    // @ts-ignore
-    process.noDeprecation = true;
     return await new Promise<string>(async (resolve, reject) => {
         const uploadStream = cloudinary.v2.uploader.upload_stream(
             {
