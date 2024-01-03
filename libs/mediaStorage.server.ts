@@ -26,29 +26,35 @@ export const uploadMedia = async (file: File, options?: UploadMediaOptions): Pro
     
     
     return await new Promise<string>(async (resolve, reject) => {
-        const uploadStream = cloudinary.v2.uploader.upload_stream(
-            {
-                filename_override : file.name,
-                display_name      : file.name, // a user-friendly name for (internal) asset management.
-                use_filename      : true,      // use a filename + random_string to form the public_id
-                public_id_prefix  : folder,    // for url-SEO
-                ...(!folder ? undefined : {
-                    asset_folder  : folder || undefined,
-                    folder        : folder
-                }),
-                resource_type     : 'auto',
-                tags              : folder ? [folder] : undefined,
-            },
-            (err, res) => {
-                if (err) {
-                    reject(err);
+        try {
+            const uploadStream = cloudinary.v2.uploader.upload_stream(
+                {
+                    filename_override : file.name,
+                    display_name      : file.name, // a user-friendly name for (internal) asset management.
+                    use_filename      : true,      // use a filename + random_string to form the public_id
+                    public_id_prefix  : folder,    // for url-SEO
+                    ...(!folder ? undefined : {
+                        asset_folder  : folder || undefined,
+                        folder        : folder
+                    }),
+                    resource_type     : 'auto',
+                    tags              : folder ? [folder] : undefined,
+                },
+                (err, res) => {
+                    if (err) {
+                        reject(err);
+                    }
+                    else {
+                        resolve(res?.public_id ?? '')
+                    } // if
                 }
-                else {
-                    resolve(res?.public_id ?? '')
-                } // if
-            }
-        );
-        createReadStream(Buffer.from(await file.arrayBuffer())).pipe(uploadStream);
+            );
+            createReadStream(Buffer.from(await file.arrayBuffer())).pipe(uploadStream);
+        }
+        catch (error: any) {
+            console.log('error: ', error);
+            reject(error);
+        } // try
     });
 };
 
