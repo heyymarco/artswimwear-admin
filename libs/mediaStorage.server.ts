@@ -20,6 +20,8 @@ export const uploadMedia = async (file: File, options?: UploadMediaOptions): Pro
     
     
     
+    // @ts-ignore
+    process.noDeprecation = true;
     return await new Promise<string>(async (resolve, reject) => {
         const uploadStream = cloudinary.v2.uploader.upload_stream(
             {
@@ -43,8 +45,6 @@ export const uploadMedia = async (file: File, options?: UploadMediaOptions): Pro
                 } // if
             }
         );
-        // @ts-ignore
-        process.noDeprecation = true;
         createReadStream(Buffer.from(await file.arrayBuffer())).pipe(uploadStream);
     });
 };
