@@ -19,7 +19,7 @@ export const uploadMedia = async (file: Express.Multer.File, options?: UploadMed
     
     
     
-    const result = await cloudinary.v2.uploader.upload(file.path, {
+    const result = await cloudinary.v2.uploader.upload(file.path ?? file.buffer, {
         filename_override : file.originalname,
         display_name      : file.originalname, // a user-friendly name for (internal) asset management.
         use_filename      : true, // use a filename + random_string to form the public_id

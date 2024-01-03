@@ -132,15 +132,16 @@ You do not have the privilege to modify the user's image.`
     
     
     
-    const filePath = `/tmp/${file.name}`;
+    // const filePath = `/tmp/${file.name}`;
     try {
         debug += 'phase4\r\n';
-        await writeFile(filePath, Buffer.from(await file.arrayBuffer()));
+        const fileBuffer = await file.arrayBuffer();
+        // await writeFile(filePath, Buffer.from(await file.arrayBuffer()));
         debug += 'phase5\r\n';
-        debug += `filePath: ${filePath}\r\n`;
-        debug += `originalname: ${file.name}\r\n`;
-        debug += `folder: ${folder}\r\n`;
-        const fileId = await uploadMedia({ path: filePath, originalname: file.name } as any, {
+        // debug += `filePath: ${filePath}\r\n`;
+        // debug += `originalname: ${file.name}\r\n`;
+        // debug += `folder: ${folder}\r\n`;
+        const fileId = await uploadMedia({ buffer: fileBuffer, originalname: file.name } as any, {
             folder,
         });
         debug += 'phase6\r\n';
@@ -152,12 +153,12 @@ You do not have the privilege to modify the user's image.`
         return NextResponse.json({ error: error?.message ?? `${error}`, debug }, { status: 500 }); // handled with error
     }
     finally {
-        try {
-            await unlink(filePath);
-        }
-        catch {
-            // ignore error
-        }
+        // try {
+        //     await unlink(filePath);
+        // }
+        // catch {
+        //     // ignore error
+        // }
     } // try
 })
 .patch(async (req) => {
