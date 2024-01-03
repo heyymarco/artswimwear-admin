@@ -43,6 +43,11 @@ export type ImageId = string & {}
 
 
 
+// @ts-ignore
+process.noDeprecation = true;
+
+
+
 // // file processors:
 // const upload = multer({
 //     storage: multer.diskStorage({
