@@ -135,13 +135,13 @@ You do not have the privilege to modify the user's image.`
     // const filePath = `/tmp/${file.name}`;
     try {
         debug += 'phase4\r\n';
-        const fileBuffer = await file.arrayBuffer();
+        const fileStream = file.stream();
         // await writeFile(filePath, Buffer.from(await file.arrayBuffer()));
         debug += 'phase5\r\n';
         // debug += `filePath: ${filePath}\r\n`;
         // debug += `originalname: ${file.name}\r\n`;
         // debug += `folder: ${folder}\r\n`;
-        const fileId = await uploadMedia({ buffer: fileBuffer, originalname: file.name } as any, {
+        const fileId = await uploadMedia(fileStream, file.name, {
             folder,
         });
         debug += 'phase6\r\n';

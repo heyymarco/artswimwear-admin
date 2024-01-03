@@ -11,7 +11,7 @@ cloudinary.v2.config({
 interface UploadMediaOptions {
     folder?: string
 }
-export const uploadMedia = async (file: Express.Multer.File, options?: UploadMediaOptions): Promise<string> => {
+export const uploadMedia = async (fileStream: ReadableStream<Uint8Array>, originalname: string, options?: UploadMediaOptions): Promise<string> => {
     // options:
     const {
         folder,
@@ -19,19 +19,32 @@ export const uploadMedia = async (file: Express.Multer.File, options?: UploadMed
     
     
     
-    const result = await cloudinary.v2.uploader.upload(file.path ?? file.buffer, {
-        filename_override : file.originalname,
-        display_name      : file.originalname, // a user-friendly name for (internal) asset management.
-        use_filename      : true, // use a filename + random_string to form the public_id
-        public_id_prefix  : folder, // for url-SEO
-        ...(!folder ? undefined : {
-            asset_folder  : folder || undefined,
-            folder        : folder
-        }),
-        resource_type     : 'auto',
-        tags              : folder ? [folder] : undefined,
+    return await new Promise<string>((resolve, reject) => {
+        const uploadStream = cloudinary.v2.uploader.upload_stream(
+            {
+                format            : 'auto',
+                filename_override : originalname,
+                display_name      : originalname, // a user-friendly name for (internal) asset management.
+                use_filename      : true, // use a filename + random_string to form the public_id
+                public_id_prefix  : folder, // for url-SEO
+                ...(!folder ? undefined : {
+                    asset_folder  : folder || undefined,
+                    folder        : folder
+                }),
+                resource_type     : 'auto',
+                tags              : folder ? [folder] : undefined,
+            },
+            (err, res) => {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(res?.public_id ?? '')
+                } // if
+            }
+        );
+        fileStream.pipeTo(uploadStream as any);
     });
-    return result.public_id;
 };
 
 export const deleteMedia = async (imageId: string): Promise<void> => {
