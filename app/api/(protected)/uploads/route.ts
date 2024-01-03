@@ -87,6 +87,7 @@ router
     return await next();
 })
 .post(async (req) => {
+    let debug = '';
     const data = await req.formData();
     const file = data.get('image');
     // const file : Express.Multer.File = (req as any).file;
@@ -95,6 +96,7 @@ router
             error: 'No file uploaded.',
         }, { status: 400 }); // handled with error
     } // if
+    debug += 'phase1\r\n';
     
     
     
@@ -107,6 +109,7 @@ router
             error: 'Invalid parameter(s).',
         }, { status: 400 }); // handled with error
     } // if
+    debug += 'phase2\r\n';
     
     
     
@@ -124,22 +127,26 @@ You do not have the privilege to modify the product images.`
 
 You do not have the privilege to modify the user's image.`
     }, { status: 403 }); // handled with error: forbidden
+    debug += 'phase3\r\n';
     //#endregion validating privileges
     
     
     
     const filePath = `/tmp/${file.name}`;
     try {
+        debug += 'phase4\r\n';
         await writeFile(filePath, Buffer.from(await file.arrayBuffer()));
+        debug += 'phase5\r\n';
         const fileId = await uploadMedia({ path: filePath, originalname: file.name } as any, {
             folder,
         });
+        debug += 'phase6\r\n';
         
         
         return NextResponse.json(fileId); // handled with success
     }
     catch (error: any) {
-        return NextResponse.json({ error: error?.message ?? `${error}` }, { status: 500 }); // handled with error
+        return NextResponse.json({ error: error?.message ?? `${error}`, debug }, { status: 500 }); // handled with error
     }
     finally {
         try {
