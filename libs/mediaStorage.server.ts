@@ -1,4 +1,5 @@
 import cloudinary from 'cloudinary'
+import { createReadStream } from 'streamifier'
 
 
 
@@ -11,7 +12,7 @@ cloudinary.v2.config({
 interface UploadMediaOptions {
     folder?: string
 }
-export const uploadMedia = async (fileStream: ReadableStream<Uint8Array>, originalname: string, options?: UploadMediaOptions): Promise<string> => {
+export const uploadMedia = async (file: File, options?: UploadMediaOptions): Promise<string> => {
     // options:
     const {
         folder,
@@ -19,14 +20,13 @@ export const uploadMedia = async (fileStream: ReadableStream<Uint8Array>, origin
     
     
     
-    return await new Promise<string>((resolve, reject) => {
+    return await new Promise<string>(async (resolve, reject) => {
         const uploadStream = cloudinary.v2.uploader.upload_stream(
             {
-                format            : 'auto',
-                filename_override : originalname,
-                display_name      : originalname, // a user-friendly name for (internal) asset management.
-                use_filename      : true, // use a filename + random_string to form the public_id
-                public_id_prefix  : folder, // for url-SEO
+                filename_override : file.name,
+                display_name      : file.name, // a user-friendly name for (internal) asset management.
+                use_filename      : true,      // use a filename + random_string to form the public_id
+                public_id_prefix  : folder,    // for url-SEO
                 ...(!folder ? undefined : {
                     asset_folder  : folder || undefined,
                     folder        : folder
@@ -43,7 +43,7 @@ export const uploadMedia = async (fileStream: ReadableStream<Uint8Array>, origin
                 } // if
             }
         );
-        fileStream.pipeTo(uploadStream as any);
+        createReadStream(Buffer.from(await file.arrayBuffer())).pipe(uploadStream);
     });
 };
 
