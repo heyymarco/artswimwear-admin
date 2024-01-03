@@ -27,6 +27,7 @@ export const uploadMedia = async (file: File, options?: UploadMediaOptions): Pro
     
     return await new Promise<string>(async (resolve, reject) => {
         try {
+            console.log('creating stream');
             const uploadStream = cloudinary.v2.uploader.upload_stream(
                 {
                     filename_override : file.name,
@@ -42,14 +43,18 @@ export const uploadMedia = async (file: File, options?: UploadMediaOptions): Pro
                 },
                 (err, res) => {
                     if (err) {
+                        console.log('cloudinary error', err);
                         reject(err);
                     }
                     else {
+                        console.log('cloudinary success', res);
                         resolve(res?.public_id ?? '')
                     } // if
                 }
             );
+            console.log('created stream');
             createReadStream(Buffer.from(await file.arrayBuffer())).pipe(uploadStream);
+            console.log('piped');
         }
         catch (error: any) {
             console.log('error: ', error);
