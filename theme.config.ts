@@ -1,3 +1,6 @@
+// themes:
+import './theme.basics.config'
+
 import '@reusable-ui/typos/effects'
 import { iconConfig, navbarValues } from '@reusable-ui/components'
 import { galleryEditors } from '@/components/editors/GalleryEditor/styles/config'
@@ -5,7 +8,6 @@ import { commerces } from '@/config'
 import { imageValues } from '@heymarco/image'
 import { carouselValues } from '@reusable-ui/components'
 import { dataTableValues } from '@heymarco/data-table'
-import './theme.basics.config'
 
 
 

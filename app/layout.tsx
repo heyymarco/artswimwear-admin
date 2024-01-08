@@ -1,13 +1,13 @@
 'use client'
 
+// themes:
+import '@/theme.config'
+import './layoutStyles.scss'
+
 import { styleSheets } from '@cssfn/core'
 
 import { StylesCSR } from './StylesCSR' // client_side_rendering CSS (required)
 import { StylesSSR } from './StylesSSR' // server_side_rendering CSS (optional)
-
-import '@/theme.config'
-
-import './layoutStyles.scss'
 
 import { Header } from './Header'
 import { Footer } from './Footer'
