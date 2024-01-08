@@ -518,12 +518,12 @@ export const checkoutConfig : CheckoutConfig = {
                         Dear <Customer.Name />,
                     </p>
                     
-                    <p style={styles.paragraphLast}>
+                    <p style={styles.paragraph}>
                         Thank you for placing an order at <strong><Business.Name /></strong>.
                         <br />
                         We are pleased to confirm that your order is <strong>on its way</strong>.
                     </p>
-                    <p>
+                    <p style={styles.paragraphLast}>
                         Please use the link below to track shipping status:
                         <br />
                         <Shipping.TrackingLink />
