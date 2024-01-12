@@ -2,7 +2,7 @@
 import type {
     // types:
     BuiltInProviderType,
-}                           from 'next-auth/providers'
+}                           from '@auth/core/providers'
 
 
 

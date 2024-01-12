@@ -1,5 +1,5 @@
 // themes:
-import './theme.basics.config'
+import './theme.basics.config' // sync client-side-themes
 
 // react:
 import {
@@ -24,28 +24,30 @@ import FacebookProvider         from '@auth/core/providers/facebook'
 import InstagramProvider        from '@auth/core/providers/instagram'
 import TwitterProvider          from '@auth/core/providers/twitter'
 
+// heymarco:
 import type {
-    AuthConfig,
-}                               from '@heymarco/next-auth/server'
+    // types:
+    AuthConfigServer,
+}                               from '@heymarco/next-auth'
 import {
     styles,
     
     Business,
     User,
     EmailConfirmation,
-    ResetPassword,
+    PasswordReset,
 }                               from '@heymarco/next-auth/templates'
 
+// internals:
+import {
+    authConfigShared,
+}                               from './auth.config.shared'
 
 
-export const authConfig : AuthConfig = {
-    business                 : {
-        name                 : process.env.BUSINESS_NAME ?? '',
-        url                  : process.env.BUSINESS_URL  ?? '',
-    },
-    signUp                   : {
-        enabled              : false, // no signUp for admin page
-    },
+
+export const authConfigServer : AuthConfigServer = {
+    business                 : authConfigShared.business,
+    signUp                   : authConfigShared.signUp,
     signIn                   : {
         requireVerifiedEmail : true,
         failureMaxAttempts   : 5    /* times */,
@@ -53,6 +55,8 @@ export const authConfig : AuthConfig = {
         path                 : '/signin',
     },
     reset                    : {
+        ...authConfigShared.reset,
+        
         throttle             : 0.08 /* hours */,
         maxAge               : 24   /* hours */,
     },
@@ -233,7 +237,7 @@ export const authConfig : AuthConfig = {
                     <p style={styles.paragraphLast}>
                         To reset your password, click on the link below:
                         <br />
-                        <ResetPassword.Link />
+                        <PasswordReset.Link />
                     </p>
                 </section>
                 

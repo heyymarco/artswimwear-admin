@@ -25,8 +25,8 @@ import {
 
 // configs:
 import {
-    credentialsConfig,
-}                           from '@/credentials.config'
+    credentialsConfigClient,
+}                           from '@/credentials.config.client'
 
 
 
@@ -82,10 +82,10 @@ const UniqueEmailEditor = <TElement extends Element = HTMLElement>(props: Unique
             
             
             // constraints:
-            minLength        = {credentialsConfig.EMAIL_MIN_LENGTH}
-            maxLength        = {credentialsConfig.EMAIL_MAX_LENGTH}
-            format           = {credentialsConfig.EMAIL_FORMAT}
-            formatHint       = {credentialsConfig.EMAIL_FORMAT_HINT}
+            minLength        = {credentialsConfigClient.email.minLength}
+            maxLength        = {credentialsConfigClient.email.maxLength}
+            format           = {credentialsConfigClient.email.format}
+            formatHint       = {credentialsConfigClient.email.formatHint}
             onCheckAvailable = {handleCheckAvailable}
         />
     );

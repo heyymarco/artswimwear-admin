@@ -281,13 +281,13 @@ export const apiSlice = createApi({
         }),
         availableUsername : builder.mutation<boolean, string>({
             query: (username) => ({
-                url    : `users/check-username?username=${encodeURIComponent(username)}`,
+                url    : `users/check-username?username=${encodeURIComponent(username)}`, // cloned from @heymarco/next-auth, because this api was disabled in auth.config.shared
                 method : 'GET',
             }),
         }),
         availableEmail    : builder.mutation<boolean, string>({
             query: (email) => ({
-                url    : `users/check-email?email=${encodeURIComponent(email)}`,
+                url    : `users/check-email?email=${encodeURIComponent(email)}`, // cloned from @heymarco/next-auth, because this api was disabled in auth.config.shared
                 method : 'GET',
             }),
         }),

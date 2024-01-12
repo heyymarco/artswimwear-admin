@@ -4,15 +4,15 @@ import {
     NextResponse,
 }                           from 'next/server'
 
+// auth-js:
+import type {
+    Session,
+}                           from '@auth/core/types'
+
 // next-auth:
 import {
     getServerSession,
 }                           from 'next-auth'
-
-// heymarco:
-import type {
-    Session,
-}                           from '@heymarco/next-auth/server'
 
 // next-connect:
 import {

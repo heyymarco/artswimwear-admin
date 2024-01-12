@@ -25,8 +25,8 @@ import {
 
 // configs:
 import {
-    credentialsConfig,
-}                           from '@/credentials.config'
+    credentialsConfigClient,
+}                           from '@/credentials.config.client'
 
 
 
@@ -82,10 +82,10 @@ const UniqueUsernameEditor = <TElement extends Element = HTMLElement>(props: Uni
             
             
             // constraints:
-            minLength        = {credentialsConfig.USERNAME_MIN_LENGTH}
-            maxLength        = {credentialsConfig.USERNAME_MAX_LENGTH}
-            format           = {credentialsConfig.USERNAME_FORMAT}
-            formatHint       = {credentialsConfig.USERNAME_FORMAT_HINT}
+            minLength        = {credentialsConfigClient.username.minLength}
+            maxLength        = {credentialsConfigClient.username.maxLength}
+            format           = {credentialsConfigClient.username.format}
+            formatHint       = {credentialsConfigClient.username.formatHint}
             onCheckAvailable = {handleCheckAvailable}
         />
     );

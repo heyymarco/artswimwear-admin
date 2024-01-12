@@ -437,7 +437,9 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
                         dontSave  : <ButtonIcon icon='cancel' theme='danger' >Don&apos;t Save</ButtonIcon>,
                         continue  : <ButtonIcon icon='edit'   theme='secondary'>Continue Editing</ButtonIcon>,
                     },
-                    backdropStyle : 'static',
+                    ...{
+                        backdropStyle : 'static',
+                    },
                 });
                 if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
             } // if

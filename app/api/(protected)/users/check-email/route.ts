@@ -26,8 +26,8 @@ import {
 
 // configs:
 import {
-    credentialsConfig,
-}                           from '@/credentials.config'
+    credentialsConfigClient,
+}                           from '@/credentials.config.client'
 
 
 
@@ -68,25 +68,43 @@ router
         });
     } // if
     
-    // throw '';
     
-    //#region parsing request
+    
+    const {
+        email    : {
+            minLength      : emailMinLength,
+            maxLength      : emailMaxLength,
+            
+            format         : emailFormat,
+        },
+    } = credentialsConfigClient;
+    
+    
+    
+    // validate the request parameter(s):
     const {
         email,
     } = Object.fromEntries(new URL(req.url, 'https://localhost/').searchParams.entries());
-    //#endregion parsing request
-    
-    
-    
-    //#region validating request
-    if (
-        (((typeof(email) !== 'string') || (email.length < credentialsConfig.EMAIL_MIN_LENGTH) || (email.length > credentialsConfig.EMAIL_MAX_LENGTH)))
-    ) {
+    if ((typeof(email) !== 'string') || !email) {
         return NextResponse.json({
-            error: 'Invalid data.',
+            error: 'The required email is not provided.',
         }, { status: 400 }); // handled with error
     } // if
-    //#endregion validating request
+    if ((typeof(emailMinLength) === 'number') && Number.isFinite(emailMinLength) && (email.length < emailMinLength)) {
+        return NextResponse.json({
+            error: `The email is too short. Minimum is ${emailMinLength} characters.`,
+        }, { status: 400 }); // handled with error
+    } // if
+    if ((typeof(emailMaxLength) === 'number') && Number.isFinite(emailMaxLength) && (email.length > emailMaxLength)) {
+        return NextResponse.json({
+            error: `The email is too long. Maximum is ${emailMaxLength} characters.`,
+        }, { status: 400 }); // handled with error
+    } // if
+    if (!email.match(emailFormat)) {
+        return NextResponse.json({
+            error: `The email is not well formatted.`,
+        }, { status: 400 }); // handled with error
+    } // if
     
     
     

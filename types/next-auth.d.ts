@@ -5,7 +5,7 @@ import type {
 
 
 
-declare module '@heymarco/next-auth/server' {
+declare module '@heymarco/next-auth' {
     interface Role
         extends
             ExtendedRole

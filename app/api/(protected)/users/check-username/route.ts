@@ -26,8 +26,8 @@ import {
 
 // configs:
 import {
-    credentialsConfig,
-}                           from '@/credentials.config'
+    credentialsConfigClient,
+}                           from '@/credentials.config.client'
 
 
 
@@ -68,25 +68,42 @@ router
         });
     } // if
     
-    // throw '';
     
-    //#region parsing request
+    
+    const {
+        username : {
+            minLength      : usernameMinLength,
+            maxLength      : usernameMaxLength,
+            format         : usernameFormat,
+        },
+    } = credentialsConfigClient;
+    
+    
+    
+    // validate the request parameter(s):
     const {
         username,
     } = Object.fromEntries(new URL(req.url, 'https://localhost/').searchParams.entries());
-    //#endregion parsing request
-    
-    
-    
-    //#region validating request
-    if (
-        (((typeof(username) !== 'string') || (username.length < credentialsConfig.USERNAME_MIN_LENGTH) || (username.length > credentialsConfig.USERNAME_MAX_LENGTH)))
-    ) {
+    if ((typeof(username) !== 'string') || !username) {
         return NextResponse.json({
-            error: 'Invalid data.',
+            error: 'The required username is not provided.',
         }, { status: 400 }); // handled with error
     } // if
-    //#endregion validating request
+    if ((typeof(usernameMinLength) === 'number') && Number.isFinite(usernameMinLength) && (username.length < usernameMinLength)) {
+        return NextResponse.json({
+            error: `The username is too short. Minimum is ${usernameMinLength} characters.`,
+        }, { status: 400 }); // handled with error
+    } // if
+    if ((typeof(usernameMaxLength) === 'number') && Number.isFinite(usernameMaxLength) && (username.length > usernameMaxLength)) {
+        return NextResponse.json({
+            error: `The username is too long. Maximum is ${usernameMaxLength} characters.`,
+        }, { status: 400 }); // handled with error
+    } // if
+    if (!username.match(usernameFormat)) {
+        return NextResponse.json({
+            error: `The username is not well formatted.`,
+        }, { status: 400 }); // handled with error
+    } // if
     
     
     

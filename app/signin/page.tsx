@@ -23,8 +23,11 @@ import {
 
 // configs:
 import {
-    credentialsConfig,
-}                           from '@/credentials.config'
+    authConfigClient,
+}                           from '@/auth.config.client'
+import {
+    credentialsConfigClient,
+}                           from '@/credentials.config.client'
 
 // internals:
 import {
@@ -50,12 +53,25 @@ export default function SignInPage() {
         <Main className={styleSheet.main}>
             <Section className='fill-self'>
                 <SignIn
+                    // variants:
                     theme='primary'
-                    credentialsConfig={credentialsConfig}
+                    
+                    
+                    
+                    // auths:
+                    authConfigClient={authConfigClient}
+                    credentialsConfigClient={credentialsConfigClient}
                     providers={loginProviders}
-                    signUpEnable={false}
-                    gotoHomeButtonComponent={null}
+                    
+                    
+                    
+                    // pages:
                     defaultCallbackUrl='/orders'
+                    
+                    
+                    
+                    // components:
+                    gotoHomeButtonComponent={null}
                 />
             </Section>
         </Main>

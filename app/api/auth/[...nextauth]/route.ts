@@ -11,18 +11,18 @@ import {
 
 // configs:
 import {
-    authConfig,
+    authConfigServer,
 }                           from '@/auth.config.server'
 import {
-    credentialsConfig,
-}                           from '@/credentials.config'
+    credentialsConfigServer,
+}                           from '@/credentials.config.server'
 
 
 
 const authRouteHandler = createAuthRouteHandler({
-    adapter           : PrismaAdapterWithCredentials(prisma),
-    authConfig        : authConfig,
-    credentialsConfig : credentialsConfig,
+    adapter                 : PrismaAdapterWithCredentials(prisma),
+    authConfigServer        : authConfigServer,
+    credentialsConfigServer : credentialsConfigServer,
 });
 const authOptions = authRouteHandler.authOptions;
 export {
