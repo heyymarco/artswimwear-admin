@@ -495,5 +495,5 @@ model Role {
     role_d                  Boolean                 @default(false)
     
     // relations:
-    users                   User[]                  // a Role may have some related Users(s)  // one  to many
+    users                   User[]                  // a Role may have some related User(s)  // one  to many
 }
