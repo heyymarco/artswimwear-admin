@@ -4,6 +4,12 @@
 import '@/theme.config'
 import './layoutStyles.scss'
 
+// next-auth:
+import {
+    NextAuthSessionProvider,
+}                           from './NextAuthSessionProvider'
+
+// cssfn:
 import { styleSheets } from '@cssfn/core'
 
 import { StylesCSR } from './StylesCSR' // client_side_rendering CSS (required)
@@ -17,7 +23,6 @@ import { Provider } from 'react-redux'
 
 import { WEBSITE_LANGUAGE } from '@/website.config'
 import { FetchErrorMessage, DialogMessageProvider } from '@reusable-ui/components'
-import { NextAuthSessionProvider } from './NextAuthSessionProvider'
 
 
 
