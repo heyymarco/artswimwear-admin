@@ -18,13 +18,15 @@ import {
 
 
 
-const SiteNavbar = () => {
+// react components:
+const SiteNavbar = (): JSX.Element|null => {
+    // jsx:
     return (
         <Navbar theme='primary' gradient={true} className='siteNavbar' breakpoint='md'>{(params) =>
             <SiteNavbarMenu {...params} />
         }</Navbar>
     );
-}
+};
 export {
     SiteNavbar,
     SiteNavbar as default,
