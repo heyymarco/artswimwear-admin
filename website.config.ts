@@ -38,3 +38,6 @@ export const PAGE_USER_TAB_DELETE                    = 'Delete'
 
 export const PAGE_ROLE_TAB_ROLE                      = 'Role'
 export const PAGE_ROLE_TAB_DELETE                    = 'Delete'
+
+export const PAGE_SIGNIN_TITLE                       = `Sign In - ${WEBSITE_TITLE}`
+export const PAGE_SIGNIN_DESCRIPTION                 = 'Admin login.'
