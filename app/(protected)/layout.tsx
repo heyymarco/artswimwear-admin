@@ -28,6 +28,11 @@ import {
     PageLoading,
 }                           from '@/components/PageLoading'
 
+// configs:
+import {
+    authConfigClient,
+}                           from '@/auth.config.client'
+
 
 
 export default function ProtectedLayout({
@@ -35,6 +40,15 @@ export default function ProtectedLayout({
 }: {
     children: React.ReactNode
 }) {
+    // configs:
+    const {
+        signIn : {
+            path : signInPath,
+        }
+    } = authConfigClient;
+    
+    
+    
     // sessions:
     const { status: sessionStatus } = useSession();
     
@@ -52,8 +66,8 @@ export default function ProtectedLayout({
         // actions:
         router.replace(
             !pathname
-            ? `/signin`
-            : `/signin?callbackUrl=${encodeURIComponent(pathname)}`
+            ? `${signInPath}`
+            : `${signInPath}?callbackUrl=${encodeURIComponent(pathname)}`
         );
     }, [sessionStatus])
     
