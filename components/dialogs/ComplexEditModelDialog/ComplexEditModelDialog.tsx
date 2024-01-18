@@ -91,7 +91,7 @@ import './ComplexEditModelDialogStyles'
 
 // react components:
 export type ComplexEditModelDialogResult = string|false|null
-export interface EditModelDialogExpandedChangeEvent extends ModalExpandedChangeEvent<ComplexEditModelDialogResult> {}
+export interface ComplexEditModelDialogExpandedChangeEvent extends ModalExpandedChangeEvent<ComplexEditModelDialogResult> {}
 
 export type UpdateHandler                               = (args: { id: string|null, privilegeAdd: boolean, privilegeUpdate: Record<string, boolean> }) => Promise<string>
 export type AfterUpdateHandler                          = () => Promise<void>
@@ -108,7 +108,7 @@ export type ConfirmUnsavedHandler<TModel extends Model> = (args: { model: TModel
 export interface ComplexEditModelDialogProps<TModel extends Model>
     extends
         // bases:
-        Omit<ModalCardProps<HTMLElement, EditModelDialogExpandedChangeEvent>,
+        Omit<ModalCardProps<HTMLElement, ComplexEditModelDialogExpandedChangeEvent>,
             // children:
             |'children'        // already taken over
         >,
@@ -466,7 +466,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
         });
     });
     
-    const handleExpandedChange : EventHandler<EditModelDialogExpandedChangeEvent> = useEvent((event) => {
+    const handleExpandedChange : EventHandler<ComplexEditModelDialogExpandedChangeEvent> = useEvent((event) => {
         // conditions:
         if (event.actionType === 'shortcut') return; // prevents closing modal by accidentally pressing [esc]
         
