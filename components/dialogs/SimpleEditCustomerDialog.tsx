@@ -9,10 +9,18 @@ import {
 // internal components:
 import {
     InitialValueHandler,
-    UpdateHandler,
     ImplementedSimpleEditDialogProps,
-    SimpleEditDialog,
 }                           from '@/components/dialogs/SimpleEditDialog'
+import {
+    // types:
+    TransformValueHandler,
+    UpdateModelApi,
+    
+    
+    
+    // react components:
+    SimpleEditModelDialog,
+}                           from '@/components/dialogs/SimpleEditModelDialog'
 
 // stores:
 import {
@@ -28,14 +36,14 @@ import {
 
 
 // react components:
-export interface SimpleEditCustomerDialogProps<TValue extends any>
+export interface SimpleEditCustomerDialogProps
     extends
-        ImplementedSimpleEditDialogProps<TValue, OrderDetail, keyof NonNullable<(OrderDetail['customer'] & OrderDetail['guest'])>>
+        ImplementedSimpleEditDialogProps<string, OrderDetail, keyof NonNullable<(OrderDetail['customer'] & OrderDetail['guest'])>>
 {
     // data:
     editGroup : keyof Pick<OrderDetail, 'customer'|'guest'>
 }
-export const SimpleEditCustomerDialog = <TValue extends any>(props: SimpleEditCustomerDialogProps<TValue>) => {
+export const SimpleEditCustomerDialog = (props: SimpleEditCustomerDialogProps) => {
     // rest props:
     const {
         // data:
@@ -44,47 +52,41 @@ export const SimpleEditCustomerDialog = <TValue extends any>(props: SimpleEditCu
     
     
     
-    // stores:
-    const [updateOrder, {isLoading}] = useUpdateOrder();
-    
-    
-    
     // handlers:
-    const handleInitialValue = useEvent<InitialValueHandler<TValue, OrderDetail, keyof NonNullable<(OrderDetail['customer'] & OrderDetail['guest'])>>>((edit, model) => {
-        return model[editGroup]?.[edit] as TValue;
+    interface MockModel extends NonNullable<(OrderDetail['customer'] & OrderDetail['guest'])> {
+        id : never
+    }
+    const handleInitialValue   = useEvent<InitialValueHandler<string, MockModel, keyof MockModel>>((edit, model) => {
+        return (model as unknown as Pick<OrderDetail, 'customer'|'guest'>)[editGroup]![edit];
     });
-    const handleUpdate       = useEvent<UpdateHandler<TValue, OrderDetail, keyof NonNullable<(OrderDetail['customer'] & OrderDetail['guest'])>>>(async (value, edit, model) => {
-        await updateOrder({
+    const handleTransformValue = useEvent<TransformValueHandler<string, MockModel, keyof MockModel>>((value, edit, model) => {
+        return {
             id          : model.id,
             
             [editGroup] : {
                 [edit] : value,
             } as any,
-        }).unwrap();
+        };
     });
     
     
     
     // jsx:
     return (
-        <SimpleEditDialog<TValue, OrderDetail, keyof NonNullable<(OrderDetail['customer'] & OrderDetail['guest'])>>
+        <SimpleEditModelDialog<MockModel>
             // other props:
-            {...restSimpleEditDialogProps}
-            
-            
-            
-            // states:
-            isLoading={isLoading}
+            {...restSimpleEditDialogProps as unknown as ImplementedSimpleEditDialogProps<string, MockModel, keyof MockModel>}
             
             
             
             // data:
             initialValue={handleInitialValue}
+            transformValue={handleTransformValue}
             
             
             
-            // handlers:
-            onUpdate={handleUpdate}
+            // stores:
+            updateModelApi={useUpdateOrder as () => UpdateModelApi<MockModel>}
         />
     );
 };
