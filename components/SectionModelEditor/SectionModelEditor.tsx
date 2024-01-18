@@ -8,7 +8,6 @@ import {
     
     
     // hooks:
-    useState,
     useRef,
 }                           from 'react'
 
@@ -22,8 +21,7 @@ import {
 import {
     // react helper hooks:
     useEvent,
-    EventHandler,
-    useMergeEvents,
+    useMountedFlag,
     
     
     
@@ -50,6 +48,11 @@ import {
     ListItemProps,
     ListItem,
     List,
+    
+    
+    
+    // utility-components:
+    useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // heymarco components:
@@ -83,12 +86,9 @@ import {
 import {
     ModalDataEmpty,
 }                           from '@/components/ModalDataEmpty'
-import {
-    CollapsibleSuspense,
-}                           from '@/components/CollapsibleSuspense'
 import type {
     // types:
-    CollapseEvent,
+    ComplexEditModelDialogResult,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 
 
@@ -108,16 +108,9 @@ export type CloseEvent = string|false|null
 export interface ModelCreateProps
     extends
         CollapsibleProps<ExpandedChangeEvent>,
-        Omit<CollapsibleEventProps,
-            // handlers:
-            |'onCollapseStart' // already taken over
-            |'onCollapseEnd'   // already taken over
-        >,
+        CollapsibleEventProps,
         ControllableCollapsibleProps<ExpandedChangeEvent>
 {
-    // handlers:
-    onCollapseStart       ?: EventHandler<CollapseEvent>
-    onCollapseEnd         ?: EventHandler<CollapseEvent>
 }
 
 export type CreateHandler = (args: { id: string }) => void|Promise<void>
@@ -165,45 +158,31 @@ export const ModelCreateOuter = (props: ModelCreateOuterProps) => {
     
     
     
-    // states:
-    const [showAddNew, setShowAddNew] = useState<boolean>(false);
+    // dialogs:
+    const {
+        showDialog,
+    } = useDialogMessage();
+    
+    
+    
+    // effects:
+    const isMounted = useMountedFlag();
     
     
     
     // handlers:
-    const handleExpandedChangeInternal = useEvent<EventHandler<ExpandedChangeEvent>>((event) => {
-        // actions:
-        if (!event.expanded) { // if collapsed (ignores of expanded)
-            setShowAddNew(false);
-        } // if
-    });
-    const handleExpandedChange         = useMergeEvents(
-        // preserves the original `onExpandedChange` from `modelCreateComponent`:
-        modelCreateComponent.props.onExpandedChange,
+    const handleShowDialog = useEvent(async (): Promise<void> => {
+        const result = await showDialog<ComplexEditModelDialogResult>(
+            modelCreateComponent
+        );
+        if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
         
         
         
-        // actions:
-        handleExpandedChangeInternal,
-    );
-    
-    const handleCollapseEndInternal = useEvent<EventHandler<CollapseEvent>>(({result}) => {
-        // actions:
         if (result) { // if closed of created Model (ignores of canceled or deleted Model)
-            onCreate?.({
-                id: result,
-            });
+            onCreate?.({ id: result });
         } // if
     });
-    const handleCollapseEnd         = useMergeEvents(
-        // preserves the original `onCollapseEnd` from `modelCreateComponent`:
-        modelCreateComponent.props.onCollapseEnd,
-        
-        
-        
-        // actions:
-        handleCollapseEndInternal,
-    );
     
     
     
@@ -218,25 +197,9 @@ export const ModelCreateOuter = (props: ModelCreateOuterProps) => {
             // classes:
             className={`${styleSheet.createData} ${props.className}`}
         >
-            <ButtonIcon icon='create' onClick={() => setShowAddNew(true)}>
+            <ButtonIcon icon='create' onClick={handleShowDialog}>
                 {createItemText ?? 'Add New Item'}
             </ButtonIcon>
-            {/* add_new_data dialog: */}
-            <CollapsibleSuspense>
-                {React.cloneElement<ModelCreateProps>(modelCreateComponent,
-                    // props:
-                    {
-                        // states:
-                        expanded         : showAddNew,
-                        
-                        
-                        
-                        // handlers:
-                        onExpandedChange : handleExpandedChange,
-                        onCollapseEnd    : handleCollapseEnd,
-                    },
-                )}
-            </CollapsibleSuspense>
         </ListItem>
     );
 };

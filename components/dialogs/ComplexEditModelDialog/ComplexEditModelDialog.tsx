@@ -90,10 +90,8 @@ import './ComplexEditModelDialogStyles'
 
 
 // react components:
-export type EditModelDialogResult = string|false|null
-export interface EditModelDialogExpandedChangeEvent extends ModalExpandedChangeEvent {
-    result: EditModelDialogResult
-}
+export type ComplexEditModelDialogResult = string|false|null
+export interface EditModelDialogExpandedChangeEvent extends ModalExpandedChangeEvent<ComplexEditModelDialogResult> {}
 
 export type UpdateHandler                               = (args: { id: string|null, privilegeAdd: boolean, privilegeUpdate: Record<string, boolean> }) => Promise<string>
 export type AfterUpdateHandler                          = () => Promise<void>
@@ -107,18 +105,10 @@ export type DeleteSideHandler                           = () => Promise<void>
 export type ConfirmDeleteHandler<TModel extends Model>  = (args: { model: TModel      }) => { title?: React.ReactNode, message: React.ReactNode }
 export type ConfirmUnsavedHandler<TModel extends Model> = (args: { model: TModel|null }) => { title?: React.ReactNode, message: React.ReactNode }
 
-export interface CollapseEvent {
-    result: EditModelDialogResult
-}
-
 export interface ComplexEditModelDialogProps<TModel extends Model>
     extends
         // bases:
         Omit<ModalCardProps<HTMLElement, EditModelDialogExpandedChangeEvent>,
-            // handlers:
-            |'onCollapseStart' // already taken over
-            |'onCollapseEnd'   // already taken over
-            
             // children:
             |'children'        // already taken over
         >,
@@ -168,9 +158,6 @@ export interface ComplexEditModelDialogProps<TModel extends Model>
     
     onConfirmDelete  ?: ConfirmDeleteHandler<TModel>
     onConfirmUnsaved ?: ConfirmUnsavedHandler<TModel>
-    
-    onCollapseStart  ?: EventHandler<CollapseEvent>
-    onCollapseEnd    ?: EventHandler<CollapseEvent>
     
     
     
@@ -263,8 +250,6 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
         onConfirmUnsaved,
         
         onExpandedChange,
-        onCollapseStart,
-        onCollapseEnd,
         
         
         
@@ -304,7 +289,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
     
     // refs:
     const editorRef       = useRef<HTMLFormElement|null>(null);
-    const dialogResultRef = useRef<EditModelDialogResult>(null);
+    const dialogResultRef = useRef<ComplexEditModelDialogResult>(null);
     
     
     
@@ -465,7 +450,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
             await handleFinalizing(null, /*commitSides = */false); // result: no changes
         } // if
     });
-    const handleFinalizing     = useEvent(async (event: EditModelDialogResult|Promise<EditModelDialogResult>, commitSides : boolean, otherTasks : Promise<any>[] = []) => {
+    const handleFinalizing     = useEvent(async (result: ComplexEditModelDialogResult|Promise<ComplexEditModelDialogResult>, commitSides : boolean, otherTasks : Promise<any>[] = []) => {
         await Promise.all([
             handleSideSave(commitSides),
             ...otherTasks,
@@ -473,11 +458,11 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
         
         
         
-        dialogResultRef.current = await event;
+        dialogResultRef.current = await result;
         onExpandedChange?.({
             expanded   : false,
             actionType : 'ui',
-            result     : dialogResultRef.current,
+            data       : dialogResultRef.current,
         });
     });
     
@@ -488,22 +473,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
         
         
         // actions:
-        onExpandedChange?.({
-            ...event,
-            result : dialogResultRef.current,
-        });
-    });
-    const handleCollapseStart  : EventHandler<void> = useEvent(() => {
-        // actions:
-        onCollapseStart?.({
-            result : dialogResultRef.current,
-        });
-    });
-    const handleCollapseEnd    : EventHandler<void> = useEvent(() => {
-        // actions:
-        onCollapseEnd?.({
-            result : dialogResultRef.current,
-        });
+        onExpandedChange?.(event);
     });
     
     
@@ -526,8 +496,6 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
                 
                 // handlers:
                 onExpandedChange = {handleExpandedChange}
-                onCollapseStart  = {handleCollapseStart }
-                onCollapseEnd    = {handleCollapseEnd   }
             >
                 <CardHeader>
                     <h1>{
