@@ -9,10 +9,18 @@ import {
 // internal components:
 import {
     InitialValueHandler,
-    UpdateHandler,
     ImplementedSimpleEditDialogProps,
-    SimpleEditDialog,
 }                           from '@/components/dialogs/SimpleEditDialog'
+import {
+    // types:
+    TransformValueHandler,
+    UpdateModelApi,
+    
+    
+    
+    // react components:
+    SimpleEditModelDialog,
+}                           from '@/components/dialogs/SimpleEditModelDialog'
 import type {
     OrderCompletedValue,
 }                           from '@/components/editors/OrderCompletedEditor'
@@ -37,23 +45,22 @@ export interface SimpleEditOrderCompletedDialogProps
 {
 }
 export const SimpleEditOrderCompletedDialog = (props: SimpleEditOrderCompletedDialogProps) => {
-    // stores:
-    const [updateOrder, {isLoading}] = useUpdateOrder();
-    
-    
-    
     // handlers:
-    const handleInitialValue = useEvent<InitialValueHandler<OrderCompletedValue, OrderDetailWithOptions, ''>>((edit, model) => {
+    interface MockModel {
+        id : never
+        '' : OrderCompletedValue
+    }
+    const handleInitialValue   = useEvent<InitialValueHandler<OrderCompletedValue, MockModel, keyof MockModel>>((edit, model) => {
         return {
             sendConfirmationEmail : true,
         };
     });
-    const handleUpdate       = useEvent<UpdateHandler<OrderCompletedValue, OrderDetailWithOptions, ''>>(async (value, edit, model) => {
+    const handleTransformValue = useEvent<TransformValueHandler<OrderCompletedValue, MockModel, keyof MockModel>>((value, edit, model) => {
         const {
             sendConfirmationEmail = true,
         ...restValue} = value;
         
-        await updateOrder({
+        return {
             id          : model.id,
             
             orderStatus : 'COMPLETED',
@@ -63,31 +70,27 @@ export const SimpleEditOrderCompletedDialog = (props: SimpleEditOrderCompletedDi
             
             //@ts-ignore
             sendConfirmationEmail,
-        }).unwrap();
+        };
     });
     
     
     
     // jsx:
     return (
-        <SimpleEditDialog<OrderCompletedValue, OrderDetailWithOptions, ''>
+        <SimpleEditModelDialog<MockModel>
             // other props:
-            {...props}
-            
-            
-            
-            // states:
-            isLoading={isLoading}
+            {...props as unknown as ImplementedSimpleEditDialogProps<OrderCompletedValue, MockModel, keyof MockModel>}
             
             
             
             // data:
             initialValue={handleInitialValue}
+            transformValue={handleTransformValue}
             
             
             
-            // handlers:
-            onUpdate={handleUpdate}
+            // stores:
+            updateModelApi={useUpdateOrder as () => UpdateModelApi<MockModel>}
         />
     );
 };
