@@ -9,10 +9,18 @@ import {
 // internal components:
 import {
     InitialValueHandler,
-    UpdateHandler,
     ImplementedSimpleEditDialogProps,
-    SimpleEditDialog,
 }                           from '@/components/dialogs/SimpleEditDialog'
+import {
+    // types:
+    TransformValueHandler,
+    UpdateModelApi,
+    
+    
+    
+    // react components:
+    SimpleEditModelDialog,
+}                           from '@/components/dialogs/SimpleEditModelDialog'
 import type {
     PaymentValue,
 }                           from '@/components/editors/PaymentEditor/PaymentEditor'
@@ -37,13 +45,12 @@ export interface SimpleEditPaymentDialogProps
 {
 }
 export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => {
-    // stores:
-    const [updateOrder, {isLoading}] = useUpdateOrder();
-    
-    
-    
     // handlers:
-    const handleInitialValue = useEvent<InitialValueHandler<PaymentValue, OrderDetailWithOptions, 'payment'>>((edit, model) => {
+    interface MockModel {
+        id      : never
+        payment : PaymentValue
+    }
+    const handleInitialValue   = useEvent<InitialValueHandler<PaymentValue, MockModel, keyof MockModel>>((edit, model) => {
         const value = model[edit];
         const isInitiallyUnpaid = (value.type === 'MANUAL');
         return {
@@ -55,12 +62,12 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
             sendConfirmationEmail :   isInitiallyUnpaid,
         };
     });
-    const handleUpdate       = useEvent<UpdateHandler<PaymentValue, OrderDetailWithOptions, 'payment'>>(async (value, edit, model) => {
+    const handleTransformValue = useEvent<TransformValueHandler<PaymentValue, MockModel, keyof MockModel>>((value, edit, model) => {
         const {
             sendConfirmationEmail = true,
         ...restValue} = value;
         
-        await updateOrder({
+        return {
             id     : model.id,
             
             [edit] : {
@@ -73,31 +80,27 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
             
             //@ts-ignore
             sendConfirmationEmail,
-        }).unwrap();
+        };
     });
     
     
     
     // jsx:
     return (
-        <SimpleEditDialog<PaymentValue, OrderDetailWithOptions, 'payment'>
+        <SimpleEditModelDialog<MockModel>
             // other props:
-            {...props}
-            
-            
-            
-            // states:
-            isLoading={isLoading}
+            {...props as unknown as ImplementedSimpleEditDialogProps<PaymentValue, MockModel, keyof MockModel>}
             
             
             
             // data:
             initialValue={handleInitialValue}
+            transformValue={handleTransformValue}
             
             
             
-            // handlers:
-            onUpdate={handleUpdate}
+            // stores:
+            updateModelApi={useUpdateOrder as () => UpdateModelApi<MockModel>}
         />
     );
 };
