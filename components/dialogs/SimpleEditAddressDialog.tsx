@@ -74,7 +74,7 @@ export const SimpleEditAddressDialog = (props: SimpleEditAddressDialogProps) => 
     return (
         <SimpleEditModelDialog<MockModel>
             // other props:
-            {...props as unknown as ImplementedSimpleEditDialogProps<AddressValue, MockModel, 'shippingAddress'|'billingAddress'>}
+            {...props as unknown as ImplementedSimpleEditDialogProps<AddressValue, MockModel, keyof MockModel>}
             
             
             
