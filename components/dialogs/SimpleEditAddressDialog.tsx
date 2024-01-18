@@ -54,10 +54,10 @@ export const SimpleEditAddressDialog = (props: SimpleEditAddressDialogProps) => 
     }
     const handleInitialValue   = useEvent<InitialValueHandler<AddressValue, MockModel, keyof MockModel>>((edit, model) => {
         if (edit === 'billingAddress') {
-            return (model as unknown as OrderDetail).payment[edit] ?? emptyAddressValue;
+            return (model as unknown as OrderDetail).payment.billingAddress ?? emptyAddressValue;
         }
         else {
-            return model[edit] ?? emptyAddressValue;
+            return model.shippingAddress ?? emptyAddressValue;
         } // if
     });
     const handleTransformValue = useEvent<TransformValueHandler<AddressValue, MockModel, keyof MockModel>>((value, edit, model) => {
