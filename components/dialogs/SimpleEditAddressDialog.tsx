@@ -9,10 +9,18 @@ import {
 // internal components:
 import {
     InitialValueHandler,
-    UpdateHandler,
     ImplementedSimpleEditDialogProps,
-    SimpleEditDialog,
 }                           from '@/components/dialogs/SimpleEditDialog'
+import {
+    // types:
+    TransformValueHandler,
+    UpdateModelApi,
+    
+    
+    
+    // react components:
+    SimpleEditModelDialog,
+}                           from '@/components/dialogs/SimpleEditModelDialog'
 import {
     AddressValue,
     emptyAddressValue,
@@ -38,50 +46,47 @@ export interface SimpleEditAddressDialogProps
 {
 }
 export const SimpleEditAddressDialog = (props: SimpleEditAddressDialogProps) => {
-    // stores:
-    const [updateOrder, {isLoading}] = useUpdateOrder();
-    
-    
-    
     // handlers:
-    const handleInitialValue = useEvent<InitialValueHandler<AddressValue, OrderDetail, 'shippingAddress'|'billingAddress'>>((edit, model) => {
+    interface MockModel {
+        id              : never
+        shippingAddress : AddressValue
+        billingAddress  : AddressValue
+    }
+    const handleInitialValue   = useEvent<InitialValueHandler<AddressValue, MockModel, keyof MockModel>>((edit, model) => {
         if (edit === 'billingAddress') {
-            return model.payment[edit] ?? emptyAddressValue;
+            return (model as unknown as OrderDetail).payment[edit] ?? emptyAddressValue;
         }
         else {
             return model[edit] ?? emptyAddressValue;
         } // if
     });
-    const handleUpdate       = useEvent<UpdateHandler<AddressValue, OrderDetail, 'shippingAddress'|'billingAddress'>>(async (value, edit, model) => {
-        await updateOrder({
+    const handleTransformValue = useEvent<TransformValueHandler<AddressValue, MockModel, keyof MockModel>>((value, edit, model) => {
+        return {
             id     : model.id,
             
             [edit] : value,
-        }).unwrap();
+        };
     });
     
     
     
     // jsx:
     return (
-        <SimpleEditDialog<AddressValue, OrderDetail, 'shippingAddress'|'billingAddress'>
+        <SimpleEditModelDialog<MockModel>
             // other props:
-            {...props}
-            
-            
-            
-            // states:
-            isLoading={isLoading}
+            {...props as unknown as ImplementedSimpleEditDialogProps<AddressValue, MockModel, 'shippingAddress'|'billingAddress'>}
             
             
             
             // data:
             initialValue={handleInitialValue}
+            transformValue={handleTransformValue}
+            onChange={undefined}
             
             
             
-            // handlers:
-            onUpdate={handleUpdate}
+            // stores:
+            updateModelApi={useUpdateOrder as () => UpdateModelApi<MockModel>}
         />
     );
 };
