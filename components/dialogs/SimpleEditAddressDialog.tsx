@@ -81,7 +81,6 @@ export const SimpleEditAddressDialog = (props: SimpleEditAddressDialogProps) => 
             // data:
             initialValue={handleInitialValue}
             transformValue={handleTransformValue}
-            onChange={undefined}
             
             
             
