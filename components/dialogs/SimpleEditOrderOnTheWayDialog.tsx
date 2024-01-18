@@ -51,7 +51,7 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
         shippingTracking : OrderOnTheWayValue
     }
     const handleInitialValue   = useEvent<InitialValueHandler<OrderOnTheWayValue, MockModel, keyof MockModel>>((edit, model) => {
-        const value = model.shippingTracking;
+        const value = model[edit];
         return {
             ...value,
             
