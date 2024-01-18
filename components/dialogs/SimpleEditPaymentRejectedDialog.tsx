@@ -9,10 +9,18 @@ import {
 // internal components:
 import {
     InitialValueHandler,
-    UpdateHandler,
     ImplementedSimpleEditDialogProps,
-    SimpleEditDialog,
 }                           from '@/components/dialogs/SimpleEditDialog'
+import {
+    // types:
+    TransformValueHandler,
+    UpdateModelApi,
+    
+    
+    
+    // react components:
+    SimpleEditModelDialog,
+}                           from '@/components/dialogs/SimpleEditModelDialog'
 import type {
     WysiwygEditorState,
 }                           from '@/components/editors/WysiwygEditor'
@@ -42,50 +50,45 @@ export interface SimpleEditPaymentRejectedDialogProps
 {
 }
 export const SimpleEditPaymentRejectedDialog = (props: SimpleEditPaymentRejectedDialogProps) => {
-    // stores:
-    const [updateOrder, {isLoading}] = useUpdateOrder();
-    
-    
-    
     // handlers:
-    const handleInitialValue = useEvent<InitialValueHandler<WysiwygEditorState|null, OrderDetailWithOptions, 'paymentConfirmation'>>((edit, model) => {
-        return (model[edit]?.rejectionReason ?? null) as WysiwygEditorState|null;
+    interface MockModel {
+        id                  : never
+        paymentConfirmation : WysiwygEditorState|null
+    }
+    const handleInitialValue   = useEvent<InitialValueHandler<WysiwygEditorState|null, MockModel, keyof MockModel>>((edit, model) => {
+        return ((model as unknown as OrderDetailWithOptions).paymentConfirmation?.rejectionReason ?? null) as WysiwygEditorState|null;
     });
-    const handleUpdate       = useEvent<UpdateHandler<WysiwygEditorState|null, OrderDetailWithOptions, 'paymentConfirmation'>>(async (value, edit, model) => {
-        await updateOrder({
+    const handleTransformValue = useEvent<TransformValueHandler<WysiwygEditorState|null, MockModel, keyof MockModel>>((value, edit, model) => {
+        return {
             id     : model.id,
             
             [edit] : {
                 rejectionReason : value as Prisma.JsonValue,
             },
             
-            //@ts-ignore
+            // @ts-ignore
             sendConfirmationEmail : true,
-        }).unwrap();
+        };
     });
     
     
     
     // jsx:
     return (
-        <SimpleEditDialog<WysiwygEditorState|null, OrderDetailWithOptions, 'paymentConfirmation'>
+        <SimpleEditModelDialog<MockModel>
             // other props:
-            {...props}
-            
-            
-            
-            // states:
-            isLoading={isLoading}
+            {...props as unknown as ImplementedSimpleEditDialogProps<WysiwygEditorState|null, MockModel, keyof MockModel>}
             
             
             
             // data:
             initialValue={handleInitialValue}
+            transformValue={handleTransformValue}
             
             
             
-            // handlers:
-            onUpdate={handleUpdate}
+            // stores:
+            updateModelApi={useUpdateOrder as () => UpdateModelApi<MockModel>}
         />
     );
 };
