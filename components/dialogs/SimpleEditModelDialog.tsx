@@ -42,17 +42,22 @@ export type UpdateModelApi<TModel extends Model> = readonly [
 
 
 // react components:
+export type TransformValueHandler<TValue extends any, TModel extends Model, TEdit extends string> = (value: TValue, edit: TEdit, model: TModel) => MutationArgs<TModel>
 export interface SimpleEditModelDialogProps<TModel extends Model>
     extends
         ImplementedSimpleEditDialogProps<TModel[keyof TModel], TModel, Extract<keyof TModel, string>>
 {
     // data:
-    updateModelApi : UpdateModelApi<TModel> | (() => UpdateModelApi<TModel>)
+    initialValue   ?: InitialValueHandler<TModel[keyof TModel], TModel, Extract<keyof TModel, string>>
+    transformValue ?: TransformValueHandler<TModel[keyof TModel], TModel, Extract<keyof TModel, string>>
+    updateModelApi  : UpdateModelApi<TModel> | (() => UpdateModelApi<TModel>)
 }
 export const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialogProps<TModel>) => {
     // rest props:
     const {
         // data:
+        initialValue,
+        transformValue,
         updateModelApi,
     ...restSimpleEditDialogProps} = props;
     
@@ -64,17 +69,19 @@ export const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditMod
     
     
     // handlers:
-    const handleInitialValue = useEvent<InitialValueHandler<TModel[keyof TModel], TModel, Extract<keyof TModel, string>>>((edit, model) => {
+    const handleDefaultInitialValue   = useEvent<InitialValueHandler<TModel[keyof TModel], TModel, Extract<keyof TModel, string>>>((edit, model) => {
         return model[edit] as TModel[keyof TModel];
     });
-    const handleUpdate       = useEvent<UpdateHandler<TModel[keyof TModel], TModel, Extract<keyof TModel, string>>>(async (value, edit, model) => {
-        if (value === '') value = null as typeof value; // auto convert empty string to null
-        await updateModel({
-            // @ts-ignore
+    const handleDefaultTransformValue = useEvent<TransformValueHandler<TModel[keyof TModel], TModel, Extract<keyof TModel, string>>>((value, edit, model) => {
+        return {
             id     : model.id,
             
-            [edit] : value,
-        }).unwrap();
+            [edit] : (value === '') ? (null as typeof value) : value, // auto convert empty string to null
+        } as any;
+    });
+    const handleUpdate                = useEvent<UpdateHandler<TModel[keyof TModel], TModel, Extract<keyof TModel, string>>>(async (value, edit, model) => {
+        const transformed = (transformValue ?? handleDefaultTransformValue)(value, edit, model);
+        await updateModel(transformed).unwrap();
     });
     
     
@@ -93,7 +100,7 @@ export const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditMod
             
             
             // data:
-            initialValue={handleInitialValue}
+            initialValue={initialValue ?? handleDefaultInitialValue}
             
             
             
