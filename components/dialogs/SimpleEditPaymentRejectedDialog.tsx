@@ -63,8 +63,8 @@ export const SimpleEditPaymentRejectedDialog = (props: SimpleEditPaymentRejected
             id     : model.id,
             
             [edit] : {
-                rejectionReason : value as Prisma.JsonValue,
-            },
+                rejectionReason : value,
+            } as any,
             
             // @ts-ignore
             sendConfirmationEmail : true,
