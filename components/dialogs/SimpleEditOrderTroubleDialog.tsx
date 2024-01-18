@@ -56,7 +56,7 @@ export const SimpleEditOrderTroubleDialog = (props: SimpleEditOrderTroubleDialog
         orderTrouble : WysiwygEditorState|null
     }
     const handleInitialValue   = useEvent<InitialValueHandler<WysiwygEditorState|null, MockModel, keyof MockModel>>((edit, model) => {
-        return (model.orderTrouble as Prisma.JsonValue as WysiwygEditorState|null) ?? null;
+        return (model[edit] as Prisma.JsonValue as WysiwygEditorState|null) ?? null;
     });
     const handleTransformValue = useEvent<TransformValueHandler<WysiwygEditorState|null, MockModel, keyof MockModel>>((value, edit, model) => {
         return {
