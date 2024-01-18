@@ -66,10 +66,10 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
         ...restValue} = value;
         
         return {
-            id               : model.id,
+            id          : model.id,
             
-            orderStatus      : 'ON_THE_WAY',
-            shippingTracking : {
+            orderStatus : 'ON_THE_WAY',
+            [edit]      : {
                 // original:
                 ...restValue,
                 shippingCarrier : restValue.shippingCarrier?.trim() || null, // normalize to null if empty_string or only_spaces
