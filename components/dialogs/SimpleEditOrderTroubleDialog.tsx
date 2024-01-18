@@ -62,7 +62,7 @@ export const SimpleEditOrderTroubleDialog = (props: SimpleEditOrderTroubleDialog
         return {
             id     : model.id,
             
-            [edit] : value as Prisma.JsonValue,
+            [edit] : value,
         };
     });
     
