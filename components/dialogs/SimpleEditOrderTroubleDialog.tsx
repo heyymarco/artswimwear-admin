@@ -9,10 +9,18 @@ import {
 // internal components:
 import {
     InitialValueHandler,
-    UpdateHandler,
     ImplementedSimpleEditDialogProps,
-    SimpleEditDialog,
 }                           from '@/components/dialogs/SimpleEditDialog'
+import {
+    // types:
+    TransformValueHandler,
+    UpdateModelApi,
+    
+    
+    
+    // react components:
+    SimpleEditModelDialog,
+}                           from '@/components/dialogs/SimpleEditModelDialog'
 import type {
     WysiwygEditorState,
 }                           from '@/components/editors/WysiwygEditor'
@@ -28,6 +36,11 @@ import {
     useUpdateOrder,
 }                           from '@/store/features/api/apiSlice'
 
+// models:
+import type {
+    Prisma,
+}                           from '@prisma/client'
+
 
 
 // react components:
@@ -37,45 +50,40 @@ export interface SimpleEditOrderTroubleDialogProps
 {
 }
 export const SimpleEditOrderTroubleDialog = (props: SimpleEditOrderTroubleDialogProps) => {
-    // stores:
-    const [updateOrder, {isLoading}] = useUpdateOrder();
-    
-    
-    
     // handlers:
-    const handleInitialValue = useEvent<InitialValueHandler<WysiwygEditorState|null, OrderDetail, 'orderTrouble'>>((edit, model) => {
-        return (model[edit] as any) ?? null;
+    interface MockModel {
+        id           : never
+        orderTrouble : WysiwygEditorState|null
+    }
+    const handleInitialValue   = useEvent<InitialValueHandler<WysiwygEditorState|null, MockModel, keyof MockModel>>((edit, model) => {
+        return (model.orderTrouble as Prisma.JsonValue as WysiwygEditorState|null) ?? null;
     });
-    const handleUpdate       = useEvent<UpdateHandler<WysiwygEditorState|null, OrderDetail, 'orderTrouble'>>(async (value, edit, model) => {
-        await updateOrder({
+    const handleTransformValue = useEvent<TransformValueHandler<WysiwygEditorState|null, MockModel, keyof MockModel>>((value, edit, model) => {
+        return {
             id     : model.id,
             
-            [edit] : value as any,
-        }).unwrap();
+            [edit] : value as Prisma.JsonValue,
+        };
     });
     
     
     
     // jsx:
     return (
-        <SimpleEditDialog<WysiwygEditorState|null, OrderDetail, 'orderTrouble'>
+        <SimpleEditModelDialog<MockModel>
             // other props:
-            {...props}
-            
-            
-            
-            // states:
-            isLoading={isLoading}
+            {...props as unknown as ImplementedSimpleEditDialogProps<WysiwygEditorState|null, MockModel, keyof MockModel>}
             
             
             
             // data:
             initialValue={handleInitialValue}
+            transformValue={handleTransformValue}
             
             
             
-            // handlers:
-            onUpdate={handleUpdate}
+            // stores:
+            updateModelApi={useUpdateOrder as () => UpdateModelApi<MockModel>}
         />
     );
 };

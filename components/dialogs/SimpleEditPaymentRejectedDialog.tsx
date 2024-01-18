@@ -56,7 +56,7 @@ export const SimpleEditPaymentRejectedDialog = (props: SimpleEditPaymentRejected
         paymentConfirmation : WysiwygEditorState|null
     }
     const handleInitialValue   = useEvent<InitialValueHandler<WysiwygEditorState|null, MockModel, keyof MockModel>>((edit, model) => {
-        return ((model as unknown as OrderDetailWithOptions).paymentConfirmation?.rejectionReason ?? null) as WysiwygEditorState|null;
+        return ((model as unknown as OrderDetailWithOptions).paymentConfirmation?.rejectionReason as Prisma.JsonValue as WysiwygEditorState|null) ?? null;
     });
     const handleTransformValue = useEvent<TransformValueHandler<WysiwygEditorState|null, MockModel, keyof MockModel>>((value, edit, model) => {
         return {
