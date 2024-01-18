@@ -450,10 +450,10 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
             await handleFinalizing(null, /*commitSides = */false); // result: no changes
         } // if
     });
-    const handleFinalizing     = useEvent(async (result: ComplexEditModelDialogResult|Promise<ComplexEditModelDialogResult>, commitSides : boolean, otherTasks : Promise<any>[] = []) => {
+    const handleFinalizing     = useEvent(async (result: ComplexEditModelDialogResult|Promise<ComplexEditModelDialogResult>, commitSides : boolean, processingTasks : Promise<any>[] = []) => {
         await Promise.all([
             handleSideSave(commitSides),
-            ...otherTasks,
+            ...processingTasks,
         ]);
         
         

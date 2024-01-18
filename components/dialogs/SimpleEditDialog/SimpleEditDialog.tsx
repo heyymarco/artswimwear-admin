@@ -262,8 +262,8 @@ const SimpleEditDialog = <TValue extends any, TModel extends {}, TEdit extends s
             await handleFinalizing(); // result: no changes
         } // if
     });
-    const handleFinalizing     = useEvent(async (otherTasks : Promise<any>[] = []) => {
-        await Promise.all(otherTasks);
+    const handleFinalizing     = useEvent(async (processingTasks : Promise<any>[] = []) => {
+        await Promise.all(processingTasks);
         
         
         
