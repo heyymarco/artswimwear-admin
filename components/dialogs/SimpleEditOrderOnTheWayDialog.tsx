@@ -9,10 +9,18 @@ import {
 // internal components:
 import {
     InitialValueHandler,
-    UpdateHandler,
     ImplementedSimpleEditDialogProps,
-    SimpleEditDialog,
 }                           from '@/components/dialogs/SimpleEditDialog'
+import {
+    // types:
+    TransformValueHandler,
+    UpdateModelApi,
+    
+    
+    
+    // react components:
+    SimpleEditModelDialog,
+}                           from '@/components/dialogs/SimpleEditModelDialog'
 import type {
     OrderOnTheWayValue,
 }                           from '@/components/editors/OrderOnTheWayEditor'
@@ -37,14 +45,13 @@ export interface SimpleEditOrderOnTheWayDialogProps
 {
 }
 export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDialogProps) => {
-    // stores:
-    const [updateOrder, {isLoading}] = useUpdateOrder();
-    
-    
-    
     // handlers:
-    const handleInitialValue = useEvent<InitialValueHandler<OrderOnTheWayValue, OrderDetailWithOptions, 'shippingTracking'>>((edit, model) => {
-        const value = model[edit];
+    interface MockModel {
+        id               : never
+        shippingTracking : OrderOnTheWayValue
+    }
+    const handleInitialValue   = useEvent<InitialValueHandler<OrderOnTheWayValue, MockModel, keyof MockModel>>((edit, model) => {
+        const value = model.shippingTracking;
         return {
             ...value,
             
@@ -53,16 +60,16 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
             sendConfirmationEmail : true,
         };
     });
-    const handleUpdate       = useEvent<UpdateHandler<OrderOnTheWayValue, OrderDetailWithOptions, 'shippingTracking'>>(async (value, edit, model) => {
+    const handleTransformValue = useEvent<TransformValueHandler<OrderOnTheWayValue, MockModel, keyof MockModel>>((value, edit, model) => {
         const {
             sendConfirmationEmail = true,
         ...restValue} = value;
         
-        await updateOrder({
-            id          : model.id,
+        return {
+            id               : model.id,
             
-            orderStatus : 'ON_THE_WAY',
-            [edit] : {
+            orderStatus      : 'ON_THE_WAY',
+            shippingTracking : {
                 // original:
                 ...restValue,
                 shippingCarrier : restValue.shippingCarrier?.trim() || null, // normalize to null if empty_string or only_spaces
@@ -71,31 +78,27 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
             
             //@ts-ignore
             sendConfirmationEmail,
-        }).unwrap();
+        };
     });
     
     
     
     // jsx:
     return (
-        <SimpleEditDialog<OrderOnTheWayValue, OrderDetailWithOptions, 'shippingTracking'>
+        <SimpleEditModelDialog<MockModel>
             // other props:
-            {...props}
-            
-            
-            
-            // states:
-            isLoading={isLoading}
+            {...props as unknown as ImplementedSimpleEditDialogProps<OrderOnTheWayValue, MockModel, keyof MockModel>}
             
             
             
             // data:
             initialValue={handleInitialValue}
+            transformValue={handleTransformValue}
             
             
             
-            // handlers:
-            onUpdate={handleUpdate}
+            // stores:
+            updateModelApi={useUpdateOrder as () => UpdateModelApi<MockModel>}
         />
     );
 };
