@@ -103,6 +103,8 @@ export type UpdateModelApi<TModel extends Model> = readonly [
     }
 ]
 
+export type ConfirmUnsavedHandler<TModel extends Model> = (args: { model: TModel|null }) => { title?: React.ReactNode, message: React.ReactNode }
+
 export interface SimpleEditModelDialogProps<TModel extends Model, TEdit extends keyof any = KeyOfModel<TModel>>
     extends
         // bases:
@@ -112,16 +114,21 @@ export interface SimpleEditModelDialogProps<TModel extends Model, TEdit extends 
         >
 {
     // data:
-    model           : TModel
-    edit            : TEdit
-    initialValue   ?: InitialValueHandler<TModel, TEdit>
-    transformValue ?: TransformValueHandler<TModel, TEdit>
-    updateModelApi  : UpdateModelApi<TModel> | (() => UpdateModelApi<TModel>)
+    model             : TModel
+    edit              : TEdit
+    initialValue     ?: InitialValueHandler<TModel, TEdit>
+    transformValue   ?: TransformValueHandler<TModel, TEdit>
+    updateModelApi    : UpdateModelApi<TModel> | (() => UpdateModelApi<TModel>)
     
     
     
     // components:
-    editorComponent : React.ReactComponentElement<any, EditorProps<Element, ValueOfModel<TModel>>>
+    editorComponent   : React.ReactComponentElement<any, EditorProps<Element, ValueOfModel<TModel>>>
+    
+    
+    
+    // handlers:
+    onConfirmUnsaved ?: ConfirmUnsavedHandler<TModel>
 }
 export type ImplementedSimpleEditModelDialogProps<TModel extends Model, TEdit extends keyof any = KeyOfModel<TModel>> = Omit<SimpleEditModelDialogProps<TModel, TEdit>,
     // data:
@@ -156,6 +163,8 @@ const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialo
         
         
         // handlers:
+        onConfirmUnsaved,
+        
         onExpandedChange,
     ...restModalCardProps} = props;
     
@@ -240,22 +249,29 @@ const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialo
     const handleCloseDialog = useEvent(async () => {
         if (isModified) {
             // conditions:
-            const answer = await showMessage<'save'|'dontSave'|'continue'>({
-                theme         : 'warning',
-                title         : <h1>Unsaved Data</h1>,
-                message       : <p>
-                    Do you want to save the changes?
-                </p>,
-                options       : {
-                    save      : <ButtonIcon icon='save'   theme='success' autoFocus={true}>Save</ButtonIcon>,
-                    dontSave  : <ButtonIcon icon='cancel' theme='danger' >Don&apos;t Save</ButtonIcon>,
-                    continue  : <ButtonIcon icon='edit'   theme='secondary'>Continue Editing</ButtonIcon>,
-                },
-                ...{
-                    backdropStyle : 'static',
-                },
-            });
-            if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
+            let answer : 'save'|'dontSave'|'continue'|undefined = 'save';
+            if (onConfirmUnsaved) {
+                const {
+                    title   = <h1>Unsaved Data</h1>,
+                    message = <p>
+                        Do you want to save the changes?
+                    </p>,
+                } = onConfirmUnsaved({model});
+                answer = await showMessage<'save'|'dontSave'|'continue'>({
+                    theme         : 'warning',
+                    title         : title,
+                    message       : message,
+                    options       : {
+                        save      : <ButtonIcon icon='save'   theme='success' autoFocus={true}>Save</ButtonIcon>,
+                        dontSave  : <ButtonIcon icon='cancel' theme='danger' >Don&apos;t Save</ButtonIcon>,
+                        continue  : <ButtonIcon icon='edit'   theme='secondary'>Continue Editing</ButtonIcon>,
+                    },
+                    ...{
+                        backdropStyle : 'static',
+                    },
+                });
+                if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
+            } // if
             
             
             
