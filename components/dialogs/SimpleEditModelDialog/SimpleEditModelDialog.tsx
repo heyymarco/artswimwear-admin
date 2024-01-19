@@ -219,7 +219,7 @@ const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialo
             // for <Input>:
             (editorElm?.parentElement?.matches?.(':is(.invalidating, .invalidated)') ? [editorElm.parentElement] : null)
         );
-        if (fieldErrors?.length) { // there is an invalid field
+        if (fieldErrors?.length) { // there is an/some invalid field
             showMessageFieldError(fieldErrors);
             return;
         } // if
