@@ -274,8 +274,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
     
     
     // refs:
-    const editorRef       = useRef<HTMLFormElement|null>(null);
-    const dialogResultRef = useRef<ComplexEditModelDialogResult>(null);
+    const editorRef = useRef<HTMLFormElement|null>(null);
     
     
     
@@ -458,11 +457,10 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
         
         
         
-        dialogResultRef.current = await result;
         onExpandedChange?.({
             expanded   : false,
             actionType : 'ui',
-            data       : dialogResultRef.current,
+            data       : await result,
         });
     });
     
