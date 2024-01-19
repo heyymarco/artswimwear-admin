@@ -90,7 +90,7 @@ import './ComplexEditModelDialogStyles'
 
 
 // react components:
-export type ComplexEditModelDialogResult = string|false|undefined
+export type ComplexEditModelDialogResult = string|false|undefined // string: created|updated; false: deleted; undefined: not created|modified
 export interface ComplexEditModelDialogExpandedChangeEvent extends ModalExpandedChangeEvent<ComplexEditModelDialogResult> {}
 
 export type UpdateHandler                               = (args: { id: string|null, privilegeAdd: boolean, privilegeUpdate: Record<string, boolean> }) => Promise<string>
