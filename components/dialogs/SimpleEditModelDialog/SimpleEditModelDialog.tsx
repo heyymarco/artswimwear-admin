@@ -237,7 +237,7 @@ const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialo
             const transformed = (transformValue ?? handleDefaultTransformValue)(editorValue, edit, model);
             const updatingModelTask = updateModel(transformed).unwrap();
             
-            await handleFinalizing([updatingModelTask]); // result: created|mutated
+            await handleFinalizing((await updatingModelTask)[edit], [updatingModelTask]); // result: created|mutated
         }
         catch (fetchError: any) {
             showMessageFetchError(fetchError);
@@ -274,7 +274,7 @@ const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialo
                     break;
                 case 'dontSave':
                     // then close the editor (without saving):
-                    await handleFinalizing(); // result: discard changes
+                    await handleFinalizing(undefined); // result: discard changes
                     break;
                 default:
                     // do nothing (continue editing)
@@ -282,10 +282,10 @@ const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialo
             } // switch
         }
         else {
-            await handleFinalizing(); // result: no changes
+            await handleFinalizing(undefined); // result: no changes
         } // if
     });
-    const handleFinalizing     = useEvent(async (processingTasks : Promise<any>[] = []) => {
+    const handleFinalizing     = useEvent(async (result: SimpleEditModelDialogResult<TModel>|Promise<SimpleEditModelDialogResult<TModel>>, processingTasks : Promise<any>[] = []) => {
         await Promise.all(processingTasks);
         
         
@@ -293,6 +293,7 @@ const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialo
         onExpandedChange?.({
             expanded   : false,
             actionType : 'ui',
+            data       : await result,
         });
     });
     
