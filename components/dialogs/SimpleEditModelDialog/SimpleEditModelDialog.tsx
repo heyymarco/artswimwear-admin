@@ -140,7 +140,7 @@ const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialo
         // data:
         model,
         edit,
-        initialValue,
+        initialValue : customInitialValue,
         transformValue,
         updateModelApi,
         
@@ -161,7 +161,10 @@ const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialo
     const [isModified      , setIsModified      ] = useState<boolean>(false);
     
     const [enableValidation, setEnableValidation] = useState<boolean>(false);
-    const [editorValue     , setEditorValue     ] = useState<any>(() => (initialValue ?? handleDefaultInitialValue)(edit, model));
+    const [editorValue     , setEditorValue     ] = useState<ValueOfModel<TModel>>(() => {
+        if (customInitialValue) return customInitialValue(edit, model); // the custom initialValue
+        return model[edit]; // the default initialValue
+    });
     
     
     
