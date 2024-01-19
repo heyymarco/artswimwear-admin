@@ -307,7 +307,6 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
             }, 0);
         });
         const fieldErrors = editorRef?.current?.querySelectorAll?.(':is(.invalidating, .invalidated)');
-        console.log({fieldErrors, ref: editorRef?.current});
         if (fieldErrors?.length) { // there is an/some invalid field
             showMessageFieldError(fieldErrors);
             return;
