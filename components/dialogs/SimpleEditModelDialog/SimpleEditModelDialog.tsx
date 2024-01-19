@@ -32,6 +32,7 @@ import {
     // react helper hooks:
     useEvent,
     EventHandler,
+    useMergeEvents,
     useMountedFlag,
     
     
@@ -70,6 +71,7 @@ import {
 
 // internal components:
 import type {
+    EditorChangeEventHandler,
     EditorProps,
 }                           from '@/components/editors/Editor'
 
@@ -316,6 +318,20 @@ const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialo
         onExpandedChange?.(event);
     });
     
+    const handleChangeInternal = useEvent<EditorChangeEventHandler<ValueOfModel<TModel>>>((value) => {
+        setEditorValue(value);
+        setIsModified(true);
+    });
+    const handleChange         = useMergeEvents(
+        // preserves the original `onChange` from `editorComponent`:
+        editorComponent.props.onChange,
+        
+        
+        
+        // actions:
+        handleChangeInternal,
+    );
+    
     
     
     // jsx:
@@ -364,8 +380,8 @@ const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialo
                                 
                                 
                                 
-                                value     : editorValue,
-                                onChange  : (value: ValueOfModel<TModel>) => { setEditorValue(value); setIsModified(true); },
+                                value     : editorComponent.props.value ?? editorValue,
+                                onChange  : handleChange,
                             },
                         )}
                     </ValidationProvider>
