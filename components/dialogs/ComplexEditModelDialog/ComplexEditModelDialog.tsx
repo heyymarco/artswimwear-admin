@@ -273,7 +273,13 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
     
     
     
-    // dom effects:
+    // refs:
+    const editorRef       = useRef<HTMLFormElement|null>(null);
+    const dialogResultRef = useRef<ComplexEditModelDialogResult>(null);
+    
+    
+    
+    // effects:
     const isMounted = useMountedFlag();
     
     
@@ -284,12 +290,6 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
         showMessageFieldError,
         showMessageFetchError,
     } = useDialogMessage();
-    
-    
-    
-    // refs:
-    const editorRef       = useRef<HTMLFormElement|null>(null);
-    const dialogResultRef = useRef<ComplexEditModelDialogResult>(null);
     
     
     
