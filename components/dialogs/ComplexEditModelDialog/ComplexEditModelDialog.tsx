@@ -90,7 +90,7 @@ import './ComplexEditModelDialogStyles'
 
 
 // react components:
-export type ComplexEditModelDialogResult = string|false|null
+export type ComplexEditModelDialogResult = string|false|undefined
 export interface ComplexEditModelDialogExpandedChangeEvent extends ModalExpandedChangeEvent<ComplexEditModelDialogResult> {}
 
 export type UpdateHandler                               = (args: { id: string|null, privilegeAdd: boolean, privilegeUpdate: Record<string, boolean> }) => Promise<string>
@@ -438,7 +438,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
                     break;
                 case 'dontSave':
                     // then close the editor (without saving):
-                    await handleFinalizing(null, /*commitSides = */false); // result: discard changes
+                    await handleFinalizing(undefined, /*commitSides = */false); // result: discard changes
                     break;
                 default:
                     // do nothing (continue editing)
@@ -446,7 +446,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
             } // switch
         }
         else {
-            await handleFinalizing(null, /*commitSides = */false); // result: no changes
+            await handleFinalizing(undefined, /*commitSides = */false); // result: no changes
         } // if
     });
     const handleFinalizing     = useEvent(async (result: ComplexEditModelDialogResult|Promise<ComplexEditModelDialogResult>, commitSides : boolean, processingTasks : Promise<any>[] = []) => {
