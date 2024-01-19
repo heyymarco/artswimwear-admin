@@ -140,8 +140,8 @@ const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialo
         // data:
         model,
         edit,
-        initialValue : customInitialValue,
-        transformValue,
+        initialValue   : customInitialValue,
+        transformValue : customTransformValue,
         updateModelApi,
         
         
@@ -234,7 +234,7 @@ const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialo
         
         
         try {
-            const transformed = (transformValue ?? handleDefaultTransformValue)(editorValue, edit, model);
+            const transformed = (customTransformValue ?? handleDefaultTransformValue)(editorValue, edit, model);
             const updatingModelTask = updateModel(transformed).unwrap();
             
             await handleFinalizing((await updatingModelTask)[edit], [updatingModelTask]); // result: created|mutated
