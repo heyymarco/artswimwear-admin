@@ -91,7 +91,7 @@ const useSimpleEditModelDialogStyleSheet = dynamicStyleSheet(
 // react components:
 type KeyOfModel<TModel extends Model>   = Exclude<keyof TModel, 'id'>
 type ValueOfModel<TModel extends Model> = TModel[KeyOfModel<TModel>]
-export type SimpleEditModelDialogResult<TModel extends Model> = ValueOfModel<TModel>|undefined
+export type SimpleEditModelDialogResult<TModel extends Model> = ValueOfModel<TModel>|undefined // ValueOfModel<TModel>: created|updated; undefined: not created|modified
 export interface SimpleEditModelDialogExpandedChangeEvent<TModel extends Model> extends ModalExpandedChangeEvent<SimpleEditModelDialogResult<TModel>> {}
 
 export type InitialValueHandler<TModel extends Model, TEdit extends keyof any = KeyOfModel<TModel>> = (edit: TEdit, model: TModel) => ValueOfModel<TModel>
