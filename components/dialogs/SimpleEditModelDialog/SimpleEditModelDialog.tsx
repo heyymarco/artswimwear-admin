@@ -94,12 +94,12 @@ type ValueOfModel<TModel extends Model> = TModel[KeyOfModel<TModel>]  // union v
 export type SimpleEditModelDialogResult<TModel extends Model> = ValueOfModel<TModel>|undefined // ValueOfModel<TModel>: created|updated; undefined: not created|modified
 export interface SimpleEditModelDialogExpandedChangeEvent<TModel extends Model> extends ModalExpandedChangeEvent<SimpleEditModelDialogResult<TModel>> {}
 
-export type InitialValueHandler<TModel extends Model, TEdit extends keyof any = KeyOfModel<TModel>> = (edit: TEdit, model: TModel) => ValueOfModel<TModel>
+export type InitialValueHandler  <TModel extends Model, TEdit extends keyof any = KeyOfModel<TModel>> = (                             edit: TEdit, model: TModel) => ValueOfModel<TModel>
 export type TransformValueHandler<TModel extends Model, TEdit extends keyof any = KeyOfModel<TModel>> = (value: ValueOfModel<TModel>, edit: TEdit, model: TModel) => MutationArgs<TModel>
 export type UpdateModelApi<TModel extends Model> = readonly [
     MutationTrigger<MutationDefinition<MutationArgs<TModel>, BaseQueryFn<any, unknown, unknown, {}, {}>, string, TModel>>,
     {
-        isLoading   : boolean
+        isLoading : boolean
     }
 ]
 
