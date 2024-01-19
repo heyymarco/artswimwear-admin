@@ -194,9 +194,6 @@ const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialo
     
     
     // handlers:
-    const handleDefaultInitialValue   = useEvent<InitialValueHandler<TModel>>((edit, model) => {
-        return model[edit] as ValueOfModel<TModel>;
-    });
     const handleDefaultTransformValue = useEvent<TransformValueHandler<TModel>>((value, edit, model) => {
         return {
             id     : model.id,
