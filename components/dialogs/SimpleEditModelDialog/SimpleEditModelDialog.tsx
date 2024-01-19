@@ -75,9 +75,9 @@ import type {
 
 // internals:
 import type {
-    Model, MutationArgs,
+    Model,
+    MutationArgs,
 }                           from '@/libs/types'
-
 
 
 
