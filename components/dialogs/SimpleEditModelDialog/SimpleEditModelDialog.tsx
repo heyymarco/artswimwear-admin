@@ -81,16 +81,6 @@ import type {
 
 
 
-// types:
-export type UpdateModelApi<TModel extends Model> = readonly [
-    MutationTrigger<MutationDefinition<MutationArgs<TModel>, BaseQueryFn<any, unknown, unknown, {}, {}>, string, TModel>>,
-    {
-        isLoading   : boolean
-    }
-]
-
-
-
 // styles:
 const useSimpleEditModelDialogStyleSheet = dynamicStyleSheet(
     () => import(/* webpackPrefetch: true */'./SimpleEditModelDialogStyles')
@@ -103,8 +93,13 @@ export type SimpleEditModelDialogResult<TModel extends Model> = TModel[Extract<k
 export interface SimpleEditModelDialogExpandedChangeEvent<TModel extends Model> extends ModalExpandedChangeEvent<SimpleEditModelDialogResult<TModel>> {}
 
 export type InitialValueHandler<TValue extends any, TModel extends {}, TEdit extends string> = (edit: TEdit, model: TModel) => TValue
-export type UpdateHandler<TValue extends any, TModel extends {}, TEdit extends string> = (value: TValue, edit: TEdit, model: TModel) => Promise<void>
 export type TransformValueHandler<TValue extends any, TModel extends Model, TEdit extends string> = (value: TValue, edit: TEdit, model: TModel) => MutationArgs<TModel>
+export type UpdateModelApi<TModel extends Model> = readonly [
+    MutationTrigger<MutationDefinition<MutationArgs<TModel>, BaseQueryFn<any, unknown, unknown, {}, {}>, string, TModel>>,
+    {
+        isLoading   : boolean
+    }
+]
 
 export interface SimpleEditModelDialogProps<TModel extends Model>
     extends
