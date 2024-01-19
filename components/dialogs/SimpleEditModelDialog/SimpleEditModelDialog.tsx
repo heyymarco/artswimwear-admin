@@ -140,8 +140,12 @@ const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialo
         // data:
         model,
         edit,
-        initialValue   = (edit, model) => model[edit],
-        transformValue : customTransformValue,
+        initialValue   = (edit, model) => model[edit] satisfies ValueOfModel<TModel>,
+        transformValue = (value, edit, model) => ({
+            id     : model.id,
+            
+            [edit] : (value === '') ? (null as typeof value) : value, // auto convert empty string to null
+        } as MutationArgs<TModel>),
         updateModelApi,
         
         
@@ -191,14 +195,6 @@ const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialo
     
     
     // handlers:
-    const handleDefaultTransformValue = useEvent<TransformValueHandler<TModel>>((value, edit, model) => {
-        return {
-            id     : model.id,
-            
-            [edit] : (value === '') ? (null as typeof value) : value, // auto convert empty string to null
-        } as any;
-    });
-    
     const handleSave = useEvent(async () => {
         setEnableValidation(true);
         await new Promise<void>((resolve) => { // wait for a validation state applied
@@ -231,7 +227,7 @@ const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialo
         
         
         try {
-            const transformed = (customTransformValue ?? handleDefaultTransformValue)(editorValue, edit, model);
+            const transformed = transformValue(editorValue, edit, model);
             const updatingModelTask = updateModel(transformed).unwrap();
             
             await handleFinalizing((await updatingModelTask)[edit], [updatingModelTask]); // result: created|mutated
