@@ -565,8 +565,8 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
                     </Tab>
                 </ValidationProvider>
                 <CardFooter>
-                    {privilegeWrite && <ButtonIcon className='btnSave'   icon={isCommiting ? 'busy' : 'save'  } theme='success' onClick={handleSave}>Save</ButtonIcon>}
-                    <ButtonIcon className='btnCancel' icon={privilegeWrite ? (isReverting ? 'busy' : 'cancel') : 'done'} theme={privilegeWrite ? 'danger' : 'primary'}  onClick={handleCloseDialog}>{isReverting ? 'Reverting' : (privilegeWrite ? 'Cancel' : 'Close')}</ButtonIcon>
+                    {privilegeWrite && <ButtonIcon className='btnSave' icon={isCommiting ? 'busy' : 'save'} theme='success' onClick={handleSave}>Save</ButtonIcon>}
+                    <ButtonIcon className='btnCancel' icon={privilegeWrite ? (isReverting ? 'busy' : 'cancel') : 'done'} theme={privilegeWrite ? 'danger' : 'primary'} onClick={handleCloseDialog}>{isReverting ? 'Reverting' : (privilegeWrite ? 'Cancel' : 'Close')}</ButtonIcon>
                 </CardFooter>
             </ModalCard>
         </AccessibilityProvider>
