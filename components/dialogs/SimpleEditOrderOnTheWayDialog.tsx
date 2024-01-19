@@ -8,17 +8,15 @@ import {
 
 // internal components:
 import {
-    InitialValueHandler,
-    ImplementedSimpleEditDialogProps,
-}                           from '@/components/dialogs/SimpleEditDialog'
-import {
     // types:
+    InitialValueHandler,
     TransformValueHandler,
     UpdateModelApi,
     
     
     
     // react components:
+    ImplementedSimpleEditModelDialogProps,
     SimpleEditModelDialog,
 }                           from '@/components/dialogs/SimpleEditModelDialog'
 import type {
@@ -28,7 +26,7 @@ import type {
 // stores:
 import {
     // types:
-    OrderDetailWithOptions,
+    OrderDetail,
     
     
     
@@ -41,16 +39,17 @@ import {
 // react components:
 export interface SimpleEditOrderOnTheWayDialogProps
     extends
-        ImplementedSimpleEditDialogProps<OrderOnTheWayValue, OrderDetailWithOptions, 'shippingTracking'>
+        // bases:
+        ImplementedSimpleEditModelDialogProps<OrderDetail, 'shippingTracking'>
 {
 }
 export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDialogProps) => {
     // handlers:
-    interface MockModel {
-        id               : never
+    interface OrderOnTheWayModel {
+        id               : OrderDetail['id']
         shippingTracking : OrderOnTheWayValue
     }
-    const handleInitialValue   = useEvent<InitialValueHandler<OrderOnTheWayValue, MockModel, keyof MockModel>>((edit, model) => {
+    const handleInitialValue   = useEvent<InitialValueHandler<OrderOnTheWayModel>>((edit, model) => {
         const value = model[edit];
         return {
             ...value,
@@ -60,7 +59,7 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
             sendConfirmationEmail : true,
         };
     });
-    const handleTransformValue = useEvent<TransformValueHandler<OrderOnTheWayValue, MockModel, keyof MockModel>>((value, edit, model) => {
+    const handleTransformValue = useEvent<TransformValueHandler<OrderOnTheWayModel>>((value, edit, model) => {
         const {
             sendConfirmationEmail = true,
         ...restValue} = value;
@@ -85,9 +84,9 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
     
     // jsx:
     return (
-        <SimpleEditModelDialog<MockModel>
+        <SimpleEditModelDialog<OrderOnTheWayModel>
             // other props:
-            {...props as unknown as ImplementedSimpleEditDialogProps<OrderOnTheWayValue, MockModel, keyof MockModel>}
+            {...props as unknown as ImplementedSimpleEditModelDialogProps<OrderOnTheWayModel>}
             
             
             
@@ -98,7 +97,7 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
             
             
             // stores:
-            updateModelApi={useUpdateOrder as () => UpdateModelApi<MockModel>}
+            updateModelApi={useUpdateOrder as () => UpdateModelApi<OrderOnTheWayModel>}
         />
     );
 };

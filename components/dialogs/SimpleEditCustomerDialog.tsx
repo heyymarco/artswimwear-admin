@@ -8,17 +8,15 @@ import {
 
 // internal components:
 import {
-    InitialValueHandler,
-    ImplementedSimpleEditDialogProps,
-}                           from '@/components/dialogs/SimpleEditDialog'
-import {
     // types:
+    InitialValueHandler,
     TransformValueHandler,
     UpdateModelApi,
     
     
     
     // react components:
+    ImplementedSimpleEditModelDialogProps,
     SimpleEditModelDialog,
 }                           from '@/components/dialogs/SimpleEditModelDialog'
 
@@ -38,7 +36,8 @@ import {
 // react components:
 export interface SimpleEditCustomerDialogProps
     extends
-        ImplementedSimpleEditDialogProps<string, OrderDetail, keyof NonNullable<(OrderDetail['customer'] & OrderDetail['guest'])>>
+        // bases:
+        ImplementedSimpleEditModelDialogProps<OrderDetail, Exclude<keyof NonNullable<(OrderDetail['customer'] & OrderDetail['guest'])>, 'id'>>
 {
     // data:
     editGroup : keyof Pick<OrderDetail, 'customer'|'guest'>
@@ -53,13 +52,13 @@ export const SimpleEditCustomerDialog = (props: SimpleEditCustomerDialogProps) =
     
     
     // handlers:
-    interface MockModel extends NonNullable<(OrderDetail['customer'] & OrderDetail['guest'])> {
-        id : never
+    interface CustomerModel extends NonNullable<(OrderDetail['customer'] & OrderDetail['guest'])> {
+        id : OrderDetail['id']
     }
-    const handleInitialValue   = useEvent<InitialValueHandler<string, MockModel, keyof MockModel>>((edit, model) => {
+    const handleInitialValue   = useEvent<InitialValueHandler<CustomerModel>>((edit, model) => {
         return (model as unknown as Pick<OrderDetail, 'customer'|'guest'>)[editGroup]![edit];
     });
-    const handleTransformValue = useEvent<TransformValueHandler<string, MockModel, keyof MockModel>>((value, edit, model) => {
+    const handleTransformValue = useEvent<TransformValueHandler<CustomerModel>>((value, edit, model) => {
         return {
             id          : model.id,
             
@@ -73,9 +72,9 @@ export const SimpleEditCustomerDialog = (props: SimpleEditCustomerDialogProps) =
     
     // jsx:
     return (
-        <SimpleEditModelDialog<MockModel>
+        <SimpleEditModelDialog<CustomerModel>
             // other props:
-            {...restSimpleEditDialogProps as unknown as ImplementedSimpleEditDialogProps<string, MockModel, keyof MockModel>}
+            {...restSimpleEditDialogProps as unknown as ImplementedSimpleEditModelDialogProps<CustomerModel>}
             
             
             
@@ -86,7 +85,7 @@ export const SimpleEditCustomerDialog = (props: SimpleEditCustomerDialogProps) =
             
             
             // stores:
-            updateModelApi={useUpdateOrder as () => UpdateModelApi<MockModel>}
+            updateModelApi={useUpdateOrder as () => UpdateModelApi<CustomerModel>}
         />
     );
 };

@@ -1061,7 +1061,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                 <SimpleEditOrderCompletedDialog
                     // data:
                     model={model!}
-                    edit=''
+                    edit='orderStatus'
                     
                     
                     

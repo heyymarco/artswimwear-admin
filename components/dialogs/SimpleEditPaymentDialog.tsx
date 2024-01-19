@@ -8,17 +8,15 @@ import {
 
 // internal components:
 import {
-    InitialValueHandler,
-    ImplementedSimpleEditDialogProps,
-}                           from '@/components/dialogs/SimpleEditDialog'
-import {
     // types:
+    InitialValueHandler,
     TransformValueHandler,
     UpdateModelApi,
     
     
     
     // react components:
+    ImplementedSimpleEditModelDialogProps,
     SimpleEditModelDialog,
 }                           from '@/components/dialogs/SimpleEditModelDialog'
 import type {
@@ -28,7 +26,7 @@ import type {
 // stores:
 import {
     // types:
-    OrderDetailWithOptions,
+    OrderDetail,
     
     
     
@@ -41,16 +39,17 @@ import {
 // react components:
 export interface SimpleEditPaymentDialogProps
     extends
-        ImplementedSimpleEditDialogProps<PaymentValue, OrderDetailWithOptions, 'payment'>
+        // bases:
+        ImplementedSimpleEditModelDialogProps<OrderDetail, 'payment'>
 {
 }
 export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => {
     // handlers:
-    interface MockModel {
-        id      : never
+    interface PaymentModel {
+        id      : OrderDetail['id']
         payment : PaymentValue
     }
-    const handleInitialValue   = useEvent<InitialValueHandler<PaymentValue, MockModel, keyof MockModel>>((edit, model) => {
+    const handleInitialValue   = useEvent<InitialValueHandler<PaymentModel>>((edit, model) => {
         const value = model[edit];
         const isInitiallyUnpaid = (value.type === 'MANUAL');
         return {
@@ -62,7 +61,7 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
             sendConfirmationEmail :   isInitiallyUnpaid,
         };
     });
-    const handleTransformValue = useEvent<TransformValueHandler<PaymentValue, MockModel, keyof MockModel>>((value, edit, model) => {
+    const handleTransformValue = useEvent<TransformValueHandler<PaymentModel>>((value, edit, model) => {
         const {
             sendConfirmationEmail = true,
         ...restValue} = value;
@@ -87,9 +86,9 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
     
     // jsx:
     return (
-        <SimpleEditModelDialog<MockModel>
+        <SimpleEditModelDialog<PaymentModel>
             // other props:
-            {...props as unknown as ImplementedSimpleEditDialogProps<PaymentValue, MockModel, keyof MockModel>}
+            {...props as unknown as ImplementedSimpleEditModelDialogProps<PaymentModel>}
             
             
             
@@ -100,7 +99,7 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
             
             
             // stores:
-            updateModelApi={useUpdateOrder as () => UpdateModelApi<MockModel>}
+            updateModelApi={useUpdateOrder as () => UpdateModelApi<PaymentModel>}
         />
     );
 };

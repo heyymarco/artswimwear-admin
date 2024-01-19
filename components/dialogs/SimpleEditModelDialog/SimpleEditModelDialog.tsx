@@ -94,8 +94,8 @@ type ValueOfModel<TModel extends Model> = TModel[KeyOfModel<TModel>]
 export type SimpleEditModelDialogResult<TModel extends Model> = ValueOfModel<TModel>|undefined
 export interface SimpleEditModelDialogExpandedChangeEvent<TModel extends Model> extends ModalExpandedChangeEvent<SimpleEditModelDialogResult<TModel>> {}
 
-export type InitialValueHandler<TModel extends Model> = (edit: KeyOfModel<TModel>, model: TModel) => ValueOfModel<TModel>
-export type TransformValueHandler<TModel extends Model> = (value: ValueOfModel<TModel>, edit: KeyOfModel<TModel>, model: TModel) => MutationArgs<TModel>
+export type InitialValueHandler<TModel extends Model, TEdit extends keyof any = KeyOfModel<TModel>> = (edit: TEdit, model: TModel) => ValueOfModel<TModel>
+export type TransformValueHandler<TModel extends Model, TEdit extends keyof any = KeyOfModel<TModel>> = (value: ValueOfModel<TModel>, edit: TEdit, model: TModel) => MutationArgs<TModel>
 export type UpdateModelApi<TModel extends Model> = readonly [
     MutationTrigger<MutationDefinition<MutationArgs<TModel>, BaseQueryFn<any, unknown, unknown, {}, {}>, string, TModel>>,
     {
@@ -103,7 +103,7 @@ export type UpdateModelApi<TModel extends Model> = readonly [
     }
 ]
 
-export interface SimpleEditModelDialogProps<TModel extends Model>
+export interface SimpleEditModelDialogProps<TModel extends Model, TEdit extends keyof any = KeyOfModel<TModel>>
     extends
         // bases:
         Omit<ModalCardProps<HTMLElement, SimpleEditModelDialogExpandedChangeEvent<TModel>>,
@@ -113,9 +113,9 @@ export interface SimpleEditModelDialogProps<TModel extends Model>
 {
     // data:
     model           : TModel
-    edit            : KeyOfModel<TModel>
-    initialValue   ?: InitialValueHandler<TModel>
-    transformValue ?: TransformValueHandler<TModel>
+    edit            : TEdit
+    initialValue   ?: InitialValueHandler<TModel, TEdit>
+    transformValue ?: TransformValueHandler<TModel, TEdit>
     updateModelApi  : UpdateModelApi<TModel> | (() => UpdateModelApi<TModel>)
     
     
@@ -123,7 +123,7 @@ export interface SimpleEditModelDialogProps<TModel extends Model>
     // components:
     editorComponent : React.ReactComponentElement<any, EditorProps<Element, ValueOfModel<TModel>>>
 }
-export type ImplementedSimpleEditModelDialogProps<TModel extends Model> = Omit<SimpleEditModelDialogProps<TModel>,
+export type ImplementedSimpleEditModelDialogProps<TModel extends Model, TEdit extends keyof any = KeyOfModel<TModel>> = Omit<SimpleEditModelDialogProps<TModel, TEdit>,
     // data:
     |'initialValue'
     |'transformValue'

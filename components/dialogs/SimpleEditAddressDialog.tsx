@@ -8,17 +8,15 @@ import {
 
 // internal components:
 import {
-    InitialValueHandler,
-    ImplementedSimpleEditDialogProps,
-}                           from '@/components/dialogs/SimpleEditDialog'
-import {
     // types:
+    InitialValueHandler,
     TransformValueHandler,
     UpdateModelApi,
     
     
     
     // react components:
+    ImplementedSimpleEditModelDialogProps,
     SimpleEditModelDialog,
 }                           from '@/components/dialogs/SimpleEditModelDialog'
 import {
@@ -42,17 +40,18 @@ import {
 // react components:
 export interface SimpleEditAddressDialogProps
     extends
-        ImplementedSimpleEditDialogProps<AddressValue, OrderDetail, 'shippingAddress'|'billingAddress'>
+        // bases:
+        ImplementedSimpleEditModelDialogProps<OrderDetail, 'shippingAddress'|'billingAddress'>
 {
 }
 export const SimpleEditAddressDialog = (props: SimpleEditAddressDialogProps) => {
     // handlers:
-    interface MockModel {
-        id              : never
-        shippingAddress : AddressValue
-        billingAddress  : AddressValue
+    interface AddressModel {
+        id               : OrderDetail['id']
+        shippingAddress ?: AddressValue|null
+        billingAddress  ?: AddressValue|null
     }
-    const handleInitialValue   = useEvent<InitialValueHandler<AddressValue, MockModel, keyof MockModel>>((edit, model) => {
+    const handleInitialValue   = useEvent<InitialValueHandler<AddressModel>>((edit, model) => {
         if (edit === 'billingAddress') {
             return (model as unknown as OrderDetail).payment.billingAddress ?? emptyAddressValue;
         }
@@ -60,7 +59,7 @@ export const SimpleEditAddressDialog = (props: SimpleEditAddressDialogProps) => 
             return model[edit] ?? emptyAddressValue;
         } // if
     });
-    const handleTransformValue = useEvent<TransformValueHandler<AddressValue, MockModel, keyof MockModel>>((value, edit, model) => {
+    const handleTransformValue = useEvent<TransformValueHandler<AddressModel>>((value, edit, model) => {
         return {
             id     : model.id,
             
@@ -72,9 +71,9 @@ export const SimpleEditAddressDialog = (props: SimpleEditAddressDialogProps) => 
     
     // jsx:
     return (
-        <SimpleEditModelDialog<MockModel>
+        <SimpleEditModelDialog<AddressModel>
             // other props:
-            {...props as unknown as ImplementedSimpleEditDialogProps<AddressValue, MockModel, keyof MockModel>}
+            {...props as unknown as ImplementedSimpleEditModelDialogProps<AddressModel>}
             
             
             
@@ -85,7 +84,7 @@ export const SimpleEditAddressDialog = (props: SimpleEditAddressDialogProps) => 
             
             
             // stores:
-            updateModelApi={useUpdateOrder as () => UpdateModelApi<MockModel>}
+            updateModelApi={useUpdateOrder as () => UpdateModelApi<AddressModel>}
         />
     );
 };

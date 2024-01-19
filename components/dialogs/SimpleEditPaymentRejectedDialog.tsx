@@ -8,17 +8,15 @@ import {
 
 // internal components:
 import {
-    InitialValueHandler,
-    ImplementedSimpleEditDialogProps,
-}                           from '@/components/dialogs/SimpleEditDialog'
-import {
     // types:
+    InitialValueHandler,
     TransformValueHandler,
     UpdateModelApi,
     
     
     
     // react components:
+    ImplementedSimpleEditModelDialogProps,
     SimpleEditModelDialog,
 }                           from '@/components/dialogs/SimpleEditModelDialog'
 import type {
@@ -28,6 +26,7 @@ import type {
 // stores:
 import {
     // types:
+    OrderDetail,
     OrderDetailWithOptions,
     
     
@@ -46,19 +45,20 @@ import type {
 // react components:
 export interface SimpleEditPaymentRejectedDialogProps
     extends
-        ImplementedSimpleEditDialogProps<WysiwygEditorState|null, OrderDetailWithOptions, 'paymentConfirmation'>
+        // bases:
+        ImplementedSimpleEditModelDialogProps<OrderDetail, 'paymentConfirmation'>
 {
 }
 export const SimpleEditPaymentRejectedDialog = (props: SimpleEditPaymentRejectedDialogProps) => {
     // handlers:
-    interface MockModel {
-        id                  : never
+    interface PaymentRejectedModel {
+        id                  : OrderDetail['id']
         paymentConfirmation : WysiwygEditorState|null
     }
-    const handleInitialValue   = useEvent<InitialValueHandler<WysiwygEditorState|null, MockModel, keyof MockModel>>((edit, model) => {
+    const handleInitialValue   = useEvent<InitialValueHandler<PaymentRejectedModel>>((edit, model) => {
         return ((model as unknown as OrderDetailWithOptions).paymentConfirmation?.rejectionReason as Prisma.JsonValue as WysiwygEditorState|null) ?? null;
     });
-    const handleTransformValue = useEvent<TransformValueHandler<WysiwygEditorState|null, MockModel, keyof MockModel>>((value, edit, model) => {
+    const handleTransformValue = useEvent<TransformValueHandler<PaymentRejectedModel>>((value, edit, model) => {
         return {
             id     : model.id,
             
@@ -75,9 +75,9 @@ export const SimpleEditPaymentRejectedDialog = (props: SimpleEditPaymentRejected
     
     // jsx:
     return (
-        <SimpleEditModelDialog<MockModel>
+        <SimpleEditModelDialog<PaymentRejectedModel>
             // other props:
-            {...props as unknown as ImplementedSimpleEditDialogProps<WysiwygEditorState|null, MockModel, keyof MockModel>}
+            {...props as unknown as ImplementedSimpleEditModelDialogProps<PaymentRejectedModel>}
             
             
             
@@ -88,7 +88,7 @@ export const SimpleEditPaymentRejectedDialog = (props: SimpleEditPaymentRejected
             
             
             // stores:
-            updateModelApi={useUpdateOrder as () => UpdateModelApi<MockModel>}
+            updateModelApi={useUpdateOrder as () => UpdateModelApi<PaymentRejectedModel>}
         />
     );
 };

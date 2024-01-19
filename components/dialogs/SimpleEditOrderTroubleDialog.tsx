@@ -8,17 +8,15 @@ import {
 
 // internal components:
 import {
-    InitialValueHandler,
-    ImplementedSimpleEditDialogProps,
-}                           from '@/components/dialogs/SimpleEditDialog'
-import {
     // types:
+    InitialValueHandler,
     TransformValueHandler,
     UpdateModelApi,
     
     
     
     // react components:
+    ImplementedSimpleEditModelDialogProps,
     SimpleEditModelDialog,
 }                           from '@/components/dialogs/SimpleEditModelDialog'
 import type {
@@ -46,19 +44,20 @@ import type {
 // react components:
 export interface SimpleEditOrderTroubleDialogProps
     extends
-        ImplementedSimpleEditDialogProps<WysiwygEditorState|null, OrderDetail, 'orderTrouble'>
+        // bases:
+        ImplementedSimpleEditModelDialogProps<OrderDetail, 'orderTrouble'>
 {
 }
 export const SimpleEditOrderTroubleDialog = (props: SimpleEditOrderTroubleDialogProps) => {
     // handlers:
-    interface MockModel {
-        id           : never
+    interface OrderTroubleModel {
+        id           : OrderDetail['id']
         orderTrouble : WysiwygEditorState|null
     }
-    const handleInitialValue   = useEvent<InitialValueHandler<WysiwygEditorState|null, MockModel, keyof MockModel>>((edit, model) => {
+    const handleInitialValue   = useEvent<InitialValueHandler<OrderTroubleModel>>((edit, model) => {
         return (model[edit] as Prisma.JsonValue as WysiwygEditorState|null) ?? null;
     });
-    const handleTransformValue = useEvent<TransformValueHandler<WysiwygEditorState|null, MockModel, keyof MockModel>>((value, edit, model) => {
+    const handleTransformValue = useEvent<TransformValueHandler<OrderTroubleModel>>((value, edit, model) => {
         return {
             id     : model.id,
             
@@ -70,9 +69,9 @@ export const SimpleEditOrderTroubleDialog = (props: SimpleEditOrderTroubleDialog
     
     // jsx:
     return (
-        <SimpleEditModelDialog<MockModel>
+        <SimpleEditModelDialog<OrderTroubleModel>
             // other props:
-            {...props as unknown as ImplementedSimpleEditDialogProps<WysiwygEditorState|null, MockModel, keyof MockModel>}
+            {...props as unknown as ImplementedSimpleEditModelDialogProps<OrderTroubleModel>}
             
             
             
@@ -83,7 +82,7 @@ export const SimpleEditOrderTroubleDialog = (props: SimpleEditOrderTroubleDialog
             
             
             // stores:
-            updateModelApi={useUpdateOrder as () => UpdateModelApi<MockModel>}
+            updateModelApi={useUpdateOrder as () => UpdateModelApi<OrderTroubleModel>}
         />
     );
 };
