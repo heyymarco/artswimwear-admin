@@ -89,11 +89,13 @@ const useSimpleEditModelDialogStyleSheet = dynamicStyleSheet(
 
 
 // react components:
-export type SimpleEditModelDialogResult<TModel extends Model> = TModel[Extract<keyof TModel, string>]|undefined
+type KeyOfModel<TModel extends Model>   = Exclude<keyof TModel, 'id'>
+type ValueOfModel<TModel extends Model> = TModel[KeyOfModel<TModel>]
+export type SimpleEditModelDialogResult<TModel extends Model> = ValueOfModel<TModel>|undefined
 export interface SimpleEditModelDialogExpandedChangeEvent<TModel extends Model> extends ModalExpandedChangeEvent<SimpleEditModelDialogResult<TModel>> {}
 
-export type InitialValueHandler<TValue extends any, TModel extends {}, TEdit extends string> = (edit: TEdit, model: TModel) => TValue
-export type TransformValueHandler<TValue extends any, TModel extends Model, TEdit extends string> = (value: TValue, edit: TEdit, model: TModel) => MutationArgs<TModel>
+export type InitialValueHandler<TModel extends Model> = (edit: KeyOfModel<TModel>, model: TModel) => ValueOfModel<TModel>
+export type TransformValueHandler<TModel extends Model> = (value: ValueOfModel<TModel>, edit: KeyOfModel<TModel>, model: TModel) => MutationArgs<TModel>
 export type UpdateModelApi<TModel extends Model> = readonly [
     MutationTrigger<MutationDefinition<MutationArgs<TModel>, BaseQueryFn<any, unknown, unknown, {}, {}>, string, TModel>>,
     {
@@ -111,15 +113,15 @@ export interface SimpleEditModelDialogProps<TModel extends Model>
 {
     // data:
     model           : TModel
-    edit            : Extract<keyof TModel, string>
-    initialValue   ?: InitialValueHandler<TModel[keyof TModel], TModel, Extract<keyof TModel, string>>
-    transformValue ?: TransformValueHandler<TModel[keyof TModel], TModel, Extract<keyof TModel, string>>
+    edit            : KeyOfModel<TModel>
+    initialValue   ?: InitialValueHandler<TModel>
+    transformValue ?: TransformValueHandler<TModel>
     updateModelApi  : UpdateModelApi<TModel> | (() => UpdateModelApi<TModel>)
     
     
     
     // components:
-    editorComponent : React.ReactComponentElement<any, EditorProps<Element, TModel[keyof TModel]>>
+    editorComponent : React.ReactComponentElement<any, EditorProps<Element, ValueOfModel<TModel>>>
 }
 export type ImplementedSimpleEditModelDialogProps<TModel extends Model> = Omit<SimpleEditModelDialogProps<TModel>,
     // data:
@@ -189,10 +191,10 @@ const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialo
     
     
     // handlers:
-    const handleDefaultInitialValue   = useEvent<InitialValueHandler<TModel[keyof TModel], TModel, Extract<keyof TModel, string>>>((edit, model) => {
-        return model[edit] as TModel[keyof TModel];
+    const handleDefaultInitialValue   = useEvent<InitialValueHandler<TModel>>((edit, model) => {
+        return model[edit] as ValueOfModel<TModel>;
     });
-    const handleDefaultTransformValue = useEvent<TransformValueHandler<TModel[keyof TModel], TModel, Extract<keyof TModel, string>>>((value, edit, model) => {
+    const handleDefaultTransformValue = useEvent<TransformValueHandler<TModel>>((value, edit, model) => {
         return {
             id     : model.id,
             
@@ -336,7 +338,7 @@ const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialo
                         enableValidation={enableValidation}
                         inheritValidation={false}
                     >
-                        {React.cloneElement<EditorProps<Element, TModel[keyof TModel]>>(editorComponent,
+                        {React.cloneElement<EditorProps<Element, ValueOfModel<TModel>>>(editorComponent,
                             // props:
                             {
                                 elmRef    : autoFocusEditorRef, // focus on the first_important editor, if the editor is a <form>, not the primary input
@@ -353,7 +355,7 @@ const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialo
                                 
                                 
                                 value     : editorValue,
-                                onChange  : (value: TModel[keyof TModel]) => { setEditorValue(value); setIsModified(true); },
+                                onChange  : (value: ValueOfModel<TModel>) => { setEditorValue(value); setIsModified(true); },
                             },
                         )}
                     </ValidationProvider>
