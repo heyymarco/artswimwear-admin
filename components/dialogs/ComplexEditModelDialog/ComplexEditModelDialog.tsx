@@ -402,7 +402,6 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
     const handleCloseDialog    = useEvent(async () => {
         if (privilegeWrite && isModified) {
             // conditions:
-            // if (!model) return; // no model to update => ignore // no need this condition, has model => save changes; no model => create new record
             let answer : 'save'|'dontSave'|'continue'|undefined = 'save';
             if (onConfirmUnsaved) {
                 const {
