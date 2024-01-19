@@ -204,7 +204,7 @@ const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialo
     
     
     // handlers:
-    const handleSave = useEvent(async () => {
+    const handleSave           = useEvent(async () => {
         setEnableValidation(true);
         await new Promise<void>((resolve) => { // wait for a validation state applied
             setTimeout(() => {
@@ -246,7 +246,7 @@ const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialo
         } // try
     });
     
-    const handleCloseDialog = useEvent(async () => {
+    const handleCloseDialog    = useEvent(async () => {
         if (isModified) {
             // conditions:
             let answer : 'save'|'dontSave'|'continue'|undefined = 'save';
