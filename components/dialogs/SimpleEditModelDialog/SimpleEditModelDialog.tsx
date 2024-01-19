@@ -126,6 +126,12 @@ export interface SimpleEditModelDialogProps<TModel extends Model>
     // components:
     editorComponent : React.ReactComponentElement<any, EditorProps<Element, TModel[keyof TModel]>>
 }
+export type ImplementedSimpleEditModelDialogProps<TModel extends Model> = Omit<SimpleEditModelDialogProps<TModel>,
+    // data:
+    |'initialValue'
+    |'transformValue'
+    |'updateModelApi'
+>
 const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialogProps<TModel>): JSX.Element|null => {
     // styles:
     const styleSheet = useSimpleEditModelDialogStyleSheet();
