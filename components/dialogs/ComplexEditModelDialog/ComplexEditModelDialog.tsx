@@ -341,11 +341,19 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
     const handleDelete         = useEvent(async () => {
         // conditions:
         if (!model) return; // no model to delete => ignore
-        if (onConfirmDelete) {
+        {
             const {
                 title   = <h1>Delete Confirmation</h1>,
-                message,
-            } = onConfirmDelete({model});
+                message = <p>
+                    Are you sure to delete {!modelEntryName ? 'this ' : ''}<strong>{
+                        // the model name is entered:
+                        modelEntryName
+                        ||
+                        // the model name is blank:
+                        modelName
+                    }</strong>
+                </p>,
+            } = onConfirmDelete?.({model}) ?? {};
             if (
                 (await showMessage<'yes'|'no'>({
                     theme    : 'warning',
