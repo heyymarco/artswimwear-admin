@@ -14,6 +14,7 @@ import {
 import {
     // hooks:
     useAvailableUsername,
+    useNotProhibitedUsername,
 }                           from '@/store/features/api/apiSlice'
 
 // internals:
@@ -39,13 +40,17 @@ export interface UniqueUsernameEditorProps<TElement extends Element = HTMLElemen
 }
 const UniqueUsernameEditor = <TElement extends Element = HTMLElement>(props: UniqueUsernameEditorProps<TElement>): JSX.Element|null => {
     // stores:
-    const [availableUsername] = useAvailableUsername();
+    const [availableUsername    ] = useAvailableUsername();
+    const [notProhibitedUsername] = useNotProhibitedUsername();
     
     
     
     // handlers:
-    const handleCheckAvailable = useEvent(async (value: string): Promise<boolean> => {
+    const handleCheckAvailable     = useEvent(async (value: string): Promise<boolean> => {
         return await availableUsername(value).unwrap();
+    });
+    const handleCheckNotProhibited = useEvent(async (value: string): Promise<boolean> => {
+        return await notProhibitedUsername(value).unwrap();
     });
     
     
@@ -75,13 +80,16 @@ const UniqueUsernameEditor = <TElement extends Element = HTMLElement>(props: Uni
             
             
             // constraints:
-            minLength        = {credentialsConfigClient.username.minLength}
-            maxLength        = {credentialsConfigClient.username.maxLength}
+            minLength            = {credentialsConfigClient.username.minLength}
+            maxLength            = {credentialsConfigClient.username.maxLength}
             
-            format           = {credentialsConfigClient.username.format}
-            formatHint       = {credentialsConfigClient.username.formatHint}
+            format               = {credentialsConfigClient.username.format}
+            formatHint           = {credentialsConfigClient.username.formatHint}
             
-            onCheckAvailable = {handleCheckAvailable}
+            onCheckAvailable     = {handleCheckAvailable}
+            
+            onCheckNotProhibited = {handleCheckNotProhibited}
+            prohibitedHint       = {credentialsConfigClient.username.prohibitedHint}
         />
     );
 };
