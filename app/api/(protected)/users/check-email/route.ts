@@ -26,8 +26,8 @@ import {
 
 // configs:
 import {
-    credentialsConfigClient,
-}                           from '@/credentials.config.client'
+    credentialsConfigServer,
+}                           from '@/credentials.config.server'
 
 
 
@@ -77,7 +77,7 @@ router
             
             format         : emailFormat,
         },
-    } = credentialsConfigClient;
+    } = credentialsConfigServer;
     
     
     
