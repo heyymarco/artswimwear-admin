@@ -1,0 +1,6 @@
+Unique  Editor          base
+Unique  EmailEditor     -
+Unique  PathEditor      -
+Unique  RolenameEditor  -
+Unique  UsernameEditor  no_prohibited_words
+        PasswordEditor  no_common_words
