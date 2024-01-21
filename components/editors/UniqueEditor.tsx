@@ -82,6 +82,7 @@ export interface UniqueEditorProps<TElement extends Element = HTMLElement>
     
     format            : RegExp
     formatHint        : React.ReactNode
+    
     onCheckAvailable  : (value: string) => Promise<boolean>
     
     
@@ -103,6 +104,7 @@ const UniqueEditor = <TElement extends Element = HTMLElement>(props: UniqueEdito
         
         format,
         formatHint,
+        
         onCheckAvailable,
         
         

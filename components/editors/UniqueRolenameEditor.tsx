@@ -36,6 +36,7 @@ export interface UniqueRolenameEditorProps<TElement extends Element = HTMLElemen
             
             |'format'           // already handled internally
             |'formatHint'       // already handled internally
+            
             |'onCheckAvailable' // already handled internally
         >
 {
@@ -84,6 +85,7 @@ const UniqueRolenameEditor = <TElement extends Element = HTMLElement>(props: Uni
             
             format           = {/^.+$/}
             formatHint       = {<>Must be a common role-name format.</>}
+            
             onCheckAvailable = {handleCheckAvailable}
         />
     );

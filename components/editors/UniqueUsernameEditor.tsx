@@ -41,6 +41,7 @@ export interface UniqueUsernameEditorProps<TElement extends Element = HTMLElemen
             
             |'format'           // already handled internally
             |'formatHint'       // already handled internally
+            
             |'onCheckAvailable' // already handled internally
         >
 {
@@ -88,6 +89,7 @@ const UniqueUsernameEditor = <TElement extends Element = HTMLElement>(props: Uni
             
             format           = {credentialsConfigClient.username.format}
             formatHint       = {credentialsConfigClient.username.formatHint}
+            
             onCheckAvailable = {handleCheckAvailable}
         />
     );

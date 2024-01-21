@@ -53,6 +53,7 @@ export interface UniquePathEditorProps<TElement extends Element = HTMLElement>
             
             |'format'           // already handled internally
             |'formatHint'       // already handled internally
+            
             |'onCheckAvailable' // already handled internally
         >
 {
@@ -99,6 +100,7 @@ const UniquePathEditor = <TElement extends Element = HTMLElement>(props: UniqueP
             
             format           = {/^[a-zA-Z0-9-_.!$%&'*+=^`|~(){}<>\[\]]+$/}
             formatHint       = {<>Must be a common url-path format.</>}
+            
             onCheckAvailable = {handleCheckAvailable}
             
             

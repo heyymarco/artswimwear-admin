@@ -41,6 +41,7 @@ export interface UniqueEmailEditorProps<TElement extends Element = HTMLElement>
             
             |'format'           // already handled internally
             |'formatHint'       // already handled internally
+            
             |'onCheckAvailable' // already handled internally
         >
 {
@@ -88,6 +89,7 @@ const UniqueEmailEditor = <TElement extends Element = HTMLElement>(props: Unique
             
             format           = {credentialsConfigClient.email.format}
             formatHint       = {credentialsConfigClient.email.formatHint}
+            
             onCheckAvailable = {handleCheckAvailable}
         />
     );
