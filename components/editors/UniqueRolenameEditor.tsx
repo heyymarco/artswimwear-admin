@@ -19,7 +19,7 @@ import {
 // internals:
 import {
     // react components:
-    UniqueEditorProps,
+    ImplementedUniqueEditorProps,
     UniqueEditor,
 }                           from '@/components/editors/UniqueEditor'
 
@@ -29,16 +29,7 @@ import {
 export interface UniqueRolenameEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Omit<UniqueEditorProps<TElement>,
-            // constraints:
-            |'minLength'        // already handled internally
-            |'maxLength'        // already handled internally
-            
-            |'format'           // already handled internally
-            |'formatHint'       // already handled internally
-            
-            |'onCheckAvailable' // already handled internally
-        >
+        ImplementedUniqueEditorProps<TElement>
 {
 }
 const UniqueRolenameEditor = <TElement extends Element = HTMLElement>(props: UniqueRolenameEditorProps<TElement>): JSX.Element|null => {

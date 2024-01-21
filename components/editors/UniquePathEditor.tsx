@@ -25,7 +25,7 @@ import {
 }                           from '@/components/editors/TextEditor'
 import {
     // react components:
-    UniqueEditorProps,
+    ImplementedUniqueEditorProps,
     UniqueEditor,
 }                           from '@/components/editors/UniqueEditor'
 
@@ -46,16 +46,7 @@ import {
 export interface UniquePathEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Omit<UniqueEditorProps<TElement>,
-            // constraints:
-            |'minLength'        // already handled internally
-            |'maxLength'        // already handled internally
-            
-            |'format'           // already handled internally
-            |'formatHint'       // already handled internally
-            
-            |'onCheckAvailable' // already handled internally
-        >
+        ImplementedUniqueEditorProps<TElement>
 {
     // appearances:
     homeUrl ?: string
