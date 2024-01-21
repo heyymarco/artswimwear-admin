@@ -38,6 +38,7 @@ export interface UniqueUsernameEditorProps<TElement extends Element = HTMLElemen
             // constraints:
             |'minLength'        // already handled internally
             |'maxLength'        // already handled internally
+            
             |'format'           // already handled internally
             |'formatHint'       // already handled internally
             |'onCheckAvailable' // already handled internally
@@ -84,6 +85,7 @@ const UniqueUsernameEditor = <TElement extends Element = HTMLElement>(props: Uni
             // constraints:
             minLength        = {credentialsConfigClient.username.minLength}
             maxLength        = {credentialsConfigClient.username.maxLength}
+            
             format           = {credentialsConfigClient.username.format}
             formatHint       = {credentialsConfigClient.username.formatHint}
             onCheckAvailable = {handleCheckAvailable}

@@ -38,6 +38,7 @@ export interface UniqueEmailEditorProps<TElement extends Element = HTMLElement>
             // constraints:
             |'minLength'        // already handled internally
             |'maxLength'        // already handled internally
+            
             |'format'           // already handled internally
             |'formatHint'       // already handled internally
             |'onCheckAvailable' // already handled internally
@@ -84,6 +85,7 @@ const UniqueEmailEditor = <TElement extends Element = HTMLElement>(props: Unique
             // constraints:
             minLength        = {credentialsConfigClient.email.minLength}
             maxLength        = {credentialsConfigClient.email.maxLength}
+            
             format           = {credentialsConfigClient.email.format}
             formatHint       = {credentialsConfigClient.email.formatHint}
             onCheckAvailable = {handleCheckAvailable}

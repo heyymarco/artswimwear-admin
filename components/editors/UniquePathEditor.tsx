@@ -50,6 +50,7 @@ export interface UniquePathEditorProps<TElement extends Element = HTMLElement>
             // constraints:
             |'minLength'        // already handled internally
             |'maxLength'        // already handled internally
+            
             |'format'           // already handled internally
             |'formatHint'       // already handled internally
             |'onCheckAvailable' // already handled internally
@@ -95,6 +96,7 @@ const UniquePathEditor = <TElement extends Element = HTMLElement>(props: UniqueP
             // constraints:
             minLength        = {1}
             maxLength        = {100}
+            
             format           = {/^[a-zA-Z0-9-_.!$%&'*+=^`|~(){}<>\[\]]+$/}
             formatHint       = {<>Must be a common url-path format.</>}
             onCheckAvailable = {handleCheckAvailable}

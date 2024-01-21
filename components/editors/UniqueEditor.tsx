@@ -79,6 +79,7 @@ export interface UniqueEditorProps<TElement extends Element = HTMLElement>
     // constraints:
     minLength         : number
     maxLength         : number
+    
     format            : RegExp
     formatHint        : React.ReactNode
     onCheckAvailable  : (value: string) => Promise<boolean>
@@ -99,6 +100,7 @@ const UniqueEditor = <TElement extends Element = HTMLElement>(props: UniqueEdito
         // constraints:
         minLength,
         maxLength,
+        
         format,
         formatHint,
         onCheckAvailable,

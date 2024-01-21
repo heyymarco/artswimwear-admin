@@ -33,6 +33,7 @@ export interface UniqueRolenameEditorProps<TElement extends Element = HTMLElemen
             // constraints:
             |'minLength'        // already handled internally
             |'maxLength'        // already handled internally
+            
             |'format'           // already handled internally
             |'formatHint'       // already handled internally
             |'onCheckAvailable' // already handled internally
@@ -80,6 +81,7 @@ const UniqueRolenameEditor = <TElement extends Element = HTMLElement>(props: Uni
             // constraints:
             minLength        = {1}
             maxLength        = {30}
+            
             format           = {/^.+$/}
             formatHint       = {<>Must be a common role-name format.</>}
             onCheckAvailable = {handleCheckAvailable}
