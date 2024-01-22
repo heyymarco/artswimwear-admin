@@ -470,7 +470,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
         });
     });
     
-    const handleExpandedChange : EventHandler<ComplexEditModelDialogExpandedChangeEvent> = useEvent((event) => {
+    const handleExpandedChange = useEvent<EventHandler<ComplexEditModelDialogExpandedChangeEvent>>((event) => {
         // conditions:
         if (event.actionType === 'shortcut') return; // prevents closing modal by accidentally pressing [esc]
         
