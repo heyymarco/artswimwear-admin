@@ -10,6 +10,11 @@ const nextConfig = {
       },
       {
         protocol : 'https',
+        hostname : '**.public.blob.vercel-storage.com',
+        port     : '',
+      },
+      {
+        protocol : 'https',
         hostname : '**.fbsbx.com',
         port     : '',
         pathname : '**',
