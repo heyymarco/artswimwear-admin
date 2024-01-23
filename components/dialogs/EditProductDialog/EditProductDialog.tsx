@@ -546,7 +546,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         try {
                             const imageId = await postImage({
                                 image            : imageFile,
-                                folder           : `products/${name}`,
+                                folder           : `products/${name || '__unnamed__'}`,
                                 onUploadProgress : reportProgress,
                                 abortSignal      : abortSignal,
                             }).unwrap();
