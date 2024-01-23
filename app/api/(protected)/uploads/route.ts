@@ -105,9 +105,9 @@ router
             type = '',
         } = imageSize(new Uint8Array(await file.arrayBuffer()));
         
-        if ((width < 512) || (width > 3840) || (height < 512) || (height > 3840)) {
+        if ((width < 256) || (width > 3840) || (height < 256) || (height > 3840)) {
             return NextResponse.json({
-                error: 'The image dimension (width & height) must between 20 to 1200 pixels.',
+                error: 'The image dimension (width & height) must between 256 to 3840 pixels.',
             }, { status: 400 }); // handled with error
         } // if
         
