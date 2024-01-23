@@ -390,6 +390,16 @@ export const apiSlice = createApi({
                 })(),
             }),
         }),
+        moveImage             : builder.mutation<{ from: string, to: string }[], { imageId: string[], folder?: string }>({
+            query: ({ imageId, folder }) => ({
+                url     : 'uploads',
+                method  : 'PUT',
+                body    : {
+                    image  : imageId,
+                    folder : folder,
+                },
+            }),
+        }),
     }),
 });
 
@@ -534,4 +544,5 @@ export const {
     
     usePostImageMutation             : usePostImage,
     useDeleteImageMutation           : useDeleteImage,
+    useMoveImageMutation             : useMoveImage,
 } = apiSlice;

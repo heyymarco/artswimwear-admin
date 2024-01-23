@@ -111,6 +111,7 @@ import {
     
     usePostImage,
     useDeleteImage,
+    useMoveImage,
 }                           from '@/store/features/api/apiSlice'
 
 // internals:
@@ -201,6 +202,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     const [postImage                                                  ] = usePostImage();
     const [commitDeleteImage, {isLoading : isLoadingCommitDeleteImage}] = useDeleteImage();
     const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
+    const [commitMoveImage  , {isLoading : isLoadingCommitMoveImage  }] = useMoveImage();
     
     
     
@@ -233,6 +235,20 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     
     const handleSideUpdate           = useEvent<UpdateSideHandler>(async () => {
         await handleSideSave(/*commitImages = */true);
+        
+        
+        
+        try {
+            const moved = await commitMoveImage({
+                imageId : images,
+                folder  : 'testing/helloh',
+                // folder  : `products/${name || '__unnamed__'}`,
+            }).unwrap();
+            console.log('moved: ', moved);
+        }
+        catch {
+            // ignore any error
+        } // try
     });
     const handleSideDelete           = useEvent<DeleteSideHandler>(async () => {
         await handleSideSave(/*commitImages = */false);
@@ -336,7 +352,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             // stores:
             isModified  = {isModified}
             
-            isCommiting = {isLoadingUpdate || isLoadingCommitDeleteImage}
+            isCommiting = {isLoadingUpdate || isLoadingCommitDeleteImage || isLoadingCommitMoveImage}
             isReverting = {                   isLoadingRevertDeleteImage}
             isDeleting  = {isLoadingDelete || isLoadingCommitDeleteImage}
             

@@ -23,6 +23,7 @@ import {
 import {
     uploadMedia,
     deleteMedia,
+    moveMedia,
 }                           from '@/libs/mediaStorage.server'
 import {
     imageSize,
@@ -65,7 +66,7 @@ const handler = async (req: NextRequest, ctx: RequestContext) => router.run(req,
 export {
     // handler as GET,
     handler as POST,
-    // handler as PUT,
+    handler as PUT,
     handler as PATCH,
     // handler as DELETE,
     // handler as HEAD,
@@ -185,6 +186,38 @@ You do not have the privilege to modify the user's image.`
         if (error?.code === 404) { // not found => treat as success
             return NextResponse.json(imageIds); // deleted => success
         } // if
+        return NextResponse.json({ error: error?.message ?? `${error}` }, { status: 500 }); // handled with error
+    } // try
+})
+.put(async (req) => {
+    const {
+        image: imageIds,
+        folder,
+    } = await req.json();
+    if (!Array.isArray(imageIds) || !imageIds.length || !imageIds.every((imageId) => (typeof(imageId) === 'string'))) {
+        return NextResponse.json({
+            error: 'Invalid parameter(s).',
+        }, { status: 400 }); // handled with error
+    } // if
+    
+    
+    
+    if ((typeof(folder) !== 'string') || !folder) {
+        return NextResponse.json({
+            error: 'Invalid parameter(s).',
+        }, { status: 400 }); // handled with error
+    } // if
+    
+    
+    
+    try {
+        const moved = await moveMedia(imageIds, folder);
+        
+        
+        
+        return NextResponse.json(moved); // update => success
+    }
+    catch (error: any) {
         return NextResponse.json({ error: error?.message ?? `${error}` }, { status: 500 }); // handled with error
     } // try
 });
