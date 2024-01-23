@@ -38,7 +38,7 @@ import {
     
     
     // utility-components:
-    paragraphify,
+    getFetchErrorMessage,
 }                           from '@reusable-ui/components'
 
 // internals:
@@ -606,7 +606,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                 // conditions:
                 if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
             }
-            catch (error: any) {
+            catch (fetchError: any) {
                 // conditions:
                 if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
                 
@@ -615,12 +615,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                 
                 
                 
-                const errorJsx : React.ReactNode = (
-                    ((typeof(error?.message) === 'string') || (typeof(error) === 'string'))
-                    ? paragraphify(error?.message ?? error)
-                    : (error ?? <p>Failed to upload image.</p>)
-                );
-                uploadingImageData.uploadError = errorJsx;
+                uploadingImageData.uploadError = getFetchErrorMessage(fetchError);
                 setUploadingImages((current) => current.slice(0)); // force to re-render
                 return; // failed => no further actions
             } // try
