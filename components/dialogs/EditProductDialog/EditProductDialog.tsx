@@ -213,18 +213,68 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     
     // handlers:
     const handleUpdate               = useEvent<UpdateHandler>(async ({id, privilegeAdd, privilegeUpdate}) => {
-        return (await updateProduct({
-            id             : id ?? '',
-            
-            visibility     : (privilegeUpdate.visibility  || privilegeAdd) ? visibility                                        : undefined,
-            name           : (privilegeUpdate.description || privilegeAdd) ? name                                              : undefined,
-            path           : (privilegeUpdate.description || privilegeAdd) ? path                                              : undefined,
-            price          : (privilegeUpdate.price       || privilegeAdd) ? price                                             : undefined,
-            shippingWeight : (privilegeUpdate.price       || privilegeAdd) ? shippingWeight                                    : undefined,
-            stock          : (privilegeUpdate.stock       || privilegeAdd) ? stock                                             : undefined,
-            images         : (privilegeUpdate.images      || privilegeAdd) ? images                                            : undefined,
-            description    : (privilegeUpdate.description || privilegeAdd) ? ((description?.toJSON?.() ?? description) as any) : undefined,
-        }).unwrap()).id;
+        const deletedImages : string[] = [];
+        let updatedImages = images;
+        if (images.length) {
+            try {
+                const movedResponse = await commitMoveImage({
+                    imageId : images,
+                    // folder  : 'testing/helloh',
+                    folder  : `products/${name || '__unnamed__'}`,
+                }).unwrap();
+                const movedMap = new Map<string, string>(
+                    movedResponse.map(({from, to}) => [from, to])
+                );
+                
+                
+                
+                if (movedMap.size) {
+                    updatedImages = images.map((image) => {
+                        // conditions:
+                        const movedImage = movedMap.get(image);
+                        if (movedImage === undefined) return image;
+                        
+                        
+                        
+                        // actions:
+                        deletedImages.push(image);
+                        return movedImage;
+                    });
+                } // if
+            }
+            catch {
+                // ignore any moveImages error
+            } // try
+        } // if
+        
+        
+        
+        try {
+            return (await updateProduct({
+                id             : id ?? '',
+                
+                visibility     : (privilegeUpdate.visibility  || privilegeAdd) ? visibility                                        : undefined,
+                name           : (privilegeUpdate.description || privilegeAdd) ? name                                              : undefined,
+                path           : (privilegeUpdate.description || privilegeAdd) ? path                                              : undefined,
+                price          : (privilegeUpdate.price       || privilegeAdd) ? price                                             : undefined,
+                shippingWeight : (privilegeUpdate.price       || privilegeAdd) ? shippingWeight                                    : undefined,
+                stock          : (privilegeUpdate.stock       || privilegeAdd) ? stock                                             : undefined,
+                images         : (privilegeUpdate.images      || privilegeAdd) ? updatedImages                                     : undefined,
+                description    : (privilegeUpdate.description || privilegeAdd) ? ((description?.toJSON?.() ?? description) as any) : undefined,
+            }).unwrap()).id;
+        }
+        finally {
+            if (deletedImages.length) {
+                try {
+                    await commitDeleteImage({
+                        imageId : deletedImages,
+                    }).unwrap();
+                }
+                catch {
+                    // ignore any deleteImages error
+                } // try
+            } // if
+        } // try
     });
     
     const handleDelete               = useEvent<DeleteHandler>(async ({id}) => {
@@ -235,20 +285,6 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     
     const handleSideUpdate           = useEvent<UpdateSideHandler>(async () => {
         await handleSideSave(/*commitImages = */true);
-        
-        
-        
-        try {
-            const moved = await commitMoveImage({
-                imageId : images,
-                folder  : 'testing/helloh',
-                // folder  : `products/${name || '__unnamed__'}`,
-            }).unwrap();
-            console.log('moved: ', moved);
-        }
-        catch {
-            // ignore any error
-        } // try
     });
     const handleSideDelete           = useEvent<DeleteSideHandler>(async () => {
         await handleSideSave(/*commitImages = */false);
