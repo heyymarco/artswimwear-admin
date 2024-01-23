@@ -215,10 +215,10 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     const handleUpdate               = useEvent<UpdateHandler>(async ({id, privilegeAdd, privilegeUpdate}) => {
         const deletedImages : string[] = [];
         let updatedImages = images;
-        if (images.length) {
+        if (updatedImages.length) {
             try {
                 const movedResponse = await commitMoveImage({
-                    imageId : images,
+                    imageId : updatedImages,
                     // folder  : 'testing/helloh',
                     folder  : `products/${name || '__unnamed__'}`,
                 }).unwrap();
@@ -229,7 +229,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                 
                 
                 if (movedMap.size) {
-                    updatedImages = images.map((image) => {
+                    updatedImages = updatedImages.map((image) => {
                         // conditions:
                         const movedImage = movedMap.get(image);
                         if (movedImage === undefined) return image;
