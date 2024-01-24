@@ -154,7 +154,7 @@ You do not have the privilege to modify the user's image.`
     
     
     try {
-        const fileId = await uploadMedia(file, {
+        const fileId = await uploadMedia(file.name, file.stream(), {
             folder,
         });
         

@@ -20,7 +20,7 @@ import {
 interface UploadMediaOptions {
     folder?: string
 }
-export const uploadMedia = async (file: File, options?: UploadMediaOptions): Promise<string> => {
+export const uploadMedia = async (fileName: string, stream: ReadableStream, options?: UploadMediaOptions): Promise<string> => {
     // options:
     const {
         folder,
@@ -28,7 +28,7 @@ export const uploadMedia = async (file: File, options?: UploadMediaOptions): Pro
     
     
     
-    const blobResult = await uploadBlob(/* pathname: */(folder ? `${folder}/${file.name}` : file.name), await file.arrayBuffer(), {
+    const blobResult = await uploadBlob((folder ? `${folder}/${fileName}` : fileName), stream, {
         token              : process.env.BLOB_READ_WRITE_TOKEN,
         access             : 'public',
         contentType        : undefined,
