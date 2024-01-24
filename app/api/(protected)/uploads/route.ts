@@ -86,6 +86,7 @@ router
 })
 .post(async (req) => {
     const data = await req.formData();
+    
     const file = data.get('image');
     // const file : Express.Multer.File = (req as any).file;
     if (!file || !(file instanceof Object)) {
@@ -166,9 +167,11 @@ You do not have the privilege to modify the user's image.`
     } // try
 })
 .patch(async (req) => {
-    const data = await req.formData();
-    const imageIds : string[] = data.getAll('image') as any;
-    if (!imageIds.length || !imageIds.every((imageId) => (typeof(imageId) === 'string'))) {
+    const {
+        image: imageIds,
+    } = await req.json();
+    
+    if (!Array.isArray(imageIds) || !imageIds.length || !imageIds.every((imageId) => (typeof(imageId) === 'string'))) {
         return NextResponse.json({
             error: 'Invalid parameter(s).',
         }, { status: 400 }); // handled with error
@@ -194,13 +197,12 @@ You do not have the privilege to modify the user's image.`
         image: imageIds,
         folder,
     } = await req.json();
+    
     if (!Array.isArray(imageIds) || !imageIds.length || !imageIds.every((imageId) => (typeof(imageId) === 'string'))) {
         return NextResponse.json({
             error: 'Invalid parameter(s).',
         }, { status: 400 }); // handled with error
     } // if
-    
-    
     
     if ((typeof(folder) !== 'string') || !folder) {
         return NextResponse.json({
