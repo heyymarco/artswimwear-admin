@@ -45,7 +45,20 @@ export const deleteMedia = async (imageId: string): Promise<void> => {
     });
 };
 
-export const moveMedia = async (imageIds: string[], folder: string): Promise<{ from: string, to: string }[]> => {
+export const hasMedia    = async (imageId: string): Promise<boolean> => {
+    try {
+        await infoBlob(imageId, {
+            token : process.env.BLOB_READ_WRITE_TOKEN,
+        });
+        
+        return true; // succeeded => the media is exist
+    }
+    catch {
+        return false; // errored => the media is not exist
+    } // try
+};
+
+export const moveMedia   = async (imageIds: string[], folder: string): Promise<{ from: string, to: string }[]> => {
     const metaPromises = imageIds.map(async (imageId) => {
         try {
             const {
