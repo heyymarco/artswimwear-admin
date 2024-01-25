@@ -136,15 +136,24 @@ You do not have the privilege to modify the user's image.`
             density          : 72, // dpi
         })
         .resize({
-            width              : 1280,
-            height             : 1920,
+            ...((): { width: number, height: number } => {
+                if (folder === 'users') return { // for user profile image:
+                    width      : 160,
+                    height     : 160,
+                };
+                
+                return { // default: assumes product image:
+                    width      : 1280,
+                    height     : 1920,
+                };
+            })(),
             fit                : 'cover',
             background         : '#ffffff',
             withoutEnlargement : true,       // do NOT scale up
             withoutReduction   : false,      // do scale down
             kernel             : 'lanczos3', // interpolation kernels
         })
-        .flatten({ // merge alpha transparency channel, if any, with background
+        .flatten({ // merge alpha transparency channel, if any, with a background, then remove the alpha channel
             background         : '#ffffff',
         })
         .webp({
