@@ -99,30 +99,6 @@ router
             error: 'The file is too big. The limit is 4MB.',
         }, { status: 400 }); // handled with error
     } // if
-    try {
-        const {
-            width  = 0,
-            height = 0,
-            format = 'raw',
-        } = await sharp(await file.arrayBuffer()).metadata();
-        
-        if ((width < 256) || (width > 3840) || (height < 256) || (height > 3840)) {
-            return NextResponse.json({
-                error: 'The image dimension (width & height) must between 256 to 3840 pixels.',
-            }, { status: 400 }); // handled with error
-        } // if
-        
-        if (!(['jpg', 'jpeg', 'jp2', 'png', 'webp', 'svg'] as (keyof sharp.FormatEnum)[]).includes(format)) {
-            return NextResponse.json({
-                error: 'Invalid image file.\n\nThe supported images are jpg, png, webp, and svg.',
-            }, { status: 400 }); // handled with error
-        } // if
-    }
-    catch {
-        return NextResponse.json({
-            error: 'Invalid image file.\n\nThe supported images are jpg, png and webp.',
-        }, { status: 400 }); // handled with error
-    } // try
     
     
     
@@ -154,7 +130,64 @@ You do not have the privilege to modify the user's image.`
     
     
     try {
-        const fileId = await uploadMedia(file.name, file.stream(), {
+        const nodeImageTransformer = sharp({
+            failOn           : 'none',
+            limitInputPixels : 4096*2160, // 4K resolution
+            density          : 72, // dpi
+        })
+        .resize({
+            width              : 1280,
+            height             : 1920,
+            fit                : 'cover',
+            background         : '#ffffff',
+            withoutEnlargement : true,       // do NOT scale up
+            withoutReduction   : false,      // do scale down
+            kernel             : 'lanczos3', // interpolation kernels
+        })
+        .flatten({ // merge alpha transparency channel, if any, with background
+            background         : '#ffffff',
+        })
+        .webp({
+            quality            : 90,
+            alphaQuality       : 90,
+            lossless           : false,
+            nearLossless       : false,
+            effort             : 4,
+        }) ;
+        
+        
+        
+        let signalTransformDone : (() => void)|undefined = undefined;
+        const webImageTransformer = new TransformStream({
+            start(controller) {
+                nodeImageTransformer.on('data', (chunk) => {
+                    controller.enqueue(chunk); // forward a chunk of processed data to the next Stream
+                    
+                    if (signalTransformDone) {
+                        signalTransformDone();
+                    } // if
+                });
+                nodeImageTransformer.on('end', () => {
+                    signalTransformDone?.(); // signal that the last data has been processed
+                });
+            },
+            transform(chunk, controller) {
+                nodeImageTransformer.write(chunk); // write a chunk of data to the Writable
+            },
+            async flush(controller) {
+                const promiseTransformDone = new Promise<void>((resolved) => {
+                    signalTransformDone = resolved;
+                });
+                nodeImageTransformer.end(); // signal that no more data will be written to the Writable
+                await promiseTransformDone; // wait for the last data has been processed
+            },
+        });
+        
+        
+        
+        const fileName = file.name;
+        const fileNameWithoutExt = fileName.match(/^.*(?=\.\w+$)/gi)?.[0] || fileName.split('.')?.[0] || 'image';
+        const fileId = await uploadMedia(`${fileNameWithoutExt}.webp`, file.stream().pipeThrough(webImageTransformer), {
             folder,
         });
         
@@ -163,7 +196,8 @@ You do not have the privilege to modify the user's image.`
         return NextResponse.json(fileId); // handled with success
     }
     catch (error: any) {
-        return NextResponse.json({ error: error?.message ?? `${error}` }, { status: 500 }); // handled with error
+        console.log('ERROR: ', error);
+        return NextResponse.json({ error: 'Unable to process your image.\n\nPlease choose another image.' }, { status: 500 }); // handled with error
     } // try
 })
 .patch(async (req) => {
