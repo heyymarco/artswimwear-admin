@@ -66,12 +66,11 @@ export interface DroppableProps<TElement extends Element = HTMLElement> {
 export interface DroppableApi {
     // states:
     /**
-     * undefined : no  dropping activity.  
-     * null      : has dropping activity but outside this dropping target.  
+     * undefined : no  dropping activity on this dropping target.  
      * false     : has dropping activity on this dropping target but the target refuses to be dropped.  
      * true      : has dropping activity on this dropping target and the target wants   to be dropped.  
      */
-    isDropping       : undefined|null|boolean
+    isDropping       : undefined|boolean
 }
 export const useDroppable = <TElement extends Element = HTMLElement>(props: DroppableProps<TElement>): DroppableApi => {
     // props:
@@ -95,7 +94,7 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
     
     // states:
     const isMounted = useMountedFlag();
-    const [isDropping, setIsDropping] = useState<undefined|null|boolean>(undefined);
+    const [isDropping, setIsDropping] = useState<undefined|boolean>(undefined);
     
     
     
@@ -105,6 +104,7 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
             dropData,
             onDropHandshake,
             onDropped,
+            setIsDropping,
         );
     }, [
         dropData,
