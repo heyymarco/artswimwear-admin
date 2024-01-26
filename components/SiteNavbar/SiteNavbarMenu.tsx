@@ -61,8 +61,8 @@ import {
     SiteLogo,
 }                           from './SiteLogo'
 import {
-    ProfileMenu,
-}                           from './ProfileMenu'
+    SignInMenu,
+}                           from './SignInMenu'
 
 
 
@@ -74,66 +74,65 @@ const SiteNavbarMenu = ({
     } : NavbarParams) => {
     // sessions:
     const { data: session, status: sessionStatus } = useSession();
-    const [isSigningOut, setIsSigningOut] = useState<boolean>(false);
-    const isFullySignedIn  = !isSigningOut && (sessionStatus === 'authenticated')   && !!session;
-    const isFullySignedOut = !isSigningOut && (sessionStatus === 'unauthenticated') &&  !session;
-    const isBusy           =  isSigningOut || (sessionStatus === 'loading');
+    const isFullySignedIn  = (sessionStatus === 'authenticated') && !!session;
     const role = session?.role;
     
     
     
-    // handlers:
-    const handleSignOut = useEvent((): void => {
-        setIsSigningOut(true);
-        signOut();
-    });
-    
-    
-    
-    // dom effects:
-    const hasUser = !!session?.user;
-    useInsertionEffect(() => {
-        navbars.listGridAreaCollapse = (!hasUser ? '2/1/2/3' : '2/1/2/4') as any;
-    }, [hasUser]);
-    
-    
-    
     // jsx:
-    const MenuButton = useCallback((props: ButtonProps) => {
-        return (
-            !isBusy
-            ? <HamburgerMenuButton                                       key='menuButton' {...props} />
-            : <ToggleButton buttonComponent={<ButtonIcon icon='busy' />} key='menuButton' {...props} />
-        );
-    }, [isBusy]);
     return (
         <>
             <SiteLogo />
             
-            {hasUser && <ProfileMenu {...basicVariantProps} listStyle='flat' gradient='inherit' />}
+            {!navbarExpanded && <HamburgerMenuButton
+                // variants:
+                {...basicVariantProps}
+                
+                
+                
+                // classes:
+                className='toggler'
+                
+                
+                
+                // states:
+                active={listExpanded}
+                
+                
+                
+                // handlers:
+                onClick={handleClickToToggleList}
+            />}
             
-            {!navbarExpanded && <MenuButton {...basicVariantProps} className='toggler' active={listExpanded} onClick={handleClickToToggleList} />}
-            
-            <Collapse className='list' mainClass={navbarExpanded ? '' : undefined} expanded={listExpanded}>
-                <Nav tag='ul' role='' {...basicVariantProps} listStyle='flat' gradient={navbarExpanded ? 'inherit' : false} orientation={navbarExpanded ? 'inline' : 'block'}>
+            <Collapse
+                // classes:
+                mainClass={navbarExpanded ? '' : undefined}
+                className='list'
+                
+                
+                
+                // states:
+                expanded={listExpanded}
+            >
+                <Nav
+                    // semantics:
+                    tag='ul'
+                    role=''
+                    
+                    
+                    
+                    // variants:
+                    {...basicVariantProps}
+                    gradient={navbarExpanded ? 'inherit' : false}
+                    listStyle='flat'
+                    orientation={navbarExpanded ? 'inline' : 'block'}
+                >
                     {isFullySignedIn && <NavItem><Link href='/'>Dashboard</Link></NavItem>}
                     {isFullySignedIn && !!role?.product_r && <NavItem><Link href='/products'>Products</Link></NavItem>}
                     {isFullySignedIn && !!role?.order_r   && <NavItem><Link href='/orders'>Orders</Link></NavItem>}
                     {isFullySignedIn && !!role?.user_r    && <NavItem><Link href='/users'>Users</Link></NavItem>}
                     
-                    {isBusy && <NavItem active={true}>
-                        <Busy theme='secondary' size='lg' />
-                        &nbsp;
-                        {(isSigningOut || session) ? 'Signing out...' : 'Loading...'}
-                    </NavItem>}
-                    
-                    {isFullySignedOut && <NavItem>
-                        <Link href='/signin'>Sign In</Link>
-                    </NavItem>}
-                    
-                    {isFullySignedIn  && <NavItem onClick={handleSignOut}>
-                        Sign Out
-                    </NavItem>}
+                    <SignInMenu />
                 </Nav>
             </Collapse>
         </>
