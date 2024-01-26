@@ -44,6 +44,11 @@ import {
 
 
 export interface DroppableProps<TElement extends Element = HTMLElement> {
+    // data:
+    dropData         : unknown
+    
+    
+    
     // refs:
     dropRef          : React.RefObject<TElement>|TElement|null // getter ref
     
@@ -71,6 +76,11 @@ export interface DroppableApi {
 export const useDroppable = <TElement extends Element = HTMLElement>(props: DroppableProps<TElement>): DroppableApi => {
     // props:
     const {
+        // data:
+        dropData,
+        
+        
+        
         // states:
         enabled = true,
         
@@ -92,10 +102,15 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
     // hooks:
     const droppableHook = useMemo((): DroppableHook => {
         return new DroppableHook(
+            dropData,
             onDropHandshake,
             onDropped,
         );
-    }, []);
+    }, [
+        dropData,
+        onDropHandshake,
+        onDropped,
+    ]);
     
     
     
