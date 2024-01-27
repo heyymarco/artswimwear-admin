@@ -14,7 +14,6 @@ import {
 import {
     // react helper hooks:
     useEvent,
-    EventHandler,
     useMountedFlag,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
