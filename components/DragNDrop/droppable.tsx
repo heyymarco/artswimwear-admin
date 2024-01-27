@@ -12,6 +12,9 @@ import {
 }                           from 'react'
 
 // internals:
+import type {
+    DragNDropData,
+}                           from './types'
 import {
     DroppableHook,
     
@@ -25,7 +28,7 @@ import {
 
 export interface DroppableProps<TElement extends Element = HTMLElement> {
     // data:
-    dropData         : unknown
+    dropData         : DragNDropData
     
     
     
@@ -40,8 +43,8 @@ export interface DroppableProps<TElement extends Element = HTMLElement> {
     
     
     // handlers:
-    onDropHandshake  : (dragData: unknown) => undefined|boolean|Promise<undefined|boolean>
-    onDropped       ?: (dragData: unknown) => void
+    onDropHandshake  : (dragData: DragNDropData) => undefined|boolean|Promise<undefined|boolean>
+    onDropped       ?: (dragData: DragNDropData) => void
 }
 export interface DroppableApi {
     // states:

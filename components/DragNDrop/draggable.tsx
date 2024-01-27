@@ -26,6 +26,9 @@ import type {
 }                           from '@reusable-ui/generic'         // a base component
 
 // internals:
+import type {
+    DragNDropData,
+}                           from './types'
 import {
     attachDroppableHook,
     detachDroppableHook,
@@ -35,7 +38,7 @@ import {
 
 export interface DraggableProps<TElement extends Element = HTMLElement> {
     // data:
-    dragData         : unknown
+    dragData         : DragNDropData
     
     
     
@@ -50,8 +53,8 @@ export interface DraggableProps<TElement extends Element = HTMLElement> {
     
     
     // handlers:
-    onDragHandshake  : (dropData: unknown) => boolean|Promise<boolean>
-    onDragged       ?: (dropData: unknown) => void
+    onDragHandshake  : (dropData: DragNDropData) => boolean|Promise<boolean>
+    onDragged       ?: (dropData: DragNDropData) => void
 }
 export interface DraggableApi<TElement extends Element = HTMLElement> {
     // states:

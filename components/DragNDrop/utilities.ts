@@ -4,22 +4,27 @@ import type {
     default as React,
 }                           from 'react'
 
+// internals:
+import type {
+    DragNDropData,
+}                           from './types'
+
 
 
 const droppableMap = new Map<Element, DroppableHook>();
 let activeDroppableHook : DroppableHook|null = null;
 
 export class DroppableHook {
-    dropData         : unknown
-    onDropHandshake  : (dragData: unknown) => undefined|boolean|Promise<undefined|boolean>
-    onDropped        : ((dragData: unknown) => void)|undefined
+    dropData         : DragNDropData
+    onDropHandshake  : (dragData: DragNDropData) => undefined|boolean|Promise<undefined|boolean>
+    onDropped        : ((dragData: DragNDropData) => void)|undefined
     setIsDropping    : React.Dispatch<React.SetStateAction<undefined|null|boolean>>
     isMounted        : boolean
     
     constructor(
-        dropData         : unknown,
-        onDropHandshake  : (dragData: unknown) => undefined|boolean|Promise<undefined|boolean>,
-        onDropped        : ((dragData: unknown) => void)|undefined,
+        dropData         : DragNDropData,
+        onDropHandshake  : (dragData: DragNDropData) => undefined|boolean|Promise<undefined|boolean>,
+        onDropped        : ((dragData: DragNDropData) => void)|undefined,
         setIsDropping    : React.Dispatch<React.SetStateAction<undefined|null|boolean>>
     ) {
         this.dropData        = dropData;
@@ -29,7 +34,7 @@ export class DroppableHook {
         this.isMounted       = true;
     }
 }
-export const attachDroppableHook = async (elements: Element[], onDragHandshake: (dropData: unknown) => boolean|Promise<boolean>, dragData: unknown): Promise<null|boolean> => {
+export const attachDroppableHook = async (elements: Element[], onDragHandshake: (dropData: DragNDropData) => boolean|Promise<boolean>, dragData: DragNDropData): Promise<null|boolean> => {
     let droppableHookResult     : null|boolean       = null; // firstly mark as NOT_YET having attached hook
     let interactedDroppableHook : DroppableHook|null = null;
     for (const element of elements) {

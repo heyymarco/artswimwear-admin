@@ -23,7 +23,10 @@ const DraggableComponent = () => {
         handleMouseDown,
         handleTouchStart,
     } = useDraggable({
-        dragData : 'drag data',
+        dragData : {
+            type : 'application/drag-123',
+            data : 'yess',
+        },
         onDragHandshake(dropData) {
             return true;
         },
@@ -51,7 +54,10 @@ const DroppableComponent = () => {
     const {
         isDropping,
     } = useDroppable({
-        dropData : 'drop data',
+        dropData : {
+            type : 'application/drop-456',
+            data : 'okay',
+        },
         dropRef  : dropRef,
         onDropHandshake(dragData) {
             return true;
