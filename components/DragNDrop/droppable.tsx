@@ -41,7 +41,7 @@ export interface DroppableProps<TElement extends Element = HTMLElement> {
     
     // handlers:
     onDropHandshake  : (dragData: unknown) => undefined|boolean|Promise<undefined|boolean>
-    onDropped        : (dragData: unknown) => void
+    onDropped       ?: (dragData: unknown) => void
 }
 export interface DroppableApi {
     // states:
