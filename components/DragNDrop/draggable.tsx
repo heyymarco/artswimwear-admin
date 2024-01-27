@@ -98,42 +98,36 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     
     // handlers:
     const isMouseActive           = useRef<boolean>(false);
+    const isTouchActive           = useRef<boolean>(false);
+    const handlePointerStatus     = useEvent((): void => {
+        // actions:
+        if (
+            (!isMouseActive.current && !isTouchActive.current) // both mouse & touch are inactive
+            ||
+            ( isMouseActive.current &&  isTouchActive.current) // both mouse & touch are active
+        ) {
+            if (watchGlobalPointer(false) === false) {         // unwatch global mouse/touch move
+                detachDroppableHook();                         // no  dropping activity
+                setIsDragging(undefined);                      // no  dragging activity
+            } // if
+        } // if
+    });
     const handleMouseStatusNative = useEvent<EventHandler<MouseEvent>>((event) => {
         // actions:
         isMouseActive.current = enabled && (
             (event.buttons === 1) // only left button pressed, ignore multi button pressed
         );
-        
-        if (
-            (!isMouseActive.current && !isTouchActive.current) // both mouse & touch are inactive
-            ||
-            ( isMouseActive.current &&  isTouchActive.current) // both mouse & touch are active
-        ) {
-            detachDroppableHook();                             // no  dropping activity
-            setIsDragging(undefined);                          // no  dragging activity
-            watchGlobalPointer(false);                         // unwatch global mouse/touch move
-        } // if
+        handlePointerStatus(); // update pointer status
     });
     const handleMouseActive       = useEvent<React.MouseEventHandler<TElement>>((event) => {
         handleMouseStatusNative(event.nativeEvent);
     });
-    
-    const isTouchActive           = useRef<boolean>(false);
     const handleTouchStatusNative = useEvent<EventHandler<TouchEvent>>((event) => {
         // actions:
         isTouchActive.current = enabled && (
             (event.touches.length === 1) // only single touch
         );
-        
-        if (
-            (!isMouseActive.current && !isTouchActive.current) // both mouse & touch are inactive
-            ||
-            ( isMouseActive.current &&  isTouchActive.current) // both mouse & touch are active
-        ) {
-            detachDroppableHook();                             // no  dropping activity
-            setIsDragging(undefined);                          // no  dragging activity
-            watchGlobalPointer(false);                         // unwatch global mouse/touch move
-        } // if
+        handlePointerStatus(); // update pointer status
     });
     const handleTouchActive       = useEvent<React.TouchEventHandler<TElement>>((event) => {
         handleTouchStatusNative(event.nativeEvent);
@@ -218,10 +212,10 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     
     // global handlers:
     const watchGlobalPointerStatusRef = useRef<undefined|(() => void)>(undefined);
-    const watchGlobalPointer          = useEvent((active: boolean): void => {
+    const watchGlobalPointer          = useEvent((active: boolean): boolean|null => {
         // conditions:
         const shouldActive = active && enabled; // control is disabled or readOnly => no response required
-        if (!!watchGlobalPointerStatusRef.current === shouldActive) return; // already activated|deactivated => nothing to do
+        if (!!watchGlobalPointerStatusRef.current === shouldActive) return null; // already activated|deactivated => nothing to do
         
         
         
@@ -259,6 +253,10 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             watchGlobalPointerStatusRef.current?.();
             watchGlobalPointerStatusRef.current = undefined;
         } // if
+        
+        
+        
+        return shouldActive;
     });
     
     
@@ -273,7 +271,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         // resets:
         isMouseActive.current = false; // unmark as pressed
         isTouchActive.current = false; // unmark as touched
-        watchGlobalPointer(false);     // unwatch global mouse/touch move
+        handlePointerStatus();         // update pointer status
     }, [enabled]);
     
     
