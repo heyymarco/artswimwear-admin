@@ -13,6 +13,8 @@ import {
 // reusable-ui core:
 import {
     // react helper hooks:
+    useEvent,
+    EventHandler,
     useMountedFlag,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
@@ -100,11 +102,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     
     
     // capabilities:
-    const {
-        // handlers:
-        handleMouseDown,
-        handleTouchStart,
-    } = usePointerCapture<TElement>({
+    const pointerCapture = usePointerCapture<TElement>({
         enabled,
         onPointerCaptureEnd() {
             const prevActiveDroppableHook = detachDroppableHook(); // no  dropping activity
@@ -136,6 +134,28 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             */
             setIsDragging(droppableHookResult);
         },
+    });
+    
+    
+    
+    // handlers:
+    const handleMouseDown  = useEvent<React.MouseEventHandler<TElement>>((event) => {
+        // conditions:
+        if (event.defaultPrevented) return; // already handled => ignore
+        event.preventDefault(); // now we handled the event
+        
+        
+        
+        pointerCapture.handleMouseDown(event);
+    });
+    const handleTouchStart = useEvent<React.TouchEventHandler<TElement>>((event) => {
+        // conditions:
+        if (event.defaultPrevented) return; // already handled => ignore
+        event.preventDefault(); // now we handled the event
+        
+        
+        
+        pointerCapture.handleTouchStart(event);
     });
     
     
