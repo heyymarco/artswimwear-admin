@@ -7,6 +7,7 @@ import type {
 
 
 const droppableMap = new Map<Element, DroppableHook>();
+let activeDroppableHook : DroppableHook|null = null;
 
 export class DroppableHook {
     dropData         : unknown
@@ -29,8 +30,8 @@ export class DroppableHook {
     }
 }
 export const attachDroppableHook = async (elements: Element[], onDragHandshake: (dropData: unknown) => boolean|Promise<boolean>, dragData: unknown): Promise<null|boolean> => {
-    let droppableHookResult    : null|boolean       = null; // firstly mark as NOT_YET having attached hook
-    let responsedDroppableHook : null|DroppableHook = null;
+    let droppableHookResult     : null|boolean       = null; // firstly mark as NOT_YET having attached hook
+    let interactedDroppableHook : DroppableHook|null = null;
     for (const element of elements) {
         // conditions:
         const droppableHook = droppableMap.get(element);
@@ -44,20 +45,20 @@ export const attachDroppableHook = async (elements: Element[], onDragHandshake: 
             continue; // noop => continue to scan others
         }
         else if(dropNego === false) {                               // false => refuses to be dropped
-            droppableHookResult    = false;                         // YET having refused hook
-            responsedDroppableHook = droppableHook;                 // YET having refused hook
+            droppableHookResult     = false;                        // YET having refused (by drop target) hook
+            interactedDroppableHook = droppableHook;                // YET having refused (by drop target) hook
             break;
         }
         else { // true => wants to be dropped
             const dragNego = await onDragHandshake(droppableHook.dropData);
             if (!dragNego) {                                        // false => refuses to be dragged
-                droppableHookResult    = false;                     // YET having refused hook
-                responsedDroppableHook = droppableHook;             // YET having refused hook
+                droppableHookResult     = false;                    // YET having refused (by drag source) hook
+                interactedDroppableHook = droppableHook;            // YET having refused (by drag source) hook
                 break;
             }
             else {                                                  // true => wants to be dragged
-                droppableHookResult    = true;                      // YET having attached hook
-                responsedDroppableHook = droppableHook;             // YET having refused hook
+                droppableHookResult     = true;                     // YET having attached hook
+                interactedDroppableHook = droppableHook;            // YET having attached hook
                 break;
             } // if
         } // if
@@ -65,9 +66,13 @@ export const attachDroppableHook = async (elements: Element[], onDragHandshake: 
     
     
     
+    activeDroppableHook = droppableHookResult ? interactedDroppableHook : null; // set or release
+    
+    
+    
     for (const droppableHook of droppableMap.values()) {
         // actions:
-        if (droppableHook === responsedDroppableHook) {
+        if (droppableHook === interactedDroppableHook) {
             /*
              * undefined : NEVER HERE.  
              * null      : NEVER HERE.  
@@ -91,11 +96,20 @@ export const attachDroppableHook = async (elements: Element[], onDragHandshake: 
     
     return droppableHookResult;
 };
-export const detachDroppableHook = (): void => {
+export const detachDroppableHook = (): DroppableHook|null => {
+    const prevActiveDroppableHook = activeDroppableHook;
+    activeDroppableHook = null; // release
+    
+    
+    
     for (const droppableHook of droppableMap.values()) {
         // actions:
         droppableHook.setIsDropping(undefined); // no  dropping activity
     } // for
+    
+    
+    
+    return prevActiveDroppableHook;
 };
 
 
@@ -108,6 +122,14 @@ export const unregisterDroppableHook = (element: Element): DroppableHook|null =>
     const droppableHook = droppableMap.get(element);
     if (droppableHook) droppableHook.isMounted = false;
     droppableMap.delete(element);
+    
+    
+    
+    if (droppableHook && (droppableHook === activeDroppableHook)) {
+        activeDroppableHook = null; // release
+    } // if
+    
+    
     
     return droppableHook ?? null; // found | not found
 };

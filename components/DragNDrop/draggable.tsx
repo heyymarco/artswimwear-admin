@@ -106,9 +106,18 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             ||
             ( isMouseActive.current &&  isTouchActive.current) // both mouse & touch are active
         ) {
-            if (watchGlobalPointer(false) === false) {         // unwatch global mouse/touch move
-                detachDroppableHook();                         // no  dropping activity
-                setIsDragging(undefined);                      // no  dragging activity
+            if (watchGlobalPointer(false) === false) {                 // unwatch global mouse/touch move
+                const prevActiveDroppableHook = detachDroppableHook(); // no  dropping activity
+                setIsDragging(undefined);                              // no  dragging activity
+                
+                
+                
+                if (isDragging === true) { // if was a valid dragging => now is dragged/dropped
+                    if (prevActiveDroppableHook) {
+                        onDragged?.(prevActiveDroppableHook.dropData);
+                        prevActiveDroppableHook.onDropped?.(dragData);
+                    } // if
+                } // if
             } // if
         } // if
     });

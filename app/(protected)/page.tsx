@@ -23,12 +23,12 @@ const DraggableComponent = () => {
         handleMouseDown,
         handleTouchStart,
     } = useDraggable({
-        dragData : 123,
+        dragData : 'drag data',
         onDragHandshake(dropData) {
             return true;
         },
         onDragged(dropData) {
-            //
+            console.log('onDragged: ', {dropData});
         },
         dragComponent : <Basic theme='warning'>Dragging...</Basic>,
     });
@@ -51,13 +51,13 @@ const DroppableComponent = () => {
     const {
         isDropping,
     } = useDroppable({
-        dropData : 456,
+        dropData : 'drop data',
         dropRef  : dropRef,
         onDropHandshake(dragData) {
             return true;
         },
         onDropped(dragData) {
-            //
+            console.log('onDropped: ', {dragData});
         },
     });
     return (
