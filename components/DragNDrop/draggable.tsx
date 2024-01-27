@@ -157,7 +157,6 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         
         
         
-        event.preventDefault();
         watchGlobalPointer(true); // watch global mouse/touch move
         
         
@@ -226,10 +225,22 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     });
     
     const handleMouseDown         = useEvent<React.MouseEventHandler<TElement>>((event) => {
+        // conditions:
+        if (event.defaultPrevented) return; // already handled => ignore;
+        event.preventDefault(); // now we handled the event
+        
+        
+        
         handleMouseActive(event); // update the mouse active status
         handleMouseSlide(event);  // update the mouse position
     });
     const handleTouchStart        = useEvent<React.TouchEventHandler<TElement>>((event) => {
+        // conditions:
+        if (event.defaultPrevented) return; // already handled => ignore;
+        event.preventDefault(); // now we handled the event
+        
+        
+        
         handleTouchActive(event); // update the touch active status
         handleTouchSlide(event);  // update the touch position
     });

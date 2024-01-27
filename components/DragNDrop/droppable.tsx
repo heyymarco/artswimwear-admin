@@ -111,9 +111,9 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
     
     
     // effects:
-    const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
     useEffect(() => {
         // conditions:
+        const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
         if (!dropElm) return; // no element for droppable => ignore
         if (!droppableHook) return; // droppableHook is disabled => ignore
         
@@ -121,6 +121,7 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
         
         // setups:
         attachDroppableHook(dropElm, droppableHook);
+        droppableHook.isMounted = true;
         
         
         
@@ -129,7 +130,7 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
             const prevDroppableHook = detachDroppableHook(dropElm);
             if (prevDroppableHook) prevDroppableHook.isMounted = false;
         };
-    }, [dropElm, droppableHook]);
+    }, [dropRef, droppableHook]);
     
     
     
