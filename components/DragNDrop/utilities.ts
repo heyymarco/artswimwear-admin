@@ -6,7 +6,7 @@ import type {
 
 
 
-const droppableKey = Symbol('droppableKey');
+const droppableMap = new WeakMap<Element, DroppableHook>();
 
 export class DroppableHook {
     dropData         : unknown
@@ -30,7 +30,7 @@ export class DroppableHook {
 }
 export const findDroppableHook = (elements: Element[]): DroppableHook|null => {
     for (const element of elements) {
-        const droppableHook = (droppableKey in element) ? element[droppableKey] : undefined;
+        const droppableHook = droppableMap.get(element);
         if (droppableHook && (droppableHook instanceof DroppableHook)) return droppableHook; // found
     } // for
     
@@ -39,13 +39,11 @@ export const findDroppableHook = (elements: Element[]): DroppableHook|null => {
     return null; // not found
 };
 export const attachDroppableHook = (element: Element, droppableHook: DroppableHook): void => {
-    (element as any)[droppableKey] = droppableHook;
+    droppableMap.set(element, droppableHook);
 };
 export const detachDroppableHook = (element: Element): DroppableHook|null => {
-    if (!(droppableKey in element)) return null;
-    const droppableHook = element[droppableKey];
-    delete element[droppableKey];
+    const droppableHook = droppableMap.get(element);
+    droppableMap.delete(element);
     
-    if (droppableHook && (droppableHook instanceof DroppableHook)) return droppableHook; // found
-    return null; // not found
+    return droppableHook ?? null; // found | not found
 };
