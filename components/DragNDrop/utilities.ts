@@ -115,12 +115,12 @@ export const detachDroppableHook = (): DroppableHook|null => {
 
 
 export const registerDroppableHook = (element: Element, droppableHook: DroppableHook): void => {
-    droppableHook.isMounted = true;
+    droppableHook.isMounted = true; // mount
     droppableMap.set(element, droppableHook);
 };
 export const unregisterDroppableHook = (element: Element): DroppableHook|null => {
     const droppableHook = droppableMap.get(element); // backup
-    if (droppableHook) droppableHook.isMounted = false;
+    if (droppableHook) droppableHook.isMounted = false; // unmount
     droppableMap.delete(element);
     
     

@@ -113,7 +113,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                 
                 
                 if (isDragging === true) { // if was a valid dragging => now is dragged/dropped
-                    if (prevActiveDroppableHook) {
+                    if (prevActiveDroppableHook?.isMounted) {
                         onDragged?.(prevActiveDroppableHook.dropData);
                         prevActiveDroppableHook.onDropped?.(dragData);
                     } // if
@@ -164,6 +164,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         
         // update drag & drop states:
         const droppableHookResult = await attachDroppableHook(document.elementsFromPoint(event.clientX, event.clientY), onDragHandshake, dragData);
+        if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
         /*
          * undefined : NEVER HERE.  
          * null      : has dragging activity but outside all dropping targets.  
