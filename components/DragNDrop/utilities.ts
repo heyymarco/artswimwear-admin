@@ -38,11 +38,13 @@ export const findDroppableHook = (elements: Element[]): DroppableHook|null => {
     
     return null; // not found
 };
-export const attachDroppableHook = (element: Element, droppableHook: DroppableHook): void => {
+export const registerDroppableHook = (element: Element, droppableHook: DroppableHook): void => {
+    droppableHook.isMounted = true;
     droppableMap.set(element, droppableHook);
 };
-export const detachDroppableHook = (element: Element): DroppableHook|null => {
+export const unregisterDroppableHook = (element: Element): DroppableHook|null => {
     const droppableHook = droppableMap.get(element);
+    if (droppableHook) droppableHook.isMounted = false;
     droppableMap.delete(element);
     
     return droppableHook ?? null; // found | not found

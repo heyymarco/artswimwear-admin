@@ -11,17 +11,11 @@ import {
     useEffect,
 }                           from 'react'
 
-// reusable-ui core:
-import {
-    // react helper hooks:
-    useMountedFlag,
-}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
-
 // internals:
 import {
     DroppableHook,
-    attachDroppableHook,
-    detachDroppableHook,
+    registerDroppableHook,
+    unregisterDroppableHook,
 }                           from './utilities'
 
 
@@ -81,7 +75,6 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
     
     
     // states:
-    const isMounted = useMountedFlag();
     const [isDropping, setIsDropping] = useState<undefined|boolean>(undefined);
     
     
@@ -120,15 +113,13 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
         
         
         // setups:
-        attachDroppableHook(dropElm, droppableHook);
-        droppableHook.isMounted = true;
+        registerDroppableHook(dropElm, droppableHook);
         
         
         
         // cleanups:
         return () => {
-            const prevDroppableHook = detachDroppableHook(dropElm);
-            if (prevDroppableHook) prevDroppableHook.isMounted = false;
+            unregisterDroppableHook(dropElm);
         };
     }, [dropRef, droppableHook]);
     
