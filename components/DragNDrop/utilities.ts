@@ -97,7 +97,7 @@ export const attachDroppableHook = async (elements: Element[], onDragHandshake: 
     return droppableHookResult;
 };
 export const detachDroppableHook = (): DroppableHook|null => {
-    const prevActiveDroppableHook = activeDroppableHook;
+    const prevActiveDroppableHook = activeDroppableHook; // backup
     activeDroppableHook = null; // release
     
     
@@ -119,7 +119,7 @@ export const registerDroppableHook = (element: Element, droppableHook: Droppable
     droppableMap.set(element, droppableHook);
 };
 export const unregisterDroppableHook = (element: Element): DroppableHook|null => {
-    const droppableHook = droppableMap.get(element);
+    const droppableHook = droppableMap.get(element); // backup
     if (droppableHook) droppableHook.isMounted = false;
     droppableMap.delete(element);
     
