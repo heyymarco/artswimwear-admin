@@ -124,14 +124,16 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         );
         
         if (
-            (!isMouseActive.current && !isTouchActive.current) // both mouse & touch are inactive
+            (!isMouseActive.current && !isTouchActive.current)     // both mouse & touch are inactive
             ||
-            ( isMouseActive.current &&  isTouchActive.current) // both mouse & touch are active
+            ( isMouseActive.current &&  isTouchActive.current)     // both mouse & touch are active
         ) {
-            setIsDragging(undefined);                          // no  dragging activity
-            activeDroppable.current?.setIsDropping(undefined); // no  dropping activity on this dropping target
-            activeDroppable.current = null;                    // no longer active => forget
-            watchGlobalPointer(false);                         // unwatch global mouse/touch move
+            setIsDragging(undefined);                              // no  dragging activity
+            if (activeDroppable.current?.isMounted) {
+                activeDroppable.current?.setIsDropping(undefined); // no  dropping activity on this dropping target
+            } // if
+            activeDroppable.current = null;                        // no longer active => forget
+            watchGlobalPointer(false);                             // unwatch global mouse/touch move
         } // if
     });
     const handleMouseActive       = useEvent<React.MouseEventHandler<TElement>>((event) => {
@@ -146,14 +148,16 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         );
         
         if (
-            (!isMouseActive.current && !isTouchActive.current) // both mouse & touch are inactive
+            (!isMouseActive.current && !isTouchActive.current)     // both mouse & touch are inactive
             ||
-            ( isMouseActive.current &&  isTouchActive.current) // both mouse & touch are active
+            ( isMouseActive.current &&  isTouchActive.current)     // both mouse & touch are active
         ) {
-            setIsDragging(undefined);                          // no  dragging activity
-            activeDroppable.current?.setIsDropping(undefined); // no  dropping activity on this dropping target
-            activeDroppable.current = null;                    // no longer active => forget
-            watchGlobalPointer(false);                         // unwatch global mouse/touch move
+            setIsDragging(undefined);                              // no  dragging activity
+            if (activeDroppable.current?.isMounted) {
+                activeDroppable.current?.setIsDropping(undefined); // no  dropping activity on this dropping target
+            } // if
+            activeDroppable.current = null;                        // no longer active => forget
+            watchGlobalPointer(false);                             // unwatch global mouse/touch move
         } // if
     });
     const handleTouchActive       = useEvent<React.TouchEventHandler<TElement>>((event) => {
@@ -182,29 +186,37 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         
         // update drag & drop states:
         const droppableHook = findDroppableHook(document.elementsFromPoint(event.clientX, event.clientY));
-        if (!droppableHook) {
-            setIsDragging(null);                               // has dragging activity but outside all dropping targets
-            activeDroppable.current?.setIsDropping(undefined); // no  dropping activity on this dropping target
-            activeDroppable.current = null;                    // no longer active => forget
+        if (!droppableHook || !droppableHook.isMounted) {
+            setIsDragging(null);                                   // has dragging activity but outside all dropping targets
+            if (activeDroppable.current?.isMounted) {
+                activeDroppable.current?.setIsDropping(undefined); // no  dropping activity on this dropping target
+            } // if
+            activeDroppable.current = null;                        // no longer active => forget
             return;
         } // if
         
         
         
-        activeDroppable.current = droppableHook;               // remember the active droppable
+        activeDroppable.current = droppableHook;                   // remember the active droppable
         
         
         
         if (!(await onDragHandshake(droppableHook.dropData)) || !(await droppableHook.onDropHandshake(dragData))) {
-            setIsDragging(false);                              // has dragging activity on a dropping target but the target refuses to be dropped
-            droppableHook.setIsDropping(false);                // has dropping activity on this dropping target but the target refuses to be dropped
+            // conditions:
+            if (!isMounted.current) return;       // the component was unloaded before awaiting returned => do nothing
+            if (!droppableHook.isMounted) return; // the component was unloaded before awaiting returned => do nothing
+            
+            
+            
+            setIsDragging(false);                                  // has dragging activity on a dropping target but the target refuses to be dropped
+            droppableHook.setIsDropping(false);                    // has dropping activity on this dropping target but the target refuses to be dropped
             return;
         } // if
         
         
         
-        setIsDragging(true);                                   // has dragging activity on a dropping target and the target wants   to be dropped
-        droppableHook.setIsDropping(true);                     // has dropping activity on this dropping target and the target wants   to be dropped
+        setIsDragging(true);                                       // has dragging activity on a dropping target and the target wants   to be dropped
+        droppableHook.setIsDropping(true);                         // has dropping activity on this dropping target and the target wants   to be dropped
     });
     const handleTouchMoveNative   = useEvent<EventHandler<TouchEvent>>((event) => {
         // conditions:

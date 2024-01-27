@@ -8,6 +8,7 @@ import {
     // hooks:
     useState,
     useMemo,
+    useEffect,
 }                           from 'react'
 
 // reusable-ui core:
@@ -39,6 +40,8 @@ import {
 // internals:
 import {
     DroppableHook,
+    attachDroppableHook,
+    detachDroppableHook,
 }                           from './utilities'
 
 
@@ -80,6 +83,11 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
         
         
         
+        // refs:
+        dropRef,
+        
+        
+        
         // states:
         enabled = true,
         
@@ -99,7 +107,13 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
     
     
     // hooks:
-    const droppableHook = useMemo((): DroppableHook => {
+    const droppableHook = useMemo((): DroppableHook|undefined => {
+        // conditions:
+        if (!enabled) return undefined;
+        
+        
+        
+        // result:
         return new DroppableHook(
             dropData,
             onDropHandshake,
@@ -107,10 +121,35 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
             setIsDropping,
         );
     }, [
+        enabled,
+        
         dropData,
         onDropHandshake,
         onDropped,
     ]);
+    
+    
+    
+    // effects:
+    const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
+    useEffect(() => {
+        // conditions:
+        if (!dropElm) return; // no element for droppable => ignore
+        if (!droppableHook) return; // droppableHook is disabled => ignore
+        
+        
+        
+        // setups:
+        attachDroppableHook(dropElm, droppableHook);
+        
+        
+        
+        // cleanups:
+        return () => {
+            const prevDroppableHook = detachDroppableHook(dropElm);
+            if (prevDroppableHook) prevDroppableHook.isMounted = false;
+        };
+    }, [dropElm, droppableHook]);
     
     
     

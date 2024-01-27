@@ -13,6 +13,7 @@ export class DroppableHook {
     onDropHandshake  : (dragData: unknown) => boolean|Promise<boolean>
     onDropped        : (dragData: unknown) => void
     setIsDropping    : React.Dispatch<React.SetStateAction<undefined|boolean>>
+    isMounted        : boolean
     
     constructor(
         dropData         : unknown,
@@ -24,6 +25,7 @@ export class DroppableHook {
         this.onDropHandshake = onDropHandshake;
         this.onDropped       = onDropped;
         this.setIsDropping   = setIsDropping;
+        this.isMounted       = true;
     }
 }
 export const findDroppableHook = (elements: Element[]): DroppableHook|null => {
@@ -34,5 +36,16 @@ export const findDroppableHook = (elements: Element[]): DroppableHook|null => {
     
     
     
+    return null; // not found
+};
+export const attachDroppableHook = (element: Element, droppableHook: DroppableHook): void => {
+    (element as any)[droppableKey] = droppableHook;
+};
+export const detachDroppableHook = (element: Element): DroppableHook|null => {
+    if (!(droppableKey in element)) return null;
+    const droppableHook = element[droppableKey];
+    delete element[droppableKey];
+    
+    if (droppableHook && (droppableHook instanceof DroppableHook)) return droppableHook; // found
     return null; // not found
 };
