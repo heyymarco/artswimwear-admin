@@ -157,6 +157,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         
         
         
+        event.preventDefault();
         watchGlobalPointer(true); // watch global mouse/touch move
         
         
