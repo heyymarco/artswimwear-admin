@@ -27,8 +27,8 @@ import type {
 
 // internals:
 import {
-    DroppableHook,
-    findDroppableHook,
+    attachDroppableHook,
+    detachDroppableHook,
 }                           from './utilities'
 
 
@@ -58,8 +58,8 @@ export interface DraggableApi<TElement extends Element = HTMLElement> {
     /**
      * undefined : no  dragging activity.  
      * null      : has dragging activity but outside all dropping targets.  
-     * false     : has dragging activity on a dropping target but the target refuses to be dropped.  
-     * true      : has dragging activity on a dropping target and the target wants   to be dropped.  
+     * false     : has dragging activity on a dropping target but the source/target refuses to be dragged/dropped.  
+     * true      : has dragging activity on a dropping target and the source/target wants   to be dragged/dropped.  
      */
     isDragging       : undefined|null|boolean
     
@@ -93,7 +93,6 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     const isMounted = useMountedFlag();
     const [isDragging, setIsDragging] = useState<undefined|null|boolean>(undefined);
     const pointerPositionRef          = useRef<{x: number, y: number}>({x: 0, y: 0});
-    const activeDroppable             = useRef<DroppableHook|null>(null);
     
     
     
@@ -106,16 +105,13 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         );
         
         if (
-            (!isMouseActive.current && !isTouchActive.current)     // both mouse & touch are inactive
+            (!isMouseActive.current && !isTouchActive.current) // both mouse & touch are inactive
             ||
-            ( isMouseActive.current &&  isTouchActive.current)     // both mouse & touch are active
+            ( isMouseActive.current &&  isTouchActive.current) // both mouse & touch are active
         ) {
-            setIsDragging(undefined);                              // no  dragging activity
-            if (activeDroppable.current?.isMounted) {
-                activeDroppable.current?.setIsDropping(undefined); // no  dropping activity on this dropping target
-            } // if
-            activeDroppable.current = null;                        // no longer active => forget
-            watchGlobalPointer(false);                             // unwatch global mouse/touch move
+            detachDroppableHook();                             // no  dropping activity
+            setIsDragging(undefined);                          // no  dragging activity
+            watchGlobalPointer(false);                         // unwatch global mouse/touch move
         } // if
     });
     const handleMouseActive       = useEvent<React.MouseEventHandler<TElement>>((event) => {
@@ -130,16 +126,13 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         );
         
         if (
-            (!isMouseActive.current && !isTouchActive.current)     // both mouse & touch are inactive
+            (!isMouseActive.current && !isTouchActive.current) // both mouse & touch are inactive
             ||
-            ( isMouseActive.current &&  isTouchActive.current)     // both mouse & touch are active
+            ( isMouseActive.current &&  isTouchActive.current) // both mouse & touch are active
         ) {
-            setIsDragging(undefined);                              // no  dragging activity
-            if (activeDroppable.current?.isMounted) {
-                activeDroppable.current?.setIsDropping(undefined); // no  dropping activity on this dropping target
-            } // if
-            activeDroppable.current = null;                        // no longer active => forget
-            watchGlobalPointer(false);                             // unwatch global mouse/touch move
+            detachDroppableHook();                             // no  dropping activity
+            setIsDragging(undefined);                          // no  dragging activity
+            watchGlobalPointer(false);                         // unwatch global mouse/touch move
         } // if
     });
     const handleTouchActive       = useEvent<React.TouchEventHandler<TElement>>((event) => {
@@ -167,38 +160,14 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         
         
         // update drag & drop states:
-        const droppableHook = findDroppableHook(document.elementsFromPoint(event.clientX, event.clientY));
-        if (!droppableHook || !droppableHook.isMounted) {
-            setIsDragging(null);                                   // has dragging activity but outside all dropping targets
-            if (activeDroppable.current?.isMounted) {
-                activeDroppable.current?.setIsDropping(undefined); // no  dropping activity on this dropping target
-            } // if
-            activeDroppable.current = null;                        // no longer active => forget
-            return;
-        } // if
-        
-        
-        
-        activeDroppable.current = droppableHook;                   // remember the active droppable
-        
-        
-        
-        if (!(await onDragHandshake(droppableHook.dropData)) || !(await droppableHook.onDropHandshake(dragData))) {
-            // conditions:
-            if (!isMounted.current) return;       // the component was unloaded before awaiting returned => do nothing
-            if (!droppableHook.isMounted) return; // the component was unloaded before awaiting returned => do nothing
-            
-            
-            
-            setIsDragging(false);                                  // has dragging activity on a dropping target but the target refuses to be dropped
-            droppableHook.setIsDropping(false);                    // has dropping activity on this dropping target but the target refuses to be dropped
-            return;
-        } // if
-        
-        
-        
-        setIsDragging(true);                                       // has dragging activity on a dropping target and the target wants   to be dropped
-        droppableHook.setIsDropping(true);                         // has dropping activity on this dropping target and the target wants   to be dropped
+        const droppableHookResult = await attachDroppableHook(document.elementsFromPoint(event.clientX, event.clientY), onDragHandshake, dragData);
+        /*
+         * undefined : NEVER HERE.  
+         * null      : has dragging activity but outside all dropping targets.  
+         * false     : has dragging activity on a dropping target but the source/target refuses to be dragged/dropped.  
+         * true      : has dragging activity on a dropping target and the source/target wants   to be dragged/dropped.  
+         */
+        setIsDragging(droppableHookResult);
     });
     const handleTouchMoveNative   = useEvent<EventHandler<TouchEvent>>((event) => {
         // conditions:

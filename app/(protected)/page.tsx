@@ -64,7 +64,7 @@ const DroppableComponent = () => {
         <Basic
             elmRef={dropRef}
             theme='danger'
-            outlined={isDropping !== undefined}
+            outlined={!!isDropping}
         >
             Drop Me!
             <Basic theme='warning'>
@@ -94,6 +94,10 @@ export default function DashboardPage() {
                     padding: '1rem',
                 }}>
                     <DraggableComponent />
+                    <DraggableComponent />
+                    
+                    <DroppableComponent />
+                    <DroppableComponent />
                     <DroppableComponent />
                 </div>
                 <UploadImage
