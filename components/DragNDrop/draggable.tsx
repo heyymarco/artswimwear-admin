@@ -189,7 +189,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     
     const handleMouseDown         = useEvent<React.MouseEventHandler<TElement>>((event) => {
         // conditions:
-        if (event.defaultPrevented) return; // already handled => ignore;
+        if (event.defaultPrevented) return; // already handled => ignore
         event.preventDefault(); // now we handled the event
         
         
@@ -199,7 +199,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     });
     const handleTouchStart        = useEvent<React.TouchEventHandler<TElement>>((event) => {
         // conditions:
-        if (event.defaultPrevented) return; // already handled => ignore;
+        if (event.defaultPrevented) return; // already handled => ignore
         event.preventDefault(); // now we handled the event
         
         
