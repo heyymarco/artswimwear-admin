@@ -12,7 +12,7 @@ import GalleryEditor from '@/components/editors/GalleryEditor';
 import {
     useDraggable,
     useDroppable,
-} from '@/components/DragNDrop'
+} from '@/libs/drag-n-drop'
 import { Basic } from '@reusable-ui/components';
 
 
