@@ -10,6 +10,9 @@ import { UploadImage } from '@/components/editors/UploadImage'
 import { Section, Main } from '@heymarco/section'
 import GalleryEditor from '@/components/editors/GalleryEditor';
 import {
+    DragNDropData,
+    DraggableProps,
+    DroppableProps,
     useDraggable,
     useDroppable,
 } from '@/libs/drag-n-drop'
@@ -17,22 +20,22 @@ import { Basic } from '@reusable-ui/components';
 
 
 
-const DraggableComponent = () => {
+interface DraggableComponentProps {
+    text            : React.ReactNode
+    dragData        : DragNDropData
+    onDragHandshake : DraggableProps['onDragHandshake']
+}
+const DraggableComponent = (props: DraggableComponentProps) => {
     const {
         isDragging,
         handleMouseDown,
         handleTouchStart,
         DragOverlay,
     } = useDraggable({
-        dragData : {
-            type : 'application/drag-123',
-            data : 'yess',
-        },
-        onDragHandshake(dropData) {
-            return true;
-        },
+        dragData : props.dragData,
+        onDragHandshake : props.onDragHandshake,
         onDragged(dropData) {
-            console.log('onDragged: ', {dropData});
+            console.log('onDragged: ', dropData);
         },
         dragComponent : () => <Basic theme='warning'>
             {(() => {
@@ -54,7 +57,7 @@ const DraggableComponent = () => {
                 onMouseDown={handleMouseDown}
                 onTouchStart={handleTouchStart}
             >
-                Drag Me!
+                {props.text}
                 <Basic theme='warning'>
                     Child
                 </Basic>
@@ -63,21 +66,22 @@ const DraggableComponent = () => {
         </>
     );
 }
-const DroppableComponent = () => {
+
+interface DroppableComponentProps {
+    text            : React.ReactNode
+    dropData        : DragNDropData
+    onDropHandshake : DroppableProps['onDropHandshake']
+}
+const DroppableComponent = (props: DroppableComponentProps) => {
     const dropRef = useRef<HTMLButtonElement|null>(null);
     const {
         isDropping,
     } = useDroppable({
-        dropData : {
-            type : 'application/drop-456',
-            data : 'okay',
-        },
+        dropData : props.dropData,
         dropRef  : dropRef,
-        onDropHandshake(dragData) {
-            return true;
-        },
+        onDropHandshake: props.onDropHandshake,
         onDropped(dragData) {
-            console.log('onDropped: ', {dragData});
+            console.log('onDropped: ', dragData);
         },
     });
     return (
@@ -86,7 +90,7 @@ const DroppableComponent = () => {
             theme='danger'
             outlined={!!isDropping}
         >
-            Drop Me!
+            {props.text}
             <Basic theme='warning'>
                 Child
             </Basic>
@@ -113,12 +117,11 @@ export default function DashboardPage() {
                     gap: '3rem',
                     padding: '1rem',
                 }}>
-                    <DraggableComponent />
-                    <DraggableComponent />
+                    <DraggableComponent text='Drag Universal' dragData={{type: 'drag/universal', data: 123}}       onDragHandshake={(dropData) => true} />
+                    <DraggableComponent text='Drag Specific'  dragData={{type: 'drag/specific',  data: 'abc-999'}} onDragHandshake={(dropData) => dropData.type === 'drop/specific'} />
                     
-                    <DroppableComponent />
-                    <DroppableComponent />
-                    <DroppableComponent />
+                    <DroppableComponent text='Drop Universal' dropData={{type: 'drop/universal', data: 123}}       onDropHandshake={(dragData) => true} />
+                    <DroppableComponent text='Drop Specific'  dropData={{type: 'drop/specific',  data: 'def-999'}} onDropHandshake={(dragData) => dragData.type === 'drag/specific'} />
                 </div>
                 <UploadImage
                     theme='primary'
