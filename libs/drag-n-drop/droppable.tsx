@@ -159,7 +159,7 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
     // clean up unused dragData after no dropping activity:
     useEffect(() => {
         // conditions:
-        if (isDropping !== undefined) return; // only interested on no_dropping_activity
+        if ((isDropping !== undefined) && (isDropping !== null)) return; // only interested on no_dropping_activity & outside_of_dropping_area
         
         
         
