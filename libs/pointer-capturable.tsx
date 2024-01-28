@@ -12,7 +12,7 @@ import {
 
 // reusable-ui utilities:
 import {
-    // react helper hooks:
+    // hooks:
     useEvent,
     EventHandler,
 }                           from '@reusable-ui/hooks'           // react helper hooks
