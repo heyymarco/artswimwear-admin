@@ -45,6 +45,9 @@ export const attachDroppableHook = async (elements: Element[], onDragHandshake: 
     let handshakeResult    : null|boolean            = null; // firstly mark as NOT_YET having handshake
     let interactedHook     : null|DroppableHook      = null;
     let interactedDropData : undefined|DragNDropData = undefined;
+    
+    
+    
     for (const element of elements) {
         // conditions:
         const droppableHook = droppableMap.get(element);
@@ -56,26 +59,32 @@ export const attachDroppableHook = async (elements: Element[], onDragHandshake: 
         const dropNego = await droppableHook.onDropHandshake(dragData);
         if (!droppableHook.isMounted || (dropNego === undefined)) { // unmounted|undefined => do not drop here => see others
             continue; // noop => continue to scan others
-        }
-        else if(dropNego === false) {                               // false => refuses to be dropped
-            handshakeResult = false;                                // handshake refused by drop target
-            interactedHook  = droppableHook;                        // handshake refused by drop target
-            break;
-        }
-        else { // true => wants to be dropped
-            interactedDropData = droppableHook.dropData;
-            const dragNego = await onDragHandshake(interactedDropData);
-            if (!dragNego) {                                        // false => refuses to be dragged
-                handshakeResult = false;                            // handshake refused by drag source
-                interactedHook  = droppableHook;                    // handshake refused by drag source
-                break;
-            }
-            else {                                                  // true => wants to be dragged
-                handshakeResult = true;                             // handshake accepted by both drop target and drag source
-                interactedHook  = droppableHook;                    // handshake accepted by both drop target and drag source
-                break;
-            } // if
         } // if
+        
+        
+        
+        interactedHook     = droppableHook;
+        interactedDropData = droppableHook.dropData;
+        
+        
+        
+        if(dropNego === false) {                                    // false => refuses to be dropped
+            handshakeResult = false;                                // handshake REFUSED by drop target
+            break; // no need to continue scan others
+        } // if
+        
+        
+        
+        const dragNego = await onDragHandshake(interactedDropData);
+        if (!dragNego) {                                            // false => refuses to be dragged
+            handshakeResult = false;                                // handshake REFUSED by drag source
+            break; // no need to continue scan others
+        } // if
+        
+        
+        
+        handshakeResult = true;                                     // handshake ACCEPTED by both drop target and drag source
+        break; // no need to continue scan others
     } // for
     
     
