@@ -25,8 +25,8 @@ import type {
 
 // internals:
 import {
-    usePointerCapture,
-}                           from '@/libs/pointer-capture'
+    usePointerCapturable,
+}                           from '@/libs/pointer-capturable'
 import type {
     DragNDropData,
 }                           from './types'
@@ -101,7 +101,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     
     
     // capabilities:
-    const pointerCapture = usePointerCapture<TElement>({
+    const pointerCapturable = usePointerCapturable<TElement>({
         enabled,
         onPointerCaptureEnd() {
             const prevActiveDroppableHook = detachDroppableHook(); // no  dropping activity
@@ -145,7 +145,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         
         
         
-        pointerCapture.handleMouseDown(event);
+        pointerCapturable.handleMouseDown(event);
     });
     const handleTouchStart = useEvent<React.TouchEventHandler<TElement>>((event) => {
         // conditions:
@@ -154,7 +154,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         
         
         
-        pointerCapture.handleTouchStart(event);
+        pointerCapturable.handleTouchStart(event);
     });
     
     

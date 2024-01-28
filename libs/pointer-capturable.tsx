@@ -10,16 +10,21 @@ import {
     useEffect,
 }                           from 'react'
 
-// reusable-ui core:
+// reusable-ui utilities:
 import {
     // react helper hooks:
     useEvent,
     EventHandler,
-}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+}                           from '@reusable-ui/hooks'           // react helper hooks
 
 
 
-export interface PointerCaptureProps {
+// hooks:
+
+// capabilities:
+
+//#region pointer capturable
+export interface PointerCapturableProps {
     // states:
     enabled ?: boolean
     
@@ -30,12 +35,12 @@ export interface PointerCaptureProps {
     onPointerCaptureEnd   ?: () => void
     onPointerCaptureMove   : (clientX: number, clientY: number) => void
 }
-export interface PointerCaptureApi<TElement extends Element = HTMLElement> {
+export interface PointerCapturableApi<TElement extends Element = HTMLElement> {
     // handlers:
     handleMouseDown  : React.MouseEventHandler<TElement>
     handleTouchStart : React.TouchEventHandler<TElement>
 }
-export const usePointerCapture = <TElement extends Element = HTMLElement>(props: PointerCaptureProps): PointerCaptureApi<TElement> => {
+export const usePointerCapturable = <TElement extends Element = HTMLElement>(props: PointerCapturableProps): PointerCapturableApi<TElement> => {
     // props:
     const {
         // states:
@@ -215,3 +220,4 @@ export const usePointerCapture = <TElement extends Element = HTMLElement>(props:
         handleTouchStart,
     };
 };
+//#endregion pointer capturable
