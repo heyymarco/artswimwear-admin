@@ -27,6 +27,7 @@ interface DraggableComponentProps {
 }
 const DraggableComponent = (props: DraggableComponentProps) => {
     const {
+        dropData,
         isDragging,
         handleMouseDown,
         handleTouchStart,
@@ -59,7 +60,7 @@ const DraggableComponent = (props: DraggableComponentProps) => {
             >
                 {props.text}
                 <Basic theme='warning'>
-                    Child
+                    {`${dropData?.data ?? '--no-data--'}`}
                 </Basic>
             </Basic>
             <DragOverlay />
@@ -75,6 +76,7 @@ interface DroppableComponentProps {
 const DroppableComponent = (props: DroppableComponentProps) => {
     const dropRef = useRef<HTMLButtonElement|null>(null);
     const {
+        dragData,
         isDropping,
     } = useDroppable({
         dropData : props.dropData,
@@ -92,7 +94,7 @@ const DroppableComponent = (props: DroppableComponentProps) => {
         >
             {props.text}
             <Basic theme='warning'>
-                Child
+                {`${dragData?.data ?? '--no-data--'}`}
             </Basic>
         </Basic>
     );
@@ -118,10 +120,10 @@ export default function DashboardPage() {
                     padding: '1rem',
                 }}>
                     <DraggableComponent text='Drag Universal' dragData={{type: 'drag/universal', data: 123}}       onDragHandshake={(dropData) => true} />
-                    <DraggableComponent text='Drag Specific'  dragData={{type: 'drag/specific',  data: 'abc-999'}} onDragHandshake={(dropData) => dropData.type === 'drop/specific'} />
+                    <DraggableComponent text='Drag Specific'  dragData={{type: 'drag/specific',  data: 'abc-333'}} onDragHandshake={(dropData) => dropData.type === 'drop/specific'} />
                     
-                    <DroppableComponent text='Drop Universal' dropData={{type: 'drop/universal', data: 123}}       onDropHandshake={(dragData) => true} />
-                    <DroppableComponent text='Drop Specific'  dropData={{type: 'drop/specific',  data: 'def-999'}} onDropHandshake={(dragData) => dragData.type === 'drag/specific'} />
+                    <DroppableComponent text='Drop Universal' dropData={{type: 'drop/universal', data: 456}}       onDropHandshake={(dragData) => true} />
+                    <DroppableComponent text='Drop Specific'  dropData={{type: 'drop/specific',  data: 'def-666'}} onDropHandshake={(dragData) => dragData.type === 'drag/specific'} />
                 </div>
                 <UploadImage
                     theme='primary'
