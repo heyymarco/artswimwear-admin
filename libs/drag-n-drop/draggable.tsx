@@ -68,7 +68,7 @@ export interface DraggableProps<TElement extends Element = HTMLElement>
     
     
     // components:
-    dragComponent   ?: React.ReactComponentElement<any, GenericProps<TElement>>
+    dragComponent   ?: React.ReactComponentElement<any, GenericProps<TElement>>|(() => React.ReactComponentElement<any, GenericProps<TElement>>)
     
     
     
@@ -267,7 +267,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                     // styles:
                     style={overlayPositionRef.current}
                 >
-                    {dragComponent}
+                    {(typeof(dragComponent) === 'function') ? dragComponent() : dragComponent}
                 </div>
             , portalElm)
         },

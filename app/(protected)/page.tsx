@@ -18,7 +18,6 @@ import { Basic } from '@reusable-ui/components';
 
 
 const DraggableComponent = () => {
-    const isDraggingRef = useRef<undefined|null|boolean>(undefined);
     const {
         isDragging,
         handleMouseDown,
@@ -35,9 +34,9 @@ const DraggableComponent = () => {
         onDragged(dropData) {
             console.log('onDragged: ', {dropData});
         },
-        dragComponent : <Basic theme='warning'>
+        dragComponent : () => <Basic theme='warning'>
             {(() => {
-                switch (isDraggingRef.current) {
+                switch (isDragging) {
                     case null  : return 'Drop me on droppable area.';
                     case true  : return 'Yes, drop here.';
                     case false : return "Noo, don't drop here.";
@@ -46,7 +45,6 @@ const DraggableComponent = () => {
             })()}
         </Basic>,
     });
-    isDraggingRef.current = isDragging;
     
     return (
         <>
