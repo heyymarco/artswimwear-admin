@@ -147,6 +147,18 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     
     
     
+    // handlers:
+    const handleDragHandshake = useEvent<typeof onDragHandshake>(async (newDropData) => {
+        try {
+            return await onDragHandshake(newDropData);
+        }
+        finally {
+            if (!Object.is(dropData, newDropData)) setDropData(newDropData);
+        } // try
+    });
+    
+    
+    
     // capabilities:
     const {portalElm, ensureTopMost} = useGlobalStackable(props);
     const pointerCapturable          = usePointerCapturable<TElement>({
@@ -190,7 +202,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             
             
             // update drag & drop states:
-            const {handshakeResult, dropData: newDropData} = await attachDroppableHook(document.elementsFromPoint(clientX, clientY), onDragHandshake, dragData);
+            const handshakeResult = await attachDroppableHook(document.elementsFromPoint(clientX, clientY), handleDragHandshake, dragData);
             if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
             /*
             * undefined : NEVER HERE.  
@@ -199,7 +211,6 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             * true      : has dragging activity on a dropping target and the source/target wants   to be dragged/dropped.  
             */
             setIsDragging(handshakeResult);
-            if (!Object.is(dropData, newDropData)) setDropData(newDropData);
         },
     });
     

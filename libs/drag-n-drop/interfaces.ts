@@ -37,14 +37,9 @@ export class DroppableHook {
 const droppableMap      = new Map<Element, DroppableHook>();
 let activeDroppableHook : null|DroppableHook = null;
 
-export interface AttachDroppableHookResult {
-    handshakeResult : null|boolean
-    dropData        : undefined|DragNDropData
-}
-export const attachDroppableHook = async (elements: Element[], onDragHandshake: (dropData: DragNDropData) => boolean|Promise<boolean>, dragData: DragNDropData): Promise<AttachDroppableHookResult> => {
-    let handshakeResult    : null|boolean            = null; // firstly mark as NOT_YET having handshake
-    let interactedHook     : null|DroppableHook      = null;
-    let interactedDropData : undefined|DragNDropData = undefined;
+export const attachDroppableHook = async (elements: Element[], onDragHandshake: (dropData: DragNDropData) => boolean|Promise<boolean>, dragData: DragNDropData): Promise<null|boolean> => {
+    let handshakeResult : null|boolean       = null; // firstly mark as NOT_YET having handshake
+    let interactedHook  : null|DroppableHook = null;
     
     
     
@@ -63,8 +58,7 @@ export const attachDroppableHook = async (elements: Element[], onDragHandshake: 
         
         
         
-        interactedHook     = droppableHook;
-        interactedDropData = droppableHook.dropData;
+        interactedHook = droppableHook;
         
         
         
@@ -75,7 +69,7 @@ export const attachDroppableHook = async (elements: Element[], onDragHandshake: 
         
         
         
-        const dragNego = await onDragHandshake(interactedDropData);
+        const dragNego = await onDragHandshake(droppableHook.dropData);
         if (!dragNego) {                                            // false => refuses to be dragged
             handshakeResult = false;                                // handshake REFUSED by drag source
             break; // no need to continue scan others
@@ -117,10 +111,7 @@ export const attachDroppableHook = async (elements: Element[], onDragHandshake: 
     
     
     
-    return {
-        handshakeResult,
-        dropData : interactedDropData,
-    };
+    return handshakeResult;
 };
 export const detachDroppableHook = (): null|DroppableHook => {
     const prevActiveDroppableHook = activeDroppableHook; // backup
