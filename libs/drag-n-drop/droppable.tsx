@@ -11,6 +11,12 @@ import {
     useEffect,
 }                           from 'react'
 
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useEvent,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
 // internals:
 import type {
     DragNDropData,
@@ -47,6 +53,11 @@ export interface DroppableProps<TElement extends Element = HTMLElement> {
     onDropped       ?: (dragData: DragNDropData) => void
 }
 export interface DroppableApi {
+    // data:
+    dragData         : DragNDropData|undefined
+    
+    
+    
     // states:
     /**
      * undefined : no  dropping activity.  
@@ -83,6 +94,19 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
     
     // states:
     const [isDropping, setIsDropping] = useState<undefined|null|boolean>(undefined);
+    const [dragData  , setDragData  ] = useState<DragNDropData|undefined>(undefined);
+    
+    
+    
+    // handlers:
+    const handleDropHandshake = useEvent<typeof onDropHandshake>(async (newDragData) => {
+        try {
+            return await onDropHandshake(newDragData);
+        }
+        finally {
+            if (!Object.is(dragData, newDragData)) setDragData(newDragData);
+        } // try
+    });
     
     
     
@@ -96,7 +120,7 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
         // result:
         return new DroppableHook(
             dropData,
-            onDropHandshake,
+            handleDropHandshake, // stable ref
             onDropped,
             setIsDropping,
         );
@@ -104,13 +128,15 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
         enabled,
         
         dropData,
-        onDropHandshake,
+        // handleDropHandshake, // stable ref
         onDropped,
     ]);
     
     
     
     // effects:
+    
+    // register/unregister DroppableHook:
     useEffect(() => {
         // conditions:
         const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
@@ -130,10 +156,26 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
         };
     }, [dropRef, droppableHook]);
     
+    // clean up unused dragData after no dropping activity:
+    useEffect(() => {
+        // conditions:
+        if (isDropping !== undefined) return; // only interested on no_dropping_activity
+        
+        
+        
+        // actions:
+        setDragData(undefined);
+    }, [isDropping]);
+    
     
     
     // api:
     return {
+        // data:
+        dragData,
+        
+        
+        
         // states:
         isDropping,
     };
