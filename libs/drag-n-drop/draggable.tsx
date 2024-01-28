@@ -15,6 +15,11 @@ import {
     // react helper hooks:
     useEvent,
     useMountedFlag,
+    
+    
+    
+    // a capability of UI to capture the mouse/touch event inside & outside the UI itself:
+    usePointerCapturable,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -24,9 +29,6 @@ import type {
 }                           from '@reusable-ui/generic'         // a base component
 
 // internals:
-import {
-    usePointerCapturable,
-}                           from '@/libs/pointer-capturable'
 import type {
     DragNDropData,
 }                           from './types'
