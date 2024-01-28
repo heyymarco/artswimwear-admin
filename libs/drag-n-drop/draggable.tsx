@@ -9,12 +9,22 @@ import {
     useState,
     useRef,
 }                           from 'react'
+import {
+    createPortal,
+}                           from 'react-dom'
 
 // reusable-ui core:
 import {
     // react helper hooks:
+    useIsomorphicLayoutEffect,
     useEvent,
     useMountedFlag,
+    
+    
+    
+    // a capability of UI to stack on top-most of another UI(s) regardless of DOM's stacking context:
+    GlobalStackableProps,
+    useGlobalStackable,
     
     
     
@@ -29,6 +39,9 @@ import type {
 }                           from '@reusable-ui/generic'         // a base component
 
 // internals:
+import {
+    useDragOverlayStyleSheet,
+}                           from './styles/loader'
 import type {
     DragNDropData,
 }                           from './types'
@@ -39,7 +52,11 @@ import {
 
 
 
-export interface DraggableProps<TElement extends Element = HTMLElement> {
+export interface DraggableProps<TElement extends Element = HTMLElement>
+    extends
+        // capabilities:
+        GlobalStackableProps
+{
     // data:
     dragData         : DragNDropData
     
@@ -51,7 +68,7 @@ export interface DraggableProps<TElement extends Element = HTMLElement> {
     
     
     // components:
-    dragComponent    : React.ReactComponentElement<any, GenericProps<TElement>>
+    dragComponent   ?: React.ReactComponentElement<any, GenericProps<TElement>>
     
     
     
@@ -71,11 +88,21 @@ export interface DraggableApi<TElement extends Element = HTMLElement> {
     
     
     
+    // components:
+    DragOverlay      : () => React.ReactPortal|null
+    
+    
+    
     // handlers:
     handleMouseDown  : React.MouseEventHandler<TElement>
     handleTouchStart : React.TouchEventHandler<TElement>
 }
 export const useDraggable = <TElement extends Element = HTMLElement>(props: DraggableProps<TElement>): DraggableApi<TElement> => {
+    // styles:
+    const styleSheet = useDragOverlayStyleSheet();
+    
+    
+    
     // props:
     const {
         // data:
@@ -85,6 +112,16 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         
         // states:
         enabled = true,
+        
+        
+        
+        // global stackable:
+        viewport : _viewport, // remove
+        
+        
+        
+        // components:
+        dragComponent,
         
         
         
@@ -98,12 +135,15 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     // states:
     const isMounted = useMountedFlag();
     const [isDragging, setIsDragging] = useState<undefined|null|boolean>(undefined);
-    const pointerPositionRef          = useRef<{x: number, y: number}>({x: 0, y: 0});
+    
+    const overlayRef                  = useRef<HTMLDivElement|null>(null);
+    const overlayPositionRef          = useRef<React.CSSProperties>({ left: '', top: '' });
     
     
     
     // capabilities:
-    const pointerCapturable = usePointerCapturable<TElement>({
+    const {portalElm, ensureTopMost} = useGlobalStackable(props);
+    const pointerCapturable          = usePointerCapturable<TElement>({
         enabled,
         onPointerCaptureEnd() {
             const prevActiveDroppableHook = detachDroppableHook(); // no  dropping activity
@@ -120,7 +160,25 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         },
         async onPointerCaptureMove({clientX, clientY}) {
             // update pointer pos:
-            pointerPositionRef.current = { x: clientX, y: clientY };
+            {
+                // calculate pointer coordinate (relative to screen viewport):
+                const left = `${clientX}px`;
+                const top  = `${clientY}px`;
+                
+                
+                
+                // update for the first render of <DragOverlay>:
+                overlayPositionRef.current = { left, top };
+                
+                
+                
+                // live update for first rerender of <DragOverlay>, vanilla way, without causing busy re-render:
+                const overlayInlineStyle = overlayRef.current?.style;
+                if (overlayInlineStyle) {
+                    overlayInlineStyle.left = left;
+                    overlayInlineStyle.top  = top;
+                } // if
+            }
             
             
             
@@ -161,10 +219,58 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     
     
     
+    // effects:
+    
+    // make sure the <DragOverlay> is top_most (if there is multiple <Overlay>s shown at the same time):
+    useIsomorphicLayoutEffect(() => {
+        // conditions:
+        if (isDragging    === undefined) return; // not in dragging activity => ignore
+        if (dragComponent === undefined) return; // not having dragComponent => ignore
+        
+        
+        
+        // actions:
+        ensureTopMost();
+    }, [isDragging, dragComponent]);
+    
+    
+    
     // api:
     return {
         // states:
         isDragging,
+        
+        
+        
+        // components:
+        DragOverlay : () => {
+            // conditions:
+            if (isDragging    === undefined) return null; // not in dragging activity => nothing to show
+            if (dragComponent === undefined) return null; // not having dragComponent => nothing to show
+            
+            
+            
+            // jsx:
+            if (!portalElm) return null; // server side -or- client side but not already hydrated => nothing to render
+            return createPortal(
+                <div
+                    // refs:
+                    ref={overlayRef}
+                    
+                    
+                    
+                    // classes:
+                    className={styleSheet.main}
+                    
+                    
+                    
+                    // styles:
+                    style={overlayPositionRef.current}
+                >
+                    {dragComponent}
+                </div>
+            , portalElm)
+        },
         
         
         

@@ -18,10 +18,12 @@ import { Basic } from '@reusable-ui/components';
 
 
 const DraggableComponent = () => {
+    const isDraggingRef = useRef<undefined|null|boolean>(undefined);
     const {
         isDragging,
         handleMouseDown,
         handleTouchStart,
+        DragOverlay,
     } = useDraggable({
         dragData : {
             type : 'application/drag-123',
@@ -33,20 +35,34 @@ const DraggableComponent = () => {
         onDragged(dropData) {
             console.log('onDragged: ', {dropData});
         },
-        dragComponent : <Basic theme='warning'>Dragging...</Basic>,
+        dragComponent : <Basic theme='warning'>
+            {(() => {
+                switch (isDraggingRef.current) {
+                    case null  : return 'Drop me on droppable area.';
+                    case true  : return 'Yes, drop here.';
+                    case false : return "Noo, don't drop here.";
+                    default    : return '';
+                } // switch
+            })()}
+        </Basic>,
     });
+    isDraggingRef.current = isDragging;
+    
     return (
-        <Basic
-            theme='danger'
-            outlined={isDragging !== undefined}
-            onMouseDown={handleMouseDown}
-            onTouchStart={handleTouchStart}
-        >
-            Drag Me!
-            <Basic theme='warning'>
-                Child
+        <>
+            <Basic
+                theme='danger'
+                outlined={isDragging !== undefined}
+                onMouseDown={handleMouseDown}
+                onTouchStart={handleTouchStart}
+            >
+                Drag Me!
+                <Basic theme='warning'>
+                    Child
+                </Basic>
             </Basic>
-        </Basic>
+            <DragOverlay />
+        </>
     );
 }
 const DroppableComponent = () => {
