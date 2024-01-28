@@ -22,7 +22,7 @@ import {
     
     registerDroppableHook,
     unregisterDroppableHook,
-}                           from './utilities'
+}                           from './interfaces'
 
 
 
