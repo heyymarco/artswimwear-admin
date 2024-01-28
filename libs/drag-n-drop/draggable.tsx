@@ -116,7 +116,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                 } // if
             } // if
         },
-        async onPointerCaptureMove(clientX, clientY) {
+        async onPointerCaptureMove({clientX, clientY}) {
             // update pointer pos:
             pointerPositionRef.current = { x: clientX, y: clientY };
             

@@ -33,7 +33,7 @@ export interface PointerCapturableProps {
     // handlers:
     onPointerCaptureStart ?: () => void
     onPointerCaptureEnd   ?: () => void
-    onPointerCaptureMove   : (clientX: number, clientY: number) => void
+    onPointerCaptureMove   : EventHandler<MouseEvent>
 }
 export interface PointerCapturableApi<TElement extends Element = HTMLElement> {
     // handlers:
@@ -110,7 +110,7 @@ export const usePointerCapturable = <TElement extends Element = HTMLElement>(pro
         
         
         
-        onPointerCaptureMove(event.clientX, event.clientY);
+        onPointerCaptureMove(event);
     });
     const handleTouchMoveNative   = useEvent<EventHandler<TouchEvent>>((event) => {
         // conditions:
