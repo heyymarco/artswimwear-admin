@@ -154,7 +154,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         onPointerCaptureEnd() {
             const prevActiveDroppableHook = detachDroppableHook(); // no  dropping activity
             setIsDragging(undefined);                              // no  dragging activity
-            // setDropData(undefined);                             // keeps the last successful|failed dropData
+            setDropData(undefined);                                // no  dragging activity
             
             
             
