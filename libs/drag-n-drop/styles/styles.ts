@@ -17,13 +17,20 @@ import {
 export const usesDragOverlayLayout = () => {
     return style({
         // positions:
-        position : 'fixed',
-        zIndex   : globalStacks.dragOverlay,
+        position  : 'fixed',
+        zIndex    : globalStacks.dragOverlay,
+        translate : '-50% -50%',
         
         
         
         // layouts:
-        display  : 'grid',
+        display   : 'grid',
+        
+        
+        
+        // sizes:
+        width     : 'max-content', // prevents not shringking by <body>'s padding
+        height    : 'max-content', // prevents not shringking by <body>'s padding
         
         
         
@@ -35,13 +42,6 @@ export const usesDragOverlayLayout = () => {
         // children:
         overflow: 'visible',
         ...children('*', {
-            // positions:
-            position : 'relative',
-            left     : '-50%', // center horizontally
-            top      : '-50%', // center vertically
-            
-            
-            
             // accessibilities:
             pointerEvents : 'initial', // undo ghost mode, so we can set the cursor (if any)
         }),
