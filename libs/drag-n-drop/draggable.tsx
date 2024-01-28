@@ -77,6 +77,11 @@ export interface DraggableProps<TElement extends Element = HTMLElement>
     onDragged       ?: (dropData: DragNDropData) => void
 }
 export interface DraggableApi<TElement extends Element = HTMLElement> {
+    // data:
+    dropData         : DragNDropData|undefined
+    
+    
+    
     // states:
     /**
      * undefined : no  dragging activity.  
@@ -135,6 +140,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     // states:
     const isMounted = useMountedFlag();
     const [isDragging, setIsDragging] = useState<undefined|null|boolean>(undefined);
+    const [dropData  , setDropData  ] = useState<DragNDropData|undefined>(undefined);
     
     const overlayRef                  = useRef<HTMLDivElement|null>(null);
     const overlayPositionRef          = useRef<React.CSSProperties>({ left: '', top: '' });
@@ -148,6 +154,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         onPointerCaptureEnd() {
             const prevActiveDroppableHook = detachDroppableHook(); // no  dropping activity
             setIsDragging(undefined);                              // no  dragging activity
+            // setDropData(undefined);                             // keeps the last successful|failed dropData
             
             
             
@@ -183,7 +190,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             
             
             // update drag & drop states:
-            const droppableHookResult = await attachDroppableHook(document.elementsFromPoint(clientX, clientY), onDragHandshake, dragData);
+            const {handshakeResult, dropData} = await attachDroppableHook(document.elementsFromPoint(clientX, clientY), onDragHandshake, dragData);
             if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
             /*
             * undefined : NEVER HERE.  
@@ -191,7 +198,8 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             * false     : has dragging activity on a dropping target but the source/target refuses to be dragged/dropped.  
             * true      : has dragging activity on a dropping target and the source/target wants   to be dragged/dropped.  
             */
-            setIsDragging(droppableHookResult);
+            setIsDragging(handshakeResult);
+            setDropData(dropData);
         },
     });
     
@@ -237,6 +245,11 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     
     // api:
     return {
+        // data:
+        dropData,
+        
+        
+        
         // states:
         isDragging,
         
