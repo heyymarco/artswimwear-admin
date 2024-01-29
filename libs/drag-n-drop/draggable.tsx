@@ -79,12 +79,13 @@ export interface DraggableProps<TElement extends Element = HTMLElement>
     
     
     // handlers:
+    onDragMove      ?: (event: MouseEvent) => void
     onDragHandshake  : (dropData: DragNDropData) => undefined|boolean|Promise<undefined|boolean>
     onDragged       ?: (dropData: DragNDropData) => void
 }
 export interface DraggableApi<TElement extends Element = HTMLElement> {
     // data:
-    dropData           : DragNDropData|undefined
+    dropData         : DragNDropData|undefined
     
     
     
@@ -95,19 +96,18 @@ export interface DraggableApi<TElement extends Element = HTMLElement> {
      * false     : has dragging activity on a dropping target but the source/target refuses to be dragged/dropped.  
      * true      : has dragging activity on a dropping target and the source/target wants   to be dragged/dropped.  
      */
-    isDragging         : undefined|null|boolean
-    pointerPositionRef : undefined|PointerPositionRef
+    isDragging       : undefined|null|boolean
     
     
     
     // components:
-    DragOverlay        : () => React.ReactPortal|null
+    DragOverlay      : () => React.ReactPortal|null
     
     
     
     // handlers:
-    handleMouseDown    : React.MouseEventHandler<TElement>
-    handleTouchStart   : React.TouchEventHandler<TElement>
+    handleMouseDown  : React.MouseEventHandler<TElement>
+    handleTouchStart : React.TouchEventHandler<TElement>
 }
 export const useDraggable = <TElement extends Element = HTMLElement>(props: DraggableProps<TElement>): DraggableApi<TElement> => {
     // styles:
@@ -138,6 +138,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         
         
         // handlers:
+        onDragMove,
         onDragHandshake,
         onDragged,
     } = props;
@@ -149,7 +150,6 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     const [isDragging, setIsDragging] = useState<undefined|null|boolean>(undefined);
     const [dropData  , setDropData  ] = useState<DragNDropData|undefined>(undefined);
     
-    const pointerPositionRef          = useRef<{ clientX: number, clientY: number }>({ clientX: 0, clientY: 0 });
     const overlayRef                  = useRef<HTMLDivElement|null>(null);
     const overlayPositionRef          = useRef<React.CSSProperties>({ left: '', top: '' });
     
@@ -185,43 +185,53 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                 } // if
             } // if
         },
-        async onPointerCaptureMove({clientX, clientY}) {
-            // update pointer pos:
-            {
-                // calculate pointer coordinate (relative to screen viewport):
-                pointerPositionRef.current.clientX = clientX;
-                pointerPositionRef.current.clientY = clientY;
-                const left = `${clientX}px`;
-                const top  = `${clientY}px`;
+        async onPointerCaptureMove(event) {
+            try {
+                const {
+                    clientX,
+                    clientY,
+                } = event;
                 
                 
                 
-                // update for the first render of <DragOverlay>:
-                overlayPositionRef.current = { left, top };
+                // update pointer pos:
+                {
+                    // calculate pointer coordinate (relative to screen viewport):
+                    const left = `${clientX}px`;
+                    const top  = `${clientY}px`;
+                    
+                    
+                    
+                    // update for the first render of <DragOverlay>:
+                    overlayPositionRef.current = { left, top };
+                    
+                    
+                    
+                    // live update for first rerender of <DragOverlay>, vanilla way, without causing busy re-render:
+                    const overlayInlineStyle = overlayRef.current?.style;
+                    if (overlayInlineStyle) {
+                        overlayInlineStyle.left = left;
+                        overlayInlineStyle.top  = top;
+                    } // if
+                }
                 
                 
                 
-                // live update for first rerender of <DragOverlay>, vanilla way, without causing busy re-render:
-                const overlayInlineStyle = overlayRef.current?.style;
-                if (overlayInlineStyle) {
-                    overlayInlineStyle.left = left;
-                    overlayInlineStyle.top  = top;
-                } // if
+                // update drag & drop states:
+                const handshakeResult = await attachDroppableHook(document.elementsFromPoint(clientX, clientY), handleDragHandshake, dragData);
+                if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
+                /*
+                * undefined : NEVER HERE.  
+                * null      : has dragging activity but outside all dropping targets.  
+                * false     : has dragging activity on a dropping target but the source/target refuses to be dragged/dropped.  
+                * true      : has dragging activity on a dropping target and the source/target wants   to be dragged/dropped.  
+                */
+                setIsDragging(handshakeResult);
+                if ((dropData !== undefined) && (handshakeResult === null)) setDropData(undefined); // outside of dropping area
             }
-            
-            
-            
-            // update drag & drop states:
-            const handshakeResult = await attachDroppableHook(document.elementsFromPoint(clientX, clientY), handleDragHandshake, dragData);
-            if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
-            /*
-            * undefined : NEVER HERE.  
-            * null      : has dragging activity but outside all dropping targets.  
-            * false     : has dragging activity on a dropping target but the source/target refuses to be dragged/dropped.  
-            * true      : has dragging activity on a dropping target and the source/target wants   to be dragged/dropped.  
-            */
-            setIsDragging(handshakeResult);
-            if ((dropData !== undefined) && (handshakeResult === null)) setDropData(undefined); // outside of dropping area
+            finally {
+                onDragMove?.(event);
+            } // try
         },
     });
     
@@ -274,7 +284,6 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         
         // states:
         isDragging,
-        pointerPositionRef : (isDragging !== undefined) ? pointerPositionRef : undefined,
         
         
         
