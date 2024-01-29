@@ -37,7 +37,7 @@ export class DroppableHook {
 const droppableMap      = new Map<Element, DroppableHook>();
 let activeDroppableHook : null|DroppableHook = null;
 
-export const attachDroppableHook = async (elements: Element[], onDragHandshake: (dropData: DragNDropData) => boolean|Promise<boolean>, dragData: DragNDropData): Promise<null|boolean> => {
+export const attachDroppableHook = async (elements: Element[], onDragHandshake: (dropData: DragNDropData) => undefined|boolean|Promise<undefined|boolean>, dragData: DragNDropData): Promise<null|boolean> => {
     let handshakeResult : null|boolean       = null; // firstly mark as NOT_YET having handshake
     let interactedHook  : null|DroppableHook = null;
     
@@ -54,8 +54,12 @@ export const attachDroppableHook = async (elements: Element[], onDragHandshake: 
         
         // conditions:
         // handshake interacted as NO_RESPONSE:
-        const dropNego = await droppableHook.onDropHandshake(dragData);
+        const [dragNego, dropNego] = await Promise.all([
+            onDragHandshake(droppableHook.dropData),
+            droppableHook.onDropHandshake(dragData),
+        ]);
         if (!droppableHook.isMounted) continue; // unmounted => noop         => see other droppables
+        if (dragNego === undefined)   continue; // undefined => NO_RESPONSE  => see other draggables
         if (dropNego === undefined)   continue; // undefined => NO_RESPONSE  => see other droppables
         
         
@@ -66,24 +70,16 @@ export const attachDroppableHook = async (elements: Element[], onDragHandshake: 
         
         
         // handshake interacted as REFUSED:
-        if (!dropNego) {             // false => refuses to be dropped
-            handshakeResult = false; // handshake REFUSED by drop target
-            break;                   // no need to scan other droppables
-        } // if
-        
-        
-        
-        const dragNego = await onDragHandshake(droppableHook.dropData);
-        if (!dragNego) {             // false => refuses to be dragged
-            handshakeResult = false; // handshake REFUSED by drag source
-            break;                   // no need to scan other droppables
+        if (!dragNego || !dropNego) { // false => refuses to be dragged|dropped
+            handshakeResult = false;  // handshake REFUSED by drop target and/or drag source
+            break;                    // no need to scan other droppables
         } // if
         
         
         
         // handshake interacted as ACCEPTED:
-        handshakeResult = true;      // handshake ACCEPTED by both drop target and drag source
-        break;                       // no need to scan other droppables
+        handshakeResult = true;       // handshake ACCEPTED by both drop target and drag source
+        break;                        // no need to scan other droppables
     } // for
     
     

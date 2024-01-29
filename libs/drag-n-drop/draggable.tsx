@@ -73,7 +73,7 @@ export interface DraggableProps<TElement extends Element = HTMLElement>
     
     
     // handlers:
-    onDragHandshake  : (dropData: DragNDropData) => boolean|Promise<boolean>
+    onDragHandshake  : (dropData: DragNDropData) => undefined|boolean|Promise<undefined|boolean>
     onDragged       ?: (dropData: DragNDropData) => void
 }
 export interface DraggableApi<TElement extends Element = HTMLElement> {
