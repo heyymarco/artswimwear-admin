@@ -32,6 +32,7 @@ import {
 
 
 
+// react components:
 export interface DroppableProps<TElement extends Element = HTMLElement> {
     // data:
     dropData         : DragNDropData

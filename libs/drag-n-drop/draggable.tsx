@@ -52,6 +52,12 @@ import {
 
 
 
+// types:
+export type PointerPositionRef = React.RefObject<{ clientX: number, clientY: number }>
+
+
+
+// react components:
 export interface DraggableProps<TElement extends Element = HTMLElement>
     extends
         // capabilities:
@@ -78,7 +84,7 @@ export interface DraggableProps<TElement extends Element = HTMLElement>
 }
 export interface DraggableApi<TElement extends Element = HTMLElement> {
     // data:
-    dropData         : DragNDropData|undefined
+    dropData           : DragNDropData|undefined
     
     
     
@@ -89,18 +95,19 @@ export interface DraggableApi<TElement extends Element = HTMLElement> {
      * false     : has dragging activity on a dropping target but the source/target refuses to be dragged/dropped.  
      * true      : has dragging activity on a dropping target and the source/target wants   to be dragged/dropped.  
      */
-    isDragging       : undefined|null|boolean
+    isDragging         : undefined|null|boolean
+    pointerPositionRef : undefined|PointerPositionRef
     
     
     
     // components:
-    DragOverlay      : () => React.ReactPortal|null
+    DragOverlay        : () => React.ReactPortal|null
     
     
     
     // handlers:
-    handleMouseDown  : React.MouseEventHandler<TElement>
-    handleTouchStart : React.TouchEventHandler<TElement>
+    handleMouseDown    : React.MouseEventHandler<TElement>
+    handleTouchStart   : React.TouchEventHandler<TElement>
 }
 export const useDraggable = <TElement extends Element = HTMLElement>(props: DraggableProps<TElement>): DraggableApi<TElement> => {
     // styles:
@@ -142,6 +149,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     const [isDragging, setIsDragging] = useState<undefined|null|boolean>(undefined);
     const [dropData  , setDropData  ] = useState<DragNDropData|undefined>(undefined);
     
+    const pointerPositionRef          = useRef<{ clientX: number, clientY: number }>({ clientX: 0, clientY: 0 });
     const overlayRef                  = useRef<HTMLDivElement|null>(null);
     const overlayPositionRef          = useRef<React.CSSProperties>({ left: '', top: '' });
     
@@ -181,6 +189,8 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             // update pointer pos:
             {
                 // calculate pointer coordinate (relative to screen viewport):
+                pointerPositionRef.current.clientX = clientX;
+                pointerPositionRef.current.clientY = clientY;
                 const left = `${clientX}px`;
                 const top  = `${clientY}px`;
                 
@@ -264,6 +274,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         
         // states:
         isDragging,
+        pointerPositionRef : (isDragging !== undefined) ? pointerPositionRef : undefined,
         
         
         
