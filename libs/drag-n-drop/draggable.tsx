@@ -203,7 +203,8 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                     
                     
                     // update for the first render of <DragOverlay>:
-                    overlayPositionRef.current = { left, top };
+                    overlayPositionRef.current.left = left;
+                    overlayPositionRef.current.top  = top;
                     
                     
                     
