@@ -28,7 +28,7 @@ import {
     
     registerDroppableHook,
     unregisterDroppableHook,
-}                           from './interfaces'
+}                           from './drag-n-drop-interface'
 
 
 

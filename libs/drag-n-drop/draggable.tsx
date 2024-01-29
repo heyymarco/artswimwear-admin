@@ -48,7 +48,7 @@ import type {
 import {
     attachDroppableHook,
     detachDroppableHook,
-}                           from './interfaces'
+}                           from './drag-n-drop-interface'
 
 
 
