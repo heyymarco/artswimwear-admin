@@ -121,27 +121,21 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
     
     
     
-    // hooks:
-    const droppableHook = useMemo((): DroppableHook|undefined => {
-        // conditions:
-        if (!enabled) return undefined;
-        
-        
-        
-        // result:
-        return new DroppableHook(
-            dropData,
-            handleDropHandshake, // stable ref
-            onDropped,
-            handleSetIsDropping,
-        );
-    }, [
-        enabled,
-        
-        dropData,
-        // handleDropHandshake, // stable ref
-        onDropped,
-    ]);
+    // stable droppableHook:
+    const droppableHook = useMemo((): DroppableHook =>
+        new DroppableHook({
+            enabled         : enabled,
+            dropData        : dropData,
+            onDropHandshake : handleDropHandshake, // stable ref
+            onDropped       : onDropped,
+            setIsDropping   : handleSetIsDropping,
+        })
+    , []);
+    droppableHook.enabled   = enabled;
+    droppableHook.dropData  = dropData;
+    // droppableHook.onDropHandshake = handleDropHandshake; // stable ref
+    droppableHook.onDropped = onDropped;
+    // droppableHook.setIsDropping = handleSetIsDropping; // stable ref
     
     
     
@@ -152,7 +146,6 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
         // conditions:
         const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
         if (!dropElm) return; // no element for droppable => ignore
-        if (!droppableHook) return; // droppableHook is disabled => ignore
         
         
         

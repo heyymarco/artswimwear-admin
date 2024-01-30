@@ -12,23 +12,30 @@ import type {
 
 
 export class DroppableHook {
+    enabled          : boolean
     dropData         : DragNDropData
     onDropHandshake  : (dragData: DragNDropData) => undefined|boolean|Promise<undefined|boolean>
     onDropped        : ((dragData: DragNDropData) => void)|undefined
     setIsDropping    : (newIsDropping: undefined|null|boolean) => void
-    isMounted        : boolean
     
-    constructor(
+    constructor({
+        enabled,
+        dropData,
+        onDropHandshake,
+        onDropped,
+        setIsDropping,
+    } : {
+        enabled          : boolean,
         dropData         : DragNDropData,
         onDropHandshake  : (dragData: DragNDropData) => undefined|boolean|Promise<undefined|boolean>,
         onDropped        : ((dragData: DragNDropData) => void)|undefined,
         setIsDropping    : (newIsDropping: undefined|null|boolean) => void
-    ) {
+    }) {
+        this.enabled         = enabled;
         this.dropData        = dropData;
         this.onDropHandshake = onDropHandshake;
         this.onDropped       = onDropped;
         this.setIsDropping   = setIsDropping;
-        this.isMounted       = true;
     }
 }
 
@@ -47,8 +54,8 @@ export const attachDroppableHook = async (elements: Element[], onDragHandshake: 
         // conditions:
         // test for valid droppable hook:
         const droppableHook = droppableMap.get(element);
-        if (!droppableHook)           continue; // not having droppable hook => see other droppables
-        if (!droppableHook.isMounted) continue; // unmounted => noop         => see other droppables
+        if (!droppableHook)         continue; // not having droppable hook => see other droppables
+        if (!droppableHook.enabled) continue; // disabled => noop         => see other droppables
         
         
         
@@ -58,9 +65,9 @@ export const attachDroppableHook = async (elements: Element[], onDragHandshake: 
             onDragHandshake(droppableHook.dropData),
             droppableHook.onDropHandshake(dragData),
         ]);
-        if (!droppableHook.isMounted) continue; // unmounted => noop         => see other droppables
-        if (dragNego === undefined)   continue; // undefined => NO_RESPONSE  => see other draggables
-        if (dropNego === undefined)   continue; // undefined => NO_RESPONSE  => see other droppables
+        if (!droppableHook.enabled) continue; // disabled => noop         => see other droppables
+        if (dragNego === undefined) continue; // undefined => NO_RESPONSE  => see other draggables
+        if (dropNego === undefined) continue; // undefined => NO_RESPONSE  => see other droppables
         
         
         
@@ -133,12 +140,12 @@ export const detachDroppableHook = (): null|DroppableHook => {
 
 
 export const registerDroppableHook   = (element: Element, droppableHook: DroppableHook): void => {
-    droppableHook.isMounted = true; // mount
+    droppableHook.enabled = true; // mount
     droppableMap.set(element, droppableHook);
 };
 export const unregisterDroppableHook = (element: Element): null|DroppableHook => {
     const droppableHook = droppableMap.get(element); // backup
-    if (droppableHook) droppableHook.isMounted = false; // unmount
+    if (droppableHook) droppableHook.enabled = false; // unmount
     droppableMap.delete(element);
     
     

@@ -179,7 +179,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             
             
             if (isDragging === true) { // if was a valid dragging => now is dragged/dropped
-                if (prevActiveDroppableHook?.isMounted) {
+                if (prevActiveDroppableHook?.enabled) {
                     onDragged?.(prevActiveDroppableHook.dropData);
                     prevActiveDroppableHook.onDropped?.(dragData);
                 } // if
