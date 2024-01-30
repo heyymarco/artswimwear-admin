@@ -227,7 +227,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                 * true      : has dragging activity on a dropping target and the source/target wants   to be dragged/dropped.  
                 */
                 if (isDragging !== handshakeResult) setIsDragging(handshakeResult);
-                if ((dropData !== undefined) && (handshakeResult === null)) setDropData(undefined); // outside of dropping area
+                if ((handshakeResult === null) && (dropData !== undefined)) setDropData(undefined); // outside of dropping area
             }
             finally {
                 onDragMove?.(event);
