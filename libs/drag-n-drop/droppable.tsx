@@ -108,6 +108,16 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
             if (!Object.is(dragData, newDragData)) setDragData(newDragData);
         } // try
     });
+    const handleSetIsDropping = useEvent((newIsDropping: undefined|null|boolean): void => {
+        // conditions:
+        if (isDropping === newIsDropping) return; // already the same => nothing to update
+        
+        
+        
+        // actions:
+        setIsDropping(newIsDropping);
+        if (((newIsDropping === undefined) || (newIsDropping === null)) && (dragData !== undefined)) setDragData(undefined); // clean up unused dragData after no_dropping_activity -or- outside_of_dropping_area
+    });
     
     
     
@@ -123,7 +133,7 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
             dropData,
             handleDropHandshake, // stable ref
             onDropped,
-            setIsDropping,
+            handleSetIsDropping,
         );
     }, [
         enabled,
@@ -156,17 +166,6 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
             unregisterDroppableHook(dropElm);
         };
     }, [dropRef, droppableHook]);
-    
-    // clean up unused dragData after no dropping activity:
-    useEffect(() => {
-        // conditions:
-        if ((isDropping !== undefined) && (isDropping !== null)) return; // only interested on no_dropping_activity & outside_of_dropping_area
-        
-        
-        
-        // actions:
-        setDragData(undefined);
-    }, [isDropping]);
     
     
     

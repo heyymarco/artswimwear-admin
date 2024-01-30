@@ -15,14 +15,14 @@ export class DroppableHook {
     dropData         : DragNDropData
     onDropHandshake  : (dragData: DragNDropData) => undefined|boolean|Promise<undefined|boolean>
     onDropped        : ((dragData: DragNDropData) => void)|undefined
-    setIsDropping    : React.Dispatch<React.SetStateAction<undefined|null|boolean>>
+    setIsDropping    : (newIsDropping: undefined|null|boolean) => void
     isMounted        : boolean
     
     constructor(
         dropData         : DragNDropData,
         onDropHandshake  : (dragData: DragNDropData) => undefined|boolean|Promise<undefined|boolean>,
         onDropped        : ((dragData: DragNDropData) => void)|undefined,
-        setIsDropping    : React.Dispatch<React.SetStateAction<undefined|null|boolean>>
+        setIsDropping    : (newIsDropping: undefined|null|boolean) => void
     ) {
         this.dropData        = dropData;
         this.onDropHandshake = onDropHandshake;
