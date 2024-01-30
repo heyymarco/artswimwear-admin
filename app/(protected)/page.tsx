@@ -16,7 +16,8 @@ import {
     useDraggable,
     useDroppable,
 } from '@/libs/drag-n-drop'
-import { Basic } from '@reusable-ui/components';
+import { Basic, ListItem } from '@reusable-ui/components';
+import { OrderableList } from '@/components/OrderableList';
 
 
 
@@ -125,6 +126,13 @@ export default function DashboardPage() {
                     <DroppableComponent text='Drop Universal' dropData={{type: 'drop/universal', data: 456}}       onDropHandshake={(dragData) => true} />
                     <DroppableComponent text='Drop Specific'  dropData={{type: 'drop/specific',  data: 'def-666'}} onDropHandshake={(dragData) => dragData.type === 'drag/specific'} />
                 </div>
+                <OrderableList theme='primary' mild={false} defaultChildren={<>
+                    <ListItem>aaa</ListItem>
+                    <ListItem>bbb</ListItem>
+                    <ListItem>ccc</ListItem>
+                    <ListItem>ddd</ListItem>
+                    <ListItem>eee</ListItem>
+                </>} />
                 <UploadImage
                     theme='primary'
                     onUploadImage={async ({ imageFile, reportProgress }) => {
