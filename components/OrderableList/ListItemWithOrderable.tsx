@@ -70,6 +70,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         
         // handlers:
+        handleDragMove,
         handleDropped,
     } = useOrderableListState();
     
@@ -83,6 +84,8 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     // capabilities:
     const {
+        // data:
+        dropData : dropData,
         // states:
         isDragging,
     ...draggable} = useDraggable<TElement>({
@@ -94,7 +97,18 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         onDragHandshake({type, data: toListIndex}) {
             return ((type === dragNDropId) && (toListIndex !== listIndex));
         },
-        onDragMove({clientX, clientY}) {
+        onDragMove(event) {
+            if (dropData) {
+                handleDragMove({
+                    ...event,
+                    from : listIndex,
+                    to   : dropData.data as number,
+                });
+            } // if
+            
+            
+            
+            const {clientX, clientY} = event;
             if (!isDraggingActiveRef.current) return;
             const listItemInlineStyle = listItemRef.current?.style;
             if (!listItemInlineStyle) return;
@@ -115,7 +129,10 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             return ((type === dragNDropId) && (fromListIndex !== listIndex));
         },
         onDropped({data: fromListIndex}) {
-            handleDropped(fromListIndex as number, listIndex);
+            handleDropped({
+                from : fromListIndex as number,
+                to   : listIndex,
+            });
         },
     });
     

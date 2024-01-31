@@ -24,26 +24,36 @@ import {
 //#region orderableListState
 
 // contexts:
+export interface OrderableListDragMoveEvent extends MouseEvent {
+    from : number
+    to   : number
+}
+export interface OrderableListDroppedEvent {
+    from : number
+    to   : number
+}
 export interface OrderableListState
 {
     // identifiers:
-    dragNDropId   : symbol,
+    dragNDropId    : symbol,
     
     
     
     // handlers:
-    handleDropped : (from: number, to: number) => void
+    handleDragMove : (event: OrderableListDragMoveEvent) => void
+    handleDropped  : (event: OrderableListDroppedEvent) => void
 }
 
 const noopHandler = () => { throw Error('not inside <OrderableList>'); };
 const OrderableListStateContext = createContext<OrderableListState>({
     // identifiers:
-    dragNDropId   : undefined as any,
+    dragNDropId    : undefined as any,
     
     
     
     // handlers:
-    handleDropped : noopHandler,
+    handleDragMove : noopHandler,
+    handleDropped  : noopHandler,
 });
 OrderableListStateContext.displayName  = 'OrderableListState';
 
@@ -57,12 +67,14 @@ export const useOrderableListState = (): OrderableListState => {
 export interface OrderableListStateProps
 {
     // handlers:
-    onDropped : (from: number, to: number) => void
+    onDragMove : (event: OrderableListDragMoveEvent) => void
+    onDropped  : (event: OrderableListDroppedEvent) => void
 }
 const OrderableListStateProvider = (props: React.PropsWithChildren<OrderableListStateProps>): JSX.Element|null => {
     // props:
     const {
         // handlers:
+        onDragMove,
         onDropped,
         
         
@@ -86,9 +98,11 @@ const OrderableListStateProvider = (props: React.PropsWithChildren<OrderableList
         
         
         // handlers:
-        handleDropped : onDropped,
+        handleDragMove : onDragMove,
+        handleDropped  : onDropped,
     }), [
         // handlers:
+        onDragMove,
         onDropped,
     ]);
     

@@ -43,6 +43,12 @@ import {
     useControllableAndUncontrollable,
 }                           from './states/hooks'
 import {
+    // types:
+    OrderableListDragMoveEvent,
+    OrderableListDroppedEvent,
+    
+    
+    
     // react components:
     OrderableListStateProvider,
 }                           from './states/orderableListState'
@@ -109,8 +115,9 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
     
     
     // handlers:
-    const handleDropped = useEvent((from: number, to: number): void => {
-        console.log('handleDropped', { from, to });
+    const handleDragMove = useEvent(({from, to}: OrderableListDragMoveEvent): void => {
+    });
+    const handleDropped  = useEvent(({from, to}: OrderableListDroppedEvent): void => {
         const mutatedChildren = children.slice(0); // copy
         [mutatedChildren[from], mutatedChildren[to]] = [mutatedChildren[to], mutatedChildren[from]];
         triggerChildrenChange(mutatedChildren);
@@ -190,6 +197,7 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
     return (
         <OrderableListStateProvider
             // handlers:
+            onDragMove={handleDragMove}
             onDropped={handleDropped}
         >
             {/* <List> */}
