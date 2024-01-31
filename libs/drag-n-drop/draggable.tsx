@@ -48,6 +48,7 @@ import type {
 import {
     attachDroppableHook,
     detachDroppableHook,
+    getActiveDroppableHook,
 }                           from './drag-n-drop-interface'
 
 
@@ -172,18 +173,19 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     const pointerCapturable          = usePointerCapturable<TElement>({
         enabled,
         onPointerCaptureEnd() {
-            const prevActiveDroppableHook = detachDroppableHook(); // no  dropping activity
-            setIsDragging(undefined);                              // no  dragging activity
-            setDropData(undefined);                                // no  dragging activity
-            
-            
-            
             if (isDragging === true) { // if was a valid dragging => now is dragged/dropped
-                if (prevActiveDroppableHook?.enabled) {
-                    onDragged?.(prevActiveDroppableHook.dropData);
-                    prevActiveDroppableHook.onDropped?.(dragData);
+                const activeDroppableHook = getActiveDroppableHook();
+                if (activeDroppableHook?.enabled) {
+                    onDragged?.(activeDroppableHook.dropData);
+                    activeDroppableHook.onDropped?.(dragData);
                 } // if
             } // if
+            
+            
+            
+            detachDroppableHook();    // no  dropping activity
+            setIsDragging(undefined); // no  dragging activity
+            setDropData(undefined);   // no  dragging activity
         },
         async onPointerCaptureMove(event) {
             try {

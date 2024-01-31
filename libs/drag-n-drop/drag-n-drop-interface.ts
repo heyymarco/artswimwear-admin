@@ -121,8 +121,7 @@ export const attachDroppableHook = async (elements: Element[], onDragHandshake: 
     
     return handshakeResult;
 };
-export const detachDroppableHook = (): null|DroppableHook => {
-    const prevActiveDroppableHook = activeDroppableHook; // backup
+export const detachDroppableHook = (): void => {
     activeDroppableHook = null; // release
     
     
@@ -131,10 +130,9 @@ export const detachDroppableHook = (): null|DroppableHook => {
         // actions:
         droppableHook.setIsDropping(undefined); // no  dropping activity
     } // for
-    
-    
-    
-    return prevActiveDroppableHook;
+};
+export const getActiveDroppableHook = (): null|DroppableHook => {
+    return activeDroppableHook;
 };
 
 
