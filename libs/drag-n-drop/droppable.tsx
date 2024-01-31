@@ -94,8 +94,8 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
     
     
     // states:
-    const [isDropping, setIsDropping] = useState<undefined|null|boolean>(undefined);
-    const [dragData  , setDragData  ] = useState<DragNDropData|undefined>(undefined);
+    let [isDropping, setIsDropping] = useState<undefined|null|boolean>(undefined);
+    let [dragData  , setDragData  ] = useState<DragNDropData|undefined>(undefined);
     
     
     
@@ -105,7 +105,7 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
             return await onDropHandshake(newDragData);
         }
         finally {
-            if (!Object.is(dragData, newDragData)) setDragData(newDragData);
+            if (!Object.is(dragData, newDragData)) setDragData(dragData = newDragData);
         } // try
     });
     const handleSetIsDropping = useEvent((newIsDropping: undefined|null|boolean): void => {
@@ -115,8 +115,8 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
         
         
         // actions:
-        setIsDropping(newIsDropping);
-        if (((newIsDropping === undefined) || (newIsDropping === null)) && (dragData !== undefined)) setDragData(undefined); // clean up unused dragData after no_dropping_activity -or- outside_of_dropping_area
+        setIsDropping(isDropping = newIsDropping);
+        if (((newIsDropping === undefined) || (newIsDropping === null)) && (dragData !== undefined)) setDragData(dragData = undefined); // clean up unused dragData after no_dropping_activity -or- outside_of_dropping_area
     });
     
     
