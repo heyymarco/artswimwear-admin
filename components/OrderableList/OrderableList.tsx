@@ -7,6 +7,8 @@ import {
     
     // hooks:
     useMemo,
+    useState,
+    useRef,
 }                           from 'react'
 
 // reusable-ui core:
@@ -44,6 +46,7 @@ import {
 }                           from './states/hooks'
 import {
     // types:
+    OrderableListDragStartEvent,
     OrderableListDragMoveEvent,
     OrderableListDroppedEvent,
     
@@ -115,9 +118,35 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
     
     
     // handlers:
-    const handleDragMove = useEvent(({from, to}: OrderableListDragMoveEvent): void => {
+    const draggingFromRef = useRef<number>(0);
+    const lastDropTo      = useRef<number|undefined>(undefined);
+    const handleDragStart = useEvent(({from}: OrderableListDragStartEvent): void => {
+        draggingFromRef.current = from;
+        lastDropTo.current      = undefined;
     });
-    const handleDropped  = useEvent(({from, to}: OrderableListDroppedEvent): void => {
+    const handleDragEnd   = useEvent(() => {
+        // if dragging is completed|canceled|out_of_drop => resets draftChildren:
+        setDraftChildren(undefined);
+    });
+    const handleDragMove  = useEvent(({from, to}: OrderableListDragMoveEvent): void => {
+        // conditions:
+        if (to === draggingFromRef.current) {
+            // if (draftChildren !== undefined) setDraftChildren(undefined); // reset to original place
+            return;
+        } // if
+        
+        
+        
+        lastDropTo.current = to;
+        
+        
+        
+        const mutatedChildren = wrappedChildren.slice(0); // copy
+        [mutatedChildren[from], mutatedChildren[to]] = [mutatedChildren[to], mutatedChildren[from]];
+        setDraftChildren(mutatedChildren);
+    });
+    const handleDropped   = useEvent(({from, to}: OrderableListDroppedEvent): void => {
+        to = lastDropTo.current ?? to; // cancel out effect of moved draftChildren (if any)
         const mutatedChildren = children.slice(0); // copy
         [mutatedChildren[from], mutatedChildren[to]] = [mutatedChildren[to], mutatedChildren[from]];
         triggerChildrenChange(mutatedChildren);
@@ -127,15 +156,15 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
     
     // children:
     const listComponentChildren = listComponent.props.children;
-    const wrappedChildren = useMemo<React.ReactNode|React.ReactNode[]>(() => {
+    const wrappedChildren = useMemo<React.ReactNode[]>(() => {
         let listIndex = -1;
         return (
             listComponentChildren
-            ??
-            flattenChildren(children)
+            ? flattenChildren(listComponentChildren)
+            : flattenChildren(children)
             .map<React.ReactNode>((listItem, childIndex) => {
                 // conditions:
-                if (!React.isValidElement<ListItemProps<HTMLElement>>(listItem)) return listItem; // not an <ListItem> => place it anyway
+                if (!React.isValidElement<ListItemProps<HTMLElement>>(listItem)) return <>{listItem}</>; // not an <ListItem> => place it anyway
                 
                 
                 
@@ -185,7 +214,9 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
                                 //#endregion restore conflicting props
                             />
                         }
-                    />
+                    >
+                        key: {listItem.key} | {listItem.props.children}
+                    </ListItemWithOrderable>
                 );
             })
         );
@@ -193,10 +224,16 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
     
     
     
+    const [draftChildren, setDraftChildren] = useState<React.ReactNode[]|undefined>(undefined);
+    
+    
+    
     // jsx:
     return (
         <OrderableListStateProvider
             // handlers:
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
             onDragMove={handleDragMove}
             onDropped={handleDropped}
         >
@@ -212,7 +249,7 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
                 
                 
                 // children:
-                wrappedChildren,
+                ((draftChildren !== undefined) ? draftChildren : wrappedChildren),
             )}
         </OrderableListStateProvider>
     );

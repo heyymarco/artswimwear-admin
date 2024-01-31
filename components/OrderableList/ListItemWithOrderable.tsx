@@ -7,11 +7,16 @@ import {
     
     // hooks:
     useRef,
+    useEffect,
+    useMemo,
 }                           from 'react'
 
 // reusable-ui core:
 import {
     globalStacks,
+    
+    
+    
     // react helper hooks:
     useEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
@@ -30,6 +35,7 @@ import {
     useOrderableListState,
 }                           from './states/orderableListState'
 import {
+    // hooks:
     useDraggable,
     useDroppable,
 }                           from '@/libs/drag-n-drop'
@@ -70,6 +76,8 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         
         // handlers:
+        handleDragStart,
+        handleDragEnd,
         handleDragMove,
         handleDropped,
     } = useOrderableListState();
@@ -77,8 +85,13 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     
     // refs:
-    const listItemRef = useRef<TElement|null>(null);
-    const listItemBasePosition = useRef<{ left: number, top: number }>({ left: 0, top: 0 });
+    const listItemRef       = useRef<TElement|null>(null);
+    const listItemParentRef = useMemo<React.MutableRefObject<TElement|null>>(() => ({
+        get current(): HTMLElement|null {
+            return listItemRef.current?.parentElement ?? null;
+        },
+    }) as React.MutableRefObject<TElement|null>, []);
+    const listItemTouchedPosition = useRef<{ left: number, top: number }>({ left: 0, top: 0 });
     
     
     
@@ -95,7 +108,8 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             data : listIndex,
         },
         onDragHandshake({type, data: toListIndex}) {
-            return ((type === dragNDropId) && (toListIndex !== listIndex));
+            if (type !== dragNDropId) return false; // wrong drop target
+            return true; // yes drop there (drop to self source|target is allowed)
         },
         onDragMove(event) {
             if (dropData) {
@@ -108,12 +122,13 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             
             
-            const {clientX, clientY} = event;
-            if (!isDraggingActiveRef.current) return;
-            const listItemInlineStyle = listItemRef.current?.style;
-            if (!listItemInlineStyle) return;
-            listItemInlineStyle.left = `${clientX - listItemBasePosition.current.left}px`;
-            listItemInlineStyle.top  = `${clientY - listItemBasePosition.current.top }px`;
+            handleUpdateFloatingPos(event);
+        },
+        onDragged(dropData) {
+            handleDropped({
+                from : listIndex,
+                to   : dropData.data as number,
+            });
         },
     });
     const {
@@ -124,25 +139,30 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             type : dragNDropId,
             data : listIndex,
         },
-        dropRef  : listItemRef,
+        dropRef  : listItemParentRef,
         onDropHandshake({type, data: fromListIndex}) {
-            return ((type === dragNDropId) && (fromListIndex !== listIndex));
-        },
-        onDropped({data: fromListIndex}) {
-            handleDropped({
-                from : fromListIndex as number,
-                to   : listIndex,
-            });
+            if (type !== dragNDropId) return false; // wrong drag source
+            return true; // yes drop there (drop to self source|target is allowed)
         },
     });
     
     
     
     // handlers:
-    const handlePointerStart = useEvent((event: MouseEvent) => {
-        listItemBasePosition.current = {
-            left : event.clientX,
-            top  : event.clientY,
+    const handlePointerStart = useEvent(({clientX, clientY}: MouseEvent) => {
+        // conditions:
+        const listItemParentElm = listItemParentRef.current;
+        if (!listItemParentElm) return;
+        
+        
+        
+        // update:
+        const {left: baseLeft, top: baseTop} = listItemParentElm.getBoundingClientRect();
+        const touchedLeft = clientX - baseLeft;
+        const touchedTop  = clientY - baseTop;
+        listItemTouchedPosition.current = {
+            left : touchedLeft,
+            top  : touchedTop,
         };
     });
     const handleMouseDown  = useEvent<React.MouseEventHandler<TElement>>((event) => {
@@ -160,32 +180,76 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         draggable.handleTouchStart(event);
     });
     
+    const handleUpdateFloatingPos = useEvent((event: MouseEvent): void => {
+        // conditions:
+        const listItemInlineStyle = listItemRef.current?.style;
+        if (!listItemInlineStyle) return;
+        const listItemParentElm   = listItemParentRef.current;
+        if (!listItemParentElm) return;
+        
+        
+        
+        // calculate pos:
+        const {clientX          , clientY        } = event;
+        const {left: baseLeft   , top: baseTop   } = listItemParentElm.getBoundingClientRect();
+        const {left: touchedLeft, top: touchedTop} = listItemTouchedPosition.current;
+        
+        
+        
+        // update:
+        listItemInlineStyle.left = `${clientX - baseLeft - touchedLeft}px`;
+        listItemInlineStyle.top  = `${clientY - baseTop  - touchedTop }px`;
+    });
+    
     
     
     // effects:
+    /*
+        undefined : inactive
+        null      : active (outside drop targets)
+        false     : active (inside wrong drop target)
+        true      : active (inside right drop target)
+    */
     const isDraggingActive = (isDragging !== undefined);
     const isDraggingActiveRef = useRef<boolean>(isDraggingActive);
-    if (isDraggingActiveRef.current !== isDraggingActive) {
-        isDraggingActiveRef.current = isDraggingActive;
+    useEffect(() => {
+        // conditions:
+        if (isDraggingActiveRef.current === isDraggingActive) return; // already the same => ignore
+        isDraggingActiveRef.current = isDraggingActive;               // sync
+        
+        
+        // actions:
+        if (isDraggingActive) {
+            handleDragStart?.({
+                from : listIndex,
+            });
+        }
+        else {
+            handleDragEnd?.();
+        } // if
+        
+        
         
         const listItemInlineStyle = listItemRef.current?.style;
         if (listItemInlineStyle) {
             if (isDraggingActive) {
                 listItemInlineStyle.position      = 'relative';
                 listItemInlineStyle.zIndex        = `${globalStacks.dragOverlay}`;
+                listItemInlineStyle.left          = '';
+                listItemInlineStyle.top           = '';
                 listItemInlineStyle.pointerEvents = 'none';
             }
             else {
-                setTimeout(() => {
-                    listItemInlineStyle.position      = '';
-                    listItemInlineStyle.zIndex        = '';
-                    listItemInlineStyle.left          = '';
-                    listItemInlineStyle.top           = '';
-                    listItemInlineStyle.pointerEvents = '';
-                }, 0);
+                // setTimeout(() => {
+                listItemInlineStyle.position      = '';
+                listItemInlineStyle.zIndex        = '';
+                listItemInlineStyle.left          = '';
+                listItemInlineStyle.top           = '';
+                listItemInlineStyle.pointerEvents = '';
+                // }, 0);
             }
         } // if
-    } // if
+    }, [isDraggingActive]);
     
     
     
