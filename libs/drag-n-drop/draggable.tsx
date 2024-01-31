@@ -148,8 +148,8 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     
     // states:
     const isMounted = useMountedFlag();
-    const [isDragging, setIsDragging] = useState<undefined|null|boolean>(undefined);
-    const [dropData  , setDropData  ] = useState<DragNDropData|undefined>(undefined);
+    let   [isDragging, setIsDragging] = useState<undefined|null|boolean>(undefined);
+    let   [dropData  , setDropData  ] = useState<DragNDropData|undefined>(undefined);
     
     const overlayRef                  = useRef<HTMLDivElement|null>(null);
     const overlayPositionRef          = useRef<React.CSSProperties>({ left: '', top: '' });
@@ -162,7 +162,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             return await onDragHandshake(newDropData);
         }
         finally {
-            if (!Object.is(dropData, newDropData)) setDropData(newDropData);
+            if (!Object.is(dropData, newDropData)) setDropData(dropData = newDropData);
         } // try
     });
     
@@ -183,9 +183,9 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             
             
             
-            detachDroppableHook();    // no  dropping activity
-            setIsDragging(undefined); // no  dragging activity
-            setDropData(undefined);   // no  dragging activity
+            detachDroppableHook();                                               // no  dropping activity
+            if (isDragging !== undefined) setIsDragging(isDragging = undefined); // no  dragging activity
+            if (dropData   !== undefined) setDropData(dropData     = undefined); // no  dragging activity
         },
         async onPointerCaptureMove(event) {
             try {
@@ -228,8 +228,8 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                 * false     : has dragging activity on a dropping target but the source/target refuses to be dragged/dropped.  
                 * true      : has dragging activity on a dropping target and the source/target wants   to be dragged/dropped.  
                 */
-                if (isDragging !== handshakeResult) setIsDragging(handshakeResult);
-                if ((handshakeResult === null) && (dropData !== undefined)) setDropData(undefined); // outside of dropping area
+                if (isDragging !== handshakeResult) setIsDragging(isDragging = handshakeResult);
+                if ((handshakeResult === null) && (dropData !== undefined)) setDropData(dropData = undefined); // outside of dropping area
             }
             finally {
                 onDragMove?.(event);
