@@ -115,6 +115,11 @@ export const usesInfoTabLayout = () => {
         }),
     });
 };
+export const usesVariantsTabLayout = () => {
+    return style({
+        // TODO: style variant tab
+    });
+};
 export const usesImagesTabLayout = () => {
     return style({
         // scrolls:
@@ -191,6 +196,9 @@ export const usesEditDescription = () => {
 export default () => [
     scope('infoTab', {
         ...usesInfoTabLayout(),
+    }),
+    scope('variantsTab', {
+        ...usesVariantsTabLayout(),
     }),
     scope('imagesTab', {
         ...usesImagesTabLayout(),

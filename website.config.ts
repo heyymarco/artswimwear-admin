@@ -18,6 +18,7 @@ export const PAGE_PRODUCT_VISIBILITY_HIDDEN          = 'Hidden'
 export const PAGE_PRODUCT_VISIBILITY_DRAFT           = 'Draft'
 
 export const PAGE_PRODUCT_TAB_INFORMATIONS           = 'Informations'
+export const PAGE_PRODUCT_TAB_VARIANTS               = 'Variants'
 export const PAGE_PRODUCT_TAB_IMAGES                 = 'Images'
 export const PAGE_PRODUCT_TAB_DESCRIPTION            = 'Description'
 export const PAGE_PRODUCT_TAB_DELETE                 = 'Delete'

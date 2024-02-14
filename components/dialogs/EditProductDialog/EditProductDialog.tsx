@@ -122,6 +122,7 @@ import {
 // configs:
 import {
     PAGE_PRODUCT_TAB_INFORMATIONS,
+    PAGE_PRODUCT_TAB_VARIANTS,
     PAGE_PRODUCT_TAB_IMAGES,
     PAGE_PRODUCT_TAB_DESCRIPTION,
     PAGE_PRODUCT_TAB_DELETE,
@@ -561,6 +562,9 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         }}
                     />
                 </form>
+            </TabPanel>
+            <TabPanel label={PAGE_PRODUCT_TAB_VARIANTS}     panelComponent={<Generic className={styleSheet.variantsTab} />}>
+                <p>TODO: variants here</p>
             </TabPanel>
             <TabPanel label={PAGE_PRODUCT_TAB_IMAGES}       panelComponent={<Generic className={styleSheet.imagesTab} />}>
                 <GalleryEditor<HTMLElement, string>
