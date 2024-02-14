@@ -157,11 +157,11 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         onChange?.(id || null); // null (no selection) if the id is an empty string
     });
     
-    const handleExpandedChange = useEvent<EventHandler<ComplexEditModelDialogExpandedChangeEvent>>(({expanded, data}) => {
+    const handleExpandedChange = useEvent<EventHandler<ComplexEditModelDialogExpandedChangeEvent>>(async ({expanded, data}) => {
         if (!expanded) {
-            // first: trigger the change (if any), before this <RolePreview> will be deleted:
+            // first: trigger the `onDelete()` event (if any):
             if (data === false) {
-                onDelete?.({
+                await onDelete?.({
                     id : id,
                 });
             } // if
