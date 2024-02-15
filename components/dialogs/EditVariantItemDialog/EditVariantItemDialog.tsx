@@ -51,9 +51,6 @@ import {
     NameEditor,
 }                           from '@/components/editors/NameEditor'
 import {
-    UniquePathEditor,
-}                           from '@/components/editors/UniquePathEditor'
-import {
     PriceEditor,
 }                           from '@/components/editors/PriceEditor'
 import {
@@ -65,12 +62,6 @@ import {
 import {
     GalleryEditor,
 }                           from '@/components/editors/GalleryEditor'
-import {
-    WysiwygEditorState,
-    ToolbarPlugin,
-    EditorPlugin,
-    WysiwygEditor,
-}                           from '@/components/editors/WysiwygEditor'
 import {
     // types:
     UpdateHandler,
@@ -164,7 +155,7 @@ const EditVariantItemDialog = (props: EditVariantItemDialogProps): JSX.Element|n
     
     const [visibility      , setVisibility      ] = useState<ProductVisibility      >(model?.visibility     ?? 'DRAFT');
     const [name            , setName            ] = useState<string                 >(model?.name           ?? ''     );
-    const [price           , setPrice           ] = useState<number                 >(model?.price          ?? 0      );
+    const [price           , setPrice           ] = useState<number            |null>(model?.price          || null   ); // converts 0 to null
     const [shippingWeight  , setShippingWeight  ] = useState<number            |null>(model?.shippingWeight ?? null   ); // optional field
     const [images          , setImages          ] = useState<string[]               >(model?.images         ?? []     );
     
@@ -237,7 +228,7 @@ const EditVariantItemDialog = (props: EditVariantItemDialogProps): JSX.Element|n
                 
                 visibility     : (privilegeUpdate.visibility  || privilegeAdd) ? visibility                                        : undefined,
                 name           : (privilegeUpdate.description || privilegeAdd) ? name                                              : undefined,
-                price          : (privilegeUpdate.price       || privilegeAdd) ? price                                             : undefined,
+                price          : (privilegeUpdate.price       || privilegeAdd) ? (price ?? 0)                                      : undefined,
                 shippingWeight : (privilegeUpdate.price       || privilegeAdd) ? shippingWeight                                    : undefined,
                 images         : (privilegeUpdate.images      || privilegeAdd) ? updatedImages                                     : undefined,
             }).unwrap()).id;
@@ -435,7 +426,7 @@ const EditVariantItemDialog = (props: EditVariantItemDialogProps): JSX.Element|n
                         // values:
                         value={price}
                         onChange={(value) => {
-                            setPrice(value ?? 0);
+                            setPrice(value || null); // converts 0 to null
                             setIsModified(true);
                         }}
                     />
