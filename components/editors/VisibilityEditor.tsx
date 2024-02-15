@@ -64,12 +64,22 @@ interface VisibilityEditorProps<TElement extends Element = HTMLElement>
             |'children'                // already taken over
         >
 {
+    // data:
+    modelName    ?: string
+    
+    
+    
     // values:
     optionHidden ?: boolean
 }
 const VisibilityEditor = <TElement extends Element = HTMLElement>(props: VisibilityEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
+        // data:
+        modelName = 'product',
+        
+        
+        
         // values:
         optionHidden = true,
         
@@ -119,17 +129,17 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
         >
             <TabPanel label={PAGE_PRODUCT_VISIBILITY_PUBLISHED}>
                 <p>
-                    The product is <em>shown</em> on the webiste.
+                    The {modelName} is <em>shown</em> on the webiste.
                 </p>
             </TabPanel>
             {optionHidden && <TabPanel label={PAGE_PRODUCT_VISIBILITY_HIDDEN}>
                 <p>
-                    The product can only be viewed via <em>a (bookmarked) link</em>.
+                    The {modelName} can only be viewed via <em>a (bookmarked) link</em>.
                 </p>
             </TabPanel>}
             <TabPanel label={PAGE_PRODUCT_VISIBILITY_DRAFT}>
                 <p>
-                    The product <em>cannot be viewed</em> on the entire website.
+                    The {modelName} <em>cannot be viewed</em> on the entire website.
                 </p>
             </TabPanel>
         </Tab>
