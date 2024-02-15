@@ -104,8 +104,8 @@ import {
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
     // react components:
-    EditVariantItemDialog,
-}                           from '@/components/dialogs/EditVariantItemDialog'
+    EditProductVariantDialog,
+}                           from '@/components/dialogs/EditProductVariantDialog'
 
 // models:
 import type {
@@ -588,8 +588,9 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                 <p>TODO: variants here</p>
                 <Button onClick={() => {
                     showDialog(
-                        <EditVariantItemDialog
+                        <EditProductVariantDialog
                             // data:
+                            groupId='blah'
                             model={undefined as any}
                         />
                     );

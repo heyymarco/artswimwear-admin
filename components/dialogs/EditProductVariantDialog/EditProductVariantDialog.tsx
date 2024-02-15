@@ -117,15 +117,15 @@ import {
 
 
 // styles:
-const useEditVariantItemDialogStyleSheet = dynamicStyleSheets(
-    () => import(/* webpackPrefetch: true */'./EditVariantItemDialogStyles')
+const useEditProductVariantDialogStyleSheet = dynamicStyleSheets(
+    () => import(/* webpackPrefetch: true */'./EditProductVariantDialogStyles')
 , { id: 'w9r17m435e' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
-import './EditVariantItemDialogStyles';
+import './EditProductVariantDialogStyles';
 
 
 
 // react components:
-export interface EditVariantItemDialogProps
+export interface EditProductVariantDialogProps
     extends
         // bases:
         ImplementedComplexEditModelDialogProps<ProductVariantDetail>
@@ -133,9 +133,9 @@ export interface EditVariantItemDialogProps
     // data:
     groupId : string
 }
-const EditVariantItemDialog = (props: EditVariantItemDialogProps): JSX.Element|null => {
+const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Element|null => {
     // styles:
-    const styleSheet = useEditVariantItemDialogStyleSheet();
+    const styleSheet = useEditProductVariantDialogStyleSheet();
     
     
     
@@ -561,6 +561,6 @@ const EditVariantItemDialog = (props: EditVariantItemDialogProps): JSX.Element|n
     );
 };
 export {
-    EditVariantItemDialog,
-    EditVariantItemDialog as default,
+    EditProductVariantDialog,
+    EditProductVariantDialog as default,
 }
