@@ -84,9 +84,32 @@ router
     
     
     
+    //#region parsing request
+    const {
+        groupId,
+    } = await req.json();
+    //#endregion parsing request
+    
+    
+    
+    //#region validating request
+    if (
+        ((typeof(groupId) !== 'string') || (groupId.length < 1))
+    ) {
+        return NextResponse.json({
+            error: 'Invalid data.',
+        }, { status: 400 }); // handled with error
+    } // if
+    //#endregion validating request
+    
+    
+    
     const productVariantDetails : ProductVariantDetail[] = (
         (await prisma.productVariant.findMany({
-            select: {
+            where  : {
+                productVariantGroupId : groupId,
+            },
+            select : {
                 id             : true,
                 
                 visibility     : true,

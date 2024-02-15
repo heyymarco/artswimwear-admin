@@ -178,9 +178,9 @@ export const apiSlice = createApi({
             }),
         }),
         
-        getProductVariantList : builder.query<EntityState<ProductVariantDetail>, void>({
-            query : () => ({
-                url    : 'product-variants',
+        getProductVariantList : builder.query<EntityState<ProductVariantDetail>, { groupId : string }>({
+            query : ({ groupId }) => ({
+                url    : `product-variants?groupId=${encodeURIComponent(groupId)}`,
                 method : 'GET',
             }),
             transformResponse(response: ProductVariantDetail[]) {
@@ -200,7 +200,7 @@ export const apiSlice = createApi({
                 ];
             },
         }),
-        updateProductVariant  : builder.mutation<ProductVariantDetail, MutationArgs<ProductVariantDetail>>({
+        updateProductVariant  : builder.mutation<ProductVariantDetail, MutationArgs<ProductVariantDetail> & { groupId ?: string }>({
             query: (patch) => ({
                 url    : 'product-variants',
                 method : 'PATCH',
