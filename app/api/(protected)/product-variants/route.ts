@@ -80,7 +80,7 @@ router
     return await next();
 })
 .get(async (req) => {
-    /* required for displaying related_variants in variant_groups page */
+    /* required for displaying related_variants in variant_group page */
     
     
     
@@ -190,6 +190,12 @@ You do not have the privilege to add new product variant.`
         }, { status: 403 }); // handled with error: forbidden
     }
     else {
+        if (!session.role?.product_ud && (name !== undefined)) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the product variant name.`
+        }, { status: 403 }); // handled with error: forbidden
+        
         if (!session.role?.product_ui && (images !== undefined)) return NextResponse.json({ error:
 `Access denied.
 
