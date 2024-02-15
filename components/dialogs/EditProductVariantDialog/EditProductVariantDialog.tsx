@@ -229,6 +229,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
             return (await updateProductVariant({
                 id             : id ?? '',
                 groupId        : id ? undefined : groupId,
+                sort           : id ? undefined : 999,
                 
                 visibility     : (privilegeUpdate.visibility  || privilegeAdd) ? visibility     : undefined,
                 name           : (privilegeUpdate.description || privilegeAdd) ? name           : undefined,
