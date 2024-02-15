@@ -9,6 +9,7 @@ import type {
     Pagination,
     
     MutationArgs,
+    Model,
 }                           from '@/libs/types'
 export type OrderDetailWithOptions = OrderDetail & { sendConfirmationEmail?: boolean }
 
@@ -16,6 +17,8 @@ export type OrderDetailWithOptions = OrderDetail & { sendConfirmationEmail?: boo
 export type { CountryPreview }                  from '@/app/api/(protected)/countries/route'
 import type { ProductPreview, ProductDetail }   from '@/app/api/(protected)/products/route'
 export type { ProductPreview, ProductDetail }   from '@/app/api/(protected)/products/route'
+import type { ProductVariantDetail }            from '@/app/api/(protected)/product-variants/route'
+export type { ProductVariantDetail }            from '@/app/api/(protected)/product-variants/route'
 import type { OrderDetail }                     from '@/app/api/(protected)/orders/route'
 export type { OrderDetail }                     from '@/app/api/(protected)/orders/route'
 import type { ShippingPreview }                 from '@/app/api/(protected)/shippings/route'
@@ -37,14 +40,17 @@ import {
 
 
 
-const shippingListAdapter = createEntityAdapter<ShippingPreview>({
+const shippingListAdapter   = createEntityAdapter<ShippingPreview>({
     selectId : (shippingPreview) => shippingPreview.id,
 });
-const productListAdapter  = createEntityAdapter<ProductPreview>({
+const productListAdapter    = createEntityAdapter<ProductPreview>({
     selectId : (productPreview) => productPreview.id,
 });
-const roleListAdapter     = createEntityAdapter<RoleDetail>({
-    selectId : (rolePreview) => rolePreview.id,
+const roleListAdapter       = createEntityAdapter<RoleDetail>({
+    selectId : (roleDetail) => roleDetail.id,
+});
+const productVariantAdapter = createEntityAdapter<ProductVariantDetail>({
+    selectId : (productVariantDetail) => productVariantDetail.id,
 });
 
 
@@ -98,7 +104,7 @@ export const apiSlice = createApi({
     baseQuery : axiosBaseQuery({
         baseUrl: `${process.env.WEBSITE_URL ?? ''}/api`
     }),
-    tagTypes: ['Products', 'Orders', 'Users', 'Roles'],
+    tagTypes: ['Products', 'ProductVariants', 'Orders', 'Users', 'Roles'],
     endpoints : (builder) => ({
         getProductList        : builder.query<EntityState<ProductPreview>, void>({
             query : () => ({
@@ -170,6 +176,61 @@ export const apiSlice = createApi({
                 url    : `products/check-path?path=${encodeURIComponent(path)}`,
                 method : 'GET',
             }),
+        }),
+        
+        getProductVariantList : builder.query<EntityState<ProductVariantDetail>, void>({
+            query : () => ({
+                url    : 'product-variants',
+                method : 'GET',
+            }),
+            transformResponse(response: ProductVariantDetail[]) {
+                return productVariantAdapter.addMany(productVariantAdapter.getInitialState(), response);
+            },
+            providesTags: (result, error, page)  => {
+                return [
+                    ...(result?.ids ?? []).map((id): { type: 'ProductVariants', id: string } => ({
+                        type : 'ProductVariants',
+                        id   : `${id}`,
+                    })),
+                    
+                    {
+                        type : 'ProductVariants',
+                        id   : 'PRODUCT_VARIANT_LIST',
+                    },
+                ];
+            },
+        }),
+        updateProductVariant  : builder.mutation<ProductVariantDetail, MutationArgs<ProductVariantDetail>>({
+            query: (patch) => ({
+                url    : 'product-variants',
+                method : 'PATCH',
+                body   : patch
+            }),
+            invalidatesTags: (productVariant, error, arg) => [
+                ...(((!arg.id || !productVariant) ? [{
+                    type : 'ProductVariants',
+                    id   : 'PRODUCT_VARIANT_LIST', // create new      => invalidates the whole list
+                }] : [{
+                    type : 'ProductVariants',
+                    id   : productVariant.id,      // update existing => invalidates the modified
+                }]) as Array<{ type: 'ProductVariants', id: string }>),
+            ],
+        }),
+        deleteProductVariant  : builder.mutation<Pick<ProductVariantDetail, 'id'>, MutationArgs<Pick<ProductVariantDetail, 'id'>>>({
+            query: (params) => ({
+                url    : 'product-variants',
+                method : 'DELETE',
+                body   : params
+            }),
+            invalidatesTags: (productVariant, error, arg) => [
+                ...((!productVariant ? [{
+                    type : 'ProductVariants',
+                    id   : 'PRODUCT_VARIANT_LIST', // delete unspecified => invalidates the whole list
+                }] : [{
+                    type : 'ProductVariants',
+                    id   : productVariant.id,      // delete existing    => invalidates the modified
+                }]) as Array<{ type: 'ProductVariants', id: string }>),
+            ],
         }),
         
         getOrderPage          : builder.query<Pagination<OrderDetail>, PaginationArgs>({
