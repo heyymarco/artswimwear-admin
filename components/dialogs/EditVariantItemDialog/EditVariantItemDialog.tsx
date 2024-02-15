@@ -83,19 +83,19 @@ import {
 
 // models:
 import type {
-    ProductVisibility,
+    ProductVariantVisibility,
 }                           from '@prisma/client'
 
 // stores:
 import {
     // types:
-    ProductDetail,
+    ProductVariantDetail,
     
     
     
     // hooks:
-    useUpdateProduct,
-    useDeleteProduct,
+    useUpdateProductVariant,
+    useDeleteProductVariant,
     
     usePostImage,
     useDeleteImage,
@@ -128,8 +128,10 @@ import './EditVariantItemDialogStyles';
 export interface EditVariantItemDialogProps
     extends
         // bases:
-        ImplementedComplexEditModelDialogProps<ProductDetail>
+        ImplementedComplexEditModelDialogProps<ProductVariantDetail>
 {
+    // data:
+    groupId : string
 }
 const EditVariantItemDialog = (props: EditVariantItemDialogProps): JSX.Element|null => {
     // styles:
@@ -140,6 +142,7 @@ const EditVariantItemDialog = (props: EditVariantItemDialogProps): JSX.Element|n
     // rest props:
     const {
         // data:
+        groupId,
         model = null,
         
         
@@ -153,11 +156,11 @@ const EditVariantItemDialog = (props: EditVariantItemDialogProps): JSX.Element|n
     // states:
     const [isModified      , setIsModified      ] = useState<boolean>(false);
     
-    const [visibility      , setVisibility      ] = useState<ProductVisibility      >(model?.visibility     ?? 'DRAFT');
-    const [name            , setName            ] = useState<string                 >(model?.name           ?? ''     );
-    const [price           , setPrice           ] = useState<number            |null>(model?.price          || null   ); // converts 0 to null
-    const [shippingWeight  , setShippingWeight  ] = useState<number            |null>(model?.shippingWeight ?? null   ); // optional field
-    const [images          , setImages          ] = useState<string[]               >(model?.images         ?? []     );
+    const [visibility      , setVisibility      ] = useState<ProductVariantVisibility>(model?.visibility     ?? 'DRAFT');
+    const [name            , setName            ] = useState<string                  >(model?.name           ?? ''     );
+    const [price           , setPrice           ] = useState<number             |null>(model?.price          || null   ); // converts 0 to null
+    const [shippingWeight  , setShippingWeight  ] = useState<number             |null>(model?.shippingWeight ?? null   ); // optional field
+    const [images          , setImages          ] = useState<string[]                >(model?.images         ?? []     );
     
     const [draftDeletedImages                   ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
     
@@ -170,12 +173,12 @@ const EditVariantItemDialog = (props: EditVariantItemDialogProps): JSX.Element|n
     
     
     // stores:
-    const [updateProduct    , {isLoading : isLoadingUpdate           }] = useUpdateProduct();
-    const [deleteProduct    , {isLoading : isLoadingDelete           }] = useDeleteProduct();
-    const [postImage                                                  ] = usePostImage();
-    const [commitDeleteImage, {isLoading : isLoadingCommitDeleteImage}] = useDeleteImage();
-    const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
-    const [commitMoveImage  , {isLoading : isLoadingCommitMoveImage  }] = useMoveImage();
+    const [updateProductVariant, {isLoading : isLoadingUpdate           }] = useUpdateProductVariant();
+    const [deleteProductVariant, {isLoading : isLoadingDelete           }] = useDeleteProductVariant();
+    const [postImage                                                     ] = usePostImage();
+    const [commitDeleteImage   , {isLoading : isLoadingCommitDeleteImage}] = useDeleteImage();
+    const [revertDeleteImage   , {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
+    const [commitMoveImage     , {isLoading : isLoadingCommitMoveImage  }] = useMoveImage();
     
     
     
@@ -223,14 +226,15 @@ const EditVariantItemDialog = (props: EditVariantItemDialogProps): JSX.Element|n
         
         
         try {
-            return (await updateProduct({
+            return (await updateProductVariant({
                 id             : id ?? '',
+                groupId        : id ? undefined : groupId,
                 
-                visibility     : (privilegeUpdate.visibility  || privilegeAdd) ? visibility                                        : undefined,
-                name           : (privilegeUpdate.description || privilegeAdd) ? name                                              : undefined,
-                price          : (privilegeUpdate.price       || privilegeAdd) ? (price ?? 0)                                      : undefined,
-                shippingWeight : (privilegeUpdate.price       || privilegeAdd) ? shippingWeight                                    : undefined,
-                images         : (privilegeUpdate.images      || privilegeAdd) ? updatedImages                                     : undefined,
+                visibility     : (privilegeUpdate.visibility  || privilegeAdd) ? visibility     : undefined,
+                name           : (privilegeUpdate.description || privilegeAdd) ? name           : undefined,
+                price          : (privilegeUpdate.price       || privilegeAdd) ? (price ?? 0)   : undefined,
+                shippingWeight : (privilegeUpdate.price       || privilegeAdd) ? shippingWeight : undefined,
+                images         : (privilegeUpdate.images      || privilegeAdd) ? updatedImages  : undefined,
             }).unwrap()).id;
         }
         finally {
@@ -248,7 +252,7 @@ const EditVariantItemDialog = (props: EditVariantItemDialogProps): JSX.Element|n
     });
     
     const handleDelete               = useEvent<DeleteHandler>(async ({id}) => {
-        await deleteProduct({
+        await deleteProductVariant({
             id : id,
         }).unwrap();
     });
@@ -291,7 +295,7 @@ const EditVariantItemDialog = (props: EditVariantItemDialogProps): JSX.Element|n
         for (const unusedImageId of unusedImageIds) draftDeletedImages.delete(unusedImageId);
     });
     
-    const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<ProductDetail>>(({model}) => {
+    const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<ProductVariantDetail>>(({model}) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
@@ -304,7 +308,7 @@ const EditVariantItemDialog = (props: EditVariantItemDialogProps): JSX.Element|n
             </>,
         };
     });
-    const handleConfirmUnsaved       = useEvent<ConfirmUnsavedHandler<ProductDetail>>(() => {
+    const handleConfirmUnsaved       = useEvent<ConfirmUnsavedHandler<ProductVariantDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>
@@ -317,7 +321,7 @@ const EditVariantItemDialog = (props: EditVariantItemDialogProps): JSX.Element|n
     
     // jsx:
     return (
-        <ComplexEditModelDialog<ProductDetail>
+        <ComplexEditModelDialog<ProductVariantDetail>
             // other props:
             {...restComplexEditModelDialogProps}
             
