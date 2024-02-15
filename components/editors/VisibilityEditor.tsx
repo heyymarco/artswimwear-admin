@@ -39,7 +39,8 @@ import type {
 
 
 // types:
-const possibleValues : ProductVisibility[] = ['PUBLISHED', 'HIDDEN', 'DRAFT'];
+const possibleValues        : ProductVisibility[] = ['PUBLISHED', 'HIDDEN', 'DRAFT']; // with hidden
+const reducedPossibleValues : ProductVisibility[] = ['PUBLISHED',           'DRAFT']; // without hidden
 
 
 
@@ -63,11 +64,15 @@ interface VisibilityEditorProps<TElement extends Element = HTMLElement>
             |'children'                // already taken over
         >
 {
+    // values:
+    optionHidden ?: boolean
 }
 const VisibilityEditor = <TElement extends Element = HTMLElement>(props: VisibilityEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // values:
+        optionHidden = true,
+        
         defaultValue,
         value,
         onChange,
@@ -78,7 +83,9 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
     // handlers:
     const handleExpandedChange = useEvent<EventHandler<TabExpandedChangeEvent>>(({tabIndex}) => {
         onChange?.(
-            possibleValues[tabIndex]
+            optionHidden                      // if including hidden
+            ? possibleValues[tabIndex]        // with hidden
+            : reducedPossibleValues[tabIndex] // without hidden
         );
     });
     
@@ -98,7 +105,16 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
             
             
             // states:
-            defaultExpandedTabIndex={possibleValues.findIndex((possibleValue) => (possibleValue.toUpperCase() === (value ?? defaultValue)?.toUpperCase()))}
+            defaultExpandedTabIndex={
+                (
+                    optionHidden            // if including hidden
+                    ? possibleValues        // with hidden
+                    : reducedPossibleValues // without hidden
+                )
+                .findIndex((possibleValue) =>
+                    (possibleValue.toUpperCase() === (value ?? defaultValue)?.toUpperCase())
+                )
+            }
             onExpandedChange={handleExpandedChange}
         >
             <TabPanel label={PAGE_PRODUCT_VISIBILITY_PUBLISHED}>
@@ -106,11 +122,11 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
                     The product is <em>shown</em> on the webiste.
                 </p>
             </TabPanel>
-            <TabPanel label={PAGE_PRODUCT_VISIBILITY_HIDDEN}>
+            {optionHidden && <TabPanel label={PAGE_PRODUCT_VISIBILITY_HIDDEN}>
                 <p>
                     The product can only be viewed via <em>a (bookmarked) link</em>.
                 </p>
-            </TabPanel>
+            </TabPanel>}
             <TabPanel label={PAGE_PRODUCT_VISIBILITY_DRAFT}>
                 <p>
                     The product <em>cannot be viewed</em> on the entire website.
