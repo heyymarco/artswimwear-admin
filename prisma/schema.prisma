@@ -43,6 +43,36 @@ model Product {
     orders                  OrdersOnProducts[]      // some Product(s) may have some related Order(s)       // many to many
     draftOrders             DraftOrdersOnProducts[] // some Product(s) may have some related DraftOrder(s)  // many to many
 }
+model ProductVariantGroup {
+    // records:
+    id                      String                  @id @default(cuid()) @map("_id")
+    createdAt               DateTime                @default(now())
+    updatedAt               DateTime                @updatedAt
+    
+    // data:
+    name                    String
+    
+    // relations:
+    productVariants         ProductVariant[]        // a ProductVariantGroup may have some related ProductVariant(s) // one  to many
+}
+model ProductVariant {
+    // records:
+    id                      String                  @id @default(cuid()) @map("_id")
+    createdAt               DateTime                @default(now())
+    updatedAt               DateTime                @updatedAt
+    
+    // data:
+    name                    String
+    
+    price                   Float?                  // min: 0
+    shippingWeight          Float?                  // min: 0
+    
+    images                  String[]
+    
+    // relations:
+    productVariantGroupId   String
+    productVariantGroup     ProductVariantGroup     @relation(fields: [productVariantGroupId], references: [id], onDelete: Cascade) // delete the related ProductVariant(s) if the ProductVariantGroup deleted
+}
 
 
 
