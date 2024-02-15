@@ -32,28 +32,23 @@ import {
 }                           from '@/website.config'
 
 // models:
-import type {
+import {
     ProductVisibility,
+    ProductVariantVisibility,
 }                           from '@prisma/client'
 
 
 
 // types:
-const possibleValues        : ProductVisibility[] = ['PUBLISHED', 'HIDDEN', 'DRAFT']; // with hidden
-const reducedPossibleValues : ProductVisibility[] = ['PUBLISHED',           'DRAFT']; // without hidden
+const possibleValues        : ProductVisibility[]        = ['PUBLISHED', 'HIDDEN', 'DRAFT']; // with hidden
+const reducedPossibleValues : ProductVariantVisibility[] = ['PUBLISHED',           'DRAFT']; // without hidden
 
 
 
 // react components:
-interface VisibilityEditorProps<TElement extends Element = HTMLElement>
+interface BaseVisibilityEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Pick<EditorProps<TElement, ProductVisibility>,
-            // values:
-            |'defaultValue'
-            |'value'
-            |'onChange'
-        >,
         Omit<TabProps<TElement>,
             // states:
             |'defaultExpandedTabIndex' // already taken over
@@ -66,12 +61,38 @@ interface VisibilityEditorProps<TElement extends Element = HTMLElement>
 {
     // data:
     modelName    ?: string
-    
-    
-    
-    // values:
-    optionHidden ?: boolean
 }
+interface CompletedVisibilityEditorProps<TElement extends Element = HTMLElement>
+    extends
+        // bases:
+        BaseVisibilityEditorProps<TElement>,
+        Pick<EditorProps<TElement, ProductVisibility>,
+            // values:
+            |'defaultValue'
+            |'value'
+            |'onChange'
+        >
+{
+    // values:
+    optionHidden ?: undefined|true
+}
+interface ReducedVisibilityEditorProps<TElement extends Element = HTMLElement>
+    extends
+        // bases:
+        BaseVisibilityEditorProps<TElement>,
+        Pick<EditorProps<TElement, ProductVariantVisibility>,
+            // values:
+            |'defaultValue'
+            |'value'
+            |'onChange'
+        >
+{
+    // values:
+    optionHidden  : false
+}
+type VisibilityEditorProps<TElement extends Element = HTMLElement> =
+    |CompletedVisibilityEditorProps<TElement>
+    |ReducedVisibilityEditorProps<TElement>
 const VisibilityEditor = <TElement extends Element = HTMLElement>(props: VisibilityEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
@@ -93,9 +114,11 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
     // handlers:
     const handleExpandedChange = useEvent<EventHandler<TabExpandedChangeEvent>>(({tabIndex}) => {
         onChange?.(
-            optionHidden                      // if including hidden
-            ? possibleValues[tabIndex]        // with hidden
-            : reducedPossibleValues[tabIndex] // without hidden
+            (
+                optionHidden                      // if including hidden
+                ? possibleValues[tabIndex]        // with hidden
+                : reducedPossibleValues[tabIndex] // without hidden
+            ) as (ProductVisibility & ProductVariantVisibility)
         );
     });
     
