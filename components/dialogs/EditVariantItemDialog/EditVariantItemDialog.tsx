@@ -37,18 +37,8 @@ import {
     
     
     
-    // simple-components:
-    Button,
-    
-    
-    
     // composite-components:
     TabPanel,
-    
-    
-    
-    // utility-components:
-    useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // heymarco components:
@@ -69,9 +59,6 @@ import {
 import {
     ShippingWeightEditor,
 }                           from '@/components/editors/ShippingWeightEditor'
-import {
-    StockEditor,
-}                           from '@/components/editors/StockEditor'
 import {
     VisibilityEditor,
 }                           from '@/components/editors/VisibilityEditor'
@@ -102,10 +89,6 @@ import {
     ImplementedComplexEditModelDialogProps,
     ComplexEditModelDialog,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
-import {
-    // react components:
-    EditVariantItemDialog,
-}                           from '@/components/dialogs/EditVariantItemDialog'
 
 // models:
 import type {
@@ -135,33 +118,31 @@ import {
 
 // configs:
 import {
-    PAGE_PRODUCT_TAB_INFORMATIONS,
-    PAGE_PRODUCT_TAB_VARIANTS,
-    PAGE_PRODUCT_TAB_IMAGES,
-    PAGE_PRODUCT_TAB_DESCRIPTION,
-    PAGE_PRODUCT_TAB_DELETE,
+    PAGE_VARIANT_ITEM_TAB_INFORMATIONS,
+    PAGE_VARIANT_ITEM_TAB_IMAGES,
+    PAGE_VARIANT_ITEM_TAB_DELETE,
 }                           from '@/website.config'
 
 
 
 // styles:
-const useEditProductDialogStyleSheet = dynamicStyleSheets(
-    () => import(/* webpackPrefetch: true */'./EditProductDialogStyles')
-, { id: 'pkeb1tledn' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
-import './EditProductDialogStyles';
+const useEditVariantItemDialogStyleSheet = dynamicStyleSheets(
+    () => import(/* webpackPrefetch: true */'./EditVariantItemDialogStyles')
+, { id: 'w9r17m435e' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
+import './EditVariantItemDialogStyles';
 
 
 
 // react components:
-export interface EditProductDialogProps
+export interface EditVariantItemDialogProps
     extends
         // bases:
         ImplementedComplexEditModelDialogProps<ProductDetail>
 {
 }
-const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
+const EditVariantItemDialog = (props: EditVariantItemDialogProps): JSX.Element|null => {
     // styles:
-    const styleSheet = useEditProductDialogStyleSheet();
+    const styleSheet = useEditVariantItemDialogStyleSheet();
     
     
     
@@ -180,26 +161,12 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     
     // states:
     const [isModified      , setIsModified      ] = useState<boolean>(false);
-    const [isPathModified  , setIsPathModified  ] = useState<boolean>(false);
     
     const [visibility      , setVisibility      ] = useState<ProductVisibility      >(model?.visibility     ?? 'DRAFT');
     const [name            , setName            ] = useState<string                 >(model?.name           ?? ''     );
-    const [path            , setPath            ] = useState<string                 >(model?.path           ?? ''     );
     const [price           , setPrice           ] = useState<number                 >(model?.price          ?? 0      );
     const [shippingWeight  , setShippingWeight  ] = useState<number            |null>(model?.shippingWeight ?? null   ); // optional field
-    const [stock           , setStock           ] = useState<number            |null>(model?.stock          ?? null   ); // optional field
     const [images          , setImages          ] = useState<string[]               >(model?.images         ?? []     );
-    const [description     , setDescription     ] = useState<WysiwygEditorState|null>(() => {                            // optional field
-        const description = model?.description;
-        if (!description) return null;
-        if (typeof(description) === 'object') return description as any;
-        try {
-            return JSON.parse(description.toString());
-        }
-        catch {
-            return null;
-        } // try
-    });
     
     const [draftDeletedImages                   ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
     
@@ -226,13 +193,6 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     
     
     
-    // dialogs:
-    const {
-        showDialog,
-    } = useDialogMessage();
-    
-    
-    
     // handlers:
     const handleUpdate               = useEvent<UpdateHandler>(async ({id, privilegeAdd, privilegeUpdate}) => {
         const deletedImages : string[] = [];
@@ -242,7 +202,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                 const movedResponse = await commitMoveImage({
                     imageId : updatedImages,
                     // folder  : 'testing/helloh',
-                    folder  : `products/${name || '__unnamed__'}`,
+                    folder  : `products/${name || '__unnamed__'}/variants`,
                 }).unwrap();
                 const movedMap = new Map<string, string>(
                     movedResponse.map(({from, to}) => [from, to])
@@ -277,12 +237,9 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                 
                 visibility     : (privilegeUpdate.visibility  || privilegeAdd) ? visibility                                        : undefined,
                 name           : (privilegeUpdate.description || privilegeAdd) ? name                                              : undefined,
-                path           : (privilegeUpdate.description || privilegeAdd) ? path                                              : undefined,
                 price          : (privilegeUpdate.price       || privilegeAdd) ? price                                             : undefined,
                 shippingWeight : (privilegeUpdate.price       || privilegeAdd) ? shippingWeight                                    : undefined,
-                stock          : (privilegeUpdate.stock       || privilegeAdd) ? stock                                             : undefined,
                 images         : (privilegeUpdate.images      || privilegeAdd) ? updatedImages                                     : undefined,
-                description    : (privilegeUpdate.description || privilegeAdd) ? ((description?.toJSON?.() ?? description) as any) : undefined,
             }).unwrap()).id;
         }
         finally {
@@ -348,10 +305,10 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
                 <p>
-                    Are you sure to delete product <strong>{model.name}</strong>?
+                    Are you sure to delete variant <strong>{model.name}</strong>?
                 </p>
                 <p>
-                    The associated product in existing orders will be marked as <strong>DELETED PRODUCT</strong>.
+                    The associated product variant in existing orders will be marked as <strong>DELETED VARIANT</strong>.
                 </p>
             </>,
         };
@@ -365,18 +322,6 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         };
     });
     
-    const handleNameChange = useEvent((name: string) => {
-        // conditions:
-        if (isPathModified) return; // path is already modified by user, do not perform *auto* modify
-        
-        
-        
-        // sync path:
-        setPath(
-            name.trim().toLowerCase().replace(/(\s|_|-)+/ig, '-')
-        );
-    });
-    
     
     
     // jsx:
@@ -388,7 +333,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             
             
             // data:
-            modelName='Product'
+            modelName='Variant'
             modelEntryName={model?.name}
             model={model}
             
@@ -400,7 +345,6 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                 description : !!role?.product_ud,
                 images      : !!role?.product_ui,
                 price       : !!role?.product_up,
-                stock       : !!role?.product_us,
                 visibility  : !!role?.product_uv,
             }), [role])}
             privilegeDelete = {!!role?.product_d}
@@ -417,7 +361,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             
             
             // tabs:
-            tabDelete={PAGE_PRODUCT_TAB_DELETE}
+            tabDelete={PAGE_VARIANT_ITEM_TAB_DELETE}
             
             
             
@@ -444,7 +388,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             onConfirmDelete={handleConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}
         >{({privilegeAdd, privilegeUpdate}) => <>
-            <TabPanel label={PAGE_PRODUCT_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
+            <TabPanel label={PAGE_VARIANT_ITEM_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>
                     <span className='name label'>Name:</span>
                     <NameEditor
@@ -468,32 +412,10 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         onChange={(value) => {
                             setName(value);
                             setIsModified(true);
-                            handleNameChange(value);
                         }}
                     />
                     
-                    <span className='path label'>Path:</span>
-                    <UniquePathEditor
-                        // classes:
-                        className='path editor'
-                        
-                        
-                        
-                        // accessibilities:
-                        enabled={privilegeUpdate.description || privilegeAdd}
-                        
-                        
-                        
-                        // values:
-                        currentValue={model?.path ?? ''}
-                        value={path}
-                        onChange={(value) => {
-                            setPath(value);
-                            setIsPathModified(true);
-                        }}
-                    />
-                    
-                    <span className='price label'>Price:</span>
+                    <span className='price label'>Additional Price <span className='txt-sec'>(optional)</span>:</span>
                     <PriceEditor
                         // classes:
                         className='price editor'
@@ -505,6 +427,11 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         
                         
                         
+                        // validations:
+                        required={false}
+                        
+                        
+                        
                         // values:
                         value={price}
                         onChange={(value) => {
@@ -513,7 +440,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         }}
                     />
                     
-                    <span className='sWeight label'>Shipping Weight:</span>
+                    <span className='sWeight label'>Additional Shipping Weight <span className='txt-sec'>(optional)</span>:</span>
                     <ShippingWeightEditor
                         // classes:
                         className='sWeight editor'
@@ -533,33 +460,13 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         }}
                     />
                     
-                    <span className='stock label'>Stock:</span>
-                    <StockEditor
-                        // variants:
-                        theme='primaryAlt'
-                        
-                        
-                        
-                        // classes:
-                        className='stock editor'
-                        
-                        
-                        
-                        // accessibilities:
-                        enabled={privilegeUpdate.stock || privilegeAdd}
-                        
-                        
-                        
-                        // values:
-                        value={stock}
-                        onChange={(value) => {
-                            setStock(value);
-                            setIsModified(true);
-                        }}
-                    />
-                    
                     <span className='visibility label'>Visibility:</span>
                     <VisibilityEditor
+                        // data:
+                        modelName='variant'
+                        
+                        
+                        
                         // variants:
                         theme='primaryAlt'
                         
@@ -576,6 +483,8 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         
                         
                         // values:
+                        optionHidden={false}
+                        
                         value={visibility}
                         onChange={(value) => {
                             setVisibility(value);
@@ -584,20 +493,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                     />
                 </form>
             </TabPanel>
-            <TabPanel label={PAGE_PRODUCT_TAB_VARIANTS}     panelComponent={<Generic className={styleSheet.variantsTab} />}>
-                <p>TODO: variants here</p>
-                <Button onClick={() => {
-                    showDialog(
-                        <EditVariantItemDialog
-                            // data:
-                            model={undefined as any}
-                        />
-                    );
-                }}>
-                    Test Variant Dialog
-                </Button>
-            </TabPanel>
-            <TabPanel label={PAGE_PRODUCT_TAB_IMAGES}       panelComponent={<Generic className={styleSheet.imagesTab} />}>
+            <TabPanel label={PAGE_VARIANT_ITEM_TAB_IMAGES}       panelComponent={<Generic className={styleSheet.imagesTab} />}>
                 <GalleryEditor<HTMLElement, string>
                     // variants:
                     nude={true}
@@ -633,7 +529,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         try {
                             const imageId = await postImage({
                                 image            : imageFile,
-                                folder           : `products/${name || '__unnamed__'}`,
+                                folder           : `products/${name || '__unnamed__'}/variants`,
                                 onUploadProgress : reportProgress,
                                 abortSignal      : abortSignal,
                             }).unwrap();
@@ -666,41 +562,10 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                     onResolveImageUrl={resolveMediaUrl<never>}
                 />
             </TabPanel>
-            <TabPanel label={PAGE_PRODUCT_TAB_DESCRIPTION}  panelComponent={<Generic className={styleSheet.descriptionTab} />}>
-                <WysiwygEditor
-                    // refs:
-                    elmRef={(defaultExpandedTabIndex === 2) ? firstEditorRef : undefined}
-                    
-                    
-                    
-                    // classes:
-                    className={styleSheet.editDescription}
-                    
-                    
-                    
-                    // accessibilities:
-                    enabled={privilegeUpdate.description || privilegeAdd}
-                    
-                    
-                    
-                    // values:
-                    value={description}
-                    onChange={(value) => {
-                        setDescription(value);
-                        setIsModified(true);
-                    }}
-                >
-                    <ToolbarPlugin className='solid' theme='primary' />
-                    <EditorPlugin
-                        // accessibilities:
-                        placeholder='Type product description here...'
-                    />
-                </WysiwygEditor>
-            </TabPanel>
         </>}</ComplexEditModelDialog>
     );
 };
 export {
-    EditProductDialog,
-    EditProductDialog as default,
+    EditVariantItemDialog,
+    EditVariantItemDialog as default,
 }
