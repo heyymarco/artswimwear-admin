@@ -583,6 +583,10 @@ export const {
     useDeleteProductMutation         : useDeleteProduct,
     useAvailablePathMutation         : useAvailablePath,
     
+    useGetProductVariantListQuery    : useGetProductVariantList,
+    useUpdateProductVariantMutation  : useUpdateProductVariant,
+    useDeleteProductVariantMutation  : useDeleteProductVariant,
+    
     useGetOrderPageQuery             : useGetOrderPage,
     useUpdateOrderMutation           : useUpdateOrder,
     
