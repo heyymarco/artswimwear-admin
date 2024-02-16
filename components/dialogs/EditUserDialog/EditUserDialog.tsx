@@ -541,7 +541,6 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                             ({id}) => <RolePreview
                                 // data:
                                 model={undefined as any}
-                                selectedRoleId={roleId}
                                 
                                 
                                 

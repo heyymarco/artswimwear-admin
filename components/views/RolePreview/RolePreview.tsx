@@ -81,19 +81,14 @@ import './RolePreviewStyles';
 
 // react components:
 export interface RolePreviewProps extends Omit<ModelPreviewProps<RoleDetail>, 'onChange'> {
-    // data:
-    selectedRoleId  : string|null
-    
-    
-    
     // appearances:
-    isShown         : boolean
+    isShown   : boolean
     
     
     
     // handlers:
-    onChange       ?: EditorChangeEventHandler<string|null>
-    onDelete       ?: DeleteHandler
+    onChange ?: EditorChangeEventHandler<string|null>
+    onDelete ?: DeleteHandler
 }
 const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     // styles:
@@ -105,7 +100,6 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     const {
         // data:
         model,
-        selectedRoleId,
         
         
         
