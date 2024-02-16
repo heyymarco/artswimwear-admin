@@ -23,9 +23,12 @@ export const PAGE_PRODUCT_TAB_IMAGES                 = 'Images'
 export const PAGE_PRODUCT_TAB_DESCRIPTION            = 'Description'
 export const PAGE_PRODUCT_TAB_DELETE                 = 'Delete'
 
-export const PAGE_VARIANT_ITEM_TAB_INFORMATIONS      = 'Informations'
-export const PAGE_VARIANT_ITEM_TAB_IMAGES            = 'Images'
-export const PAGE_VARIANT_ITEM_TAB_DELETE            = 'Delete'
+export const PAGE_VARIANT_GROUP_TAB_INFORMATIONS     = 'Informations'
+export const PAGE_VARIANT_GROUP_TAB_DELETE           = 'Delete'
+
+export const PAGE_VARIANT_TAB_INFORMATIONS           = 'Informations'
+export const PAGE_VARIANT_TAB_IMAGES                 = 'Images'
+export const PAGE_VARIANT_TAB_DELETE                 = 'Delete'
 
 export const PAGE_ORDER_TITLE                        = `Orders - ${WEBSITE_TITLE}`
 export const PAGE_ORDER_DESCRIPTION                  = 'Order management.'

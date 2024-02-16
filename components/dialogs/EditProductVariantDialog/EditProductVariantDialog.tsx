@@ -109,9 +109,9 @@ import {
 
 // configs:
 import {
-    PAGE_VARIANT_ITEM_TAB_INFORMATIONS,
-    PAGE_VARIANT_ITEM_TAB_IMAGES,
-    PAGE_VARIANT_ITEM_TAB_DELETE,
+    PAGE_VARIANT_TAB_INFORMATIONS,
+    PAGE_VARIANT_TAB_IMAGES,
+    PAGE_VARIANT_TAB_DELETE,
 }                           from '@/website.config'
 
 
@@ -229,7 +229,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
             return (await updateProductVariant({
                 id             : id ?? '',
                 groupId        : id ? undefined : groupId,
-                sort           : id ? undefined : 999,
+                sort           : id ? undefined : -999, // default order to top_most
                 
                 visibility     : (privilegeUpdate.visibility  || privilegeAdd) ? visibility     : undefined,
                 name           : (privilegeUpdate.description || privilegeAdd) ? name           : undefined,
@@ -357,7 +357,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
             
             
             // tabs:
-            tabDelete={PAGE_VARIANT_ITEM_TAB_DELETE}
+            tabDelete={PAGE_VARIANT_TAB_DELETE}
             
             
             
@@ -384,7 +384,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
             onConfirmDelete={handleConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}
         >{({privilegeAdd, privilegeUpdate}) => <>
-            <TabPanel label={PAGE_VARIANT_ITEM_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
+            <TabPanel label={PAGE_VARIANT_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>
                     <span className='name label'>Name:</span>
                     <NameEditor
@@ -489,7 +489,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                     />
                 </form>
             </TabPanel>
-            <TabPanel label={PAGE_VARIANT_ITEM_TAB_IMAGES}       panelComponent={<Generic className={styleSheet.imagesTab} />}>
+            <TabPanel label={PAGE_VARIANT_TAB_IMAGES}       panelComponent={<Generic className={styleSheet.imagesTab} />}>
                 <GalleryEditor<HTMLElement, string>
                     // variants:
                     nude={true}

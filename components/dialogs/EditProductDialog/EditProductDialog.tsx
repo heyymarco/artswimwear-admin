@@ -104,6 +104,10 @@ import {
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
     // react components:
+    EditProductVariantGroupDialog,
+}                           from '@/components/dialogs/EditProductVariantGroupDialog'
+import {
+    // react components:
     EditProductVariantDialog,
 }                           from '@/components/dialogs/EditProductVariantDialog'
 
@@ -586,6 +590,17 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             </TabPanel>
             <TabPanel label={PAGE_PRODUCT_TAB_VARIANTS}     panelComponent={<Generic className={styleSheet.variantsTab} />}>
                 <p>TODO: variants here</p>
+                <Button onClick={() => {
+                    showDialog(
+                        <EditProductVariantGroupDialog
+                            // data:
+                            productId='blah'
+                            model={undefined as any}
+                        />
+                    );
+                }}>
+                    Test Variant Group Dialog
+                </Button>
                 <Button onClick={() => {
                     showDialog(
                         <EditProductVariantDialog
