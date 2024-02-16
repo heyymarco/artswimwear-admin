@@ -411,7 +411,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                         }}
                     />
                     
-                    <span className='price label'>Additional Price <span className='txt-sec'>(optional)</span>:</span>
+                    <span className='price label'>Additional Price: <span className='optional'>(optional)</span></span>
                     <PriceEditor
                         // classes:
                         className='price editor'
@@ -436,7 +436,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                         }}
                     />
                     
-                    <span className='sWeight label'>Additional Shipping Weight <span className='txt-sec'>(optional)</span>:</span>
+                    <span className='sWeight label'>Additional Shipping Weight: <span className='optional'>(optional)</span></span>
                     <ShippingWeightEditor
                         // classes:
                         className='sWeight editor'

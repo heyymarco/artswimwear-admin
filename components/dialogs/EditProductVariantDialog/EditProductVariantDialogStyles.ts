@@ -1,29 +1,23 @@
 // cssfn:
 import {
     // writes css in javascript:
-    fallback,
     children,
     style,
     scope,
 }                           from '@cssfn/core'          // writes css in javascript
 import {
-    // border (stroke) stuff of UI:
-    usesBorder,
-    
-    
-    
     // a spacer (gap) management system:
     spacers,
     
     
     
+    // a typography management system:
+    typos,
+    
+    
+    
     // a responsive management system:
     ifScreenWidthAtLeast,
-    
-    
-    
-    // groups a list of UIs into a single UI:
-    usesGroupable,
 }                           from '@reusable-ui/core'    // a set of reusable-ui packages which are responsible for building any component
 
 
@@ -97,6 +91,21 @@ export const usesInfoTabLayout = () => {
             
             ...children('.visibility.label' , { gridArea: 'visibility-label'  }),
             ...children('.visibility.editor', { gridArea: 'visibility-editor' }),
+            
+            ...children('.label', {
+                // layouts:
+                display        : 'flex',
+                justifyContent : 'space-between',
+                alignItems     : 'center',
+                
+                
+                
+                // children:
+                ...children('.optional', {
+                    fontSize: typos.fontSizeSm,
+                    opacity: 0.5,
+                }),
+            }),
         }),
     });
 };
