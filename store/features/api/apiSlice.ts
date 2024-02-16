@@ -643,7 +643,7 @@ export const {
     useDeleteProductMutation             : useDeleteProduct,
     useAvailablePathMutation             : useAvailablePath,
     
-    useGetProductVariantGroupListQuery   : useGetProductVariantGroupList,
+    useGetProductVariantGroupListQuery   : useGetProductVariantGroupListRaw,
     useUpdateProductVariantGroupMutation : useUpdateProductVariantGroup,
     useDeleteProductVariantGroupMutation : useDeleteProductVariantGroup,
     
@@ -672,3 +672,17 @@ export const {
     useDeleteImageMutation               : useDeleteImage,
     useMoveImageMutation                 : useMoveImage,
 } = apiSlice;
+
+export const useGetProductVariantGroupList = (arg: { productId : string }): ReturnType<typeof useGetProductVariantGroupListRaw> => {
+    if (!arg.productId) return {
+        data : undefined,
+        
+        isLoading  : false,
+        isError    : false,
+        isFetching : false,
+        
+        refetch    : (() => {}) as any,
+    };
+    
+    return useGetProductVariantGroupListRaw(arg);
+}

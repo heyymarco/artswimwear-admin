@@ -86,11 +86,6 @@ export interface VariantGroupPreviewProps extends Omit<ModelPreviewProps<Product
     
     
     
-    // appearances:
-    isShown   : boolean
-    
-    
-    
     // handlers:
     onChange ?: EditorChangeEventHandler<string|null>
     onDelete ?: DeleteHandler
@@ -106,11 +101,6 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
         // data:
         model,
         productId,
-        
-        
-        
-        // appearances:
-        isShown,
         
         
         
@@ -172,52 +162,6 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
             setEditMode(null);
         } // if
     });
-    
-    
-    
-    // dom effects:
-    
-    // initial-focus on initial-tab-is-variant-group:
-    useEffect(() => {
-        // conditions:
-        if (!isShown)     return;
-        if (!active)      return;
-        const listItemElm = listItemRef.current;
-        if (!listItemElm) return;
-        
-        
-        
-        // actions:
-        setTimeout(() => {
-            listItemElm.scrollIntoView({
-                behavior : 'smooth',
-                
-                inline   : 'nearest',
-                block    : 'nearest',
-            });
-        }, 500); // a delay to compensate <Modal> showing => <Modal> shown
-        // @ts-ignore
-    }, []);
-    
-    // re-focus on selected tab changed:
-    useEffect(() => {
-        // conditions:
-        if (!isShown)     return;
-        if (!active)      return;
-        const listItemElm = listItemRef.current;
-        if (!listItemElm) return;
-        
-        
-        
-        // actions:
-        listItemElm.scrollIntoView({
-            behavior : 'smooth',
-            
-            inline   : 'nearest',
-            block    : 'nearest',
-        });
-        // @ts-ignore
-    }, [isShown, /* active // do not re-focus on re-selected */]);
     
     
     

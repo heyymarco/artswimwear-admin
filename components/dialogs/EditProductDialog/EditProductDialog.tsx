@@ -55,6 +55,9 @@ import {
 import {
     Image,
 }                           from '@heymarco/image'
+import {
+    LoadingBar,
+}                           from '@heymarco/loading-bar'
 
 // internal components:
 import {
@@ -110,6 +113,12 @@ import {
     // react components:
     EditProductVariantDialog,
 }                           from '@/components/dialogs/EditProductVariantDialog'
+import {
+    VariantGroupsEditor,
+}                           from '@/components/editors/VariantGroupsEditor'
+import {
+    VariantGroupPreview,
+}                           from '@/components/views//VariantGroupPreview'
 
 // models:
 import type {
@@ -126,6 +135,8 @@ import {
     // hooks:
     useUpdateProduct,
     useDeleteProduct,
+    
+    useGetProductVariantGroupList,
     
     usePostImage,
     useDeleteImage,
@@ -222,6 +233,10 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     const [commitDeleteImage, {isLoading : isLoadingCommitDeleteImage}] = useDeleteImage();
     const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
     const [commitMoveImage  , {isLoading : isLoadingCommitMoveImage  }] = useMoveImage();
+    
+    const {data: variantGroupList, isLoading: isLoadingVariantGroup, isError: isErrorVariantGroup} = useGetProductVariantGroupList({
+        productId : model?.id ?? '',
+    });
     
     
     
@@ -588,31 +603,56 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                     />
                 </form>
             </TabPanel>
-            <TabPanel label={PAGE_PRODUCT_TAB_VARIANTS}     panelComponent={<Generic className={styleSheet.variantsTab} />}>
-                <p>TODO: variants here</p>
-                <Button onClick={() => {
-                    showDialog(
-                        <EditProductVariantGroupDialog
-                            // data:
-                            productId='blah'
-                            model={undefined as any}
-                        />
-                    );
-                }}>
-                    Test Variant Group Dialog
-                </Button>
-                <Button onClick={() => {
-                    showDialog(
-                        <EditProductVariantDialog
-                            // data:
-                            groupId='blah'
-                            model={undefined as any}
-                        />
-                    );
-                }}>
-                    Test Variant Dialog
-                </Button>
-            </TabPanel>
+            <TabPanel label={PAGE_PRODUCT_TAB_VARIANTS}     panelComponent={<Generic className={styleSheet.variantsTab} />}>{
+                isLoadingVariantGroup
+                ? <LoadingBar />
+                : isErrorVariantGroup
+                    ? 'Error getting variant data'
+                    : <VariantGroupsEditor
+                        // values:
+                        modelList={variantGroupList}
+                        // value={roleId}
+                        onChange={(value) => {
+                            // setRoleId(value);
+                            setIsModified(true);
+                        }}
+                        
+                        
+                        
+                        // components:
+                        modelPreviewComponent={
+                            ({id}) => <VariantGroupPreview
+                                // data:
+                                model={undefined as any}
+                                productId={model?.id ?? ''}
+                                
+                                
+                                
+                                // accessibilities:
+                                readOnly={!(privilegeUpdate.role /* || privilegeAdd */) && !(!id && privilegeAdd)}
+                                
+                                
+                                
+                                // handlers:
+                                // onDelete={handleRoleDelete}
+                            />
+                        }
+                        modelCreateComponent={
+                            !!role?.role_c
+                            ? <EditProductVariantGroupDialog
+                                // data:
+                                model={null} // create a new model
+                                productId={model?.id ?? ''}
+                            />
+                            : undefined
+                        }
+                        
+                        
+                        
+                        // handlers:
+                        // onCreate={handleRoleCreate}
+                    />
+            }</TabPanel>
             <TabPanel label={PAGE_PRODUCT_TAB_IMAGES}       panelComponent={<Generic className={styleSheet.imagesTab} />}>
                 <GalleryEditor<HTMLElement, string>
                     // variants:

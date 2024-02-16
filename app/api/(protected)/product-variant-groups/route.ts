@@ -87,7 +87,7 @@ router
     //#region parsing request
     const {
         productId,
-    } = await req.json();
+    } = Object.fromEntries(new URL(req.url, 'https://localhost/').searchParams.entries());
     //#endregion parsing request
     
     
