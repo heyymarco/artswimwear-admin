@@ -527,7 +527,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                     ? 'Error getting role data'
                     : <RoleEditor
                         // values:
-                        roleList={roleList}
+                        modelList={roleList}
                         value={roleId}
                         onChange={(value) => {
                             setRoleId(value);

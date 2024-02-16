@@ -63,7 +63,7 @@ interface RoleEditorProps<TElement extends Element = HTMLElement>
         Partial<Omit<ModelCreateOuterProps, keyof ListItemProps>>
 {
     // values:
-    roleList              ?: EntityState<RoleDetail>
+    modelList             ?: EntityState<RoleDetail>
     
     
     
@@ -74,7 +74,7 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
     // rest props:
     const {
         // values:
-        roleList,
+        modelList,
         
         defaultValue,
         value,
@@ -92,13 +92,13 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
         onCreate,
     ...restListProps} = props;
     
-    const filteredRoleList = !roleList ? undefined : Object.values(roleList.entities).filter((roleEntry): roleEntry is Exclude<typeof roleEntry, undefined> => !!roleEntry);
-    const roleListWithNone : RoleDetail[] = [
+    const filteredModelList = !modelList ? undefined : Object.values(modelList.entities).filter((roleEntry): roleEntry is Exclude<typeof roleEntry, undefined> => !!roleEntry);
+    const modelListWithNone : RoleDetail[] = [
         {
             id   : '',
             name : 'No Access',
         } as RoleDetail, // mock of 'No Access'
-        ...(filteredRoleList ?? []),
+        ...(filteredModelList ?? []),
     ];
     
     
@@ -112,7 +112,7 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
             {/* <ModelCreate> */}
             {!!modelCreateComponent  && <ModelCreateOuter className='solid' createItemText='Add New Role' modelCreateComponent={modelCreateComponent} onCreate={onCreate} />}
             
-            {roleListWithNone.map((model) => {
+            {modelListWithNone.map((model) => {
                 const modelPreviewComponent = modelPreviewComponentFn(model);
                 // jsx:
                 return (
