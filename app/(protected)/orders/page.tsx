@@ -35,8 +35,8 @@ import {
     PageError,
 }                           from '@/components/PageError'
 import {
-    SectionModelEditor,
-}                           from '@/components/SectionModelEditor'
+    PagedModelExplorer,
+}                           from '@/components/explorers/PagedModelExplorer'
 import {
     OrderPreview,
 }                           from '@/components/views//OrderPreview'
@@ -97,7 +97,7 @@ export default function OrderPage(): JSX.Element|null {
     if (isErrorAndNoData  ) return <PageError onRetry={refetch} />;
     return (
         <Main className={styleSheet.main}>
-            <SectionModelEditor<OrderDetail>
+            <PagedModelExplorer<OrderDetail>
                 // data:
                 page={page}
                 perPage={perPage}

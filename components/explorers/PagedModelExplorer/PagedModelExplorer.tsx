@@ -94,7 +94,7 @@ import type {
 
 
 // styles:
-export const useSectionModelEditorStyleSheet = dynamicStyleSheets(
+export const usePagedModelExplorerStyleSheet = dynamicStyleSheets(
     () => import(/* webpackPrefetch: true */ './styles/styles')
 , { id: 'lm1zazz2r7' });
 import './styles/styles';
@@ -136,7 +136,7 @@ export interface ModelCreateOuterProps
 }
 export const ModelCreateOuter = (props: ModelCreateOuterProps) => {
     // styles:
-    const styleSheet = useSectionModelEditorStyleSheet();
+    const styleSheet = usePagedModelExplorerStyleSheet();
     
     
     
@@ -232,11 +232,11 @@ const ModelEmpty = () => {
     );
 };
 
-/* <SectionModelEditor> */
-export interface SectionModelEditorProps<TModel extends Model>
+/* <PagedModelExplorer> */
+export interface PagedModelExplorerProps<TModel extends Model>
     extends
         // bases:
-        SectionModelEditorInternalProps<TModel>
+        PagedModelExplorerInternalProps<TModel>
 {
     // data:
     page                  : number
@@ -245,9 +245,9 @@ export interface SectionModelEditorProps<TModel extends Model>
     setPerPage            : (perPage: number) => void
     getModelPaginationApi : ModelPaginationStateProps<TModel>['getModelPaginationApi']
 }
-const SectionModelEditor         = <TModel extends Model>(props: SectionModelEditorProps<TModel>): JSX.Element|null => {
+const PagedModelExplorer         = <TModel extends Model>(props: PagedModelExplorerProps<TModel>): JSX.Element|null => {
     // styles:
-    const styleSheet = useSectionModelEditorStyleSheet();
+    const styleSheet = usePagedModelExplorerStyleSheet();
     
     
     
@@ -259,7 +259,7 @@ const SectionModelEditor         = <TModel extends Model>(props: SectionModelEdi
         setPage,
         setPerPage,
         getModelPaginationApi,
-    ...restSectionModelEditorProps} = props;
+    ...restPagedModelExplorerProps} = props;
     
     
     
@@ -292,7 +292,7 @@ const SectionModelEditor         = <TModel extends Model>(props: SectionModelEdi
                     // handlers:
                     onNavigateTo={handleNavigateTo}
                 />
-                <SectionModelEditorInternal<TModel> {...restSectionModelEditorProps} />
+                <PagedModelExplorerInternal<TModel> {...restPagedModelExplorerProps} />
                 <ModelPagination<TModel>
                     // paginations:
                     page={page}
@@ -313,12 +313,12 @@ const SectionModelEditor         = <TModel extends Model>(props: SectionModelEdi
     );
 };
 export {
-    SectionModelEditor,
-    SectionModelEditor as default,
+    PagedModelExplorer,
+    PagedModelExplorer as default,
 }
 
-/* <SectionModelEditorInternal> */
-interface SectionModelEditorInternalProps<TModel extends Model>
+/* <PagedModelExplorerInternal> */
+interface PagedModelExplorerInternalProps<TModel extends Model>
     extends
         // data:
         Partial<Omit<ModelCreateOuterProps, keyof ListItemProps>>
@@ -326,9 +326,9 @@ interface SectionModelEditorInternalProps<TModel extends Model>
     // components:
     modelPreviewComponent : React.ReactComponentElement<any, ModelPreviewProps<TModel, Element>>
 }
-const SectionModelEditorInternal = <TModel extends Model>(props: SectionModelEditorInternalProps<TModel>): JSX.Element|null => {
+const PagedModelExplorerInternal = <TModel extends Model>(props: PagedModelExplorerInternalProps<TModel>): JSX.Element|null => {
     // styles:
-    const styleSheet = useSectionModelEditorStyleSheet();
+    const styleSheet = usePagedModelExplorerStyleSheet();
     
     
     

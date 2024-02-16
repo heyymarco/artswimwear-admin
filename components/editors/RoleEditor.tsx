@@ -25,7 +25,7 @@ import type {
 import {
     ModelCreateOuterProps,
     ModelCreateOuter,
-}                           from '@/components/SectionModelEditor'
+}                           from '@/components/explorers/PagedModelExplorer'
 import type {
     RolePreviewProps,
 }                           from '@/components/views/RolePreview'

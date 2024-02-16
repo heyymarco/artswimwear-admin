@@ -64,7 +64,7 @@ import {
 // internal components:
 import {
     ModelPreviewProps,
-}                           from '@/components/SectionModelEditor'
+}                           from '@/components/explorers/PagedModelExplorer'
 import {
     EditButton,
 }                           from '@/components/EditButton'

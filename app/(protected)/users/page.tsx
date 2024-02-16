@@ -40,8 +40,8 @@ import {
     PageError,
 }                           from '@/components/PageError'
 import {
-    SectionModelEditor,
-}                           from '@/components/SectionModelEditor'
+    PagedModelExplorer,
+}                           from '@/components/explorers/PagedModelExplorer'
 import {
     EditUserDialog,
 }                           from '@/components/dialogs/EditUserDialog'
@@ -112,7 +112,7 @@ export default function UserPage(): JSX.Element|null {
     if (isErrorAndNoData   || (sessionStatus === 'unauthenticated')) return <PageError onRetry={refetch} />;
     return (
         <Main className={styleSheet.main}>
-            <SectionModelEditor<UserDetail>
+            <PagedModelExplorer<UserDetail>
                 // accessibilities:
                 createItemText='Add New User'
                 

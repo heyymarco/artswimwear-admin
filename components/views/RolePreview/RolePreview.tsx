@@ -47,7 +47,7 @@ import type {
 import type {
     // react components:
     ModelPreviewProps,
-}                           from '@/components/SectionModelEditor'
+}                           from '@/components/explorers/PagedModelExplorer'
 import {
     RadioDecorator,
 }                           from '@/components/RadioDecorator'
