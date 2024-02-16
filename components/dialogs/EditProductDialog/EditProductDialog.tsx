@@ -235,7 +235,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     const [commitMoveImage  , {isLoading : isLoadingCommitMoveImage  }] = useMoveImage();
     
     const {data: variantGroupList, isLoading: isLoadingVariantGroup, isError: isErrorVariantGroup} = useGetProductVariantGroupList({
-        productId : model?.id ?? '',
+        productId : model?.id ?? '', // the related product of the productVariantGroup
     });
     
     
@@ -624,7 +624,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                             ({id}) => <VariantGroupPreview
                                 // data:
                                 model={undefined as any}
-                                productId={model?.id ?? ''}
+                                productId={model?.id ?? ''} // the related product of the productVariantGroup
                                 
                                 
                                 
@@ -642,7 +642,8 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                             ? <EditProductVariantGroupDialog
                                 // data:
                                 model={null} // create a new model
-                                productId={model?.id ?? ''}
+                                // TODO: if product is create_new, the productId will be empty, thus creating productVariantGroup will be fail
+                                productId={model?.id ?? ''} // the related product of the productVariantGroup
                             />
                             : undefined
                         }
