@@ -92,7 +92,7 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
         onCreate,
     ...restListProps} = props;
     
-    const filteredModelList = !modelList ? undefined : Object.values(modelList.entities).filter((roleEntry): roleEntry is Exclude<typeof roleEntry, undefined> => !!roleEntry);
+    const filteredModelList = !modelList ? undefined : Object.values(modelList.entities).filter((model): model is Exclude<typeof model, undefined> => !!model);
     const modelListWithNone : RoleDetail[] = [
         {
             id   : '',
