@@ -30,13 +30,11 @@ import type {
     RolePreviewProps,
 }                           from '@/components/views/RolePreview'
 
-
-
-// types:
-export interface RoleEntry {
-    id   : string
-    name : string
-}
+// stores:
+import type {
+    // types:
+    RoleDetail,
+}                           from '@/store/features/api/apiSlice'
 
 
 
@@ -65,12 +63,12 @@ interface RoleEditorProps<TElement extends Element = HTMLElement>
         Partial<Omit<ModelCreateOuterProps, keyof ListItemProps>>
 {
     // values:
-    roleList              ?: EntityState<RoleEntry>
+    roleList              ?: EntityState<RoleDetail>
     
     
     
     // components:
-    modelPreviewComponent  : (model: RoleEntry) => React.ReactComponentElement<any, RolePreviewProps>
+    modelPreviewComponent  : (model: RoleDetail) => React.ReactComponentElement<any, RolePreviewProps>
 }
 const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorProps<TElement>): JSX.Element|null => {
     // rest props:
@@ -95,11 +93,11 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
     ...restListProps} = props;
     
     const filteredRoleList = !roleList ? undefined : Object.values(roleList.entities).filter((roleEntry): roleEntry is Exclude<typeof roleEntry, undefined> => !!roleEntry);
-    const roleListWithNone = [
+    const roleListWithNone : RoleDetail[] = [
         {
             id   : '',
             name : 'No Access',
-        },
+        } as RoleDetail, // mock of 'No Access'
         ...(filteredRoleList ?? []),
     ];
     
