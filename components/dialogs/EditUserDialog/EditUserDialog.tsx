@@ -549,7 +549,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                                     edit mode   (having id) : readOnly when no privilege update_user_role
                                     create mode     (no id) : readOnly when no privilege create_user
                                 */
-                                readOnly={!privilegeUpdate.role && !(!id && privilegeAdd)}
+                                readOnly={!(!!id && privilegeUpdate.role) && !(!id && privilegeAdd)}
                                 
                                 
                                 
