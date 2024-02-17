@@ -609,6 +609,15 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                 : isErrorVariantGroup
                     ? 'Error getting variant data'
                     : <VariantGroupsEditor
+                        // accessibilities:
+                        /*
+                            edit mode   (having model) : readOnly when no privilege update_product_description
+                            create mode     (no model) : readOnly when no privilege create_product
+                        */
+                        readOnly={!(!!model && privilegeUpdate.description) && !(!model && privilegeAdd)}
+                        
+                        
+                        
                         // values:
                         modelList={variantGroupList}
                         // value={roleId}
@@ -628,17 +637,12 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                                 
                                 
                                 
-                                // accessibilities:
-                                readOnly={!(privilegeUpdate.role /* || privilegeAdd */) && !(!id && privilegeAdd)}
-                                
-                                
-                                
                                 // handlers:
                                 // onDelete={handleRoleDelete}
                             />
                         }
                         modelCreateComponent={
-                            !!role?.role_c
+                            !!role?.product_c
                             ? <EditProductVariantGroupDialog
                                 // data:
                                 model={null} // create a new model

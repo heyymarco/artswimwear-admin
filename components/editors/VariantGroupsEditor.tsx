@@ -17,6 +17,14 @@ import {
     List,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
+// heymarco components:
+import {
+    OrderableListItemDragStartEvent,
+    OrderableListItemDropHandshakeEvent,
+    OrderableListItem,
+    OrderableList,
+}                           from '@heymarco/orderable-list'
+
 // internal components:
 import type {
     // react components:
@@ -73,6 +81,11 @@ interface VariantGroupsEditorProps<TElement extends Element = HTMLElement>
 const VariantGroupsEditor = <TElement extends Element = HTMLElement>(props: VariantGroupsEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
+        // accessibilities:
+        readOnly = false,
+        
+        
+        
         // values:
         modelList,
         
@@ -97,13 +110,37 @@ const VariantGroupsEditor = <TElement extends Element = HTMLElement>(props: Vari
     
     
     // jsx:
+    const ConditionalList = readOnly ? List<TElement> : OrderableList<TElement, unknown>;
     return (
-        <List<TElement>
+        <ConditionalList
             // other props:
             {...restListProps}
         >
             {/* <ModelCreate> */}
-            {!!modelCreateComponent  && <ModelCreateOuter className='solid' createItemText='Add New Variant Group' modelCreateComponent={modelCreateComponent} onCreate={onCreate} />}
+            {!!modelCreateComponent  && <ModelCreateOuter
+                // classes:
+                className='solid'
+                
+                
+                
+                // accessibilities:
+                createItemText='Add New Variant Group'
+                
+                
+                
+                // components:
+                modelCreateComponent={modelCreateComponent}
+                listItemComponent={
+                    <OrderableListItem
+                        orderable={false}
+                    />
+                }
+                
+                
+                
+                // handlers:
+                onCreate={onCreate}
+            />}
             
             {filteredModelList.map((model) => {
                 const modelPreviewComponent = modelPreviewComponentFn(model);
@@ -134,7 +171,7 @@ const VariantGroupsEditor = <TElement extends Element = HTMLElement>(props: Vari
                     )
                 );
             })}
-        </List>
+        </ConditionalList>
     );
 };
 export {

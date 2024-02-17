@@ -30,12 +30,12 @@ import {
 import {
     // simple-components:
     Icon,
-    
-    
-    
-    // layout-components:
-    ListItem,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
+
+// heymarco components:
+import {
+    OrderableListItem,
+}                           from '@heymarco/orderable-list'
 
 // internal components:
 import {
@@ -105,7 +105,7 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
         
         
         // accessibilities:
-        readOnly = false,
+        readOnly = false, // TODO: unordrable if readonly
         
         
         
@@ -167,7 +167,7 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
     
     // jsx:
     return (
-        <ListItem
+        <OrderableListItem
             // other props:
             {...restListItemProps}
             
@@ -183,28 +183,10 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
             
             
             
-            // behaviors:
-            actionCtrl={!readOnly}
-            
-            
-            
             // states:
             active={active}
-            
-            
-            
-            // handlers:
-            onClick={!readOnly ? handleClick : undefined}
         >
-            <RadioDecorator
-                // classes:
-                className='decorator'
-                
-                
-                
-                // accessibilities:
-                enabled={!readOnly}
-            />
+            // TODO: {'<Grip>'}
             <p className='name'>{!!id ? name : <span className='noValue'>No Access</span>}</p>
             {!!id && <EditButton
                 iconComponent={<Icon icon='edit' mild={active} />}
@@ -228,7 +210,7 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
                     onExpandedChange={handleExpandedChange}
                 />
             </CollapsibleSuspense>
-        </ListItem>
+        </OrderableListItem>
     );
 };
 export {

@@ -47,6 +47,8 @@ import {
     // layout-components:
     ListItemProps,
     ListItem,
+    ListItemComponentProps,
+    
     List,
     
     
@@ -119,7 +121,10 @@ export type CreateHandler = (args: { id: string }) => void|Promise<void>
 export interface ModelCreateOuterProps
     extends
         // bases:
-        ListItemProps
+        ListItemProps,
+        
+        // components:
+        ListItemComponentProps<Element>
 {
     // accessibilities:
     createItemText       ?: React.ReactNode
@@ -149,6 +154,7 @@ export const ModelCreateOuter = (props: ModelCreateOuterProps) => {
         
         // components:
         modelCreateComponent,
+        listItemComponent = (<ListItem<Element> /> as React.ReactComponentElement<any, ListItemProps<Element>>),
         
         
         
@@ -187,20 +193,24 @@ export const ModelCreateOuter = (props: ModelCreateOuterProps) => {
     
     
     // jsx:
-    return (
-        <ListItem
+    return React.cloneElement<ListItemProps<Element>>(listItemComponent,
+        // props:
+        {
             // other props:
-            {...restListItemProps}
+            ...restListItemProps,
             
             
             
             // classes:
-            className={`${styleSheet.createData} ${props.className}`}
-        >
-            <ButtonIcon icon='create' onClick={handleShowDialog}>
-                {createItemText ?? 'Add New Item'}
-            </ButtonIcon>
-        </ListItem>
+            className : `${styleSheet.createData} ${props.className}`,
+        },
+        
+        
+        
+        // children:
+        <ButtonIcon icon='create' onClick={handleShowDialog}>
+            {createItemText ?? 'Add New Item'}
+        </ButtonIcon>,
     );
 };
 
