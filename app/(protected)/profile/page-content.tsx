@@ -130,7 +130,7 @@ export function ProfilePageContent() {
     
     // handlers:
     const handleEdit = useEvent(async (edit: 'image'|'name'|'username') => {
-        const result = await showDialog<SimpleEditModelDialogResult<Omit<UserDetail, 'roleId'>>>(
+        const updatedUserModel = await showDialog<SimpleEditModelDialogResult<Omit<UserDetail, 'roleId'>>>(
             (edit === 'image')
             ? <SimpleEditUserImageDialog
                 // data:
@@ -164,7 +164,7 @@ export function ProfilePageContent() {
                 })()}
             />
         );
-        if (result === undefined) return;
+        if (updatedUserModel === undefined) return;
         updateSession();
     });
     
