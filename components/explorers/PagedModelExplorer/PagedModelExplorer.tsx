@@ -402,7 +402,7 @@ const PagedModelExplorerInternal = <TModel extends Model>(props: PagedModelExplo
                 
                 {!!data && !data.total && <ModelEmpty />}
                 
-                {!!data?.total && Object.values(data?.entities).filter((model): model is Exclude<typeof model, undefined> => !!model).map((model, index) =>
+                {!!data?.total && Object.values(data?.entities).filter((model): model is Exclude<typeof model, undefined> => !!model).map((model) =>
                     /* <ModelPreview> */
                     React.cloneElement<ModelPreviewProps<TModel, Element>>(modelPreviewComponent,
                         // props:
