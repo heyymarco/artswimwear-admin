@@ -79,7 +79,7 @@ interface VariantGroupsEditorProps<TElement extends Element = HTMLElement>
     
     
     // components:
-    modelPreviewComponent  : (model: ProductVariantGroupDetail) => React.ReactComponentElement<any, VariantGroupPreviewProps>
+    modelPreviewComponent  : React.ReactComponentElement<any, VariantGroupPreviewProps>
 }
 const VariantGroupsEditor = <TElement extends Element = HTMLElement>(props: VariantGroupsEditorProps<TElement>): JSX.Element|null => {
     // rest props:
@@ -100,7 +100,7 @@ const VariantGroupsEditor = <TElement extends Element = HTMLElement>(props: Vari
         
         // components:
         modelCreateComponent,
-        modelPreviewComponent : modelPreviewComponentFn,
+        modelPreviewComponent,
     ...restListProps} = props;
     
     const filteredModelList = !modelList ? [] : Object.values(modelList.entities).filter((model): model is Exclude<typeof model, undefined> => !!model);
@@ -135,35 +135,26 @@ const VariantGroupsEditor = <TElement extends Element = HTMLElement>(props: Vari
                 }
             />}
             
-            {filteredModelList.map((model) => {
-                const modelPreviewComponent = modelPreviewComponentFn(model);
-                // jsx:
-                return (
-                    /* <ModelPreview> */
-                    React.cloneElement<VariantGroupPreviewProps>(modelPreviewComponent,
-                        // props:
-                        {
-                            // identifiers:
-                            key      : modelPreviewComponent.key          ?? model.id,
-                            
-                            
-                            
-                            // data:
-                            model    : modelPreviewComponent.props.model  ?? model,
-                            
-                            
-                            
-                            // states:
-                            active   : modelPreviewComponent.props.active ?? ((value ?? '') === model.id),
-                            
-                            
-                            
-                            // handlers:
-                            onChange : onChange,
-                        },
-                    )
-                );
-            })}
+            {filteredModelList.map((model) =>
+                /* <ModelPreview> */
+                React.cloneElement<VariantGroupPreviewProps>(modelPreviewComponent,
+                    // props:
+                    {
+                        // identifiers:
+                        key      : modelPreviewComponent.key          ?? model.id,
+                        
+                        
+                        
+                        // data:
+                        model    : modelPreviewComponent.props.model  ?? model,
+                        
+                        
+                        
+                        // handlers:
+                        onChange : onChange,
+                    },
+                )
+            )}
         </ConditionalList>
     );
 };

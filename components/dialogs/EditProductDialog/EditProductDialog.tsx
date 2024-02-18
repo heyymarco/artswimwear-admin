@@ -630,7 +630,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         
                         // components:
                         modelPreviewComponent={
-                            ({id}) => <VariantGroupPreview
+                            <VariantGroupPreview
                                 // data:
                                 model={undefined as any}
                                 productId={model?.id ?? ''} // the related product of the productVariantGroup
