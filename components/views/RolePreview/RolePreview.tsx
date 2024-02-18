@@ -142,7 +142,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleClick          = useEvent<React.MouseEventHandler<HTMLElement>>((event) => {
+    const handleClick           = useEvent<React.MouseEventHandler<HTMLElement>>((event) => {
         // conditions:
         if (!event.currentTarget.contains(event.target as Node)) return; // ignore bubbling from <portal> of <EditRoleDialog>
         
