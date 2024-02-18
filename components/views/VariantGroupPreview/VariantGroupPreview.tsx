@@ -78,12 +78,12 @@ import './VariantGroupPreviewStyles';
 // react components:
 export interface VariantGroupPreviewProps extends Omit<ModelPreviewProps<ProductVariantGroupDetail>, 'onChange'> {
     // data:
-    productId : string
+    productId  : string
     
     
     
     // handlers:
-    onDelete ?: DeleteHandler<ProductVariantGroupDetail>
+    onDeleted ?: DeleteHandler<ProductVariantGroupDetail>
 }
 const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null => {
     // styles:
@@ -105,7 +105,7 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
         
         
         // handlers:
-        onDelete,
+        onDeleted,
     ...restListItemProps} = props;
     const {
         id,
@@ -136,7 +136,7 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
             />
         );
         if (updatedVariantGroupModel === false) {
-            await onDelete?.(model);
+            await onDeleted?.(model);
         } // if
     });
     
