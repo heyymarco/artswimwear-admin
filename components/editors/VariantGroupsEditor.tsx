@@ -74,7 +74,7 @@ interface VariantGroupsEditorProps<TElement extends Element = HTMLElement>
         >>
 {
     // values:
-    modelList             ?: EntityState<ProductVariantGroupDetail>
+    valueOptions          ?: EntityState<ProductVariantGroupDetail>
     
     
     
@@ -90,7 +90,7 @@ const VariantGroupsEditor = <TElement extends Element = HTMLElement>(props: Vari
         
         
         // values:
-        modelList,
+        valueOptions,
         
         defaultValue,
         value,
@@ -103,7 +103,7 @@ const VariantGroupsEditor = <TElement extends Element = HTMLElement>(props: Vari
         modelPreviewComponent,
     ...restListProps} = props;
     
-    const filteredModelList = !modelList ? [] : Object.values(modelList.entities).filter((model): model is Exclude<typeof model, undefined> => !!model);
+    const filteredValueOptions = !valueOptions ? [] : Object.values(valueOptions.entities).filter((model): model is Exclude<typeof model, undefined> => !!model);
     
     
     
@@ -135,18 +135,18 @@ const VariantGroupsEditor = <TElement extends Element = HTMLElement>(props: Vari
                 }
             />}
             
-            {filteredModelList.map((model) =>
+            {filteredValueOptions.map((modelOption) =>
                 /* <ModelPreview> */
                 React.cloneElement<VariantGroupPreviewProps>(modelPreviewComponent,
                     // props:
                     {
                         // identifiers:
-                        key      : modelPreviewComponent.key          ?? model.id,
+                        key      : modelPreviewComponent.key          ?? modelOption.id,
                         
                         
                         
                         // data:
-                        model    : modelPreviewComponent.props.model  ?? model,
+                        model    : modelPreviewComponent.props.model  ?? modelOption,
                         
                         
                         

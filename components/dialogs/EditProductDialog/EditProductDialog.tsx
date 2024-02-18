@@ -234,7 +234,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
     const [commitMoveImage  , {isLoading : isLoadingCommitMoveImage  }] = useMoveImage();
     
-    const {data: variantGroupList, isLoading: isLoadingVariantGroup, isError: isErrorVariantGroup} = useGetProductVariantGroupList({
+    const {data: variantGroupOptions, isLoading: isLoadingVariantGroup, isError: isErrorVariantGroup} = useGetProductVariantGroupList({
         productId : model?.id ?? '', // the related product of the productVariantGroup
     });
     
@@ -619,7 +619,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         
                         
                         // values:
-                        modelList={variantGroupList}
+                        valueOptions={variantGroupOptions}
                         // value={roleId}
                         onChange={(value) => {
                             // setRoleId(value);
