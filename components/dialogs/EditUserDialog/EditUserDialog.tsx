@@ -225,7 +225,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
         }).unwrap();
     });
     
-    const handleRoleCreate           = useEvent<CreateHandler<RoleDetail>>(async ({id}) => {
+    const handleRoleCreated          = useEvent<CreateHandler<RoleDetail>>(async ({id}) => {
         setRoleId(id); // select the last created role
         setIsModified(true);
     });
@@ -575,7 +575,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                         
                         
                         // handlers:
-                        onCreate={handleRoleCreate}
+                        onCreated={handleRoleCreated}
                     />
             }</TabPanel>
         </>}</ComplexEditModelDialog>

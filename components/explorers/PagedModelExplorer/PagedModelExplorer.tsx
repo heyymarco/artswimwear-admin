@@ -137,7 +137,7 @@ export interface ModelCreateOuterProps<TModel extends Model>
     
     
     // handlers:
-    onCreate             ?: CreateHandler<TModel>
+    onCreated            ?: CreateHandler<TModel>
 }
 export const ModelCreateOuter = <TModel extends Model>(props: ModelCreateOuterProps<TModel>) => {
     // styles:
@@ -159,7 +159,7 @@ export const ModelCreateOuter = <TModel extends Model>(props: ModelCreateOuterPr
         
         
         // handlers:
-        onCreate,
+        onCreated,
     ...restListItemProps} = props;
     
     
@@ -186,7 +186,7 @@ export const ModelCreateOuter = <TModel extends Model>(props: ModelCreateOuterPr
         
         
         if (createdModel) { // if closed of created Model (ignores of canceled or deleted Model)
-            onCreate?.(createdModel);
+            onCreated?.(createdModel);
         } // if
     });
     
