@@ -68,7 +68,10 @@ interface VariantGroupsEditorProps<TElement extends Element = HTMLElement>
             |'children'     // already taken over
         >,
         // data:
-        Partial<Omit<ModelCreateOuterProps, keyof ListItemProps>>
+        Partial<Pick<ModelCreateOuterProps,
+            // components:
+            |'modelCreateComponent'
+        >>
 {
     // values:
     modelList             ?: EntityState<ProductVariantGroupDetail>
@@ -98,11 +101,6 @@ const VariantGroupsEditor = <TElement extends Element = HTMLElement>(props: Vari
         // components:
         modelCreateComponent,
         modelPreviewComponent : modelPreviewComponentFn,
-        
-        
-        
-        // handlers:
-        onCreate,
     ...restListProps} = props;
     
     const filteredModelList = !modelList ? [] : Object.values(modelList.entities).filter((model): model is Exclude<typeof model, undefined> => !!model);
@@ -135,11 +133,6 @@ const VariantGroupsEditor = <TElement extends Element = HTMLElement>(props: Vari
                         orderable={false}
                     />
                 }
-                
-                
-                
-                // handlers:
-                onCreate={onCreate}
             />}
             
             {filteredModelList.map((model) => {
