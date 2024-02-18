@@ -156,13 +156,13 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         
         
         
-        const data = await showDialog<ComplexEditModelDialogResult>(
+        const updatedRoleModel = await showDialog<ComplexEditModelDialogResult>(
             <EditRoleDialog
                 // data:
                 model={model} // modify current model
             />
         );
-        if (data === false) {
+        if (updatedRoleModel === false) {
             await onDelete?.({
                 id : id,
             });
