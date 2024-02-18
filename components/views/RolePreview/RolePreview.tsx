@@ -88,7 +88,7 @@ export interface RolePreviewProps extends Omit<ModelPreviewProps<RoleDetail>, 'o
     
     // handlers:
     onChange ?: EditorChangeEventHandler<string|null>
-    onDelete ?: DeleteHandler
+    onDelete ?: DeleteHandler<RoleDetail>
 }
 const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     // styles:
@@ -156,16 +156,14 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         
         
         
-        const updatedRoleModel = await showDialog<ComplexEditModelDialogResult>(
+        const updatedRoleModel = await showDialog<ComplexEditModelDialogResult<RoleDetail>>(
             <EditRoleDialog
                 // data:
                 model={model} // modify current model
             />
         );
         if (updatedRoleModel === false) {
-            await onDelete?.({
-                id : id,
-            });
+            await onDelete?.(model);
         } // if
     });
     

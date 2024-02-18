@@ -253,7 +253,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleUpdate               = useEvent<UpdateHandler>(async ({id, privilegeAdd, privilegeUpdate}) => {
+    const handleUpdate               = useEvent<UpdateHandler<ProductDetail>>(async ({id, privilegeAdd, privilegeUpdate}) => {
         const deletedImages : string[] = [];
         let updatedImages = images;
         if (updatedImages.length) {
@@ -291,7 +291,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         
         
         try {
-            return (await updateProduct({
+            return await updateProduct({
                 id             : id ?? '',
                 
                 visibility     : (privilegeUpdate.visibility  || privilegeAdd) ? visibility                                        : undefined,
@@ -302,7 +302,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                 stock          : (privilegeUpdate.stock       || privilegeAdd) ? stock                                             : undefined,
                 images         : (privilegeUpdate.images      || privilegeAdd) ? updatedImages                                     : undefined,
                 description    : (privilegeUpdate.description || privilegeAdd) ? ((description?.toJSON?.() ?? description) as any) : undefined,
-            }).unwrap()).id;
+            }).unwrap();
         }
         finally {
             if (deletedImages.length) {
@@ -318,7 +318,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         } // try
     });
     
-    const handleDelete               = useEvent<DeleteHandler>(async ({id}) => {
+    const handleDelete               = useEvent<DeleteHandler<ProductDetail>>(async ({id}) => {
         await deleteProduct({
             id : id,
         }).unwrap();

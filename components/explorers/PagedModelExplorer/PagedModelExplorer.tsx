@@ -115,10 +115,10 @@ export interface ModelCreateProps
 {
 }
 
-export type CreateHandler = (args: { id: string }) => void|Promise<void>
+export type CreateHandler<TModel extends Model> = (createdModel: TModel) => void|Promise<void>
 
 /* <ModelCreateOuter> */
-export interface ModelCreateOuterProps
+export interface ModelCreateOuterProps<TModel extends Model>
     extends
         // bases:
         ListItemProps,
@@ -137,9 +137,9 @@ export interface ModelCreateOuterProps
     
     
     // handlers:
-    onCreate             ?: CreateHandler
+    onCreate             ?: CreateHandler<TModel>
 }
-export const ModelCreateOuter = (props: ModelCreateOuterProps) => {
+export const ModelCreateOuter = <TModel extends Model>(props: ModelCreateOuterProps<TModel>) => {
     // styles:
     const styleSheet = usePagedModelExplorerStyleSheet();
     
@@ -178,15 +178,15 @@ export const ModelCreateOuter = (props: ModelCreateOuterProps) => {
     
     // handlers:
     const handleShowDialog = useEvent(async (): Promise<void> => {
-        const result = await showDialog<ComplexEditModelDialogResult>(
+        const createdModel = await showDialog<ComplexEditModelDialogResult<TModel>>(
             modelCreateComponent
         );
         if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
         
         
         
-        if (result) { // if closed of created Model (ignores of canceled or deleted Model)
-            onCreate?.({ id: result });
+        if (createdModel) { // if closed of created Model (ignores of canceled or deleted Model)
+            onCreate?.(createdModel);
         } // if
     });
     
@@ -331,7 +331,7 @@ export {
 interface PagedModelExplorerInternalProps<TModel extends Model>
     extends
         // data:
-        Partial<Pick<ModelCreateOuterProps,
+        Partial<Pick<ModelCreateOuterProps<TModel>,
             // accessibilities:
             |'createItemText'
             
@@ -398,7 +398,7 @@ const PagedModelExplorerInternal = <TModel extends Model>(props: PagedModelExplo
             
             <List listStyle='flush' className={styleSheet.listDataInner}>
                 {/* <ModelCreate> */}
-                {!!modelCreateComponent  && <ModelCreateOuter className='solid' createItemText={createItemText} modelCreateComponent={modelCreateComponent} />}
+                {!!modelCreateComponent  && <ModelCreateOuter<TModel> className='solid' createItemText={createItemText} modelCreateComponent={modelCreateComponent} />}
                 
                 {!!data && !data.total && <ModelEmpty />}
                 

@@ -99,6 +99,7 @@ import {
 import {
     // types:
     UserDetail,
+    RoleDetail,
     
     
     
@@ -202,8 +203,8 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleUpdate               = useEvent<UpdateHandler>(async ({id, privilegeAdd, privilegeUpdate}) => {
-        return (await updateUser({
+    const handleUpdate               = useEvent<UpdateHandler<UserDetail>>(async ({id, privilegeAdd, privilegeUpdate}) => {
+        return await updateUser({
             id       : id ?? '',
             
             name     : (privilegeUpdate.name     || privilegeAdd) ? name               : undefined,
@@ -211,24 +212,24 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
             image    : (privilegeUpdate.image    || privilegeAdd) ? image              : undefined,
             roleId   : (privilegeUpdate.role                    ) ? roleId             : ((!id && privilegeAdd) ? null : undefined),
             username : (privilegeUpdate.username || privilegeAdd) ? (username || null) : undefined, // convert empty string to null
-        }).unwrap()).id;
+        }).unwrap();
     });
     const handleAfterUpdate          = useEvent<AfterUpdateHandler>(async () => {
         const sessionEmail = session?.user?.email;
         if (!!sessionEmail && (sessionEmail.toLowerCase() === initialEmailRef.current.toLowerCase())) await updateSession(); // update the session if updated current user
     });
     
-    const handleDelete               = useEvent<DeleteHandler>(async ({id}) => {
+    const handleDelete               = useEvent<DeleteHandler<UserDetail>>(async ({id}) => {
         await deleteUser({
             id : id,
         }).unwrap();
     });
     
-    const handleRoleCreate           = useEvent<CreateHandler>(async ({id}) => {
+    const handleRoleCreate           = useEvent<CreateHandler<RoleDetail>>(async ({id}) => {
         setRoleId(id); // select the last created role
         setIsModified(true);
     });
-    const handleRoleDelete           = useEvent<DeleteHandler>(async ({id}) => {
+    const handleRoleDelete           = useEvent<DeleteHandler<RoleDetail>>(async ({id}) => {
         if (id && (id === roleId)) { // if currently selected
             // the related role was deleted => set to null (no selection):
             setRoleId(null);

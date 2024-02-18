@@ -60,7 +60,7 @@ interface RoleEditorProps<TElement extends Element = HTMLElement>
             |'children'     // already taken over
         >,
         // data:
-        Partial<Pick<ModelCreateOuterProps,
+        Partial<Pick<ModelCreateOuterProps<RoleDetail>,
             // components:
             |'modelCreateComponent'
             
@@ -118,7 +118,7 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
             {...restListProps}
         >
             {/* <ModelCreate> */}
-            {!!modelCreateComponent  && <ModelCreateOuter
+            {!!modelCreateComponent  && <ModelCreateOuter<RoleDetail>
                 // classes:
                 className='solid'
                 

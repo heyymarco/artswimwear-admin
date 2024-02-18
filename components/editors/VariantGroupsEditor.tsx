@@ -68,7 +68,7 @@ interface VariantGroupsEditorProps<TElement extends Element = HTMLElement>
             |'children'     // already taken over
         >,
         // data:
-        Partial<Pick<ModelCreateOuterProps,
+        Partial<Pick<ModelCreateOuterProps<ProductVariantGroupDetail>,
             // components:
             |'modelCreateComponent'
         >>
@@ -115,7 +115,7 @@ const VariantGroupsEditor = <TElement extends Element = HTMLElement>(props: Vari
             {...restListProps}
         >
             {/* <ModelCreate> */}
-            {!!modelCreateComponent  && <ModelCreateOuter
+            {!!modelCreateComponent  && <ModelCreateOuter<ProductVariantGroupDetail>
                 // classes:
                 className='solid'
                 

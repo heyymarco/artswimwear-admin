@@ -83,7 +83,7 @@ export interface VariantGroupPreviewProps extends Omit<ModelPreviewProps<Product
     
     
     // handlers:
-    onDelete ?: DeleteHandler
+    onDelete ?: DeleteHandler<ProductVariantGroupDetail>
 }
 const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null => {
     // styles:
@@ -128,7 +128,7 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
     
     // handlers:
     const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLElement>>(async () => {
-        const updatedVariantGroupModel = await showDialog<ComplexEditModelDialogResult>(
+        const updatedVariantGroupModel = await showDialog<ComplexEditModelDialogResult<ProductVariantGroupDetail>>(
             <EditProductVariantGroupDialog
                 // data:
                 model={model} // modify current model
@@ -136,9 +136,7 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
             />
         );
         if (updatedVariantGroupModel === false) {
-            await onDelete?.({
-                id : id,
-            });
+            await onDelete?.(model);
         } // if
     });
     
@@ -160,7 +158,7 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
             // classes:
             className={styleSheet.main}
         >
-            // TODO: {'<Grip>'}
+            TODO: {'<Grip>'}
             <p className='name'>{!!id ? name : <span className='noValue'>No Access</span>}</p>
             {!!id && <EditButton
                 iconComponent={<Icon icon='edit' />}

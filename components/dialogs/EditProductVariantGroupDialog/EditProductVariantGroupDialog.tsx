@@ -143,17 +143,17 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
     
     
     // handlers:
-    const handleUpdate               = useEvent<UpdateHandler>(async ({id, privilegeAdd, privilegeUpdate}) => {
-        return (await updateProductVariantGroup({
+    const handleUpdate               = useEvent<UpdateHandler<ProductVariantGroupDetail>>(async ({id, privilegeAdd, privilegeUpdate}) => {
+        return await updateProductVariantGroup({
             id             : id ?? '',
             productId      : id ? undefined : productId,
             sort           : id ? undefined : -999, // default order to top_most
             
             name           : (privilegeUpdate.description || privilegeAdd) ? name : undefined,
-        }).unwrap()).id;
+        }).unwrap();
     });
     
-    const handleDelete               = useEvent<DeleteHandler>(async ({id}) => {
+    const handleDelete               = useEvent<DeleteHandler<ProductVariantGroupDetail>>(async ({id}) => {
         await deleteProductVariantGroup({
             id : id,
         }).unwrap();

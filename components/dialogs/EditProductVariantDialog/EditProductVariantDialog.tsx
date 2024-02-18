@@ -188,7 +188,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
     
     
     // handlers:
-    const handleUpdate               = useEvent<UpdateHandler>(async ({id, privilegeAdd, privilegeUpdate}) => {
+    const handleUpdate               = useEvent<UpdateHandler<ProductVariantDetail>>(async ({id, privilegeAdd, privilegeUpdate}) => {
         const deletedImages : string[] = [];
         let updatedImages = images;
         if (updatedImages.length) {
@@ -226,7 +226,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
         
         
         try {
-            return (await updateProductVariant({
+            return await updateProductVariant({
                 id             : id ?? '',
                 groupId        : id ? undefined : groupId,
                 sort           : id ? undefined : -999, // default order to top_most
@@ -236,7 +236,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                 price          : (privilegeUpdate.price       || privilegeAdd) ? (price ?? 0)   : undefined,
                 shippingWeight : (privilegeUpdate.price       || privilegeAdd) ? shippingWeight : undefined,
                 images         : (privilegeUpdate.images      || privilegeAdd) ? updatedImages  : undefined,
-            }).unwrap()).id;
+            }).unwrap();
         }
         finally {
             if (deletedImages.length) {
@@ -252,7 +252,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
         } // try
     });
     
-    const handleDelete               = useEvent<DeleteHandler>(async ({id}) => {
+    const handleDelete               = useEvent<DeleteHandler<ProductVariantDetail>>(async ({id}) => {
         await deleteProductVariant({
             id : id,
         }).unwrap();
