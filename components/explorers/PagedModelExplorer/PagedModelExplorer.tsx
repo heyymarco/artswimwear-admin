@@ -331,7 +331,15 @@ export {
 interface PagedModelExplorerInternalProps<TModel extends Model>
     extends
         // data:
-        Partial<Omit<ModelCreateOuterProps, keyof ListItemProps>>
+        Partial<Pick<ModelCreateOuterProps,
+            // accessibilities:
+            |'createItemText'
+            
+            
+            
+            // components:
+            |'modelCreateComponent'
+        >>
 {
     // components:
     modelPreviewComponent : React.ReactComponentElement<any, ModelPreviewProps<TModel, Element>>
