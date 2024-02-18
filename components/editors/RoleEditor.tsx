@@ -71,7 +71,7 @@ interface RoleEditorProps<TElement extends Element = HTMLElement>
         >>
 {
     // values:
-    modelList             ?: EntityState<RoleDetail>
+    valueOptions          ?: EntityState<RoleDetail>
     
     
     
@@ -82,7 +82,7 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
     // rest props:
     const {
         // values:
-        modelList,
+        valueOptions,
         
         defaultValue,
         value,
@@ -100,13 +100,13 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
         onCreate,
     ...restListProps} = props;
     
-    const filteredModelList = !modelList ? undefined : Object.values(modelList.entities).filter((model): model is Exclude<typeof model, undefined> => !!model);
-    const modelListWithNone : RoleDetail[] = [
+    const filteredValueOptions = !valueOptions ? undefined : Object.values(valueOptions.entities).filter((model): model is Exclude<typeof model, undefined> => !!model);
+    const valueOptionsWithNone : RoleDetail[] = [
         {
             id   : '',
             name : 'No Access',
         } as RoleDetail, // mock of 'No Access'
-        ...(filteredModelList ?? []),
+        ...(filteredValueOptions ?? []),
     ];
     
     
@@ -138,23 +138,23 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
                 onCreate={onCreate}
             />}
             
-            {modelListWithNone.map((model) =>
+            {valueOptionsWithNone.map((modelOption) =>
                 /* <ModelPreview> */
                 React.cloneElement<RolePreviewProps>(modelPreviewComponent,
                     // props:
                     {
                         // identifiers:
-                        key      : modelPreviewComponent.key          ?? model.id,
+                        key      : modelPreviewComponent.key          ?? modelOption.id,
                         
                         
                         
                         // data:
-                        model    : modelPreviewComponent.props.model  ?? model,
+                        model    : modelPreviewComponent.props.model  ?? modelOption,
                         
                         
                         
                         // states:
-                        active   : modelPreviewComponent.props.active ?? ((value ?? '') === model.id),
+                        active   : modelPreviewComponent.props.active ?? ((value ?? '') === modelOption.id),
                         
                         
                         

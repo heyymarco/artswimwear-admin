@@ -192,7 +192,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
     const [commitDeleteImage, {isLoading : isLoadingCommitDeleteImage}] = useDeleteImage();
     const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
     
-    const {data: roleList, isLoading: isLoadingRole, isError: isErrorRole} = useGetRoleList();
+    const {data: roleOptions, isLoading: isLoadingRole, isError: isErrorRole} = useGetRoleList();
     
     
     
@@ -527,7 +527,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                     ? 'Error getting role data'
                     : <RoleEditor
                         // values:
-                        modelList={roleList}
+                        valueOptions={roleOptions}
                         value={roleId}
                         onChange={(value) => {
                             setRoleId(value);
