@@ -538,7 +538,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                         
                         // components:
                         modelPreviewComponent={
-                            ({id}) => <RolePreview
+                            <RolePreview
                                 // data:
                                 model={undefined as any}
                                 
@@ -546,10 +546,10 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                                 
                                 // accessibilities:
                                 /*
-                                    edit mode   (having id) : readOnly when no privilege update_user_role
-                                    create mode     (no id) : readOnly when no privilege create_user
+                                    edit mode   (having model) : readOnly when no privilege update_user_role
+                                    create mode     (no model) : readOnly when no privilege create_user
                                 */
-                                readOnly={!(!!id && privilegeUpdate.role) && !(!id && privilegeAdd)}
+                                readOnly={!(!!model && privilegeUpdate.role) && !(!model && privilegeAdd)}
                                 
                                 
                                 

@@ -76,7 +76,7 @@ interface RoleEditorProps<TElement extends Element = HTMLElement>
     
     
     // components:
-    modelPreviewComponent  : (model: RoleDetail) => React.ReactComponentElement<any, RolePreviewProps>
+    modelPreviewComponent  : React.ReactComponentElement<any, RolePreviewProps>
 }
 const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorProps<TElement>): JSX.Element|null => {
     // rest props:
@@ -92,7 +92,7 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
         
         // components:
         modelCreateComponent,
-        modelPreviewComponent : modelPreviewComponentFn,
+        modelPreviewComponent,
         
         
         
@@ -138,35 +138,31 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
                 onCreate={onCreate}
             />}
             
-            {modelListWithNone.map((model) => {
-                const modelPreviewComponent = modelPreviewComponentFn(model);
-                // jsx:
-                return (
-                    /* <ModelPreview> */
-                    React.cloneElement<RolePreviewProps>(modelPreviewComponent,
-                        // props:
-                        {
-                            // identifiers:
-                            key      : modelPreviewComponent.key          ?? model.id,
-                            
-                            
-                            
-                            // data:
-                            model    : modelPreviewComponent.props.model  ?? model,
-                            
-                            
-                            
-                            // states:
-                            active   : modelPreviewComponent.props.active ?? ((value ?? '') === model.id),
-                            
-                            
-                            
-                            // handlers:
-                            onChange : onChange,
-                        },
-                    )
-                );
-            })}
+            {modelListWithNone.map((model) =>
+                /* <ModelPreview> */
+                React.cloneElement<RolePreviewProps>(modelPreviewComponent,
+                    // props:
+                    {
+                        // identifiers:
+                        key      : modelPreviewComponent.key          ?? model.id,
+                        
+                        
+                        
+                        // data:
+                        model    : modelPreviewComponent.props.model  ?? model,
+                        
+                        
+                        
+                        // states:
+                        active   : modelPreviewComponent.props.active ?? ((value ?? '') === model.id),
+                        
+                        
+                        
+                        // handlers:
+                        onChange : onChange,
+                    },
+                )
+            )}
         </List>
     );
 };
