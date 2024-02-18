@@ -3,6 +3,7 @@ TODO: notify to email template: shippingCarrier changed if (shippingCarrier !== 
 TODO: fix table layout to use subgrid
 TODO: fix PrintDialog when the document scrolled down
 TODO: add billingAddress to Orders > Payment > billingAddress
+TODO: replace CollapsibleSuspense with showDialog()
 // TODO: refresh the user model
 protect Admin role from deletion
 protect change user role from himself
