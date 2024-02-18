@@ -82,13 +82,13 @@ import './RolePreviewStyles';
 // react components:
 export interface RolePreviewProps extends Omit<ModelPreviewProps<RoleDetail>, 'onChange'> {
     // appearances:
-    isShown   : boolean
+    isShown    : boolean
     
     
     
     // handlers:
-    onChange ?: EditorChangeEventHandler<string|null>
-    onDelete ?: DeleteHandler<RoleDetail>
+    onChange  ?: EditorChangeEventHandler<string|null>
+    onDeleted ?: DeleteHandler<RoleDetail>
 }
 const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     // styles:
@@ -120,7 +120,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         
         // handlers:
         onChange,
-        onDelete,
+        onDeleted,
     ...restListItemProps} = props;
     const {
         id,
@@ -163,7 +163,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
             />
         );
         if (updatedRoleModel === false) {
-            await onDelete?.(model);
+            await onDeleted?.(model);
         } // if
     });
     

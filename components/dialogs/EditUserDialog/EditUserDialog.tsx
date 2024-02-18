@@ -229,7 +229,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
         setRoleId(id); // select the last created role
         setIsModified(true);
     });
-    const handleRoleDelete           = useEvent<DeleteHandler<RoleDetail>>(async ({id}) => {
+    const handleRoleDeleted          = useEvent<DeleteHandler<RoleDetail>>(async ({id}) => {
         if (id && (id === roleId)) { // if currently selected
             // the related role was deleted => set to null (no selection):
             setRoleId(null);
@@ -560,7 +560,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                                 
                                 
                                 // handlers:
-                                onDelete={handleRoleDelete}
+                                onDeleted={handleRoleDeleted}
                             />
                         }
                         modelCreateComponent={
