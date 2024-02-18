@@ -60,7 +60,15 @@ interface RoleEditorProps<TElement extends Element = HTMLElement>
             |'children'     // already taken over
         >,
         // data:
-        Partial<Omit<ModelCreateOuterProps, keyof ListItemProps>>
+        Partial<Pick<ModelCreateOuterProps,
+            // components:
+            |'modelCreateComponent'
+            
+            
+            
+            // handlers:
+            |'onCreate'
+        >>
 {
     // values:
     modelList             ?: EntityState<RoleDetail>
@@ -91,8 +99,6 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
         // handlers:
         onCreate,
     ...restListProps} = props;
-    type T1 = typeof restListProps
-    type T2 = Omit<T1, keyof ListProps>
     
     const filteredModelList = !modelList ? undefined : Object.values(modelList.entities).filter((model): model is Exclude<typeof model, undefined> => !!model);
     const modelListWithNone : RoleDetail[] = [
