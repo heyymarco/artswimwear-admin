@@ -9,7 +9,6 @@ import {
     
     // hooks:
     useRef,
-    useState,
     useEffect,
 }                           from 'react'
 
@@ -23,7 +22,6 @@ import {
 import {
     // react helper hooks:
     useEvent,
-    EventHandler,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -35,6 +33,11 @@ import {
     
     // layout-components:
     ListItem,
+    
+    
+    
+    // utility-components:
+    useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // internal components:
@@ -51,12 +54,9 @@ import type {
 import {
     RadioDecorator,
 }                           from '@/components/RadioDecorator'
-import {
-    CollapsibleSuspense,
-}                           from '@/components/CollapsibleSuspense'
 import type {
     // types:
-    ComplexEditModelDialogExpandedChangeEvent,
+    ComplexEditModelDialogResult,
     DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
@@ -129,14 +129,15 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     
     
     
-    // states:
-    type EditMode = 'full'
-    const [editMode, setEditMode] = useState<EditMode|null>(null);
-    
-    
-    
     // refs:
     const listItemRef = useRef<HTMLElement|null>(null);
+    
+    
+    
+    // dialogs:
+    const {
+        showDialog,
+    } = useDialogMessage();
     
     
     
@@ -150,20 +151,21 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         // actions:
         onChange?.(id || null); // null (no selection) if the id is an empty string
     });
-    
-    const handleExpandedChange = useEvent<EventHandler<ComplexEditModelDialogExpandedChangeEvent>>(async ({expanded, data}) => {
-        if (!expanded) {
-            // first: trigger the `onDelete()` event (if any):
-            if (data === false) {
-                await onDelete?.({
-                    id : id,
-                });
-            } // if
-            
-            
-            
-            // second: close the dialog:
-            setEditMode(null);
+    const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLElement>>(async (event) => {
+        event.stopPropagation(); // prevents triggering `ListItem::onClick`
+        
+        
+        
+        const data = await showDialog<ComplexEditModelDialogResult>(
+            <EditRoleDialog
+                // data:
+                model={model} // modify current model
+            />
+        );
+        if (data === false) {
+            await onDelete?.({
+                id : id,
+            });
         } // if
     });
     
@@ -258,25 +260,8 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
             <p className='name'>{!!id ? name : <span className='noValue'>No Access</span>}</p>
             {!!id && <EditButton
                 iconComponent={<Icon icon='edit' mild={active} />}
-                onClick={(event) => { setEditMode('full'); event.stopPropagation(); }}
+                onClick={handleEditButtonClick}
             />}
-            {/* edit dialog: */}
-            <CollapsibleSuspense>
-                <EditRoleDialog
-                    // data:
-                    model={model} // modify current model
-                    
-                    
-                    
-                    // states:
-                    expanded={(editMode === 'full')}
-                    
-                    
-                    
-                    // handlers:
-                    onExpandedChange={handleExpandedChange}
-                />
-            </CollapsibleSuspense>
         </ListItem>
     );
 };
