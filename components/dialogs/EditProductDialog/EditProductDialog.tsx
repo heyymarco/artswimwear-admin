@@ -634,11 +634,6 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                                 // data:
                                 model={undefined as any}
                                 productId={model?.id ?? ''} // the related product of the productVariantGroup
-                                
-                                
-                                
-                                // handlers:
-                                // onDelete={handleRoleDelete}
                             />
                         }
                         modelCreateComponent={
@@ -651,11 +646,6 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                             />
                             : undefined
                         }
-                        
-                        
-                        
-                        // handlers:
-                        // onCreate={handleRoleCreate}
                     />
             }</TabPanel>
             <TabPanel label={PAGE_PRODUCT_TAB_IMAGES}       panelComponent={<Generic className={styleSheet.imagesTab} />}>
