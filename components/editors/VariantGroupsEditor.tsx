@@ -147,11 +147,6 @@ const VariantGroupsEditor = <TElement extends Element = HTMLElement>(props: Vari
                         
                         // data:
                         model    : modelPreviewComponent.props.model  ?? modelOption,
-                        
-                        
-                        
-                        // handlers:
-                        onChange : onChange,
                     },
                 )
             )}

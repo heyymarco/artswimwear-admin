@@ -87,7 +87,6 @@ export interface VariantGroupPreviewProps extends Omit<ModelPreviewProps<Product
     
     
     // handlers:
-    onChange ?: EditorChangeEventHandler<string|null>
     onDelete ?: DeleteHandler
 }
 const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null => {
@@ -109,13 +108,7 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
         
         
         
-        // states:
-        active = false,
-        
-        
-        
         // handlers:
-        onChange,
         onDelete,
     ...restListItemProps} = props;
     const {
@@ -137,16 +130,6 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
     
     
     // handlers:
-    const handleClick          = useEvent<React.MouseEventHandler<HTMLElement>>((event) => {
-        // conditions:
-        if (!event.currentTarget.contains(event.target as Node)) return; // ignore bubbling from <portal> of <EditProductVariantGroupDialog>
-        
-        
-        
-        // actions:
-        onChange?.(id || null); // null (no selection) if the id is an empty string
-    });
-    
     const handleExpandedChange = useEvent<EventHandler<ComplexEditModelDialogExpandedChangeEvent>>(async ({expanded, data}) => {
         if (!expanded) {
             // first: trigger the `onDelete()` event (if any):
@@ -180,16 +163,11 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
             
             // classes:
             className={styleSheet.main}
-            
-            
-            
-            // states:
-            active={active}
         >
             // TODO: {'<Grip>'}
             <p className='name'>{!!id ? name : <span className='noValue'>No Access</span>}</p>
             {!!id && <EditButton
-                iconComponent={<Icon icon='edit' mild={active} />}
+                iconComponent={<Icon icon='edit' />}
                 onClick={(event) => { setEditMode('full'); event.stopPropagation(); }}
             />}
             {/* edit dialog: */}
