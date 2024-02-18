@@ -128,14 +128,14 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
     
     // handlers:
     const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLElement>>(async () => {
-        const data = await showDialog<ComplexEditModelDialogResult>(
+        const updatedVariantGroupModel = await showDialog<ComplexEditModelDialogResult>(
             <EditProductVariantGroupDialog
                 // data:
                 model={model} // modify current model
                 productId={productId}
             />
         );
-        if (data === false) {
+        if (updatedVariantGroupModel === false) {
             await onDelete?.({
                 id : id,
             });
