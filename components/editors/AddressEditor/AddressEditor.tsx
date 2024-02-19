@@ -2,11 +2,6 @@
 import {
     // react:
     default as React,
-    
-    
-    
-    // hooks:
-    useState,
 }                           from 'react'
 
 // cssfn:
@@ -25,6 +20,12 @@ import {
     // an accessibility management system:
     AccessibilityProvider,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
+// heymarco:
+import {
+    // utilities:
+    useControllableAndUncontrollable,
+}                           from '@heymarco/events'
 
 // reusable-ui components:
 import {
@@ -46,11 +47,6 @@ import {
 
 // internals:
 import type {
-    // types:
-    EditorChangeEventHandler,
-    
-    
-    
     // react components:
     EditorProps,
 }                           from '@/components/editors/Editor'
@@ -140,9 +136,9 @@ const AddressEditor = (props: AddressEditorProps): JSX.Element|null => {
         
         
         // values:
-        defaultValue,
-        value,
-        onChange,
+        defaultValue : defaultUncontrollableValue = emptyAddressValue,
+        value        : controllableValue,
+        onChange     : onControllableValueChange,
         countryList,
         
         
@@ -166,41 +162,26 @@ const AddressEditor = (props: AddressEditorProps): JSX.Element|null => {
     
     
     // states:
-    const [valueDn, setValueDn] = useState<AddressValue>(((value !== undefined) ? value : defaultValue) ?? emptyAddressValue);
-    
-    
-    
-    /*
-     * value state is based on [controllable value] (if set) and fallback to [uncontrollable value]
-     */
-    const valueFn : AddressValue = (value !== undefined) ? value /*controllable*/ : valueDn /*uncontrollable*/;
-    
-    
-    
-    // events:
-    /*
-          controllable : setValue(new) => update state(old => old) => trigger Event(new)
-        uncontrollable : setValue(new) => update state(old => new) => trigger Event(new)
-    */
-    const triggerValueChange = useEvent<EditorChangeEventHandler<AddressValue>>((value) => {
-        if (onChange) {
-            // fire `onChange` react event:
-            onChange(value);
-        };
+    const {
+        value              : value,
+        triggerValueChange : triggerValueChange,
+    } = useControllableAndUncontrollable<AddressValue>({
+        defaultValue       : defaultUncontrollableValue,
+        value              : controllableValue,
+        onValueChange      : onControllableValueChange,
     });
     
     
     
     // callbacks:
-    const setValue = useEvent<React.Dispatch<React.SetStateAction<AddressValue>>>((value) => {
+    const setValue = useEvent<React.Dispatch<React.SetStateAction<AddressValue>>>((newValueFn) => {
         // conditions:
-        const newValue = (typeof(value) === 'function') ? value(valueFn) : value;
-        if (newValue === valueFn) return; // still the same => nothing to update
+        const newValue = (typeof(newValueFn) === 'function') ? newValueFn(value) : newValueFn;
+        if (newValue === value) return; // still the same => nothing to update
         
         
         
         // update:
-        setValueDn(newValue);
         triggerValueChange(newValue);
     }); // a stable callback, the `setValue` guaranteed to never change
     
@@ -275,17 +256,17 @@ const AddressEditor = (props: AddressEditorProps): JSX.Element|null => {
                     
                     
                     // values:
-                    firstName         = {valueFn?.firstName}
-                    lastName          = {valueFn?.lastName }
+                    firstName         = {value?.firstName       }
+                    lastName          = {value?.lastName        }
                     
-                    phone             = {valueFn?.phone    }
+                    phone             = {value?.phone           }
                     
-                    address           = {valueFn?.address  }
-                    city              = {valueFn?.city     }
-                    zone              = {valueFn?.zone     }
-                    zip               = {valueFn?.zip ?? undefined }
-                    country           = {valueFn?.country  }
-                    countryList       = {countryList       }
+                    address           = {value?.address         }
+                    city              = {value?.city            }
+                    zone              = {value?.zone            }
+                    zip               = {value?.zip ?? undefined}
+                    country           = {value?.country         }
+                    countryList       = {countryList            }
                     
                     
                     
