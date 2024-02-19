@@ -163,11 +163,13 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
     const basicVariantProps = useBasicVariantProps(props);
     
     
+    
     // states:
     const value = (controllableValue !== undefined) ? controllableValue : defaultUncontrollableValue;
     const [selectedTabLimited, setSelectedTabLimited] = useState<boolean>(
-        (typeof(value) === 'number')
+        (value !== null) // null: unlimited, number: limited
     );
+    
     
     
     // refs:
