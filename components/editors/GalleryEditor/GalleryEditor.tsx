@@ -20,12 +20,18 @@ import {
 import {
     // react helper hooks:
     useIsomorphicLayoutEffect,
+    useTriggerRender,
     useEvent,
-    useMergeEvents,
     useMergeClasses,
     useMountedFlag,
     useScheduleTriggerEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
+// heymarco:
+import {
+    // utilities:
+    useControllableAndUncontrollable,
+}                           from '@heymarco/events'
 
 // reusable-ui components:
 import {
@@ -43,11 +49,6 @@ import {
 
 // internals:
 import type {
-    // types:
-    EditorChangeEventHandler,
-    
-    
-    
     // react components:
     EditorProps,
 }                           from '@/components/editors/Editor'
@@ -220,9 +221,9 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         
         // values:
-        defaultValue : defaultImages,
-        value        : images,
-        onChange,
+        defaultValue : defaultUncontrollableValue = [],
+        value        : controllableValue,
+        onChange     : onControllableValueChange,
         
         
         
@@ -294,9 +295,16 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
     
     
     // states:
-    const isControllableImages                    = (images !== undefined);
-    let   [imagesDn, setImagesDn]                 = useState<TValue[]>(defaultImages ?? []);
-    let   imagesFn : TValue[]                     = (images /*controllable*/ ?? imagesDn /*uncontrollable*/);
+    let {
+        value              : imagesFn,
+        triggerValueChange : triggerValueChange,
+    } = useControllableAndUncontrollable<TValue[]>({
+        defaultValue       : defaultUncontrollableValue,
+        value              : controllableValue,
+        onValueChange      : onControllableValueChange,
+    });
+    
+    const [triggerRender] = useTriggerRender();
     
     const [draggedItemIndex, setDraggedItemIndex] = useState<number>(-1);
     let   [droppedItemIndex, setDroppedItemIndex] = useState<number>(-1);
@@ -322,29 +330,6 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
     
     
     // handlers:
-    const handleChangeInternal = useEvent<EditorChangeEventHandler<TValue[]>>((images) => {
-        // update state:
-        if (!isControllableImages) {
-            setImagesDn(imagesDn /* instant update without waiting for (slow|delayed) re-render */ = images);
-            imagesFn =  imagesDn /*uncontrollable*/; // instant update the computed variable too, without waiting for (slow|delayed) re-render
-        } // if
-    });
-    const handleChange         = useMergeEvents(
-        // preserves the original `onChange` from `props`:
-        onChange,
-        
-        
-        
-        // actions:
-        handleChangeInternal,
-    );
-    const triggerChange        = useEvent((newDraftImages: TValue[]): void => {
-        if (handleChange) scheduleTriggerEvent(() => { // runs the `onChange` event *next after* current macroTask completed
-            // fire `onChange` react event:
-            handleChange(newDraftImages);
-        });
-    });
-    
     const handlePreviewMoved   = useEvent((newDroppedItemIndex: number): TValue[]|undefined => {
         if (draggedItemIndex === newDroppedItemIndex) { // no change => nothing to shift => return the (original) *source of truth* images
             // reset the preview:
@@ -405,7 +390,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         
         // notify the gallery's images changed:
-        triggerChange(newDraftImages); // then at the *next re-render*, the *controllable* `images` will change and trigger the `handleRevertPreview` and the `droppedItemIndex` will be reset
+        triggerValueChange(newDraftImages, { triggerAt: 'macrotask' }); // then at the *next re-render*, the *controllable* `images` will change and trigger the `handleRevertPreview` and the `droppedItemIndex` will be reset
     });
     const handleRevertPreview  = useEvent((): TValue[] => {
         // reset the preview:
@@ -487,22 +472,22 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         
         // notify the gallery's images changed:
-        triggerChange(newDraftImages); // then at the *next re-render*, the *controllable* `images` will change and trigger the `handleRevertPreview` and the `droppedItemIndex` will be reset
+        triggerValueChange(newDraftImages, { triggerAt: 'macrotask' }); // then at the *next re-render*, the *controllable* `images` will change and trigger the `handleRevertPreview` and the `droppedItemIndex` will be reset
         
         
         
         // update:
         /*
             uncontrollable:
-                The `imagesDn` and `imagesFn` has been updated and the `setImagesDn()` has been invoked when the `triggerChange()` called.
+                The `uncontrollableValue` and `imagesFn` has been updated and the `setUncontrollableValue()` has been invoked when the `triggerValueChange()` called.
                 Then the *next re-render* will happen shortly (maybe delayed).
             
             controllable:
-                We need to ensure the *next re-render* will happen shortly (maybe delayed) by calling `setImagesDn(force to re-render)`, in case of calling `triggerChange()` won't cause <parent> to update the *controllable* `images` prop.
+                We need to ensure the *next re-render* will happen shortly (maybe delayed) by calling `triggerRender()`, in case of calling `triggerValueChange()` won't cause <parent> to update the *controllable* `images` prop.
                 When the *next re-render* occured, the `imagesFn` will reflect the *controllable* `images`'s value.
         */
         imagesFn = newDraftImages; // a temporary update regradless of (/*controllable*/ ?? /*uncontrollable*/), will be re-updated on *next re-render*
-        if (isControllableImages) setImagesDn((current) => current.slice(0)); // force to re-render
+        if (controllableValue !== undefined) triggerRender(); // force to re-render
     });
     const handleUploadImage    = useEvent((args: { imageFile: File }): void => {
         // conditions:
@@ -638,14 +623,14 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                 
                 
                 // notify the gallery's images changed:
-                triggerChange(newDraftImages); // then at the *next re-render*, the *controllable* `images` will change and trigger the `handleRevertPreview` and the `droppedItemIndex` will be reset
+                triggerValueChange(newDraftImages, { triggerAt: 'macrotask' }); // then at the *next re-render*, the *controllable* `images` will change and trigger the `handleRevertPreview` and the `droppedItemIndex` will be reset
                 
                 
                 
                 // update:
                 /*
                     uncontrollable:
-                        The `imagesDn` and `imagesFn` has been updated and the `setImagesDn()` has been invoked when the `triggerChange()` called.
+                        The `uncontrollableValue` and `imagesFn` has been updated and the `setUncontrollableValue()` has been invoked when the `triggerValueChange()` called.
                         Then the *next re-render* will happen shortly (maybe delayed).
                     
                     controllable:
