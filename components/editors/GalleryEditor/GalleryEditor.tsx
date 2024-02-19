@@ -296,7 +296,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
     
     // states:
     let {
-        value              : imagesFn,
+        value              : value,
         triggerValueChange : triggerValueChange,
     } = useControllableAndUncontrollable<TValue[]>({
         defaultValue       : defaultUncontrollableValue,
@@ -315,7 +315,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
     useIsomorphicLayoutEffect(() => {
         // reset the preview:
         handleRevertPreview();
-    }, [imagesFn]); // (re)update the draft images every time the *source of truth* images updated
+    }, [value]); // (re)update the draft images every time the *source of truth* images updated
     
     
     
@@ -339,7 +339,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         
         // create a new local draftImages:
-        const newDraftImages = imagesFn.slice(0); // clone (copy and then modify) the *source of truth* images
+        const newDraftImages = value.slice(0); // clone (copy and then modify) the *source of truth* images
         
         
         
@@ -394,7 +394,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
     });
     const handleRevertPreview  = useEvent((): TValue[] => {
         // reset the preview:
-        if (draftImages !== imagesFn) setDraftImages(imagesFn);
+        if (draftImages !== value) setDraftImages(value);
         
         
         
@@ -404,7 +404,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         
         // return the original:
-        return imagesFn;
+        return value;
     });
     
     // draggable handlers:
@@ -437,8 +437,8 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         
         // conditions:
-        if (itemIndex >= imagesFn.length) return; // out of range => ignore
-        const imageData = imagesFn[itemIndex];
+        if (itemIndex >= value.length) return; // out of range => ignore
+        const imageData = value[itemIndex];
         if (onDeleteImage) {
             try {
                 const result = await onDeleteImage({
@@ -461,7 +461,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         
         // remove an image from collection by its index:
-        const newDraftImages = imagesFn.slice(0); // clone (copy and then modify) the *source of truth* images
+        const newDraftImages = value.slice(0); // clone (copy and then modify) the *source of truth* images
         newDraftImages.splice(itemIndex, 1);
         
         
@@ -479,14 +479,14 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         // update:
         /*
             uncontrollable:
-                The `uncontrollableValue` and `imagesFn` has been updated and the `setUncontrollableValue()` has been invoked when the `triggerValueChange()` called.
+                The `uncontrollableValue` and `value` has been updated and the `setUncontrollableValue()` has been invoked when the `triggerValueChange()` called.
                 Then the *next re-render* will happen shortly (maybe delayed).
             
             controllable:
                 We need to ensure the *next re-render* will happen shortly (maybe delayed) by calling `triggerRender()`, in case of calling `triggerValueChange()` won't cause <parent> to update the *controllable* `images` prop.
-                When the *next re-render* occured, the `imagesFn` will reflect the `controllableValue`.
+                When the *next re-render* occured, the `value` will reflect the `controllableValue`.
         */
-        imagesFn = newDraftImages; // a temporary update regradless of (/*controllable*/ ?? /*uncontrollable*/), will be re-updated on *next re-render*
+        value = newDraftImages; // a temporary update regradless of (/*controllable*/ ?? /*uncontrollable*/), will be re-updated on *next re-render*
         if (controllableValue !== undefined) triggerRender(); // force to re-render
     });
     const handleUploadImage    = useEvent((args: { imageFile: File }): void => {
@@ -611,7 +611,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
             if (imageData) {
                 // append the new image into a new draft images:
                 const newDraftImages = [
-                    ...imagesFn, // clone (copy and then modify) the *source of truth* images
+                    ...value, // clone (copy and then modify) the *source of truth* images
                     imageData,                    // the change
                 ];
                 
@@ -630,14 +630,14 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                 // update:
                 /*
                     uncontrollable:
-                        The `uncontrollableValue` and `imagesFn` has been updated and the `setUncontrollableValue()` has been invoked when the `triggerValueChange()` called.
+                        The `uncontrollableValue` and `value` has been updated and the `setUncontrollableValue()` has been invoked when the `triggerValueChange()` called.
                         Then the *next re-render* will happen shortly (maybe delayed).
                     
                     controllable:
                         We have called the `performRemove()`, so it's guaranteed the *next re-render* will happen shortly (maybe delayed), even if the <parent> won't update the *controllable* `images` prop.
-                        When the *next re-render* occured, the `imagesFn` will reflect the `controllableValue`.
+                        When the *next re-render* occured, the `value` will reflect the `controllableValue`.
                 */
-                imagesFn = newDraftImages; // a temporary update regradless of (/*controllable*/ ?? /*uncontrollable*/), will be re-updated on *next re-render*
+                value = newDraftImages; // a temporary update regradless of (/*controllable*/ ?? /*uncontrollable*/), will be re-updated on *next re-render*
             } // if
             
             
