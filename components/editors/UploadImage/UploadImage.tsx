@@ -24,7 +24,6 @@ import {
     useMergeEvents,
     useMergeClasses,
     useMountedFlag,
-    useScheduleTriggerEvent,
     
     
     
@@ -36,6 +35,17 @@ import {
     // a capability of UI to be disabled:
     useDisableable,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
+// heymarco:
+import {
+    // hooks:
+    useScheduleTriggerEvent,
+    
+    
+    
+    // utilities:
+    useControllableAndUncontrollable,
+}                           from '@heymarco/events'
 
 // reusable-ui components:
 import {
@@ -224,9 +234,9 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         
         // values:
-        defaultValue : defaultImage,
-        value        : image,
-        onChange,
+        defaultValue : defaultUncontrollableValue = null,
+        value        : controllableValue,
+        onChange     : onControllableValueChange,
         
         
         
@@ -294,9 +304,14 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
     
     
     // states:
-    const isControllableImage                  = (image !== undefined);
-    const [imageDn        , setImageDn       ] = useState<TValue|null>(defaultImage ?? null);
-    const imageFn : TValue|null                = ((image !== undefined) ? image /*controllable*/ : imageDn /*uncontrollable*/);
+    const {
+        value              : imageFn,
+        triggerValueChange : triggerValueChange,
+    } = useControllableAndUncontrollable<TValue|null>({
+        defaultValue       : defaultUncontrollableValue,
+        value              : controllableValue,
+        onValueChange      : onControllableValueChange,
+    });
     
     const [uploadingImage , setUploadingImage] = useState<UploadingImageData|null>(null);
     const uploadingImageRef                    = useRef<UploadingImageData|null>(uploadingImage);
@@ -324,26 +339,6 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
     
     
     // handlers:
-    const handleChangeInternal            = useEvent<EditorChangeEventHandler<TValue|null>>((image) => {
-        // update state:
-        if (!isControllableImage) setImageDn(image);
-    });
-    const handleChange                    = useMergeEvents(
-        // preserves the original `onChange` from `props`:
-        onChange,
-        
-        
-        
-        // actions:
-        handleChangeInternal,
-    );
-    const triggerChange                   = useEvent((newDraftImage: TValue|null): void => {
-        if (handleChange) scheduleTriggerEvent(() => { // runs the `onChange` event *next after* current macroTask completed
-            // fire `onChange` react event:
-            handleChange(newDraftImage);
-        });
-    });
-    
     const selectButtonHandleClickInternal = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
         inputFileRef.current?.click();
     });
@@ -417,7 +412,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         
         // notify the image changed:
-        triggerChange(null); // then at the *next re-render*, the *controllable* `image` will change
+        triggerValueChange(null, { triggerAt: 'macrotask' }); // then at the *next re-render*, the *controllable* `image` will change
     });
     
     const inputFileHandleChange           = useEvent<React.ChangeEventHandler<HTMLInputElement>>(async () => {
@@ -591,13 +586,13 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
             // successfully uploaded:
             if (imageData) {
                 // notify the image changed:
-                triggerChange(imageData); // then at the *next re-render*, the *controllable* `image` will change
+                triggerValueChange(imageData, { triggerAt: 'macrotask' }); // then at the *next re-render*, the *controllable* `image` will change
             } // if
             
             
             
             // remove the uploading status:
-            scheduleTriggerEvent(performRemove); // runs the `performRemove` function *next after* `onChange` event fired (to avoid blinking of previous image issue)
+            scheduleTriggerEvent(performRemove, { triggerAt: 'macrotask' }); // runs the `performRemove` function *next after* `onChange` event fired (to avoid blinking of previous image issue)
         };
         performUpload();
     });
