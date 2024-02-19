@@ -129,8 +129,8 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
         
         
         // values:
-        defaultValue,
-        value,
+        defaultValue : defaultUncontrollableValue = 0,
+        value        : controllableValue,
         onChange,
         onChangeAsText,
         
@@ -164,10 +164,9 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
     
     
     // states:
+    const value = (controllableValue !== undefined) ? controllableValue : defaultUncontrollableValue;
     const [selectedTabLimited, setSelectedTabLimited] = useState<boolean>(
-        (value !== undefined)
-        ? (typeof(value)        === 'number') /*controllable*/
-        : (typeof(defaultValue) === 'number') /*uncontrollable*/
+        (typeof(value) === 'number')
     );
     
     
@@ -321,7 +320,7 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                         
                         
                         // values:
-                        defaultValue={value ?? defaultValue ?? 0} // force as UNCONTROLLED, so the last value when switching tab back & forth is NOT LOST
+                        defaultValue={value ?? 0} // force as UNCONTROLLED, so the last value when switching tab back & forth is NOT LOST
                         onChange={onChange}
                         onChangeAsText={onChangeAsText}
                         
