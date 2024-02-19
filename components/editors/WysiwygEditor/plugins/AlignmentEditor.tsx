@@ -24,7 +24,7 @@ export type AlignmentOption =
     |'center'
     |'right'
     |'justify'
-const possibleValues : (AlignmentOption|null)[] = [
+const valueOptions : (AlignmentOption|null)[] = [
     null,
     'left',
     'center',
@@ -40,8 +40,8 @@ export interface AlignmentEditorProps<TElement extends Element = HTMLElement>
         // bases:
         Omit<SelectEditorProps<TElement, AlignmentOption>,
             // values:
-            |'possibleValues' // overriden internally
-            |'valueToText'    // overriden internally
+            |'valueOptions' // overriden internally
+            |'valueToText'  // overriden internally
         >
 {
     // options:
@@ -91,7 +91,7 @@ const AlignmentEditor = <TElement extends Element = HTMLElement>(props: Alignmen
             
             
             // values:
-            possibleValues={possibleValues}
+            valueOptions={valueOptions}
             valueToText={valueToText}
         />
     );

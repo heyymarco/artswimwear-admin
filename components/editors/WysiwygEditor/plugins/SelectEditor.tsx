@@ -2,19 +2,13 @@
 import {
     // react:
     default as React,
-    
-    
-    
-    // hooks:
-    useState,
 }                           from 'react'
 
-// reusable-ui core:
+// heymarco:
 import {
-    // react helper hooks:
-    useEvent,
-    useMergeEvents,
-}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+    // utilities:
+    useControllableAndUncontrollable,
+}                           from '@heymarco/events'
 
 // reusable-ui components:
 import type {
@@ -63,51 +57,31 @@ export interface SelectEditorProps<TElement extends Element = HTMLElement, TValu
         BasicSelectEditorProps<TElement, TValue>
 {
     // values:
-    possibleValues ?: (TValue|null)[]
-    valueToText    ?: (value: TValue|null) => string
+    valueOptions ?: (TValue|null)[]
+    valueToText  ?: (value: TValue|null) => string
 }
 const SelectEditor = <TElement extends Element = HTMLElement, TValue extends any = string>(props: SelectEditorProps<TElement, TValue>): JSX.Element|null => {
     // rest props:
     const {
         // values:
-        defaultValue,
-        value,
-        onChange,
+        defaultValue : defaultUncontrollableValue = null,
+        value        : controllableValue,
+        onChange     : onControllableValueChange,
         
-        possibleValues = [],
-        valueToText    = (value) => `${value}`,
+        valueOptions = [],
+        valueToText  = (value) => `${value}`,
     ...restDropdownListButtonProps} = props;
     
     
     
     // states:
-    const isControllableValue = (value !== undefined);
-    const [valueDn, setValueDn] = useState<TValue|null>(defaultValue ?? null);
-    const valueFn : TValue|null = ((value !== undefined) /*controllable*/ ? value : valueDn /*uncontrollable*/);
-    
-    
-    
-    // handlers:
-    const handleChangeInternal = useEvent((value: TValue|null) => {
-        // update state:
-        if (!isControllableValue) setValueDn(value);
-    });
-    const handleChange         = useMergeEvents(
-        // preserves the original `onChange` from `props`:
-        onChange,
-        
-        
-        
-        // actions:
-        handleChangeInternal,
-    );
-    
-    
-    
-    // events:
-    const triggerChange = useEvent((value: TValue|null): void => {
-        // fire `onChange` react event:
-        handleChange?.(value);
+    const {
+        value              : value,
+        triggerValueChange : triggerValueChange,
+    } = useControllableAndUncontrollable<TValue|null>({
+        defaultValue       : defaultUncontrollableValue,
+        value              : controllableValue,
+        onValueChange      : onControllableValueChange,
     });
     
     
@@ -121,9 +95,9 @@ const SelectEditor = <TElement extends Element = HTMLElement, TValue extends any
             
             
             // children:
-            buttonChildren={valueToText(valueFn)}
+            buttonChildren={valueToText(value)}
         >
-            {possibleValues.map((possibleValue, index) =>
+            {valueOptions.map((valueOption, index) =>
                 <ListItem
                     // identifiers:
                     key={index}
@@ -131,14 +105,14 @@ const SelectEditor = <TElement extends Element = HTMLElement, TValue extends any
                     
                     
                     // accessibilities:
-                    active={(possibleValue === valueFn)}
+                    active={(valueOption === value)}
                     
                     
                     
                     // handlers:
-                    onClick={() => triggerChange(possibleValue)}
+                    onClick={() => triggerValueChange(valueOption, { triggerAt: 'immediately' })}
                 >
-                    {valueToText(possibleValue)}
+                    {valueToText(valueOption)}
                 </ListItem>
             )}
         </DropdownListButton>

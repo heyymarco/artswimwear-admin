@@ -26,7 +26,7 @@ export type BlockOption =
     |'h4'
     |'h5'
     |'h6'
-const possibleValues : (BlockOption|null)[] = [
+const valueOptions : (BlockOption|null)[] = [
     null,
     'h1',
     'h2',
@@ -44,8 +44,8 @@ export interface HeadingEditorProps<TElement extends Element = HTMLElement>
         // bases:
         Omit<SelectEditorProps<TElement, BlockOption>,
             // values:
-            |'possibleValues' // overriden internally
-            |'valueToText'    // overriden internally
+            |'valueOptions' // overriden internally
+            |'valueToText'  // overriden internally
         >
 {
     // options:
@@ -103,7 +103,7 @@ const HeadingEditor = <TElement extends Element = HTMLElement>(props: HeadingEdi
             
             
             // values:
-            possibleValues={possibleValues}
+            valueOptions={valueOptions}
             valueToText={valueToText}
         />
     );
