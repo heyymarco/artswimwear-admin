@@ -40,8 +40,8 @@ import {
 
 
 // types:
-const possibleValues        : ProductVisibility[]        = ['PUBLISHED', 'HIDDEN', 'DRAFT']; // with hidden
-const reducedPossibleValues : ProductVariantVisibility[] = ['PUBLISHED',           'DRAFT']; // without hidden
+const valueOptions        : ProductVisibility[]        = ['PUBLISHED', 'HIDDEN', 'DRAFT']; // with hidden
+const reducedValueOptions : ProductVariantVisibility[] = ['PUBLISHED',           'DRAFT']; // without hidden
 
 
 
@@ -115,9 +115,9 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
     const handleExpandedChange = useEvent<EventHandler<TabExpandedChangeEvent>>(({tabIndex}) => {
         onChange?.(
             (
-                optionHidden                      // if including hidden
-                ? possibleValues[tabIndex]        // with hidden
-                : reducedPossibleValues[tabIndex] // without hidden
+                optionHidden                    // if including hidden
+                ? valueOptions[tabIndex]        // with hidden
+                : reducedValueOptions[tabIndex] // without hidden
             ) as (ProductVisibility & ProductVariantVisibility)
         );
     });
@@ -140,12 +140,12 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
             // states:
             defaultExpandedTabIndex={
                 (
-                    optionHidden            // if including hidden
-                    ? possibleValues        // with hidden
-                    : reducedPossibleValues // without hidden
+                    optionHidden          // if including hidden
+                    ? valueOptions        // with hidden
+                    : reducedValueOptions // without hidden
                 )
-                .findIndex((possibleValue) =>
-                    (possibleValue.toUpperCase() === (value ?? defaultValue)?.toUpperCase())
+                .findIndex((valueOption) =>
+                    (valueOption.toUpperCase() === (value ?? defaultValue)?.toUpperCase())
                 )
             }
             onExpandedChange={handleExpandedChange}
