@@ -87,11 +87,6 @@ import {
 
 // internals:
 import type {
-    // types:
-    EditorChangeEventHandler,
-    
-    
-    
     // react components:
     EditorProps,
 }                           from '@/components/editors/Editor'
