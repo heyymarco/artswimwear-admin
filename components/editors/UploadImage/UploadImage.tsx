@@ -305,7 +305,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
     
     // states:
     const {
-        value              : imageFn,
+        value              : value,
         triggerValueChange : triggerValueChange,
     } = useControllableAndUncontrollable<TValue|null>({
         defaultValue       : defaultUncontrollableValue,
@@ -383,7 +383,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
         
         // conditions:
         if (isBusy)     return; // this component is busy => ignore
-        const imageData = imageFn;
+        const imageData = value;
         if (!imageData) return; // no image => nothing to delete
         if (onDeleteImage) {
             setIsBusy(isBusy /* instant update without waiting for (slow|delayed) re-render */ = true);
@@ -724,7 +724,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                         // children:
                         mediaGroupComponent.props.children ?? <>
                             {/* <NoImage> */}
-                            {(!uploadingImage && !imageFn) && React.cloneElement<React.HTMLAttributes<HTMLElement>>(noImageComponent,
+                            {(!uploadingImage && !value) && React.cloneElement<React.HTMLAttributes<HTMLElement>>(noImageComponent,
                                 // props:
                                 {
                                     // classes:
@@ -749,7 +749,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                             )}
                             
                             {/* <Image> */}
-                            { !uploadingImage && !!imageFn && React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
+                            { !uploadingImage && !!value && React.cloneElement<React.ImgHTMLAttributes<HTMLImageElement>>(imageComponent,
                                 // props:
                                 {
                                     // classes:
@@ -763,8 +763,8 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                                     
                                     
                                     // images:
-                                    alt              : imageComponent.props.alt   ??  resolveAlt(imageFn),
-                                    src              : imageComponent.props.src   ?? (resolveSrc(imageFn, onResolveImageUrl) || undefined), // convert empty string to undefined
+                                    alt              : imageComponent.props.alt   ??  resolveAlt(value),
+                                    src              : imageComponent.props.src   ?? (resolveSrc(value, onResolveImageUrl) || undefined), // convert empty string to undefined
                                     sizes            : imageComponent.props.sizes ?? uploadImages.imageInlineSize,
                                     
                                     
@@ -776,7 +776,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                             )}
                             
                             {/* <MediaGroupInner> */}
-                            {((!uploadingImage && !!imageFn && isBusy) || !!uploadingImage) && !readOnly && React.cloneElement<React.HTMLAttributes<HTMLElement>>(mediaGroupComponentInner,
+                            {((!uploadingImage && !!value && isBusy) || !!uploadingImage) && !readOnly && React.cloneElement<React.HTMLAttributes<HTMLElement>>(mediaGroupComponentInner,
                                 // props:
                                 {
                                     // classes:
@@ -788,7 +788,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                                 // children:
                                 mediaGroupComponentInner.props.children ?? <>
                                     {/* <DeletingImageTitle> + <Busy> */}
-                                    {(!uploadingImage && !!imageFn && isBusy) && <>
+                                    {(!uploadingImage && !!value && isBusy) && <>
                                         {/* <DeletingImageTitle> */}
                                         {!!deletingImageTitleComponent && React.cloneElement<React.HTMLAttributes<HTMLElement>>(deletingImageTitleComponent,
                                             // props:
@@ -938,7 +938,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
                                 )}
                                 
                                 {/* <DeleteButton> */}
-                                {!!imageFn && React.cloneElement<ButtonProps>(deleteButtonComponent,
+                                {!!value && React.cloneElement<ButtonProps>(deleteButtonComponent,
                                     // props:
                                     {
                                         // classes:
