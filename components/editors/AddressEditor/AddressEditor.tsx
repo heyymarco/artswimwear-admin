@@ -182,7 +182,7 @@ const AddressEditor = (props: AddressEditorProps): JSX.Element|null => {
         
         
         // update:
-        triggerValueChange(newValue);
+        triggerValueChange(newValue, { triggerAt: 'immediately' });
     }); // a stable callback, the `setValue` guaranteed to never change
     
     
