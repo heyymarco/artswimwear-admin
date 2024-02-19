@@ -484,7 +484,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
             
             controllable:
                 We need to ensure the *next re-render* will happen shortly (maybe delayed) by calling `triggerRender()`, in case of calling `triggerValueChange()` won't cause <parent> to update the *controllable* `images` prop.
-                When the *next re-render* occured, the `imagesFn` will reflect the *controllable* `images`'s value.
+                When the *next re-render* occured, the `imagesFn` will reflect the `controllableValue`.
         */
         imagesFn = newDraftImages; // a temporary update regradless of (/*controllable*/ ?? /*uncontrollable*/), will be re-updated on *next re-render*
         if (controllableValue !== undefined) triggerRender(); // force to re-render
@@ -635,7 +635,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                     
                     controllable:
                         We have called the `performRemove()`, so it's guaranteed the *next re-render* will happen shortly (maybe delayed), even if the <parent> won't update the *controllable* `images` prop.
-                        When the *next re-render* occured, the `imagesFn` will reflect the *controllable* `images`'s value.
+                        When the *next re-render* occured, the `imagesFn` will reflect the `controllableValue`.
                 */
                 imagesFn = newDraftImages; // a temporary update regradless of (/*controllable*/ ?? /*uncontrollable*/), will be re-updated on *next re-render*
             } // if
