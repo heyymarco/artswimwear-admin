@@ -592,7 +592,7 @@ const UploadImage = <TElement extends Element = HTMLElement, TValue extends Imag
             
             
             // remove the uploading status:
-            scheduleTriggerEvent(performRemove, { triggerAt: 'macrotask' }); // runs the `performRemove` function *next after* `onChange` event fired (to avoid blinking of previous image issue)
+            scheduleTriggerEvent(performRemove, { triggerAt: 'macrotask' }); // runs the `performRemove` function *next after* `onChange` event fired (to avoid blinking of previous image issue, the controllable image should be *already applied* before we're removing the `uploadingImage` draft)
         };
         performUpload();
     });
