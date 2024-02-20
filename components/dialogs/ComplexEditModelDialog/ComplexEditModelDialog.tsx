@@ -77,6 +77,7 @@ import {
 // internals:
 import type {
     Model,
+    PartialModel,
 }                           from '@/libs/types'
 
 
@@ -90,10 +91,10 @@ import './ComplexEditModelDialogStyles'
 
 
 // react components:
-export type ComplexEditModelDialogResult<TModel extends Model> = TModel|false|undefined // TModel: created|updated; false: deleted; undefined: not created|modified
+export type ComplexEditModelDialogResult<TModel extends Model> = PartialModel<TModel>|false|undefined // TModel: created|updated; false: deleted; undefined: not created|modified
 export interface ComplexEditModelDialogExpandedChangeEvent<TModel extends Model> extends ModalExpandedChangeEvent<ComplexEditModelDialogResult<TModel>> {}
 
-export type UpdateHandler<TModel extends Model>         = (args: { id: string|null, privilegeAdd: boolean, privilegeUpdate: Record<string, boolean> }) => Promise<TModel>
+export type UpdateHandler<TModel extends Model>         = (args: { id: string|null, privilegeAdd: boolean, privilegeUpdate: Record<string, boolean> }) => Promise<PartialModel<TModel>>
 export type AfterUpdateHandler                          = () => Promise<void>
 
 export type DeleteHandler<TModel extends Model>         = (deletingModel: TModel) => Promise<void>

@@ -71,6 +71,7 @@ import {
 import type {
     Pagination,
     Model,
+    PartialModel,
 }                           from '@/libs/types'
 import {
     // states:
@@ -115,7 +116,7 @@ export interface ModelCreateProps
 {
 }
 
-export type CreateHandler<TModel extends Model> = (createdModel: TModel) => void|Promise<void>
+export type CreateHandler<TModel extends Model> = (createdModel: PartialModel<TModel>) => void|Promise<void>
 
 /* <ModelCreateOuter> */
 export interface ModelCreateOuterProps<TModel extends Model>
