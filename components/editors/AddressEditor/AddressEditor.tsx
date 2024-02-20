@@ -256,17 +256,17 @@ const AddressEditor = (props: AddressEditorProps): JSX.Element|null => {
                     
                     
                     // values:
-                    firstName         = {value?.firstName       }
-                    lastName          = {value?.lastName        }
+                    firstName         = {value.firstName       }
+                    lastName          = {value.lastName        }
                     
-                    phone             = {value?.phone           }
+                    phone             = {value.phone           }
                     
-                    address           = {value?.address         }
-                    city              = {value?.city            }
-                    zone              = {value?.zone            }
-                    zip               = {value?.zip ?? undefined}
-                    country           = {value?.country         }
-                    countryList       = {countryList            }
+                    address           = {value.address         }
+                    city              = {value.city            }
+                    zone              = {value.zone            }
+                    zip               = {value.zip ?? undefined}
+                    country           = {value.country         }
+                    countryList       = {countryList           }
                     
                     
                     
