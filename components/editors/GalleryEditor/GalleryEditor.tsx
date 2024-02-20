@@ -187,12 +187,12 @@ export interface GalleryEditorProps<TElement extends Element = HTMLElement, TVal
         >
 {
     // actions:
-    onDeleteImage       ?: (args: { imageData: TValue }) => Promise<boolean|Error>
+    onDeleteImage       ?: (args: { imageData: TValue }) => boolean|Error|Promise<boolean|Error>
     
     
     
     // upload activities:
-    onUploadImage       ?: (args: { imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal }) => Promise<TValue|Error|null>
+    onUploadImage       ?: (args: { imageFile: File, reportProgress: (percentage: number) => void, abortSignal: AbortSignal }) => TValue|Error|null|Promise<TValue|Error|null>
     
     
     

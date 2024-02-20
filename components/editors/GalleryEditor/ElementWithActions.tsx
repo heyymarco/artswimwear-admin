@@ -55,7 +55,7 @@ export interface ElementWithActionsProps<TElement extends Element = HTMLElement>
     // actions:
     deletingImageTitle          ?: React.ReactNode
     deleteButtonTitle           ?: string
-    onDeleteImage               ?: (args: { itemIndex: number }) => Promise<void>
+    onDeleteImage               ?: (args: { itemIndex: number }) => void|Promise<void>
     
     
     
