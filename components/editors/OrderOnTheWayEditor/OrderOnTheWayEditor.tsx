@@ -2,11 +2,6 @@
 import {
     // react:
     default as React,
-    
-    
-    
-    // hooks:
-    useState,
 }                           from 'react'
 
 // cssfn:
@@ -32,6 +27,12 @@ import {
     ActiveChangeEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
+// heymarco:
+import {
+    // utilities:
+    useControllableAndUncontrollable,
+}                           from '@heymarco/events'
+
 // reusable-ui components:
 import {
     // base-components:
@@ -55,7 +56,6 @@ import type {
     EditorProps,
 }                           from '@/components/editors/Editor'
 import {
-    NameEditorProps,
     NameEditor,
 }                           from '@/components/editors/NameEditor'
 import {
@@ -143,9 +143,9 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
         
         
         // values:
-        defaultValue,
-        value,
-        onChange,
+        defaultValue : defaultUncontrollableValue = emptyOrderOnTheWayValue,
+        value        : controllableValue,
+        onChange     : onControllableValueChange,
     ...restIndicatorProps} = props;
     
     const {
@@ -163,44 +163,34 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
     
     
     // states:
-    const [valueDn, setValueDn] = useState<OrderOnTheWayValue>(((value !== undefined) ? value : defaultValue) ?? emptyOrderOnTheWayValue);
+    const {
+        value              : value,
+        triggerValueChange : triggerValueChange,
+    } = useControllableAndUncontrollable<OrderOnTheWayValue>({
+        defaultValue       : defaultUncontrollableValue,
+        value              : controllableValue,
+        onValueChange      : onControllableValueChange,
+    });
     
-    
-    
-    /*
-     * value state is based on [controllable value] (if set) and fallback to [uncontrollable value]
-     */
-    const valueFn : OrderOnTheWayValue = (value !== undefined) ? value /*controllable*/ : valueDn /*uncontrollable*/;
     const {
         shippingCarrier,
         shippingNumber,
         sendConfirmationEmail,
-    } = valueFn;
+    } = value;
     
     
     
-    // events:
-    /*
-          controllable : setValue(new) => update state(old => old) => trigger Event(new)
-        uncontrollable : setValue(new) => update state(old => new) => trigger Event(new)
-    */
-    const triggerValueChange = useEvent<EditorChangeEventHandler<OrderOnTheWayValue>>((value) => {
-        if (onChange) {
-            // fire `onChange` react event:
-            onChange(value);
-        };
-    });
+    // utilities:
     const setValue           = useEvent((newValue: Partial<OrderOnTheWayValue>) => {
         const combinedValue : OrderOnTheWayValue = {
-            ...valueFn,
+            ...value,
             ...newValue,
         };
         
         
         
         // update:
-        setValueDn(combinedValue);
-        triggerValueChange(combinedValue);
+        triggerValueChange(combinedValue, { triggerAt: 'immediately' });
     });
     
     
@@ -252,11 +242,6 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                 inheritReadOnly = {inheritReadOnly}
             >
                 <NameEditor
-                    // refs:
-                    elmRef={elmRef}
-                    
-                    
-                    
                     // classes:
                     className='shippingCarrier'
                     
