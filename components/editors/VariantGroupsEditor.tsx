@@ -36,13 +36,24 @@ import type {
     // react components:
     EditorProps,
 }                           from '@/components/editors/Editor'
+import type {
+    // types:
+    UpdatedHandler,
+    DeleteHandler,
+}                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
+    CreateHandler,
     ModelCreateOuterProps,
     ModelCreateOuter,
 }                           from '@/components/explorers/PagedModelExplorer'
 import type {
     VariantGroupPreviewProps,
 }                           from '@/components/views/VariantGroupPreview'
+
+// internals:
+import type {
+    PartialModel,
+}                           from '@/libs/types'
 
 // stores:
 import type {
@@ -56,7 +67,7 @@ import type {
 interface VariantGroupsEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Pick<EditorProps<TElement, ProductVariantGroupDetail[]>,
+        Pick<EditorProps<TElement, PartialModel<ProductVariantGroupDetail>[]>,
             // values:
             |'defaultValue' // not supported, controllable only
             |'value'
@@ -108,7 +119,7 @@ const VariantGroupsEditor = <TElement extends Element = HTMLElement>(props: Vari
     let {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllableAndUncontrollable<ProductVariantGroupDetail[]>({
+    } = useControllableAndUncontrollable<PartialModel<ProductVariantGroupDetail>[]>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
         onValueChange      : onControllableValueChange,
@@ -122,6 +133,30 @@ const VariantGroupsEditor = <TElement extends Element = HTMLElement>(props: Vari
             _firstChild, // remove
         ...restChildren] = children;
         triggerValueChange(restChildren.map((modelPreviewComponent) => (modelPreviewComponent.props as any).model), { triggerAt: 'immediately' });
+    });
+    const handleModelCreated   = useEvent<CreateHandler<ProductVariantGroupDetail>>((createdModel) => {
+        const mutatedValue = value.slice(0); // copy
+        mutatedValue.unshift(createdModel);
+        triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
+    });
+    const handleModelUpdated = useEvent<UpdatedHandler<ProductVariantGroupDetail>>((updatedModel) => {
+        const mutatedValue = value.slice(0); // copy
+        const id = updatedModel.id;
+        const modelIndex = mutatedValue.findIndex((model) => model.id === id);
+        if (modelIndex < 0) {
+            mutatedValue.unshift(updatedModel);
+        }
+        else {
+            mutatedValue[modelIndex] = updatedModel;
+        } // if
+        triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
+    });
+    const handleModelDeleted = useEvent<DeleteHandler<ProductVariantGroupDetail>>(({id}) => {
+        const mutatedValue = value.slice(0); // copy
+        const modelIndex = mutatedValue.findIndex((model) => model.id === id);
+        if (modelIndex < 0) return;
+        mutatedValue.splice(modelIndex, 1);
+        triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
     
     
@@ -147,6 +182,11 @@ const VariantGroupsEditor = <TElement extends Element = HTMLElement>(props: Vari
                     orderable={false}
                 />
             }
+            
+            
+            
+            // handlers:
+            onCreated={handleModelCreated}
         />}
         
         {value.map((modelOption) =>
@@ -155,12 +195,18 @@ const VariantGroupsEditor = <TElement extends Element = HTMLElement>(props: Vari
                 // props:
                 {
                     // identifiers:
-                    key      : modelPreviewComponent.key          ?? modelOption.id,
+                    key       : modelPreviewComponent.key          ?? modelOption.id,
                     
                     
                     
                     // data:
-                    model    : modelPreviewComponent.props.model  ?? modelOption,
+                    model     : modelPreviewComponent.props.model  ?? modelOption,
+                    
+                    
+                    
+                    // handlers:
+                    onUpdated : handleModelUpdated,
+                    onDeleted : handleModelDeleted,
                 },
             )
         )}

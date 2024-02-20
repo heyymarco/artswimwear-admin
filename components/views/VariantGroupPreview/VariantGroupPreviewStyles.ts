@@ -40,19 +40,6 @@ const usesVariantGroupPreviewLayout = () => { // the <ListItem> of variantGroup 
             
             // spacings:
             margin: 0,
-            
-            
-            
-            // children:
-            ...children('.noValue', {
-                // appearances:
-                opacity    : 0.5,
-                
-                
-                
-                // typos:
-                fontStyle  : 'italic',
-            }),
         }),
         ...children('.edit', {
             // positions:

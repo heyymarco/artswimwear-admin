@@ -132,6 +132,9 @@ import {
 }                           from '@/store/features/api/apiSlice'
 
 // internals:
+import type {
+    PartialModel,
+}                           from '@/libs/types'
 import {
     resolveMediaUrl,
 }                           from '@/libs/mediaStorage.client'
@@ -203,7 +206,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             return null;
         } // try
     });
-    const [variantGroups   , setVariantGroups   ] = useState<ProductVariantGroupDetail[]>();
+    const [variantGroups   , setVariantGroups   ] = useState<PartialModel<ProductVariantGroupDetail>[]>();
     
     const [draftDeletedImages                   ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
     

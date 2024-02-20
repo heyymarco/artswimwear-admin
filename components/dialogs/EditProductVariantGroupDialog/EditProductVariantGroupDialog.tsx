@@ -49,8 +49,6 @@ import {
     // types:
     UpdateHandler,
     
-    DeleteHandler,
-    
     ConfirmDeleteHandler,
     ConfirmUnsavedHandler,
     
@@ -61,16 +59,15 @@ import {
     ComplexEditModelDialog,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 
-// stores:
+// others:
 import {
+    customAlphabet,
+}                           from 'nanoid/async'
+
+// stores:
+import type {
     // types:
     ProductVariantGroupDetail,
-    
-    
-    
-    // hooks:
-    useUpdateProductVariantGroup,
-    useDeleteProductVariantGroup,
 }                           from '@/store/features/api/apiSlice'
 
 // configs:
@@ -131,12 +128,6 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
     
     
     
-    // stores:
-    const [updateProductVariantGroup, {isLoading : isLoadingUpdate}] = useUpdateProductVariantGroup();
-    const [deleteProductVariantGroup, {isLoading : isLoadingDelete}] = useDeleteProductVariantGroup();
-    
-    
-    
     // refs:
     const firstEditorRef = useRef<HTMLInputElement|null>(null); // TODO: finish this
     
@@ -144,19 +135,14 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
     
     // handlers:
     const handleUpdate               = useEvent<UpdateHandler<ProductVariantGroupDetail>>(async ({id, privilegeAdd, privilegeUpdate}) => {
-        return await updateProductVariantGroup({
-            id             : id ?? '',
-            productId      : id ? undefined : productId,
-            sort           : id ? undefined : -999, // default order to top_most
+        return {
+            id   : id ?? await (async () => {
+                const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
+                return ` ${await nanoid()}`; // starts with space{random-temporary-id}
+            })(),
             
-            name           : (privilegeUpdate.description || privilegeAdd) ? name : undefined,
-        }).unwrap();
-    });
-    
-    const handleDelete               = useEvent<DeleteHandler<ProductVariantGroupDetail>>(async ({id}) => {
-        await deleteProductVariantGroup({
-            id : id,
-        }).unwrap();
+            name : (privilegeUpdate.description || privilegeAdd) ? name : undefined,
+        };
     });
     
     const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<ProductVariantGroupDetail>>(({model}) => {
@@ -210,8 +196,8 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
             // stores:
             isModified  = {isModified}
             
-            isCommiting = {isLoadingUpdate}
-            isDeleting  = {isLoadingDelete}
+            // isCommiting = {isLoadingUpdate}
+            // isDeleting  = {isLoadingDelete}
             
             
             
@@ -234,7 +220,7 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
             onUpdate={handleUpdate}
             // onAfterUpdate={handleAfterUpdate}
             
-            onDelete={handleDelete}
+            // onDelete={handleDelete}
             // onAfterDelete={undefined}
             
             onConfirmDelete={handleConfirmDelete}

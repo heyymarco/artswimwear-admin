@@ -205,38 +205,38 @@ export const apiSlice = createApi({
                 ];
             },
         }),
-        updateProductVariantGroup  : builder.mutation<ProductVariantGroupDetail, MutationArgs<ProductVariantGroupDetail> & { productId ?: string }>({
-            query: (patch) => ({
-                url    : 'product-variant-groups',
-                method : 'PATCH',
-                body   : patch
-            }),
-            invalidatesTags: (productVariantGroup, error, arg) => [
-                ...(((!arg.id || !productVariantGroup) ? [{
-                    type : 'ProductVariantGroups',
-                    id   : 'PRODUCT_VARIANT_GROUP_LIST', // create new      => invalidates the whole list
-                }] : [{
-                    type : 'ProductVariantGroups',
-                    id   : productVariantGroup.id,       // update existing => invalidates the modified
-                }]) as Array<{ type: 'ProductVariantGroups', id: string }>),
-            ],
-        }),
-        deleteProductVariantGroup  : builder.mutation<Pick<ProductVariantGroupDetail, 'id'>, MutationArgs<Pick<ProductVariantGroupDetail, 'id'>>>({
-            query: (params) => ({
-                url    : 'product-variant-groups',
-                method : 'DELETE',
-                body   : params
-            }),
-            invalidatesTags: (productVariantGroup, error, arg) => [
-                ...((!productVariantGroup ? [{
-                    type : 'ProductVariantGroups',
-                    id   : 'PRODUCT_VARIANT_GROUP_LIST', // delete unspecified => invalidates the whole list
-                }] : [{
-                    type : 'ProductVariantGroups',
-                    id   : productVariantGroup.id,       // delete existing    => invalidates the modified
-                }]) as Array<{ type: 'ProductVariantGroups', id: string }>),
-            ],
-        }),
+        // // updateProductVariantGroup  : builder.mutation<ProductVariantGroupDetail, MutationArgs<ProductVariantGroupDetail> & { productId ?: string }>({
+        // //     query: (patch) => ({
+        // //         url    : 'product-variant-groups',
+        // //         method : 'PATCH',
+        // //         body   : patch
+        // //     }),
+        // //     invalidatesTags: (productVariantGroup, error, arg) => [
+        // //         ...(((!arg.id || !productVariantGroup) ? [{
+        // //             type : 'ProductVariantGroups',
+        // //             id   : 'PRODUCT_VARIANT_GROUP_LIST', // create new      => invalidates the whole list
+        // //         }] : [{
+        // //             type : 'ProductVariantGroups',
+        // //             id   : productVariantGroup.id,       // update existing => invalidates the modified
+        // //         }]) as Array<{ type: 'ProductVariantGroups', id: string }>),
+        // //     ],
+        // // }),
+        // // deleteProductVariantGroup  : builder.mutation<Pick<ProductVariantGroupDetail, 'id'>, MutationArgs<Pick<ProductVariantGroupDetail, 'id'>>>({
+        // //     query: (params) => ({
+        // //         url    : 'product-variant-groups',
+        // //         method : 'DELETE',
+        // //         body   : params
+        // //     }),
+        // //     invalidatesTags: (productVariantGroup, error, arg) => [
+        // //         ...((!productVariantGroup ? [{
+        // //             type : 'ProductVariantGroups',
+        // //             id   : 'PRODUCT_VARIANT_GROUP_LIST', // delete unspecified => invalidates the whole list
+        // //         }] : [{
+        // //             type : 'ProductVariantGroups',
+        // //             id   : productVariantGroup.id,       // delete existing    => invalidates the modified
+        // //         }]) as Array<{ type: 'ProductVariantGroups', id: string }>),
+        // //     ],
+        // // }),
         
         getProductVariantList      : builder.query<EntityState<ProductVariantDetail>, { groupId : string }>({
             query : ({ groupId }) => ({
@@ -644,8 +644,8 @@ export const {
     useAvailablePathMutation             : useAvailablePath,
     
     useGetProductVariantGroupListQuery   : useGetProductVariantGroupListRaw,
-    useUpdateProductVariantGroupMutation : useUpdateProductVariantGroup,
-    useDeleteProductVariantGroupMutation : useDeleteProductVariantGroup,
+    // // useUpdateProductVariantGroupMutation : useUpdateProductVariantGroup,
+    // // useDeleteProductVariantGroupMutation : useDeleteProductVariantGroup,
     
     useGetProductVariantListQuery        : useGetProductVariantList,
     useUpdateProductVariantMutation      : useUpdateProductVariant,

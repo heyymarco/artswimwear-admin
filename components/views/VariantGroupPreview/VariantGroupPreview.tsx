@@ -53,6 +53,7 @@ import {
 import type {
     // types:
     ComplexEditModelDialogResult,
+    UpdatedHandler,
     DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
@@ -83,6 +84,7 @@ export interface VariantGroupPreviewProps extends Omit<ModelPreviewProps<Product
     
     
     // handlers:
+    onUpdated ?: UpdatedHandler<ProductVariantGroupDetail>
     onDeleted ?: DeleteHandler<ProductVariantGroupDetail>
 }
 const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null => {
@@ -105,6 +107,7 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
         
         
         // handlers:
+        onUpdated,
         onDeleted,
     ...restListItemProps} = props;
     const {
@@ -135,9 +138,17 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
                 productId={productId}
             />
         );
-        if (updatedVariantGroupModel === false) {
-            await onDeleted?.(model);
-        } // if
+        switch (updatedVariantGroupModel) {
+            case undefined: // dialog canceled
+                break;
+            
+            case false:     // dialog deleted
+                await onDeleted?.(model);
+                break;
+            
+            default:        // dialog updated
+                await onUpdated?.(updatedVariantGroupModel);
+        } // switch
     });
     
     
@@ -159,11 +170,11 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
             className={styleSheet.main}
         >
             TODO: {'<Grip>'}
-            <p className='name'>{!!id ? name : <span className='noValue'>No Access</span>}</p>
-            {!!id && <EditButton
+            <p className='name'>{name}</p>
+            <EditButton
                 iconComponent={<Icon icon='edit' />}
                 onClick={handleEditButtonClick}
-            />}
+            />
         </OrderableListItem>
     );
 };
