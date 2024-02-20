@@ -1,7 +1,8 @@
 import { createEntityAdapter, EntityState }                         from '@reduxjs/toolkit'
-import { BaseQueryFn, createApi, fetchBaseQuery }                   from '@reduxjs/toolkit/query/react'
+import { BaseQueryFn, createApi, QueryStatus }                      from '@reduxjs/toolkit/query/react'
 import type { QuerySubState }                                       from '@reduxjs/toolkit/dist/query/core/apiState'
 import type { BaseEndpointDefinition, MutationCacheLifecycleApi }   from '@reduxjs/toolkit/dist/query/endpointDefinitions'
+import type { UseQuery, UseQueryHookResult }                        from '@reduxjs/toolkit/dist/query/react/buildHooks'
 
 // types:
 import type {
@@ -9,7 +10,6 @@ import type {
     Pagination,
     
     MutationArgs,
-    Model,
 }                           from '@/libs/types'
 export type OrderDetailWithOptions = OrderDetail & { sendConfirmationEmail?: boolean }
 
@@ -673,16 +673,30 @@ export const {
     useMoveImageMutation                 : useMoveImage,
 } = apiSlice;
 
-export const useGetProductVariantGroupList = (arg: { productId : string }): ReturnType<typeof useGetProductVariantGroupListRaw> => {
-    if (!arg.productId) return {
-        data : undefined,
-        
-        isLoading  : false,
-        isError    : false,
-        isFetching : false,
-        
-        refetch    : (() => {}) as any,
-    };
+type QueryHookResultFromUseQuery<TUseQuery> = TUseQuery extends UseQuery<infer TQueryDefinition> ? UseQueryHookResult<TQueryDefinition> : unknown
+export const useGetProductVariantGroupList = (arg: { productId : string }): QueryHookResultFromUseQuery<typeof useGetProductVariantGroupListRaw> => {
+    if (!arg.productId) {
+        const emptyData : EntityState<ProductVariantGroupDetail> = {
+            ids      : [],
+            entities : {},
+        };
+        return {
+            data               : emptyData, // assumes as succeeded
+            currentData        : emptyData, // assumes as succeeded
+            error              : undefined,
+            
+            status             : QueryStatus.fulfilled,
+            isUninitialized    : false,
+            isLoading          : false,
+            isFetching         : false,
+            isError            : false,
+            isSuccess          : true,      // assumes as succeeded
+            
+            refetch            : (() => {}) as any,
+            
+            fulfilledTimeStamp : 0,
+        };
+    } // if
     
     return useGetProductVariantGroupListRaw(arg);
 }

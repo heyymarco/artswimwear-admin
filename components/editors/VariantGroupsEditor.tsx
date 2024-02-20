@@ -4,24 +4,30 @@ import {
     default as React,
 }                           from 'react'
 
-// redux:
-import type {
-    EntityState
-}                           from '@reduxjs/toolkit'
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useEvent,
+}                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
+
+// heymarco:
+import {
+    // utilities:
+    useControllableAndUncontrollable,
+}                           from '@heymarco/events'
 
 // reusable-ui components:
 import {
     // layout-components:
-    ListItemProps,
     ListProps,
     List,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // heymarco components:
 import {
-    OrderableListItemDragStartEvent,
-    OrderableListItemDropHandshakeEvent,
+    OrderableListItemProps,
     OrderableListItem,
+    
     OrderableList,
 }                           from '@heymarco/orderable-list'
 
@@ -50,7 +56,7 @@ import type {
 interface VariantGroupsEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Pick<EditorProps<TElement, string|null>,
+        Pick<EditorProps<TElement, ProductVariantGroupDetail[]>,
             // values:
             |'defaultValue' // not supported, controllable only
             |'value'
@@ -73,11 +79,6 @@ interface VariantGroupsEditorProps<TElement extends Element = HTMLElement>
             |'modelCreateComponent'
         >>
 {
-    // values:
-    valueOptions          ?: EntityState<ProductVariantGroupDetail>
-    
-    
-    
     // components:
     modelPreviewComponent  : React.ReactComponentElement<any, VariantGroupPreviewProps>
 }
@@ -90,11 +91,9 @@ const VariantGroupsEditor = <TElement extends Element = HTMLElement>(props: Vari
         
         
         // values:
-        valueOptions,
-        
-        defaultValue,
-        value,
-        onChange,
+        defaultValue : defaultUncontrollableValue = [],
+        value        : controllableValue,
+        onChange     : onControllableValueChange,
         
         
         
@@ -103,54 +102,91 @@ const VariantGroupsEditor = <TElement extends Element = HTMLElement>(props: Vari
         modelPreviewComponent,
     ...restListProps} = props;
     
-    const filteredValueOptions = !valueOptions ? [] : Object.values(valueOptions.entities).filter((model): model is Exclude<typeof model, undefined> => !!model);
+    
+    
+    // states:
+    let {
+        value              : value,
+        triggerValueChange : triggerValueChange,
+    } = useControllableAndUncontrollable<ProductVariantGroupDetail[]>({
+        defaultValue       : defaultUncontrollableValue,
+        value              : controllableValue,
+        onValueChange      : onControllableValueChange,
+    });
+    
+    
+    
+    // handlers:
+    const handleChildrenChange = useEvent((children: React.ReactComponentElement<any, OrderableListItemProps<HTMLElement, unknown>>[]) => {
+        const [
+            _firstChild, // remove
+        ...restChildren] = children;
+        triggerValueChange(restChildren.map((modelPreviewComponent) => (modelPreviewComponent.props as any).model), { triggerAt: 'immediately' });
+    });
     
     
     
     // jsx:
-    const ConditionalList = readOnly ? List<TElement> : OrderableList<TElement, unknown>;
-    return (
-        <ConditionalList
+    const children = <>
+        {/* <ModelCreate> */}
+        {!!modelCreateComponent  && <ModelCreateOuter<ProductVariantGroupDetail>
+            // classes:
+            className='solid'
+            
+            
+            
+            // accessibilities:
+            createItemText='Add New Variant Group'
+            
+            
+            
+            // components:
+            modelCreateComponent={modelCreateComponent}
+            listItemComponent={
+                <OrderableListItem
+                    orderable={false}
+                />
+            }
+        />}
+        
+        {value.map((modelOption) =>
+            /* <ModelPreview> */
+            React.cloneElement<VariantGroupPreviewProps>(modelPreviewComponent,
+                // props:
+                {
+                    // identifiers:
+                    key      : modelPreviewComponent.key          ?? modelOption.id,
+                    
+                    
+                    
+                    // data:
+                    model    : modelPreviewComponent.props.model  ?? modelOption,
+                },
+            )
+        )}
+    </>;
+    
+    if (readOnly) return (
+        <List<TElement>
             // other props:
             {...restListProps}
         >
-            {/* <ModelCreate> */}
-            {!!modelCreateComponent  && <ModelCreateOuter<ProductVariantGroupDetail>
-                // classes:
-                className='solid'
-                
-                
-                
-                // accessibilities:
-                createItemText='Add New Variant Group'
-                
-                
-                
-                // components:
-                modelCreateComponent={modelCreateComponent}
-                listItemComponent={
-                    <OrderableListItem
-                        orderable={false}
-                    />
-                }
-            />}
+            {children}
+        </List>
+    );
+    
+    return (
+        <OrderableList<TElement, unknown>
+            // other props:
+            {...restListProps}
             
-            {filteredValueOptions.map((modelOption) =>
-                /* <ModelPreview> */
-                React.cloneElement<VariantGroupPreviewProps>(modelPreviewComponent,
-                    // props:
-                    {
-                        // identifiers:
-                        key      : modelPreviewComponent.key          ?? modelOption.id,
-                        
-                        
-                        
-                        // data:
-                        model    : modelPreviewComponent.props.model  ?? modelOption,
-                    },
-                )
-            )}
-        </ConditionalList>
+            
+            
+            // values:
+            onChildrenChange={handleChildrenChange}
+        >
+            {children}
+        </OrderableList>
     );
 };
 export {

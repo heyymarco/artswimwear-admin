@@ -11,6 +11,7 @@ import {
     useRef,
     useState,
     useMemo,
+    useEffect,
 }                           from 'react'
 
 // next-auth:
@@ -37,18 +38,8 @@ import {
     
     
     
-    // simple-components:
-    Button,
-    
-    
-    
     // composite-components:
     TabPanel,
-    
-    
-    
-    // utility-components:
-    useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // heymarco components:
@@ -110,10 +101,6 @@ import {
     EditProductVariantGroupDialog,
 }                           from '@/components/dialogs/EditProductVariantGroupDialog'
 import {
-    // react components:
-    EditProductVariantDialog,
-}                           from '@/components/dialogs/EditProductVariantDialog'
-import {
     VariantGroupsEditor,
 }                           from '@/components/editors/VariantGroupsEditor'
 import {
@@ -129,6 +116,7 @@ import type {
 import {
     // types:
     ProductDetail,
+    ProductVariantGroupDetail,
     
     
     
@@ -215,6 +203,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             return null;
         } // try
     });
+    const [variantGroups   , setVariantGroups   ] = useState<ProductVariantGroupDetail[]>();
     
     const [draftDeletedImages                   ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
     
@@ -237,18 +226,16 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     const {data: variantGroupOptions, isLoading: isLoadingVariantGroup, isError: isErrorVariantGroup} = useGetProductVariantGroupList({
         productId : model?.id ?? '', // the related product of the productVariantGroup
     });
+    const variantGroupentities = variantGroupOptions?.entities;
+    useEffect(() => {
+        const updatedVariantGroups = variantGroupentities ? Object.values(variantGroupentities).filter((model): model is Exclude<typeof model, undefined> => !!model) : [];
+        setVariantGroups(updatedVariantGroups);
+    }, [variantGroupentities]);
     
     
     
     // refs:
     const firstEditorRef = useRef<HTMLInputElement|null>(null); // TODO: finish this
-    
-    
-    
-    // dialogs:
-    const {
-        showDialog,
-    } = useDialogMessage();
     
     
     
@@ -619,10 +606,9 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         
                         
                         // values:
-                        valueOptions={variantGroupOptions}
-                        // value={roleId}
+                        value={variantGroups}
                         onChange={(value) => {
-                            // setRoleId(value);
+                            setVariantGroups(value);
                             setIsModified(true);
                         }}
                         
