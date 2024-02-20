@@ -181,7 +181,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
     
     
     // utilities:
-    const setValue           = useEvent((newValue: Partial<OrderOnTheWayValue>) => {
+    const setValue = useEvent((newValue: Partial<OrderOnTheWayValue>) => {
         const combinedValue : OrderOnTheWayValue = {
             ...value,
             ...newValue,
