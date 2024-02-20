@@ -2,11 +2,6 @@
 import {
     // react:
     default as React,
-    
-    
-    
-    // hooks:
-    useState,
 }                           from 'react'
 
 // cssfn:
@@ -27,6 +22,12 @@ import {
     ActiveChangeEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
+// heymarco:
+import {
+    // utilities:
+    useControllableAndUncontrollable,
+}                           from '@heymarco/events'
+
 // reusable-ui components:
 import {
     // base-components:
@@ -42,11 +43,6 @@ import {
 
 // internals components:
 import type {
-    // types:
-    EditorChangeEventHandler,
-    
-    
-    
     // react components:
     EditorProps,
 }                           from '@/components/editors/Editor'
@@ -103,9 +99,9 @@ const OrderCompletedEditor = (props: OrderCompletedEditorProps): JSX.Element|nul
     // rest props:
     const {
         // values:
-        defaultValue,
-        value,
-        onChange,
+        defaultValue : defaultUncontrollableValue = emptyOrderCompletedValue,
+        value        : controllableValue,
+        onChange     : onControllableValueChange,
     ...restIndicatorProps} = props;
     
     const {
@@ -123,42 +119,32 @@ const OrderCompletedEditor = (props: OrderCompletedEditorProps): JSX.Element|nul
     
     
     // states:
-    const [valueDn, setValueDn] = useState<OrderCompletedValue>(((value !== undefined) ? value : defaultValue) ?? emptyOrderCompletedValue);
+    const {
+        value              : value,
+        triggerValueChange : triggerValueChange,
+    } = useControllableAndUncontrollable<OrderCompletedValue>({
+        defaultValue       : defaultUncontrollableValue,
+        value              : controllableValue,
+        onValueChange      : onControllableValueChange,
+    });
     
-    
-    
-    /*
-     * value state is based on [controllable value] (if set) and fallback to [uncontrollable value]
-     */
-    const valueFn : OrderCompletedValue = (value !== undefined) ? value /*controllable*/ : valueDn /*uncontrollable*/;
     const {
         sendConfirmationEmail,
-    } = valueFn;
+    } = value;
     
     
     
-    // events:
-    /*
-          controllable : setValue(new) => update state(old => old) => trigger Event(new)
-        uncontrollable : setValue(new) => update state(old => new) => trigger Event(new)
-    */
-    const triggerValueChange = useEvent<EditorChangeEventHandler<OrderCompletedValue>>((value) => {
-        if (onChange) {
-            // fire `onChange` react event:
-            onChange(value);
-        };
-    });
+    // utilities:
     const setValue           = useEvent((newValue: Partial<OrderCompletedValue>) => {
         const combinedValue : OrderCompletedValue = {
-            ...valueFn,
+            ...value,
             ...newValue,
         };
         
         
         
         // update:
-        setValueDn(combinedValue);
-        triggerValueChange(combinedValue);
+        triggerValueChange(combinedValue, { triggerAt: 'immediately' });
     });
     
     
