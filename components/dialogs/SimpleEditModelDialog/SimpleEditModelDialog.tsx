@@ -105,10 +105,10 @@ export type UpdateModelApi<TModel extends Model> = readonly [
     }
 ]
 
-export type AfterUpdateHandler                          = () => Promise<void>
+export type AfterUpdateHandler                          = () => void|Promise<void>
 
-export type UpdateSideHandler                           = () => Promise<void>
-export type DeleteSideHandler                           = () => Promise<void>
+export type UpdateSideHandler                           = () => void|Promise<void>
+export type DeleteSideHandler                           = () => void|Promise<void>
 
 export type ConfirmUnsavedHandler<TModel extends Model> = (args: { model: TModel|null }) => { title?: React.ReactNode, message: React.ReactNode }
 

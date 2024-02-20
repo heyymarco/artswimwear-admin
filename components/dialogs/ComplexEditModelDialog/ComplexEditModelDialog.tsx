@@ -94,14 +94,14 @@ import './ComplexEditModelDialogStyles'
 export type ComplexEditModelDialogResult<TModel extends Model> = PartialModel<TModel>|false|undefined // TModel: created|updated; false: deleted; undefined: not created|modified
 export interface ComplexEditModelDialogExpandedChangeEvent<TModel extends Model> extends ModalExpandedChangeEvent<ComplexEditModelDialogResult<TModel>> {}
 
-export type UpdateHandler<TModel extends Model>         = (args: { id: string|null, privilegeAdd: boolean, privilegeUpdate: Record<string, boolean> }) => Promise<PartialModel<TModel>>
-export type AfterUpdateHandler                          = () => Promise<void>
+export type UpdateHandler<TModel extends Model>         = (args: { id: string|null, privilegeAdd: boolean, privilegeUpdate: Record<string, boolean> }) => PartialModel<TModel>|Promise<PartialModel<TModel>>
+export type AfterUpdateHandler                          = () => void|Promise<void>
 
-export type DeleteHandler<TModel extends Model>         = (deletingModel: TModel) => Promise<void>
-export type AfterDeleteHandler                          = () => Promise<void>
+export type DeleteHandler<TModel extends Model>         = (deletingModel: TModel) => void|Promise<void>
+export type AfterDeleteHandler                          = () => void|Promise<void>
 
-export type UpdateSideHandler                           = () => Promise<void>
-export type DeleteSideHandler                           = () => Promise<void>
+export type UpdateSideHandler                           = () => void|Promise<void>
+export type DeleteSideHandler                           = () => void|Promise<void>
 
 export type ConfirmDeleteHandler<TModel extends Model>  = (args: { model: TModel      }) => { title?: React.ReactNode, message: React.ReactNode }
 export type ConfirmUnsavedHandler<TModel extends Model> = (args: { model: TModel|null }) => { title?: React.ReactNode, message: React.ReactNode }
@@ -316,12 +316,13 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
         
         
         try {
-            const updatingModelTask = onUpdate?.({
+            const updatingModelRaw = onUpdate?.({
                 id : model?.id || null,
                 
                 privilegeAdd,
                 privilegeUpdate,
             });
+            const updatingModelTask = (updatingModelRaw instanceof Promise) ? updatingModelRaw : Promise.resolve(updatingModelRaw);
             
             const updatingModelAndOthersTask = (
                 updatingModelTask
