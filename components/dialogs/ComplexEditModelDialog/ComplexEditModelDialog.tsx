@@ -95,6 +95,7 @@ export type ComplexEditModelDialogResult<TModel extends Model> = PartialModel<TM
 export interface ComplexEditModelDialogExpandedChangeEvent<TModel extends Model> extends ModalExpandedChangeEvent<ComplexEditModelDialogResult<TModel>> {}
 
 export type UpdateHandler<TModel extends Model>         = (args: { id: string|null, privilegeAdd: boolean, privilegeUpdate: Record<string, boolean> }) => PartialModel<TModel>|Promise<PartialModel<TModel>>
+export type UpdatedHandler<TModel extends Model>        = (updatedModel: PartialModel<TModel>) => void|Promise<void>
 export type AfterUpdateHandler                          = () => void|Promise<void>
 
 export type DeleteHandler<TModel extends Model>         = (deletingModel: TModel) => void|Promise<void>
