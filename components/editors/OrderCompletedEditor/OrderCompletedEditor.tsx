@@ -135,7 +135,7 @@ const OrderCompletedEditor = (props: OrderCompletedEditorProps): JSX.Element|nul
     
     
     // utilities:
-    const setValue           = useEvent((newValue: Partial<OrderCompletedValue>) => {
+    const setValue = useEvent((newValue: Partial<OrderCompletedValue>) => {
         const combinedValue : OrderCompletedValue = {
             ...value,
             ...newValue,
