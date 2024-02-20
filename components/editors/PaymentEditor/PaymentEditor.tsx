@@ -34,6 +34,12 @@ import {
     ActiveChangeEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
+// heymarco:
+import {
+    // utilities:
+    useControllableAndUncontrollable,
+}                           from '@heymarco/events'
+
 // reusable-ui components:
 import {
     // base-components:
@@ -88,7 +94,6 @@ import {
 
 // models:
 import type {
-    PaymentType,
     Payment,
 }                           from '@prisma/client'
 
@@ -199,9 +204,9 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
         
         
         // values:
-        defaultValue,
-        value,
-        onChange,
+        defaultValue : defaultUncontrollableValue = emptyPaymentValue,
+        value        : controllableValue,
+        onChange     : onControllableValueChange,
     ...restIndicatorProps} = props;
     
     const {
@@ -219,48 +224,40 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     
     
     // states:
-    const [valueDn, setValueDn] = useState<PaymentValue>(((value !== undefined) ? value : defaultValue) ?? emptyPaymentValue);
+    const {
+        value              : value,
+        triggerValueChange : triggerValueChange,
+    } = useControllableAndUncontrollable<PaymentValue>({
+        defaultValue       : defaultUncontrollableValue,
+        value              : controllableValue,
+        onValueChange      : onControllableValueChange,
+    });
     
     const [amountWarning, setAmountWarning] = useState<React.ReactNode>(null);
     const [amountFocused, setAmountFocused] = useState<boolean>(false);
     
     
     
-    /*
-     * value state is based on [controllable value] (if set) and fallback to [uncontrollable value]
-     */
-    const valueFn : PaymentValue = (value !== undefined) ? value /*controllable*/ : valueDn /*uncontrollable*/;
     const {
         brand,
         amount,
         fee,
         sendConfirmationEmail,
-    } = valueFn;
+    } = value;
     
     
     
     // events:
-    /*
-          controllable : setValue(new) => update state(old => old) => trigger Event(new)
-        uncontrollable : setValue(new) => update state(old => new) => trigger Event(new)
-    */
-    const triggerValueChange = useEvent<EditorChangeEventHandler<PaymentValue>>((value) => {
-        if (onChange) {
-            // fire `onChange` react event:
-            onChange(value);
-        };
-    });
-    const setValue           = useEvent((newValue: Partial<PaymentValue>) => {
+    const setValue = useEvent((newValue: Partial<PaymentValue>) => {
         const combinedValue : PaymentValue = {
-            ...valueFn,
+            ...value,
             ...newValue,
         };
         
         
         
         // update:
-        setValueDn(combinedValue);
-        triggerValueChange(combinedValue);
+        triggerValueChange(combinedValue, { triggerAt: 'immediately' });
     });
     
     
