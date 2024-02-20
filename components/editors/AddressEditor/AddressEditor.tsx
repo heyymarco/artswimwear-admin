@@ -173,7 +173,7 @@ const AddressEditor = (props: AddressEditorProps): JSX.Element|null => {
     
     
     
-    // callbacks:
+    // utilities:
     const setValue = useEvent<React.Dispatch<React.SetStateAction<AddressValue>>>((newValueFn) => {
         // conditions:
         const newValue = (typeof(newValueFn) === 'function') ? newValueFn(value) : newValueFn;
