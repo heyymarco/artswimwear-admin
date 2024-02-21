@@ -23,6 +23,9 @@ import {
 import type {
     ProductVariantGroup,
 }                           from '@prisma/client'
+import type {
+    ProductVariantDetail,
+}                           from '../product-variants/route'
 
 // ORMs:
 import {
@@ -46,6 +49,7 @@ export interface ProductVariantGroupDetail
             |'productId'
         >
 {
+    productVariants : ProductVariantDetail[]
 }
 
 
@@ -110,11 +114,28 @@ router
                 productId : productId,
             },
             select : {
-                id             : true,
+                id              : true,
                 
-                sort           : true,
+                sort            : true,
                 
-                name           : true,
+                name            : true,
+                
+                productVariants : {
+                    select : {
+                        id             : true,
+                        
+                        visibility     : true,
+                        sort           : true,
+                        
+                        name           : true,
+                        price          : true,
+                        shippingWeight : true,
+                        images         : true,
+                    },
+                    orderBy : {
+                        sort: 'asc',
+                    },
+                }
             },
             orderBy : {
                 sort: 'asc',
