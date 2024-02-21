@@ -629,10 +629,10 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                                 
                                 // privileges:
                                 /*
-                                    edit mode   (having model) : enable_update when has privilege update_product_description
-                                    create mode     (no model) : enable_update when has privilege create_product
+                                    edit mode   (having model) : editable when has privilege update_product_description
+                                    create mode     (no model) : editable when has privilege create_product
                                 */
-                                privilegeUpdate = {(!!model && privilegeUpdate.description) || (!model && privilegeAdd)}
+                                privilegeEdit = {(!!model && privilegeUpdate.description) || (!model && privilegeAdd)}
                             />
                         }
                         modelCreateComponent={
