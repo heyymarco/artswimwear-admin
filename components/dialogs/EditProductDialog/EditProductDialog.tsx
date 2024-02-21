@@ -100,8 +100,8 @@ import {
     EditProductVariantGroupDialog,
 }                           from '@/components/dialogs/EditProductVariantGroupDialog'
 import {
-    VariantGroupsEditor,
-}                           from '@/components/editors/VariantGroupsEditor'
+    VariantGroupEditor,
+}                           from '@/components/editors/VariantGroupEditor'
 import {
     VariantGroupPreview,
 }                           from '@/components/views//VariantGroupPreview'
@@ -599,7 +599,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                 ? <LoadingBar />
                 : isErrorVariantGroup
                     ? 'Error getting variant data'
-                    : <VariantGroupsEditor
+                    : <VariantGroupEditor
                         // accessibilities:
                         /*
                             edit mode   (having model) : readOnly when no privilege update_product_description
