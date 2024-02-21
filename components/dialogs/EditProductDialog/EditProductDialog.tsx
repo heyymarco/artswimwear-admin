@@ -11,7 +11,6 @@ import {
     useRef,
     useState,
     useMemo,
-    useEffect,
 }                           from 'react'
 
 // next-auth:
@@ -206,7 +205,6 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             return null;
         } // try
     });
-    const [variantGroups   , setVariantGroups   ] = useState<PartialModel<ProductVariantGroupDetail>[]>();
     
     const [draftDeletedImages                   ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
     
@@ -226,14 +224,17 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
     const [commitMoveImage  , {isLoading : isLoadingCommitMoveImage  }] = useMoveImage();
     
-    const {data: variantGroupOptions, isLoading: isLoadingVariantGroup, isError: isErrorVariantGroup} = useGetProductVariantGroupList({
+    const {data: variantGroupServerData, isLoading: isLoadingVariantGroup, isError: isErrorVariantGroup, isSuccess: isSuccessVariantGroup, fulfilledTimeStamp: timeStampVariantGroup} = useGetProductVariantGroupList({
         productId : model?.id ?? '', // the related product of the productVariantGroup
     });
-    const variantGroupentities = variantGroupOptions?.entities;
-    useEffect(() => {
-        const updatedVariantGroups = variantGroupentities ? Object.values(variantGroupentities).filter((model): model is Exclude<typeof model, undefined> => !!model) : [];
-        setVariantGroups(updatedVariantGroups);
-    }, [variantGroupentities]);
+    const variantGroupEntities = variantGroupServerData?.entities;
+    const variantGroupList     = !variantGroupEntities ? undefined : Object.values(variantGroupEntities).filter((model): model is Exclude<typeof model, undefined> => !!model);
+    const [unmodifiedVariantGroups, setUnmodifiedVariantGroups] = useState<PartialModel<ProductVariantGroupDetail>[]|undefined>(variantGroupList);
+    const [variantGroups, setVariantGroups] = useState<PartialModel<ProductVariantGroupDetail>[]|undefined>(variantGroupList);
+    if ((unmodifiedVariantGroups?.length !== variantGroupList?.length) || unmodifiedVariantGroups?.some((item, index) => (item !== variantGroupList?.[index]))) {
+        setUnmodifiedVariantGroups(variantGroupList); // tracks the new changes
+        setVariantGroups(variantGroupList);           // discard the user changes
+    } // if
     
     
     
