@@ -132,7 +132,16 @@ const VariantGroupsEditor = <TElement extends Element = HTMLElement>(props: Vari
         const [
             _firstChild, // remove
         ...restChildren] = children;
-        triggerValueChange(restChildren.map((modelPreviewComponent) => (modelPreviewComponent.props as any).model), { triggerAt: 'immediately' });
+        triggerValueChange(
+            restChildren
+            .map((modelPreviewComponent, index) => {
+                const model = (modelPreviewComponent.props as any).model as ProductVariantGroupDetail;
+                return {
+                    ...model,
+                    sort: index,
+                } satisfies ProductVariantGroupDetail;
+            })
+        , { triggerAt: 'immediately' });
     });
     const handleModelCreated   = useEvent<CreateHandler<ProductVariantGroupDetail>>((createdModel) => {
         const mutatedValue = value.slice(0); // copy
