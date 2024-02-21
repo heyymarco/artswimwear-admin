@@ -13,9 +13,9 @@ const usesVariantGroupPreviewLayout = () => { // the <ListItem> of variantGroup 
         // layouts:
         display       : 'grid',
         gridTemplate  : [[
-            '"decorator name edit"',
+            '"name grip edit"',
             '/',
-            'auto 1fr auto',
+            '1fr auto auto',
         ]],
         
         
@@ -28,10 +28,6 @@ const usesVariantGroupPreviewLayout = () => { // the <ListItem> of variantGroup 
         
         
         // children:
-        ...children('.decorator', {
-            // positions:
-            gridArea    : 'decorator',
-        }),
         ...children('.name', {
             // positions:
             gridArea : 'name',
@@ -40,6 +36,10 @@ const usesVariantGroupPreviewLayout = () => { // the <ListItem> of variantGroup 
             
             // spacings:
             margin: 0,
+        }),
+        ...children('.grip', {
+            // positions:
+            gridArea    : 'grip',
         }),
         ...children('.edit', {
             // positions:
