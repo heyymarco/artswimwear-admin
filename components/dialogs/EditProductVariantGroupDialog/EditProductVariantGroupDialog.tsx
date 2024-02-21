@@ -136,6 +136,8 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
     // handlers:
     const handleUpdate               = useEvent<UpdateHandler<ProductVariantGroupDetail>>(async ({id, privilegeAdd, privilegeUpdate}) => {
         return {
+            ...model,
+            
             id   : id ?? await (async () => {
                 const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
                 return ` ${await nanoid()}`; // starts with space{random-temporary-id}
