@@ -146,6 +146,12 @@ const VariantGroupsEditor = <TElement extends Element = HTMLElement>(props: Vari
     const handleModelCreated   = useEvent<CreateHandler<ProductVariantGroupDetail>>((createdModel) => {
         const mutatedValue = value.slice(0); // copy
         mutatedValue.unshift(createdModel);
+        for (let index = 0; index < mutatedValue.length; index++) {
+            mutatedValue[index] = {
+                ...mutatedValue[index],
+                sort: index,
+            };
+        } // for
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
     const handleModelUpdated = useEvent<UpdatedHandler<ProductVariantGroupDetail>>((updatedModel) => {
@@ -165,6 +171,12 @@ const VariantGroupsEditor = <TElement extends Element = HTMLElement>(props: Vari
         const modelIndex = mutatedValue.findIndex((model) => model.id === id);
         if (modelIndex < 0) return;
         mutatedValue.splice(modelIndex, 1);
+        for (let index = 0; index < mutatedValue.length; index++) {
+            mutatedValue[index] = {
+                ...mutatedValue[index],
+                sort: index,
+            };
+        } // for
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
     
