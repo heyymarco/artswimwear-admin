@@ -46,6 +46,17 @@ import {
     NameEditor,
 }                           from '@/components/editors/NameEditor'
 import {
+    // react components:
+    EditProductVariantDialog,
+}                           from '@/components/dialogs/EditProductVariantDialog'
+
+import {
+    VariantEditor,
+}                           from '@/components/editors/VariantEditor'
+import {
+    VariantPreview,
+}                           from '@/components/views//VariantPreview'
+import {
     // types:
     UpdateHandler,
     
@@ -253,6 +264,42 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                             setName(value);
                             setIsModified(true);
                         }}
+                    />
+                    
+                    <span className='variants label'>Variants:</span>
+                    <VariantEditor
+                        // classes:
+                        className='variants editor'
+                        
+                        
+                        
+                        // accessibilities:
+                        /*
+                            edit mode   (having model) : readOnly when no privilege update_product_description
+                            create mode     (no model) : readOnly when no privilege create_product
+                        */
+                        readOnly={!(!!model && privilegeUpdate.description) && !(!model && privilegeAdd)}
+                        
+                        
+                        
+                        // components:
+                        modelPreviewComponent={
+                            <VariantPreview
+                                // data:
+                                model={undefined as any}
+                                productId={model?.id ?? ''} // the related product of the productVariant
+                            />
+                        }
+                        modelCreateComponent={
+                            !!role?.product_c
+                            ? <EditProductVariantDialog
+                                // data:
+                                model={null} // create a new model
+                                // TODO: if product is create_new, the productId will be empty, thus creating productVariant will be fail
+                                productId={model?.id ?? ''} // the related product of the productVariant
+                            />
+                            : undefined
+                        }
                     />
                 </form>
             </TabPanel>

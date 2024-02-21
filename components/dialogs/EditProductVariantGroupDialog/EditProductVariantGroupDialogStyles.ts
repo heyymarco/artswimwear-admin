@@ -44,6 +44,9 @@ export const usesInfoTabLayout = () => {
             gridTemplate       : [[
                 '"name-label       "', 'auto',
                 '"name-editor      "', 'auto',
+                '"................."', spacers.sm,
+                '"variants-label   "', 'auto',
+                '"variants-editor  "', 'auto',
                 '/',
                 '1fr'
             ]],
@@ -51,6 +54,9 @@ export const usesInfoTabLayout = () => {
                 gridTemplate   : [[
                     '"name-label               name-label"', 'auto',
                     '"name-editor             name-editor"', 'auto',
+                    '"................. ................."', spacers.sm,
+                    '"variants-label       variants-label"', 'auto',
+                    '"variants-editor     variants-editor"', 'auto',
                     '/',
                     '1fr', '1fr'
                 ]],
@@ -67,6 +73,9 @@ export const usesInfoTabLayout = () => {
             // children:
             ...children('.name.label'       , { gridArea: 'name-label'        }),
             ...children('.name.editor'      , { gridArea: 'name-editor'       }),
+            
+            ...children('.variants.label'   , { gridArea: 'variants-label'    }),
+            ...children('.variants.editor'  , { gridArea: 'variants-editor'   }),
         }),
     });
 };
