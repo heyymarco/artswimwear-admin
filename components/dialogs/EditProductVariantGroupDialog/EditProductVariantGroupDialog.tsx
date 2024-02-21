@@ -292,7 +292,11 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                                 
                                 
                                 // privileges:
-                                privilegeUpdate = {!!role?.product_ud}
+                                /*
+                                    edit mode   (having model) : enable_update when has privilege update_product_description
+                                    create mode     (no model) : enable_update when has privilege create_product
+                                */
+                                privilegeUpdate = {(!!model && privilegeUpdate.description) || (!model && privilegeAdd)}
                             />
                         }
                         modelCreateComponent={
