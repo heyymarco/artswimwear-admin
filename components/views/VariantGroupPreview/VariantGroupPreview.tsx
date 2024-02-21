@@ -84,13 +84,18 @@ const handleOrderStart = (event: OrderableListItemDragStartEvent<HTMLElement>): 
 // react components:
 export interface VariantGroupPreviewProps extends Omit<ModelPreviewProps<ProductVariantGroupDetail>, 'onChange'> {
     // data:
-    productId  : string
+    productId        : string
+    
+    
+    
+    // privileges:
+    privilegeUpdate ?: boolean
     
     
     
     // handlers:
-    onUpdated ?: UpdatedHandler<ProductVariantGroupDetail>
-    onDeleted ?: DeleteHandler<ProductVariantGroupDetail>
+    onUpdated       ?: UpdatedHandler<ProductVariantGroupDetail>
+    onDeleted       ?: DeleteHandler<ProductVariantGroupDetail>
 }
 const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null => {
     // styles:
@@ -103,6 +108,11 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
         // data:
         model,
         productId,
+        
+        
+        
+        // privileges:
+        privilegeUpdate = false,
         
         
         
@@ -183,10 +193,10 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
             
             <span className='grip'>TODO: {'<Grip>'}</span>
             
-            <EditButton
+            {privilegeUpdate && <EditButton
                 iconComponent={<Icon icon='edit' />}
                 onClick={handleEditButtonClick}
-            />
+            />}
         </OrderableListItem>
     );
 };

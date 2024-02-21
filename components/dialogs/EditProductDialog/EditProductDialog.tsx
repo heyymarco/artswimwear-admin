@@ -624,6 +624,11 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                                 // data:
                                 model={undefined as any}
                                 productId={model?.id ?? ''} // the related product of the productVariantGroup
+                                
+                                
+                                
+                                // privileges:
+                                privilegeUpdate = {!!role?.product_ud}
                             />
                         }
                         modelCreateComponent={

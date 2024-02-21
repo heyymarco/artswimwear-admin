@@ -288,6 +288,11 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                                 // data:
                                 model={undefined as any}
                                 productId={model?.id ?? ''} // the related product of the productVariant
+                                
+                                
+                                
+                                // privileges:
+                                privilegeUpdate = {!!role?.product_ud}
                             />
                         }
                         modelCreateComponent={
