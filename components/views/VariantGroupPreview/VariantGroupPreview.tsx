@@ -36,6 +36,7 @@ import {
 
 // heymarco components:
 import {
+    OrderableListItemDragStartEvent,
     OrderableListItem,
 }                           from '@heymarco/orderable-list'
 
@@ -47,9 +48,6 @@ import type {
     // react components:
     ModelPreviewProps,
 }                           from '@/components/explorers/PagedModelExplorer'
-import {
-    RadioDecorator,
-}                           from '@/components/RadioDecorator'
 import type {
     // types:
     ComplexEditModelDialogResult,
@@ -73,6 +71,13 @@ const useVariantGroupPreviewStyleSheet = dynamicStyleSheet(
     () => import(/* webpackPrefetch: true */'./VariantGroupPreviewStyles')
 , { specificityWeight: 2, id: 'r52809dkaf' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 import './VariantGroupPreviewStyles';
+
+
+
+// handlers:
+const handleOrderStart = (event: OrderableListItemDragStartEvent<HTMLElement>): void => {
+    if (!(event.target as HTMLElement)?.classList?.contains?.('grip')) event.response = false;
+};
 
 
 
@@ -168,9 +173,16 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
             
             // classes:
             className={styleSheet.main}
+            
+            
+            
+            // handlers:
+            onOrderStart={handleOrderStart}
         >
-            TODO: {'<Grip>'}
             <p className='name'>{name}</p>
+            
+            <span className='grip'>TODO: {'<Grip>'}</span>
+            
             <EditButton
                 iconComponent={<Icon icon='edit' />}
                 onClick={handleEditButtonClick}
