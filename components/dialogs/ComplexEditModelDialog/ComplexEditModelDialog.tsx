@@ -509,9 +509,9 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
                         ||
                         // the model name is blank:
                         (
-                            !model?.id
-                            ? `Create New ${modelName}` // create new model, if no  id
-                            : `Edit ${modelName}`       // edit model      , if has id
+                            !model
+                            ? `Create New ${modelName}` // create new model, if no  model
+                            : `Edit ${modelName}`       // edit model      , if has model
                         )
                     }</h1>
                     <CloseButton onClick={handleCloseDialog} />
