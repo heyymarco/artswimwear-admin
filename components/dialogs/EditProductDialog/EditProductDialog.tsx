@@ -222,7 +222,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
     const [commitMoveImage  , {isLoading : isLoadingCommitMoveImage  }] = useMoveImage();
     
-    const {data: variantGroupServerData, isLoading: isLoadingVariantGroup, isError: isErrorVariantGroup, isSuccess: isSuccessVariantGroup, fulfilledTimeStamp: timeStampVariantGroup} = useGetProductVariantGroupList({
+    const {data: variantGroupServerData, isLoading: isLoadingVariantGroup, isError: isErrorVariantGroup} = useGetProductVariantGroupList({
         productId : model?.id ?? '', // the related product of the productVariantGroup
     });
     const variantGroupEntities = variantGroupServerData?.entities;
