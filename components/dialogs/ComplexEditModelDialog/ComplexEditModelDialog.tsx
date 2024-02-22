@@ -258,9 +258,9 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
         // children:
         children : childrenFn,
     ...restModalCardProps} = props;
-    const privilegeAdd    : boolean                 =   !model?.id && privilegeAddRaw;
-    const privilegeUpdate : Record<string, boolean> =  !!model?.id ?  privilegeUpdateRaw : {};
-    const privilegeDelete : boolean                 =  !!model?.id && privilegeDeleteRaw;
+    const privilegeAdd    : boolean                 =   !model && privilegeAddRaw;
+    const privilegeUpdate : Record<string, boolean> =  !!model ?  privilegeUpdateRaw : {};
+    const privilegeDelete : boolean                 =  !!model && privilegeDeleteRaw;
     const privilegeWrite  : boolean                 = (
         privilegeAdd
         || !!Object.keys(privilegeUpdate).length
