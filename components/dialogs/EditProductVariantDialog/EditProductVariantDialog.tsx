@@ -52,6 +52,9 @@ import {
     ShippingWeightEditor,
 }                           from '@/components/editors/ShippingWeightEditor'
 import {
+    VisibilityEditor,
+}                           from '@/components/editors/VisibilityEditor'
+import {
     GalleryEditor,
 }                           from '@/components/editors/GalleryEditor'
 import {
@@ -80,6 +83,11 @@ import {
 import {
     customAlphabet,
 }                           from 'nanoid/async'
+
+// models:
+import type {
+    ProductVariantVisibility,
+}                           from '@prisma/client'
 
 // stores:
 import {
@@ -143,10 +151,11 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
     // states:
     const [isModified, setIsModified] = useState<boolean>(false);
     
+    const [visibility    , setVisibility    ] = useState<ProductVariantVisibility>(model?.visibility     ?? 'DRAFT');
     const [name          , setName          ] = useState<string>(model?.name ?? '');
-    const [price         , setPrice         ] = useState<number            |null>(model?.price          || null   ); // converts 0 to empty
-    const [shippingWeight, setShippingWeight] = useState<number            |null>(model?.shippingWeight ?? null   ); // optional field
-    const [images        , setImages        ] = useState<string[]               >(model?.images         ?? []     );
+    const [price         , setPrice         ] = useState<number             |null>(model?.price          || null   ); // converts 0 to empty
+    const [shippingWeight, setShippingWeight] = useState<number             |null>(model?.shippingWeight ?? null   ); // optional field
+    const [images        , setImages        ] = useState<string[]                >(model?.images         ?? []     );
     
     const [draftDeletedImages               ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
     
@@ -218,6 +227,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                     return ` ${await nanoid()}`; // starts with space{random-temporary-id}
                 })(),
                 
+                visibility     : (privilegeUpdate.visibility  || privilegeAdd) ? visibility     : undefined,
                 name           : (privilegeUpdate.description || privilegeAdd) ? name           : undefined,
                 price          : (privilegeUpdate.price       || privilegeAdd) ? price          : undefined,
                 shippingWeight : (privilegeUpdate.price       || privilegeAdd) ? shippingWeight : undefined,
@@ -434,6 +444,33 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                         value={shippingWeight}
                         onChange={(value) => {
                             setShippingWeight(value);
+                            setIsModified(true);
+                        }}
+                    />
+                    
+                    <span className='visibility label'>Visibility:</span>
+                    <VisibilityEditor
+                        // variants:
+                        theme='primaryAlt'
+                        
+                        
+                        
+                        // classes:
+                        className='visibility editor'
+                        
+                        
+                        
+                        // accessibilities:
+                        modelName='variant'
+                        enabled={privilegeUpdate.visibility || privilegeAdd}
+                        
+                        
+                        
+                        // values:
+                        optionHidden={false}
+                        value={visibility}
+                        onChange={(value) => {
+                            setVisibility(value);
                             setIsModified(true);
                         }}
                     />
