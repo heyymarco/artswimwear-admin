@@ -46,6 +46,12 @@ import {
     NameEditor,
 }                           from '@/components/editors/NameEditor'
 import {
+    PriceEditor,
+}                           from '@/components/editors/PriceEditor'
+import {
+    ShippingWeightEditor,
+}                           from '@/components/editors/ShippingWeightEditor'
+import {
     // types:
     UpdateHandler,
     
@@ -81,7 +87,7 @@ import {
 // styles:
 const useEditProductVariantDialogStyleSheet = dynamicStyleSheets(
     () => import(/* webpackPrefetch: true */'./EditProductVariantDialogStyles')
-, { id: 'w9r17m435e' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
+, { id: 'b4kzha6i3y' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 import './EditProductVariantDialogStyles';
 
 
@@ -118,7 +124,9 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
     // states:
     const [isModified, setIsModified] = useState<boolean>(false);
     
-    const [name      , setName      ] = useState<string>(model?.name ?? '');
+    const [name          , setName          ] = useState<string>(model?.name ?? '');
+    const [price         , setPrice         ] = useState<number                 >(model?.price          ?? 0      );
+    const [shippingWeight, setShippingWeight] = useState<number            |null>(model?.shippingWeight ?? null   ); // optional field
     
     
     
@@ -138,13 +146,15 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
         return {
             ...model,
             
-            id   : id ?? await (async () => {
+            id             : id ?? await (async () => {
                 const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
                 return ` ${await nanoid()}`; // starts with space{random-temporary-id}
             })(),
             
-            name : (privilegeUpdate.description || privilegeAdd) ? name : undefined,
-        };
+            name           : (privilegeUpdate.description || privilegeAdd) ? name           : undefined,
+            price          : (privilegeUpdate.price       || privilegeAdd) ? price          : undefined,
+            shippingWeight : (privilegeUpdate.price       || privilegeAdd) ? shippingWeight : undefined,
+    };
     });
     
     const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<ProductVariantDetail>>(({model}) => {
@@ -251,6 +261,48 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                         value={name}
                         onChange={(value) => {
                             setName(value);
+                            setIsModified(true);
+                        }}
+                    />
+                    
+                    <span className='price label'>Additional Price:</span>
+                    <span className='price label optional'>(Optional: will be added to base price)</span>
+                    <PriceEditor
+                        // classes:
+                        className='price editor'
+                        
+                        
+                        
+                        // accessibilities:
+                        enabled={privilegeUpdate.price || privilegeAdd}
+                        
+                        
+                        
+                        // values:
+                        value={price}
+                        onChange={(value) => {
+                            setPrice(value ?? 0);
+                            setIsModified(true);
+                        }}
+                    />
+                    
+                    <span className='sWeight label'>Additional Shipping Weight:</span>
+                    <span className='sWeight label optional'>(Optional: will be added to base weight)</span>
+                    <ShippingWeightEditor
+                        // classes:
+                        className='sWeight editor'
+                        
+                        
+                        
+                        // accessibilities:
+                        enabled={privilegeUpdate.price || privilegeAdd}
+                        
+                        
+                        
+                        // values:
+                        value={shippingWeight}
+                        onChange={(value) => {
+                            setShippingWeight(value);
                             setIsModified(true);
                         }}
                     />

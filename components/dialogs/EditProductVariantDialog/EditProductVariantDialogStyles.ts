@@ -42,15 +42,28 @@ export const usesInfoTabLayout = () => {
             display            : 'grid',
             alignContent       : 'start',
             gridTemplate       : [[
-                '"name-label       "', 'auto',
-                '"name-editor      "', 'auto',
+                '"name-label            "', 'auto',
+                '"name-editor           "', 'auto',
+                '"......................"', spacers.sm,
+                '"price-label           "', 'auto',
+                '"price-label-optional  "', 'auto',
+                '"price-editor          "', 'auto',
+                '"......................"', spacers.sm,
+                '"sWeight-label         "', 'auto',
+                '"sWeight-label-optional"', 'auto',
+                '"sWeight-editor        "', 'auto',
                 '/',
                 '1fr'
             ]],
             ...ifScreenWidthAtLeast('lg', {
                 gridTemplate   : [[
-                    '"name-label               name-label"', 'auto',
-                    '"name-editor             name-editor"', 'auto',
+                    '"name-label                        name-label"', 'auto',
+                    '"name-label-optional      name-label-optional"', 'auto',
+                    '"name-editor                      name-editor"', 'auto',
+                    '".....................  ....................."', spacers.sm,
+                    '"price-label                    sWeight-label"', 'auto',
+                    '"price-label-optional  sWeight-label-optional"', 'auto',
+                    '"price-editor                  sWeight-editor"', 'auto',
                     '/',
                     '1fr', '1fr'
                 ]],
@@ -65,8 +78,21 @@ export const usesInfoTabLayout = () => {
             
             
             // children:
-            ...children('.name.label'       , { gridArea: 'name-label'        }),
-            ...children('.name.editor'      , { gridArea: 'name-editor'       }),
+            ...children('.label.optional', {
+                marginBlockStart : `calc(0px - ${spacers.xs})`, // cancels out default block spacing
+                fontSize : typos.fontSizeSm,
+                opacity  : 0.5,
+            }),
+            ...children('.name.label'            , { gridArea: 'name-label'             }),
+            ...children('.name.editor'           , { gridArea: 'name-editor'            }),
+            
+            ...children('.price.label'           , { gridArea: 'price-label'            }),
+            ...children('.price.label.optional'  , { gridArea: 'price-label-optional'   }),
+            ...children('.price.editor'          , { gridArea: 'price-editor'           }),
+            
+            ...children('.sWeight.label'         , { gridArea: 'sWeight-label'          }),
+            ...children('.sWeight.label.optional', { gridArea: 'sWeight-label-optional' }),
+            ...children('.sWeight.editor'        , { gridArea: 'sWeight-editor'         }),
         }),
     });
 };
