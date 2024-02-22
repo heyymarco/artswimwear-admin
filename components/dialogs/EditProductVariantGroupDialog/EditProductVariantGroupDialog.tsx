@@ -132,9 +132,9 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
         // states:
         defaultExpandedTabIndex = 0,
     ...restComplexEditModelDialogProps} = props;
-    const privilegeAdd    : boolean                 =   !model?.id && privilegeAddRaw;
-    const privilegeUpdate : Record<string, boolean> =  !!model?.id ?  privilegeUpdateRaw : {};
-    const privilegeDelete : boolean                 =  !!model?.id && privilegeDeleteRaw;
+    const privilegeAdd    : boolean                 =   !model && privilegeAddRaw;
+    const privilegeUpdate : Record<string, boolean> =  !!model ?  privilegeUpdateRaw : {};
+    const privilegeDelete : boolean                 =  !!model && privilegeDeleteRaw;
     
     
     
