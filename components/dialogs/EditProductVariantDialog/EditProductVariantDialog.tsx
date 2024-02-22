@@ -10,13 +10,7 @@ import {
     // hooks:
     useRef,
     useState,
-    useMemo,
 }                           from 'react'
-
-// next-auth:
-import {
-    useSession,
-}                           from 'next-auth/react'
 
 // cssfn:
 import {
@@ -28,7 +22,7 @@ import {
 import {
     // react helper hooks:
     useEvent,
-}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+}                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
 import {
@@ -70,6 +64,7 @@ import {
     
     
     // react components:
+    ComplexEditModelDialogProps,
     ImplementedComplexEditModelDialogProps,
     ComplexEditModelDialog,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
@@ -123,7 +118,13 @@ import './EditProductVariantDialogStyles';
 export interface EditProductVariantDialogProps
     extends
         // bases:
-        ImplementedComplexEditModelDialogProps<ProductVariantDetail>
+        ImplementedComplexEditModelDialogProps<ProductVariantDetail>,
+        Pick<ComplexEditModelDialogProps<ProductVariantDetail>,
+            // privileges:
+            |'privilegeAdd'
+            |'privilegeUpdate'
+            |'privilegeDelete'
+        >
 {
     // data:
     productId : string
@@ -142,9 +143,19 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
         
         
         
+        // privileges:
+        privilegeAdd    : privilegeAddRaw    = false,
+        privilegeUpdate : privilegeUpdateRaw = {},
+        privilegeDelete : privilegeDeleteRaw = false,
+        
+        
+        
         // states:
         defaultExpandedTabIndex = 0,
     ...restComplexEditModelDialogProps} = props;
+    const privilegeAdd    : boolean                 =   !model?.id && privilegeAddRaw;
+    const privilegeUpdate : Record<string, boolean> =  !!model?.id ?  privilegeUpdateRaw : {};
+    const privilegeDelete : boolean                 =  !!model?.id && privilegeDeleteRaw;
     
     
     
@@ -158,12 +169,6 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
     const [images        , setImages        ] = useState<string[]                >(model?.images         ?? []         );
     
     const [draftDeletedImages               ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
-    
-    
-    
-    // sessions:
-    const { data: session } = useSession();
-    const role = session?.role;
     
     
     
@@ -181,7 +186,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
     
     
     // handlers:
-    const handleUpdate               = useEvent<UpdateHandler<ProductVariantDetail>>(async ({id, privilegeAdd, privilegeUpdate}) => {
+    const handleUpdate               = useEvent<UpdateHandler<ProductVariantDetail>>(async ({id}) => {
         const deletedImages : string[] = [];
         let updatedImages = images;
         if (updatedImages.length) {
@@ -326,14 +331,9 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
             
             
             // privileges:
-            privilegeAdd    = {!!role?.product_c}
-            privilegeUpdate = {useMemo(() => ({
-                description : !!role?.product_ud,
-                images      : !!role?.product_ui,
-                price       : !!role?.product_up,
-                visibility  : !!role?.product_uv,
-            }), [role])}
-            privilegeDelete = {!!role?.product_d}
+            privilegeAdd    = {privilegeAdd}
+            privilegeUpdate = {privilegeUpdate}
+            privilegeDelete = {privilegeDelete}
             
             
             
@@ -373,7 +373,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
             
             onConfirmDelete={handleConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}
-        >{({privilegeAdd, privilegeUpdate}) => <>
+        >
             <TabPanel label={PAGE_VARIANT_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>
                     <span className='name label'>Name:</span>
@@ -545,7 +545,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                     onResolveImageUrl={resolveMediaUrl<never>}
                 />
             </TabPanel>
-        </>}</ComplexEditModelDialog>
+        </ComplexEditModelDialog>
     );
 };
 export {

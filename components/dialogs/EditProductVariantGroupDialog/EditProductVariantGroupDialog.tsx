@@ -10,13 +10,7 @@ import {
     // hooks:
     useRef,
     useState,
-    useMemo,
 }                           from 'react'
-
-// next-auth:
-import {
-    useSession,
-}                           from 'next-auth/react'
 
 // cssfn:
 import {
@@ -28,7 +22,7 @@ import {
 import {
     // react helper hooks:
     useEvent,
-}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+}                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
 import {
@@ -66,6 +60,7 @@ import {
     
     
     // react components:
+    ComplexEditModelDialogProps,
     ImplementedComplexEditModelDialogProps,
     ComplexEditModelDialog,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
@@ -102,7 +97,13 @@ import './EditProductVariantGroupDialogStyles';
 export interface EditProductVariantGroupDialogProps
     extends
         // bases:
-        ImplementedComplexEditModelDialogProps<ProductVariantGroupDetail>
+        ImplementedComplexEditModelDialogProps<ProductVariantGroupDetail>,
+        Pick<ComplexEditModelDialogProps<ProductVariantGroupDetail>,
+            // privileges:
+            |'privilegeAdd'
+            |'privilegeUpdate'
+            |'privilegeDelete'
+        >
 {
     // data:
     productId : string
@@ -121,9 +122,19 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
         
         
         
+        // privileges:
+        privilegeAdd    : privilegeAddRaw    = false,
+        privilegeUpdate : privilegeUpdateRaw = {},
+        privilegeDelete : privilegeDeleteRaw = false,
+        
+        
+        
         // states:
         defaultExpandedTabIndex = 0,
     ...restComplexEditModelDialogProps} = props;
+    const privilegeAdd    : boolean                 =   !model?.id && privilegeAddRaw;
+    const privilegeUpdate : Record<string, boolean> =  !!model?.id ?  privilegeUpdateRaw : {};
+    const privilegeDelete : boolean                 =  !!model?.id && privilegeDeleteRaw;
     
     
     
@@ -131,12 +142,6 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
     const [isModified, setIsModified] = useState<boolean>(false);
     
     const [name      , setName      ] = useState<string>(model?.name ?? '');
-    
-    
-    
-    // sessions:
-    const { data: session } = useSession();
-    const role = session?.role;
     
     
     
@@ -157,7 +162,7 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
     
     
     // handlers:
-    const handleUpdate               = useEvent<UpdateHandler<ProductVariantGroupDetail>>(async ({id, privilegeAdd, privilegeUpdate}) => {
+    const handleUpdate               = useEvent<UpdateHandler<ProductVariantGroupDetail>>(async ({id}) => {
         return {
             ...model,
             
@@ -214,11 +219,9 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
             
             
             // privileges:
-            privilegeAdd    = {!!role?.product_c}
-            privilegeUpdate = {useMemo(() => ({
-                description : !!role?.product_ud,
-            }), [role])}
-            privilegeDelete = {!!role?.product_d}
+            privilegeAdd    = {privilegeAdd}
+            privilegeUpdate = {privilegeUpdate}
+            privilegeDelete = {privilegeDelete}
             
             
             
@@ -254,7 +257,7 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
             
             onConfirmDelete={handleConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}
-        >{({privilegeAdd, privilegeUpdate}) => <>
+        >
             <TabPanel label={PAGE_VARIANT_GROUP_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>
                     <span className='name label'>Name:</span>
@@ -325,7 +328,7 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                             />
                         }
                         modelCreateComponent={
-                            !!role?.product_c
+                            privilegeAdd
                             ? <EditProductVariantDialog
                                 // data:
                                 model={null} // create a new model
@@ -337,7 +340,7 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                     />
                 </form>
             </TabPanel>
-        </>}</ComplexEditModelDialog>
+        </ComplexEditModelDialog>
     );
 };
 export {
