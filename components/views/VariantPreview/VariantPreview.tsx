@@ -158,7 +158,7 @@ const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
                 
                 
                 // privileges:
-                privilegeAdd    = {privilegeAdd}
+                privilegeAdd    = {privilegeAdd   }
                 privilegeUpdate = {privilegeUpdate}
                 privilegeDelete = {privilegeDelete}
             />
