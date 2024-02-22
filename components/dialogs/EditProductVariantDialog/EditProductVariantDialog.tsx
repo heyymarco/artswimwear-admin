@@ -125,7 +125,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
     const [isModified, setIsModified] = useState<boolean>(false);
     
     const [name          , setName          ] = useState<string>(model?.name ?? '');
-    const [price         , setPrice         ] = useState<number                 >(model?.price          ?? 0      );
+    const [price         , setPrice         ] = useState<number            |null>(model?.price          || null   ); // converts 0 to empty
     const [shippingWeight, setShippingWeight] = useState<number            |null>(model?.shippingWeight ?? null   ); // optional field
     
     
@@ -281,7 +281,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                         // values:
                         value={price}
                         onChange={(value) => {
-                            setPrice(value ?? 0);
+                            setPrice(value || null); // converts 0 to empty
                             setIsModified(true);
                         }}
                     />
