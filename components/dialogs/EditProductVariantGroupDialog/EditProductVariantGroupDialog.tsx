@@ -105,8 +105,6 @@ export interface EditProductVariantGroupDialogProps
             |'privilegeDelete'
         >
 {
-    // data:
-    productId : string
 }
 const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps): JSX.Element|null => {
     // styles:
@@ -117,7 +115,6 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
     // rest props:
     const {
         // data:
-        productId,
         model = null,
         
         
@@ -292,15 +289,6 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                         
                         
                         
-                        // accessibilities:
-                        /*
-                            edit mode   (having model) : readOnly when no privilege update_product_description
-                            create mode     (no model) : readOnly when no privilege create_product
-                        */
-                        readOnly={!(!!model && privilegeUpdate.description) && !(!model && privilegeAdd)}
-                        
-                        
-                        
                         // values:
                         value={variants}
                         onChange={(value) => {
@@ -310,21 +298,18 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                         
                         
                         
+                        // privileges:
+                        privilegeAdd    = {privilegeAdd}
+                        privilegeUpdate = {privilegeUpdate}
+                        privilegeDelete = {privilegeDelete}
+                        
+                        
+                        
                         // components:
                         modelPreviewComponent={
                             <VariantPreview
                                 // data:
                                 model={undefined as any}
-                                productId={model?.id ?? ''} // the related product of the productVariant
-                                
-                                
-                                
-                                // privileges:
-                                /*
-                                    edit mode   (having model) : editable when has privilege update_product_description
-                                    create mode     (no model) : editable when has privilege create_product
-                                */
-                                privilegeEdit = {(!!model && privilegeUpdate.description) || (!model && privilegeAdd)}
                             />
                         }
                         modelCreateComponent={
@@ -332,8 +317,11 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                             ? <EditProductVariantDialog
                                 // data:
                                 model={null} // create a new model
-                                // TODO: if product is create_new, the productId will be empty, thus creating productVariant will be fail
-                                productId={model?.id ?? ''} // the related product of the productVariant
+                                
+                                
+                                
+                                // privileges:
+                                privilegeAdd={true}
                             />
                             : undefined
                         }

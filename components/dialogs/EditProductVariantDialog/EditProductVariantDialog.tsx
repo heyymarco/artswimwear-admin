@@ -35,6 +35,11 @@ import {
     TabPanel,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
+// heymarco components:
+import {
+    Image,
+}                           from '@heymarco/image'
+
 // internal components:
 import {
     NameEditor,
@@ -126,8 +131,6 @@ export interface EditProductVariantDialogProps
             |'privilegeDelete'
         >
 {
-    // data:
-    productId : string
 }
 const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Element|null => {
     // styles:
@@ -138,7 +141,6 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
     // rest props:
     const {
         // data:
-        productId,
         model = null,
         
         

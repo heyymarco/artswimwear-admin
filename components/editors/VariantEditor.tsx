@@ -79,11 +79,20 @@ interface VariantEditorProps<TElement extends Element = HTMLElement>
             // children:
             |'children'     // already taken over
         >,
+        
         // data:
         Partial<Pick<ModelCreateOuterProps<ProductVariantDetail>,
             // components:
             |'modelCreateComponent'
-        >>
+        >>,
+        
+        // privileges:
+        Pick<VariantPreviewProps,
+            // privileges:
+            |'privilegeAdd'
+            |'privilegeUpdate'
+            |'privilegeDelete'
+        >
 {
     // components:
     modelPreviewComponent  : React.ReactComponentElement<any, VariantPreviewProps>
@@ -91,15 +100,22 @@ interface VariantEditorProps<TElement extends Element = HTMLElement>
 const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
-        // accessibilities:
-        readOnly = false,
-        
-        
-        
         // values:
         defaultValue : defaultUncontrollableValue = [],
         value        : controllableValue,
         onChange     : onControllableValueChange,
+        
+        
+        
+        // privileges:
+        privilegeAdd,
+        privilegeUpdate,
+        privilegeDelete,
+        
+        
+        
+        // accessibilities:
+        readOnly = !privilegeUpdate?.description && !privilegeAdd,
         
         
         
@@ -211,18 +227,25 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
                 // props:
                 {
                     // identifiers:
-                    key       : modelPreviewComponent.key          ?? modelOption.id,
+                    key             : modelPreviewComponent.key          ?? modelOption.id,
                     
                     
                     
                     // data:
-                    model     : modelPreviewComponent.props.model  ?? modelOption,
+                    model           : modelPreviewComponent.props.model  ?? modelOption,
+                    
+                    
+                    
+                    // privileges:
+                    privilegeAdd    : modelPreviewComponent.props.privilegeAdd    ?? privilegeAdd,
+                    privilegeUpdate : modelPreviewComponent.props.privilegeUpdate ?? privilegeUpdate,
+                    privilegeDelete : modelPreviewComponent.props.privilegeDelete ?? privilegeDelete,
                     
                     
                     
                     // handlers:
-                    onUpdated : handleModelUpdated,
-                    onDeleted : handleModelDeleted,
+                    onUpdated       : handleModelUpdated,
+                    onDeleted       : handleModelDeleted,
                 },
             )
         )}

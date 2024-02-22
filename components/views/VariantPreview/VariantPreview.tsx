@@ -55,6 +55,7 @@ import type {
     DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
+    EditProductVariantDialogProps,
     EditProductVariantDialog,
 }                           from '@/components/dialogs/EditProductVariantDialog'
 
@@ -82,17 +83,19 @@ const handleOrderStart = (event: OrderableListItemDragStartEvent<HTMLElement>): 
 
 
 // react components:
-export interface VariantPreviewProps extends Omit<ModelPreviewProps<ProductVariantDetail>, 'onChange'> {
-    // data:
-    productId      : string
-    
-    
-    
-    // privileges:
-    privilegeEdit ?: boolean
-    
-    
-    
+export interface VariantPreviewProps
+    extends
+        // bases:
+        ModelPreviewProps<ProductVariantDetail>,
+        
+        // privileges:
+        Pick<EditProductVariantDialogProps,
+            // privileges:
+            |'privilegeAdd'
+            |'privilegeUpdate'
+            |'privilegeDelete'
+        >
+{
     // handlers:
     onUpdated     ?: UpdatedHandler<ProductVariantDetail>
     onDeleted     ?: DeleteHandler<ProductVariantDetail>
@@ -107,12 +110,13 @@ const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
     const {
         // data:
         model,
-        productId,
         
         
         
         // privileges:
-        privilegeEdit = false,
+        privilegeAdd,
+        privilegeUpdate,
+        privilegeDelete,
         
         
         
@@ -150,7 +154,13 @@ const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
             <EditProductVariantDialog
                 // data:
                 model={model} // modify current model
-                productId={productId}
+                
+                
+                
+                // privileges:
+                privilegeAdd    = {privilegeAdd}
+                privilegeUpdate = {privilegeUpdate}
+                privilegeDelete = {privilegeDelete}
             />
         );
         switch (updatedVariantModel) {
@@ -193,10 +203,10 @@ const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
             
             <span className='grip'>TODO: {'<Grip>'}</span>
             
-            {privilegeEdit && <EditButton
+            <EditButton
                 iconComponent={<Icon icon='edit' />}
                 onClick={handleEditButtonClick}
-            />}
+            />
         </OrderableListItem>
     );
 };
