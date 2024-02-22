@@ -376,7 +376,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         };
     });
     
-    const handleNameChange = useEvent((name: string) => {
+    const handleNameChange           = useEvent((name: string) => {
         // conditions:
         if (isPathModified) return; // path is already modified by user, do not perform *auto* modify
         
