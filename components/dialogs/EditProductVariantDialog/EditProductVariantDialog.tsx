@@ -52,8 +52,14 @@ import {
     ShippingWeightEditor,
 }                           from '@/components/editors/ShippingWeightEditor'
 import {
+    GalleryEditor,
+}                           from '@/components/editors/GalleryEditor'
+import {
     // types:
     UpdateHandler,
+    
+    UpdateSideHandler,
+    DeleteSideHandler,
     
     ConfirmDeleteHandler,
     ConfirmUnsavedHandler,
@@ -65,20 +71,33 @@ import {
     ComplexEditModelDialog,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 
+// internals:
+import {
+    resolveMediaUrl,
+}                           from '@/libs/mediaStorage.client'
+
 // others:
 import {
     customAlphabet,
 }                           from 'nanoid/async'
 
 // stores:
-import type {
+import {
     // types:
     ProductVariantDetail,
+    
+    
+    
+    // hooks:
+    usePostImage,
+    useDeleteImage,
+    useMoveImage,
 }                           from '@/store/features/api/apiSlice'
 
 // configs:
 import {
     PAGE_VARIANT_TAB_INFORMATIONS,
+    PAGE_VARIANT_TAB_IMAGES,
     PAGE_VARIANT_TAB_DELETE,
 }                           from '@/website.config'
 
@@ -127,12 +146,24 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
     const [name          , setName          ] = useState<string>(model?.name ?? '');
     const [price         , setPrice         ] = useState<number            |null>(model?.price          || null   ); // converts 0 to empty
     const [shippingWeight, setShippingWeight] = useState<number            |null>(model?.shippingWeight ?? null   ); // optional field
+    const [images        , setImages        ] = useState<string[]               >(model?.images         ?? []     );
+    
+    const [draftDeletedImages               ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
     
     
     
     // sessions:
     const { data: session } = useSession();
     const role = session?.role;
+    
+    
+    
+    // stores:
+
+    const [postImage                                                  ] = usePostImage();
+    const [commitDeleteImage, {isLoading : isLoadingCommitDeleteImage}] = useDeleteImage();
+    const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
+    const [commitMoveImage  , {isLoading : isLoadingCommitMoveImage  }] = useMoveImage();
     
     
     
@@ -143,18 +174,106 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
     
     // handlers:
     const handleUpdate               = useEvent<UpdateHandler<ProductVariantDetail>>(async ({id, privilegeAdd, privilegeUpdate}) => {
-        return {
-            ...model,
-            
-            id             : id ?? await (async () => {
-                const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
-                return ` ${await nanoid()}`; // starts with space{random-temporary-id}
-            })(),
-            
-            name           : (privilegeUpdate.description || privilegeAdd) ? name           : undefined,
-            price          : (privilegeUpdate.price       || privilegeAdd) ? price          : undefined,
-            shippingWeight : (privilegeUpdate.price       || privilegeAdd) ? shippingWeight : undefined,
-    };
+        const deletedImages : string[] = [];
+        let updatedImages = images;
+        if (updatedImages.length) {
+            try {
+                const movedResponse = await commitMoveImage({
+                    imageId : updatedImages,
+                    // folder  : 'testing/helloh',
+                    folder  : `products/${name || '__unnamed__'}/variants`,
+                }).unwrap();
+                const movedMap = new Map<string, string>(
+                    movedResponse.map(({from, to}) => [from, to])
+                );
+                
+                
+                
+                if (movedMap.size) {
+                    updatedImages = updatedImages.map((image) => {
+                        // conditions:
+                        const movedImage = movedMap.get(image);
+                        if (movedImage === undefined) return image;
+                        
+                        
+                        
+                        // actions:
+                        deletedImages.push(image);
+                        return movedImage;
+                    });
+                } // if
+            }
+            catch {
+                // ignore any moveImages error
+            } // try
+        } // if
+        
+        
+        
+        try {
+            return {
+                ...model,
+                
+                id             : id ?? await (async () => {
+                    const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
+                    return ` ${await nanoid()}`; // starts with space{random-temporary-id}
+                })(),
+                
+                name           : (privilegeUpdate.description || privilegeAdd) ? name           : undefined,
+                price          : (privilegeUpdate.price       || privilegeAdd) ? price          : undefined,
+                shippingWeight : (privilegeUpdate.price       || privilegeAdd) ? shippingWeight : undefined,
+            };
+        }
+        finally {
+            if (deletedImages.length) {
+                try {
+                    await commitDeleteImage({
+                        imageId : deletedImages,
+                    }).unwrap();
+                }
+                catch {
+                    // ignore any deleteImages error
+                } // try
+            } // if
+        } // try
+    });
+    
+    const handleSideUpdate           = useEvent<UpdateSideHandler>(async () => {
+        await handleSideSave(/*commitImages = */true);
+    });
+    const handleSideDelete           = useEvent<DeleteSideHandler>(async () => {
+        await handleSideSave(/*commitImages = */false);
+    });
+    const handleSideSave             = useEvent(async (commitImages : boolean) => {
+        // search for unused image(s) and delete them:
+        const unusedImageIds : string[] = [];
+        for (const unusedImageId of
+            Array.from(draftDeletedImages.entries())
+            .filter((draftDeletedImage) => ((draftDeletedImage[1] === commitImages) || (draftDeletedImage[1] === null)))
+            .map((draftDeletedImage) => draftDeletedImage[0])
+        )
+        {
+            unusedImageIds.push(unusedImageId);
+        } // for
+        
+        
+        
+        try {
+            if (unusedImageIds.length) {
+                await (commitImages ? commitDeleteImage : revertDeleteImage)({
+                    imageId : unusedImageIds,
+                }).unwrap();
+            } // if
+        }
+        catch {
+            // ignore any error
+            return; // but do not clear the draft
+        } // try
+        
+        
+        
+        // substract the drafts:
+        for (const unusedImageId of unusedImageIds) draftDeletedImages.delete(unusedImageId);
     });
     
     const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<ProductVariantDetail>>(({model}) => {
@@ -208,8 +327,9 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
             // stores:
             isModified  = {isModified}
             
-            // isCommiting = {isLoadingUpdate}
-            // isDeleting  = {isLoadingDelete}
+            isCommiting = {/*isLoadingUpdate ||*/ isLoadingCommitDeleteImage || isLoadingCommitMoveImage}
+            isReverting = {                       isLoadingRevertDeleteImage}
+            isDeleting  = {/*isLoadingDelete ||*/ isLoadingCommitDeleteImage}
             
             
             
@@ -234,6 +354,9 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
             
             // onDelete={handleDelete}
             // onAfterDelete={undefined}
+            
+            onSideUpdate={handleSideUpdate}
+            onSideDelete={handleSideDelete}
             
             onConfirmDelete={handleConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}
@@ -312,6 +435,75 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                         }}
                     />
                 </form>
+            </TabPanel>
+            <TabPanel label={PAGE_VARIANT_TAB_IMAGES}       panelComponent={<Generic className={styleSheet.imagesTab} />}>
+                <GalleryEditor<HTMLElement, string>
+                    // variants:
+                    nude={true}
+                    
+                    
+                    
+                    // accessibilities:
+                    readOnly={!(privilegeUpdate.images || privilegeAdd)}
+                    
+                    
+                    
+                    // values:
+                    value={images}
+                    onChange={(value) => {
+                        setImages(value);
+                        setIsModified(true);
+                    }}
+                    
+                    
+                    
+                    // components:
+                    imageComponent={
+                        // @ts-ignore
+                        <Image
+                            priority={true}
+                        />
+                    }
+                    
+                    
+                    
+                    // handlers:
+                    onUploadImage={async ({ imageFile, reportProgress, abortSignal }) => {
+                        try {
+                            const imageId = await postImage({
+                                image            : imageFile,
+                                folder           : `products/${name || '__unnamed__'}/variants`,
+                                onUploadProgress : reportProgress,
+                                abortSignal      : abortSignal,
+                            }).unwrap();
+                            
+                            // register to actual_delete the new_image when reverted:
+                            draftDeletedImages.set(imageId, false /* false: delete when reverted, noop when committed */);
+                            
+                            return imageId;
+                        }
+                        catch (error : any) {
+                            if (error.status === 0) { // non_standard HTTP status code: a request was aborted
+                                // TODO: try to cleanup a prematurely image (if any)
+                                
+                                return null; // prevents showing error
+                            } // if
+                            
+                            throw error;     // shows the error detail
+                        } // try
+                    }}
+                    onDeleteImage={async ({ imageData: imageId }) => {
+                        // register to actual_delete the deleted_image when committed:
+                        draftDeletedImages.set(imageId,
+                            draftDeletedImages.has(imageId) // if has been created but not saved
+                            ? null /* null: delete when committed, delete when reverted */
+                            : true /* true: delete when committed, noop when reverted */
+                        );
+                        
+                        return true;
+                    }}
+                    onResolveImageUrl={resolveMediaUrl<never>}
+                />
             </TabPanel>
         </>}</ComplexEditModelDialog>
     );

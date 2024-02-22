@@ -96,9 +96,18 @@ export const usesInfoTabLayout = () => {
         }),
     });
 };
+export const usesImagesTabLayout = () => {
+    return style({
+        // scrolls:
+        overscrollBehavior : 'none',
+    });
+};
 
 export default () => [
     scope('infoTab', {
         ...usesInfoTabLayout(),
+    }),
+    scope('imagesTab', {
+        ...usesImagesTabLayout(),
     }),
 ];
