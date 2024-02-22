@@ -151,11 +151,11 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
     // states:
     const [isModified, setIsModified] = useState<boolean>(false);
     
-    const [visibility    , setVisibility    ] = useState<ProductVariantVisibility>(model?.visibility     ?? 'DRAFT');
+    const [visibility    , setVisibility    ] = useState<ProductVariantVisibility>(model?.visibility     ?? 'PUBLISHED');
     const [name          , setName          ] = useState<string>(model?.name ?? '');
-    const [price         , setPrice         ] = useState<number             |null>(model?.price          || null   ); // converts 0 to empty
-    const [shippingWeight, setShippingWeight] = useState<number             |null>(model?.shippingWeight ?? null   ); // optional field
-    const [images        , setImages        ] = useState<string[]                >(model?.images         ?? []     );
+    const [price         , setPrice         ] = useState<number             |null>(model?.price          || null       ); // converts 0 to empty
+    const [shippingWeight, setShippingWeight] = useState<number             |null>(model?.shippingWeight ?? null       ); // optional field
+    const [images        , setImages        ] = useState<string[]                >(model?.images         ?? []         );
     
     const [draftDeletedImages               ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
     
