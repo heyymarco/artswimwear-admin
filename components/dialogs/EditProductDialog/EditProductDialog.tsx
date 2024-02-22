@@ -390,6 +390,19 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     
     
     
+    // privileges:
+    const privilegeProductAdd    = !!role?.product_c;
+    const privilegeProductUpdate = useMemo(() => ({
+        description : !!role?.product_ud,
+        images      : !!role?.product_ui,
+        price       : !!role?.product_up,
+        stock       : !!role?.product_us,
+        visibility  : !!role?.product_uv,
+    }), [role]);
+    const privilegeProductDelete = !!role?.product_d;
+    
+    
+    
     // jsx:
     return (
         <ComplexEditModelDialog<ProductDetail>
@@ -406,15 +419,9 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             
             
             // privileges:
-            privilegeAdd    = {!!role?.product_c}
-            privilegeUpdate = {useMemo(() => ({
-                description : !!role?.product_ud,
-                images      : !!role?.product_ui,
-                price       : !!role?.product_up,
-                stock       : !!role?.product_us,
-                visibility  : !!role?.product_uv,
-            }), [role])}
-            privilegeDelete = {!!role?.product_d}
+            privilegeAdd    = {privilegeProductAdd   }
+            privilegeUpdate = {privilegeProductUpdate}
+            privilegeDelete = {privilegeProductDelete}
             
             
             
@@ -611,9 +618,9 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         
                         
                         // privileges:
-                        privilegeAdd    = {privilegeAdd}
-                        privilegeUpdate = {privilegeUpdate   || privilegeAdd}
-                        privilegeDelete = {!!role?.product_d || privilegeAdd}
+                        privilegeAdd    = {privilegeProductAdd   }
+                        privilegeUpdate = {privilegeProductUpdate}
+                        privilegeDelete = {privilegeProductDelete}
                         
                         
                         
@@ -625,7 +632,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                             />
                         }
                         modelCreateComponent={
-                            privilegeAdd
+                            privilegeProductAdd
                             ? <EditProductVariantGroupDialog
                                 // data:
                                 model={null} // create a new model
