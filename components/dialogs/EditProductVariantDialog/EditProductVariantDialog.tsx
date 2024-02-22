@@ -278,6 +278,11 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                         
                         
                         
+                        // validations:
+                        required={false}
+                        
+                        
+                        
                         // values:
                         value={price}
                         onChange={(value) => {
