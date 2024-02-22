@@ -11,6 +11,7 @@ import {
     useRef,
     useState,
     useMemo,
+    useEffect,
 }                           from 'react'
 
 // next-auth:
@@ -235,6 +236,9 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         setUnmodifiedVariantGroups(variantGroupList); // tracks the new changes
         setVariantGroups(variantGroupList);           // discard the user changes
     } // if
+    useEffect(() => {
+        console.log(variantGroups);
+    }, [variantGroups]);
     
     
     

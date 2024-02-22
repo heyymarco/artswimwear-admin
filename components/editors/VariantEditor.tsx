@@ -50,11 +50,6 @@ import type {
     VariantPreviewProps,
 }                           from '@/components/views/VariantPreview'
 
-// internals:
-import type {
-    PartialModel,
-}                           from '@/libs/types'
-
 // stores:
 import type {
     // types:
@@ -67,7 +62,7 @@ import type {
 interface VariantEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Pick<EditorProps<TElement, PartialModel<ProductVariantDetail>[]>,
+        Pick<EditorProps<TElement, ProductVariantDetail[]>,
             // values:
             |'defaultValue' // not supported, controllable only
             |'value'
@@ -119,7 +114,7 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
     let {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllableAndUncontrollable<PartialModel<ProductVariantDetail>[]>({
+    } = useControllableAndUncontrollable<ProductVariantDetail[]>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
         onValueChange      : onControllableValueChange,
@@ -145,7 +140,7 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
     });
     const handleModelCreated   = useEvent<CreateHandler<ProductVariantDetail>>((createdModel) => {
         const mutatedValue = value.slice(0); // copy
-        mutatedValue.unshift(createdModel);
+        mutatedValue.unshift(createdModel as ProductVariantDetail);
         for (let index = 0; index < mutatedValue.length; index++) {
             mutatedValue[index] = {
                 ...mutatedValue[index],
@@ -159,10 +154,10 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
         const id = updatedModel.id;
         const modelIndex = mutatedValue.findIndex((model) => model.id === id);
         if (modelIndex < 0) {
-            mutatedValue.unshift(updatedModel);
+            mutatedValue.unshift(updatedModel as ProductVariantDetail);
         }
         else {
-            mutatedValue[modelIndex] = updatedModel;
+            mutatedValue[modelIndex] = updatedModel as ProductVariantDetail;
         } // if
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });

@@ -70,6 +70,11 @@ import {
     ComplexEditModelDialog,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 
+// internals:
+import type {
+    PartialModel,
+}                           from '@/libs/types'
+
 // others:
 import {
     customAlphabet,
@@ -78,6 +83,7 @@ import {
 // stores:
 import type {
     // types:
+    ProductVariantDetail,
     ProductVariantGroupDetail,
 }                           from '@/store/features/api/apiSlice'
 
@@ -139,6 +145,17 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
     
     
     
+    // stores:
+    const variantList = model?.productVariants;
+    const [unmodifiedVariants, setUnmodifiedVariants] = useState<ProductVariantDetail[]|undefined>(variantList);
+    const [variants, setVariants] = useState<ProductVariantDetail[]|undefined>(variantList);
+    if ((unmodifiedVariants?.length !== variantList?.length) || unmodifiedVariants?.some((item, index) => (item !== variantList?.[index]))) {
+        setUnmodifiedVariants(variantList); // tracks the new changes
+        setVariants(variantList);           // discard the user changes
+    } // if
+    
+    
+    
     // refs:
     const firstEditorRef = useRef<HTMLInputElement|null>(null); // TODO: finish this
     
@@ -155,6 +172,10 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
             })(),
             
             name : (privilegeUpdate.description || privilegeAdd) ? name : undefined,
+            
+            ...((variants === unmodifiedVariants) ? null : ({
+                productVariants : variants,
+            } satisfies Partial<ProductVariantGroupDetail>)),
         };
     });
     
@@ -279,6 +300,15 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                             create mode     (no model) : readOnly when no privilege create_product
                         */
                         readOnly={!(!!model && privilegeUpdate.description) && !(!model && privilegeAdd)}
+                        
+                        
+                        
+                        // values:
+                        value={variants}
+                        onChange={(value) => {
+                            setVariants(value);
+                            setIsModified(true);
+                        }}
                         
                         
                         
