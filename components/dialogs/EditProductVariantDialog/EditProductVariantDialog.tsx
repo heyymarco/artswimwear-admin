@@ -222,6 +222,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                 name           : (privilegeUpdate.description || privilegeAdd) ? name           : undefined,
                 price          : (privilegeUpdate.price       || privilegeAdd) ? price          : undefined,
                 shippingWeight : (privilegeUpdate.price       || privilegeAdd) ? shippingWeight : undefined,
+                images         : (privilegeUpdate.images      || privilegeAdd) ? updatedImages  : undefined,
             };
         }
         finally {
