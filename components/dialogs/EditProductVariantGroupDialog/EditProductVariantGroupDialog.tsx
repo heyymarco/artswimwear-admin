@@ -70,11 +70,6 @@ import {
     ComplexEditModelDialog,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 
-// internals:
-import type {
-    PartialModel,
-}                           from '@/libs/types'
-
 // others:
 import {
     customAlphabet,

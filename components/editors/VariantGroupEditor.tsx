@@ -50,11 +50,6 @@ import type {
     VariantGroupPreviewProps,
 }                           from '@/components/views/VariantGroupPreview'
 
-// internals:
-import type {
-    PartialModel,
-}                           from '@/libs/types'
-
 // stores:
 import type {
     // types:
@@ -67,7 +62,7 @@ import type {
 interface VariantGroupEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Pick<EditorProps<TElement, PartialModel<ProductVariantGroupDetail>[]>,
+        Pick<EditorProps<TElement, ProductVariantGroupDetail[]>,
             // values:
             |'defaultValue' // not supported, controllable only
             |'value'
@@ -119,7 +114,7 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
     let {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllableAndUncontrollable<PartialModel<ProductVariantGroupDetail>[]>({
+    } = useControllableAndUncontrollable<ProductVariantGroupDetail[]>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
         onValueChange      : onControllableValueChange,
@@ -145,7 +140,7 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
     });
     const handleModelCreated   = useEvent<CreateHandler<ProductVariantGroupDetail>>((createdModel) => {
         const mutatedValue = value.slice(0); // copy
-        mutatedValue.unshift(createdModel);
+        mutatedValue.unshift(createdModel as ProductVariantGroupDetail);
         for (let index = 0; index < mutatedValue.length; index++) {
             mutatedValue[index] = {
                 ...mutatedValue[index],
@@ -159,10 +154,10 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
         const id = updatedModel.id;
         const modelIndex = mutatedValue.findIndex((model) => model.id === id);
         if (modelIndex < 0) {
-            mutatedValue.unshift(updatedModel);
+            mutatedValue.unshift(updatedModel as ProductVariantGroupDetail);
         }
         else {
-            mutatedValue[modelIndex] = updatedModel;
+            mutatedValue[modelIndex] = updatedModel as ProductVariantGroupDetail;
         } // if
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });

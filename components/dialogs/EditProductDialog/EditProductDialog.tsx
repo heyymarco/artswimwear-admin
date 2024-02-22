@@ -132,9 +132,6 @@ import {
 }                           from '@/store/features/api/apiSlice'
 
 // internals:
-import type {
-    PartialModel,
-}                           from '@/libs/types'
 import {
     resolveMediaUrl,
 }                           from '@/libs/mediaStorage.client'
@@ -230,8 +227,8 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     });
     const variantGroupEntities = variantGroupServerData?.entities;
     const variantGroupList     = !variantGroupEntities ? undefined : Object.values(variantGroupEntities).filter((model): model is Exclude<typeof model, undefined> => !!model);
-    const [unmodifiedVariantGroups, setUnmodifiedVariantGroups] = useState<PartialModel<ProductVariantGroupDetail>[]|undefined>(variantGroupList);
-    const [variantGroups, setVariantGroups] = useState<PartialModel<ProductVariantGroupDetail>[]|undefined>(variantGroupList);
+    const [unmodifiedVariantGroups, setUnmodifiedVariantGroups] = useState<ProductVariantGroupDetail[]|undefined>(variantGroupList);
+    const [variantGroups, setVariantGroups] = useState<ProductVariantGroupDetail[]|undefined>(variantGroupList);
     if ((unmodifiedVariantGroups?.length !== variantGroupList?.length) || unmodifiedVariantGroups?.some((item, index) => (item !== variantGroupList?.[index]))) {
         setUnmodifiedVariantGroups(variantGroupList); // tracks the new changes
         setVariantGroups(variantGroupList);           // discard the user changes
