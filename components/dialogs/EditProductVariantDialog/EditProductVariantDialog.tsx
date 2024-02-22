@@ -159,7 +159,6 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
     
     
     // stores:
-
     const [postImage                                                  ] = usePostImage();
     const [commitDeleteImage, {isLoading : isLoadingCommitDeleteImage}] = useDeleteImage();
     const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
@@ -320,6 +319,9 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
             privilegeAdd    = {!!role?.product_c}
             privilegeUpdate = {useMemo(() => ({
                 description : !!role?.product_ud,
+                images      : !!role?.product_ui,
+                price       : !!role?.product_up,
+                visibility  : !!role?.product_uv,
             }), [role])}
             privilegeDelete = {!!role?.product_d}
             
