@@ -141,7 +141,7 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
     // handlers:
     const handleChildrenChange = useEvent((children: React.ReactComponentElement<any, OrderableListItemProps<HTMLElement, unknown>>[]) => {
         const restChildren = children.slice(0); // copy
-        if (!!!modelCreateComponent) restChildren.splice(0, 1); // remove the <ModelCreate> component
+        if (!!modelCreateComponent) restChildren.splice(0, 1); // remove the <ModelCreate> component
         triggerValueChange(
             restChildren
             .map((modelPreviewComponent, index) => {
