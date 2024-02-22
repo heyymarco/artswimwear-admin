@@ -149,7 +149,7 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
         } // for
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
-    const handleModelUpdated = useEvent<UpdatedHandler<ProductVariantDetail>>((updatedModel) => {
+    const handleModelUpdated   = useEvent<UpdatedHandler<ProductVariantDetail>>((updatedModel) => {
         const mutatedValue = value.slice(0); // copy
         const id = updatedModel.id;
         const modelIndex = mutatedValue.findIndex((model) => model.id === id);
@@ -161,7 +161,7 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
         } // if
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
-    const handleModelDeleted = useEvent<DeleteHandler<ProductVariantDetail>>(({id}) => {
+    const handleModelDeleted   = useEvent<DeleteHandler<ProductVariantDetail>>(({id}) => {
         const mutatedValue = value.slice(0); // copy
         const modelIndex = mutatedValue.findIndex((model) => model.id === id);
         if (modelIndex < 0) return;

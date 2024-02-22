@@ -149,7 +149,7 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
         } // for
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
-    const handleModelUpdated = useEvent<UpdatedHandler<ProductVariantGroupDetail>>((updatedModel) => {
+    const handleModelUpdated   = useEvent<UpdatedHandler<ProductVariantGroupDetail>>((updatedModel) => {
         const mutatedValue = value.slice(0); // copy
         const id = updatedModel.id;
         const modelIndex = mutatedValue.findIndex((model) => model.id === id);
@@ -161,7 +161,7 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
         } // if
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
-    const handleModelDeleted = useEvent<DeleteHandler<ProductVariantGroupDetail>>(({id}) => {
+    const handleModelDeleted   = useEvent<DeleteHandler<ProductVariantGroupDetail>>(({id}) => {
         const mutatedValue = value.slice(0); // copy
         const modelIndex = mutatedValue.findIndex((model) => model.id === id);
         if (modelIndex < 0) return;
