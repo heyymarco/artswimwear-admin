@@ -629,13 +629,18 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         
                         
                         // privileges:
-                        privilegeAdd    = {                                                    privilegeProductAdd   }
+                        privilegeAdd    = {                                                  privilegeProductAdd   }
                         /*
-                            Always full access for `privilegeUpdate` and `privilegeDelete` when *add_mode*,
-                            because the VariantGroup and Variant are *not_yet_exsist* on the database (draft data).
+                            when edit_mode (update):
+                                * the editing  capability follows the `privilegeProductUpdate`
+                                * the deleting capability follows the `privilegeProductDelete`
+                            
+                            when create_mode (add):
+                                * ALWAYS be ABLE to edit   the VariantGroup and the Variant (because the data is *not_yet_exsist* on the database)
+                                * ALWAYS be ABLE to delete the VariantGroup and the Variant (because the data is *not_yet_exsist* on the database)
                         */
-                        privilegeUpdate = {!!privilegeAdd ? privilegeProductUpdateFullAccess : privilegeProductUpdate}
-                        privilegeDelete = {!!privilegeAdd ?               true               : privilegeProductDelete}
+                        privilegeUpdate = {privilegeAdd ? privilegeProductUpdateFullAccess : privilegeProductUpdate}
+                        privilegeDelete = {privilegeAdd ?               true               : privilegeProductDelete}
                         
                         
                         
