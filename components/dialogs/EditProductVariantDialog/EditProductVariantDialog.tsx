@@ -146,9 +146,9 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
         
         
         // privileges:
-        privilegeAdd    = false,
-        privilegeUpdate = {},
-        privilegeDelete = false,
+        privilegeAdd,
+        privilegeUpdate,
+        privilegeDelete,
         
         
         
@@ -185,7 +185,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
     
     
     // handlers:
-    const handleUpdate               = useEvent<UpdateHandler<ProductVariantDetail>>(async ({id}) => {
+    const handleUpdate               = useEvent<UpdateHandler<ProductVariantDetail>>(async ({id, whenAdd, whenUpdate}) => {
         const deletedImages : string[] = [];
         let updatedImages = images;
         if (updatedImages.length) {
@@ -231,11 +231,11 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                     return ` ${await nanoid()}`; // starts with space{random-temporary-id}
                 })(),
                 
-                visibility     : (privilegeUpdate.visibility  || privilegeAdd) ? visibility     : undefined,
-                name           : (privilegeUpdate.description || privilegeAdd) ? name           : undefined,
-                price          : (privilegeUpdate.price       || privilegeAdd) ? price          : undefined,
-                shippingWeight : (privilegeUpdate.price       || privilegeAdd) ? shippingWeight : undefined,
-                images         : (privilegeUpdate.images      || privilegeAdd) ? updatedImages  : undefined,
+                visibility     : (whenUpdate.visibility  || whenAdd) ? visibility     : undefined,
+                name           : (whenUpdate.description || whenAdd) ? name           : undefined,
+                price          : (whenUpdate.price       || whenAdd) ? price          : undefined,
+                shippingWeight : (whenUpdate.price       || whenAdd) ? shippingWeight : undefined,
+                images         : (whenUpdate.images      || whenAdd) ? updatedImages  : undefined,
             };
         }
         finally {
@@ -372,7 +372,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
             
             onConfirmDelete={handleConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}
-        >
+        >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_VARIANT_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>
                     <span className='name label'>Name:</span>
@@ -388,7 +388,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                         
                         
                         // accessibilities:
-                        enabled={privilegeUpdate.description || privilegeAdd}
+                        enabled={whenUpdate.description || whenAdd}
                         
                         
                         
@@ -409,7 +409,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                         
                         
                         // accessibilities:
-                        enabled={privilegeUpdate.price || privilegeAdd}
+                        enabled={whenUpdate.price || whenAdd}
                         
                         
                         
@@ -435,7 +435,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                         
                         
                         // accessibilities:
-                        enabled={privilegeUpdate.price || privilegeAdd}
+                        enabled={whenUpdate.price || whenAdd}
                         
                         
                         
@@ -461,7 +461,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                         
                         // accessibilities:
                         modelName='variant'
-                        enabled={privilegeUpdate.visibility || privilegeAdd}
+                        enabled={whenUpdate.visibility || whenAdd}
                         
                         
                         
@@ -483,7 +483,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                     
                     
                     // accessibilities:
-                    readOnly={!(privilegeUpdate.images || privilegeAdd)}
+                    readOnly={!(whenUpdate.images || whenAdd)}
                     
                     
                     
@@ -544,7 +544,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                     onResolveImageUrl={resolveMediaUrl<never>}
                 />
             </TabPanel>
-        </ComplexEditModelDialog>
+        </>}</ComplexEditModelDialog>
     );
 };
 export {
