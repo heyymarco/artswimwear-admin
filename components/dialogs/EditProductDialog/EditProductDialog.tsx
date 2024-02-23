@@ -155,6 +155,17 @@ import './EditProductDialogStyles';
 
 
 
+// utilities:
+const privilegeProductUpdateFullAccess : Record<string, boolean> = {
+    visibility     : true,
+    name           : true,
+    price          : true,
+    shippingWeight : true,
+    images         : true,
+};
+
+
+
 // react components:
 export interface EditProductDialogProps
     extends
@@ -619,8 +630,12 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         
                         // privileges:
                         privilegeAdd    = {privilegeProductAdd   }
-                        privilegeUpdate = {privilegeProductUpdate}
-                        privilegeDelete = {privilegeProductDelete}
+                        /*
+                            Always full access for `privilegeUpdate` and `privilegeDelete` when *add_mode*,
+                            because the VariantGroup and Variant are *not_yet_exsist* on the database (draft data).
+                        */
+                        privilegeUpdate = {!!privilegeAdd ? privilegeProductUpdateFullAccess : privilegeProductUpdate}
+                        privilegeDelete = {!!privilegeAdd ?               true               : privilegeProductDelete}
                         
                         
                         
