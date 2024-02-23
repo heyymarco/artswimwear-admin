@@ -552,11 +552,11 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                                             * if NO  privilege update_user_role => UNABLE to change user's role
                                             * if HAS privilege update_user_role =>   ABLE to change user's role
                                         
-                                        when create_mode
+                                        when create_mode:
                                             * ALWAYS be ABLE to change new_user's role
                                     */
                                     if (model) { // has model => edit_mode
-                                        return !privilegeUpdate.role; // readOnly when no privilege update_user_role => UNABLE to change user's role
+                                        return !privilegeUpdate.role; // readOnly when NO  privilege update_user_role => UNABLE to change user's role
                                     }
                                     else {       // no model  => create_mode
                                         return false;                 // ALWAYS be ABLE to change new_user's role
