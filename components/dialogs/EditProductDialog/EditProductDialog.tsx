@@ -402,15 +402,15 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     
     
     // privileges:
-    const privilegeProductAdd    = !!role?.product_c;
-    const privilegeProductUpdate = useMemo(() => ({
+    const privilegeAdd    = !!role?.product_c;
+    const privilegeUpdate = useMemo(() => ({
         description : !!role?.product_ud,
         images      : !!role?.product_ui,
         price       : !!role?.product_up,
         stock       : !!role?.product_us,
         visibility  : !!role?.product_uv,
     }), [role]);
-    const privilegeProductDelete = !!role?.product_d;
+    const privilegeDelete = !!role?.product_d;
     
     
     
@@ -430,9 +430,9 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             
             
             // privileges:
-            privilegeAdd    = {privilegeProductAdd   }
-            privilegeUpdate = {privilegeProductUpdate}
-            privilegeDelete = {privilegeProductDelete}
+            privilegeAdd    = {privilegeAdd   }
+            privilegeUpdate = {privilegeUpdate}
+            privilegeDelete = {privilegeDelete}
             
             
             
@@ -629,7 +629,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         
                         
                         // privileges:
-                        privilegeAdd    = {                                                  privilegeProductAdd   }
+                        privilegeAdd    = {                                             privilegeAdd   }
                         /*
                             when edit_mode (update):
                                 * the editing  capability follows the `privilegeProductUpdate`
@@ -639,8 +639,8 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                                 * ALWAYS be ABLE to edit   the VariantGroup and the Variant (because the data is *not_yet_exsist* on the database)
                                 * ALWAYS be ABLE to delete the VariantGroup and the Variant (because the data is *not_yet_exsist* on the database)
                         */
-                        privilegeUpdate = {whenAdd ? privilegeProductUpdateFullAccess : privilegeProductUpdate}
-                        privilegeDelete = {whenAdd ?               true               : privilegeProductDelete}
+                        privilegeUpdate = {whenAdd ? privilegeProductUpdateFullAccess : privilegeUpdate}
+                        privilegeDelete = {whenAdd ?               true               : privilegeDelete}
                         
                         
                         
@@ -652,7 +652,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                             />
                         }
                         modelCreateComponent={
-                            privilegeProductAdd
+                            privilegeAdd
                             ? <EditProductVariantGroupDialog
                                 // data:
                                 model={null} // create a new model
