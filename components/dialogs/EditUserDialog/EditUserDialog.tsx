@@ -546,11 +546,22 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                                 
                                 
                                 // accessibilities:
-                                /*
-                                    edit mode   (having model) : readOnly when no privilege update_user_role
-                                    create mode     (no model) : readOnly when no privilege create_user
-                                */
-                                readOnly={!(!!model && privilegeUpdate.role) && !(!model && privilegeAdd)}
+                                readOnly={((): boolean => {
+                                    /*
+                                        when edit_mode:
+                                            * if NO  privilege update_user_role => UNABLE to change user's role
+                                            * if HAS privilege update_user_role =>   ABLE to change user's role
+                                        
+                                        when create_mode
+                                            * ALWAYS be ABLE to change new_user's role
+                                    */
+                                    if (model) { // has model => edit_mode
+                                        return !privilegeUpdate.role; // readOnly when no privilege update_user_role => UNABLE to change user's role
+                                    }
+                                    else {       // no model  => create_mode
+                                        return false;                 // ALWAYS be ABLE to change new_user's role
+                                    } // if
+                                })()}
                                 
                                 
                                 
