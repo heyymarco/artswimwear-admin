@@ -203,15 +203,15 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleUpdate               = useEvent<UpdateHandler<UserDetail>>(async ({id, privilegeAdd, privilegeUpdate}) => {
+    const handleUpdate               = useEvent<UpdateHandler<UserDetail>>(async ({id, whenAdd, whenUpdate}) => {
         return await updateUser({
             id       : id ?? '',
             
-            name     : (privilegeUpdate.name     || privilegeAdd) ? name               : undefined,
-            email    : (privilegeUpdate.email    || privilegeAdd) ? email              : undefined,
-            image    : (privilegeUpdate.image    || privilegeAdd) ? image              : undefined,
-            roleId   : (privilegeUpdate.role                    ) ? roleId             : ((!id && privilegeAdd) ? null : undefined),
-            username : (privilegeUpdate.username || privilegeAdd) ? (username || null) : undefined, // convert empty string to null
+            name     : (whenUpdate.name     || whenAdd) ? name               : undefined,
+            email    : (whenUpdate.email    || whenAdd) ? email              : undefined,
+            image    : (whenUpdate.image    || whenAdd) ? image              : undefined,
+            roleId   : (whenUpdate.role                    ) ? roleId             : ((!id && whenAdd) ? null : undefined),
+            username : (whenUpdate.username || whenAdd) ? (username || null) : undefined, // convert empty string to null
         }).unwrap();
     });
     const handleAfterUpdate          = useEvent<AfterUpdateHandler>(async () => {

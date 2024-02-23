@@ -94,7 +94,7 @@ import './ComplexEditModelDialogStyles'
 export type ComplexEditModelDialogResult<TModel extends Model> = PartialModel<TModel>|false|undefined // TModel: created|updated; false: deleted; undefined: not created|modified
 export interface ComplexEditModelDialogExpandedChangeEvent<TModel extends Model> extends ModalExpandedChangeEvent<ComplexEditModelDialogResult<TModel>> {}
 
-export type UpdateHandler<TModel extends Model>         = (args: { id: string|null, privilegeAdd: boolean, privilegeUpdate: Record<string, boolean> }) => PartialModel<TModel>|Promise<PartialModel<TModel>>
+export type UpdateHandler<TModel extends Model>         = (args: { id: string|null, whenAdd: boolean, whenUpdate: Record<string, boolean> }) => PartialModel<TModel>|Promise<PartialModel<TModel>>
 export type UpdatedHandler<TModel extends Model>        = (updatedModel: PartialModel<TModel>) => void|Promise<void>
 export type AfterUpdateHandler                          = () => void|Promise<void>
 
@@ -318,10 +318,10 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
         
         try {
             const updatingModelRaw = onUpdate?.({
-                id : model?.id || null,
+                id         : model?.id || null,
                 
-                privilegeAdd,
-                privilegeUpdate,
+                whenAdd    : privilegeAdd,
+                whenUpdate : privilegeUpdate,
             });
             const updatingModelTask = (updatingModelRaw instanceof Promise) ? updatingModelRaw : Promise.resolve(updatingModelRaw);
             

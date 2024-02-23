@@ -256,7 +256,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleUpdate               = useEvent<UpdateHandler<ProductDetail>>(async ({id, privilegeAdd, privilegeUpdate}) => {
+    const handleUpdate               = useEvent<UpdateHandler<ProductDetail>>(async ({id, whenAdd, whenUpdate}) => {
         const deletedImages : string[] = [];
         let updatedImages = images;
         if (updatedImages.length) {
@@ -297,14 +297,14 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             return await updateProduct({
                 id             : id ?? '',
                 
-                visibility     : (privilegeUpdate.visibility  || privilegeAdd) ? visibility                                        : undefined,
-                name           : (privilegeUpdate.description || privilegeAdd) ? name                                              : undefined,
-                path           : (privilegeUpdate.description || privilegeAdd) ? path                                              : undefined,
-                price          : (privilegeUpdate.price       || privilegeAdd) ? price                                             : undefined,
-                shippingWeight : (privilegeUpdate.price       || privilegeAdd) ? shippingWeight                                    : undefined,
-                stock          : (privilegeUpdate.stock       || privilegeAdd) ? stock                                             : undefined,
-                images         : (privilegeUpdate.images      || privilegeAdd) ? updatedImages                                     : undefined,
-                description    : (privilegeUpdate.description || privilegeAdd) ? ((description?.toJSON?.() ?? description) as any) : undefined,
+                visibility     : (whenUpdate.visibility  || whenAdd) ? visibility                                        : undefined,
+                name           : (whenUpdate.description || whenAdd) ? name                                              : undefined,
+                path           : (whenUpdate.description || whenAdd) ? path                                              : undefined,
+                price          : (whenUpdate.price       || whenAdd) ? price                                             : undefined,
+                shippingWeight : (whenUpdate.price       || whenAdd) ? shippingWeight                                    : undefined,
+                stock          : (whenUpdate.stock       || whenAdd) ? stock                                             : undefined,
+                images         : (whenUpdate.images      || whenAdd) ? updatedImages                                     : undefined,
+                description    : (whenUpdate.description || whenAdd) ? ((description?.toJSON?.() ?? description) as any) : undefined,
             }).unwrap();
         }
         finally {
