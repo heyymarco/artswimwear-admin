@@ -330,7 +330,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
             
             
             // privileges:
-            privilegeAdd    = {privilegeAdd}
+            privilegeAdd    = {privilegeAdd   }
             privilegeUpdate = {privilegeUpdate}
             privilegeDelete = {privilegeDelete}
             
