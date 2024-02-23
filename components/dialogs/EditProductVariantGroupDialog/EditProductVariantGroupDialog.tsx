@@ -296,7 +296,7 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                         
                         
                         // privileges:
-                        privilegeAdd    = {privilegeAdd}
+                        privilegeAdd    = {privilegeAdd   }
                         privilegeUpdate = {privilegeUpdate}
                         privilegeDelete = {privilegeDelete}
                         
