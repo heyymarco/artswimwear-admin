@@ -629,7 +629,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         
                         
                         // privileges:
-                        privilegeAdd    = {privilegeProductAdd   }
+                        privilegeAdd    = {                                                    privilegeProductAdd   }
                         /*
                             Always full access for `privilegeUpdate` and `privilegeDelete` when *add_mode*,
                             because the VariantGroup and Variant are *not_yet_exsist* on the database (draft data).
