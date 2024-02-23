@@ -258,13 +258,13 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
         // children:
         children : childrenFn,
     ...restModalCardProps} = props;
-    const privilegeAdd    : boolean                 =   !model && privilegeAddRaw;
-    const privilegeUpdate : Record<string, boolean> =  !!model ?  privilegeUpdateRaw : {};
-    const privilegeDelete : boolean                 =  !!model && privilegeDeleteRaw;
-    const privilegeWrite  : boolean                 = (
-        privilegeAdd
-        || !!Object.keys(privilegeUpdate).length
-        /* || privilegeDelete */ // except for delete
+    const whenAdd    : boolean                 =   !model && privilegeAddRaw;
+    const whenUpdate : Record<string, boolean> =  !!model ?  privilegeUpdateRaw : {};
+    const whenDelete : boolean                 =  !!model && privilegeDeleteRaw;
+    const whenWrite  : boolean                 = (
+        whenAdd
+        || !!Object.keys(whenUpdate).length
+        /* || whenDelete */ // except for delete
     );
     const isLoading = isCommiting || isReverting || isDeleting;
     
@@ -296,7 +296,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
     
     // handlers:
     const handleSave           = useEvent(async () => {
-        if (!privilegeWrite) return;
+        if (!whenWrite) return;
         
         
         
@@ -318,10 +318,10 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
         
         try {
             const updatingModelRaw = onUpdate?.({
-                id         : model?.id || null,
+                id : model?.id || null,
                 
-                whenAdd    : privilegeAdd,
-                whenUpdate : privilegeUpdate,
+                whenAdd,
+                whenUpdate,
             });
             const updatingModelTask = (updatingModelRaw instanceof Promise) ? updatingModelRaw : Promise.resolve(updatingModelRaw);
             
@@ -396,7 +396,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
         } // try
     });
     const handleSideSave       = useEvent(async (commitSides : boolean) => {
-        if (!privilegeWrite) return;
+        if (!whenWrite) return;
         
         
         
@@ -409,7 +409,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
     });
     
     const handleCloseDialog    = useEvent(async () => {
-        if (privilegeWrite && isModified) {
+        if (whenWrite && isModified) {
             // conditions:
             let answer : 'save'|'dontSave'|'continue'|undefined = 'save';
             {
@@ -557,10 +557,10 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
                         }
                     >
                         {(typeof(childrenFn) === 'function') ? childrenFn?.({
-                            whenAdd    : privilegeAdd,
-                            whenUpdate : privilegeUpdate,
+                            whenAdd,
+                            whenUpdate,
                         }) : childrenFn}
-                        {privilegeDelete && <TabPanel label={tabDelete} panelComponent={<Content theme='warning' className={styleSheet.tabDelete} />}>
+                        {whenDelete && <TabPanel label={tabDelete} panelComponent={<Content theme='warning' className={styleSheet.tabDelete} />}>
                             <ButtonIcon icon={isDeleting ? 'busy' : 'delete'} theme='danger' onClick={handleDelete}>
                                 Delete {!modelEntryName ? 'this ' : ''}<strong>{
                                     // the model name is entered:
@@ -574,8 +574,8 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
                     </Tab>
                 </ValidationProvider>
                 <CardFooter>
-                    {privilegeWrite && <ButtonIcon className='btnSave' icon={isCommiting ? 'busy' : 'save'} theme='success' onClick={handleSave}>Save</ButtonIcon>}
-                    <ButtonIcon className='btnCancel' icon={privilegeWrite ? (isReverting ? 'busy' : 'cancel') : 'done'} theme={privilegeWrite ? 'danger' : 'primary'} onClick={handleCloseDialog}>{isReverting ? 'Reverting' : (privilegeWrite ? 'Cancel' : 'Close')}</ButtonIcon>
+                    {whenWrite && <ButtonIcon className='btnSave' icon={isCommiting ? 'busy' : 'save'} theme='success' onClick={handleSave}>Save</ButtonIcon>}
+                    <ButtonIcon className='btnCancel' icon={whenWrite ? (isReverting ? 'busy' : 'cancel') : 'done'} theme={whenWrite ? 'danger' : 'primary'} onClick={handleCloseDialog}>{isReverting ? 'Reverting' : (whenWrite ? 'Cancel' : 'Close')}</ButtonIcon>
                 </CardFooter>
             </ModalCard>
         </AccessibilityProvider>
