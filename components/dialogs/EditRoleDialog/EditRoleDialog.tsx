@@ -315,7 +315,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             
             onConfirmDelete={handleConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}
-        >{({privilegeAdd, privilegeUpdate}) => <>
+        >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_ROLE_TAB_ROLE} panelComponent={<Generic className={styleSheet.roleTab} />}>
                 <form>
                     <span className='name label'>Name:</span>
@@ -331,7 +331,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
                         
                         
                         // accessibilities:
-                        enabled={privilegeUpdate.update || privilegeAdd}
+                        enabled={whenUpdate.update || whenAdd}
                         
                         
                         
@@ -356,7 +356,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
                                 <AccessibilityProvider
                                     // accessibilities:
                                     /* enable|disable accessibility for all <Check> */
-                                    enabled={privilegeUpdate.update || privilegeAdd}
+                                    enabled={whenUpdate.update || whenAdd}
                                 >
                                     <Check className='check editor' active={product_r}  onActiveChange={({active}) => { setProduct_r(active);  setIsModified(true); }}>
                                         View
@@ -389,7 +389,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
                                 <AccessibilityProvider
                                     // accessibilities:
                                     /* enable|disable accessibility for all <Check> */
-                                    enabled={privilegeUpdate.update || privilegeAdd}
+                                    enabled={whenUpdate.update || whenAdd}
                                 >
                                     <Check className='check editor' active={user_r}     onActiveChange={({active}) => { setUser_r(active);     setIsModified(true); }}>
                                         View
@@ -425,7 +425,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
                                 <AccessibilityProvider
                                     // accessibilities:
                                     /* enable|disable accessibility for all <Check> */
-                                    enabled={privilegeUpdate.update || privilegeAdd}
+                                    enabled={whenUpdate.update || whenAdd}
                                 >
                                     <Check className='check editor' active={order_r}    onActiveChange={({active}) => { setOrder_r(active);    setIsModified(true); }}>
                                         View
@@ -449,7 +449,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
                                 <AccessibilityProvider
                                     // accessibilities:
                                     /* enable|disable accessibility for all <Check> */
-                                    enabled={privilegeUpdate.update || privilegeAdd}
+                                    enabled={whenUpdate.update || whenAdd}
                                 >
                                     <Check className='check editor' active={role_c}     onActiveChange={({active}) => { setRole_c(active);     setIsModified(true); }}>
                                         Add New

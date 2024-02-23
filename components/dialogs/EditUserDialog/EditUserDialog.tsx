@@ -378,7 +378,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
             
             onConfirmDelete={handleConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}
-        >{({privilegeAdd, privilegeUpdate}) => <>
+        >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_USER_TAB_ACCOUNT} panelComponent={<Generic className={styleSheet.accountTab} />}>
                 <form>
                     <span className='name label'>Name:</span>
@@ -394,7 +394,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                         
                         
                         // accessibilities:
-                        enabled={privilegeUpdate.name || privilegeAdd}
+                        enabled={whenUpdate.name || whenAdd}
                         
                         
                         
@@ -414,7 +414,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                         
                         
                         // accessibilities:
-                        enabled={privilegeUpdate.username || privilegeAdd}
+                        enabled={whenUpdate.username || whenAdd}
                         
                         
                         
@@ -435,7 +435,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                         
                         
                         // accessibilities:
-                        enabled={privilegeUpdate.email || privilegeAdd}
+                        enabled={whenUpdate.email || whenAdd}
                         
                         
                         
@@ -457,7 +457,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                     
                     
                     // accessibilities:
-                    readOnly={!(privilegeUpdate.image || privilegeAdd)}
+                    readOnly={!(whenUpdate.image || whenAdd)}
                     
                     
                     
@@ -556,10 +556,10 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                                             * ALWAYS be ABLE to change new_user's role
                                     */
                                     if (model) { // has model => edit_mode
-                                        return !privilegeUpdate.role; // readOnly when NO  privilege update_user_role => UNABLE to change user's role
+                                        return !whenUpdate.role; // readOnly when NO  privilege update_user_role => UNABLE to change user's role
                                     }
                                     else {       // no model  => create_mode
-                                        return false;                 // ALWAYS be ABLE to change new_user's role
+                                        return false;            // ALWAYS be ABLE to change new_user's role
                                     } // if
                                 })()}
                                 

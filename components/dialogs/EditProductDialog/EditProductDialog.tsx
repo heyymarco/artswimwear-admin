@@ -472,7 +472,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             
             onConfirmDelete={handleConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}
-        >{({privilegeAdd, privilegeUpdate}) => <>
+        >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_PRODUCT_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>
                     <span className='name label'>Name:</span>
@@ -488,7 +488,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         
                         
                         // accessibilities:
-                        enabled={privilegeUpdate.description || privilegeAdd}
+                        enabled={whenUpdate.description || whenAdd}
                         
                         
                         
@@ -509,7 +509,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         
                         
                         // accessibilities:
-                        enabled={privilegeUpdate.description || privilegeAdd}
+                        enabled={whenUpdate.description || whenAdd}
                         
                         
                         
@@ -530,7 +530,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         
                         
                         // accessibilities:
-                        enabled={privilegeUpdate.price || privilegeAdd}
+                        enabled={whenUpdate.price || whenAdd}
                         
                         
                         
@@ -550,7 +550,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         
                         
                         // accessibilities:
-                        enabled={privilegeUpdate.price || privilegeAdd}
+                        enabled={whenUpdate.price || whenAdd}
                         
                         
                         
@@ -575,7 +575,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         
                         
                         // accessibilities:
-                        enabled={privilegeUpdate.stock || privilegeAdd}
+                        enabled={whenUpdate.stock || whenAdd}
                         
                         
                         
@@ -600,7 +600,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         
                         
                         // accessibilities:
-                        enabled={privilegeUpdate.visibility || privilegeAdd}
+                        enabled={whenUpdate.visibility || whenAdd}
                         
                         
                         
@@ -639,8 +639,8 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                                 * ALWAYS be ABLE to edit   the VariantGroup and the Variant (because the data is *not_yet_exsist* on the database)
                                 * ALWAYS be ABLE to delete the VariantGroup and the Variant (because the data is *not_yet_exsist* on the database)
                         */
-                        privilegeUpdate = {privilegeAdd ? privilegeProductUpdateFullAccess : privilegeProductUpdate}
-                        privilegeDelete = {privilegeAdd ?               true               : privilegeProductDelete}
+                        privilegeUpdate = {whenAdd ? privilegeProductUpdateFullAccess : privilegeProductUpdate}
+                        privilegeDelete = {whenAdd ?               true               : privilegeProductDelete}
                         
                         
                         
@@ -674,7 +674,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                     
                     
                     // accessibilities:
-                    readOnly={!(privilegeUpdate.images || privilegeAdd)}
+                    readOnly={!(whenUpdate.images || whenAdd)}
                     
                     
                     
@@ -748,7 +748,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                     
                     
                     // accessibilities:
-                    enabled={privilegeUpdate.description || privilegeAdd}
+                    enabled={whenUpdate.description || whenAdd}
                     
                     
                     
