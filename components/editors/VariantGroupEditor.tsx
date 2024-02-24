@@ -226,12 +226,12 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
                 // props:
                 {
                     // identifiers:
-                    key             : modelPreviewComponent.key          ?? modelOption.id,
+                    key             : modelPreviewComponent.key                   ?? modelOption.id,
                     
                     
                     
                     // data:
-                    model           : modelPreviewComponent.props.model  ?? modelOption,
+                    model           : modelPreviewComponent.props.model           ?? modelOption,
                     
                     
                     
