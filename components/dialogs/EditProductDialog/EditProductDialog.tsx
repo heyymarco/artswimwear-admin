@@ -157,11 +157,10 @@ import './EditProductDialogStyles';
 
 // utilities:
 const privilegeProductUpdateFullAccess : Record<string, boolean> = {
-    visibility     : true,
-    name           : true,
-    price          : true,
-    shippingWeight : true,
-    images         : true,
+    description : true,
+    images      : true,
+    price       : true,
+    visibility  : true,
 };
 
 
