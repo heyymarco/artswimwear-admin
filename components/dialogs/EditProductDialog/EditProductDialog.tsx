@@ -665,7 +665,9 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                                 
                                 
                                 // privileges:
-                                privilegeAdd={true}
+                                privilegeAdd    = {privilegeAdd   }
+                                privilegeUpdate = {privilegeUpdate}
+                                privilegeDelete = {privilegeDelete}
                             />
                             : undefined
                         }
