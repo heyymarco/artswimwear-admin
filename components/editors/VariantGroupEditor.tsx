@@ -17,10 +17,9 @@ import {
 }                           from '@heymarco/events'
 
 // reusable-ui components:
-import {
+import type {
     // layout-components:
     ListProps,
-    List,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // heymarco components:
@@ -193,72 +192,6 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
     
     
     // jsx:
-    const children = <>
-        {/* <ModelCreate> */}
-        {!!modelCreateComponent  && <ModelCreateOuter<ProductVariantGroupDetail>
-            // classes:
-            className='solid'
-            
-            
-            
-            // accessibilities:
-            createItemText='Add New Variant Group'
-            
-            
-            
-            // components:
-            modelCreateComponent={modelCreateComponent}
-            listItemComponent={
-                <OrderableListItem
-                    orderable={false}
-                />
-            }
-            
-            
-            
-            // handlers:
-            onCreated={handleModelCreated}
-        />}
-        
-        {value.map((modelOption) =>
-            /* <ModelPreview> */
-            React.cloneElement<VariantGroupPreviewProps>(modelPreviewComponent,
-                // props:
-                {
-                    // identifiers:
-                    key             : modelPreviewComponent.key                   ?? modelOption.id,
-                    
-                    
-                    
-                    // data:
-                    model           : modelPreviewComponent.props.model           ?? modelOption,
-                    
-                    
-                    
-                    // privileges:
-                    privilegeAdd    : modelPreviewComponent.props.privilegeAdd    ?? privilegeAdd,
-                    privilegeUpdate : modelPreviewComponent.props.privilegeUpdate ?? privilegeUpdate,
-                    privilegeDelete : modelPreviewComponent.props.privilegeDelete ?? privilegeDelete,
-                    
-                    
-                    
-                    // handlers:
-                    onUpdated       : handleModelUpdated,
-                    onDeleted       : handleModelDeleted,
-                },
-            )
-        )}
-    </>;
-    
-    if (readOnly) return (
-        <List<TElement>
-            // other props:
-            {...restListProps}
-        >
-            {children}
-        </List>
-    );
-    
     return (
         <OrderableList<TElement, unknown>
             // other props:
@@ -266,10 +199,68 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
             
             
             
+            // behaviors:
+            orderable={!readOnly}
+            
+            
+            
             // values:
             onChildrenChange={handleChildrenChange}
         >
-            {children}
+            {/* <ModelCreate> */}
+            {!!modelCreateComponent  && <ModelCreateOuter<ProductVariantGroupDetail>
+                // classes:
+                className='solid'
+                
+                
+                
+                // accessibilities:
+                createItemText='Add New Variant Group'
+                
+                
+                
+                // components:
+                modelCreateComponent={modelCreateComponent}
+                listItemComponent={
+                    <OrderableListItem
+                        orderable={false}
+                    />
+                }
+                
+                
+                
+                // handlers:
+                onCreated={handleModelCreated}
+            />}
+            
+            {value.map((modelOption) =>
+                /* <ModelPreview> */
+                React.cloneElement<VariantGroupPreviewProps>(modelPreviewComponent,
+                    // props:
+                    {
+                        // identifiers:
+                        key             : modelPreviewComponent.key                   ?? modelOption.id,
+                        
+                        
+                        
+                        // data:
+                        model           : modelPreviewComponent.props.model           ?? modelOption,
+                        
+                        
+                        
+                        // privileges:
+                        privilegeAdd    : modelPreviewComponent.props.privilegeAdd    ?? privilegeAdd,
+                        privilegeUpdate : modelPreviewComponent.props.privilegeUpdate ?? privilegeUpdate,
+                        privilegeDelete : modelPreviewComponent.props.privilegeDelete ?? privilegeDelete,
+                        
+                        
+                        
+                        // handlers:
+                        onUpdated       : handleModelUpdated,
+                        onDeleted       : handleModelDeleted,
+                    },
+                )
+            )}
         </OrderableList>
     );
 };
