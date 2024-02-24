@@ -120,9 +120,9 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
         
         
         // privileges:
-        privilegeAdd    = false,
-        privilegeUpdate = {},
-        privilegeDelete = false,
+        privilegeAdd,
+        privilegeUpdate,
+        privilegeDelete,
         
         
         
@@ -156,7 +156,7 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
     
     
     // handlers:
-    const handleUpdate               = useEvent<UpdateHandler<ProductVariantGroupDetail>>(async ({id}) => {
+    const handleUpdate               = useEvent<UpdateHandler<ProductVariantGroupDetail>>(async ({id, whenAdd, whenUpdate}) => {
         return {
             ...model,
             
@@ -165,7 +165,7 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                 return ` ${await nanoid()}`; // starts with space{random-temporary-id}
             })(),
             
-            name : (privilegeUpdate.description || privilegeAdd) ? name : undefined,
+            name : (whenUpdate.description || whenAdd) ? name : undefined,
             
             ...((variants === unmodifiedVariants) ? null : ({
                 productVariants : variants,
@@ -251,7 +251,7 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
             
             onConfirmDelete={handleConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}
-        >
+        >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_VARIANT_GROUP_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>
                     <span className='name label'>Name:</span>
@@ -267,7 +267,7 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                         
                         
                         // accessibilities:
-                        enabled={privilegeUpdate.description || privilegeAdd}
+                        enabled={whenUpdate.description || whenAdd}
                         
                         
                         
@@ -283,6 +283,11 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                     <VariantEditor
                         // classes:
                         className='variants editor'
+                        
+                        
+                        
+                        // accessibilities:
+                        readOnly={!(whenUpdate.description || whenAdd)}
                         
                         
                         
@@ -325,7 +330,7 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                     />
                 </form>
             </TabPanel>
-        </ComplexEditModelDialog>
+        </>}</ComplexEditModelDialog>
     );
 };
 export {
