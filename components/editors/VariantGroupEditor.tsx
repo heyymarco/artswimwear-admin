@@ -40,7 +40,12 @@ import type {
     UpdatedHandler,
     DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
+import type {
+    // react components:
+    EditProductVariantGroupDialogProps,
+}                           from '@/components/dialogs/EditProductVariantGroupDialog'
 import {
+    ModelCreateProps,
     CreateHandler,
     ModelCreateOuterProps,
     ModelCreateOuter,
@@ -94,6 +99,7 @@ interface VariantGroupEditorProps<TElement extends Element = HTMLElement>
         >
 {
     // components:
+    modelCreateComponent  ?: React.ReactComponentElement<any, ModelCreateProps & EditProductVariantGroupDialogProps>
     modelPreviewComponent  : React.ReactComponentElement<any, VariantGroupPreviewProps>
 }
 const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: VariantGroupEditorProps<TElement>): JSX.Element|null => {
@@ -220,7 +226,17 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
                 
                 
                 // components:
-                modelCreateComponent={modelCreateComponent}
+                modelCreateComponent={
+                    React.cloneElement<ModelCreateProps & EditProductVariantGroupDialogProps>(modelCreateComponent,
+                        // props:
+                        {
+                            // privileges:
+                            privilegeAdd    : modelCreateComponent.props.privilegeAdd    ?? privilegeAdd,
+                            privilegeUpdate : modelCreateComponent.props.privilegeUpdate ?? privilegeUpdate,
+                            privilegeDelete : modelCreateComponent.props.privilegeDelete ?? privilegeDelete,
+                        },
+                    )
+                }
                 listItemComponent={
                     <OrderableListItem
                         orderable={false}

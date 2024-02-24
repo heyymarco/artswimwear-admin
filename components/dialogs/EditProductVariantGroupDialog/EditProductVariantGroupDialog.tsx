@@ -319,13 +319,6 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                             ? <EditProductVariantDialog
                                 // data:
                                 model={null} // create a new model
-                                
-                                
-                                
-                                // privileges:
-                                privilegeAdd    = {privilegeAdd   }
-                                privilegeUpdate = {privilegeUpdate}
-                                privilegeDelete = {privilegeDelete}
                             />
                             : undefined
                         }
