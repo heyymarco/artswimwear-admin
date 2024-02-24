@@ -115,7 +115,7 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
         
         
         // accessibilities:
-        readOnly = !privilegeUpdate?.description && !privilegeAdd,
+        readOnly = true,
         
         
         
