@@ -115,7 +115,7 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
         
         
         // accessibilities:
-        readOnly = !privilegeUpdate?.description && !privilegeAdd,
+        readOnly = true,
         
         
         
