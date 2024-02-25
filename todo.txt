@@ -32,6 +32,7 @@ VariantEditor			verified
 
 
 TODO:
+* remove <Grip> when not having privilege.description
 * must be able editing/deleting model(s) having temporary id(s)
 * deleting image(s) then cancel save product, the deleted images should be in draft mode
 * SAVE variant(group) ke database
