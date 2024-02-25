@@ -40,7 +40,11 @@ import type {
     UpdatedHandler,
     DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
+import type {
+    EditProductVariantGroupDialogProps,
+}                           from '@/components/dialogs/EditProductVariantGroupDialog'
 import {
+    ModelCreateProps,
     CreateHandler,
     ModelCreateOuterProps,
     ModelCreateOuter,
@@ -53,6 +57,7 @@ import type {
 import {
     // types:
     VariantPrivilege,
+    VariantState,
     
     
     
@@ -100,6 +105,7 @@ interface VariantGroupEditorProps<TElement extends Element = HTMLElement>
         VariantPrivilege
 {
     // components:
+    modelCreateComponent  ?: React.ReactComponentElement<any, ModelCreateProps & EditProductVariantGroupDialogProps>
     modelPreviewComponent  : React.ReactComponentElement<any, VariantGroupPreviewProps>
 }
 const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: VariantGroupEditorProps<TElement>): JSX.Element|null => {
@@ -192,6 +198,17 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
     
     
     
+    // states:
+    // workaround for penetrating <VariantStateProvider> to showDialog():
+    const variantState : VariantState = {
+        // privileges:
+        privilegeAdd,
+        privilegeUpdate,
+        privilegeDelete,
+    };
+    
+    
+    
     // jsx:
     return (
         <VariantStateProvider
@@ -227,7 +244,15 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
                     
                     
                     // components:
-                    modelCreateComponent={modelCreateComponent}
+                    modelCreateComponent={
+                        React.cloneElement<ModelCreateProps & EditProductVariantGroupDialogProps>(modelCreateComponent,
+                            // props:
+                            {
+                                // workaround for penetrating <VariantStateProvider> to showDialog():
+                                ...variantState,
+                            },
+                        )
+                    }
                     listItemComponent={
                         <OrderableListItem
                             orderable={false}

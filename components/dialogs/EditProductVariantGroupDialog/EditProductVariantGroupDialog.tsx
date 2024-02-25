@@ -45,12 +45,13 @@ import {
 }                           from '@/components/dialogs/EditProductVariantDialog'
 
 import {
-    // states:
-    useVariantState,
+    // types:
+    VariantState,
     
     
     
     // react components:
+    VariantStateProvider,
     VariantEditor,
 }                           from '@/components/editors/VariantEditor'
 import {
@@ -102,7 +103,10 @@ import './EditProductVariantGroupDialogStyles';
 export interface EditProductVariantGroupDialogProps
     extends
         // bases:
-        ImplementedComplexEditModelDialogProps<ProductVariantGroupDetail>
+        ImplementedComplexEditModelDialogProps<ProductVariantGroupDetail>,
+        
+        // privileges & states:
+        VariantState
 {
 }
 const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps): JSX.Element|null => {
@@ -118,6 +122,13 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
         
         
         
+        // privileges:
+        privilegeAdd,
+        privilegeUpdate,
+        privilegeDelete,
+        
+        
+        
         // states:
         defaultExpandedTabIndex = 0,
     ...restComplexEditModelDialogProps} = props;
@@ -125,12 +136,6 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
     
     
     // states:
-    const {
-        // privileges:
-        privilegeAdd,
-        privilegeUpdate,
-        privilegeDelete,
-    }                                 = useVariantState();
     const [isModified, setIsModified] = useState<boolean>(false);
     
     const [name      , setName      ] = useState<string>(model?.name ?? '');
@@ -278,37 +283,44 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                     />
                     
                     <span className='variants label'>Variants:</span>
-                    <VariantEditor
-                        // classes:
-                        className='variants editor'
-                        
-                        
-                        
-                        // values:
-                        value={variants}
-                        onChange={(value) => {
-                            setVariants(value);
-                            setIsModified(true);
-                        }}
-                        
-                        
-                        
-                        // components:
-                        modelPreviewComponent={
-                            <VariantPreview
-                                // data:
-                                model={undefined as any}
-                            />
-                        }
-                        modelCreateComponent={
-                            privilegeAdd
-                            ? <EditProductVariantDialog
-                                // data:
-                                model={null} // create a new model
-                            />
-                            : undefined
-                        }
-                    />
+                    <VariantStateProvider
+                        // privileges:
+                        privilegeAdd    = {privilegeAdd}
+                        privilegeUpdate = {privilegeUpdate}
+                        privilegeDelete = {privilegeDelete}
+                    >
+                        <VariantEditor
+                            // classes:
+                            className='variants editor'
+                            
+                            
+                            
+                            // values:
+                            value={variants}
+                            onChange={(value) => {
+                                setVariants(value);
+                                setIsModified(true);
+                            }}
+                            
+                            
+                            
+                            // components:
+                            modelPreviewComponent={
+                                <VariantPreview
+                                    // data:
+                                    model={undefined as any}
+                                />
+                            }
+                            modelCreateComponent={
+                                privilegeAdd
+                                ? <EditProductVariantDialog
+                                    // data:
+                                    model={null} // create a new model
+                                />
+                                : undefined
+                            }
+                        />
+                    </VariantStateProvider>
                 </form>
             </TabPanel>
         </>}</ComplexEditModelDialog>

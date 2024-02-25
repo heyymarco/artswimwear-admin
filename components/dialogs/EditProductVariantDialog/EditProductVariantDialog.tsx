@@ -56,9 +56,9 @@ import {
 import {
     GalleryEditor,
 }                           from '@/components/editors/GalleryEditor'
-import {
-    // states:
-    useVariantState,
+import type {
+    // types:
+    VariantState,
 }                           from '@/components/editors/VariantEditor'
 import {
     // types:
@@ -129,7 +129,10 @@ import './EditProductVariantDialogStyles';
 export interface EditProductVariantDialogProps
     extends
         // bases:
-        ImplementedComplexEditModelDialogProps<ProductVariantDetail>
+        ImplementedComplexEditModelDialogProps<ProductVariantDetail>,
+        
+        // privileges & states:
+        VariantState
 {
 }
 const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Element|null => {
@@ -145,6 +148,13 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
         
         
         
+        // privileges:
+        privilegeAdd,
+        privilegeUpdate,
+        privilegeDelete,
+        
+        
+        
         // states:
         defaultExpandedTabIndex = 0,
     ...restComplexEditModelDialogProps} = props;
@@ -152,12 +162,6 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
     
     
     // states:
-    const {
-        // privileges:
-        privilegeAdd,
-        privilegeUpdate,
-        privilegeDelete,
-    }                                         = useVariantState();
     const [isModified, setIsModified]         = useState<boolean>(false);
     
     const [visibility    , setVisibility    ] = useState<ProductVariantVisibility>(model?.visibility     ?? 'PUBLISHED');

@@ -40,7 +40,11 @@ import type {
     UpdatedHandler,
     DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
+import type {
+    EditProductVariantDialogProps,
+}                           from '@/components/dialogs/EditProductVariantDialog'
 import {
+    ModelCreateProps,
     CreateHandler,
     ModelCreateOuterProps,
     ModelCreateOuter,
@@ -51,6 +55,11 @@ import type {
 
 // internals:
 import {
+    // types:
+    VariantState,
+    
+    
+    
     // states:
     useVariantState,
 }                           from './states/variantState'
@@ -92,6 +101,7 @@ interface VariantEditorProps<TElement extends Element = HTMLElement>
         >>
 {
     // components:
+    modelCreateComponent  ?: React.ReactComponentElement<any, ModelCreateProps & EditProductVariantDialogProps>
     modelPreviewComponent  : React.ReactComponentElement<any, VariantPreviewProps>
 }
 const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEditorProps<TElement>): JSX.Element|null => {
@@ -114,7 +124,9 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
     // states:
     const {
         // privileges:
+        privilegeAdd,
         privilegeUpdate,
+        privilegeDelete,
     } = useVariantState();
     let {
         value              : value,
@@ -181,6 +193,17 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
     
     
     
+    // states:
+    // workaround for penetrating <VariantStateProvider> to showDialog():
+    const variantState : VariantState = {
+        // privileges:
+        privilegeAdd,
+        privilegeUpdate,
+        privilegeDelete,
+    };
+    
+    
+    
     // jsx:
     return (
         <OrderableList<TElement, unknown>
@@ -210,7 +233,15 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
                 
                 
                 // components:
-                modelCreateComponent={modelCreateComponent}
+                modelCreateComponent={
+                    React.cloneElement<ModelCreateProps & EditProductVariantDialogProps>(modelCreateComponent,
+                        // props:
+                        {
+                            // workaround for penetrating <VariantStateProvider> to showDialog():
+                            ...variantState,
+                        },
+                    )
+                }
                 listItemComponent={
                     <OrderableListItem
                         orderable={false}

@@ -58,6 +58,10 @@ import {
     EditProductVariantDialogProps,
     EditProductVariantDialog,
 }                           from '@/components/dialogs/EditProductVariantDialog'
+import {
+    // states:
+    useVariantState,
+}                           from '@/components/editors/VariantEditor/states/variantState'
 
 // stores:
 import type {
@@ -133,12 +137,23 @@ const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
     
     
     
+    // states:
+    // workaround for penetrating <VariantStateProvider> to showDialog():
+    const variantState = useVariantState();
+    
+    
+    
     // handlers:
     const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLElement>>(async () => {
         const updatedVariantModel = await showDialog<ComplexEditModelDialogResult<ProductVariantDetail>>(
             <EditProductVariantDialog
                 // data:
                 model={model} // modify current model
+                
+                
+                
+                // workaround for penetrating <VariantStateProvider> to showDialog():
+                {...variantState}
             />
         );
         switch (updatedVariantModel) {
