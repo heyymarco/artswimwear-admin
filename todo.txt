@@ -10,3 +10,29 @@ protect change user role from himself
 protect delete user from himself
 [high prior] create a random value of @unique nullable data of DraftOrder::paypalOrderId & Credentials::username
 [low  prior] update AddressEditor to accept/return null if all fields are empty
+
+
+
+==============================================================================================
+
+
+
+privilege(Add|Update|Delete)
+when(Add|Update)
+
+
+EditProductVariantGroupDialog	verified						modelCreateComponent by EditProductDialog
+EditProductVariantDialog	verified						modelCreateComponent by EditProductVariantGroupDialog
+
+VariantGroupPreview		verified						modelPreviewComponent by EditProductDialog
+VariantPreview			verified						modelPreviewComponent by EditProductVariantGroupDialog
+
+VariantGroupEditor		verified	// privileges by EditProductDialog	
+VariantEditor			verified						
+
+
+TODO:
+* must be able editing model(s) having temporary id(s)
+* deleting image(s) then cancel save product, the deleted images should be in draft mode
+* SAVE variant(group) ke database
+
