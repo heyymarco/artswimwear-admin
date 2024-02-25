@@ -614,11 +614,6 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                 : isErrorVariantGroup
                     ? 'Error getting variant data'
                     : <VariantGroupEditor
-                        // accessibilities:
-                        readOnly={!(whenUpdate.description || whenAdd)}
-                        
-                        
-                        
                         // values:
                         value={variantGroups}
                         onChange={(value) => {

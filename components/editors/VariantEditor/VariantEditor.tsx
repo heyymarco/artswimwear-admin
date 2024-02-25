@@ -49,6 +49,12 @@ import type {
     VariantPreviewProps,
 }                           from '@/components/views/VariantPreview'
 
+// internals:
+import {
+    // states:
+    useVariantState,
+}                           from './states/variantState'
+
 // stores:
 import type {
     // types:
@@ -98,11 +104,6 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
         
         
         
-        // accessibilities:
-        readOnly = true,
-        
-        
-        
         // components:
         modelCreateComponent,
         modelPreviewComponent,
@@ -111,6 +112,10 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
     
     
     // states:
+    const {
+        // privileges:
+        privilegeUpdate,
+    } = useVariantState();
     let {
         value              : value,
         triggerValueChange : triggerValueChange,
@@ -185,7 +190,7 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
             
             
             // behaviors:
-            orderable={!readOnly}
+            orderable={!!privilegeUpdate?.description}
             
             
             

@@ -284,11 +284,6 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                         
                         
                         
-                        // accessibilities:
-                        readOnly={!(whenUpdate.description || whenAdd)}
-                        
-                        
-                        
                         // values:
                         value={variants}
                         onChange={(value) => {

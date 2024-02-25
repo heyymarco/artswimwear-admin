@@ -119,11 +119,6 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
         
         
         
-        // accessibilities:
-        readOnly = true,
-        
-        
-        
         // components:
         modelCreateComponent,
         modelPreviewComponent,
@@ -212,7 +207,7 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
                 
                 
                 // behaviors:
-                orderable={!readOnly}
+                orderable={!!privilegeUpdate?.description}
                 
                 
                 
