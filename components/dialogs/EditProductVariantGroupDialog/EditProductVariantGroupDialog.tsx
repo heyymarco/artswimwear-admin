@@ -45,8 +45,14 @@ import {
 }                           from '@/components/dialogs/EditProductVariantDialog'
 
 import {
+    // states:
+    useVariantState,
+    
+    
+    
+    // react components:
     VariantEditor,
-}                           from '@/components/editors/VariantEditor/VariantEditor'
+}                           from '@/components/editors/VariantEditor'
 import {
     VariantPreview,
 }                           from '@/components/views//VariantPreview'
@@ -60,7 +66,6 @@ import {
     
     
     // react components:
-    ComplexEditModelDialogProps,
     ImplementedComplexEditModelDialogProps,
     ComplexEditModelDialog,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
@@ -97,13 +102,7 @@ import './EditProductVariantGroupDialogStyles';
 export interface EditProductVariantGroupDialogProps
     extends
         // bases:
-        ImplementedComplexEditModelDialogProps<ProductVariantGroupDetail>,
-        Pick<ComplexEditModelDialogProps<ProductVariantGroupDetail>,
-            // privileges:
-            |'privilegeAdd'
-            |'privilegeUpdate'
-            |'privilegeDelete'
-        >
+        ImplementedComplexEditModelDialogProps<ProductVariantGroupDetail>
 {
 }
 const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps): JSX.Element|null => {
@@ -119,13 +118,6 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
         
         
         
-        // privileges:
-        privilegeAdd,
-        privilegeUpdate,
-        privilegeDelete,
-        
-        
-        
         // states:
         defaultExpandedTabIndex = 0,
     ...restComplexEditModelDialogProps} = props;
@@ -133,6 +125,12 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
     
     
     // states:
+    const {
+        // privileges:
+        privilegeAdd,
+        privilegeUpdate,
+        privilegeDelete,
+    }                                 = useVariantState();
     const [isModified, setIsModified] = useState<boolean>(false);
     
     const [name      , setName      ] = useState<string>(model?.name ?? '');
@@ -297,13 +295,6 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                             setVariants(value);
                             setIsModified(true);
                         }}
-                        
-                        
-                        
-                        // privileges:
-                        privilegeAdd    = {privilegeAdd   }
-                        privilegeUpdate = {privilegeUpdate}
-                        privilegeDelete = {privilegeDelete}
                         
                         
                         

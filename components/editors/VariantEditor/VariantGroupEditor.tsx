@@ -40,12 +40,7 @@ import type {
     UpdatedHandler,
     DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
-import type {
-    // react components:
-    EditProductVariantGroupDialogProps,
-}                           from '@/components/dialogs/EditProductVariantGroupDialog'
 import {
-    ModelCreateProps,
     CreateHandler,
     ModelCreateOuterProps,
     ModelCreateOuter,
@@ -53,6 +48,17 @@ import {
 import type {
     VariantGroupPreviewProps,
 }                           from '@/components/views/VariantGroupPreview'
+
+// internals:
+import {
+    // types:
+    VariantPrivilege,
+    
+    
+    
+    // react components:
+    VariantStateProvider,
+}                           from './states/variantState'
 
 // stores:
 import type {
@@ -91,15 +97,9 @@ interface VariantGroupEditorProps<TElement extends Element = HTMLElement>
         >>,
         
         // privileges:
-        Pick<VariantGroupPreviewProps,
-            // privileges:
-            |'privilegeAdd'
-            |'privilegeUpdate'
-            |'privilegeDelete'
-        >
+        VariantPrivilege
 {
     // components:
-    modelCreateComponent  ?: React.ReactComponentElement<any, ModelCreateProps & EditProductVariantGroupDialogProps>
     modelPreviewComponent  : React.ReactComponentElement<any, VariantGroupPreviewProps>
 }
 const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: VariantGroupEditorProps<TElement>): JSX.Element|null => {
@@ -199,85 +199,75 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
     
     // jsx:
     return (
-        <OrderableList<TElement, unknown>
-            // other props:
-            {...restListProps}
-            
-            
-            
-            // behaviors:
-            orderable={!readOnly}
-            
-            
-            
-            // values:
-            onChildrenChange={handleChildrenChange}
+        <VariantStateProvider
+            // privileges:
+            privilegeAdd    = {privilegeAdd}
+            privilegeUpdate = {privilegeUpdate}
+            privilegeDelete = {privilegeDelete}
         >
-            {/* <ModelCreate> */}
-            {!!modelCreateComponent  && <ModelCreateOuter<ProductVariantGroupDetail>
-                // classes:
-                className='solid'
+            <OrderableList<TElement, unknown>
+                // other props:
+                {...restListProps}
                 
                 
                 
-                // accessibilities:
-                createItemText='Add New Variant Group'
+                // behaviors:
+                orderable={!readOnly}
                 
                 
                 
-                // components:
-                modelCreateComponent={
-                    React.cloneElement<ModelCreateProps & EditProductVariantGroupDialogProps>(modelCreateComponent,
+                // values:
+                onChildrenChange={handleChildrenChange}
+            >
+                {/* <ModelCreate> */}
+                {!!modelCreateComponent  && <ModelCreateOuter<ProductVariantGroupDetail>
+                    // classes:
+                    className='solid'
+                    
+                    
+                    
+                    // accessibilities:
+                    createItemText='Add New Variant Group'
+                    
+                    
+                    
+                    // components:
+                    modelCreateComponent={modelCreateComponent}
+                    listItemComponent={
+                        <OrderableListItem
+                            orderable={false}
+                        />
+                    }
+                    
+                    
+                    
+                    // handlers:
+                    onCreated={handleModelCreated}
+                />}
+                
+                {value.map((modelOption) =>
+                    /* <ModelPreview> */
+                    React.cloneElement<VariantGroupPreviewProps>(modelPreviewComponent,
                         // props:
                         {
-                            // privileges:
-                            privilegeAdd    : modelCreateComponent.props.privilegeAdd    ?? privilegeAdd,
-                            privilegeUpdate : modelCreateComponent.props.privilegeUpdate ?? privilegeUpdate,
-                            privilegeDelete : modelCreateComponent.props.privilegeDelete ?? privilegeDelete,
+                            // identifiers:
+                            key       : modelPreviewComponent.key         ?? modelOption.id,
+                            
+                            
+                            
+                            // data:
+                            model     : modelPreviewComponent.props.model ?? modelOption,
+                            
+                            
+                            
+                            // handlers:
+                            onUpdated : handleModelUpdated,
+                            onDeleted : handleModelDeleted,
                         },
                     )
-                }
-                listItemComponent={
-                    <OrderableListItem
-                        orderable={false}
-                    />
-                }
-                
-                
-                
-                // handlers:
-                onCreated={handleModelCreated}
-            />}
-            
-            {value.map((modelOption) =>
-                /* <ModelPreview> */
-                React.cloneElement<VariantGroupPreviewProps>(modelPreviewComponent,
-                    // props:
-                    {
-                        // identifiers:
-                        key             : modelPreviewComponent.key                   ?? modelOption.id,
-                        
-                        
-                        
-                        // data:
-                        model           : modelPreviewComponent.props.model           ?? modelOption,
-                        
-                        
-                        
-                        // privileges:
-                        privilegeAdd    : modelPreviewComponent.props.privilegeAdd    ?? privilegeAdd,
-                        privilegeUpdate : modelPreviewComponent.props.privilegeUpdate ?? privilegeUpdate,
-                        privilegeDelete : modelPreviewComponent.props.privilegeDelete ?? privilegeDelete,
-                        
-                        
-                        
-                        // handlers:
-                        onUpdated       : handleModelUpdated,
-                        onDeleted       : handleModelDeleted,
-                    },
-                )
-            )}
-        </OrderableList>
+                )}
+            </OrderableList>
+        </VariantStateProvider>
     );
 };
 export {

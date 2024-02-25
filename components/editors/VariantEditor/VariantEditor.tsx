@@ -40,12 +40,7 @@ import type {
     UpdatedHandler,
     DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
-import type {
-    // react components:
-    EditProductVariantDialogProps,
-}                           from '@/components/dialogs/EditProductVariantDialog'
 import {
-    ModelCreateProps,
     CreateHandler,
     ModelCreateOuterProps,
     ModelCreateOuter,
@@ -88,18 +83,9 @@ interface VariantEditorProps<TElement extends Element = HTMLElement>
         Partial<Pick<ModelCreateOuterProps<ProductVariantDetail>,
             // components:
             |'modelCreateComponent'
-        >>,
-        
-        // privileges:
-        Pick<VariantPreviewProps,
-            // privileges:
-            |'privilegeAdd'
-            |'privilegeUpdate'
-            |'privilegeDelete'
-        >
+        >>
 {
     // components:
-    modelCreateComponent  ?: React.ReactComponentElement<any, ModelCreateProps & EditProductVariantDialogProps>
     modelPreviewComponent  : React.ReactComponentElement<any, VariantPreviewProps>
 }
 const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEditorProps<TElement>): JSX.Element|null => {
@@ -109,13 +95,6 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
         defaultValue : defaultUncontrollableValue = [],
         value        : controllableValue,
         onChange     : onControllableValueChange,
-        
-        
-        
-        // privileges:
-        privilegeAdd,
-        privilegeUpdate,
-        privilegeDelete,
         
         
         
@@ -226,17 +205,7 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
                 
                 
                 // components:
-                modelCreateComponent={
-                    React.cloneElement<ModelCreateProps & EditProductVariantDialogProps>(modelCreateComponent,
-                        // props:
-                        {
-                            // privileges:
-                            privilegeAdd    : modelCreateComponent.props.privilegeAdd    ?? privilegeAdd,
-                            privilegeUpdate : modelCreateComponent.props.privilegeUpdate ?? privilegeUpdate,
-                            privilegeDelete : modelCreateComponent.props.privilegeDelete ?? privilegeDelete,
-                        },
-                    )
-                }
+                modelCreateComponent={modelCreateComponent}
                 listItemComponent={
                     <OrderableListItem
                         orderable={false}
@@ -255,25 +224,18 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
                     // props:
                     {
                         // identifiers:
-                        key             : modelPreviewComponent.key                   ?? modelOption.id,
+                        key       : modelPreviewComponent.key         ?? modelOption.id,
                         
                         
                         
                         // data:
-                        model           : modelPreviewComponent.props.model           ?? modelOption,
-                        
-                        
-                        
-                        // privileges:
-                        privilegeAdd    : modelPreviewComponent.props.privilegeAdd    ?? privilegeAdd,
-                        privilegeUpdate : modelPreviewComponent.props.privilegeUpdate ?? privilegeUpdate,
-                        privilegeDelete : modelPreviewComponent.props.privilegeDelete ?? privilegeDelete,
+                        model     : modelPreviewComponent.props.model ?? modelOption,
                         
                         
                         
                         // handlers:
-                        onUpdated       : handleModelUpdated,
-                        onDeleted       : handleModelDeleted,
+                        onUpdated : handleModelUpdated,
+                        onDeleted : handleModelDeleted,
                     },
                 )
             )}

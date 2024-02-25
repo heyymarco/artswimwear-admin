@@ -57,6 +57,10 @@ import {
     GalleryEditor,
 }                           from '@/components/editors/GalleryEditor'
 import {
+    // states:
+    useVariantState,
+}                           from '@/components/editors/VariantEditor'
+import {
     // types:
     UpdateHandler,
     
@@ -69,7 +73,6 @@ import {
     
     
     // react components:
-    ComplexEditModelDialogProps,
     ImplementedComplexEditModelDialogProps,
     ComplexEditModelDialog,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
@@ -126,13 +129,7 @@ import './EditProductVariantDialogStyles';
 export interface EditProductVariantDialogProps
     extends
         // bases:
-        ImplementedComplexEditModelDialogProps<ProductVariantDetail>,
-        Pick<ComplexEditModelDialogProps<ProductVariantDetail>,
-            // privileges:
-            |'privilegeAdd'
-            |'privilegeUpdate'
-            |'privilegeDelete'
-        >
+        ImplementedComplexEditModelDialogProps<ProductVariantDetail>
 {
 }
 const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Element|null => {
@@ -148,13 +145,6 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
         
         
         
-        // privileges:
-        privilegeAdd,
-        privilegeUpdate,
-        privilegeDelete,
-        
-        
-        
         // states:
         defaultExpandedTabIndex = 0,
     ...restComplexEditModelDialogProps} = props;
@@ -162,7 +152,13 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
     
     
     // states:
-    const [isModified, setIsModified] = useState<boolean>(false);
+    const {
+        // privileges:
+        privilegeAdd,
+        privilegeUpdate,
+        privilegeDelete,
+    }                                         = useVariantState();
+    const [isModified, setIsModified]         = useState<boolean>(false);
     
     const [visibility    , setVisibility    ] = useState<ProductVariantVisibility>(model?.visibility     ?? 'PUBLISHED');
     const [name          , setName          ] = useState<string>(model?.name ?? '');

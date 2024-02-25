@@ -101,8 +101,14 @@ import {
     EditProductVariantGroupDialog,
 }                           from '@/components/dialogs/EditProductVariantGroupDialog'
 import {
+    // types:
+    VariantPrivilege,
+    
+    
+    
+    // react components:
     VariantGroupEditor,
-}                           from '@/components/editors/VariantEditor/VariantGroupEditor'
+}                           from '@/components/editors/VariantEditor'
 import {
     VariantGroupPreview,
 }                           from '@/components/views//VariantGroupPreview'
@@ -159,7 +165,7 @@ import './EditProductDialogStyles';
 
 
 // utilities:
-const privilegeProductUpdateFullAccess : Record<string, boolean> = {
+const privilegeProductUpdateFullAccess : Required<VariantPrivilege>['privilegeUpdate'] = {
     description : true,
     images      : true,
     price       : true,

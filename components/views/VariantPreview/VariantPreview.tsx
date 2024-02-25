@@ -86,15 +86,7 @@ const handleOrderStart = (event: OrderableListItemDragStartEvent<HTMLElement>): 
 export interface VariantPreviewProps
     extends
         // bases:
-        ModelPreviewProps<ProductVariantDetail>,
-        
-        // privileges:
-        Pick<EditProductVariantDialogProps,
-            // privileges:
-            |'privilegeAdd'
-            |'privilegeUpdate'
-            |'privilegeDelete'
-        >
+        ModelPreviewProps<ProductVariantDetail>
 {
     // handlers:
     onUpdated     ?: UpdatedHandler<ProductVariantDetail>
@@ -110,13 +102,6 @@ const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
     const {
         // data:
         model,
-        
-        
-        
-        // privileges:
-        privilegeAdd,
-        privilegeUpdate,
-        privilegeDelete,
         
         
         
@@ -154,13 +139,6 @@ const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
             <EditProductVariantDialog
                 // data:
                 model={model} // modify current model
-                
-                
-                
-                // privileges:
-                privilegeAdd    = {privilegeAdd   }
-                privilegeUpdate = {privilegeUpdate}
-                privilegeDelete = {privilegeDelete}
             />
         );
         switch (updatedVariantModel) {
