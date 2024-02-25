@@ -102,7 +102,7 @@ import {
 }                           from '@/components/dialogs/EditProductVariantGroupDialog'
 import {
     VariantGroupEditor,
-}                           from '@/components/editors/VariantGroupEditor'
+}                           from '@/components/editors/VariantEditor/VariantGroupEditor'
 import {
     VariantGroupPreview,
 }                           from '@/components/views//VariantGroupPreview'

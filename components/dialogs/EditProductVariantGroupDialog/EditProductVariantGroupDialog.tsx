@@ -46,7 +46,7 @@ import {
 
 import {
     VariantEditor,
-}                           from '@/components/editors/VariantEditor'
+}                           from '@/components/editors/VariantEditor/VariantEditor'
 import {
     VariantPreview,
 }                           from '@/components/views//VariantPreview'
