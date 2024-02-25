@@ -47,7 +47,7 @@ export interface VariantState
 {
 }
 
-const VariantStateContext = createContext<VariantState>({
+const defaultVariantStateContext : VariantState = {
     // privileges:
     privilegeAdd    : false,
     privilegeUpdate : {
@@ -57,11 +57,14 @@ const VariantStateContext = createContext<VariantState>({
         visibility    : false,
     },
     privilegeDelete : false,
-});
+}
+const VariantStateContext = createContext<VariantState>(defaultVariantStateContext);
 VariantStateContext.displayName  = 'VariantState';
 
 export const useVariantState = (): VariantState => {
-    return useContext(VariantStateContext);
+    const variantState = useContext(VariantStateContext);
+    if (variantState === defaultVariantStateContext) throw Error('not inside <VariantStateProvider>');
+    return variantState;
 }
 
 
