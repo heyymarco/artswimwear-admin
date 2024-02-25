@@ -167,7 +167,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
     const [shippingWeight, setShippingWeight] = useState<number             |null>(model?.shippingWeight ?? null       ); // optional field
     const [images        , setImages        ] = useState<string[]                >(model?.images         ?? []         );
     
-    const [draftDeletedImages               ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
+    const [draftDifferentialImages          ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
     
     
     
@@ -186,7 +186,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
     
     // handlers:
     const handleUpdate               = useEvent<UpdateHandler<ProductVariantDetail>>(async ({id, whenAdd, whenUpdate}) => {
-        const deletedImages : string[] = [];
+        const immigratedImages : string[] = [];
         let updatedImages = images;
         if (updatedImages.length) {
             try {
@@ -210,7 +210,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                         
                         
                         // actions:
-                        deletedImages.push(image);
+                        immigratedImages.push(image);
                         return movedImage;
                     });
                 } // if
@@ -239,10 +239,10 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
             };
         }
         finally {
-            if (deletedImages.length) {
+            if (immigratedImages.length) {
                 try {
                     await commitDeleteImage({
-                        imageId : deletedImages,
+                        imageId : immigratedImages,
                     }).unwrap();
                 }
                 catch {
@@ -262,7 +262,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
         // search for unused image(s) and delete them:
         const unusedImageIds : string[] = [];
         for (const unusedImageId of
-            Array.from(draftDeletedImages.entries())
+            Array.from(draftDifferentialImages.entries())
             .filter((draftDeletedImage) => ((draftDeletedImage[1] === commitImages) || (draftDeletedImage[1] === null)))
             .map((draftDeletedImage) => draftDeletedImage[0])
         )
@@ -286,8 +286,10 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
         
         
         
-        // substract the drafts:
-        for (const unusedImageId of unusedImageIds) draftDeletedImages.delete(unusedImageId);
+        // cleanup the drafts:
+        // for (const unusedImageId of unusedImageIds) draftDifferentialImages.delete(unusedImageId);
+        // const usedImageIds = Array.from(draftDifferentialImages.keys());
+        draftDifferentialImages.clear();
     });
     
     const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<ProductVariantDetail>>(({model}) => {
@@ -517,7 +519,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                             }).unwrap();
                             
                             // register to actual_delete the new_image when reverted:
-                            draftDeletedImages.set(imageId, false /* false: delete when reverted, noop when committed */);
+                            draftDifferentialImages.set(imageId, false /* false: delete when reverted, noop when committed */);
                             
                             return imageId;
                         }
@@ -533,8 +535,8 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                     }}
                     onDeleteImage={async ({ imageData: imageId }) => {
                         // register to actual_delete the deleted_image when committed:
-                        draftDeletedImages.set(imageId,
-                            draftDeletedImages.has(imageId) // if has been created but not saved
+                        draftDifferentialImages.set(imageId,
+                            draftDifferentialImages.has(imageId) // if has been created but not saved
                             ? null /* null: delete when committed, delete when reverted */
                             : true /* true: delete when committed, noop when reverted */
                         );

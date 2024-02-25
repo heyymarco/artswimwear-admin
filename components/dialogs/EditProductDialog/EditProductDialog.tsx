@@ -214,7 +214,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         } // try
     });
     
-    const [draftDeletedImages                   ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
+    const [draftDifferentialImages              ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
     
     
     
@@ -256,7 +256,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     
     // handlers:
     const handleUpdate               = useEvent<UpdateHandler<ProductDetail>>(async ({id, whenAdd, whenUpdate}) => {
-        const deletedImages : string[] = [];
+        const immigratedImages : string[] = [];
         let updatedImages = images;
         if (updatedImages.length) {
             try {
@@ -280,7 +280,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         
                         
                         // actions:
-                        deletedImages.push(image);
+                        immigratedImages.push(image);
                         return movedImage;
                     });
                 } // if
@@ -307,10 +307,10 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             }).unwrap();
         }
         finally {
-            if (deletedImages.length) {
+            if (immigratedImages.length) {
                 try {
                     await commitDeleteImage({
-                        imageId : deletedImages,
+                        imageId : immigratedImages,
                     }).unwrap();
                 }
                 catch {
@@ -336,7 +336,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         // search for unused image(s) and delete them:
         const unusedImageIds : string[] = [];
         for (const unusedImageId of
-            Array.from(draftDeletedImages.entries())
+            Array.from(draftDifferentialImages.entries())
             .filter((draftDeletedImage) => ((draftDeletedImage[1] === commitImages) || (draftDeletedImage[1] === null)))
             .map((draftDeletedImage) => draftDeletedImage[0])
         )
@@ -360,8 +360,10 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         
         
         
-        // substract the drafts:
-        for (const unusedImageId of unusedImageIds) draftDeletedImages.delete(unusedImageId);
+        // cleanup the drafts:
+        // for (const unusedImageId of unusedImageIds) draftDifferentialImages.delete(unusedImageId);
+        // const usedImageIds = Array.from(draftDifferentialImages.keys());
+        draftDifferentialImages.clear();
     });
     
     const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<ProductDetail>>(({model}) => {
@@ -707,7 +709,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                             }).unwrap();
                             
                             // register to actual_delete the new_image when reverted:
-                            draftDeletedImages.set(imageId, false /* false: delete when reverted, noop when committed */);
+                            draftDifferentialImages.set(imageId, false /* false: delete when reverted, noop when committed */);
                             
                             return imageId;
                         }
@@ -723,8 +725,8 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                     }}
                     onDeleteImage={async ({ imageData: imageId }) => {
                         // register to actual_delete the deleted_image when committed:
-                        draftDeletedImages.set(imageId,
-                            draftDeletedImages.has(imageId) // if has been created but not saved
+                        draftDifferentialImages.set(imageId,
+                            draftDifferentialImages.has(imageId) // if has been created but not saved
                             ? null /* null: delete when committed, delete when reverted */
                             : true /* true: delete when committed, noop when reverted */
                         );

@@ -174,7 +174,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
     const initialEmailRef                     = useRef  <string     >(model?.email    ?? ''  );
     const initialImageRef                     = useRef  <string|null>(model?.image    ?? null); // optional field
     
-    const [draftDeletedImages               ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
+    const [draftDifferentialImages          ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
     
     const [isTabRoleShown, setIsTabRoleShown] = useState<boolean>(() => (defaultExpandedTabIndex === 2));
     
@@ -251,7 +251,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
         // initial_image have been replaced with new image:
         if (commitImages && initialImageRef.current && (initialImageRef.current !== image)) {
             // register to actual_delete the initial_image when committed:
-            draftDeletedImages.set(initialImageRef.current, true /* true: delete when committed, noop when reverted */);
+            draftDifferentialImages.set(initialImageRef.current, true /* true: delete when committed, noop when reverted */);
         } // if
         
         
@@ -259,7 +259,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
         // search for unused image(s) and delete them:
         const unusedImageIds : string[] = [];
         for (const unusedImageId of
-            Array.from(draftDeletedImages.entries())
+            Array.from(draftDifferentialImages.entries())
             .filter((draftDeletedImage) => ((draftDeletedImage[1] === commitImages) || (draftDeletedImage[1] === null)))
             .map((draftDeletedImage) => draftDeletedImage[0])
         )
@@ -283,8 +283,10 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
         
         
         
-        // substract the drafts:
-        for (const unusedImageId of unusedImageIds) draftDeletedImages.delete(unusedImageId);
+        // cleanup the drafts:
+        // for (const unusedImageId of unusedImageIds) draftDifferentialImages.delete(unusedImageId);
+        // const usedImageIds = Array.from(draftDifferentialImages.keys());
+        draftDifferentialImages.clear();
     });
     
     const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<UserDetail>>(({model}) => {
@@ -494,7 +496,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                             await handleSideDelete();
                             
                             // register to actual_delete the new_image when reverted:
-                            draftDeletedImages.set(imageId, false /* false: delete when reverted, noop when committed */);
+                            draftDifferentialImages.set(imageId, false /* false: delete when reverted, noop when committed */);
                             
                             return imageId;
                         }
@@ -510,8 +512,8 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                     }}
                     onDeleteImage={async ({ imageData: imageId }) => {
                         // register to actual_delete the deleted_image when committed:
-                        draftDeletedImages.set(imageId,
-                            draftDeletedImages.has(imageId) // if has been created but not saved
+                        draftDifferentialImages.set(imageId,
+                            draftDifferentialImages.has(imageId) // if has been created but not saved
                             ? null /* null: delete when committed, delete when reverted */
                             : true /* true: delete when committed, noop when reverted */
                         );
