@@ -117,6 +117,9 @@ import {
 import {
     resolveMediaUrl,
 }                           from '@/libs/mediaStorage.client'
+import {
+    useDraftDifferentialImages,
+}                           from '@/states/draftDifferentialImages'
 
 // configs:
 import {
@@ -174,7 +177,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
     const initialEmailRef                     = useRef  <string     >(model?.email    ?? ''  );
     const initialImageRef                     = useRef  <string|null>(model?.image    ?? null); // optional field
     
-    const [draftDifferentialImages          ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
+    const draftDifferentialImages             = useDraftDifferentialImages();
     
     const [isTabRoleShown, setIsTabRoleShown] = useState<boolean>(() => (defaultExpandedTabIndex === 2));
     
@@ -251,28 +254,20 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
         // initial_image have been replaced with new image:
         if (commitImages && initialImageRef.current && (initialImageRef.current !== image)) {
             // register to actual_delete the initial_image when committed:
-            draftDifferentialImages.set(initialImageRef.current, true /* true: delete when committed, noop when reverted */);
+            draftDifferentialImages.registerDeletedImage(initialImageRef.current);
         } // if
         
         
         
         // search for unused image(s) and delete them:
-        const unusedImageIds : string[] = [];
-        for (const unusedImageId of
-            Array.from(draftDifferentialImages.entries())
-            .filter((draftDeletedImage) => ((draftDeletedImage[1] === commitImages) || (draftDeletedImage[1] === null)))
-            .map((draftDeletedImage) => draftDeletedImage[0])
-        )
-        {
-            unusedImageIds.push(unusedImageId);
-        } // for
+        const {unusedImages} = draftDifferentialImages.commitChanges(commitImages);
         
         
         
         try {
-            if (unusedImageIds.length) {
+            if (unusedImages.length) {
                 await (commitImages ? commitDeleteImage : revertDeleteImage)({
-                    imageId : unusedImageIds,
+                    imageId : unusedImages,
                 }).unwrap();
             } // if
         }
@@ -280,13 +275,6 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
             // ignore any error
             return; // but do not clear the draft
         } // try
-        
-        
-        
-        // cleanup the drafts:
-        // for (const unusedImageId of unusedImageIds) draftDifferentialImages.delete(unusedImageId);
-        // const usedImageIds = Array.from(draftDifferentialImages.keys());
-        draftDifferentialImages.clear();
     });
     
     const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<UserDetail>>(({model}) => {
@@ -496,7 +484,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                             await handleSideDelete();
                             
                             // register to actual_delete the new_image when reverted:
-                            draftDifferentialImages.set(imageId, false /* false: delete when reverted, noop when committed */);
+                            draftDifferentialImages.registerAddedImage(imageId);
                             
                             return imageId;
                         }
@@ -512,11 +500,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                     }}
                     onDeleteImage={async ({ imageData: imageId }) => {
                         // register to actual_delete the deleted_image when committed:
-                        draftDifferentialImages.set(imageId,
-                            draftDifferentialImages.has(imageId) // if has been created but not saved
-                            ? null /* null: delete when committed, delete when reverted */
-                            : true /* true: delete when committed, noop when reverted */
-                        );
+                        draftDifferentialImages.registerDeletedImage(imageId);
                         
                         return true;
                     }}

@@ -135,6 +135,9 @@ import {
 import {
     resolveMediaUrl,
 }                           from '@/libs/mediaStorage.client'
+import {
+    useDraftDifferentialImages,
+}                           from '@/states/draftDifferentialImages'
 
 // configs:
 import {
@@ -192,17 +195,17 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     
     
     // states:
-    const [isModified      , setIsModified      ] = useState<boolean>(false);
-    const [isPathModified  , setIsPathModified  ] = useState<boolean>(false);
+    const [isModified      , setIsModified    ] = useState<boolean>(false);
+    const [isPathModified  , setIsPathModified] = useState<boolean>(false);
     
-    const [visibility      , setVisibility      ] = useState<ProductVisibility      >(model?.visibility     ?? 'DRAFT');
-    const [name            , setName            ] = useState<string                 >(model?.name           ?? ''     );
-    const [path            , setPath            ] = useState<string                 >(model?.path           ?? ''     );
-    const [price           , setPrice           ] = useState<number                 >(model?.price          ?? 0      );
-    const [shippingWeight  , setShippingWeight  ] = useState<number            |null>(model?.shippingWeight ?? null   ); // optional field
-    const [stock           , setStock           ] = useState<number            |null>(model?.stock          ?? null   ); // optional field
-    const [images          , setImages          ] = useState<string[]               >(model?.images         ?? []     );
-    const [description     , setDescription     ] = useState<WysiwygEditorState|null>(() => {                            // optional field
+    const [visibility      , setVisibility    ] = useState<ProductVisibility      >(model?.visibility     ?? 'DRAFT');
+    const [name            , setName          ] = useState<string                 >(model?.name           ?? ''     );
+    const [path            , setPath          ] = useState<string                 >(model?.path           ?? ''     );
+    const [price           , setPrice         ] = useState<number                 >(model?.price          ?? 0      );
+    const [shippingWeight  , setShippingWeight] = useState<number            |null>(model?.shippingWeight ?? null   ); // optional field
+    const [stock           , setStock         ] = useState<number            |null>(model?.stock          ?? null   ); // optional field
+    const [images          , setImages        ] = useState<string[]               >(model?.images         ?? []     );
+    const [description     , setDescription   ] = useState<WysiwygEditorState|null>(() => {                            // optional field
         const description = model?.description;
         if (!description) return null;
         if (typeof(description) === 'object') return description as any;
@@ -214,7 +217,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         } // try
     });
     
-    const [draftDifferentialImages              ] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
+    const draftDifferentialImages               = useDraftDifferentialImages();
     
     
     
@@ -334,22 +337,14 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     });
     const handleSideSave             = useEvent(async (commitImages : boolean) => {
         // search for unused image(s) and delete them:
-        const unusedImageIds : string[] = [];
-        for (const unusedImageId of
-            Array.from(draftDifferentialImages.entries())
-            .filter((draftDeletedImage) => ((draftDeletedImage[1] === commitImages) || (draftDeletedImage[1] === null)))
-            .map((draftDeletedImage) => draftDeletedImage[0])
-        )
-        {
-            unusedImageIds.push(unusedImageId);
-        } // for
+        const {unusedImages} = draftDifferentialImages.commitChanges(commitImages);
         
         
         
         try {
-            if (unusedImageIds.length) {
+            if (unusedImages.length) {
                 await (commitImages ? commitDeleteImage : revertDeleteImage)({
-                    imageId : unusedImageIds,
+                    imageId : unusedImages,
                 }).unwrap();
             } // if
         }
@@ -357,13 +352,6 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             // ignore any error
             return; // but do not clear the draft
         } // try
-        
-        
-        
-        // cleanup the drafts:
-        // for (const unusedImageId of unusedImageIds) draftDifferentialImages.delete(unusedImageId);
-        // const usedImageIds = Array.from(draftDifferentialImages.keys());
-        draftDifferentialImages.clear();
     });
     
     const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<ProductDetail>>(({model}) => {
@@ -709,7 +697,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                             }).unwrap();
                             
                             // register to actual_delete the new_image when reverted:
-                            draftDifferentialImages.set(imageId, false /* false: delete when reverted, noop when committed */);
+                            draftDifferentialImages.registerAddedImage(imageId);
                             
                             return imageId;
                         }
@@ -725,11 +713,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                     }}
                     onDeleteImage={async ({ imageData: imageId }) => {
                         // register to actual_delete the deleted_image when committed:
-                        draftDifferentialImages.set(imageId,
-                            draftDifferentialImages.has(imageId) // if has been created but not saved
-                            ? null /* null: delete when committed, delete when reverted */
-                            : true /* true: delete when committed, noop when reverted */
-                        );
+                        draftDifferentialImages.registerDeletedImage(imageId);
                         
                         return true;
                     }}
