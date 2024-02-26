@@ -59,6 +59,11 @@ import {
     EditProductVariantDialog,
 }                           from '@/components/dialogs/EditProductVariantDialog'
 import {
+    // utilities:
+    privilegeVariantUpdateFullAccess,
+    
+    
+    
     // states:
     useVariantState,
 }                           from '@/components/editors/VariantEditor/states/variantState'
@@ -139,11 +144,17 @@ const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
     
     // states:
     // workaround for penetrating <VariantStateProvider> to showDialog():
-    const variantState = useVariantState();
+    const {
+        // privileges:
+        privilegeAdd,
+        privilegeUpdate,
+        privilegeDelete,
+    ...restVariantState} = useVariantState();
     
     
     
     // handlers:
+    const whenDraft = (id[0] === ' '); // any id(s) starting with a space => draft id
     const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLElement>>(async () => {
         const updatedVariantModel = await showDialog<ComplexEditModelDialogResult<ProductVariantDetail>>(
             <EditProductVariantDialog
@@ -153,7 +164,23 @@ const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
                 
                 
                 // workaround for penetrating <VariantStateProvider> to showDialog():
-                {...variantState}
+                {...restVariantState}
+                
+                
+                
+                // privileges:
+                privilegeAdd    = {                                               privilegeAdd   }
+                /*
+                    when edit_mode (update):
+                        * the editing  capability follows the `privilegeProductUpdate`
+                        * the deleting capability follows the `privilegeProductDelete`
+                    
+                    when create_mode (add):
+                        * ALWAYS be ABLE to edit   the VariantGroup and the Variant (because the data is *not_yet_exsist* on the database)
+                        * ALWAYS be ABLE to delete the VariantGroup and the Variant (because the data is *not_yet_exsist* on the database)
+                */
+                privilegeUpdate = {whenDraft ? privilegeVariantUpdateFullAccess : privilegeUpdate}
+                privilegeDelete = {whenDraft ?               true               : privilegeDelete}
             />
         );
         switch (updatedVariantModel) {
