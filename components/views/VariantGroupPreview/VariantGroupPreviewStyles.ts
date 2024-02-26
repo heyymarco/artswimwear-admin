@@ -15,7 +15,7 @@ const usesVariantGroupPreviewLayout = () => { // the <ListItem> of variantGroup 
         gridTemplate  : [[
             '"name grip edit"',
             '/',
-            '1fr auto auto',
+            '1fr min-content auto',
         ]],
         
         

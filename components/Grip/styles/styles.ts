@@ -61,8 +61,10 @@ export const usesGripLayout = () => {
         ...style({
             // layouts:
             display             : 'grid',
-            gridTemplateColumns : 'repeat(3, 1fr)',
-            gridTemplateRows    : 'repeat(3, 1fr)',
+            gridAutoFlow        : 'row',
+            gridTemplateColumns : `repeat(auto-fill, minmax(calc(${grips.dotInlineSize} + (2 * ${grips.dotMarginInline})), 1fr))`,
+            gridTemplateRows    : `repeat(auto-fill, minmax(calc(${grips.dotBlockSize } + (2 * ${grips.dotMarginBlock })), 1fr))`,
+            gridAutoRows        : '1fr',
             justifyItems        : 'center',
             alignItems          : 'center',
             
@@ -70,6 +72,11 @@ export const usesGripLayout = () => {
             
             // children:
             ...children('*', {
+                // sizes:
+                boxSizing       : 'border-box',
+                
+                
+                
                 // accessibilities:
                 pointerEvents   : 'none', // no interaction, just for decoration purpose
                 
