@@ -39,6 +39,16 @@ export interface VariantPrivilege
 
 
 
+// utilities:
+export const privilegeVariantUpdateFullAccess : Required<VariantPrivilege>['privilegeUpdate'] = {
+    description : true,
+    images      : true,
+    price       : true,
+    visibility  : true,
+};
+
+
+
 // contexts:
 export interface VariantState
     extends

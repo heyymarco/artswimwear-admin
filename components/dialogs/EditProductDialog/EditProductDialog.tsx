@@ -101,8 +101,8 @@ import {
     EditProductVariantGroupDialog,
 }                           from '@/components/dialogs/EditProductVariantGroupDialog'
 import {
-    // types:
-    VariantPrivilege,
+    // utilities:
+    privilegeVariantUpdateFullAccess,
     
     
     
@@ -161,16 +161,6 @@ const useEditProductDialogStyleSheet = dynamicStyleSheets(
     () => import(/* webpackPrefetch: true */'./EditProductDialogStyles')
 , { id: 'pkeb1tledn' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 import './EditProductDialogStyles';
-
-
-
-// utilities:
-const privilegeProductUpdateFullAccess : Required<VariantPrivilege>['privilegeUpdate'] = {
-    description : true,
-    images      : true,
-    price       : true,
-    visibility  : true,
-};
 
 
 
@@ -634,7 +624,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                                 * ALWAYS be ABLE to edit   the VariantGroup and the Variant (because the data is *not_yet_exsist* on the database)
                                 * ALWAYS be ABLE to delete the VariantGroup and the Variant (because the data is *not_yet_exsist* on the database)
                         */
-                        privilegeUpdate = {whenAdd ? privilegeProductUpdateFullAccess : privilegeUpdate}
+                        privilegeUpdate = {whenAdd ? privilegeVariantUpdateFullAccess : privilegeUpdate}
                         privilegeDelete = {whenAdd ?               true               : privilegeDelete}
                         
                         
