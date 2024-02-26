@@ -168,7 +168,7 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                 return ` ${await nanoid()}`; // starts with space{random-temporary-id}
             })(),
             
-            name : (whenUpdate.description || whenAdd) ? name : undefined,
+            name : (whenUpdate.description || whenAdd) ? name : model?.name,
             
             ...((variants === unmodifiedVariants) ? null : ({
                 productVariants : variants,

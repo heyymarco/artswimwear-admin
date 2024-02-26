@@ -234,11 +234,11 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                     return ` ${await nanoid()}`; // starts with space{random-temporary-id}
                 })(),
                 
-                visibility     : (whenUpdate.visibility  || whenAdd) ? visibility     : undefined,
-                name           : (whenUpdate.description || whenAdd) ? name           : undefined,
-                price          : (whenUpdate.price       || whenAdd) ? price          : undefined,
-                shippingWeight : (whenUpdate.price       || whenAdd) ? shippingWeight : undefined,
-                images         : (whenUpdate.images      || whenAdd) ? updatedImages  : undefined,
+                visibility     : (whenUpdate.visibility  || whenAdd) ? visibility     : model?.visibility,
+                name           : (whenUpdate.description || whenAdd) ? name           : model?.name,
+                price          : (whenUpdate.price       || whenAdd) ? price          : model?.price,
+                shippingWeight : (whenUpdate.price       || whenAdd) ? shippingWeight : model?.shippingWeight,
+                images         : (whenUpdate.images      || whenAdd) ? updatedImages  : model?.images,
             };
         }
         finally {
