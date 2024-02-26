@@ -117,11 +117,6 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
         
         
         
-        // accessibilities:
-        readOnly = false, // TODO: unordrable if readonly
-        
-        
-        
         // handlers:
         onUpdated,
         onDeleted,
