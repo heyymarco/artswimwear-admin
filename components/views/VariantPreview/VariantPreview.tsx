@@ -44,6 +44,9 @@ import {
 import {
     EditButton,
 }                           from '@/components/EditButton'
+import {
+    Grip,
+}                           from '@/components/Grip'
 import type {
     // react components:
     ModelPreviewProps,
@@ -79,7 +82,7 @@ import type {
 // styles:
 const useVariantPreviewStyleSheet = dynamicStyleSheet(
     () => import(/* webpackPrefetch: true */'./VariantPreviewStyles')
-, { specificityWeight: 2, id: 'bfyf914v0j' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
+, { specificityWeight: 2, id: 'ksusgysqhs' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 import './VariantPreviewStyles';
 
 
@@ -147,14 +150,26 @@ const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
     const {
         // privileges:
         privilegeAdd,
-        privilegeUpdate,
-        privilegeDelete,
+        privilegeUpdate : privilegeUpdateRaw,
+        privilegeDelete : privilegeDeleteRaw,
     ...restVariantState} = useVariantState();
+    
+    const whenDraft = (id[0] === ' '); // any id(s) starting with a space => draft id
+    /*
+        when edit_mode (update):
+            * the editing  capability follows the `privilegeProductUpdate`
+            * the deleting capability follows the `privilegeProductDelete`
+        
+        when create_mode (add):
+            * ALWAYS be ABLE to edit   the VariantGroup and the Variant (because the data is *not_yet_exsist* on the database)
+            * ALWAYS be ABLE to delete the VariantGroup and the Variant (because the data is *not_yet_exsist* on the database)
+    */
+    const privilegeUpdate = whenDraft ? privilegeVariantUpdateFullAccess : privilegeUpdateRaw;
+    const privilegeDelete = whenDraft ?               true               : privilegeDeleteRaw;
     
     
     
     // handlers:
-    const whenDraft = (id[0] === ' '); // any id(s) starting with a space => draft id
     const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLElement>>(async () => {
         const updatedVariantModel = await showDialog<ComplexEditModelDialogResult<ProductVariantDetail>>(
             <EditProductVariantDialog
@@ -169,18 +184,9 @@ const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
                 
                 
                 // privileges:
-                privilegeAdd    = {                                               privilegeAdd   }
-                /*
-                    when edit_mode (update):
-                        * the editing  capability follows the `privilegeProductUpdate`
-                        * the deleting capability follows the `privilegeProductDelete`
-                    
-                    when create_mode (add):
-                        * ALWAYS be ABLE to edit   the VariantGroup and the Variant (because the data is *not_yet_exsist* on the database)
-                        * ALWAYS be ABLE to delete the VariantGroup and the Variant (because the data is *not_yet_exsist* on the database)
-                */
-                privilegeUpdate = {whenDraft ? privilegeVariantUpdateFullAccess : privilegeUpdate}
-                privilegeDelete = {whenDraft ?               true               : privilegeDelete}
+                privilegeAdd    = {privilegeAdd   }
+                privilegeUpdate = {privilegeUpdate}
+                privilegeDelete = {privilegeDelete}
             />
         );
         switch (updatedVariantModel) {
@@ -221,7 +227,7 @@ const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
         >
             <p className='name'>{name}</p>
             
-            <span className='grip'>TODO: {'<Grip>'}</span>
+            {!!privilegeUpdate?.description && <Grip className='grip' />}
             
             <EditButton
                 iconComponent={<Icon icon='edit' />}
