@@ -39,12 +39,7 @@ const usesVariantGroupPreviewLayout = () => { // the <ListItem> of variantGroup 
         }),
         ...children('.grip', {
             // positions:
-            gridArea    : 'grip',
-            
-            
-            
-            // accessibilities:
-            cursor      : 'move',
+            gridArea : 'grip',
         }),
         ...children('.edit', {
             // positions:
