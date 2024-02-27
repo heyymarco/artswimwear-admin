@@ -32,6 +32,5 @@ VariantEditor			verified
 
 
 TODO:
-* deleting image(s) then cancel save product, the deleted images should be in draft mode
 * SAVE variant(group) ke database
 
