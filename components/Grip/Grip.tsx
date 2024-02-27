@@ -83,18 +83,12 @@ const Grip = <TElement extends Element = HTMLElement>(props: GripProps<TElement>
     
     // handlers:
     const handleGrabbed    = useEvent((event: React.MouseEvent<TElement, MouseEvent> | React.TouchEvent<TElement>): void => {
-        // conditions:
-        if ('buttons' in event) {
-            if (event.buttons !== 1)        return; // must ONLY left_button is pressed
-        }
-        else {
-            if (event.touches.length !== 1) return; // must ONLY single touched
-        } // if
-        
-        
-        
         // actions:
-        setIsGrabbed(true);
+        setIsGrabbed(
+            ('buttons' in event)
+            ? (event.buttons        === 1) // must ONLY left_button is pressed, otherwise auto released
+            : (event.touches.length === 1) // must ONLY single touched        , otherwise auto released
+        );
     });
     
     const handleMouseDown  = useMergeEvents(
@@ -155,7 +149,7 @@ const Grip = <TElement extends Element = HTMLElement>(props: GripProps<TElement>
         // handlers:
         const handleRelease = (): void => {
             // actions:
-            setIsGrabbed(false);
+            setIsGrabbed(false); // previous mouse|touch is distrupted (the number of buttons|touches are changed) => auto released
         };
         
         
@@ -199,7 +193,7 @@ const Grip = <TElement extends Element = HTMLElement>(props: GripProps<TElement>
         // children:
         children                     = (new Array(requiredDots)).fill(null).map((_item, index) =>
             <span key={index} />
-        ),                           // defaults to dotted children
+        ),                                              // defaults to dotted children
         
         
         
