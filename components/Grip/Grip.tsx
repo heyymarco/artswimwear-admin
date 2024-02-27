@@ -10,12 +10,6 @@ import {
     useState,
 }                           from 'react'
 
-// cssfn:
-import {
-    // style sheets:
-    dynamicStyleSheet,
-}                           from '@cssfn/cssfn-react'           // writes css in react hook
-
 // reusable-ui core:
 import {
     // react helper hooks:
@@ -30,13 +24,10 @@ import {
     Indicator,
 }                           from '@reusable-ui/indicator'       // a base component
 
-
-
 // styles:
-import './styles/styles';
-export const useGripStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */ './styles/styles')
-, { specificityWeight: 2, id: 'ea59ydp5qf' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
+import {
+    useGripStyleSheet,
+}                           from './styles/loader'
 
 
 
@@ -50,6 +41,19 @@ export interface GripProps<TElement extends Element = HTMLElement>
 {
 }
 const Grip = <TElement extends Element = HTMLElement>(props: GripProps<TElement>): JSX.Element|null => {
+    // props:
+    const {
+        // refs:
+        elmRef,
+        
+        
+        
+        // other props:
+        ...restGripProps
+    } = props;
+    
+    
+    
     // styles:
     const styleSheet   = useGripStyleSheet();
     
@@ -58,8 +62,8 @@ const Grip = <TElement extends Element = HTMLElement>(props: GripProps<TElement>
     // refs:
     const gripRef      = useRef<TElement|null>(null);
     const mergedElmRef = useMergeRefs(
-        // preserves the original `elmRef`:
-        props.elmRef,
+        // preserves the original `elmRef` from `props`:
+        elmRef,
         
         
         
@@ -100,11 +104,37 @@ const Grip = <TElement extends Element = HTMLElement>(props: GripProps<TElement>
     
     
     
+    // default props:
+    const {
+        // variants:
+        nude      = true,            // defaults to nude
+        mild      = true,            // defaults to mild
+        
+        
+        
+        // classes:
+        mainClass = styleSheet.main, // defaults to internal styleSheet
+        
+        
+        
+        // children:
+        children  = (new Array(requiredDots)).fill(null).map((_item, index) =>
+            <span key={index} />
+        ),                           // defaults to dotted children
+        
+        
+        
+        // other props:
+        ...restIndicatorProps
+    } = restGripProps as (typeof restGripProps & React.PropsWithChildren<{}>);
+    
+    
+    
     // jsx:
     return (
         <Indicator<TElement>
             // other props:
-            {...props}
+            {...restIndicatorProps}
             
             
             
@@ -114,23 +144,21 @@ const Grip = <TElement extends Element = HTMLElement>(props: GripProps<TElement>
             
             
             // variants:
-            nude={props.nude ?? true}
-            mild={props.mild ?? true}
+            nude={nude}
+            mild={mild}
             
             
             
             // classes:
-            mainClass={props.mainClass ?? styleSheet.main}
+            mainClass={mainClass}
         >
-            {(new Array(requiredDots)).fill(null).map((_item, index) =>
-                <span key={index} />
-            )}
+            {children}
         </Indicator>
     );
 };
 export {
-    Grip,
-    Grip as default,
+    Grip,            // named export for readibility
+    Grip as default, // default export to support React.lazy
 }
 
 
