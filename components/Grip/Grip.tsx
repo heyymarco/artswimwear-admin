@@ -8,12 +8,15 @@ import {
     // hooks:
     useRef,
     useState,
+    useEffect,
 }                           from 'react'
 
 // reusable-ui core:
 import {
     // react helper hooks:
     useIsomorphicLayoutEffect,
+    useEvent,
+    useMergeEvents,
     useMergeRefs,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
@@ -74,14 +77,54 @@ const Grip = <TElement extends Element = HTMLElement>(props: GripProps<TElement>
     
     // states:
     const [requiredDots, setRequiredDots] = useState<number>(0);
+    const [isGrabbed   , setIsGrabbed   ] = useState<boolean>(false);
+    
+    
+    
+    // handlers:
+    const handleGrabbed    = useEvent((event: React.MouseEvent<TElement, MouseEvent> | React.TouchEvent<TElement>): void => {
+        // conditions:
+        if ('buttons' in event) {
+            if (event.buttons !== 1)        return; // must ONLY left_button is pressed
+        }
+        else {
+            if (event.touches.length !== 1) return; // must ONLY single touched
+        } // if
+        
+        
+        
+        // actions:
+        setIsGrabbed(true);
+    });
+    
+    const handleMouseDown  = useMergeEvents(
+        // preserves the original `onMouseDown`:
+        props.onMouseDown,
+        
+        
+        
+        // states:
+        handleGrabbed,
+    );
+    const handleTouchStart = useMergeEvents(
+        // preserves the original `onTouchStart`:
+        props.onTouchStart,
+        
+        
+        
+        // states:
+        handleGrabbed,
+    );
     
     
     
     // effects:
+    
+    // observes for <Grip>'s resize => change `setRequiredDots()`:
     useIsomorphicLayoutEffect(() => {
         // conditions:
         const gripElm = gripRef.current;
-        if (!gripElm) return;
+        if (!gripElm) return; // no <Grip> element is attached => nothing to observe => ignore
         
         
         
@@ -102,23 +145,59 @@ const Grip = <TElement extends Element = HTMLElement>(props: GripProps<TElement>
         };
     }, []);
     
+    // watchdog for mouse|touch release => change `setIsGrabbed()`:
+    useEffect(() => {
+        // conditions:
+        if (!isGrabbed) return; // not being grabbed => nothing to release => ignore
+        
+        
+        
+        // handlers:
+        const handleRelease = (): void => {
+            // actions:
+            setIsGrabbed(false);
+        };
+        
+        
+        
+        // setups:
+        window.addEventListener('mouseup'    , handleRelease);
+        window.addEventListener('touchend'   , handleRelease);
+        window.addEventListener('touchcancel', handleRelease);
+        
+        
+        
+        // cleanups:
+        return () => {
+            window.removeEventListener('mouseup'    , handleRelease);
+            window.removeEventListener('touchend'   , handleRelease);
+            window.removeEventListener('touchcancel', handleRelease);
+        };
+    }, [isGrabbed]);
+    
     
     
     // default props:
     const {
+        // semantics:
+        // @ts-ignore
+        'aria-grabbed' : ariaGrabbed = isGrabbed,       // defaults to `isGrabbed` state
+        
+        
+        
         // variants:
-        nude      = true,            // defaults to nude
-        mild      = true,            // defaults to mild
+        nude                         = true,            // defaults to nude
+        mild                         = true,            // defaults to mild
         
         
         
         // classes:
-        mainClass = styleSheet.main, // defaults to internal styleSheet
+        mainClass                    = styleSheet.main, // defaults to internal styleSheet
         
         
         
         // children:
-        children  = (new Array(requiredDots)).fill(null).map((_item, index) =>
+        children                     = (new Array(requiredDots)).fill(null).map((_item, index) =>
             <span key={index} />
         ),                           // defaults to dotted children
         
@@ -138,6 +217,12 @@ const Grip = <TElement extends Element = HTMLElement>(props: GripProps<TElement>
             
             
             
+            // semantics:
+            // @ts-ignore
+            aria-grabbed={ariaGrabbed}
+            
+            
+            
             // refs:
             elmRef={mergedElmRef}
             
@@ -151,6 +236,12 @@ const Grip = <TElement extends Element = HTMLElement>(props: GripProps<TElement>
             
             // classes:
             mainClass={mainClass}
+            
+            
+            
+            // handlers:
+            onMouseDown={handleMouseDown}
+            onTouchStart={handleTouchStart}
         >
             {children}
         </Indicator>
