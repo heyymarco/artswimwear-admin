@@ -629,6 +629,12 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         
                         
                         
+                        // images:
+                        registerAddedImage   = {draftDifferentialImages.registerAddedImage  }
+                        registerDeletedImage = {draftDifferentialImages.registerDeletedImage}
+                        
+                        
+                        
                         // components:
                         modelPreviewComponent={
                             <VariantGroupPreview
@@ -641,6 +647,14 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                             ? <EditProductVariantGroupDialog
                                 // data:
                                 model={null} // create a new model
+                                
+                                
+                                
+                                // images:
+                                // @ts-ignore
+                                registerAddedImage   = {undefined}
+                                // @ts-ignore
+                                registerDeletedImage = {undefined}
                             />
                             : undefined
                         }

@@ -15,6 +15,11 @@ import {
     useMemo,
 }                           from 'react'
 
+// internals:
+import type {
+    DraftDifferentialImagesApi,
+}                           from '@/states/draftDifferentialImages'
+
 
 
 // hooks:
@@ -53,7 +58,14 @@ export const privilegeVariantUpdateFullAccess : Required<VariantPrivilege>['priv
 export interface VariantState
     extends
         // apis:
-        VariantPrivilege
+        VariantPrivilege,
+        
+        // states:
+        Pick<DraftDifferentialImagesApi,
+            // images:
+            |'registerAddedImage'
+            |'registerDeletedImage'
+        >
 {
 }
 
@@ -67,6 +79,12 @@ const defaultVariantStateContext : VariantState = {
         visibility    : false,
     },
     privilegeDelete : false,
+    
+    
+    
+    // images:
+    registerAddedImage   : () => {},
+    registerDeletedImage : () => {},
 }
 const VariantStateContext = createContext<VariantState>(defaultVariantStateContext);
 VariantStateContext.displayName  = 'VariantState';
@@ -83,7 +101,14 @@ export const useVariantState = (): VariantState => {
 export interface VariantStateProps
     extends
         // apis:
-        VariantPrivilege
+        VariantPrivilege,
+        
+        // states:
+        Pick<DraftDifferentialImagesApi,
+            // images:
+            |'registerAddedImage'
+            |'registerDeletedImage'
+        >
 {
 }
 const VariantStateProvider = (props: React.PropsWithChildren<VariantStateProps>): JSX.Element|null => {
@@ -93,6 +118,12 @@ const VariantStateProvider = (props: React.PropsWithChildren<VariantStateProps>)
         privilegeAdd,
         privilegeUpdate,
         privilegeDelete,
+        
+        
+        
+        // images:
+        registerAddedImage,
+        registerDeletedImage,
     } = props;
     
     
@@ -103,11 +134,23 @@ const VariantStateProvider = (props: React.PropsWithChildren<VariantStateProps>)
         privilegeAdd,
         privilegeUpdate,
         privilegeDelete,
+        
+        
+        
+        // images:
+        registerAddedImage,
+        registerDeletedImage,
     }), [
         // privileges:
         privilegeAdd,
         privilegeUpdate,
         privilegeDelete,
+        
+        
+        
+        // images:
+        registerAddedImage,
+        registerDeletedImage,
     ]);
     
     

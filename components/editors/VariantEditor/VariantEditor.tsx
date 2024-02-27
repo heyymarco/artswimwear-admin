@@ -122,12 +122,13 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
     
     
     // states:
+    // workaround for penetrating <VariantStateProvider> to showDialog():
+    const variantState = useVariantState();
     const {
         // privileges:
-        privilegeAdd,
         privilegeUpdate,
-        privilegeDelete,
-    } = useVariantState();
+    } = variantState;
+    
     let {
         value              : value,
         triggerValueChange : triggerValueChange,
@@ -190,17 +191,6 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
         } // for
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
-    
-    
-    
-    // states:
-    // workaround for penetrating <VariantStateProvider> to showDialog():
-    const variantState : VariantState = {
-        // privileges:
-        privilegeAdd,
-        privilegeUpdate,
-        privilegeDelete,
-    };
     
     
     

@@ -81,9 +81,6 @@ import {
 import {
     resolveMediaUrl,
 }                           from '@/libs/mediaStorage.client'
-import {
-    useDraftDifferentialImages,
-}                           from '@/states/draftDifferentialImages'
 
 // others:
 import {
@@ -155,6 +152,12 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
         
         
         
+        // images:
+        registerAddedImage,
+        registerDeletedImage,
+        
+        
+        
         // states:
         defaultExpandedTabIndex = 0,
     ...restComplexEditModelDialogProps} = props;
@@ -170,14 +173,11 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
     const [shippingWeight, setShippingWeight] = useState<number             |null>(model?.shippingWeight ?? null       ); // optional field
     const [images        , setImages        ] = useState<string[]                >(model?.images         ?? []         );
     
-    const draftDifferentialImages             = useDraftDifferentialImages();
-    
     
     
     // stores:
     const [postImage                                                  ] = usePostImage();
     const [commitDeleteImage, {isLoading : isLoadingCommitDeleteImage}] = useDeleteImage();
-    const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
     const [commitMoveImage  , {isLoading : isLoadingCommitMoveImage  }] = useMoveImage();
     
     
@@ -255,31 +255,6 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
         } // try
     });
     
-    const handleSideUpdate           = useEvent<UpdateSideHandler>(async () => {
-        await handleSideSave(/*commitImages = */true);
-    });
-    const handleSideDelete           = useEvent<DeleteSideHandler>(async () => {
-        await handleSideSave(/*commitImages = */false);
-    });
-    const handleSideSave             = useEvent(async (commitImages : boolean) => {
-        // search for unused image(s) and delete them:
-        const {unusedImages} = draftDifferentialImages.commitChanges(commitImages);
-        
-        
-        
-        try {
-            if (unusedImages.length) {
-                await (commitImages ? commitDeleteImage : revertDeleteImage)({
-                    imageId : unusedImages,
-                }).unwrap();
-            } // if
-        }
-        catch {
-            // ignore any error
-            return; // but do not clear the draft
-        } // try
-    });
-    
     const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<ProductVariantDetail>>(({model}) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
@@ -330,7 +305,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
             isModified  = {isModified}
             
             isCommiting = {/*isLoadingUpdate ||*/ isLoadingCommitDeleteImage || isLoadingCommitMoveImage}
-            isReverting = {                       isLoadingRevertDeleteImage}
+            // isReverting = {                       /*isLoadingRevertDeleteImage*/}
             isDeleting  = {/*isLoadingDelete ||*/ isLoadingCommitDeleteImage}
             
             
@@ -357,8 +332,8 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
             // onDelete={handleDelete}
             // onAfterDelete={undefined}
             
-            onSideUpdate={handleSideUpdate}
-            onSideDelete={handleSideDelete}
+            // onSideUpdate={handleSideUpdate}
+            // onSideDelete={handleSideDelete}
             
             onConfirmDelete={handleConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}
@@ -507,7 +482,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                             }).unwrap();
                             
                             // register to actual_delete the new_image when reverted:
-                            draftDifferentialImages.registerAddedImage(imageId);
+                            registerAddedImage(imageId);
                             
                             return imageId;
                         }
@@ -523,7 +498,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                     }}
                     onDeleteImage={async ({ imageData: imageId }) => {
                         // register to actual_delete the deleted_image when committed:
-                        draftDifferentialImages.registerDeletedImage(imageId);
+                        registerDeletedImage(imageId);
                         
                         return true;
                     }}

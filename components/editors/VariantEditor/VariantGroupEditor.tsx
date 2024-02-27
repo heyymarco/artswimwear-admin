@@ -56,8 +56,8 @@ import type {
 // internals:
 import {
     // types:
-    VariantPrivilege,
     VariantState,
+    VariantStateProps,
     
     
     
@@ -101,8 +101,8 @@ interface VariantGroupEditorProps<TElement extends Element = HTMLElement>
             |'modelCreateComponent'
         >>,
         
-        // privileges:
-        VariantPrivilege
+        // states:
+        VariantStateProps
 {
     // components:
     modelCreateComponent  ?: React.ReactComponentElement<any, ModelCreateProps & EditProductVariantGroupDialogProps>
@@ -122,6 +122,12 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
         privilegeAdd,
         privilegeUpdate,
         privilegeDelete,
+        
+        
+        
+        // images:
+        registerAddedImage,
+        registerDeletedImage,
         
         
         
@@ -205,6 +211,12 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
         privilegeAdd,
         privilegeUpdate,
         privilegeDelete,
+        
+        
+        
+        // images:
+        registerAddedImage,
+        registerDeletedImage,
     };
     
     
@@ -213,9 +225,15 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
     return (
         <VariantStateProvider
             // privileges:
-            privilegeAdd    = {privilegeAdd}
+            privilegeAdd    = {privilegeAdd   }
             privilegeUpdate = {privilegeUpdate}
             privilegeDelete = {privilegeDelete}
+            
+            
+            
+            // images:
+            registerAddedImage   = {registerAddedImage  }
+            registerDeletedImage = {registerDeletedImage}
         >
             <OrderableList<TElement, unknown>
                 // other props:

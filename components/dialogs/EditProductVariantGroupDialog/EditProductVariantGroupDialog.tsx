@@ -129,6 +129,12 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
         
         
         
+        // images:
+        registerAddedImage,
+        registerDeletedImage,
+        
+        
+        
         // states:
         defaultExpandedTabIndex = 0,
     ...restComplexEditModelDialogProps} = props;
@@ -285,9 +291,15 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                     <span className='variants label'>Variants:</span>
                     <VariantStateProvider
                         // privileges:
-                        privilegeAdd    = {privilegeAdd}
+                        privilegeAdd    = {privilegeAdd   }
                         privilegeUpdate = {privilegeUpdate}
                         privilegeDelete = {privilegeDelete}
+                        
+                        
+                        
+                        // images:
+                        registerAddedImage   = {registerAddedImage  }
+                        registerDeletedImage = {registerDeletedImage}
                     >
                         <VariantEditor
                             // classes:
@@ -316,6 +328,14 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                                 ? <EditProductVariantDialog
                                     // data:
                                     model={null} // create a new model
+                                    
+                                    
+                                    
+                                    // images:
+                                    // @ts-ignore
+                                    registerAddedImage   = {undefined}
+                                    // @ts-ignore
+                                    registerDeletedImage = {undefined}
                                 />
                                 : undefined
                             }
