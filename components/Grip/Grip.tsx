@@ -240,8 +240,8 @@ const Grip = <TElement extends Element = HTMLElement>(props: GripProps<TElement>
             
             
             // handlers:
-            onMouseDown={handleMouseDown}
-            onTouchStart={handleTouchStart}
+            onMouseDown  = {handleMouseDown}
+            onTouchStart = {handleTouchStart}
         >
             {children}
         </Indicator>
