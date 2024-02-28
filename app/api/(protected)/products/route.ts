@@ -26,6 +26,8 @@ import type {
 
 // models:
 import type {
+    ProductVariant,
+    ProductVariantGroup,
     Product,
 }                           from '@prisma/client'
 
@@ -53,6 +55,28 @@ export interface ProductPreview
 {
     image: Required<Product>['images'][number]|undefined
 }
+
+export interface ProductVariantDetail
+    extends
+        Omit<ProductVariant,
+            |'createdAt'
+            |'updatedAt'
+            
+            |'productVariantGroupId'
+        >
+{
+}
+export interface ProductVariantGroupDetail
+    extends
+        Omit<ProductVariantGroup,
+            |'createdAt'
+            |'updatedAt'
+            
+            |'productId'
+        >
+{
+    productVariants : ProductVariantDetail[]
+}
 export interface ProductDetail
     extends
         Omit<Product,
@@ -60,6 +84,7 @@ export interface ProductDetail
             |'updatedAt'
         >
 {
+    productVariantGroups : ProductVariantGroupDetail[]
 }
 
 
@@ -191,6 +216,36 @@ You do not have the privilege to view the products.`
                 description    : true,
                 
                 images         : true,
+                
+                productVariantGroups : {
+                    select: {
+                        id              : true,
+                        
+                        sort            : true,
+                        
+                        name            : true,
+                        
+                        productVariants : {
+                            select: {
+                                id             : true,
+                                
+                                visibility     : true,
+                                sort           : true,
+                                
+                                name           : true,
+                                price          : true,
+                                shippingWeight : true,
+                                images         : true,
+                            },
+                            orderBy : {
+                                sort: 'asc',
+                            },
+                        },
+                    },
+                    orderBy : {
+                        sort: 'asc',
+                    },
+                },
             },
             orderBy : {
                 createdAt: 'desc',
@@ -237,6 +292,8 @@ You do not have the privilege to view the products.`
         description,
         
         images,
+        
+        productVariantGroups,
     } = await req.json();
     //#endregion parsing request
     
@@ -251,6 +308,12 @@ You do not have the privilege to view the products.`
         
         // TODO: validating data type & constraints
     ) {
+        return NextResponse.json({
+            error: 'Invalid data.',
+        }, { status: 400 }); // handled with error
+    } // if
+    
+    if ((productVariantGroups !== undefined) && !Array.isArray(productVariantGroups)) {
         return NextResponse.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
@@ -298,6 +361,172 @@ You do not have the privilege to modify the product stock.`
 
 You do not have the privilege to modify the product visibility.`
         }, { status: 403 }); // handled with error: forbidden
+        
+        if (productVariantGroups !== undefined) {
+            if (
+                !session.role?.product_c
+                &&
+                (productVariantGroups as ProductVariantGroupDetail[])
+                .some((variantGroup) =>
+                    !variantGroup.id
+                    ||
+                    variantGroup.productVariants
+                    .some((variant) =>
+                        !variant.id
+                    )
+                )
+            ) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to add new product variant.`
+            }, { status: 403 }); // handled with error: forbidden
+            
+            
+            
+            const originalProductVariantGroups = await prisma.productVariantGroup.findMany({
+                select: {
+                    id              : true,
+                    
+                    sort            : true,
+                    
+                    name            : true,
+                    
+                    productVariants : {
+                        select: {
+                            id             : true,
+                            
+                            visibility     : true,
+                            sort           : true,
+                            
+                            name           : true,
+                            price          : true,
+                            shippingWeight : true,
+                            images         : true,
+                        },
+                        orderBy : {
+                            sort: 'asc',
+                        },
+                    },
+                },
+                orderBy : {
+                    sort: 'asc',
+                },
+            });
+            const originalProductVariants      = originalProductVariantGroups.flatMap((originalVariantGroup) => originalVariantGroup.productVariants);
+            
+            
+            
+            const variantGroupIds : string[]               = (productVariantGroups as ProductVariantGroupDetail[]).map((variantGroup) => variantGroup.id);
+            const productVariants : ProductVariantDetail[] = (productVariantGroups as ProductVariantGroupDetail[]).flatMap((variantGroup) => variantGroup.productVariants);
+            const variantIds      : string[]               = productVariants.map((variant) => variant.id);
+            if (
+                !session.role?.product_d
+                &&
+                (
+                    originalProductVariantGroups
+                    .some((originalVariantGroup) =>
+                        !variantGroupIds.includes(originalVariantGroup.id)
+                    )
+                    ||
+                    originalProductVariants
+                    .some((originalVariant) =>
+                        !variantIds.includes(originalVariant.id)
+                    )
+                )
+            ) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to delete the product variant.`
+            }, { status: 403 }); // handled with error: forbidden
+            
+            
+            
+            if (
+                !session.role?.product_ud
+                &&
+                (
+                    (productVariantGroups as ProductVariantGroupDetail[])
+                    .some(({id, name, sort}) => {
+                        const originalVariantGroup = originalProductVariantGroups.find((originalVariantGroup) => (originalVariantGroup.id === id));
+                        return (
+                            (name !== originalVariantGroup?.name)
+                            ||
+                            (sort !== originalVariantGroup.sort)
+                        );
+                    })
+                    ||
+                    productVariants
+                    .some(({id, name, sort}) => {
+                        const originalVariant = originalProductVariants.find((originalVariant) => (originalVariant.id === id));
+                        return (
+                            (name !== originalVariant?.name)
+                            ||
+                            (sort !== originalVariant.sort)
+                        );
+                    })
+                )
+            ) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the product_variant name and/or order.`
+            }, { status: 403 }); // handled with error: forbidden
+            
+            
+            
+            if (
+                !session.role?.product_ui
+                &&
+                productVariants
+                .some(({id, images}) => {
+                    const originalImages = originalProductVariants.find((originalVariant) => (originalVariant.id === id))?.images;
+                    if (images.length !== originalImages?.length) return true;
+                    for (let index = 0; index < images.length; index++) {
+                        if (images[index] !== originalImages[index]) return false;
+                    } // for
+                    return true;
+                })
+            ) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the product_variant images.`
+            }, { status: 403 }); // handled with error: forbidden
+            
+            
+            
+            if (
+                !session.role?.product_up
+                &&
+                productVariants
+                .some(({id, price, shippingWeight}) => {
+                    const originalVariant = originalProductVariants.find((originalVariant) => (originalVariant.id === id));
+                    return (
+                        (price !== originalVariant?.price)
+                        ||
+                        (shippingWeight !== originalVariant.shippingWeight)
+                    );
+                })
+            ) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the product_variant price and/or shipping weight.`
+            }, { status: 403 }); // handled with error: forbidden
+            
+            
+            
+            if (
+                !session.role?.product_uv
+                &&
+                productVariants
+                .some(({id, visibility}) => {
+                    const originalVariant = originalProductVariants.find((originalVariant) => (originalVariant.id === id));
+                    return (visibility !== originalVariant?.visibility);
+                })
+            ) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the product_variant visibility.`
+            }, { status: 403 }); // handled with error: forbidden
+        } // if
     } // if
     //#endregion validating privileges
     
@@ -321,6 +550,8 @@ You do not have the privilege to modify the product visibility.`
             description,
             
             images,
+            
+            productVariantGroups,
         };
         const select = {
             id             : true,
@@ -340,6 +571,36 @@ You do not have the privilege to modify the product visibility.`
             description    : true,
             
             images         : true,
+            
+            productVariantGroups : {
+                select: {
+                    id              : true,
+                    
+                    sort            : true,
+                    
+                    name            : true,
+                    
+                    productVariants : {
+                        select: {
+                            id             : true,
+                            
+                            visibility     : true,
+                            sort           : true,
+                            
+                            name           : true,
+                            price          : true,
+                            shippingWeight : true,
+                            images         : true,
+                        },
+                        // orderBy : {
+                        //     sort: 'asc',
+                        // },
+                    },
+                },
+                // orderBy : {
+                //     sort: 'asc',
+                // },
+            },
         };
         const productDetail : ProductDetail = (
             !id
