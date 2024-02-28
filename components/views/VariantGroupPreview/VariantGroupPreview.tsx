@@ -25,6 +25,11 @@ import {
 
 // reusable-ui components:
 import {
+    // base-components:
+    Indicator,
+    
+    
+    
     // simple-components:
     Icon,
     
@@ -124,6 +129,7 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
     const {
         id,
         name,
+        productVariants,
     } = model;
     
     
@@ -221,6 +227,18 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
             onOrderStart={handleOrderStart}
         >
             <p className='name'>{name}</p>
+            
+            <p className='preview'>
+                {
+                    !productVariants.length
+                    ? <span className='noValue'>No Access</span>
+                    : <span className='values'>
+                        {productVariants.map(({id, name, visibility}) =>
+                            <Indicator key={id} className='value' size='sm' active enabled={visibility === 'PUBLISHED'}>{name}</Indicator>
+                        )}
+                    </span>
+                }
+            </p>
             
             {!!privilegeUpdate?.description && <Grip className='grip' />}
             
