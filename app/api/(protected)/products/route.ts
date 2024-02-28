@@ -346,9 +346,9 @@ You do not have the privilege to view the products.`
                             &&
                             /* 4: */ ((typeof(productVariantGroupRaw.name) === 'string') && !!productVariantGroupRaw.name)
                             &&
-                            /* 5: */ ((typeof(productVariantRaw.price) === 'number') && ((productVariantRaw.price === null) || (productVariantRaw.price >= 0) && (productVariantRaw.price <= Number.MAX_SAFE_INTEGER)))
+                            /* 5: */ ((productVariantRaw.price === null) || ((typeof(productVariantRaw.price) === 'number') && (productVariantRaw.price >= 0) && (productVariantRaw.price <= Number.MAX_SAFE_INTEGER)))
                             &&
-                            /* 6: */ ((typeof(productVariantRaw.shippingWeight) === 'number') && ((productVariantRaw.shippingWeight === null) || (productVariantRaw.shippingWeight >= 0) && (productVariantRaw.shippingWeight <= Number.MAX_SAFE_INTEGER)))
+                            /* 6: */ ((productVariantRaw.shippingWeight === null) || ((typeof(productVariantRaw.shippingWeight) === 'number') && (productVariantRaw.shippingWeight >= 0) && (productVariantRaw.shippingWeight <= Number.MAX_SAFE_INTEGER)))
                             &&
                             /* 7: */ ((): boolean => {
                                 const {images: imagesRaw} = productVariantRaw;
