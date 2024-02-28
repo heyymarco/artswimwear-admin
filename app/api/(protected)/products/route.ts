@@ -447,6 +447,7 @@ You do not have the privilege to view the products.`
                             // data:
                             ...restProductVariant,
                         });
+                        continue;
                     } // if
                     
                     
@@ -703,7 +704,7 @@ You do not have the privilege to modify the product_variant visibility.`
     } // if
     //#endregion validating privileges
     
-    
+    console.log(productVariantGroupDiffs);
     
     //#region save changes
     try {
