@@ -596,20 +596,16 @@ You do not have the privilege to delete the product variant.`
                 !session.role?.product_ud
                 &&
                 productVariantGroupMods
-                .some(({id, name, sort, productVariantMods}) => {
+                .some(({id, name, productVariantMods}) => {
                     const productVariantGroupOri = productVariantGroupOris.find(({id: idOri}) => (idOri === id));
                     return (
                         (name !== productVariantGroupOri?.name)
                         ||
-                        (sort !== productVariantGroupOri.sort)
-                        ||
                         productVariantMods
-                        .some(({id, name, sort}) => {
+                        .some(({id, name}) => {
                             const productVariantOri = productVariantGroupOri.productVariants.find(({id: idOri}) => (idOri === id));
                             return (
                                 (name !== productVariantOri?.name)
-                                ||
-                                (sort !== productVariantOri.sort)
                             );
                         })
                     );
@@ -617,7 +613,40 @@ You do not have the privilege to delete the product variant.`
             ) return NextResponse.json({ error:
 `Access denied.
 
-You do not have the privilege to modify the product_variant name and/or order.`
+You do not have the privilege to modify the product_variant name.`
+            }, { status: 403 }); // handled with error: forbidden
+            
+            
+            
+            if (
+                !session.role?.product_ud
+                &&
+                !((): boolean => {
+                    const productVariantGroupModSortIds = productVariantGroupMods.map(({id}) => id);
+                    const productVariantGroupOriSortIds = productVariantGroupOris.map(({id}) => id);
+                    if (productVariantGroupModSortIds.length !== productVariantGroupOriSortIds.length) return false; // not_equal
+                    for (let index = 0; index <= productVariantGroupModSortIds.length; index++) {
+                        if (productVariantGroupModSortIds[index] !== productVariantGroupOriSortIds[index]) return false; // not_equal
+                        
+                        
+                        
+                        const productVariantModSortIds = productVariantGroupMods[index].productVariantMods.map(({id}) => id);
+                        const productVariantDeletedIds = productVariantGroupMods[index].productVariantDels;
+                        const productVariantOriSortIds = productVariantGroupOris[index].productVariants.map(({id}) => id).filter((id) => !productVariantDeletedIds.includes(id));
+                        if (productVariantModSortIds.length !== productVariantOriSortIds.length) return false; // not_deep_equal
+                        for (let index = 0; index <= productVariantModSortIds.length; index++) {
+                            if (productVariantModSortIds[index] !== productVariantOriSortIds[index]) return false; // not_deep_equal
+                        } // for
+                    } // for
+                    
+                    
+                    
+                    return true; // deep_equal
+                })()
+            ) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the product_variant order.`
             }, { status: 403 }); // handled with error: forbidden
             
             
