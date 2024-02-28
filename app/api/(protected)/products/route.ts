@@ -383,12 +383,13 @@ You do not have the privilege to view the products.`
         productVariantMods      : ProductVariantDetail[]
     }
     interface ProductVariantGroupDiff {
+        productVariantGroupOris : ProductVariantGroupDetail[]
         productVariantGroupDels : string[]
         productVariantGroupAdds : (Omit<ProductVariantGroupDetail, 'id'|'productVariants'> & Pick<ProductVariantDiff, 'productVariantAdds'>)[]
         productVariantGroupMods : (Omit<ProductVariantGroupDetail,      'productVariants'> & ProductVariantDiff)[]
     }
     const productVariantGroupDiffs = (productVariantGroups === undefined) ? undefined : await (async (): Promise<ProductVariantGroupDiff> => {
-        const originalProductVariantGroups : ProductVariantGroupDetail[] = await prisma.productVariantGroup.findMany({
+        const productVariantGroupOris : ProductVariantGroupDetail[] = await prisma.productVariantGroup.findMany({
             select: {
                 id              : true,
                 
@@ -422,7 +423,7 @@ You do not have the privilege to view the products.`
         
         const productVariantGroupDels : ProductVariantGroupDiff['productVariantGroupDels'] = (() => {
             const postedIds  : string[] = productVariantGroups.map(({id}) => id);
-            const currentIds : string[] = originalProductVariantGroups.map(({id}) => id);
+            const currentIds : string[] = productVariantGroupOris.map(({id}) => id);
             return currentIds.filter((currentId) => !postedIds.includes(currentId));
         })();
         const productVariantGroupAdds : ProductVariantGroupDiff['productVariantGroupAdds'] = [];
@@ -435,7 +436,7 @@ You do not have the privilege to view the products.`
             } = ((): ProductVariantDiff => {
                 const productVariantDels : ProductVariantDiff['productVariantDels'] = (() => {
                     const postedIds  : string[] = productVariants.map(({id}) => id);
-                    const currentIds : string[] = originalProductVariantGroups.find(({id: groupId}) => (groupId === id))?.productVariants.map(({id}) => id) ?? [];
+                    const currentIds : string[] = productVariantGroupOris.find(({id: groupId}) => (groupId === id))?.productVariants.map(({id}) => id) ?? [];
                     return currentIds.filter((currentId) => !postedIds.includes(currentId));
                 })();
                 const productVariantAdds : ProductVariantDiff['productVariantAdds'] = [];
@@ -490,6 +491,8 @@ You do not have the privilege to view the products.`
             });
         } // for
         return {
+            productVariantGroupOris,
+            
             productVariantGroupDels,
             productVariantGroupAdds,
             productVariantGroupMods,
@@ -539,18 +542,24 @@ You do not have the privilege to modify the product stock.`
 You do not have the privilege to modify the product visibility.`
         }, { status: 403 }); // handled with error: forbidden
         
-        if (productVariantGroups !== undefined) {
+        if (productVariantGroupDiffs !== undefined) {
+            const {
+                productVariantGroupOris,
+                
+                productVariantGroupDels,
+                productVariantGroupAdds,
+                productVariantGroupMods,
+            } = productVariantGroupDiffs;
+            
+            
+            
             if (
                 !session.role?.product_c
                 &&
-                productVariantGroups
-                .some((variantGroup) =>
-                    !variantGroup.id
+                (
+                    !!productVariantGroupAdds.length
                     ||
-                    variantGroup.productVariants
-                    .some((variant) =>
-                        !variant.id
-                    )
+                    productVariantGroupMods.some(({productVariantAdds}) => !!productVariantAdds.length)
                 )
             ) return NextResponse.json({ error:
 `Access denied.
@@ -560,55 +569,13 @@ You do not have the privilege to add new product variant.`
             
             
             
-            const originalProductVariantGroups = await prisma.productVariantGroup.findMany({
-                select: {
-                    id              : true,
-                    
-                    sort            : true,
-                    
-                    name            : true,
-                    
-                    productVariants : {
-                        select: {
-                            id             : true,
-                            
-                            visibility     : true,
-                            sort           : true,
-                            
-                            name           : true,
-                            price          : true,
-                            shippingWeight : true,
-                            images         : true,
-                        },
-                        orderBy : {
-                            sort: 'asc',
-                        },
-                    },
-                },
-                orderBy : {
-                    sort: 'asc',
-                },
-            });
-            const originalProductVariants      = originalProductVariantGroups.flatMap((originalVariantGroup) => originalVariantGroup.productVariants);
-            
-            
-            
-            const variantGroupIds : string[]               = productVariantGroups.map((variantGroup) => variantGroup.id);
-            const productVariants : ProductVariantDetail[] = productVariantGroups.flatMap((variantGroup) => variantGroup.productVariants);
-            const variantIds      : string[]               = productVariants.map((variant) => variant.id);
             if (
                 !session.role?.product_d
                 &&
                 (
-                    originalProductVariantGroups
-                    .some((originalVariantGroup) =>
-                        !variantGroupIds.includes(originalVariantGroup.id)
-                    )
+                    !!productVariantGroupDels.length
                     ||
-                    originalProductVariants
-                    .some((originalVariant) =>
-                        !variantIds.includes(originalVariant.id)
-                    )
+                    productVariantGroupMods.some(({productVariantDels}) => !!productVariantDels.length)
                 )
             ) return NextResponse.json({ error:
 `Access denied.
@@ -621,27 +588,25 @@ You do not have the privilege to delete the product variant.`
             if (
                 !session.role?.product_ud
                 &&
-                (
-                    productVariantGroups
-                    .some(({id, name, sort}) => {
-                        const originalVariantGroup = originalProductVariantGroups.find((originalVariantGroup) => (originalVariantGroup.id === id));
-                        return (
-                            (name !== originalVariantGroup?.name)
-                            ||
-                            (sort !== originalVariantGroup.sort)
-                        );
-                    })
-                    ||
-                    productVariants
-                    .some(({id, name, sort}) => {
-                        const originalVariant = originalProductVariants.find((originalVariant) => (originalVariant.id === id));
-                        return (
-                            (name !== originalVariant?.name)
-                            ||
-                            (sort !== originalVariant.sort)
-                        );
-                    })
-                )
+                productVariantGroupMods
+                .some(({id, name, sort, productVariantMods}) => {
+                    const productVariantGroupOri = productVariantGroupOris.find(({id: idOri}) => (idOri === id));
+                    return (
+                        (name !== productVariantGroupOri?.name)
+                        ||
+                        (sort !== productVariantGroupOri.sort)
+                        ||
+                        productVariantMods
+                        .some(({id, name, sort}) => {
+                            const productVariantOri = productVariantGroupOri.productVariants.find(({id: idOri}) => (idOri === id));
+                            return (
+                                (name !== productVariantOri?.name)
+                                ||
+                                (sort !== productVariantOri.sort)
+                            );
+                        })
+                    );
+                })
             ) return NextResponse.json({ error:
 `Access denied.
 
@@ -653,14 +618,27 @@ You do not have the privilege to modify the product_variant name and/or order.`
             if (
                 !session.role?.product_ui
                 &&
-                productVariants
-                .some(({id, images}) => {
-                    const originalImages = originalProductVariants.find((originalVariant) => (originalVariant.id === id))?.images;
-                    if (images.length !== originalImages?.length) return true;
-                    for (let index = 0; index < images.length; index++) {
-                        if (images[index] !== originalImages[index]) return false;
-                    } // for
-                    return true;
+                productVariantGroupMods
+                .some(({id, productVariantMods}) => {
+                    const productVariantGroupOri = productVariantGroupOris.find(({id: idOri}) => (idOri === id));
+                    return (
+                        !!productVariantGroupOri
+                        &&
+                        productVariantMods
+                        .some(({id, images}) => {
+                            const imagesOri = productVariantGroupOri.productVariants.find(({id: idOri}) => (idOri === id))?.images ?? [];
+                            return (
+                                (images.length !== (imagesOri.length ?? 0))
+                                ||
+                                ((): boolean => {
+                                    for (let index = 0; index < images.length; index++) {
+                                        if (images[index] !== imagesOri[index]) return true;
+                                    } // for
+                                    return false;
+                                })()
+                            );
+                        })
+                    );
                 })
             ) return NextResponse.json({ error:
 `Access denied.
@@ -673,13 +651,21 @@ You do not have the privilege to modify the product_variant images.`
             if (
                 !session.role?.product_up
                 &&
-                productVariants
-                .some(({id, price, shippingWeight}) => {
-                    const originalVariant = originalProductVariants.find((originalVariant) => (originalVariant.id === id));
+                productVariantGroupMods
+                .some(({id, productVariantMods}) => {
+                    const productVariantGroupOri = productVariantGroupOris.find(({id: idOri}) => (idOri === id));
                     return (
-                        (price !== originalVariant?.price)
-                        ||
-                        (shippingWeight !== originalVariant.shippingWeight)
+                        !!productVariantGroupOri
+                        &&
+                        productVariantMods
+                        .some(({id, price, shippingWeight}) => {
+                            const productVariantOri = productVariantGroupOri.productVariants.find(({id: idOri}) => (idOri === id));
+                            return (
+                                (price !== productVariantOri?.price)
+                                ||
+                                (shippingWeight !== productVariantOri.shippingWeight)
+                            );
+                        })
                     );
                 })
             ) return NextResponse.json({ error:
@@ -693,10 +679,20 @@ You do not have the privilege to modify the product_variant price and/or shippin
             if (
                 !session.role?.product_uv
                 &&
-                productVariants
-                .some(({id, visibility}) => {
-                    const originalVariant = originalProductVariants.find((originalVariant) => (originalVariant.id === id));
-                    return (visibility !== originalVariant?.visibility);
+                productVariantGroupMods
+                .some(({id, productVariantMods}) => {
+                    const productVariantGroupOri = productVariantGroupOris.find(({id: idOri}) => (idOri === id));
+                    return (
+                        !!productVariantGroupOri
+                        &&
+                        productVariantMods
+                        .some(({id, visibility}) => {
+                            const productVariantOri = productVariantGroupOri.productVariants.find(({id: idOri}) => (idOri === id));
+                            return (
+                                (visibility !== productVariantOri?.visibility)
+                            );
+                        })
+                    );
                 })
             ) return NextResponse.json({ error:
 `Access denied.
