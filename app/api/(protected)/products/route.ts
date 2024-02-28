@@ -740,9 +740,10 @@ You do not have the privilege to modify the product_variant visibility.`
     } // if
     //#endregion validating privileges
     
-    console.log(productVariantGroupDiffs);
+    
     
     //#region save changes
+    // console.log(productVariantGroupDiffs);
     try {
         const data = {
             visibility,
@@ -761,7 +762,51 @@ You do not have the privilege to modify the product_variant visibility.`
             
             images,
             
-            // productVariantGroups,
+            productVariantGroups : (productVariantGroupDiffs === undefined) ? undefined : {
+                delete : productVariantGroupDiffs.productVariantGroupDels.map((id) => ({
+                    // conditions:
+                    id : id,
+                })),
+                
+                create : productVariantGroupDiffs.productVariantGroupAdds.map(({productVariantAdds, ...restProductVariantGroup}) => ({
+                    // data:
+                    ...restProductVariantGroup,
+                    
+                    // relations:
+                    productVariants: {
+                        create : productVariantAdds,
+                    },
+                })),
+                
+                update : productVariantGroupDiffs.productVariantGroupMods.map(({id, productVariantDels, productVariantAdds, productVariantMods, ...restProductVariantGroup}) => ({
+                    where : {
+                        // conditions:
+                        id : id,
+                    },
+                    data  : {
+                        // data:
+                        ...restProductVariantGroup,
+                        
+                        // relations:
+                        productVariants : {
+                            delete : productVariantDels.map((id) => ({
+                                // conditions:
+                                id : id,
+                            })),
+                            
+                            create : productVariantAdds,
+                            
+                            update : productVariantMods.map(({id, ...restProductVariant}) => ({
+                                where : {
+                                    // conditions:
+                                    id: id,
+                                },
+                                data  : restProductVariant,
+                            })),
+                        },
+                    },
+                })),
+            },
         };
         const select = {
             id             : true,
