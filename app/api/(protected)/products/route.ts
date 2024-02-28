@@ -293,7 +293,7 @@ You do not have the privilege to view the products.`
         
         images,
         
-        productVariantGroups,
+        productVariantGroups : productVariantGroupsRaw,
     } = await req.json();
     //#endregion parsing request
     
@@ -313,11 +313,64 @@ You do not have the privilege to view the products.`
         }, { status: 400 }); // handled with error
     } // if
     
-    if ((productVariantGroups !== undefined) && !Array.isArray(productVariantGroups)) {
+    if (
+        (productVariantGroupsRaw !== undefined)
+        &&
+        (
+            !Array.isArray(productVariantGroupsRaw)
+            ||
+            !productVariantGroupsRaw.every((productVariantGroupRaw) =>
+                (typeof(productVariantGroupRaw) === 'object')
+                &&
+                (Object.keys(productVariantGroupRaw).length === 4)
+                &&
+                /* 1: */ ((typeof(productVariantGroupRaw.id) === 'string') && (!id ? !productVariantGroupRaw.id : (productVariantGroupRaw.id.length <= 40)))
+                &&
+                /* 2: */ ((typeof(productVariantGroupRaw.sort) === 'number') && (productVariantGroupRaw.sort >= Number.MIN_SAFE_INTEGER) && (productVariantGroupRaw.sort <= Number.MAX_SAFE_INTEGER))
+                &&
+                /* 3: */ ((typeof(productVariantGroupRaw.name) === 'string') && !!productVariantGroupRaw.name)
+                &&
+                /* 4: */ ((): boolean => {
+                    const {productVariants: productVariantsRaw} = productVariantGroupRaw;
+                    return (
+                        Array.isArray(productVariantsRaw)
+                        &&
+                        productVariantsRaw.every((productVariantRaw) =>
+                            (Object.keys(productVariantRaw).length === 7)
+                            &&
+                            /* 1: */ ((typeof(productVariantRaw.id) === 'string') && (!productVariantGroupRaw.id ? !productVariantRaw.id : (productVariantRaw.id.length <= 40)))
+                            &&
+                            /* 2: */ ((typeof(productVariantRaw.visibility) === 'string') && ['PUBLISHED', 'DRAFT'].includes(productVariantRaw.visibility))
+                            &&
+                            /* 3: */ ((typeof(productVariantRaw.sort) === 'number') && (productVariantRaw.sort >= Number.MIN_SAFE_INTEGER) && (productVariantRaw.sort <= Number.MAX_SAFE_INTEGER))
+                            &&
+                            /* 4: */ ((typeof(productVariantGroupRaw.name) === 'string') && !!productVariantGroupRaw.name)
+                            &&
+                            /* 5: */ ((typeof(productVariantRaw.price) === 'number') && ((productVariantRaw.price === null) || (productVariantRaw.price >= 0) && (productVariantRaw.price <= Number.MAX_SAFE_INTEGER)))
+                            &&
+                            /* 6: */ ((typeof(productVariantRaw.shippingWeight) === 'number') && ((productVariantRaw.shippingWeight === null) || (productVariantRaw.shippingWeight >= 0) && (productVariantRaw.shippingWeight <= Number.MAX_SAFE_INTEGER)))
+                            &&
+                            /* 7: */ ((): boolean => {
+                                const {images: imagesRaw} = productVariantRaw;
+                                return (
+                                    Array.isArray(imagesRaw)
+                                    &&
+                                    imagesRaw.every((imageRaw) =>
+                                        (typeof(imageRaw) === 'string')
+                                    )
+                                );
+                            })()
+                        )
+                    );
+                })()
+            )
+        )
+    ) {
         return NextResponse.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
+    const productVariantGroups : ProductVariantGroupDetail[]|undefined = productVariantGroupsRaw;
     //#endregion validating request
     
     
@@ -366,7 +419,7 @@ You do not have the privilege to modify the product visibility.`
             if (
                 !session.role?.product_c
                 &&
-                (productVariantGroups as ProductVariantGroupDetail[])
+                productVariantGroups
                 .some((variantGroup) =>
                     !variantGroup.id
                     ||
@@ -416,8 +469,8 @@ You do not have the privilege to add new product variant.`
             
             
             
-            const variantGroupIds : string[]               = (productVariantGroups as ProductVariantGroupDetail[]).map((variantGroup) => variantGroup.id);
-            const productVariants : ProductVariantDetail[] = (productVariantGroups as ProductVariantGroupDetail[]).flatMap((variantGroup) => variantGroup.productVariants);
+            const variantGroupIds : string[]               = productVariantGroups.map((variantGroup) => variantGroup.id);
+            const productVariants : ProductVariantDetail[] = productVariantGroups.flatMap((variantGroup) => variantGroup.productVariants);
             const variantIds      : string[]               = productVariants.map((variant) => variant.id);
             if (
                 !session.role?.product_d
@@ -445,7 +498,7 @@ You do not have the privilege to delete the product variant.`
                 !session.role?.product_ud
                 &&
                 (
-                    (productVariantGroups as ProductVariantGroupDetail[])
+                    productVariantGroups
                     .some(({id, name, sort}) => {
                         const originalVariantGroup = originalProductVariantGroups.find((originalVariantGroup) => (originalVariantGroup.id === id));
                         return (
