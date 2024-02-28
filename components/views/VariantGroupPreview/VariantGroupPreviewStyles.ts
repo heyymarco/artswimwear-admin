@@ -11,6 +11,12 @@ import {
     spacers,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
+// reusable-ui components:
+import {
+    // base-components:
+    basics,
+}                           from '@reusable-ui/components'          // a set of official Reusable-UI components
+
 
 
 // styles:
@@ -46,6 +52,12 @@ const usesVariantGroupPreviewLayout = () => { // the <ListItem> of variantGroup 
         ...children('.preview', {
             // positions:
             gridArea : 'preview',
+            
+            
+            
+            // layouts:
+            display        : 'grid',
+            justifyContent : 'end',
             
             
             
@@ -104,6 +116,7 @@ const usesVariantGroupPreviewLayout = () => { // the <ListItem> of variantGroup 
                 
                 
                 // typos:
+                fontSize   : basics.fontSizeSm,
                 fontStyle  : 'italic',
             }),
         }),

@@ -231,7 +231,7 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
             <p className='preview'>
                 {
                     !productVariants.length
-                    ? <span className='noValue'>No Access</span>
+                    ? <span className='noValue'>No Variant</span>
                     : <span className='values'>
                         {productVariants.map(({id, name, visibility}) =>
                             <Indicator key={id} className='value' size='sm' active enabled={visibility === 'PUBLISHED'}>{name}</Indicator>
