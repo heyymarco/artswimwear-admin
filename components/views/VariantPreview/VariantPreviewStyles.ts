@@ -5,6 +5,12 @@ import {
     style,
 }                           from '@cssfn/core'          // writes css in javascript
 
+// reusable-ui core:
+import {
+    // a spacer (gap) management system:
+    spacers,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
 
 
 // styles:
@@ -13,9 +19,9 @@ const usesVariantPreviewLayout = () => { // the <ListItem> of variant list
         // layouts:
         display       : 'grid',
         gridTemplate  : [[
-            '"name grip edit"',
+            '"name visibility grip edit"',
             '/',
-            '1fr min-content auto',
+            '1fr min-content min-content min-content',
         ]],
         
         
@@ -36,6 +42,15 @@ const usesVariantPreviewLayout = () => { // the <ListItem> of variant list
             
             // spacings:
             margin: 0,
+        }),
+        ...children('.visibility', {
+            // spacings:
+            padding       : spacers.xs,
+            
+            
+            
+            // typos:
+            lineHeight    : 1,
         }),
         ...children('.grip', {
             // positions:

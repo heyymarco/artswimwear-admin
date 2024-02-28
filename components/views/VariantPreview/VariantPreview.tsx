@@ -25,6 +25,11 @@ import {
 
 // reusable-ui components:
 import {
+    // base-components:
+    Indicator,
+    
+    
+    
     // simple-components:
     Icon,
     
@@ -221,6 +226,8 @@ const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
             onOrderStart={handleOrderStart}
         >
             <p className='name'>{name}</p>
+            
+            {(model.visibility !== 'PUBLISHED') && <Indicator key={id} className='visibility' size='sm' active enabled={false}>DRAFT</Indicator>}
             
             {!!privilegeUpdate?.description && <Grip className='grip' />}
             
