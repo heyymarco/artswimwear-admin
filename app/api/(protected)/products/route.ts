@@ -428,7 +428,8 @@ You do not have the privilege to view the products.`
         })();
         const productVariantGroupAdds : ProductVariantGroupDiff['productVariantGroupAdds'] = [];
         const productVariantGroupMods : ProductVariantGroupDiff['productVariantGroupMods'] = [];
-        for (const {id, productVariants, ...restProductVariantGroup} of productVariantGroups) {
+        let productVariantGroupSortCounter = 0;
+        for (const {id, sort, productVariants, ...restProductVariantGroup} of productVariantGroups) {
             const {
                 productVariantDels,
                 productVariantAdds,
@@ -441,10 +442,12 @@ You do not have the privilege to view the products.`
                 })();
                 const productVariantAdds : ProductVariantDiff['productVariantAdds'] = [];
                 const productVariantMods : ProductVariantDiff['productVariantMods'] = [];
-                for (const {id, ...restProductVariant} of productVariants) {
+                let productVariantSortCounter = 0;
+                for (const {id, sort, ...restProductVariant} of productVariants) {
                     if (!id || (id[0] === ' ')) {
                         productVariantAdds.push({
                             // data:
+                            sort: productVariantSortCounter++, // normalize sort, zero based
                             ...restProductVariant,
                         });
                         continue;
@@ -455,6 +458,7 @@ You do not have the privilege to view the products.`
                     productVariantMods.push({
                         // data:
                         id,
+                        sort: productVariantSortCounter++, // normalize sort, zero based
                         ...restProductVariant,
                     });
                 } // for
@@ -470,6 +474,7 @@ You do not have the privilege to view the products.`
             if (!id || (id[0] === ' ')) {
                 productVariantGroupAdds.push({
                     // data:
+                    sort: productVariantGroupSortCounter++, // normalize sort, zero based
                     ...restProductVariantGroup,
                     
                     // relations:
@@ -483,6 +488,7 @@ You do not have the privilege to view the products.`
             productVariantGroupMods.push({
                 // data:
                 id,
+                sort: productVariantGroupSortCounter++, // normalize sort, zero based
                 ...restProductVariantGroup,
                 
                 // relations:
