@@ -626,7 +626,7 @@ You do not have the privilege to modify the product_variant name.`
                     const productVariantGroupModSortIds = productVariantGroupMods.map(({id}) => id);
                     const productVariantGroupOriSortIds = productVariantGroupOris.map(({id}) => id);
                     if (productVariantGroupModSortIds.length !== productVariantGroupOriSortIds.length) return false; // not_equal
-                    for (let index = 0; index <= productVariantGroupModSortIds.length; index++) {
+                    for (let index = 0; index < productVariantGroupModSortIds.length; index++) {
                         if (productVariantGroupModSortIds[index] !== productVariantGroupOriSortIds[index]) return false; // not_equal
                         
                         
@@ -635,7 +635,7 @@ You do not have the privilege to modify the product_variant name.`
                         const productVariantDeletedIds = productVariantGroupMods[index].productVariantDels;
                         const productVariantOriSortIds = productVariantGroupOris[index].productVariants.map(({id}) => id).filter((id) => !productVariantDeletedIds.includes(id));
                         if (productVariantModSortIds.length !== productVariantOriSortIds.length) return false; // not_deep_equal
-                        for (let index = 0; index <= productVariantModSortIds.length; index++) {
+                        for (let index = 0; index < productVariantModSortIds.length; index++) {
                             if (productVariantModSortIds[index] !== productVariantOriSortIds[index]) return false; // not_deep_equal
                         } // for
                     } // for
