@@ -284,16 +284,18 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         
         try {
             return await updateProduct({
-                id             : id ?? '',
+                id                   : id ?? '',
                 
-                visibility     : (whenUpdate.visibility  || whenAdd) ? visibility                                        : undefined,
-                name           : (whenUpdate.description || whenAdd) ? name                                              : undefined,
-                path           : (whenUpdate.description || whenAdd) ? path                                              : undefined,
-                price          : (whenUpdate.price       || whenAdd) ? price                                             : undefined,
-                shippingWeight : (whenUpdate.price       || whenAdd) ? shippingWeight                                    : undefined,
-                stock          : (whenUpdate.stock       || whenAdd) ? stock                                             : undefined,
-                images         : (whenUpdate.images      || whenAdd) ? updatedImages                                     : undefined,
-                description    : (whenUpdate.description || whenAdd) ? ((description?.toJSON?.() ?? description) as any) : undefined,
+                visibility           : (whenUpdate.visibility  || whenAdd)         ? visibility                                        : undefined,
+                name                 : (whenUpdate.description || whenAdd)         ? name                                              : undefined,
+                path                 : (whenUpdate.description || whenAdd)         ? path                                              : undefined,
+                price                : (whenUpdate.price       || whenAdd)         ? price                                             : undefined,
+                shippingWeight       : (whenUpdate.price       || whenAdd)         ? shippingWeight                                    : undefined,
+                stock                : (whenUpdate.stock       || whenAdd)         ? stock                                             : undefined,
+                images               : (whenUpdate.images      || whenAdd)         ? updatedImages                                     : undefined,
+                description          : (whenUpdate.description || whenAdd)         ? ((description?.toJSON?.() ?? description) as any) : undefined,
+                
+                productVariantGroups : (variantGroups !== unmodifiedVariantGroups) ? variantGroups                                     : undefined,
             }).unwrap();
         }
         finally {
