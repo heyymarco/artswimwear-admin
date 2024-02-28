@@ -15,9 +15,7 @@ export type OrderDetailWithOptions = OrderDetail & { sendConfirmationEmail?: boo
 
 // apis:
 export type { CountryPreview }                  from '@/app/api/(protected)/countries/route'
-import type { ProductVariantDetail }            from '@/app/api/(protected)/products/route'
 export type { ProductVariantDetail }            from '@/app/api/(protected)/products/route'
-import type { ProductVariantGroupDetail }       from '@/app/api/(protected)/products/route'
 export type { ProductVariantGroupDetail }       from '@/app/api/(protected)/products/route'
 import type { ProductPreview, ProductDetail }   from '@/app/api/(protected)/products/route'
 export type { ProductPreview, ProductDetail }   from '@/app/api/(protected)/products/route'
@@ -50,12 +48,6 @@ const productListAdapter         = createEntityAdapter<ProductPreview>({
 });
 const roleListAdapter            = createEntityAdapter<RoleDetail>({
     selectId : (roleDetail) => roleDetail.id,
-});
-const productVariantGroupAdapter = createEntityAdapter<ProductVariantGroupDetail>({
-    selectId : (productVariantGroupDetail) => productVariantGroupDetail.id,
-});
-const productVariantAdapter      = createEntityAdapter<ProductVariantDetail>({
-    selectId : (productVariantDetail) => productVariantDetail.id,
 });
 
 
@@ -109,7 +101,7 @@ export const apiSlice = createApi({
     baseQuery : axiosBaseQuery({
         baseUrl: `${process.env.WEBSITE_URL ?? ''}/api`
     }),
-    tagTypes: ['Products', 'ProductVariantGroups', 'ProductVariants', 'Orders', 'Users', 'Roles'],
+    tagTypes: ['Products', 'Orders', 'Users', 'Roles'],
     endpoints : (builder) => ({
         getProductList             : builder.query<EntityState<ProductPreview>, void>({
             query : () => ({
@@ -181,116 +173,6 @@ export const apiSlice = createApi({
                 url    : `products/check-path?path=${encodeURIComponent(path)}`,
                 method : 'GET',
             }),
-        }),
-        
-        getProductVariantGroupList : builder.query<EntityState<ProductVariantGroupDetail>, { productId : string }>({
-            query : ({ productId }) => ({
-                url    : `product-variant-groups?productId=${encodeURIComponent(productId)}`,
-                method : 'GET',
-            }),
-            transformResponse(response: ProductVariantGroupDetail[]) {
-                return productVariantGroupAdapter.addMany(productVariantGroupAdapter.getInitialState(), response);
-            },
-            providesTags: (result, error, page)  => {
-                return [
-                    ...(result?.ids ?? []).map((id): { type: 'ProductVariantGroups', id: string } => ({
-                        type : 'ProductVariantGroups',
-                        id   : `${id}`,
-                    })),
-                    
-                    {
-                        type : 'ProductVariantGroups',
-                        id   : 'PRODUCT_VARIANT_GROUP_LIST',
-                    },
-                ];
-            },
-        }),
-        // // updateProductVariantGroup  : builder.mutation<ProductVariantGroupDetail, MutationArgs<ProductVariantGroupDetail> & { productId ?: string }>({
-        // //     query: (patch) => ({
-        // //         url    : 'product-variant-groups',
-        // //         method : 'PATCH',
-        // //         body   : patch
-        // //     }),
-        // //     invalidatesTags: (productVariantGroup, error, arg) => [
-        // //         ...(((!arg.id || !productVariantGroup) ? [{
-        // //             type : 'ProductVariantGroups',
-        // //             id   : 'PRODUCT_VARIANT_GROUP_LIST', // create new      => invalidates the whole list
-        // //         }] : [{
-        // //             type : 'ProductVariantGroups',
-        // //             id   : productVariantGroup.id,       // update existing => invalidates the modified
-        // //         }]) as Array<{ type: 'ProductVariantGroups', id: string }>),
-        // //     ],
-        // // }),
-        // // deleteProductVariantGroup  : builder.mutation<Pick<ProductVariantGroupDetail, 'id'>, MutationArgs<Pick<ProductVariantGroupDetail, 'id'>>>({
-        // //     query: (params) => ({
-        // //         url    : 'product-variant-groups',
-        // //         method : 'DELETE',
-        // //         body   : params
-        // //     }),
-        // //     invalidatesTags: (productVariantGroup, error, arg) => [
-        // //         ...((!productVariantGroup ? [{
-        // //             type : 'ProductVariantGroups',
-        // //             id   : 'PRODUCT_VARIANT_GROUP_LIST', // delete unspecified => invalidates the whole list
-        // //         }] : [{
-        // //             type : 'ProductVariantGroups',
-        // //             id   : productVariantGroup.id,       // delete existing    => invalidates the modified
-        // //         }]) as Array<{ type: 'ProductVariantGroups', id: string }>),
-        // //     ],
-        // // }),
-        
-        getProductVariantList      : builder.query<EntityState<ProductVariantDetail>, { groupId : string }>({
-            query : ({ groupId }) => ({
-                url    : `product-variants?groupId=${encodeURIComponent(groupId)}`,
-                method : 'GET',
-            }),
-            transformResponse(response: ProductVariantDetail[]) {
-                return productVariantAdapter.addMany(productVariantAdapter.getInitialState(), response);
-            },
-            providesTags: (result, error, page)  => {
-                return [
-                    ...(result?.ids ?? []).map((id): { type: 'ProductVariants', id: string } => ({
-                        type : 'ProductVariants',
-                        id   : `${id}`,
-                    })),
-                    
-                    {
-                        type : 'ProductVariants',
-                        id   : 'PRODUCT_VARIANT_LIST',
-                    },
-                ];
-            },
-        }),
-        updateProductVariant       : builder.mutation<ProductVariantDetail, MutationArgs<ProductVariantDetail> & { groupId ?: string }>({
-            query: (patch) => ({
-                url    : 'product-variants',
-                method : 'PATCH',
-                body   : patch
-            }),
-            invalidatesTags: (productVariant, error, arg) => [
-                ...(((!arg.id || !productVariant) ? [{
-                    type : 'ProductVariants',
-                    id   : 'PRODUCT_VARIANT_LIST', // create new      => invalidates the whole list
-                }] : [{
-                    type : 'ProductVariants',
-                    id   : productVariant.id,      // update existing => invalidates the modified
-                }]) as Array<{ type: 'ProductVariants', id: string }>),
-            ],
-        }),
-        deleteProductVariant       : builder.mutation<Pick<ProductVariantDetail, 'id'>, MutationArgs<Pick<ProductVariantDetail, 'id'>>>({
-            query: (params) => ({
-                url    : 'product-variants',
-                method : 'DELETE',
-                body   : params
-            }),
-            invalidatesTags: (productVariant, error, arg) => [
-                ...((!productVariant ? [{
-                    type : 'ProductVariants',
-                    id   : 'PRODUCT_VARIANT_LIST', // delete unspecified => invalidates the whole list
-                }] : [{
-                    type : 'ProductVariants',
-                    id   : productVariant.id,      // delete existing    => invalidates the modified
-                }]) as Array<{ type: 'ProductVariants', id: string }>),
-            ],
         }),
         
         getOrderPage               : builder.query<Pagination<OrderDetail>, PaginationArgs>({
@@ -643,14 +525,6 @@ export const {
     useDeleteProductMutation             : useDeleteProduct,
     useAvailablePathMutation             : useAvailablePath,
     
-    useGetProductVariantGroupListQuery   : useGetProductVariantGroupListRaw,
-    // // useUpdateProductVariantGroupMutation : useUpdateProductVariantGroup,
-    // // useDeleteProductVariantGroupMutation : useDeleteProductVariantGroup,
-    
-    useGetProductVariantListQuery        : useGetProductVariantList,
-    useUpdateProductVariantMutation      : useUpdateProductVariant,
-    useDeleteProductVariantMutation      : useDeleteProductVariant,
-    
     useGetOrderPageQuery                 : useGetOrderPage,
     useUpdateOrderMutation               : useUpdateOrder,
     
@@ -672,31 +546,3 @@ export const {
     useDeleteImageMutation               : useDeleteImage,
     useMoveImageMutation                 : useMoveImage,
 } = apiSlice;
-
-type QueryHookResultFromUseQuery<TUseQuery> = TUseQuery extends UseQuery<infer TQueryDefinition> ? UseQueryHookResult<TQueryDefinition> : unknown
-export const useGetProductVariantGroupList = (arg: { productId : string }): QueryHookResultFromUseQuery<typeof useGetProductVariantGroupListRaw> => {
-    if (!arg.productId) {
-        const emptyData : EntityState<ProductVariantGroupDetail> = {
-            ids      : [],
-            entities : {},
-        };
-        return {
-            data               : emptyData, // assumes as succeeded
-            currentData        : emptyData, // assumes as succeeded
-            error              : undefined,
-            
-            status             : QueryStatus.fulfilled,
-            isUninitialized    : false,
-            isLoading          : false,
-            isFetching         : false,
-            isError            : false,
-            isSuccess          : true,      // assumes as succeeded
-            
-            refetch            : (() => {}) as any,
-            
-            fulfilledTimeStamp : 0,
-        };
-    } // if
-    
-    return useGetProductVariantGroupListRaw(arg);
-}

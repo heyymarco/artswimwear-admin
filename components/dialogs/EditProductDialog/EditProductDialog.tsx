@@ -46,9 +46,6 @@ import {
 import {
     Image,
 }                           from '@heymarco/image'
-import {
-    LoadingBar,
-}                           from '@heymarco/loading-bar'
 
 // internal components:
 import {
@@ -129,8 +126,6 @@ import {
     // hooks:
     useUpdateProduct,
     useDeleteProduct,
-    
-    useGetProductVariantGroupList,
     
     usePostImage,
     useDeleteImage,
@@ -231,11 +226,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
     const [commitMoveImage  , {isLoading : isLoadingCommitMoveImage  }] = useMoveImage();
     
-    const {data: variantGroupServerData, isLoading: isLoadingVariantGroup, isError: isErrorVariantGroup} = useGetProductVariantGroupList({
-        productId : model?.id ?? '', // the related product of the productVariantGroup
-    });
-    const variantGroupEntities = variantGroupServerData?.entities;
-    const variantGroupList     = !variantGroupEntities ? undefined : Object.values(variantGroupEntities).filter((model): model is Exclude<typeof model, undefined> => !!model);
+    const variantGroupList = model?.productVariantGroups;
     const [unmodifiedVariantGroups, setUnmodifiedVariantGroups] = useState<ProductVariantGroupDetail[]|undefined>(variantGroupList);
     const [variantGroups, setVariantGroups] = useState<ProductVariantGroupDetail[]|undefined>(variantGroupList);
     if ((unmodifiedVariantGroups?.length !== variantGroupList?.length) || unmodifiedVariantGroups?.some((item, index) => (item !== variantGroupList?.[index]))) {
@@ -599,66 +590,62 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                 </form>
             </TabPanel>
             <TabPanel label={PAGE_PRODUCT_TAB_VARIANTS}     panelComponent={<Generic className={styleSheet.variantsTab} />}>{
-                isLoadingVariantGroup
-                ? <LoadingBar />
-                : isErrorVariantGroup
-                    ? 'Error getting variant data'
-                    : <VariantGroupEditor
-                        // values:
-                        value={variantGroups}
-                        onChange={(value) => {
-                            setVariantGroups(value);
-                            setIsModified(true);
-                        }}
+                <VariantGroupEditor
+                    // values:
+                    value={variantGroups}
+                    onChange={(value) => {
+                        setVariantGroups(value);
+                        setIsModified(true);
+                    }}
+                    
+                    
+                    
+                    // privileges:
+                    privilegeAdd    = {                                             privilegeAdd   }
+                    /*
+                        when edit_mode (update):
+                            * the editing  capability follows the `privilegeProductUpdate`
+                            * the deleting capability follows the `privilegeProductDelete`
                         
-                        
-                        
-                        // privileges:
-                        privilegeAdd    = {                                             privilegeAdd   }
-                        /*
-                            when edit_mode (update):
-                                * the editing  capability follows the `privilegeProductUpdate`
-                                * the deleting capability follows the `privilegeProductDelete`
+                        when create_mode (add):
+                            * ALWAYS be ABLE to edit   the VariantGroup and the Variant (because the data is *not_yet_exsist* on the database)
+                            * ALWAYS be ABLE to delete the VariantGroup and the Variant (because the data is *not_yet_exsist* on the database)
+                    */
+                    privilegeUpdate = {whenAdd ? privilegeVariantUpdateFullAccess : privilegeUpdate}
+                    privilegeDelete = {whenAdd ?               true               : privilegeDelete}
+                    
+                    
+                    
+                    // images:
+                    registerAddedImage   = {draftDifferentialImages.registerAddedImage  }
+                    registerDeletedImage = {draftDifferentialImages.registerDeletedImage}
+                    
+                    
+                    
+                    // components:
+                    modelPreviewComponent={
+                        <VariantGroupPreview
+                            // data:
+                            model={undefined as any}
+                        />
+                    }
+                    modelCreateComponent={
+                        privilegeAdd
+                        ? <EditProductVariantGroupDialog
+                            // data:
+                            model={null} // create a new model
                             
-                            when create_mode (add):
-                                * ALWAYS be ABLE to edit   the VariantGroup and the Variant (because the data is *not_yet_exsist* on the database)
-                                * ALWAYS be ABLE to delete the VariantGroup and the Variant (because the data is *not_yet_exsist* on the database)
-                        */
-                        privilegeUpdate = {whenAdd ? privilegeVariantUpdateFullAccess : privilegeUpdate}
-                        privilegeDelete = {whenAdd ?               true               : privilegeDelete}
-                        
-                        
-                        
-                        // images:
-                        registerAddedImage   = {draftDifferentialImages.registerAddedImage  }
-                        registerDeletedImage = {draftDifferentialImages.registerDeletedImage}
-                        
-                        
-                        
-                        // components:
-                        modelPreviewComponent={
-                            <VariantGroupPreview
-                                // data:
-                                model={undefined as any}
-                            />
-                        }
-                        modelCreateComponent={
-                            privilegeAdd
-                            ? <EditProductVariantGroupDialog
-                                // data:
-                                model={null} // create a new model
-                                
-                                
-                                
-                                // images:
-                                // @ts-ignore
-                                registerAddedImage   = {undefined}
-                                // @ts-ignore
-                                registerDeletedImage = {undefined}
-                            />
-                            : undefined
-                        }
-                    />
+                            
+                            
+                            // images:
+                            // @ts-ignore
+                            registerAddedImage   = {undefined}
+                            // @ts-ignore
+                            registerDeletedImage = {undefined}
+                        />
+                        : undefined
+                    }
+                />
             }</TabPanel>
             <TabPanel label={PAGE_PRODUCT_TAB_IMAGES}       panelComponent={<Generic className={styleSheet.imagesTab} />}>
                 <GalleryEditor<HTMLElement, string>
