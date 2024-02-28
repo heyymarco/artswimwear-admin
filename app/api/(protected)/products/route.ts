@@ -441,7 +441,7 @@ You do not have the privilege to view the products.`
                 const productVariantAdds : ProductVariantDiff['productVariantAdds'] = [];
                 const productVariantMods : ProductVariantDiff['productVariantMods'] = [];
                 for (const {id, ...restProductVariant} of productVariants) {
-                    if (!id) {
+                    if (!id || (id[0] === ' ')) {
                         productVariantAdds.push({
                             // data:
                             ...restProductVariant,
@@ -465,7 +465,7 @@ You do not have the privilege to view the products.`
             
             
             
-            if (!id) {
+            if (!id || (id[0] === ' ')) {
                 productVariantGroupAdds.push({
                     // data:
                     ...restProductVariantGroup,
