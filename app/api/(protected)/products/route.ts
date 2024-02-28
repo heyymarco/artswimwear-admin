@@ -622,6 +622,7 @@ You do not have the privilege to modify the product_variant name.`
                 !session.role?.product_ud
                 &&
                 !((): boolean => {
+                    // compare the modified order items, ignore added|deleted items:
                     const productVariantGroupModSortIds = productVariantGroupMods.map(({id}) => id);
                     const productVariantGroupOriSortIds = productVariantGroupOris.map(({id}) => id);
                     if (productVariantGroupModSortIds.length !== productVariantGroupOriSortIds.length) return false; // not_equal
