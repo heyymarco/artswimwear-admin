@@ -370,8 +370,132 @@ You do not have the privilege to view the products.`
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
-    const productVariantGroups : ProductVariantGroupDetail[]|undefined = productVariantGroupsRaw;
     //#endregion validating request
+    
+    
+    
+    //#region normalize productVariantGroups
+    const productVariantGroups : ProductVariantGroupDetail[]|undefined = productVariantGroupsRaw;
+    
+    interface ProductVariantDiff {
+        productVariantDels      : string[]
+        productVariantAdds      : Omit<ProductVariantDetail, 'id'>[]
+        productVariantMods      : ProductVariantDetail[]
+    }
+    interface ProductVariantGroupDiff {
+        productVariantGroupDels : string[]
+        productVariantGroupAdds : (Omit<ProductVariantGroupDetail, 'id'|'productVariants'> & Pick<ProductVariantDiff, 'productVariantAdds'>)[]
+        productVariantGroupMods : (Omit<ProductVariantGroupDetail,      'productVariants'> & ProductVariantDiff)[]
+    }
+    const productVariantGroupDiffs = (productVariantGroups === undefined) ? undefined : await (async (): Promise<ProductVariantGroupDiff> => {
+        const originalProductVariantGroups : ProductVariantGroupDetail[] = await prisma.productVariantGroup.findMany({
+            select: {
+                id              : true,
+                
+                sort            : true,
+                
+                name            : true,
+                
+                productVariants : {
+                    select: {
+                        id             : true,
+                        
+                        visibility     : true,
+                        sort           : true,
+                        
+                        name           : true,
+                        price          : true,
+                        shippingWeight : true,
+                        images         : true,
+                    },
+                    orderBy : {
+                        sort: 'asc',
+                    },
+                },
+            },
+            orderBy : {
+                sort: 'asc',
+            },
+        });
+        
+        
+        
+        const productVariantGroupDels : ProductVariantGroupDiff['productVariantGroupDels'] = (() => {
+            const postedIds  : string[] = productVariantGroups.map(({id}) => id);
+            const currentIds : string[] = originalProductVariantGroups.map(({id}) => id);
+            return currentIds.filter((currentId) => !postedIds.includes(currentId));
+        })();
+        const productVariantGroupAdds : ProductVariantGroupDiff['productVariantGroupAdds'] = [];
+        const productVariantGroupMods : ProductVariantGroupDiff['productVariantGroupMods'] = [];
+        for (const {id, productVariants, ...restProductVariantGroup} of productVariantGroups) {
+            const {
+                productVariantDels,
+                productVariantAdds,
+                productVariantMods,
+            } = ((): ProductVariantDiff => {
+                const productVariantDels : ProductVariantDiff['productVariantDels'] = (() => {
+                    const postedIds  : string[] = productVariants.map(({id}) => id);
+                    const currentIds : string[] = originalProductVariantGroups.find(({id: groupId}) => (groupId === id))?.productVariants.map(({id}) => id) ?? [];
+                    return currentIds.filter((currentId) => !postedIds.includes(currentId));
+                })();
+                const productVariantAdds : ProductVariantDiff['productVariantAdds'] = [];
+                const productVariantMods : ProductVariantDiff['productVariantMods'] = [];
+                for (const {id, ...restProductVariant} of productVariants) {
+                    if (!id) {
+                        productVariantAdds.push({
+                            // data:
+                            ...restProductVariant,
+                        });
+                    } // if
+                    
+                    
+                    
+                    productVariantMods.push({
+                        // data:
+                        id,
+                        ...restProductVariant,
+                    });
+                } // for
+                return {
+                    productVariantDels,
+                    productVariantAdds,
+                    productVariantMods,
+                };
+            })();
+            
+            
+            
+            if (!id) {
+                productVariantGroupAdds.push({
+                    // data:
+                    ...restProductVariantGroup,
+                    
+                    // relations:
+                    productVariantAdds,
+                });
+                continue;
+            } // if
+            
+            
+            
+            productVariantGroupMods.push({
+                // data:
+                id,
+                ...restProductVariantGroup,
+                
+                // relations:
+                productVariantDels,
+                productVariantAdds,
+                productVariantMods,
+            });
+        } // for
+        return {
+            productVariantGroupDels,
+            productVariantGroupAdds,
+            productVariantGroupMods,
+        };
+    })();
+    //#endregion normalize productVariantGroups
     
     
     
@@ -604,7 +728,7 @@ You do not have the privilege to modify the product_variant visibility.`
             
             images,
             
-            productVariantGroups,
+            // productVariantGroups,
         };
         const select = {
             id             : true,
