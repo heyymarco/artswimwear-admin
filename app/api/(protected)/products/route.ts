@@ -324,7 +324,7 @@ You do not have the privilege to view the products.`
                 &&
                 (Object.keys(productVariantGroupRaw).length === 4)
                 &&
-                /* 1: */ ((typeof(productVariantGroupRaw.id) === 'string') && (!id ? !productVariantGroupRaw.id : (productVariantGroupRaw.id.length <= 40)))
+                /* 1: */ ((typeof(productVariantGroupRaw.id) === 'string') && (!productVariantGroupRaw.id || (!!id && (productVariantGroupRaw.id.length <= 40))))
                 &&
                 /* 2: */ ((typeof(productVariantGroupRaw.sort) === 'number') && (productVariantGroupRaw.sort >= Number.MIN_SAFE_INTEGER) && (productVariantGroupRaw.sort <= Number.MAX_SAFE_INTEGER))
                 &&
@@ -338,7 +338,7 @@ You do not have the privilege to view the products.`
                         productVariantsRaw.every((productVariantRaw) =>
                             (Object.keys(productVariantRaw).length === 7)
                             &&
-                            /* 1: */ ((typeof(productVariantRaw.id) === 'string') && (!productVariantGroupRaw.id ? !productVariantRaw.id : (productVariantRaw.id.length <= 40)))
+                            /* 1: */ ((typeof(productVariantRaw.id) === 'string') && (!productVariantRaw.id || (!!productVariantGroupRaw.id && (productVariantRaw.id.length <= 40))))
                             &&
                             /* 2: */ ((typeof(productVariantRaw.visibility) === 'string') && ['PUBLISHED', 'DRAFT'].includes(productVariantRaw.visibility))
                             &&
