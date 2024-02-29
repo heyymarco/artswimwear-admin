@@ -32,5 +32,8 @@ VariantEditor			verified
 
 
 TODO:
-* SAVE variant(group) ke database
+* create variant template
+* create stock map
+* apply variant to cart
+* apply variant to product explorer
 
