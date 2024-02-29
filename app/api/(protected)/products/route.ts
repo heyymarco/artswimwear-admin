@@ -847,11 +847,13 @@ You do not have the privilege to modify the product_variant visibility.`
                             shippingWeight : true,
                             images         : true,
                         },
+                        // doesn't work:
                         // orderBy : {
                         //     sort: 'asc',
                         // },
                     },
                 },
+                // doesn't work:
                 // orderBy : {
                 //     sort: 'asc',
                 // },
@@ -871,6 +873,13 @@ You do not have the privilege to modify the product_variant visibility.`
                 select : select,
             })
         );
+        
+        // a workaround of non_working_orderBy of product.create() & product.update():
+        productDetail.productVariantGroups.sort(({sort: sortA}, {sort: sortB}) => sortA - sortB); // mutate
+        for (const productVariantGroup of productDetail.productVariantGroups) {
+            productVariantGroup.productVariants.sort(({sort: sortA}, {sort: sortB}) => sortA - sortB); // mutate
+        } // for
+        
         return NextResponse.json(productDetail); // handled with success
     }
     catch (error: any) {
