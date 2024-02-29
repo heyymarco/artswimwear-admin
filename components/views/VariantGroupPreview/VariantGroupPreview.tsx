@@ -103,7 +103,10 @@ const handleOrderStart = (event: OrderableListItemDragStartEvent<HTMLElement>): 
 export interface VariantGroupPreviewProps
     extends
         // bases:
-        ModelPreviewProps<ProductVariantGroupDetail>
+        Omit<ModelPreviewProps<ProductVariantGroupDetail>,
+            // behaviors:
+            |'draggable'
+        >
 {
     // handlers:
     onUpdated     ?: UpdatedHandler<ProductVariantGroupDetail>
@@ -223,6 +226,11 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
             
             
             
+            // behaviors:
+            draggable={!!privilegeUpdate?.description}
+            
+            
+            
             // handlers:
             onOrderStart={handleOrderStart}
         >
@@ -240,7 +248,7 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
                 }
             </p>
             
-            {!!privilegeUpdate?.description && <Grip className='grip' />}
+            <Grip className='grip' enabled={!!privilegeUpdate?.description} />
             
             <EditButton
                 iconComponent={<Icon icon='edit' />}

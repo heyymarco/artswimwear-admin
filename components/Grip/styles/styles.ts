@@ -1,6 +1,7 @@
 // cssfn:
 import {
     // writes css in javascript:
+    states,
     children,
     style,
     
@@ -25,6 +26,11 @@ import {
     
     // size options of UI:
     usesResizable,
+    
+    
+    
+    // a capability of UI to be disabled:
+    ifDisable,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -33,7 +39,12 @@ import {
     onIndicatorStylesChange,
     usesIndicatorLayout,
     usesIndicatorVariants,
+    usesIndicatorStates,
 }                           from '@reusable-ui/indicator'       // a base component
+import {
+    // configs:
+    controls,
+}                           from '@reusable-ui/control'         // a base component
 
 // internals:
 import {
@@ -114,10 +125,26 @@ export const usesGripVariants = () => {
     });
 };
 
+export const usesGripStates = () => {
+    return style({
+        // states:
+        ...usesIndicatorStates(),
+        ...states([
+            ifDisable({
+                // accessibilities:
+                cursor : controls.cursorDisable,
+            }),
+        ]),
+    });
+};
+
 export default () => style({
     // layouts:
     ...usesGripLayout(),
     
     // variants:
     ...usesGripVariants(),
+    
+    // states:
+    ...usesGripStates(),
 });

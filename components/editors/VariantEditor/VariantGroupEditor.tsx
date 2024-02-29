@@ -241,11 +241,6 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
                 
                 
                 
-                // behaviors:
-                orderable={!!privilegeUpdate?.description}
-                
-                
-                
                 // values:
                 onChildrenChange={handleChildrenChange}
             >

@@ -55,11 +55,6 @@ import type {
 
 // internals:
 import {
-    // types:
-    VariantState,
-    
-    
-    
     // states:
     useVariantState,
 }                           from './states/variantState'
@@ -124,10 +119,6 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
     // states:
     // workaround for penetrating <VariantStateProvider> to showDialog():
     const variantState = useVariantState();
-    const {
-        // privileges:
-        privilegeUpdate,
-    } = variantState;
     
     let {
         value              : value,
@@ -199,11 +190,6 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
         <OrderableList<TElement, unknown>
             // other props:
             {...restListProps}
-            
-            
-            
-            // behaviors:
-            orderable={!!privilegeUpdate?.description}
             
             
             
