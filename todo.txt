@@ -32,6 +32,7 @@ VariantEditor			verified
 
 
 TODO:
+* create blank variant(group) status
 * create variant template
 * create stock map
 * apply variant to cart
