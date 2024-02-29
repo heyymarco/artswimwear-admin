@@ -235,7 +235,7 @@ const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
         >
             <p className='name'>{name}</p>
             
-            {(model.visibility !== 'PUBLISHED') && <Indicator key={id} className='visibility' size='sm' active enabled={false}>DRAFT</Indicator>}
+            {(model.visibility !== 'PUBLISHED') && <Indicator key={id} tag='span' className='visibility' size='sm' active enabled={false}>DRAFT</Indicator>}
             
             <Grip className='grip' enabled={!!privilegeUpdate?.description} />
             

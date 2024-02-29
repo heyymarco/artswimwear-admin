@@ -242,7 +242,7 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
                     ? <span className='noValue'>No Variant</span>
                     : <span className='values'>
                         {productVariants.map(({id, name, visibility}) =>
-                            <Indicator key={id} className='value' size='sm' active enabled={visibility === 'PUBLISHED'}>{name}</Indicator>
+                            <Indicator key={id} tag='span' className='value' size='sm' active enabled={visibility === 'PUBLISHED'}>{name}</Indicator>
                         )}
                     </span>
                 }
