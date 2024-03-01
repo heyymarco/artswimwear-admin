@@ -99,8 +99,6 @@ router
             select: {
                 id              : true,
                 
-                sort            : true,
-                
                 name            : true,
                 
                 templateVariants : {
@@ -121,7 +119,7 @@ router
                 },
             },
             orderBy : {
-                sort: 'asc',
+                createdAt: 'asc',
             },
         }))
     );
@@ -150,15 +148,13 @@ router
     if (!(
         (typeof(templateVariantGroupRaw) === 'object')
         &&
-        (Object.keys(templateVariantGroupRaw).length === 4)
+        (Object.keys(templateVariantGroupRaw).length === 3)
         &&
         /* 1: */ ((typeof(templateVariantGroupRaw.id) === 'string') && (!templateVariantGroupRaw.id || (templateVariantGroupRaw.id.length <= 40)))
         &&
-        /* 2: */ ((typeof(templateVariantGroupRaw.sort) === 'number') && (templateVariantGroupRaw.sort >= Number.MIN_SAFE_INTEGER) && (templateVariantGroupRaw.sort <= Number.MAX_SAFE_INTEGER))
+        /* 2: */ ((typeof(templateVariantGroupRaw.name) === 'string') && !!templateVariantGroupRaw.name)
         &&
-        /* 3: */ ((typeof(templateVariantGroupRaw.name) === 'string') && !!templateVariantGroupRaw.name)
-        &&
-        /* 4: */ ((): boolean => {
+        /* 3: */ ((): boolean => {
             const {templateVariants: templateVariantsRaw} = templateVariantGroupRaw;
             return (
                 Array.isArray(templateVariantsRaw)
@@ -399,8 +395,6 @@ You do not have the privilege to modify the template_variant visibility.`
     // console.log(templateVariantGroupDiffs);
     try {
         const data = {
-            sort : 0,
-            
             name,
             
             templateVariant : {
@@ -422,8 +416,6 @@ You do not have the privilege to modify the template_variant visibility.`
         };
         const select = {
             id             : true,
-            
-            sort           : true,
             
             name           : true,
             
