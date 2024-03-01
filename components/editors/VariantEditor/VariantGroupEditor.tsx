@@ -48,6 +48,7 @@ import {
     CreateHandler,
     ModelCreateOuterProps,
     ModelCreateOuter,
+    ModelEmpty,
 }                           from '@/components/explorers/PagedModelExplorer'
 import type {
     VariantGroupPreviewProps,
@@ -277,6 +278,8 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
                     // handlers:
                     onCreated={handleModelCreated}
                 />}
+                
+                {!value.length && <ModelEmpty />}
                 
                 {value.map((modelOption) =>
                     /* <ModelPreview> */
