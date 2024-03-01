@@ -331,6 +331,31 @@ You do not have the privilege to modify the template_variant name.`
         
         
         if (
+            !session.role?.product_ud
+            &&
+            !((): boolean => {
+                // compare the modified order items, ignore added|deleted items:
+                const templateVariantModSortIds = templateVariantMods.map(({id}) => id);
+                const templateVariantDeletedIds = templateVariantDels;
+                const templateVariantOriSortIds = templateVariantOris.map(({id}) => id).filter((id) => !templateVariantDeletedIds.includes(id));
+                if (templateVariantModSortIds.length !== templateVariantOriSortIds.length) return false; // not_deep_equal
+                for (let index = 0; index < templateVariantModSortIds.length; index++) {
+                    if (templateVariantModSortIds[index] !== templateVariantOriSortIds[index]) return false; // not_deep_equal
+                } // for
+                
+                
+                
+                return true; // deep_equal
+            })()
+        ) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the template_variant order.`
+        }, { status: 403 }); // handled with error: forbidden
+        
+        
+        
+        if (
             !session.role?.product_up
             &&
             templateVariantMods
