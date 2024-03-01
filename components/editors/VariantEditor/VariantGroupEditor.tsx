@@ -2,12 +2,19 @@
 import {
     // react:
     default as React,
+    
+    
+    
+    // hooks:
+    useState,
 }                           from 'react'
 
 // reusable-ui core:
 import {
     // react helper hooks:
     useEvent,
+    EventHandler,
+    useMountedFlag,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
 // heymarco:
@@ -17,9 +24,24 @@ import {
 }                           from '@heymarco/events'
 
 // reusable-ui components:
-import type {
+import {
     // layout-components:
+    ListItem,
+    
     ListProps,
+    List,
+    
+    
+    
+    // menu-components:
+    DropdownListExpandedChangeEvent,
+    DropdownListButtonProps,
+    DropdownListButton,
+    
+    
+    
+    // utility-components:
+    useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // heymarco components:
@@ -27,6 +49,7 @@ import {
     OrderableListItemProps,
     OrderableListItem,
     
+    OrderableListProps,
     OrderableList,
 }                           from '@heymarco/orderable-list'
 
@@ -37,11 +60,13 @@ import type {
 }                           from '@/components/editors/Editor'
 import type {
     // types:
+    ComplexEditModelDialogResult,
     UpdatedHandler,
     DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
-import type {
+import {
     EditProductVariantGroupDialogProps,
+    EditProductVariantGroupDialog,
 }                           from '@/components/dialogs/EditProductVariantGroupDialog'
 import {
     ModelCreateProps,
@@ -62,6 +87,11 @@ import {
     
     
     
+    // states:
+    useVariantState,
+    
+    
+    
     // react components:
     VariantStateProvider,
 }                           from './states/variantState'
@@ -71,6 +101,118 @@ import type {
     // types:
     ProductVariantGroupDetail,
 }                           from '@/store/features/api/apiSlice'
+
+
+
+const VariantTemplateMenuButton = (props: DropdownListButtonProps): JSX.Element|null => {
+    // states:
+    const [menuExpanded, setMenuExpanded] = useState<boolean>(false);
+    const isMounted = useMountedFlag();
+    
+    
+    
+    // states:
+    // workaround for penetrating <VariantStateProvider> to showDialog():
+    const {
+        // privileges:
+        privilegeAdd,
+        privilegeUpdate,
+        privilegeDelete,
+    ...restVariantState} = useVariantState();
+    
+    
+    
+    // dialogs:
+    const {
+        showDialog,
+    } = useDialogMessage();
+    
+    
+    
+    // handlers:
+    const handleMenuExpandedChange = useEvent<EventHandler<DropdownListExpandedChangeEvent<any>>>(({expanded}) => {
+        setMenuExpanded(expanded);
+    });
+    const handleCreateNewVariantTemplate = useEvent(async () => {
+        setMenuExpanded(false);
+        
+        
+        
+        const createdModel = await showDialog<ComplexEditModelDialogResult<ProductVariantGroupDetail>>(
+            <EditProductVariantGroupDialog
+                // data:
+                model={null} // create a new model
+                
+                
+                
+                // workaround for penetrating <VariantStateProvider> to showDialog():
+                {...restVariantState}
+                
+                
+                
+                // privileges:
+                privilegeAdd    = {privilegeAdd   }
+                privilegeUpdate = {privilegeUpdate}
+                privilegeDelete = {privilegeDelete}
+            />
+        );
+        if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
+        
+        
+        
+        console.log(createdModel);
+    });
+    
+    
+    
+    // jsx:
+    return (
+        <DropdownListButton
+            // other props:
+            {...props}
+            
+            
+            
+            // variants:
+            theme='primary'
+            
+            
+            
+            // states:
+            expanded={menuExpanded}
+            onExpandedChange={handleMenuExpandedChange}
+            
+            
+            
+            // floatable:
+            floatingPlacement='bottom-end'
+            
+            
+            
+            // components:
+            listComponent={
+                <OrderableList
+                >
+                    <OrderableListItem
+                        // behaviors:
+                        actionCtrl={true}
+                        orderable={false}
+                        
+                        
+                        
+                        // handlers:
+                        onClick={handleCreateNewVariantTemplate}
+                    >
+                        Crete New Variant Template
+                    </OrderableListItem>
+                    <OrderableListItem>
+                        bbb
+                    </OrderableListItem>
+                </OrderableList>
+            }
+        />
+    );
+};
 
 
 
@@ -266,6 +408,9 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
                                 ...variantState,
                             },
                         )
+                    }
+                    moreButtonComponent={
+                        <VariantTemplateMenuButton />
                     }
                     listItemComponent={
                         <OrderableListItem
