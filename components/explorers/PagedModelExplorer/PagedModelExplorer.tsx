@@ -53,6 +53,16 @@ import {
     
     
     
+    // menu-components:
+    DropdownListButtonProps,
+    
+    
+    
+    // composite-components:
+    Group,
+    
+    
+    
     // utility-components:
     useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
@@ -134,6 +144,7 @@ export interface ModelCreateOuterProps<TModel extends Model>
     
     // components:
     modelCreateComponent  : React.ReactComponentElement<any, ModelCreateProps>
+    moreButtonComponent  ?: React.ReactComponentElement<any, DropdownListButtonProps>
     
     
     
@@ -155,6 +166,7 @@ export const ModelCreateOuter = <TModel extends Model>(props: ModelCreateOuterPr
         
         // components:
         modelCreateComponent,
+        moreButtonComponent,
         listItemComponent = (<ListItem<Element> /> as React.ReactComponentElement<any, ListItemProps<Element>>),
         
         
@@ -194,6 +206,11 @@ export const ModelCreateOuter = <TModel extends Model>(props: ModelCreateOuterPr
     
     
     // jsx:
+    const addNewBUtton = (
+        <ButtonIcon icon='create' className='fluid' onClick={handleShowDialog}>
+            {createItemText ?? 'Add New Item'}
+        </ButtonIcon>
+    );
     return React.cloneElement<ListItemProps<Element>>(listItemComponent,
         // props:
         {
@@ -209,9 +226,16 @@ export const ModelCreateOuter = <TModel extends Model>(props: ModelCreateOuterPr
         
         
         // children:
-        <ButtonIcon icon='create' onClick={handleShowDialog}>
-            {createItemText ?? 'Add New Item'}
-        </ButtonIcon>,
+        (
+            !moreButtonComponent
+            ?
+            addNewBUtton
+            :
+            <Group>
+                {addNewBUtton}
+                {moreButtonComponent}
+            </Group>
+        ),
     );
 };
 
