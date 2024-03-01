@@ -5,7 +5,7 @@ import {
     children,
     scope,
     style,
-}                           from '@cssfn/core'          // writes css in javascript
+}                           from '@cssfn/core'                  // writes css in javascript
 
 // reusable-ui core:
 import {
@@ -26,13 +26,19 @@ import {
     
     // groups a list of UIs into a single UI
     usesGroupable,
-}                           from '@reusable-ui/core'    // a set of reusable-ui packages which are responsible for building any component
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
+// reusable-ui components:
+import {
+    // base-components:
+    basics,
+}                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 
 
 // styles:
 // defaults:
-const usesListDataLayout = () => {
+const usesListModelLayout = () => {
     // dependencies:
     
     // capabilities:
@@ -55,7 +61,7 @@ const usesListDataLayout = () => {
         // layouts:
         ...style({
             // positions:
-            gridArea  : 'dataList',
+            gridArea  : 'modelList',
             alignSelf : 'start',
             
             
@@ -69,7 +75,7 @@ const usesListDataLayout = () => {
             
             // sizes:
             ...rule('.empty', {
-                blockSize : '100%', // if data empty => fill the entire available page height
+                blockSize : '100%',   // if model is empty => fill the entire available page height
                 overflow  : 'hidden', // a fix for <Backdrop>'s borderRadius // TODO: fix reusable-ui's <ModalBackdrop>
             }),
             
@@ -81,7 +87,7 @@ const usesListDataLayout = () => {
         }),
     });
 };
-const usesDataListInnerLayout = () => { // the <List> of data
+const usesModelListInnerLayout = () => { // the <List> of model
     // dependencies:
     
     // capabilities:
@@ -111,11 +117,28 @@ const usesDataListInnerLayout = () => { // the <List> of data
     });
 };
 
-const usesCreateDataLayout = () => { // the <ListItem> of data add_new
+const usesCreateModelLayout = () => { // the <ListItem> of model add_new
     return style({
         // layouts:
         display: 'flex',
         flexDirection: 'column',
+    });
+};
+const usesEmptyModelLayout = () => {
+    return style({
+        // appearances:
+        opacity    : 0.5,
+        
+        
+        
+        // spacings:
+        margin     : 0,
+        
+        
+        
+        // typos:
+        fontStyle  : 'italic',
+        textAlign  : 'center',
     });
 };
 
@@ -130,7 +153,7 @@ export default () => [
             display      : 'grid',
             gridTemplate : [[
                 '"paginTop"', 'auto',
-                '"dataList"', '1fr',
+                '"modelList"', '1fr',
                 '"paginBtm"', 'auto',
                 '/',
                 'auto',
@@ -155,18 +178,21 @@ export default () => [
         
         justifySelf: 'center',
     }),
-    scope('listData', {
-        ...usesListDataLayout(),
+    scope('listModel', {
+        ...usesListModelLayout(),
     }, { specificityWeight: 2 }),
     scope('paginBtm', {
         gridArea: 'paginBtm',
         
         justifySelf: 'center',
     }),
-    scope('listDataInner', { // the <List> of data
-        ...usesDataListInnerLayout(),
+    scope('listModelInner', { // the <List> of model
+        ...usesModelListInnerLayout(),
     }, { specificityWeight: 2 }),
-    scope('createData', { // the <ListItem> of data add_new
-        ...usesCreateDataLayout(),
+    scope('createModel', { // the <ListItem> of model add_new
+        ...usesCreateModelLayout(),
+    }),
+    scope('emptyModel', { // the <ListItem> of model add_new
+        ...usesEmptyModelLayout(),
     }),
 ];

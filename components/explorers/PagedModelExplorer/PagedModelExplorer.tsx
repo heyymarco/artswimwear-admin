@@ -203,7 +203,7 @@ export const ModelCreateOuter = <TModel extends Model>(props: ModelCreateOuterPr
             
             
             // classes:
-            className : `${styleSheet.createData} ${props.className}`,
+            className : `${styleSheet.createModel} ${props.className}`,
         },
         
         
@@ -226,7 +226,12 @@ export interface ModelPreviewProps<TModel extends Model, TElement extends Elemen
 }
 
 /* <ModelEmpty> */
-const ModelEmpty = () => {
+export const ModelEmpty = () => {
+    // styles:
+    const styleSheet = usePagedModelExplorerStyleSheet();
+    
+    
+    
     // refs:
     const statusEmptyListRef = useRef<HTMLElement|null>(null);
     
@@ -234,11 +239,18 @@ const ModelEmpty = () => {
     
     // jsx:
     return (
-        <ListItem elmRef={statusEmptyListRef} className='statusEmpty'>
-            <ModalDataEmpty
-                // global stackable:
-                viewport={statusEmptyListRef}
-            />
+        <ListItem
+            // refs:
+            elmRef={statusEmptyListRef}
+            
+            
+            
+            // classes:
+            className={styleSheet.emptyModel}
+        >
+            <p>
+                The data is empty.
+            </p>
         </ListItem>
     );
 };
@@ -384,7 +396,7 @@ const PagedModelExplorerInternal = <TModel extends Model>(props: PagedModelExplo
     
     // jsx:
     return (
-        <Basic className={`${styleSheet.listData}${isDataEmpty ? ' empty' : ''}`} theme='primary' mild={true} elmRef={dataListRef}>
+        <Basic className={`${styleSheet.listModel}${isDataEmpty ? ' empty' : ''}`} theme='primary' mild={true} elmRef={dataListRef}>
             <ModalLoadingError
                 // data:
                 isFetching={isFetching}
@@ -397,7 +409,7 @@ const PagedModelExplorerInternal = <TModel extends Model>(props: PagedModelExplo
                 viewport={dataListRef}
             />
             
-            <List listStyle='flush' className={styleSheet.listDataInner}>
+            <List listStyle='flush' className={styleSheet.listModelInner}>
                 {/* <ModelCreate> */}
                 {!!modelCreateComponent  && <ModelCreateOuter<TModel> className='solid' createItemText={createItemText} modelCreateComponent={modelCreateComponent} />}
                 
