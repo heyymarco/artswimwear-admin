@@ -49,9 +49,6 @@ import {
 import {
     EditButton,
 }                           from '@/components/EditButton'
-import {
-    Grip,
-}                           from '@/components/Grip'
 import type {
     // react components:
     ModelPreviewProps,
@@ -111,6 +108,7 @@ export interface TemplateVariantGroupPreviewProps
     // handlers:
     onUpdated     ?: UpdatedHandler<TemplateVariantGroupDetail>
     onDeleted     ?: DeleteHandler<TemplateVariantGroupDetail>
+    onEdit        ?: React.MouseEventHandler<HTMLButtonElement>
 }
 const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): JSX.Element|null => {
     // styles:
@@ -128,6 +126,7 @@ const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): J
         // handlers:
         onUpdated,
         onDeleted,
+        onEdit,
     ...restListItemProps} = props;
     const {
         id,
@@ -174,7 +173,11 @@ const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): J
     
     
     // handlers:
-    const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLElement>>(async () => {
+    const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async (event) => {
+        onEdit?.(event);
+        
+        
+        
         const updatedVariantGroupModel = await showDialog<ComplexEditModelDialogResult<TemplateVariantGroupDetail>>(
             <EditTemplateVariantGroupDialog
                 // data:

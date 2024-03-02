@@ -173,7 +173,7 @@ const ProductVariantPreview = (props: ProductVariantPreviewProps): JSX.Element|n
     
     
     // handlers:
-    const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLElement>>(async () => {
+    const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async () => {
         const updatedVariantModel = await showDialog<ComplexEditModelDialogResult<ProductVariantDetail>>(
             <EditProductVariantDialog
                 // data:

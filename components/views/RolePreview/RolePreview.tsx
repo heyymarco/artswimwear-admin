@@ -151,7 +151,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         // actions:
         onChange?.(id || null); // null (no selection) if the id is an empty string
     });
-    const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLElement>>(async (event) => {
+    const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async (event) => {
         event.stopPropagation(); // prevents triggering `ListItem::onClick`
         
         

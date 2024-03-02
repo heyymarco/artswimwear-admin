@@ -174,7 +174,7 @@ const ProductVariantGroupPreview = (props: ProductVariantGroupPreviewProps): JSX
     
     
     // handlers:
-    const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLElement>>(async () => {
+    const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async () => {
         const updatedVariantGroupModel = await showDialog<ComplexEditModelDialogResult<ProductVariantGroupDetail>>(
             <EditProductVariantGroupDialog
                 // data:
