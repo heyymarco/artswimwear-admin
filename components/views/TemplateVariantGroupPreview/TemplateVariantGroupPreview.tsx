@@ -108,7 +108,7 @@ export interface TemplateVariantGroupPreviewProps
     // handlers:
     onUpdated     ?: UpdatedHandler<TemplateVariantGroupDetail>
     onDeleted     ?: DeleteHandler<TemplateVariantGroupDetail>
-    onEdit        ?: React.MouseEventHandler<HTMLButtonElement>
+    onEditing     ?: React.MouseEventHandler<HTMLButtonElement>
 }
 const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): JSX.Element|null => {
     // styles:
@@ -126,7 +126,7 @@ const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): J
         // handlers:
         onUpdated,
         onDeleted,
-        onEdit,
+        onEditing,
     ...restListItemProps} = props;
     const {
         id,
@@ -174,7 +174,7 @@ const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): J
     
     // handlers:
     const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async (event) => {
-        onEdit?.(event);
+        onEditing?.(event);
         
         
         

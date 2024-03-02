@@ -94,14 +94,10 @@ const TemplateVariantMenuButton = (props: DropdownListButtonProps): JSX.Element|
     
     
     // handlers:
-    const handleMenuExpandedChange = useEvent<EventHandler<DropdownListExpandedChangeEvent<any>>>(({expanded}) => {
+    const handleMenuExpandedChange       = useEvent<EventHandler<DropdownListExpandedChangeEvent<any>>>(({expanded}) => {
         setMenuExpanded(expanded);
     });
-    const handleCreateNewTemplateVariant = useEvent(async () => {
-        setMenuExpanded(false);
-        
-        
-        
+    const handleCreateNewTemplateVariant = useEvent<React.MouseEventHandler<HTMLElement>>(async (event): Promise<void> => {
         const createdModel = await showDialog<ComplexEditModelDialogResult<ProductVariantGroupDetail>>(
             <EditTemplateVariantGroupDialog
                 // data:
@@ -126,6 +122,18 @@ const TemplateVariantMenuButton = (props: DropdownListButtonProps): JSX.Element|
         
         
         console.log(createdModel);
+    });
+    const handleSelectTemplateVariant    = useEvent<React.MouseEventHandler<HTMLElement>>((event) => {
+        // conditions:
+        if (event.defaultPrevented) return; // ignores clicking by <EditButton>
+        
+        
+        
+        console.log('TODO: handle select template');
+    });
+    const handleEditingTemplateVariant   = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
+        event.preventDefault(); // prevents trigger <ListItem> => handleSelectTemplateVariant()
+        setMenuExpanded(false); // preserves the prevented default closing <DropdownMenu>
     });
     
     
@@ -188,6 +196,12 @@ const TemplateVariantMenuButton = (props: DropdownListButtonProps): JSX.Element|
                         
                         // data:
                         model={model}
+                        
+                        
+                        
+                        // handlers:
+                        onClick   = {handleSelectTemplateVariant }
+                        onEditing = {handleEditingTemplateVariant}
                     />
                 )}
             </>}
