@@ -29,9 +29,7 @@ import type {
     
     
     // react components:
-    ComplexEditModelDialogProps,
     ImplementedComplexEditModelDialogProps,
-    ComplexEditModelDialog,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
     // react components:
@@ -84,7 +82,7 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
         
         
         
-        // incompatibles:
+        // components:
         popupComponent,
         modalComponent,
         
@@ -191,6 +189,12 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
             // stores:
             isCommiting = {isLoadingUpdate}
             isDeleting  = {isLoadingDelete}
+            
+            
+            
+            // components:
+            popupComponent={popupComponent as EditProductVariantGroupDialogProps['popupComponent']}
+            modalComponent={modalComponent as EditProductVariantGroupDialogProps['modalComponent']}
             
             
             
