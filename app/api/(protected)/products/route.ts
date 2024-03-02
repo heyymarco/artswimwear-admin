@@ -764,12 +764,12 @@ You do not have the privilege to modify the product_variant visibility.`
             
             // relations:
             productVariantGroups : (productVariantGroupDiffs === undefined) ? undefined : {
-                delete : productVariantGroupDiffs.productVariantGroupDels.map((id) => ({
+                delete : !productVariantGroupDiffs.productVariantGroupDels.length ? undefined : productVariantGroupDiffs.productVariantGroupDels.map((id) => ({
                     // conditions:
                     id : id,
                 })),
                 
-                create : productVariantGroupDiffs.productVariantGroupAdds.map(({productVariantAdds, ...restProductVariantGroup}) => ({
+                create : !productVariantGroupDiffs.productVariantGroupAdds.length ? undefined : productVariantGroupDiffs.productVariantGroupAdds.map(({productVariantAdds, ...restProductVariantGroup}) => ({
                     // data:
                     ...restProductVariantGroup,
                     
@@ -779,7 +779,7 @@ You do not have the privilege to modify the product_variant visibility.`
                     },
                 })),
                 
-                update : productVariantGroupDiffs.productVariantGroupMods.map(({id, productVariantDels, productVariantAdds, productVariantMods, ...restProductVariantGroup}) => ({
+                update : !productVariantGroupDiffs.productVariantGroupMods.length ? undefined : productVariantGroupDiffs.productVariantGroupMods.map(({id, productVariantDels, productVariantAdds, productVariantMods, ...restProductVariantGroup}) => ({
                     where : {
                         // conditions:
                         id : id,
@@ -790,14 +790,14 @@ You do not have the privilege to modify the product_variant visibility.`
                         
                         // relations:
                         productVariants : {
-                            delete : productVariantDels.map((id) => ({
+                            delete : !productVariantDels.length ? undefined : productVariantDels.map((id) => ({
                                 // conditions:
                                 id : id,
                             })),
                             
-                            create : productVariantAdds,
+                            create : !productVariantAdds.length ? undefined : productVariantAdds,
                             
-                            update : productVariantMods.map(({id, ...restProductVariant}) => ({
+                            update : !productVariantMods.length ? undefined : productVariantMods.map(({id, ...restProductVariant}) => ({
                                 where : {
                                     // conditions:
                                     id: id,
