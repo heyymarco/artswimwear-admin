@@ -54,8 +54,8 @@ import type {
     VariantGroupPreviewProps,
 }                           from '@/components/views/VariantGroupPreview'
 import {
-    VariantTemplateMenuButton,
-}                           from './VariantTemplateMenuButton'
+    TemplateVariantMenuButton,
+}                           from './TemplateVariantMenuButton'
 
 // internals:
 import {
@@ -271,7 +271,7 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
                         )
                     }
                     moreButtonComponent={
-                        <VariantTemplateMenuButton />
+                        <TemplateVariantMenuButton />
                     }
                     listItemComponent={
                         <OrderableListItem

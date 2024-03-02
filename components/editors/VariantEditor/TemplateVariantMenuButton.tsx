@@ -65,7 +65,7 @@ import {
 
 
 // react components:
-const VariantTemplateMenuButton = (props: DropdownListButtonProps): JSX.Element|null => {
+const TemplateVariantMenuButton = (props: DropdownListButtonProps): JSX.Element|null => {
     // states:
     const [menuExpanded, setMenuExpanded] = useState<boolean>(false);
     const isMounted = useMountedFlag();
@@ -94,7 +94,7 @@ const VariantTemplateMenuButton = (props: DropdownListButtonProps): JSX.Element|
     const handleMenuExpandedChange = useEvent<EventHandler<DropdownListExpandedChangeEvent<any>>>(({expanded}) => {
         setMenuExpanded(expanded);
     });
-    const handleCreateNewVariantTemplate = useEvent(async () => {
+    const handleCreateNewTemplateVariant = useEvent(async () => {
         setMenuExpanded(false);
         
         
@@ -168,7 +168,7 @@ const VariantTemplateMenuButton = (props: DropdownListButtonProps): JSX.Element|
                 
                 
                 // handlers:
-                onClick={handleCreateNewVariantTemplate}
+                onClick={handleCreateNewTemplateVariant}
             >
                 Crete New Variant Template
             </ListItem>}
@@ -186,6 +186,6 @@ const VariantTemplateMenuButton = (props: DropdownListButtonProps): JSX.Element|
     );
 };
 export {
-    VariantTemplateMenuButton,
-    VariantTemplateMenuButton as default,
+    TemplateVariantMenuButton,
+    TemplateVariantMenuButton as default,
 }
