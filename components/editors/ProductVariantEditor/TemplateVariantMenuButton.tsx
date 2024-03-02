@@ -44,6 +44,9 @@ import type {
 import {
     EditTemplateVariantGroupDialog,
 }                           from '@/components/dialogs/EditTemplateVariantGroupDialog'
+import {
+    TemplateVariantGroupPreview,
+}                           from '@/components/views/TemplateVariantGroupPreview'
 
 // internals:
 import {
@@ -176,10 +179,16 @@ const TemplateVariantMenuButton = (props: DropdownListButtonProps): JSX.Element|
             {data?.ids.length && <>
                 <ListSeparatorItem />
                 
-                {Object.values(data.entities).filter((model): model is Exclude<typeof model, undefined> => !!model).map(({id, name}) =>
-                    <ListItem key={id}>
-                        {name}
-                    </ListItem>
+                {Object.values(data.entities).filter((model): model is Exclude<typeof model, undefined> => !!model).map((model) =>
+                    <TemplateVariantGroupPreview
+                        // indentifiers:
+                        key={model.id}
+                        
+                        
+                        
+                        // data:
+                        model={model}
+                    />
                 )}
             </>}
         </DropdownListButton>
