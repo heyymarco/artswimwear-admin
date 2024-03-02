@@ -87,7 +87,7 @@ import type {
 // styles:
 const useTemplateVariantGroupPreviewStyleSheet = dynamicStyleSheet(
     () => import(/* webpackPrefetch: true */'./TemplateVariantGroupPreviewStyles')
-, { specificityWeight: 2, id: 'iy5w85wh2c' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
+, { specificityWeight: 2, id: 'bt1unv97as' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 import './TemplateVariantGroupPreviewStyles';
 
 
