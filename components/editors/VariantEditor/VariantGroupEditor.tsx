@@ -27,9 +27,9 @@ import {
 import {
     // layout-components:
     ListItem,
+    ListSeparatorItem,
     
     ListProps,
-    List,
     
     
     
@@ -49,7 +49,6 @@ import {
     OrderableListItemProps,
     OrderableListItem,
     
-    OrderableListProps,
     OrderableList,
 }                           from '@heymarco/orderable-list'
 
@@ -66,7 +65,6 @@ import type {
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
     EditProductVariantGroupDialogProps,
-    EditProductVariantGroupDialog,
 }                           from '@/components/dialogs/EditProductVariantGroupDialog'
 import {
     EditTemplateVariantGroupDialog,
@@ -100,9 +98,14 @@ import {
 }                           from './states/variantState'
 
 // stores:
-import type {
+import {
     // types:
     ProductVariantGroupDetail,
+    
+    
+    
+    // hooks:
+    useGetTemplateVariantGroupList,
 }                           from '@/store/features/api/apiSlice'
 
 
@@ -159,12 +162,20 @@ const VariantTemplateMenuButton = (props: DropdownListButtonProps): JSX.Element|
                 privilegeDelete = {privilegeDelete}
             />
         );
+        if (!createdModel) return; // modal canceled => ignore
         if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
         
         
         
         console.log(createdModel);
     });
+    
+    
+    
+    // stores:
+    const getModelPaginationApi = useGetTemplateVariantGroupList();
+    const {data, isLoading: isLoadingAndNoData, isError, refetch } = getModelPaginationApi;
+    const isErrorAndNoData = isError && !data;
     
     
     
@@ -189,31 +200,34 @@ const VariantTemplateMenuButton = (props: DropdownListButtonProps): JSX.Element|
             
             // floatable:
             floatingPlacement='bottom-end'
+        >
+            <ListItem
+                // variants:
+                mild={false}
+                
+                
+                
+                // behaviors:
+                actionCtrl={true}
+                
+                
+                
+                // handlers:
+                onClick={handleCreateNewVariantTemplate}
+            >
+                Crete New Variant Template
+            </ListItem>
             
-            
-            
-            // components:
-            listComponent={
-                <OrderableList
-                >
-                    <OrderableListItem
-                        // behaviors:
-                        actionCtrl={true}
-                        orderable={false}
-                        
-                        
-                        
-                        // handlers:
-                        onClick={handleCreateNewVariantTemplate}
-                    >
-                        Crete New Variant Template
-                    </OrderableListItem>
-                    <OrderableListItem>
-                        bbb
-                    </OrderableListItem>
-                </OrderableList>
-            }
-        />
+            {data?.ids.length && <>
+                <ListSeparatorItem />
+                
+                {Object.values(data.entities).filter((model): model is Exclude<typeof model, undefined> => !!model).map(({id, name}) =>
+                    <ListItem key={id}>
+                        {name}
+                    </ListItem>
+                )}
+            </>}
+        </DropdownListButton>
     );
 };
 
