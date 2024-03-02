@@ -162,7 +162,7 @@ router
                 templateVariantsRaw.every((templateVariantRaw) =>
                     (Object.keys(templateVariantRaw).length === 7)
                     &&
-                    /* 1: */ ((typeof(templateVariantRaw.id) === 'string') && (!templateVariantRaw.id || (!!templateVariantGroupRaw.id && (templateVariantRaw.id.length <= 40))))
+                    /* 1: */ ((typeof(templateVariantRaw.id) === 'string') && ((!templateVariantRaw.id || (templateVariantRaw.id[0] === ' ')) || (!!templateVariantGroupRaw.id && (templateVariantRaw.id.length <= 40))))
                     &&
                     /* 2: */ ((typeof(templateVariantRaw.visibility) === 'string') && ['PUBLISHED', 'DRAFT'].includes(templateVariantRaw.visibility))
                     &&
@@ -397,7 +397,7 @@ You do not have the privilege to modify the template_variant visibility.`
         const data = {
             name,
             
-            templateVariant : {
+            templateVariants : {
                 delete : templateVariantDiff.templateVariantDels.map((id) => ({
                     // conditions:
                     id : id,
