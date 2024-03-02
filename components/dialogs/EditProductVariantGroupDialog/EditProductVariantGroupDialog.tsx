@@ -248,7 +248,7 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
             
             
             // data:
-            modelName={'Variant Group' ?? props.modelName}
+            modelName={props.modelName ?? 'Variant Group'}
             modelEntryName={model?.name}
             model={model}
             
