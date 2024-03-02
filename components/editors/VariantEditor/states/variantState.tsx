@@ -61,11 +61,11 @@ export interface VariantState
         VariantPrivilege,
         
         // states:
-        Pick<DraftDifferentialImagesApi,
+        Partial<Pick<DraftDifferentialImagesApi,
             // images:
             |'registerAddedImage'
             |'registerDeletedImage'
-        >
+        >>
 {
 }
 
@@ -104,11 +104,11 @@ export interface VariantStateProps
         VariantPrivilege,
         
         // states:
-        Pick<DraftDifferentialImagesApi,
+        Partial<Pick<DraftDifferentialImagesApi,
             // images:
             |'registerAddedImage'
             |'registerDeletedImage'
-        >
+        >>
 {
 }
 const VariantStateProvider = (props: React.PropsWithChildren<VariantStateProps>): JSX.Element|null => {

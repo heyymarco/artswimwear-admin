@@ -60,6 +60,7 @@ import {
 import {
     // types:
     UpdateHandler,
+    UpdateDraftHandler,
     
     ConfirmDeleteHandler,
     ConfirmUnsavedHandler,
@@ -67,6 +68,7 @@ import {
     
     
     // react components:
+    ComplexEditModelDialogProps,
     ImplementedComplexEditModelDialogProps,
     ComplexEditModelDialog,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
@@ -104,10 +106,35 @@ export interface EditProductVariantGroupDialogProps
     extends
         // bases:
         ImplementedComplexEditModelDialogProps<ProductVariantGroupDetail>,
+        Partial<Pick<ComplexEditModelDialogProps<ProductVariantGroupDetail>,
+            // data:
+            |'modelName'
+            
+            
+            
+            // stores:
+            |'isCommiting'
+            |'isReverting'
+            |'isDeleting'
+            
+            
+            
+            // handlers:
+            // |'onUpdate'
+            |'onAfterUpdate'
+            
+            |'onDelete'
+            |'onAfterDelete'
+            
+            |'onSideUpdate'
+            |'onSideDelete'
+        >>,
         
         // privileges & states:
         VariantState
 {
+    // handlers
+    onUpdate         ?: UpdateDraftHandler<ProductVariantGroupDetail>
 }
 const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps): JSX.Element|null => {
     // styles:
@@ -137,6 +164,11 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
         
         // states:
         defaultExpandedTabIndex = 0,
+        
+        
+        
+        // handlers:
+        onUpdate,
     ...restComplexEditModelDialogProps} = props;
     
     
@@ -166,20 +198,21 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
     
     // handlers:
     const handleUpdate               = useEvent<UpdateHandler<ProductVariantGroupDetail>>(async ({id, whenAdd, whenUpdate}) => {
-        return {
+        const draftModel : ProductVariantGroupDetail = {
             ...model,
+            
+            sort : model?.sort ?? 0,
             
             id   : id ?? await (async () => {
                 const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
                 return ` ${await nanoid()}`; // starts with space{random-temporary-id}
             })(),
             
-            name : (whenUpdate.description || whenAdd) ? name : model?.name,
+            name : (whenUpdate.description || whenAdd) ? name : (model?.name ?? ''),
             
-            ...((variants === unmodifiedVariants) ? null : ({
-                productVariants : variants,
-            } satisfies Partial<ProductVariantGroupDetail>)),
+            productVariants : (!!variants && (variants !== unmodifiedVariants)) ? variants : [],
         };
+        return (onUpdate !== undefined) ? onUpdate({draftModel, whenAdd, whenUpdate}) : draftModel;
     });
     
     const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<ProductVariantGroupDetail>>(({model}) => {
@@ -215,7 +248,7 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
             
             
             // data:
-            modelName='Variant Group'
+            modelName={'Variant Group' ?? props.modelName}
             modelEntryName={model?.name}
             model={model}
             

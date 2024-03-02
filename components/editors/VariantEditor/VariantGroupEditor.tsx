@@ -69,6 +69,9 @@ import {
     EditProductVariantGroupDialog,
 }                           from '@/components/dialogs/EditProductVariantGroupDialog'
 import {
+    EditTemplateVariantGroupDialog,
+}                           from '@/components/dialogs/EditTemplateVariantGroupDialog'
+import {
     ModelCreateProps,
     CreateHandler,
     ModelCreateOuterProps,
@@ -139,7 +142,7 @@ const VariantTemplateMenuButton = (props: DropdownListButtonProps): JSX.Element|
         
         
         const createdModel = await showDialog<ComplexEditModelDialogResult<ProductVariantGroupDetail>>(
-            <EditProductVariantGroupDialog
+            <EditTemplateVariantGroupDialog
                 // data:
                 model={null} // create a new model
                 

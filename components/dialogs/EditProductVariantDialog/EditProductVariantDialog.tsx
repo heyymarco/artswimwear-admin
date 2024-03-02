@@ -440,7 +440,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                     />
                 </form>
             </TabPanel>
-            <TabPanel label={PAGE_VARIANT_TAB_IMAGES}       panelComponent={<Generic className={styleSheet.imagesTab} />}>
+            {!!registerAddedImage && !!registerDeletedImage && <TabPanel label={PAGE_VARIANT_TAB_IMAGES}       panelComponent={<Generic className={styleSheet.imagesTab} />}>
                 <GalleryEditor<HTMLElement, string>
                     // variants:
                     nude={true}
@@ -504,7 +504,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
                     }}
                     onResolveImageUrl={resolveMediaUrl<never>}
                 />
-            </TabPanel>
+            </TabPanel>}
         </>}</ComplexEditModelDialog>
     );
 };
