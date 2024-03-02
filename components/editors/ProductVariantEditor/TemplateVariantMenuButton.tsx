@@ -14,7 +14,6 @@ import {
     // react helper hooks:
     useEvent,
     EventHandler,
-    useMountedFlag,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -71,7 +70,6 @@ import {
 const TemplateVariantMenuButton = (props: DropdownListButtonProps): JSX.Element|null => {
     // states:
     const [menuExpanded, setMenuExpanded] = useState<boolean>(false);
-    const isMounted = useMountedFlag();
     
     
     
@@ -98,7 +96,7 @@ const TemplateVariantMenuButton = (props: DropdownListButtonProps): JSX.Element|
         setMenuExpanded(expanded);
     });
     const handleCreateNewTemplateVariant = useEvent<React.MouseEventHandler<HTMLElement>>(async (event): Promise<void> => {
-        const createdModel = await showDialog<ComplexEditModelDialogResult<ProductVariantGroupDetail>>(
+        await showDialog<ComplexEditModelDialogResult<ProductVariantGroupDetail>>(
             <EditTemplateVariantGroupDialog
                 // data:
                 model={null} // create a new model
@@ -116,12 +114,6 @@ const TemplateVariantMenuButton = (props: DropdownListButtonProps): JSX.Element|
                 privilegeDelete = {privilegeDelete}
             />
         );
-        if (!createdModel) return; // modal canceled => ignore
-        if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
-        
-        
-        
-        console.log(createdModel);
     });
     const handleSelectTemplateVariant    = useEvent<React.MouseEventHandler<HTMLElement>>((event) => {
         // conditions:
