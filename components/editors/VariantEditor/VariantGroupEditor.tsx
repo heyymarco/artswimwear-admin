@@ -51,8 +51,8 @@ import {
     ModelEmpty,
 }                           from '@/components/explorers/PagedModelExplorer'
 import type {
-    VariantGroupPreviewProps,
-}                           from '@/components/views/VariantGroupPreview'
+    ProductVariantGroupPreviewProps,
+}                           from '@/components/views/ProductVariantGroupPreview'
 import {
     TemplateVariantMenuButton,
 }                           from './TemplateVariantMenuButton'
@@ -110,7 +110,7 @@ interface VariantGroupEditorProps<TElement extends Element = HTMLElement>
 {
     // components:
     modelCreateComponent  ?: React.ReactComponentElement<any, ModelCreateProps & EditProductVariantGroupDialogProps>
-    modelPreviewComponent  : React.ReactComponentElement<any, VariantGroupPreviewProps>
+    modelPreviewComponent  : React.ReactComponentElement<any, ProductVariantGroupPreviewProps>
 }
 const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: VariantGroupEditorProps<TElement>): JSX.Element|null => {
     // rest props:
@@ -289,7 +289,7 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
                 
                 {value.map((modelOption) =>
                     /* <ModelPreview> */
-                    React.cloneElement<VariantGroupPreviewProps>(modelPreviewComponent,
+                    React.cloneElement<ProductVariantGroupPreviewProps>(modelPreviewComponent,
                         // props:
                         {
                             // identifiers:

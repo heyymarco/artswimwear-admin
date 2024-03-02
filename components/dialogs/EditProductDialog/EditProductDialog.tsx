@@ -107,8 +107,8 @@ import {
     VariantGroupEditor,
 }                           from '@/components/editors/VariantEditor'
 import {
-    VariantGroupPreview,
-}                           from '@/components/views//VariantGroupPreview'
+    ProductVariantGroupPreview,
+}                           from '@/components/views/ProductVariantGroupPreview'
 
 // models:
 import type {
@@ -626,7 +626,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                     
                     // components:
                     modelPreviewComponent={
-                        <VariantGroupPreview
+                        <ProductVariantGroupPreview
                             // data:
                             model={undefined as any}
                         />

@@ -20,7 +20,7 @@ import {
 
 
 // styles:
-const usesVariantGroupPreviewLayout = () => { // the <ListItem> of variantGroup list
+const usesProductVariantGroupPreviewLayout = () => { // the <ListItem> of variantGroup list
     return style({
         // layouts:
         display       : 'grid',
@@ -133,5 +133,5 @@ const usesVariantGroupPreviewLayout = () => { // the <ListItem> of variantGroup 
 
 export default style({
     // layouts:
-    ...usesVariantGroupPreviewLayout(),
+    ...usesProductVariantGroupPreviewLayout(),
 });
