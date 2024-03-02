@@ -29,6 +29,7 @@ import {
 import {
     // types:
     ProductVariantGroupDetail,
+    TemplateVariantGroupDetail,
     
     
     
@@ -74,8 +75,14 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
     const handleUpdate               = useEvent<UpdateDraftHandler<ProductVariantGroupDetail>>(async ({draftModel}) => {
         const {
             sort : _sort, // remove
-            ...model
+            productVariants : templateVariants,
+            ...restProductVariantGroupDetail
         } = draftModel;
+        
+        const model : TemplateVariantGroupDetail = {
+            ...restProductVariantGroupDetail,
+            templateVariants,
+        };
         
         return await updateTemplateVariantGroup(model).unwrap();
     });
