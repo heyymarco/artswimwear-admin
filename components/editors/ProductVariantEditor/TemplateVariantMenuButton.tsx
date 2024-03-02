@@ -35,6 +35,11 @@ import {
     useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
+// heymarco components:
+import {
+    LoadingBar,
+}                           from '@heymarco/loading-bar'
+
 // internal components:
 import type {
     // types:
@@ -46,6 +51,12 @@ import {
 import {
     TemplateVariantGroupPreview,
 }                           from '@/components/views/TemplateVariantGroupPreview'
+import {
+    MessageLoading,
+}                           from '@/components/MessageLoading'
+import {
+    MessageError,
+}                           from '@/components/MessageError'
 
 // internals:
 import {
@@ -132,7 +143,13 @@ const TemplateVariantMenuButton = (props: DropdownListButtonProps): JSX.Element|
     
     // stores:
     const getModelPaginationApi = useGetTemplateVariantGroupList();
-    const {data, isLoading: isLoadingAndNoData, isError, refetch } = getModelPaginationApi;
+    const {
+        // data:
+        data,
+        isFetching,
+        isError,
+        refetch,
+    } = getModelPaginationApi;
     const isErrorAndNoData = isError && !data;
     
     
@@ -178,6 +195,14 @@ const TemplateVariantMenuButton = (props: DropdownListButtonProps): JSX.Element|
             
             {data?.ids.length && <>
                 <ListSeparatorItem />
+                
+                {isFetching && <ListItem actionCtrl={false}>
+                    <MessageLoading />
+                </ListItem>}
+                
+                {isError && <ListItem actionCtrl={false}>
+                    <MessageError onRetry={refetch} />
+                </ListItem>}
                 
                 {Object.values(data.entities).filter((model): model is Exclude<typeof model, undefined> => !!model).map((model) =>
                     <TemplateVariantGroupPreview
