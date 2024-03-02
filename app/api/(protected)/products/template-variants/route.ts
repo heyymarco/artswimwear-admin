@@ -397,6 +397,7 @@ You do not have the privilege to modify the template_variant visibility.`
         const data = {
             name,
             
+            // relations:
             templateVariants : {
                 delete : templateVariantDiff.templateVariantDels.map((id) => ({
                     // conditions:

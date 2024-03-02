@@ -762,6 +762,7 @@ You do not have the privilege to modify the product_variant visibility.`
             
             images,
             
+            // relations:
             productVariantGroups : (productVariantGroupDiffs === undefined) ? undefined : {
                 delete : productVariantGroupDiffs.productVariantGroupDels.map((id) => ({
                     // conditions:
