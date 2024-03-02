@@ -74,6 +74,7 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
     // handlers:
     const handleUpdate               = useEvent<UpdateDraftHandler<ProductVariantGroupDetail>>(async ({draftModel}) => {
         const {
+            id,
             sort : _sort, // remove
             productVariants : templateVariants,
             ...restProductVariantGroupDetail
@@ -81,6 +82,7 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
         
         const model : TemplateVariantGroupDetail = {
             ...restProductVariantGroupDetail,
+            id : (!id || (id[0] === ' ')) ? '' : id,
             templateVariants,
         };
         
