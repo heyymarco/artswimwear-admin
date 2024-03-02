@@ -105,7 +105,7 @@ import {
     
     // react components:
     ProductVariantGroupEditor,
-}                           from '@/components/editors/VariantEditor'
+}                           from '@/components/editors/ProductVariantEditor'
 import {
     ProductVariantGroupPreview,
 }                           from '@/components/views/ProductVariantGroupPreview'

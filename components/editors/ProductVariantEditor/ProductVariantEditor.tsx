@@ -69,7 +69,7 @@ import type {
 
 
 // react components:
-interface VariantEditorProps<TElement extends Element = HTMLElement>
+interface ProductVariantEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
         Pick<EditorProps<TElement, ProductVariantDetail[]>,
@@ -100,7 +100,7 @@ interface VariantEditorProps<TElement extends Element = HTMLElement>
     modelCreateComponent  ?: React.ReactComponentElement<any, ModelCreateProps & EditProductVariantDialogProps>
     modelPreviewComponent  : React.ReactComponentElement<any, ProductVariantPreviewProps>
 }
-const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEditorProps<TElement>): JSX.Element|null => {
+const ProductVariantEditor = <TElement extends Element = HTMLElement>(props: ProductVariantEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // values:
@@ -258,6 +258,6 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
     );
 };
 export {
-    VariantEditor,
-    VariantEditor as default,
+    ProductVariantEditor,
+    ProductVariantEditor as default,
 }

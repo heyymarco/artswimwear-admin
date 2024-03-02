@@ -52,8 +52,8 @@ import {
     
     // react components:
     VariantStateProvider,
-    VariantEditor,
-}                           from '@/components/editors/VariantEditor'
+    ProductVariantEditor,
+}                           from '@/components/editors/ProductVariantEditor'
 import {
     ProductVariantPreview,
 }                           from '@/components/views/ProductVariantPreview'
@@ -334,7 +334,7 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                         registerAddedImage   = {registerAddedImage  }
                         registerDeletedImage = {registerDeletedImage}
                     >
-                        <VariantEditor
+                        <ProductVariantEditor
                             // classes:
                             className='variants editor'
                             

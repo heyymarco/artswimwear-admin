@@ -59,7 +59,7 @@ import {
 import type {
     // types:
     VariantState,
-}                           from '@/components/editors/VariantEditor'
+}                           from '@/components/editors/ProductVariantEditor'
 import {
     // types:
     UpdateHandler,
