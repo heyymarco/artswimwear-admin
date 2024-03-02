@@ -78,7 +78,7 @@ import type {
 
 
 // react components:
-interface VariantGroupEditorProps<TElement extends Element = HTMLElement>
+interface ProductVariantGroupEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
         Pick<EditorProps<TElement, ProductVariantGroupDetail[]>,
@@ -112,7 +112,7 @@ interface VariantGroupEditorProps<TElement extends Element = HTMLElement>
     modelCreateComponent  ?: React.ReactComponentElement<any, ModelCreateProps & EditProductVariantGroupDialogProps>
     modelPreviewComponent  : React.ReactComponentElement<any, ProductVariantGroupPreviewProps>
 }
-const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: VariantGroupEditorProps<TElement>): JSX.Element|null => {
+const ProductVariantGroupEditor = <TElement extends Element = HTMLElement>(props: ProductVariantGroupEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // values:
@@ -313,6 +313,6 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
     );
 };
 export {
-    VariantGroupEditor,
-    VariantGroupEditor as default,
+    ProductVariantGroupEditor,
+    ProductVariantGroupEditor as default,
 }

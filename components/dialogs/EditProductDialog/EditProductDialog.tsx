@@ -104,7 +104,7 @@ import {
     
     
     // react components:
-    VariantGroupEditor,
+    ProductVariantGroupEditor,
 }                           from '@/components/editors/VariantEditor'
 import {
     ProductVariantGroupPreview,
@@ -592,7 +592,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                 </form>
             </TabPanel>
             <TabPanel label={PAGE_PRODUCT_TAB_VARIANTS}     panelComponent={<Generic className={styleSheet.variantsTab} />}>{
-                <VariantGroupEditor
+                <ProductVariantGroupEditor
                     // values:
                     value={variantGroups}
                     onChange={(value) => {
