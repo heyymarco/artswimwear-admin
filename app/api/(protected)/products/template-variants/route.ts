@@ -217,7 +217,10 @@ router
         
         
         
-        const templateVariantOris : TemplateVariantDetail[] = await prisma.templateVariant.findMany({
+        const templateVariantOris : TemplateVariantDetail[] = !id ? [] : await prisma.templateVariant.findMany({
+            where : {
+                templateVariantGroupId : id,
+            },
             select: {
                 id             : true,
                 

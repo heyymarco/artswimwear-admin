@@ -389,7 +389,10 @@ You do not have the privilege to view the products.`
         productVariantGroupMods : (Omit<ProductVariantGroupDetail,      'productVariants'> & ProductVariantDiff)[]
     }
     const productVariantGroupDiffs = (productVariantGroups === undefined) ? undefined : await (async (): Promise<ProductVariantGroupDiff> => {
-        const productVariantGroupOris : ProductVariantGroupDetail[] = await prisma.productVariantGroup.findMany({
+        const productVariantGroupOris : ProductVariantGroupDetail[] = !id ? [] : await prisma.productVariantGroup.findMany({
+            where : {
+                productId : id,
+            },
             select: {
                 id              : true,
                 
