@@ -156,7 +156,7 @@ const VariantTemplateMenuButton = (props: DropdownListButtonProps): JSX.Element|
             // floatable:
             floatingPlacement='bottom-end'
         >
-            <ListItem
+            {privilegeAdd && <ListItem
                 // variants:
                 mild={false}
                 
@@ -171,7 +171,7 @@ const VariantTemplateMenuButton = (props: DropdownListButtonProps): JSX.Element|
                 onClick={handleCreateNewVariantTemplate}
             >
                 Crete New Variant Template
-            </ListItem>
+            </ListItem>}
             
             {data?.ids.length && <>
                 <ListSeparatorItem />
