@@ -56,7 +56,7 @@ import {
 }                           from '@/components/editors/VariantEditor'
 import {
     VariantPreview,
-}                           from '@/components/views//VariantPreview'
+}                           from '@/components/views/VariantPreview'
 import {
     // types:
     UpdateHandler,

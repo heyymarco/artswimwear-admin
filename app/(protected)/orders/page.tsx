@@ -39,7 +39,7 @@ import {
 }                           from '@/components/explorers/PagedModelExplorer'
 import {
     OrderPreview,
-}                           from '@/components/views//OrderPreview'
+}                           from '@/components/views/OrderPreview'
 
 // stores:
 import {

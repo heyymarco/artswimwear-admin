@@ -47,7 +47,7 @@ import {
 }                           from '@/components/dialogs/EditProductDialog'
 import {
     ProductPreview,
-}                           from '@/components/views//ProductPreview'
+}                           from '@/components/views/ProductPreview'
 
 // stores:
 import {

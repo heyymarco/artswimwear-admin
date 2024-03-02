@@ -47,7 +47,7 @@ import {
 }                           from '@/components/dialogs/EditUserDialog'
 import {
     UserPreview,
-}                           from '@/components/views//UserPreview'
+}                           from '@/components/views/UserPreview'
 
 // stores:
 import {

@@ -93,7 +93,7 @@ import {
 }                           from '@/components/dialogs/EditRoleDialog'
 import {
     RolePreview,
-}                           from '@/components/views//RolePreview'
+}                           from '@/components/views/RolePreview'
 
 // stores:
 import {
