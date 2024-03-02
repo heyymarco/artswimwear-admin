@@ -14,7 +14,7 @@ import {
 
 
 // styles:
-const usesVariantPreviewLayout = () => { // the <ListItem> of variant list
+const usesProductVariantPreviewLayout = () => { // the <ListItem> of variant list
     return style({
         // layouts:
         display       : 'grid',
@@ -65,5 +65,5 @@ const usesVariantPreviewLayout = () => { // the <ListItem> of variant list
 
 export default style({
     // layouts:
-    ...usesVariantPreviewLayout(),
+    ...usesProductVariantPreviewLayout(),
 });

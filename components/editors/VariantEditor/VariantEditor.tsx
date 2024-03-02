@@ -51,8 +51,8 @@ import {
     ModelEmpty,
 }                           from '@/components/explorers/PagedModelExplorer'
 import type {
-    VariantPreviewProps,
-}                           from '@/components/views/VariantPreview'
+    ProductVariantPreviewProps,
+}                           from '@/components/views/ProductVariantPreview'
 
 // internals:
 import {
@@ -98,7 +98,7 @@ interface VariantEditorProps<TElement extends Element = HTMLElement>
 {
     // components:
     modelCreateComponent  ?: React.ReactComponentElement<any, ModelCreateProps & EditProductVariantDialogProps>
-    modelPreviewComponent  : React.ReactComponentElement<any, VariantPreviewProps>
+    modelPreviewComponent  : React.ReactComponentElement<any, ProductVariantPreviewProps>
 }
 const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEditorProps<TElement>): JSX.Element|null => {
     // rest props:
@@ -235,7 +235,7 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
             
             {value.map((modelOption) =>
                 /* <ModelPreview> */
-                React.cloneElement<VariantPreviewProps>(modelPreviewComponent,
+                React.cloneElement<ProductVariantPreviewProps>(modelPreviewComponent,
                     // props:
                     {
                         // identifiers:

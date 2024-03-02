@@ -85,10 +85,10 @@ import type {
 
 
 // styles:
-const useVariantPreviewStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */'./VariantPreviewStyles')
+const useProductVariantPreviewStyleSheet = dynamicStyleSheet(
+    () => import(/* webpackPrefetch: true */'./ProductVariantPreviewStyles')
 , { specificityWeight: 2, id: 'ksusgysqhs' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
-import './VariantPreviewStyles';
+import './ProductVariantPreviewStyles';
 
 
 
@@ -100,7 +100,7 @@ const handleOrderStart = (event: OrderableListItemDragStartEvent<HTMLElement>): 
 
 
 // react components:
-export interface VariantPreviewProps
+export interface ProductVariantPreviewProps
     extends
         // bases:
         Omit<ModelPreviewProps<ProductVariantDetail>,
@@ -112,9 +112,9 @@ export interface VariantPreviewProps
     onUpdated     ?: UpdatedHandler<ProductVariantDetail>
     onDeleted     ?: DeleteHandler<ProductVariantDetail>
 }
-const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
+const ProductVariantPreview = (props: ProductVariantPreviewProps): JSX.Element|null => {
     // styles:
-    const styleSheet = useVariantPreviewStyleSheet();
+    const styleSheet = useProductVariantPreviewStyleSheet();
     
     
     
@@ -247,6 +247,6 @@ const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
     );
 };
 export {
-    VariantPreview,
-    VariantPreview as default,
+    ProductVariantPreview,
+    ProductVariantPreview as default,
 }

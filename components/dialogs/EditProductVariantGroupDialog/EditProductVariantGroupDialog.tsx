@@ -55,8 +55,8 @@ import {
     VariantEditor,
 }                           from '@/components/editors/VariantEditor'
 import {
-    VariantPreview,
-}                           from '@/components/views/VariantPreview'
+    ProductVariantPreview,
+}                           from '@/components/views/ProductVariantPreview'
 import {
     // types:
     UpdateHandler,
@@ -351,7 +351,7 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                             
                             // components:
                             modelPreviewComponent={
-                                <VariantPreview
+                                <ProductVariantPreview
                                     // data:
                                     model={undefined as any}
                                 />
