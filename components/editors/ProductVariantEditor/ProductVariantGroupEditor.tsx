@@ -271,7 +271,10 @@ const ProductVariantGroupEditor = <TElement extends Element = HTMLElement>(props
                         )
                     }
                     moreButtonComponent={
-                        <TemplateVariantMenuButton />
+                        <TemplateVariantMenuButton
+                            // handlers:
+                            onPaste={handleModelCreated}
+                        />
                     }
                     listItemComponent={
                         <OrderableListItem

@@ -67,10 +67,17 @@ import {
     useVariantState,
 }                           from '@/components/editors/ProductVariantEditor/states/variantState'
 
+// others:
+import {
+    customAlphabet,
+}                           from 'nanoid/async'
+
 // stores:
 import {
     // types:
     ProductVariantGroupDetail,
+    TemplateVariantGroupDetail,
+    TemplateVariantDetail,
     
     
     
@@ -81,7 +88,26 @@ import {
 
 
 // react components:
-const TemplateVariantMenuButton = (props: DropdownListButtonProps): JSX.Element|null => {
+export interface TemplateVariantMenuButtonProps
+    extends
+        // bases:
+        Omit<DropdownListButtonProps,
+            // handlers:
+            |'onPaste'
+        >
+{
+    // handlers:
+    onPaste ?: (newModel : ProductVariantGroupDetail) => void
+}
+const TemplateVariantMenuButton = (props: TemplateVariantMenuButtonProps): JSX.Element|null => {
+    // props:
+    const {
+        // handlers:
+        onPaste,
+    ...restDropdownListButtonProps} = props;
+    
+    
+    
     // styles:
     const styleSheet = useTemplateVariantMenuButtonStyleSheet();
     
@@ -134,13 +160,35 @@ const TemplateVariantMenuButton = (props: DropdownListButtonProps): JSX.Element|
             />
         );
     });
-    const handleSelectTemplateVariant    = useEvent<React.MouseEventHandler<HTMLElement>>((event) => {
+    const handleSelectTemplateVariant    = useEvent(async (event: React.MouseEvent<HTMLElement, MouseEvent>, templateVariantGroupDetail: TemplateVariantGroupDetail) => {
         // conditions:
         if (event.defaultPrevented) return; // ignores clicking by <EditButton>
+        if (!onPaste) return; // the `onPaste()` handler is not assigned => ignore
         
         
+        const {
+            // @ts-ignore
+            productVariants  : productVariantsExist,
+            templateVariants : productVariants = productVariantsExist,
+            ...restTemplateVariantGroupDetail
+        } = templateVariantGroupDetail;
         
-        console.log('TODO: handle select template');
+        const productVariantGroupDetail : ProductVariantGroupDetail = {
+            ...restTemplateVariantGroupDetail,
+            id   : await (async () => {
+                const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
+                return ` ${await nanoid()}`; // starts with space{random-temporary-id}
+            })(),
+            sort : 0,
+            productVariants : await Promise.all((productVariants as TemplateVariantDetail[]).map(async ({id, ...restProductVariant}) => ({
+                ...restProductVariant,
+                id   : await (async () => {
+                    const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
+                    return ` ${await nanoid()}`; // starts with space{random-temporary-id}
+                })(),
+            }))),
+        };
+        onPaste(productVariantGroupDetail);
     });
     const handleEditingTemplateVariant   = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
         event.preventDefault(); // prevents trigger <ListItem> => handleSelectTemplateVariant()
@@ -159,6 +207,7 @@ const TemplateVariantMenuButton = (props: DropdownListButtonProps): JSX.Element|
         refetch,
     } = getModelPaginationApi;
     const isErrorAndNoData = isError && !data;
+    const modelList = !data?.ids.length ? undefined : Object.values(data.entities).filter((model): model is Exclude<typeof model, undefined> => !!model);
     
     
     
@@ -166,7 +215,7 @@ const TemplateVariantMenuButton = (props: DropdownListButtonProps): JSX.Element|
     return (
         <DropdownListButton
             // other props:
-            {...props}
+            {...restDropdownListButtonProps}
             
             
             
@@ -237,7 +286,7 @@ const TemplateVariantMenuButton = (props: DropdownListButtonProps): JSX.Element|
                 <MessageError onRetry={refetch} />
             </ListItem>}
             
-            {data?.ids.length && Object.values(data.entities).filter((model): model is Exclude<typeof model, undefined> => !!model).map((model) =>
+            {modelList?.map((model) =>
                 <TemplateVariantGroupPreview
                     // indentifiers:
                     key={model.id}
@@ -250,7 +299,7 @@ const TemplateVariantMenuButton = (props: DropdownListButtonProps): JSX.Element|
                     
                     
                     // handlers:
-                    onClick   = {handleSelectTemplateVariant }
+                    onClick   = {(event) => handleSelectTemplateVariant(event, model)}
                     onEditing = {handleEditingTemplateVariant}
                 />
             )}
