@@ -160,54 +160,9 @@ const TemplateVariantMenuButton = (props: TemplateVariantMenuButtonProps): JSX.E
             />
         );
     });
-    const handleSelectTemplateVariant    = useEvent(async (event: React.MouseEvent<HTMLElement, MouseEvent>, templateVariantGroupDetail: TemplateVariantGroupDetail) => {
-        // conditions:
-        if (event.defaultPrevented) return; // ignores clicking by <EditButton>
-        if (!onPaste) return; // the `onPaste()` handler is not assigned => ignore
-        
-        
-        const {
-            // @ts-ignore
-            productVariants  : productVariantsExist,
-            templateVariants : productVariants = productVariantsExist,
-            ...restTemplateVariantGroupDetail
-        } = templateVariantGroupDetail;
-        
-        const productVariantGroupDetail : ProductVariantGroupDetail = {
-            ...restTemplateVariantGroupDetail,
-            id   : await (async () => {
-                const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
-                return ` ${await nanoid()}`; // starts with space{random-temporary-id}
-            })(),
-            sort : 0,
-            productVariants : await Promise.all((productVariants as TemplateVariantDetail[]).map(async ({id, ...restProductVariant}) => ({
-                ...restProductVariant,
-                id   : await (async () => {
-                    const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
-                    return ` ${await nanoid()}`; // starts with space{random-temporary-id}
-                })(),
-            }))),
-        };
-        onPaste(productVariantGroupDetail);
+    const handleMenuClose                = useEvent((): void => {
+        setMenuExpanded(false);
     });
-    const handleEditingTemplateVariant   = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
-        event.preventDefault(); // prevents trigger <ListItem> => handleSelectTemplateVariant()
-        setMenuExpanded(false); // preserves the prevented default closing <DropdownMenu>
-    });
-    
-    
-    
-    // stores:
-    const getModelPaginationApi = useGetTemplateVariantGroupList();
-    const {
-        // data:
-        data,
-        isLoading: isLoadingAndNoData,
-        isError,
-        refetch,
-    } = getModelPaginationApi;
-    const isErrorAndNoData = isError && !data;
-    const modelList = !data?.ids.length ? undefined : Object.values(data.entities).filter((model): model is Exclude<typeof model, undefined> => !!model);
     
     
     
@@ -221,6 +176,11 @@ const TemplateVariantMenuButton = (props: TemplateVariantMenuButtonProps): JSX.E
             
             // variants:
             theme='primary'
+            
+            
+            
+            // behaviors:
+            lazy={true}
             
             
             
@@ -257,6 +217,96 @@ const TemplateVariantMenuButton = (props: TemplateVariantMenuButtonProps): JSX.E
             
             <ListSeparatorItem />
             
+            <TemplateVariantMenuItems
+                // handlers:
+                onPaste={onPaste}
+                onClose={handleMenuClose}
+            />
+        </DropdownListButton>
+    );
+};
+export {
+    TemplateVariantMenuButton,
+    TemplateVariantMenuButton as default,
+}
+
+
+
+interface TemplateVariantMenuItemsProps {
+    // handlers:
+    onPaste ?: (newModel : ProductVariantGroupDetail) => void
+    onClose ?: () => void
+}
+const TemplateVariantMenuItems = (props: TemplateVariantMenuItemsProps): JSX.Element|null => {
+    // props:
+    const {
+        // handlers:
+        onPaste,
+        onClose,
+    } = props;
+    
+    
+    
+    // styles:
+    const styleSheet = useTemplateVariantMenuButtonStyleSheet();
+    
+    
+    
+    // handlers:
+    const handleSelectTemplateVariant    = useEvent(async (event: React.MouseEvent<HTMLElement, MouseEvent>, templateVariantGroupDetail: TemplateVariantGroupDetail) => {
+        // conditions:
+        if (event.defaultPrevented) return; // ignores clicking by <EditButton>
+        if (!onPaste) return; // the `onPaste()` handler is not assigned => ignore
+        
+        
+        const {
+            // @ts-ignore
+            productVariants  : productVariantsExist,
+            templateVariants : productVariants = productVariantsExist,
+            ...restTemplateVariantGroupDetail
+        } = templateVariantGroupDetail;
+        
+        const productVariantGroupDetail : ProductVariantGroupDetail = {
+            ...restTemplateVariantGroupDetail,
+            id   : await (async () => {
+                const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
+                return ` ${await nanoid()}`; // starts with space{random-temporary-id}
+            })(),
+            sort : 0,
+            productVariants : await Promise.all((productVariants as TemplateVariantDetail[]).map(async ({id, ...restProductVariant}) => ({
+                ...restProductVariant,
+                id   : await (async () => {
+                    const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
+                    return ` ${await nanoid()}`; // starts with space{random-temporary-id}
+                })(),
+            }))),
+        };
+        onPaste(productVariantGroupDetail);
+    });
+    const handleEditingTemplateVariant   = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
+        event.preventDefault(); // prevents trigger <ListItem> => handleSelectTemplateVariant()
+        onClose?.();            // preserves the prevented default closing <DropdownMenu>
+    });
+    
+    
+    
+    // stores:
+    const getModelPaginationApi = useGetTemplateVariantGroupList();
+    const {
+        // data:
+        data,
+        isLoading: isLoadingAndNoData,
+        isError,
+        refetch,
+    } = getModelPaginationApi;
+    const isErrorAndNoData = isError && !data;
+    const modelList = !data?.ids.length ? undefined : Object.values(data.entities).filter((model): model is Exclude<typeof model, undefined> => !!model);
+    
+    
+    
+    // jsx:
+    return (
+        <>
             {isLoadingAndNoData && <ListItem
                 // classes:
                 className={styleSheet.loadingModel}
@@ -303,10 +353,6 @@ const TemplateVariantMenuButton = (props: TemplateVariantMenuButtonProps): JSX.E
                     onEditing = {handleEditingTemplateVariant}
                 />
             )}
-        </DropdownListButton>
+        </>
     );
-};
-export {
-    TemplateVariantMenuButton,
-    TemplateVariantMenuButton as default,
 }
