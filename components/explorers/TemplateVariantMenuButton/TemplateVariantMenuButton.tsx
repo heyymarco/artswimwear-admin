@@ -256,7 +256,8 @@ const TemplateVariantMenuItems = (props: TemplateVariantMenuItemsProps): JSX.Ele
     const handleSelectTemplateVariant    = useEvent(async (event: React.MouseEvent<HTMLElement, MouseEvent>, templateVariantGroupDetail: TemplateVariantGroupDetail) => {
         // conditions:
         if (event.defaultPrevented) return; // ignores clicking by <EditButton>
-        if (!onPaste) return; // the `onPaste()` handler is not assigned => ignore
+        onClose?.();                        // preserves the prevented default closing <DropdownMenu>
+        if (!onPaste) return;               // the `onPaste()` handler is not assigned => ignore
         
         
         const {
@@ -345,6 +346,11 @@ const TemplateVariantMenuItems = (props: TemplateVariantMenuItemsProps): JSX.Ele
                     
                     // data:
                     model={model}
+                    
+                    
+                    
+                    // behaviors:
+                    actionCtrl={true}
                     
                     
                     
