@@ -90,7 +90,30 @@ router
     return await next();
 })
 .get(async (req) => {
-    /* required for constraining the privileges */
+    /* required for displaying templates page */
+    
+    
+    
+    if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
+        await new Promise<void>((resolve) => {
+            setTimeout(() => {
+                resolve();
+            }, 2000);
+        });
+    } // if
+    
+    // throw '';
+    // return NextResponse.json({ message: 'not found'    }, { status: 400 }); // handled with error
+    // return NextResponse.json({ message: 'server error' }, { status: 500 }); // handled with error
+    
+    //#region validating privileges
+    const session = (req as any).session as Session;
+    if (!session.role?.product_r) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to view the template_variant.`
+    }, { status: 403 }); // handled with error: forbidden
+    //#endregion validating privileges
     
     
     

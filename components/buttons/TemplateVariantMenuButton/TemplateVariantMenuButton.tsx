@@ -60,6 +60,9 @@ import {
 
 // internals:
 import {
+    useTemplateVariantMenuButtonStyleSheet,
+}                           from './styles/loader'
+import {
     // states:
     useVariantState,
 }                           from '@/components/editors/ProductVariantEditor/states/variantState'
@@ -79,6 +82,11 @@ import {
 
 // react components:
 const TemplateVariantMenuButton = (props: DropdownListButtonProps): JSX.Element|null => {
+    // styles:
+    const styleSheet = useTemplateVariantMenuButtonStyleSheet();
+    
+    
+    
     // states:
     const [menuExpanded, setMenuExpanded] = useState<boolean>(false);
     
@@ -146,7 +154,7 @@ const TemplateVariantMenuButton = (props: DropdownListButtonProps): JSX.Element|
     const {
         // data:
         data,
-        isFetching,
+        isLoading: isLoadingAndNoData,
         isError,
         refetch,
     } = getModelPaginationApi;
@@ -182,6 +190,11 @@ const TemplateVariantMenuButton = (props: DropdownListButtonProps): JSX.Element|
                 
                 
                 
+                // classes:
+                className={styleSheet.createModel}
+                
+                
+                
                 // behaviors:
                 actionCtrl={true}
                 
@@ -190,38 +203,57 @@ const TemplateVariantMenuButton = (props: DropdownListButtonProps): JSX.Element|
                 // handlers:
                 onClick={handleCreateNewTemplateVariant}
             >
-                Crete New Variant Template
+                <p>Crete New Variant Template</p>
             </ListItem>}
             
-            {data?.ids.length && <>
-                <ListSeparatorItem />
+            <ListSeparatorItem />
+            
+            {isLoadingAndNoData && <ListItem
+                // classes:
+                className={styleSheet.loadingModel}
                 
-                {isFetching && <ListItem actionCtrl={false}>
-                    <MessageLoading />
-                </ListItem>}
                 
-                {isError && <ListItem actionCtrl={false}>
-                    <MessageError onRetry={refetch} />
-                </ListItem>}
                 
-                {Object.values(data.entities).filter((model): model is Exclude<typeof model, undefined> => !!model).map((model) =>
-                    <TemplateVariantGroupPreview
-                        // indentifiers:
-                        key={model.id}
-                        
-                        
-                        
-                        // data:
-                        model={model}
-                        
-                        
-                        
-                        // handlers:
-                        onClick   = {handleSelectTemplateVariant }
-                        onEditing = {handleEditingTemplateVariant}
-                    />
-                )}
-            </>}
+                // behaviors:
+                actionCtrl={false}
+            >
+                <MessageLoading />
+            </ListItem>}
+            
+            {isErrorAndNoData && <ListItem
+                // variants:
+                theme='danger'
+                
+                
+                
+                // classes:
+                className={styleSheet.errorModel}
+                
+                
+                
+                // behaviors:
+                actionCtrl={false}
+            >
+                <MessageError onRetry={refetch} />
+            </ListItem>}
+            
+            {data?.ids.length && Object.values(data.entities).filter((model): model is Exclude<typeof model, undefined> => !!model).map((model) =>
+                <TemplateVariantGroupPreview
+                    // indentifiers:
+                    key={model.id}
+                    
+                    
+                    
+                    // data:
+                    model={model}
+                    
+                    
+                    
+                    // handlers:
+                    onClick   = {handleSelectTemplateVariant }
+                    onEditing = {handleEditingTemplateVariant}
+                />
+            )}
         </DropdownListButton>
     );
 };
