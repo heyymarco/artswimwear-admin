@@ -62,7 +62,7 @@ import {
 import {
     // states:
     useVariantState,
-}                           from './states/variantState'
+}                           from '@/components/editors/ProductVariantEditor/states/variantState'
 
 // stores:
 import {

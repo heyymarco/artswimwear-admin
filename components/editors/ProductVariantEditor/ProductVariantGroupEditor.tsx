@@ -55,7 +55,7 @@ import type {
 }                           from '@/components/views/ProductVariantGroupPreview'
 import {
     TemplateVariantMenuButton,
-}                           from './TemplateVariantMenuButton'
+}                           from '@/components/buttons/TemplateVariantMenuButton'
 
 // internals:
 import {
