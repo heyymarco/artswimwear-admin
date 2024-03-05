@@ -3,7 +3,13 @@ import type {
     ProductVariant,
     ProductVariantGroup,
     Product,
+    Stock,
 }                           from '@prisma/client'
+
+// ORMs:
+import {
+    prisma,
+}                           from '@/libs/prisma.server'
 
 
 
@@ -582,7 +588,7 @@ const test = (async () => {
         variantIds : string[]
     }
     type ProductVariantUpd = Pick<ProductVariantUpdated, 'productVariantAdds'> & Partial<Pick<ProductVariantUpdated, 'productVariantMods'>>
-    const expandStockInfo = (productVariantUpds : ProductVariantUpd[], index: number, baseStockInfo: StockInfo, expandedStockInfos: StockInfo[]): void => {
+    const expandStockInfo = async (productVariantUpds : ProductVariantUpd[], index: number, currentStocks: Pick<Stock, 'value'|'productVariantIds'>[], baseStockInfo: StockInfo, expandedStockInfos: StockInfo[]): Promise<void> => {
         const productVariantUpd = productVariantUpds[index];
         if (!productVariantUpd) { // end of variantGroup(s) => resolved as current `baseStockInfo`
             expandedStockInfos.push(baseStockInfo);
@@ -593,23 +599,73 @@ const test = (async () => {
         
         // recursively expands:
         
+        const baseVariantIds = baseStockInfo.variantIds;
+        
         if (productVariantUpd.productVariantMods) {
+            const currentStock = (
+                currentStocks
+                .find(({productVariantIds}) =>
+                    (productVariantIds.length === baseVariantIds.length)
+                    &&
+                    productVariantIds.every((idA) => baseVariantIds.includes(idA))
+                    &&
+                    baseVariantIds.every((idB) => productVariantIds.includes(idB))
+                )
+                ?.value
+            );
+            
             for (const productVariantMod of productVariantUpd.productVariantMods) {
-                expandStockInfo(productVariantUpds, index + 1, /* baseStockInfo: */{ stock: baseStockInfo.stock, variantIds: [...baseStockInfo.variantIds, productVariantMod.name] }, expandedStockInfos);
+                await expandStockInfo(
+                    productVariantUpds,
+                    index + 1,
+                    currentStocks,
+                    /* baseStockInfo: */{
+                        stock      : (
+                            ((currentStock !== undefined) && (productVariantMod === productVariantUpd.productVariantMods[0]))
+                            ? currentStock
+                            : null
+                        ),
+                        variantIds : [...baseVariantIds, productVariantMod.name],
+                    },
+                    expandedStockInfos
+                );
             } // for
         } // if
         
         for (const productVariantAdd of productVariantUpd.productVariantAdds) {
-            expandStockInfo(productVariantUpds, index + 1, /* baseStockInfo: */{ stock: null, variantIds: [...baseStockInfo.variantIds, productVariantAdd.name] }, expandedStockInfos);
+            await expandStockInfo(
+                productVariantUpds,
+                index + 1,
+                currentStocks,
+                /* baseStockInfo: */{
+                    stock      : null,
+                    variantIds : [...baseVariantIds, productVariantAdd.name],
+                },
+                expandedStockInfos
+            );
         } // for
     }
     const productVariantUpds : ProductVariantUpd[] = [
         ...productVariantGroupUpdated.productVariantGroupMods,
         ...productVariantGroupUpdated.productVariantGroupAdds,
     ];
+    const currentStocks = await prisma.stock.findMany({
+        where  : {
+            productId : productDetail.id,
+        },
+        select : {
+            value             : true,
+            productVariantIds : true,
+        },
+    });
+    
     const expandedStockInfos: StockInfo[] = [];
-    expandStockInfo(productVariantUpds, 0, /* baseStockInfo: */{ stock: null, variantIds: [] }, expandedStockInfos);
-    console.log(expandedStockInfos);
+    await expandStockInfo(productVariantUpds, 0, currentStocks, /* baseStockInfo: */{ stock: 99, variantIds: [] }, expandedStockInfos);
+    
+    const expandedStockInfosEmpty: StockInfo[] = [];
+    await expandStockInfo([], 0, currentStocks, /* baseStockInfo: */{ stock: 99, variantIds: [] }, expandedStockInfosEmpty);
+    
+    console.log(expandedStockInfos, expandedStockInfosEmpty);
 });
 
 Bun.serve({
