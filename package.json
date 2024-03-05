@@ -49,6 +49,7 @@
     "typescript": "^5.0.3"
   },
   "devDependencies": {
+    "@types/bun": "^1.0.8",
     "prisma": "^5.0.0"
   }
 }
