@@ -1000,8 +1000,9 @@ You do not have the privilege to modify the product_variant visibility.`
                                 currentVariantIds.every((idB) => productVariantIds.includes(idB))
                             )
                             ?.value
+                            ??
+                            null
                         );
-                        console.log('currentStock', currentStock);
                         
                         
                         
@@ -1010,11 +1011,7 @@ You do not have the privilege to modify the product_variant visibility.`
                             index + 1,
                             currentStocks,
                             /* baseStockInfo: */{
-                                stock      : (
-                                    ((currentStock !== undefined) && (productVariantMod === productVariantUpd.productVariantMods[0]))
-                                    ? currentStock
-                                    : null
-                                ),
+                                stock      : currentStock,
                                 variantIds : currentVariantIds,
                             },
                             expandedStockInfos
@@ -1032,7 +1029,11 @@ You do not have the privilege to modify the product_variant visibility.`
                         index + 1,
                         currentStocks,
                         /* baseStockInfo: */{
-                            stock      : null,
+                            stock      : (
+                                (productVariantAdd === productVariantUpd.productVariantAdds[0])
+                                ? baseStockInfo.stock
+                                : null
+                            ),
                             variantIds : currentVariantIds,
                         },
                         expandedStockInfos

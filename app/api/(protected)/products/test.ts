@@ -613,9 +613,9 @@ const test = (async () => {
                         currentVariantIds.every((idB) => productVariantIds.includes(idB))
                     )
                     ?.value
+                    ??
+                    null
                 );
-                console.log('currentVariantIds', currentVariantIds);
-                console.log('currentStock', currentStock);
                 
                 
                 
@@ -624,11 +624,7 @@ const test = (async () => {
                     index + 1,
                     currentStocks,
                     /* baseStockInfo: */{
-                        stock      : (
-                            ((currentStock !== undefined) && (productVariantMod === productVariantUpd.productVariantMods[0]))
-                            ? currentStock
-                            : null
-                        ),
+                        stock      : currentStock,
                         variantIds : currentVariantIds,
                     },
                     expandedStockInfos
@@ -646,7 +642,11 @@ const test = (async () => {
                 index + 1,
                 currentStocks,
                 /* baseStockInfo: */{
-                    stock      : null,
+                    stock      : (
+                        (productVariantAdd === productVariantUpd.productVariantAdds[0])
+                        ? baseStockInfo.stock
+                        : null
+                    ),
                     variantIds : currentVariantIds,
                 },
                 expandedStockInfos
