@@ -45,6 +45,9 @@ export const usesInfoTabLayout = () => {
                 '"name-label       "', 'auto',
                 '"name-editor      "', 'auto',
                 '"................."', spacers.sm,
+                '"hasStock-label   "', 'auto',
+                '"hasStock-editor  "', 'auto',
+                '"................."', spacers.sm,
                 '"variants-label   "', 'auto',
                 '"variants-editor  "', 'auto',
                 '/',
@@ -54,6 +57,9 @@ export const usesInfoTabLayout = () => {
                 gridTemplate   : [[
                     '"name-label               name-label"', 'auto',
                     '"name-editor             name-editor"', 'auto',
+                    '"................. ................."', spacers.sm,
+                    '"hasStock-label       hasStock-label"', 'auto',
+                    '"hasStock-editor     hasStock-editor"', 'auto',
                     '"................. ................."', spacers.sm,
                     '"variants-label       variants-label"', 'auto',
                     '"variants-editor     variants-editor"', 'auto',
@@ -73,6 +79,9 @@ export const usesInfoTabLayout = () => {
             // children:
             ...children('.name.label'       , { gridArea: 'name-label'        }),
             ...children('.name.editor'      , { gridArea: 'name-editor'       }),
+            
+            ...children('.hasStock.label'   , { gridArea: 'hasStock-label'    }),
+            ...children('.hasStock.editor'  , { gridArea: 'hasStock-editor'   }),
             
             ...children('.variants.label'   , { gridArea: 'variants-label'    }),
             ...children('.variants.editor'  , { gridArea: 'variants-editor'   }),

@@ -220,13 +220,14 @@ You do not have the privilege to view the products.`
                 
                 productVariantGroups : {
                     select: {
-                        id              : true,
+                        id                 : true,
                         
-                        sort            : true,
+                        sort               : true,
                         
-                        name            : true,
+                        name               : true,
+                        hasDedicatedStocks : true,
                         
-                        productVariants : {
+                        productVariants    : {
                             select: {
                                 id             : true,
                                 
@@ -323,7 +324,7 @@ You do not have the privilege to view the products.`
             !productVariantGroupsRaw.every((productVariantGroupRaw) =>
                 (typeof(productVariantGroupRaw) === 'object')
                 &&
-                (Object.keys(productVariantGroupRaw).length === 4)
+                (Object.keys(productVariantGroupRaw).length === 5)
                 &&
                 /* 1: */ ((typeof(productVariantGroupRaw.id) === 'string') && ((!productVariantGroupRaw.id || (productVariantGroupRaw.id[0] === ' ')) || (!!id && (productVariantGroupRaw.id.length <= 40))))
                 &&
@@ -331,7 +332,9 @@ You do not have the privilege to view the products.`
                 &&
                 /* 3: */ ((typeof(productVariantGroupRaw.name) === 'string') && !!productVariantGroupRaw.name)
                 &&
-                /* 4: */ ((): boolean => {
+                /* 4: */ (typeof(productVariantGroupRaw.hasDedicatedStocks) === 'boolean')
+                &&
+                /* 5: */ ((): boolean => {
                     const {productVariants: productVariantsRaw} = productVariantGroupRaw;
                     return (
                         Array.isArray(productVariantsRaw)
@@ -397,13 +400,14 @@ You do not have the privilege to view the products.`
                         productId : id,
                     },
                     select: {
-                        id              : true,
+                        id                 : true,
                         
-                        sort            : true,
+                        sort               : true,
                         
-                        name            : true,
+                        name               : true,
+                        hasDedicatedStocks : true,
                         
-                        productVariants : {
+                        productVariants    : {
                             select: {
                                 id             : true,
                                 
@@ -834,13 +838,14 @@ You do not have the privilege to modify the product_variant visibility.`
                 
                 productVariantGroups : {
                     select: {
-                        id              : true,
+                        id                 : true,
                         
-                        sort            : true,
+                        sort               : true,
                         
-                        name            : true,
+                        name               : true,
+                        hasDedicatedStocks : true,
                         
-                        productVariants : {
+                        productVariants    : {
                             select: {
                                 id             : true,
                                 

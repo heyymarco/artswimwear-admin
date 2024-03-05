@@ -120,11 +120,12 @@ You do not have the privilege to view the template_variant.`
     const templateVariantGroupDetails : TemplateVariantGroupDetail[] = (
         (await prisma.templateVariantGroup.findMany({
             select: {
-                id              : true,
+                id                 : true,
                 
-                name            : true,
+                name               : true,
+                hasDedicatedStocks : true,
                 
-                templateVariants : {
+                templateVariants   : {
                     select: {
                         id             : true,
                         
@@ -142,7 +143,7 @@ You do not have the privilege to view the template_variant.`
                 },
             },
             orderBy : {
-                createdAt: 'asc',
+                createdAt: 'desc',
             },
         }))
     );
@@ -171,13 +172,15 @@ You do not have the privilege to view the template_variant.`
     if (!(
         (typeof(templateVariantGroupRaw) === 'object')
         &&
-        (Object.keys(templateVariantGroupRaw).length === 3)
+        (Object.keys(templateVariantGroupRaw).length === 4)
         &&
         /* 1: */ ((typeof(templateVariantGroupRaw.id) === 'string') && (!templateVariantGroupRaw.id || (templateVariantGroupRaw.id.length <= 40)))
         &&
         /* 2: */ ((typeof(templateVariantGroupRaw.name) === 'string') && !!templateVariantGroupRaw.name)
         &&
-        /* 3: */ ((): boolean => {
+        /* 3: */ (typeof(templateVariantGroupRaw.hasDedicatedStocks) === 'boolean')
+        &&
+        /* 4: */ ((): boolean => {
             const {templateVariants: templateVariantsRaw} = templateVariantGroupRaw;
             return (
                 Array.isArray(templateVariantsRaw)
@@ -224,6 +227,7 @@ You do not have the privilege to view the template_variant.`
     const {
         id,
         name,
+        hasDedicatedStocks,
     } = templateVariantGroup;
     
     interface TemplateVariantDiff {
@@ -422,6 +426,7 @@ You do not have the privilege to modify the template_variant visibility.`
     try {
         const data = {
             name,
+            hasDedicatedStocks,
             
             // relations:
             templateVariants : {
@@ -442,11 +447,12 @@ You do not have the privilege to modify the template_variant visibility.`
             },
         };
         const select = {
-            id             : true,
+            id                 : true,
             
-            name           : true,
+            name               : true,
+            hasDedicatedStocks : true,
             
-            templateVariants : {
+            templateVariants   : {
                 select: {
                     id             : true,
                     

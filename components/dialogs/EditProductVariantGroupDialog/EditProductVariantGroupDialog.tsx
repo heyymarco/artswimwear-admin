@@ -31,6 +31,11 @@ import {
     
     
     
+    // simple-components:
+    Check,
+    
+    
+    
     // composite-components:
     TabPanel,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
@@ -174,9 +179,10 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
     
     
     // states:
-    const [isModified, setIsModified] = useState<boolean>(false);
+    const [isModified        , setIsModified        ] = useState<boolean>(false);
     
-    const [name      , setName      ] = useState<string>(model?.name ?? '');
+    const [name              , setName              ] = useState<string>(model?.name ?? '');
+    const [hasDedicatedStocks, setHasDedicatedStocks] = useState<boolean>(model?.hasDedicatedStocks ?? false);
     
     
     
@@ -201,14 +207,15 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
         const draftModel : ProductVariantGroupDetail = {
             ...model,
             
-            sort : model?.sort ?? 0,
+            sort               : model?.sort ?? 0,
             
-            id   : id ?? await (async () => {
+            id                 : id ?? await (async () => {
                 const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
                 return ` ${await nanoid()}`; // starts with space{random-temporary-id}
             })(),
             
-            name : (whenUpdate.description || whenAdd) ? name : (model?.name ?? ''),
+            name               : (whenUpdate.description || whenAdd) ? name               : (model?.name               ?? ''   ),
+            hasDedicatedStocks : (whenUpdate.description || whenAdd) ? hasDedicatedStocks : (model?.hasDedicatedStocks ?? false),
             
             productVariants : (!!variants && (variants !== unmodifiedVariants)) ? variants : [],
         };
@@ -320,6 +327,28 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                             setIsModified(true);
                         }}
                     />
+                    
+                    <span className='hasStock label'>Dedicated Stocks:</span>
+                    <Check
+                        // classes:
+                        className='hasStock editor'
+                        
+                        
+                        
+                        // accessibilities:
+                        enabled={whenUpdate.description || whenAdd}
+                        
+                        
+                        
+                        // values:
+                        active={hasDedicatedStocks}
+                        onActiveChange={({active}) => {
+                            setHasDedicatedStocks(active);
+                            setIsModified(true);
+                        }}
+                    >
+                        Has dedicated stock for each variant
+                    </Check>
                     
                     <span className='variants label'>Variants:</span>
                     <VariantStateProvider
