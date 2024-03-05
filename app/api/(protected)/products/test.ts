@@ -582,41 +582,34 @@ const test = (async () => {
         variantIds : string[]
     }
     type ProductVariantUpd = Pick<ProductVariantUpdated, 'productVariantAdds'> & Partial<Pick<ProductVariantUpdated, 'productVariantMods'>>
-    const expandStockInfo = (productVariantUpds : ProductVariantUpd[], index: number, baseStockInfo: StockInfo): StockInfo[] => {
+    const expandStockInfo = (productVariantUpds : ProductVariantUpd[], index: number, baseStockInfo: StockInfo, expandedStockInfos: StockInfo[]): void => {
         const productVariantUpd = productVariantUpds[index];
-        if (!productVariantUpd) return [baseStockInfo];
+        if (!productVariantUpd) { // end of variantGroup(s) => resolved as current `baseStockInfo`
+            expandedStockInfos.push(baseStockInfo);
+            return;
+        } // if
         
         
         
-        const expandedStockInfos : StockInfo[] = [];
+        // recursively expands:
         
         if (productVariantUpd.productVariantMods) {
             for (const productVariantMod of productVariantUpd.productVariantMods) {
-                expandedStockInfos.push(
-                    ...expandStockInfo(productVariantUpds, index + 1, { stock: baseStockInfo.stock, variantIds: [...baseStockInfo.variantIds, productVariantMod.name] }),
-                );
+                expandStockInfo(productVariantUpds, index + 1, /* baseStockInfo: */{ stock: baseStockInfo.stock, variantIds: [...baseStockInfo.variantIds, productVariantMod.name] }, expandedStockInfos);
             } // for
         } // if
         
         for (const productVariantAdd of productVariantUpd.productVariantAdds) {
-            expandedStockInfos.push(
-                ...expandStockInfo(productVariantUpds, index + 1, { stock: null, variantIds: [...baseStockInfo.variantIds, productVariantAdd.name] }),
-            );
+            expandStockInfo(productVariantUpds, index + 1, /* baseStockInfo: */{ stock: null, variantIds: [...baseStockInfo.variantIds, productVariantAdd.name] }, expandedStockInfos);
         } // for
-        
-        return expandedStockInfos;
     }
     const productVariantUpds : ProductVariantUpd[] = [
         ...productVariantGroupUpdated.productVariantGroupMods,
         ...productVariantGroupUpdated.productVariantGroupAdds,
     ];
-    const stockInfos : StockInfo[] = [];
-    if (productVariantUpds.length) {
-        stockInfos.push(
-            ...expandStockInfo(productVariantUpds, 0, { stock: null, variantIds: [] }),
-        );
-    } // if
-    console.log(stockInfos);
+    const expandedStockInfos: StockInfo[] = [];
+    expandStockInfo(productVariantUpds, 0, /* baseStockInfo: */{ stock: null, variantIds: [] }, expandedStockInfos);
+    console.log(expandedStockInfos);
 });
 
 Bun.serve({
