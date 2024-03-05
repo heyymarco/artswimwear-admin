@@ -513,7 +513,10 @@ const test = (async () => {
         productVariantGroupAdds : (Omit<ProductVariantGroupDetail, 'productVariants'> & Pick<ProductVariantUpdated, 'productVariantAdds'>)[]
         productVariantGroupMods : (Omit<ProductVariantGroupDetail, 'productVariants'> & ProductVariantUpdated)[]
     }
-    const productVariantGroupUpdated = ((): ProductVariantGroupUpdated => {
+    const {
+        productVariantGroupAdds,
+        productVariantGroupMods,
+    } = ((): ProductVariantGroupUpdated => {
         const productVariantGroupModIds = productVariantGroupDiffs.productVariantGroupMods.map(({id}) => id);
         const productVariantGroupAdds   : ProductVariantGroupUpdated['productVariantGroupAdds'] = [];
         const productVariantGroupMods   : ProductVariantGroupUpdated['productVariantGroupMods'] = [];
@@ -572,7 +575,6 @@ const test = (async () => {
             productVariantGroupMods,
         };
     })();
-    console.log(productVariantGroupUpdated);
     //#endregion normalize productVariantGroupUpdated
     
     
@@ -640,8 +642,8 @@ const test = (async () => {
         } // for
     }
     const productVariantUpds : ProductVariantUpd[] = [
-        ...productVariantGroupUpdated.productVariantGroupMods,
-        ...productVariantGroupUpdated.productVariantGroupAdds,
+        ...productVariantGroupMods, // the mods first
+        ...productVariantGroupAdds, // then the adds
     ];
     const currentStocks = await prisma.stock.findMany({
         where  : {
