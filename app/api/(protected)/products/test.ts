@@ -572,8 +572,51 @@ const test = (async () => {
             productVariantGroupMods,
         };
     })();
-    //#endregion normalize productVariantGroupUpdated
     console.log(productVariantGroupUpdated);
+    //#endregion normalize productVariantGroupUpdated
+    
+    
+    
+    interface StockInfo {
+        stock      : number|null
+        variantIds : string[]
+    }
+    type ProductVariantUpd = Pick<ProductVariantUpdated, 'productVariantAdds'> & Partial<Pick<ProductVariantUpdated, 'productVariantMods'>>
+    const expandStockInfo = (productVariantUpds : ProductVariantUpd[], index: number, baseStockInfo: StockInfo): StockInfo[] => {
+        const productVariantUpd = productVariantUpds[index];
+        if (!productVariantUpd) return [baseStockInfo];
+        
+        
+        
+        const expandedStockInfos : StockInfo[] = [];
+        
+        if (productVariantUpd.productVariantMods) {
+            for (const productVariantMod of productVariantUpd.productVariantMods) {
+                expandedStockInfos.push(
+                    ...expandStockInfo(productVariantUpds, index + 1, { stock: baseStockInfo.stock, variantIds: [...baseStockInfo.variantIds, productVariantMod.name] }),
+                );
+            } // for
+        } // if
+        
+        for (const productVariantAdd of productVariantUpd.productVariantAdds) {
+            expandedStockInfos.push(
+                ...expandStockInfo(productVariantUpds, index + 1, { stock: null, variantIds: [...baseStockInfo.variantIds, productVariantAdd.name] }),
+            );
+        } // for
+        
+        return expandedStockInfos;
+    }
+    const productVariantUpds : ProductVariantUpd[] = [
+        ...productVariantGroupUpdated.productVariantGroupMods,
+        ...productVariantGroupUpdated.productVariantGroupAdds,
+    ];
+    const stockInfos : StockInfo[] = [];
+    if (productVariantUpds.length) {
+        stockInfos.push(
+            ...expandStockInfo(productVariantUpds, 0, { stock: null, variantIds: [] }),
+        );
+    } // if
+    console.log(stockInfos);
 });
 
 Bun.serve({
