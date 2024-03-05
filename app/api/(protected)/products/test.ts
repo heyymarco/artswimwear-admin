@@ -598,19 +598,27 @@ const test = (async () => {
         const baseVariantIds = baseStockInfo.variantIds;
         
         if (productVariantUpd.productVariantMods) {
-            const currentStock = (
-                currentStocks
-                .find(({productVariantIds}) =>
-                    (productVariantIds.length === baseVariantIds.length)
-                    &&
-                    productVariantIds.every((idA) => baseVariantIds.includes(idA))
-                    &&
-                    baseVariantIds.every((idB) => productVariantIds.includes(idB))
-                )
-                ?.value
-            );
-            
             for (const productVariantMod of productVariantUpd.productVariantMods) {
+                const currentVariantIds = [...baseVariantIds, productVariantMod.name];
+                
+                
+                
+                const currentStock = (
+                    currentStocks
+                    .find(({productVariantIds}) =>
+                        (productVariantIds.length === currentVariantIds.length)
+                        &&
+                        productVariantIds.every((idA) => currentVariantIds.includes(idA))
+                        &&
+                        currentVariantIds.every((idB) => productVariantIds.includes(idB))
+                    )
+                    ?.value
+                );
+                console.log('currentVariantIds', currentVariantIds);
+                console.log('currentStock', currentStock);
+                
+                
+                
                 await expandStockInfo(
                     productVariantUpds,
                     index + 1,
@@ -621,7 +629,7 @@ const test = (async () => {
                             ? currentStock
                             : null
                         ),
-                        variantIds : [...baseVariantIds, productVariantMod.name],
+                        variantIds : currentVariantIds,
                     },
                     expandedStockInfos
                 );
@@ -629,13 +637,17 @@ const test = (async () => {
         } // if
         
         for (const productVariantAdd of productVariantUpd.productVariantAdds) {
+            const currentVariantIds = [...baseVariantIds, productVariantAdd.name];
+            
+            
+            
             await expandStockInfo(
                 productVariantUpds,
                 index + 1,
                 currentStocks,
                 /* baseStockInfo: */{
                     stock      : null,
-                    variantIds : [...baseVariantIds, productVariantAdd.name],
+                    variantIds : currentVariantIds,
                 },
                 expandedStockInfos
             );
@@ -645,18 +657,39 @@ const test = (async () => {
         ...productVariantGroupMods, // the mods first
         ...productVariantGroupAdds, // then the adds
     ];
-    const currentStocks = await prisma.stock.findMany({
-        where  : {
-            productId : productDetail.id,
+    const currentStocks = [
+        {
+          value: 11,
+          productVariantIds: [
+            "Red",
+            "Sm",
+          ],
         },
-        select : {
-            value             : true,
-            productVariantIds : true,
+        {
+          value: 22,
+          productVariantIds: [
+            "Red",
+            "Md",
+          ],
         },
-    });
+        {
+          value: null,
+          productVariantIds: [
+            "Green",
+            "Sm",
+          ],
+        },
+        {
+          value: 44,
+          productVariantIds: [
+            "Green",
+            "Md",
+          ],
+        },
+    ];
     
     const expandedStockInfos: StockInfo[] = [];
-    await expandStockInfo(productVariantUpds, 0, currentStocks, /* baseStockInfo: */{ stock: 99, variantIds: [] }, expandedStockInfos);
+    await expandStockInfo(productVariantUpds, 0, currentStocks, /* baseStockInfo: */{ stock: null, variantIds: [] }, expandedStockInfos);
     
     const expandedStockInfosEmpty: StockInfo[] = [];
     await expandStockInfo([], 0, currentStocks, /* baseStockInfo: */{ stock: 99, variantIds: [] }, expandedStockInfosEmpty);

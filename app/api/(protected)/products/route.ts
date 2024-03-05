@@ -29,6 +29,7 @@ import type {
     ProductVariant,
     ProductVariantGroup,
     Product,
+    Stock,
 }                           from '@prisma/client'
 
 // ORMs:
@@ -883,6 +884,208 @@ You do not have the privilege to modify the product_variant visibility.`
         for (const productVariantGroup of productDetail.productVariantGroups) {
             productVariantGroup.productVariants.sort(({sort: sortA}, {sort: sortB}) => sortA - sortB); // mutate
         } // for
+        
+        
+        
+        //#region rebuild stock maps
+        if (productVariantGroupDiffs) {
+            //#region normalize productVariantGroupUpdated
+            const updatedProductVariantGroups = productDetail.productVariantGroups;
+            
+            interface ProductVariantUpdated {
+                productVariantAdds      : ProductVariantDetail[]
+                productVariantMods      : ProductVariantDetail[]
+            }
+            interface ProductVariantGroupUpdated {
+                productVariantGroupAdds : (Omit<ProductVariantGroupDetail, 'productVariants'> & Pick<ProductVariantUpdated, 'productVariantAdds'>)[]
+                productVariantGroupMods : (Omit<ProductVariantGroupDetail, 'productVariants'> & ProductVariantUpdated)[]
+            }
+            const {
+                productVariantGroupAdds,
+                productVariantGroupMods,
+            } = ((): ProductVariantGroupUpdated => {
+                const productVariantGroupModIds = productVariantGroupDiffs.productVariantGroupMods.map(({id}) => id);
+                const productVariantGroupAdds   : ProductVariantGroupUpdated['productVariantGroupAdds'] = [];
+                const productVariantGroupMods   : ProductVariantGroupUpdated['productVariantGroupMods'] = [];
+                for (const {id, productVariants, ...restProductVariantGroup} of updatedProductVariantGroups) {
+                    const {
+                        productVariantAdds,
+                        productVariantMods,
+                    } = ((): ProductVariantUpdated => {
+                        const productVariantGroupMod = productVariantGroupDiffs.productVariantGroupMods.find(({id: groupId}) => (groupId === id));
+                        const productVariantModIds   = productVariantGroupMod?.productVariantMods.map(({id}) => id);
+                        const productVariantAdds     : ProductVariantUpdated['productVariantAdds'] = [];
+                        for (const {id, ...restProductVariant} of productVariants) {
+                            if (!productVariantModIds?.includes(id)) {
+                                productVariantAdds.push({
+                                    // data:
+                                    id,
+                                    ...restProductVariant,
+                                });
+                                continue;
+                            } // if
+                        } // for
+                        return {
+                            productVariantAdds,
+                            productVariantMods : productVariantGroupMod?.productVariantMods ?? [],
+                        };
+                    })();
+                    
+                    
+                    
+                    if (!productVariantGroupModIds.includes(id)) {
+                        productVariantGroupAdds.push({
+                            // data:
+                            id,
+                            ...restProductVariantGroup,
+                            
+                            // relations:
+                            productVariantAdds,
+                        });
+                        continue;
+                    } // if
+                    
+                    
+                    
+                    productVariantGroupMods.push({
+                        // data:
+                        id,
+                        ...restProductVariantGroup,
+                        
+                        // relations:
+                        productVariantAdds,
+                        productVariantMods,
+                    });
+                } // for
+                return {
+                    productVariantGroupAdds,
+                    productVariantGroupMods,
+                };
+            })();
+            //#endregion normalize productVariantGroupUpdated
+            
+            
+            
+            interface StockInfo {
+                stock      : number|null
+                variantIds : string[]
+            }
+            type ProductVariantUpd = Pick<ProductVariantUpdated, 'productVariantAdds'> & Partial<Pick<ProductVariantUpdated, 'productVariantMods'>>
+            const expandStockInfo = async (productVariantUpds : ProductVariantUpd[], index: number, currentStocks: Pick<Stock, 'value'|'productVariantIds'>[], baseStockInfo: StockInfo, expandedStockInfos: StockInfo[]): Promise<void> => {
+                const productVariantUpd = productVariantUpds[index];
+                if (!productVariantUpd) { // end of variantGroup(s) => resolved as current `baseStockInfo`
+                    expandedStockInfos.push(baseStockInfo);
+                    return;
+                } // if
+                
+                
+                
+                // recursively expands:
+                
+                const baseVariantIds = baseStockInfo.variantIds;
+                
+                if (productVariantUpd.productVariantMods) {
+                    for (const productVariantMod of productVariantUpd.productVariantMods) {
+                        const currentVariantIds = [...baseVariantIds, productVariantMod.id];
+                        
+                        
+                        
+                        const currentStock = (
+                            currentStocks
+                            .find(({productVariantIds}) =>
+                                (productVariantIds.length === currentVariantIds.length)
+                                &&
+                                productVariantIds.every((idA) => currentVariantIds.includes(idA))
+                                &&
+                                currentVariantIds.every((idB) => productVariantIds.includes(idB))
+                            )
+                            ?.value
+                        );
+                        console.log('currentStock', currentStock);
+                        
+                        
+                        
+                        await expandStockInfo(
+                            productVariantUpds,
+                            index + 1,
+                            currentStocks,
+                            /* baseStockInfo: */{
+                                stock      : (
+                                    ((currentStock !== undefined) && (productVariantMod === productVariantUpd.productVariantMods[0]))
+                                    ? currentStock
+                                    : null
+                                ),
+                                variantIds : currentVariantIds,
+                            },
+                            expandedStockInfos
+                        );
+                    } // for
+                } // if
+                
+                for (const productVariantAdd of productVariantUpd.productVariantAdds) {
+                    const currentVariantIds = [...baseVariantIds, productVariantAdd.id];
+                    
+                    
+                    
+                    await expandStockInfo(
+                        productVariantUpds,
+                        index + 1,
+                        currentStocks,
+                        /* baseStockInfo: */{
+                            stock      : null,
+                            variantIds : currentVariantIds,
+                        },
+                        expandedStockInfos
+                    );
+                } // for
+            }
+            
+            
+            
+            const productVariantUpds : ProductVariantUpd[] = [
+                ...productVariantGroupMods, // the mods first
+                ...productVariantGroupAdds, // then the adds
+            ];
+            const currentStocks = await prisma.stock.findMany({
+                where  : {
+                    productId : productDetail.id,
+                },
+                select : {
+                    value             : true,
+                    productVariantIds : true,
+                },
+            });
+            const expandedStockInfos: StockInfo[] = [];
+            await expandStockInfo(productVariantUpds, 0, currentStocks, /* baseStockInfo: */{ stock: null, variantIds: [] }, expandedStockInfos);
+            
+            
+            
+            debugger;
+            return NextResponse.json({ error: 'test' }, { status: 500 }); // handled with error
+            // await prisma.product.update({
+            //     where  : {
+            //         id: productDetail.id,
+            //     },
+            //     data   : {
+            //         stocks : {
+            //             deleteMany : {
+            //                 // delete all within current `productId`
+            //                 productId : productDetail.id,
+            //             },
+            //             create : expandedStockInfos.map(({variantIds, stock}) => ({
+            //                 productVariantIds : variantIds,
+            //                 value             : stock,
+            //             })),
+            //         },
+            //     },
+            //     select : {
+            //         id : true,
+            //     },
+            // });
+        } // if
+        //#endregion rebuild stock maps
+        
+        
         
         return NextResponse.json(productDetail); // handled with success
     }
