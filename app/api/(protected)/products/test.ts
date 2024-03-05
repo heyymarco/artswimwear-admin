@@ -506,12 +506,10 @@ const test = (async () => {
     const updatedProductVariantGroups = productDetail.productVariantGroups;
     
     interface ProductVariantUpdated {
-        productVariantDels      : string[]
         productVariantAdds      : ProductVariantDetail[]
         productVariantMods      : ProductVariantDetail[]
     }
     interface ProductVariantGroupUpdated {
-        productVariantGroupDels : string[]
         productVariantGroupAdds : (Omit<ProductVariantGroupDetail, 'productVariants'> & Pick<ProductVariantUpdated, 'productVariantAdds'>)[]
         productVariantGroupMods : (Omit<ProductVariantGroupDetail, 'productVariants'> & ProductVariantUpdated)[]
     }
@@ -521,7 +519,6 @@ const test = (async () => {
         const productVariantGroupMods   : ProductVariantGroupUpdated['productVariantGroupMods'] = [];
         for (const {id, productVariants, ...restProductVariantGroup} of updatedProductVariantGroups) {
             const {
-                productVariantDels,
                 productVariantAdds,
                 productVariantMods,
             } = ((): ProductVariantUpdated => {
@@ -539,7 +536,6 @@ const test = (async () => {
                     } // if
                 } // for
                 return {
-                    productVariantDels : productVariantGroupMod?.productVariantDels ?? [],
                     productVariantAdds,
                     productVariantMods : productVariantGroupMod?.productVariantMods ?? [],
                 };
@@ -567,13 +563,11 @@ const test = (async () => {
                 ...restProductVariantGroup,
                 
                 // relations:
-                productVariantDels,
                 productVariantAdds,
                 productVariantMods,
             });
         } // for
         return {
-            productVariantGroupDels : productVariantGroupDiffs.productVariantGroupDels,
             productVariantGroupAdds,
             productVariantGroupMods,
         };
