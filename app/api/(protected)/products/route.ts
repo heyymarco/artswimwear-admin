@@ -1061,28 +1061,26 @@ You do not have the privilege to modify the product_variant visibility.`
             
             
             
-            debugger;
-            return NextResponse.json({ error: 'test' }, { status: 500 }); // handled with error
-            // await prisma.product.update({
-            //     where  : {
-            //         id: productDetail.id,
-            //     },
-            //     data   : {
-            //         stocks : {
-            //             deleteMany : {
-            //                 // delete all within current `productId`
-            //                 productId : productDetail.id,
-            //             },
-            //             create : expandedStockInfos.map(({variantIds, stock}) => ({
-            //                 productVariantIds : variantIds,
-            //                 value             : stock,
-            //             })),
-            //         },
-            //     },
-            //     select : {
-            //         id : true,
-            //     },
-            // });
+            await prisma.product.update({
+                where  : {
+                    id: productDetail.id,
+                },
+                data   : {
+                    stocks : {
+                        deleteMany : {
+                            // delete all within current `productId`
+                            productId : productDetail.id,
+                        },
+                        create : expandedStockInfos.map(({variantIds, stock}) => ({
+                            productVariantIds : variantIds,
+                            value             : stock,
+                        })),
+                    },
+                },
+                select : {
+                    id : true,
+                },
+            });
         } // if
         //#endregion rebuild stock maps
         
