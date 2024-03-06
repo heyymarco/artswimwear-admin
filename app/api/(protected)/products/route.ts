@@ -78,6 +78,13 @@ export interface ProductVariantGroupDetail
 {
     productVariants : ProductVariantDetail[]
 }
+export interface StockDetail
+    extends
+        Omit<Stock,
+            |'productId'
+        >
+{
+}
 export interface ProductDetail
     extends
         Omit<Product,
@@ -86,6 +93,7 @@ export interface ProductDetail
         >
 {
     productVariantGroups : ProductVariantGroupDetail[]
+    stocks               : StockDetail[]
 }
 
 
@@ -246,6 +254,15 @@ You do not have the privilege to view the products.`
                     },
                     orderBy : {
                         sort: 'asc',
+                    },
+                },
+                stocks : {
+                    select: {
+                        id                : true,
+                        
+                        value             : true,
+                        
+                        productVariantIds : true,
                     },
                 },
             },
@@ -868,6 +885,15 @@ You do not have the privilege to modify the product_variant visibility.`
                     //     sort: 'asc',
                     // },
                 },
+                stocks : {
+                    select: {
+                        id                : true,
+                        
+                        value             : true,
+                        
+                        productVariantIds : true,
+                    },
+                },
             };
             const productDetail : ProductDetail = (
                 !id
@@ -1062,7 +1088,7 @@ You do not have the privilege to modify the product_variant visibility.`
                 
                 
                 
-                await prismaTransaction.product.update({
+                const changedProduct = await prismaTransaction.product.update({
                     where  : {
                         id: productDetail.id,
                     },
@@ -1079,9 +1105,18 @@ You do not have the privilege to modify the product_variant visibility.`
                         },
                     },
                     select : {
-                        id : true,
+                        stocks : {
+                            select: {
+                                id                : true,
+                                
+                                value             : true,
+                                
+                                productVariantIds : true,
+                            },
+                        },
                     },
                 });
+                productDetail.stocks = changedProduct.stocks;
             } // if
             //#endregion rebuild stock maps
             

@@ -64,6 +64,9 @@ import {
     StockEditor,
 }                           from '@/components/editors/StockEditor'
 import {
+    StockListEditor,
+}                           from '@/components/editors/StockListEditor'
+import {
     VisibilityEditor,
 }                           from '@/components/editors/VisibilityEditor'
 import {
@@ -109,6 +112,9 @@ import {
 import {
     ProductVariantGroupPreview,
 }                           from '@/components/views/ProductVariantGroupPreview'
+import {
+    StockPreview,
+}                           from '@/components/views/StockPreview'
 
 // models:
 import type {
@@ -120,6 +126,7 @@ import {
     // types:
     ProductDetail,
     ProductVariantGroupDetail,
+    StockDetail,
     
     
     
@@ -229,14 +236,21 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     
     const variantGroupList = model?.productVariantGroups;
     const [unmodifiedVariantGroups, setUnmodifiedVariantGroups] = useState<ProductVariantGroupDetail[]|undefined>(variantGroupList);
-    const [variantGroups, setVariantGroups] = useState<ProductVariantGroupDetail[]|undefined>(variantGroupList);
+    const [variantGroups          , setVariantGroups          ] = useState<ProductVariantGroupDetail[]|undefined>(variantGroupList);
     if ((unmodifiedVariantGroups?.length !== variantGroupList?.length) || unmodifiedVariantGroups?.some((item, index) => (item !== variantGroupList?.[index]))) {
         setUnmodifiedVariantGroups(variantGroupList); // tracks the new changes
         setVariantGroups(variantGroupList);           // discard the user changes
     } // if
-    useEffect(() => {
-        console.log(variantGroups);
-    }, [variantGroups]);
+    
+    
+    
+    const stockList = model?.stocks;
+    const [unmodifiedStocks, setUnmodifiedStocks] = useState<StockDetail[]|undefined>(stockList);
+    const [stocks          , setStocks          ] = useState<StockDetail[]|undefined>(stockList);
+    if ((unmodifiedStocks?.length !== stockList?.length) || unmodifiedStocks?.some((item, index) => (item !== stockList?.[index]))) {
+        setUnmodifiedStocks(stockList); // tracks the new changes
+        setStocks(stockList);           // discard the user changes
+    } // if
     
     
     
@@ -651,7 +665,29 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                 />
             </TabPanel>
             <TabPanel label={PAGE_PRODUCT_TAB_STOCKS}       panelComponent={<Generic className={styleSheet.stocksTab} />}>
-                <p>under construction...</p>
+                <StockListEditor
+                    // models:
+                    productVariantGroups={model?.productVariantGroups}
+                    
+                    
+                    
+                    // values:
+                    value={stocks}
+                    onChange={(value) => {
+                        setStocks(value);
+                        setIsModified(true);
+                    }}
+                    
+                    
+                    
+                    // components:
+                    modelPreviewComponent={
+                        <StockPreview
+                            // data:
+                            model={undefined as any}
+                        />
+                    }
+                />
             </TabPanel>
             <TabPanel label={PAGE_PRODUCT_TAB_IMAGES}       panelComponent={<Generic className={styleSheet.imagesTab} />}>
                 <GalleryEditor<HTMLElement, string>
