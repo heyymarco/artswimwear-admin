@@ -214,10 +214,10 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                 return ` ${await nanoid()}`; // starts with space{random-temporary-id}
             })(),
             
-            name               : (whenUpdate.description || whenAdd) ? name               : (model?.name               ?? ''   ),
-            hasDedicatedStocks : (whenUpdate.description || whenAdd) ? hasDedicatedStocks : (model?.hasDedicatedStocks ?? false),
+            name               : (whenUpdate.description || whenAdd)               ? name               : (model?.name               ?? ''   ),
+            hasDedicatedStocks : (whenUpdate.description || whenAdd)               ? hasDedicatedStocks : (model?.hasDedicatedStocks ?? false),
             
-            productVariants : (!!variants && (variants !== unmodifiedVariants)) ? variants : [],
+            productVariants    : (!!variants && (variants !== unmodifiedVariants)) ? variants           : (unmodifiedVariants        ?? []   ),
         };
         return (onUpdate !== undefined) ? onUpdate({draftModel, whenAdd, whenUpdate}) : draftModel;
     });
