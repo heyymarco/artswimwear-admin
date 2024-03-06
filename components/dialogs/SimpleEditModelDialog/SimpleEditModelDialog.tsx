@@ -125,7 +125,7 @@ export interface SimpleEditModelDialogProps<TModel extends Model, TEdit extends 
     edit              : TEdit
     initialValue     ?: InitialValueHandler<TModel, TEdit>
     transformValue   ?: TransformValueHandler<TModel, TEdit>
-    updateModelApi    : UpdateModelApi<TModel> | (() => UpdateModelApi<TModel>)
+    updateModelApi   ?: UpdateModelApi<TModel> | (() => UpdateModelApi<TModel>)
     
     
     
@@ -237,7 +237,7 @@ const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialo
     
     
     // stores:
-    const [updateModel, {isLoading: isCommitingModel}] = (typeof(updateModelApi) === 'function') ? updateModelApi() : updateModelApi;
+    const [updateModel, {isLoading: isCommitingModel}] = (typeof(updateModelApi) === 'function') ? updateModelApi() : (updateModelApi ?? [undefined, {isLoading: false}]);
     const isCommiting = isCommitingExternal || isCommitingModel;
     const isLoading   = isCommiting || isReverting;
     
@@ -276,8 +276,13 @@ const SimpleEditModelDialog = <TModel extends Model>(props: SimpleEditModelDialo
         
         
         try {
-            const transformed = transformValue(editorValue, edit, model);
-            const updatingModelTask = updateModel(transformed).unwrap();
+            const updatingModelTask : Promise<TModel> = (
+                updateModel
+                ? updateModel(
+                    transformValue(editorValue, edit, model)
+                ).unwrap()
+                : Promise.resolve<TModel>(model)
+            );
             
             const updatingModelAndOthersTask = (
                 updatingModelTask
