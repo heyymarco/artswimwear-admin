@@ -898,12 +898,12 @@ You do not have the privilege to modify the product_variant visibility.`
                 const updatedProductVariantGroups = productDetail.productVariantGroups;
                 
                 interface ProductVariantUpdated {
-                    productVariantAdds      : ProductVariantDetail[]
-                    productVariantMods      : ProductVariantDetail[]
+                    productVariantAdds      : Pick<ProductVariantDetail, 'id'>[]
+                    productVariantMods      : Pick<ProductVariantDetail, 'id'>[]
                 }
                 interface ProductVariantGroupUpdated {
-                    productVariantGroupAdds : (Omit<ProductVariantGroupDetail, 'productVariants'> & Pick<ProductVariantUpdated, 'productVariantAdds'>)[]
-                    productVariantGroupMods : (Omit<ProductVariantGroupDetail, 'productVariants'> & ProductVariantUpdated)[]
+                    productVariantGroupAdds : (Pick<ProductVariantGroupDetail, 'id'> & Pick<ProductVariantUpdated, 'productVariantAdds'>)[]
+                    productVariantGroupMods : (Pick<ProductVariantGroupDetail, 'id'> & ProductVariantUpdated)[]
                 }
                 const {
                     productVariantGroupAdds,
@@ -912,7 +912,12 @@ You do not have the privilege to modify the product_variant visibility.`
                     const productVariantGroupModIds = productVariantGroupDiffs.productVariantGroupMods.map(({id}) => id);
                     const productVariantGroupAdds   : ProductVariantGroupUpdated['productVariantGroupAdds'] = [];
                     const productVariantGroupMods   : ProductVariantGroupUpdated['productVariantGroupMods'] = [];
-                    for (const {id, productVariants, ...restProductVariantGroup} of updatedProductVariantGroups) {
+                    for (const {id, hasDedicatedStocks, productVariants} of updatedProductVariantGroups) {
+                        // conditions:
+                        if (!hasDedicatedStocks) continue;
+                        
+                        
+                        
                         const {
                             productVariantAdds,
                             productVariantMods,
@@ -920,12 +925,11 @@ You do not have the privilege to modify the product_variant visibility.`
                             const productVariantGroupMod = productVariantGroupDiffs.productVariantGroupMods.find(({id: groupId}) => (groupId === id));
                             const productVariantModIds   = productVariantGroupMod?.productVariantMods.map(({id}) => id);
                             const productVariantAdds     : ProductVariantUpdated['productVariantAdds'] = [];
-                            for (const {id, ...restProductVariant} of productVariants) {
+                            for (const {id} of productVariants) {
                                 if (!productVariantModIds?.includes(id)) {
                                     productVariantAdds.push({
                                         // data:
                                         id,
-                                        ...restProductVariant,
                                     });
                                     continue;
                                 } // if
@@ -942,7 +946,6 @@ You do not have the privilege to modify the product_variant visibility.`
                             productVariantGroupAdds.push({
                                 // data:
                                 id,
-                                ...restProductVariantGroup,
                                 
                                 // relations:
                                 productVariantAdds,
@@ -955,7 +958,6 @@ You do not have the privilege to modify the product_variant visibility.`
                         productVariantGroupMods.push({
                             // data:
                             id,
-                            ...restProductVariantGroup,
                             
                             // relations:
                             productVariantAdds,
