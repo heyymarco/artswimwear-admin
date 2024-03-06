@@ -120,6 +120,11 @@ export const usesVariantsTabLayout = () => {
         // TODO: style variant tab
     });
 };
+export const usesStocksTabLayout = () => {
+    return style({
+        // TODO: style variant tab
+    });
+};
 export const usesImagesTabLayout = () => {
     return style({
         // scrolls:
@@ -199,6 +204,9 @@ export default () => [
     }),
     scope('variantsTab', {
         ...usesVariantsTabLayout(),
+    }),
+    scope('stocksTab', {
+        ...usesStocksTabLayout(),
     }),
     scope('imagesTab', {
         ...usesImagesTabLayout(),

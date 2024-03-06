@@ -144,6 +144,7 @@ import {
 import {
     PAGE_PRODUCT_TAB_INFORMATIONS,
     PAGE_PRODUCT_TAB_VARIANTS,
+    PAGE_PRODUCT_TAB_STOCKS,
     PAGE_PRODUCT_TAB_IMAGES,
     PAGE_PRODUCT_TAB_DESCRIPTION,
     PAGE_PRODUCT_TAB_DELETE,
@@ -591,7 +592,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                     />
                 </form>
             </TabPanel>
-            <TabPanel label={PAGE_PRODUCT_TAB_VARIANTS}     panelComponent={<Generic className={styleSheet.variantsTab} />}>{
+            <TabPanel label={PAGE_PRODUCT_TAB_VARIANTS}     panelComponent={<Generic className={styleSheet.variantsTab} />}>
                 <ProductVariantGroupEditor
                     // values:
                     value={variantGroups}
@@ -648,7 +649,10 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         : undefined
                     }
                 />
-            }</TabPanel>
+            </TabPanel>
+            <TabPanel label={PAGE_PRODUCT_TAB_STOCKS}       panelComponent={<Generic className={styleSheet.stocksTab} />}>
+                <p>under construction...</p>
+            </TabPanel>
             <TabPanel label={PAGE_PRODUCT_TAB_IMAGES}       panelComponent={<Generic className={styleSheet.imagesTab} />}>
                 <GalleryEditor<HTMLElement, string>
                     // variants:
