@@ -902,8 +902,8 @@ You do not have the privilege to modify the product_variant visibility.`
                     productVariantMods      : Pick<ProductVariantDetail, 'id'>[]
                 }
                 interface ProductVariantGroupUpdated {
-                    productVariantGroupAdds : (Pick<ProductVariantGroupDetail, 'id'> & Pick<ProductVariantUpdated, 'productVariantAdds'>)[]
-                    productVariantGroupMods : (Pick<ProductVariantGroupDetail, 'id'> & ProductVariantUpdated)[]
+                    productVariantGroupAdds : Pick<ProductVariantUpdated, 'productVariantAdds'>[]
+                    productVariantGroupMods : ProductVariantUpdated[]
                 }
                 const {
                     productVariantGroupAdds,
@@ -944,9 +944,6 @@ You do not have the privilege to modify the product_variant visibility.`
                         
                         if (!productVariantGroupModIds.includes(id)) {
                             productVariantGroupAdds.push({
-                                // data:
-                                id,
-                                
                                 // relations:
                                 productVariantAdds,
                             });
@@ -956,9 +953,6 @@ You do not have the privilege to modify the product_variant visibility.`
                         
                         
                         productVariantGroupMods.push({
-                            // data:
-                            id,
-                            
                             // relations:
                             productVariantAdds,
                             productVariantMods,
