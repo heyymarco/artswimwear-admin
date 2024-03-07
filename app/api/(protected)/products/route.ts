@@ -39,18 +39,18 @@ import type {
     ProductPreview,
     ProductVariantGroupDetail,
     ProductDetail,
-}                           from './types'
+}                           from '@/models/products/types'
 export type {
     ProductPreview,
     ProductVariantDetail,
     ProductVariantGroupDetail,
     StockDetail,
     ProductDetail,
-}                           from './types'
+}                           from '@/models/products/types'
 import {
     createProductVariantGroupDiff,
     createStockMap,
-}                           from './utilities'
+}                           from '@/models/products/utilities'
 
 
 

@@ -116,10 +116,20 @@ import {
     StockPreview,
 }                           from '@/components/views/StockPreview'
 
+// others:
+import {
+    customAlphabet,
+}                           from 'nanoid/async'
+
 // models:
 import type {
     ProductVisibility,
+    Stock,
 }                           from '@prisma/client'
+import {
+    createProductVariantGroupDiff,
+    createStockMap,
+}                           from '@/models/products'
 
 // stores:
 import {
@@ -240,7 +250,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     if ((unmodifiedVariantGroups?.length !== variantGroupList?.length) || unmodifiedVariantGroups?.some((item, index) => (item !== variantGroupList?.[index]))) {
         setUnmodifiedVariantGroups(variantGroupList); // tracks the new changes
         setVariantGroups(variantGroupList);           // discard the user changes
-    } // if
+    } // if  
     
     
     
@@ -251,6 +261,33 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         setUnmodifiedStocks(stockList); // tracks the new changes
         setStocks(stockList);           // discard the user changes
     } // if
+    const prevVariantGroups = useRef<ProductVariantGroupDetail[]|undefined>(variantGroups);
+    
+    
+    
+    if (prevVariantGroups.current !== variantGroups) {
+        const productVariantGroupDiff = createProductVariantGroupDiff(variantGroups ?? [], prevVariantGroups.current ?? []);
+        // console.log(productVariantGroupDiff);
+        const currentStocks : Pick<Stock, 'value'|'productVariantIds'>[] = stocks ?? [];
+        const stockMap = createStockMap(productVariantGroupDiff, currentStocks, variantGroups ?? []);
+        // console.log('stockMap: ', stockMap);
+        (async () => {
+            const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
+            setStocks(await Promise.all(
+                stockMap
+                .map(async ({variants, stock, ...stockItem}) => ({
+                    ...stockItem,
+                    id    : ` ${await nanoid()}`, // starts with space{random-temporary-id}
+                    value : stock,
+                    productVariantIds : variants,
+                }))
+            ));
+        })();
+        
+        
+        
+        prevVariantGroups.current = variantGroups; // tracks the new changes
+    } // if  
     
     
     
