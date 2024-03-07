@@ -210,7 +210,7 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
             sort               : model?.sort ?? 0,
             
             id                 : id ?? await (async () => {
-                const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
+                const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
                 return ` ${await nanoid()}`; // starts with space{random-temporary-id}
             })(),
             

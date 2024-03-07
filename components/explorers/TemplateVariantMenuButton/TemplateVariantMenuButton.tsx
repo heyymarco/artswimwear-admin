@@ -270,14 +270,14 @@ const TemplateVariantMenuItems = (props: TemplateVariantMenuItemsProps): JSX.Ele
         const productVariantGroupDetail : ProductVariantGroupDetail = {
             ...restTemplateVariantGroupDetail,
             id   : await (async () => {
-                const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
+                const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
                 return ` ${await nanoid()}`; // starts with space{random-temporary-id}
             })(),
             sort : 0,
             productVariants : await Promise.all((productVariants as TemplateVariantDetail[]).map(async ({id, ...restProductVariant}) => ({
                 ...restProductVariant,
                 id   : await (async () => {
-                    const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
+                    const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
                     return ` ${await nanoid()}`; // starts with space{random-temporary-id}
                 })(),
             }))),
