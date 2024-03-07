@@ -928,8 +928,8 @@ You do not have the privilege to modify the product_variant visibility.`
                     productVariantMods      : Pick<ProductVariantDetail, 'id'>[]
                 }
                 interface ProductVariantGroupUpdated {
-                    productVariantGroupAdds : Pick<ProductVariantUpdated, 'productVariantAdds'>[]
-                    productVariantGroupMods : ProductVariantUpdated[]
+                    productVariantGroupAdds : (Pick<ProductVariantGroupDetail, 'sort'> & Pick<ProductVariantUpdated, 'productVariantAdds'>)[]
+                    productVariantGroupMods : (Pick<ProductVariantGroupDetail, 'sort'> & ProductVariantUpdated)[]
                 }
                 const {
                     productVariantGroupAdds,
@@ -938,7 +938,7 @@ You do not have the privilege to modify the product_variant visibility.`
                     const productVariantGroupModIds = productVariantGroupDiffs.productVariantGroupMods.map(({id}) => id);
                     const productVariantGroupAdds   : ProductVariantGroupUpdated['productVariantGroupAdds'] = [];
                     const productVariantGroupMods   : ProductVariantGroupUpdated['productVariantGroupMods'] = [];
-                    for (const {id, hasDedicatedStocks, productVariants} of updatedProductVariantGroups) {
+                    for (const {id, sort, hasDedicatedStocks, productVariants} of updatedProductVariantGroups) {
                         // conditions:
                         if (!hasDedicatedStocks) continue;
                         
@@ -970,6 +970,11 @@ You do not have the privilege to modify the product_variant visibility.`
                         
                         if (!productVariantGroupModIds.includes(id)) {
                             productVariantGroupAdds.push({
+                                // data:
+                                sort,
+                                
+                                
+                                
                                 // relations:
                                 productVariantAdds,
                             });
@@ -979,6 +984,11 @@ You do not have the privilege to modify the product_variant visibility.`
                         
                         
                         productVariantGroupMods.push({
+                            // data:
+                            sort,
+                            
+                            
+                            
                             // relations:
                             productVariantAdds,
                             productVariantMods,
@@ -994,10 +1004,13 @@ You do not have the privilege to modify the product_variant visibility.`
                 
                 
                 interface StockInfo {
-                    stock      : number|null
-                    variantIds : string[]
+                    stock    : number|null
+                    variants : { groupSort: number, id: string }[]
                 }
-                type ProductVariantUpd = Pick<ProductVariantUpdated, 'productVariantAdds'> & Partial<Pick<ProductVariantUpdated, 'productVariantMods'>>
+                type ProductVariantUpd =
+                    &Pick<ProductVariantGroupDetail, 'sort'>
+                    &Pick<ProductVariantUpdated, 'productVariantAdds'>
+                    &Partial<Pick<ProductVariantUpdated, 'productVariantMods'>>
                 const expandStockInfo = async (productVariantUpds : ProductVariantUpd[], index: number, currentStocks: Pick<Stock, 'value'|'productVariantIds'>[], baseStockInfo: StockInfo, expandedStockInfos: StockInfo[]): Promise<void> => {
                     const productVariantUpd = productVariantUpds[index];
                     if (!productVariantUpd) { // end of variantGroup(s) => resolved as current `baseStockInfo`
@@ -1009,11 +1022,18 @@ You do not have the privilege to modify the product_variant visibility.`
                     
                     // recursively expands:
                     
-                    const baseVariantIds = baseStockInfo.variantIds;
+                    const baseVariants = baseStockInfo.variants;
                     
                     if (productVariantUpd.productVariantMods) {
                         for (const productVariantMod of productVariantUpd.productVariantMods) {
-                            const currentVariantIds = [...baseVariantIds, productVariantMod.id];
+                            const currentVariants = [
+                                ...baseVariants,
+                                {
+                                    groupSort : productVariantUpd.sort,
+                                    id        : productVariantMod.id,
+                                },
+                            ];
+                            const currentVariantIds = currentVariants.map(({id}) => id);
                             
                             
                             
@@ -1038,8 +1058,8 @@ You do not have the privilege to modify the product_variant visibility.`
                                 index + 1,
                                 currentStocks,
                                 /* baseStockInfo: */{
-                                    stock      : currentStock,
-                                    variantIds : currentVariantIds,
+                                    stock    : currentStock,
+                                    variants : currentVariants,
                                 },
                                 expandedStockInfos
                             );
@@ -1047,7 +1067,13 @@ You do not have the privilege to modify the product_variant visibility.`
                     } // if
                     
                     for (const productVariantAdd of productVariantUpd.productVariantAdds) {
-                        const currentVariantIds = [...baseVariantIds, productVariantAdd.id];
+                        const currentVariants = [
+                            ...baseVariants,
+                            {
+                                groupSort : productVariantUpd.sort,
+                                id        : productVariantAdd.id,
+                            },
+                        ];
                         
                         
                         
@@ -1056,12 +1082,12 @@ You do not have the privilege to modify the product_variant visibility.`
                             index + 1,
                             currentStocks,
                             /* baseStockInfo: */{
-                                stock      : (
+                                stock    : (
                                     (productVariantAdd === productVariantUpd.productVariantAdds[0])
                                     ? baseStockInfo.stock
                                     : null
                                 ),
-                                variantIds : currentVariantIds,
+                                variants : currentVariants,
                             },
                             expandedStockInfos
                         );
@@ -1084,7 +1110,11 @@ You do not have the privilege to modify the product_variant visibility.`
                     },
                 });
                 const expandedStockInfos: StockInfo[] = [];
-                await expandStockInfo(productVariantUpds, 0, currentStocks, /* baseStockInfo: */{ stock: null, variantIds: [] }, expandedStockInfos);
+                await expandStockInfo(productVariantUpds, 0, currentStocks, /* baseStockInfo: */{ stock: null, variants: [] }, expandedStockInfos);
+                expandedStockInfos.forEach(({variants}) => {
+                    // sort each variant by variantGroup's sort:
+                    variants.sort(({groupSort: groupSortA}, {groupSort: groupSortB}) => groupSortA - groupSortB);
+                });
                 
                 
                 
@@ -1098,8 +1128,8 @@ You do not have the privilege to modify the product_variant visibility.`
                                 // delete all within current `productId`
                                 productId : productDetail.id,
                             },
-                            create : expandedStockInfos.map(({variantIds, stock}) => ({
-                                productVariantIds : variantIds,
+                            create : expandedStockInfos.map(({variants, stock}) => ({
+                                productVariantIds : variants.map(({id}) => id),
                                 value             : stock,
                             })),
                         },
