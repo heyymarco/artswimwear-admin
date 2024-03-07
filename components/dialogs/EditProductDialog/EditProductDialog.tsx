@@ -256,10 +256,10 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         setUnmodifiedStocks(stockList); // tracks the new changes
         setStocks(stockList);           // discard the user changes
     } // if
+    
+    
+    
     const prevVariantGroups = useRef<ProductVariantGroupDetail[]|undefined>(variantGroups);
-    
-    
-    
     if (prevVariantGroups.current !== variantGroups) {
         const productVariantGroupDiff = createProductVariantGroupDiff(variantGroups ?? [], prevVariantGroups.current ?? []);
         // console.log(productVariantGroupDiff);
@@ -694,7 +694,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             <TabPanel label={PAGE_PRODUCT_TAB_STOCKS}       panelComponent={<Generic className={styleSheet.stocksTab} />}>
                 <StockListEditor
                     // models:
-                    productVariantGroups={model?.productVariantGroups}
+                    productVariantGroups={variantGroups}
                     
                     
                     
