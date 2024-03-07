@@ -198,6 +198,194 @@ const createProductVariantGroupDiff = (productVariantGroups: ProductVariantGroup
 
 
 
+interface StockInfo {
+    stock    : number|null
+    variants : { groupSort: number, id: string }[]
+}
+const createStockMap = (productVariantGroupDiff: Pick<ProductVariantGroupDiff, 'productVariantGroupAdds'|'productVariantGroupMods'>, updatedProductVariantGroups: ProductVariantGroupDetail[], currentStocks: Pick<Stock, 'value'|'productVariantIds'>[]): StockInfo[] => {
+    //#region normalize productVariantGroupUpdated
+    interface ProductVariantUpdated {
+        productVariantAdds      : Pick<ProductVariantDetail, 'id'>[]
+        productVariantMods      : Pick<ProductVariantDetail, 'id'>[]
+    }
+    interface ProductVariantGroupUpdated {
+        productVariantGroupAdds : (Pick<ProductVariantGroupDetail, 'sort'> & Pick<ProductVariantUpdated, 'productVariantAdds'>)[]
+        productVariantGroupMods : (Pick<ProductVariantGroupDetail, 'sort'> & ProductVariantUpdated)[]
+    }
+    const {
+        productVariantGroupAdds,
+        productVariantGroupMods,
+    } = ((): ProductVariantGroupUpdated => {
+        const productVariantGroupModIds = productVariantGroupDiff.productVariantGroupMods.map(({id}) => id);
+        const productVariantGroupAdds   : ProductVariantGroupUpdated['productVariantGroupAdds'] = [];
+        const productVariantGroupMods   : ProductVariantGroupUpdated['productVariantGroupMods'] = [];
+        for (const {id, sort, hasDedicatedStocks, productVariants} of updatedProductVariantGroups) {
+            // conditions:
+            if (!hasDedicatedStocks) continue;
+            
+            
+            
+            const {
+                productVariantAdds,
+                productVariantMods,
+            } = ((): ProductVariantUpdated => {
+                const productVariantGroupMod = productVariantGroupDiff.productVariantGroupMods.find(({id: groupId}) => (groupId === id));
+                const productVariantModIds   = productVariantGroupMod?.productVariantMods.map(({id}) => id);
+                const productVariantAdds     : ProductVariantUpdated['productVariantAdds'] = [];
+                for (const {id} of productVariants) {
+                    if (!productVariantModIds?.includes(id)) {
+                        productVariantAdds.push({
+                            // data:
+                            id,
+                        });
+                        continue;
+                    } // if
+                } // for
+                return {
+                    productVariantAdds,
+                    productVariantMods : productVariantGroupMod?.productVariantMods ?? [],
+                };
+            })();
+            
+            
+            
+            if (!productVariantGroupModIds.includes(id)) {
+                productVariantGroupAdds.push({
+                    // data:
+                    sort,
+                    
+                    
+                    
+                    // relations:
+                    productVariantAdds,
+                });
+                continue;
+            } // if
+            
+            
+            
+            productVariantGroupMods.push({
+                // data:
+                sort,
+                
+                
+                
+                // relations:
+                productVariantAdds,
+                productVariantMods,
+            });
+        } // for
+        return {
+            productVariantGroupAdds,
+            productVariantGroupMods,
+        };
+    })();
+    //#endregion normalize productVariantGroupUpdated
+    
+    
+    
+    type ProductVariantUpd =
+        &Pick<ProductVariantGroupDetail, 'sort'>
+        &Pick<ProductVariantUpdated, 'productVariantAdds'>
+        &Partial<Pick<ProductVariantUpdated, 'productVariantMods'>>
+    const expandStockInfo = (productVariantUpds : ProductVariantUpd[], index: number, baseStockInfo: StockInfo, expandedStockInfos: StockInfo[]): void => {
+        const productVariantUpd = productVariantUpds[index];
+        if (!productVariantUpd) { // end of variantGroup(s) => resolved as current `baseStockInfo`
+            expandedStockInfos.push(baseStockInfo);
+            return;
+        } // if
+        
+        
+        
+        // recursively expands:
+        
+        const baseVariants = baseStockInfo.variants;
+        
+        if (productVariantUpd.productVariantMods) {
+            for (const productVariantMod of productVariantUpd.productVariantMods) {
+                const currentVariants = [
+                    ...baseVariants,
+                    {
+                        groupSort : productVariantUpd.sort,
+                        id        : productVariantMod.id,
+                    },
+                ];
+                const currentVariantIds = currentVariants.map(({id}) => id);
+                
+                
+                
+                const currentStock = (
+                    currentStocks
+                    .find(({productVariantIds}) =>
+                        (productVariantIds.length === currentVariantIds.length)
+                        &&
+                        productVariantIds.every((idA) => currentVariantIds.includes(idA))
+                        &&
+                        currentVariantIds.every((idB) => productVariantIds.includes(idB))
+                    )
+                    ?.value
+                    ??
+                    null
+                );
+                
+                
+                
+                expandStockInfo(
+                    productVariantUpds,
+                    index + 1,
+                    /* baseStockInfo: */{
+                        stock    : currentStock,
+                        variants : currentVariants,
+                    },
+                    expandedStockInfos
+                );
+            } // for
+        } // if
+        
+        for (const productVariantAdd of productVariantUpd.productVariantAdds) {
+            const currentVariants = [
+                ...baseVariants,
+                {
+                    groupSort : productVariantUpd.sort,
+                    id        : productVariantAdd.id,
+                },
+            ];
+            
+            
+            
+            expandStockInfo(
+                productVariantUpds,
+                index + 1,
+                /* baseStockInfo: */{
+                    stock    : (
+                        (productVariantAdd === productVariantUpd.productVariantAdds[0])
+                        ? baseStockInfo.stock
+                        : null
+                    ),
+                    variants : currentVariants,
+                },
+                expandedStockInfos
+            );
+        } // for
+    }
+    
+    
+    
+    const productVariantUpds : ProductVariantUpd[] = [
+        ...productVariantGroupMods, // the mods first
+        ...productVariantGroupAdds, // then the adds
+    ];
+    const expandedStockInfos: StockInfo[] = [];
+    expandStockInfo(productVariantUpds, 0, /* baseStockInfo: */{ stock: null, variants: [] }, expandedStockInfos);
+    expandedStockInfos.forEach(({variants}) => {
+        // sort each variant by variantGroup's sort:
+        variants.sort(({groupSort: groupSortA}, {groupSort: groupSortB}) => groupSortA - groupSortB);
+    });
+    return expandedStockInfos;
+}
+
+
+
 // routers:
 interface RequestContext {
     params: {
@@ -924,186 +1112,7 @@ You do not have the privilege to modify the product_variant visibility.`
             
             //#region rebuild stock maps
             if (productVariantGroupDiff) {
-                //#region normalize productVariantGroupUpdated
                 const updatedProductVariantGroups = productDetail.productVariantGroups;
-                
-                interface ProductVariantUpdated {
-                    productVariantAdds      : Pick<ProductVariantDetail, 'id'>[]
-                    productVariantMods      : Pick<ProductVariantDetail, 'id'>[]
-                }
-                interface ProductVariantGroupUpdated {
-                    productVariantGroupAdds : (Pick<ProductVariantGroupDetail, 'sort'> & Pick<ProductVariantUpdated, 'productVariantAdds'>)[]
-                    productVariantGroupMods : (Pick<ProductVariantGroupDetail, 'sort'> & ProductVariantUpdated)[]
-                }
-                const {
-                    productVariantGroupAdds,
-                    productVariantGroupMods,
-                } = ((): ProductVariantGroupUpdated => {
-                    const productVariantGroupModIds = productVariantGroupDiff.productVariantGroupMods.map(({id}) => id);
-                    const productVariantGroupAdds   : ProductVariantGroupUpdated['productVariantGroupAdds'] = [];
-                    const productVariantGroupMods   : ProductVariantGroupUpdated['productVariantGroupMods'] = [];
-                    for (const {id, sort, hasDedicatedStocks, productVariants} of updatedProductVariantGroups) {
-                        // conditions:
-                        if (!hasDedicatedStocks) continue;
-                        
-                        
-                        
-                        const {
-                            productVariantAdds,
-                            productVariantMods,
-                        } = ((): ProductVariantUpdated => {
-                            const productVariantGroupMod = productVariantGroupDiff.productVariantGroupMods.find(({id: groupId}) => (groupId === id));
-                            const productVariantModIds   = productVariantGroupMod?.productVariantMods.map(({id}) => id);
-                            const productVariantAdds     : ProductVariantUpdated['productVariantAdds'] = [];
-                            for (const {id} of productVariants) {
-                                if (!productVariantModIds?.includes(id)) {
-                                    productVariantAdds.push({
-                                        // data:
-                                        id,
-                                    });
-                                    continue;
-                                } // if
-                            } // for
-                            return {
-                                productVariantAdds,
-                                productVariantMods : productVariantGroupMod?.productVariantMods ?? [],
-                            };
-                        })();
-                        
-                        
-                        
-                        if (!productVariantGroupModIds.includes(id)) {
-                            productVariantGroupAdds.push({
-                                // data:
-                                sort,
-                                
-                                
-                                
-                                // relations:
-                                productVariantAdds,
-                            });
-                            continue;
-                        } // if
-                        
-                        
-                        
-                        productVariantGroupMods.push({
-                            // data:
-                            sort,
-                            
-                            
-                            
-                            // relations:
-                            productVariantAdds,
-                            productVariantMods,
-                        });
-                    } // for
-                    return {
-                        productVariantGroupAdds,
-                        productVariantGroupMods,
-                    };
-                })();
-                //#endregion normalize productVariantGroupUpdated
-                
-                
-                
-                interface StockInfo {
-                    stock    : number|null
-                    variants : { groupSort: number, id: string }[]
-                }
-                type ProductVariantUpd =
-                    &Pick<ProductVariantGroupDetail, 'sort'>
-                    &Pick<ProductVariantUpdated, 'productVariantAdds'>
-                    &Partial<Pick<ProductVariantUpdated, 'productVariantMods'>>
-                const expandStockInfo = async (productVariantUpds : ProductVariantUpd[], index: number, currentStocks: Pick<Stock, 'value'|'productVariantIds'>[], baseStockInfo: StockInfo, expandedStockInfos: StockInfo[]): Promise<void> => {
-                    const productVariantUpd = productVariantUpds[index];
-                    if (!productVariantUpd) { // end of variantGroup(s) => resolved as current `baseStockInfo`
-                        expandedStockInfos.push(baseStockInfo);
-                        return;
-                    } // if
-                    
-                    
-                    
-                    // recursively expands:
-                    
-                    const baseVariants = baseStockInfo.variants;
-                    
-                    if (productVariantUpd.productVariantMods) {
-                        for (const productVariantMod of productVariantUpd.productVariantMods) {
-                            const currentVariants = [
-                                ...baseVariants,
-                                {
-                                    groupSort : productVariantUpd.sort,
-                                    id        : productVariantMod.id,
-                                },
-                            ];
-                            const currentVariantIds = currentVariants.map(({id}) => id);
-                            
-                            
-                            
-                            const currentStock = (
-                                currentStocks
-                                .find(({productVariantIds}) =>
-                                    (productVariantIds.length === currentVariantIds.length)
-                                    &&
-                                    productVariantIds.every((idA) => currentVariantIds.includes(idA))
-                                    &&
-                                    currentVariantIds.every((idB) => productVariantIds.includes(idB))
-                                )
-                                ?.value
-                                ??
-                                null
-                            );
-                            
-                            
-                            
-                            await expandStockInfo(
-                                productVariantUpds,
-                                index + 1,
-                                currentStocks,
-                                /* baseStockInfo: */{
-                                    stock    : currentStock,
-                                    variants : currentVariants,
-                                },
-                                expandedStockInfos
-                            );
-                        } // for
-                    } // if
-                    
-                    for (const productVariantAdd of productVariantUpd.productVariantAdds) {
-                        const currentVariants = [
-                            ...baseVariants,
-                            {
-                                groupSort : productVariantUpd.sort,
-                                id        : productVariantAdd.id,
-                            },
-                        ];
-                        
-                        
-                        
-                        await expandStockInfo(
-                            productVariantUpds,
-                            index + 1,
-                            currentStocks,
-                            /* baseStockInfo: */{
-                                stock    : (
-                                    (productVariantAdd === productVariantUpd.productVariantAdds[0])
-                                    ? baseStockInfo.stock
-                                    : null
-                                ),
-                                variants : currentVariants,
-                            },
-                            expandedStockInfos
-                        );
-                    } // for
-                }
-                
-                
-                
-                const productVariantUpds : ProductVariantUpd[] = [
-                    ...productVariantGroupMods, // the mods first
-                    ...productVariantGroupAdds, // then the adds
-                ];
                 const currentStocks = await prismaTransaction.stock.findMany({
                     where  : {
                         productId : productDetail.id,
@@ -1113,12 +1122,7 @@ You do not have the privilege to modify the product_variant visibility.`
                         productVariantIds : true,
                     },
                 });
-                const expandedStockInfos: StockInfo[] = [];
-                await expandStockInfo(productVariantUpds, 0, currentStocks, /* baseStockInfo: */{ stock: null, variants: [] }, expandedStockInfos);
-                expandedStockInfos.forEach(({variants}) => {
-                    // sort each variant by variantGroup's sort:
-                    variants.sort(({groupSort: groupSortA}, {groupSort: groupSortB}) => groupSortA - groupSortB);
-                });
+                const expandedStockInfos = createStockMap(productVariantGroupDiff, updatedProductVariantGroups, currentStocks);
                 
                 
                 
