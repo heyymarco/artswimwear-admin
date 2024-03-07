@@ -200,7 +200,7 @@ const createProductVariantGroupDiff = (productVariantGroups: ProductVariantGroup
 
 interface StockInfo {
     stock    : number|null
-    variants : { groupSort: number, id: string }[]
+    variants : string[]
 }
 const createStockMap = (productVariantGroupDiff: Pick<ProductVariantGroupDiff, 'productVariantGroupAdds'|'productVariantGroupMods'>, updatedProductVariantGroups: ProductVariantGroupDetail[], currentStocks: Pick<Stock, 'value'|'productVariantIds'>[]): StockInfo[] => {
     //#region normalize productVariantGroupUpdated
@@ -288,7 +288,11 @@ const createStockMap = (productVariantGroupDiff: Pick<ProductVariantGroupDiff, '
         &Pick<ProductVariantGroupDetail, 'sort'>
         &Pick<ProductVariantUpdated, 'productVariantAdds'>
         &Partial<Pick<ProductVariantUpdated, 'productVariantMods'>>
-    const expandStockInfo = (productVariantUpds : ProductVariantUpd[], index: number, baseStockInfo: StockInfo, expandedStockInfos: StockInfo[]): void => {
+    interface StockInfoRaw {
+        stock    : number|null
+        variants : { groupSort: number, id: string }[]
+    }
+    const expandStockInfo = (productVariantUpds : ProductVariantUpd[], index: number, baseStockInfo: StockInfoRaw, expandedStockInfos: StockInfoRaw[]): void => {
         const productVariantUpd = productVariantUpds[index];
         if (!productVariantUpd) { // end of variantGroup(s) => resolved as current `baseStockInfo`
             expandedStockInfos.push(baseStockInfo);
@@ -375,13 +379,16 @@ const createStockMap = (productVariantGroupDiff: Pick<ProductVariantGroupDiff, '
         ...productVariantGroupMods, // the mods first
         ...productVariantGroupAdds, // then the adds
     ];
-    const expandedStockInfos: StockInfo[] = [];
+    const expandedStockInfos: StockInfoRaw[] = [];
     expandStockInfo(productVariantUpds, 0, /* baseStockInfo: */{ stock: null, variants: [] }, expandedStockInfos);
     expandedStockInfos.forEach(({variants}) => {
         // sort each variant by variantGroup's sort:
         variants.sort(({groupSort: groupSortA}, {groupSort: groupSortB}) => groupSortA - groupSortB);
     });
-    return expandedStockInfos;
+    return expandedStockInfos.map(({variants, ...restStockInfo}) => ({
+        ...restStockInfo,
+        variants : variants.map(({id}) => id),
+    }));
 }
 
 
@@ -1122,7 +1129,7 @@ You do not have the privilege to modify the product_variant visibility.`
                         productVariantIds : true,
                     },
                 });
-                const expandedStockInfos = createStockMap(productVariantGroupDiff, updatedProductVariantGroups, currentStocks);
+                const stockMap = createStockMap(productVariantGroupDiff, updatedProductVariantGroups, currentStocks);
                 
                 
                 
@@ -1136,8 +1143,8 @@ You do not have the privilege to modify the product_variant visibility.`
                                 // delete all within current `productId`
                                 productId : productDetail.id,
                             },
-                            create : expandedStockInfos.map(({variants, stock}) => ({
-                                productVariantIds : variants.map(({id}) => id),
+                            create : stockMap.map(({variants, stock}) => ({
+                                productVariantIds : variants,
                                 value             : stock,
                             })),
                         },
