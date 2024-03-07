@@ -133,7 +133,7 @@ const StockPreview = (props: StockPreviewProps): JSX.Element|null => {
                     !productVariantIds.length
                     ? <span className='noValue'>No Variant</span>
                     : productVariantIds.map((productVariantId) =>
-                        <Basic key={id} className='variant' size='sm'>
+                        <Basic key={productVariantId} className='variant' size='sm'>
                             {productVariants?.find(({id}) => (id === productVariantId))?.name}
                         </Basic>
                     )
