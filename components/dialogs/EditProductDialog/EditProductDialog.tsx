@@ -116,11 +116,6 @@ import {
     StockPreview,
 }                           from '@/components/views/StockPreview'
 
-// others:
-import {
-    customAlphabet,
-}                           from 'nanoid/async'
-
 // models:
 import type {
     ProductVisibility,
@@ -271,16 +266,13 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         const currentStocks : Pick<Stock, 'value'|'productVariantIds'>[] = stocks ?? [];
         const stockMap = createStockMap(productVariantGroupDiff, currentStocks, variantGroups ?? []);
         // console.log('stockMap: ', stockMap);
-        (async () => {
-            const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
-            setStocks(await Promise.all(
-                stockMap
-                .map(async (stockItem) => ({
-                    ...stockItem,
-                    id : ` ${await nanoid()}`, // starts with space{random-temporary-id}
-                }))
-            ));
-        })();
+        setStocks(
+            stockMap
+            .map((stockItem, index) => ({
+                ...stockItem,
+                id : ` ${index}`, // starts with space{id-counter}
+            }))
+        );
         
         
         
