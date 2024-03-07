@@ -4,11 +4,6 @@
 import {
     // react:
     default as React,
-    
-    
-    
-    // hooks:
-    useRef,
 }                           from 'react'
 
 // cssfn:
@@ -26,29 +21,23 @@ import {
 // reusable-ui components:
 import {
     // base-components:
-    Indicator,
-    
-    
-    
-    // simple-components:
-    Icon,
+    Basic,
     
     
     
     // layout-components:
     ListItem,
-    List,
     
     
     
-    // utility-components:
-    useDialogMessage,
+    // composite-components:
+    Group,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // internal components:
-import {
-    EditButton,
-}                           from '@/components/EditButton'
+import type {
+    EditorChangeEventHandler
+}                           from '@/components/editors/Editor'
 import {
     StockEditor,
 }                           from '@/components/editors/StockEditor'
@@ -61,9 +50,6 @@ import type {
     ComplexEditModelDialogResult,
     UpdatedHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
-import {
-    SimpleEditModelDialog,
-}                           from '@/components/dialogs/SimpleEditModelDialog'
 
 // stores:
 import type {
@@ -121,47 +107,12 @@ const StockPreview = (props: StockPreviewProps): JSX.Element|null => {
     
     
     
-    // refs:
-    const listItemRef = useRef<HTMLElement|null>(null);
-    
-    
-    
-    // dialogs:
-    const {
-        showDialog,
-    } = useDialogMessage();
-    
-    
-    
     // handlers:
-    const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async (event) => {
-        const updatedVariantGroupModel = await showDialog<ComplexEditModelDialogResult<StockDetail>>(
-            <SimpleEditModelDialog<StockDetail>
-                // data:
-                model={model}
-                edit='value'
-                
-                
-                
-                // global stackable:
-                viewport={listItemRef}
-                
-                
-                
-                // components:
-                editorComponent={<StockEditor theme='primaryAlt' />}
-            />
-        );
-        switch (updatedVariantGroupModel) {
-            case undefined: // dialog canceled
-                break;
-            
-            case false:     // dialog deleted
-                break;
-            
-            default:        // dialog updated
-                await onUpdated?.(updatedVariantGroupModel);
-        } // switch
+    const handleChange = useEvent<EditorChangeEventHandler<number|null>>((value) => {
+        onUpdated?.({
+            ...model,
+            value : value,
+        });
     });
     
     
@@ -174,35 +125,36 @@ const StockPreview = (props: StockPreviewProps): JSX.Element|null => {
             
             
             
-            // refs:
-            elmRef={listItemRef}
-            
-            
-            
             // classes:
             className={styleSheet.main}
         >
-            <div className='variants'>
+            <Group orientation='block' className='variants' theme='primaryAlt'>
                 {
                     !productVariantIds.length
                     ? <span className='noValue'>No Variant</span>
-                    : <span className='values'>
-                        {productVariantIds.map((productVariantId) =>
-                            <Indicator key={id} tag='span' className='value' size='sm' active>
-                                {productVariants?.find(({id}) => (id === productVariantId))?.name}
-                            </Indicator>
-                        )}
-                    </span>
+                    : productVariantIds.map((productVariantId) =>
+                        <Basic key={id} className='variant' size='sm'>
+                            {productVariants?.find(({id}) => (id === productVariantId))?.name}
+                        </Basic>
+                    )
                 }
-            </div>
+            </Group>
             
-            <span className='stock'>
-                {value}
-            </span>
-            
-            <EditButton
-                iconComponent={<Icon icon='edit' />}
-                onClick={handleEditButtonClick}
+            <StockEditor
+                // variants:
+                size='sm'
+                theme='primaryAlt'
+                
+                
+                
+                // classes:
+                className='stock'
+                
+                
+                
+                // values:
+                value={value}
+                onChange={handleChange}
             />
         </ListItem>
     );
