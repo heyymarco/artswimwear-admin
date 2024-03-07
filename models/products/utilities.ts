@@ -112,8 +112,8 @@ export const createProductVariantGroupDiff = (productVariantGroups: ProductVaria
 
 
 export interface StockInfo {
-    stock    : number|null
-    variants : string[]
+    stock             : number|null
+    productVariantIds : string[]
 }
 export const createStockMap = (productVariantGroupDiff: Pick<ProductVariantGroupDiff, 'productVariantGroupAdds'|'productVariantGroupMods'>, currentStocks: Pick<Stock, 'value'|'productVariantIds'>[], updatedProductVariantGroups: (Pick<ProductVariantGroupDetail, 'id'|'sort'|'hasDedicatedStocks'> & { productVariants: Pick<ProductVariantGroupDetail['productVariants'][number], 'id'>[] })[]): StockInfo[] => {
     //#region normalize productVariantGroupUpdated
@@ -206,8 +206,8 @@ export const createStockMap = (productVariantGroupDiff: Pick<ProductVariantGroup
         ...productVariantGroupAdds, // then the adds
     ];
     interface StockInfoRaw {
-        stock    : number|null
-        variants : { groupSort: number, id: string }[]
+        stock           : number|null
+        productVariants : { groupSort: number, id: string }[]
     }
     const expandStockInfo = (variantGroupIndex: number, baseStockInfo: StockInfoRaw, expandedStockInfos: StockInfoRaw[]): void => {
         const productVariantGroupUpdate = productVariantGroupUpdates[variantGroupIndex];
@@ -220,29 +220,29 @@ export const createStockMap = (productVariantGroupDiff: Pick<ProductVariantGroup
         
         // recursively expands:
         
-        const baseVariants = baseStockInfo.variants;
+        const baseProductVariants = baseStockInfo.productVariants;
         
         if (productVariantGroupUpdate.productVariantMods) {
             for (const productVariantMod of productVariantGroupUpdate.productVariantMods) {
-                const currentVariants = [
-                    ...baseVariants,
+                const currentProductVariants = [
+                    ...baseProductVariants,
                     {
                         groupSort : productVariantGroupUpdate.sort,
                         id        : productVariantMod.id,
                     },
                 ];
-                const currentVariantIds = currentVariants.map(({id}) => id);
+                const currentProductVariantIds = currentProductVariants.map(({id}) => id);
                 
                 
                 
                 const currentStock = (
                     currentStocks
                     .find(({productVariantIds}) =>
-                        (productVariantIds.length === currentVariantIds.length)
+                        (productVariantIds.length === currentProductVariantIds.length)
                         &&
-                        productVariantIds.every((idA) => currentVariantIds.includes(idA))
+                        productVariantIds.every((idA) => currentProductVariantIds.includes(idA))
                         &&
-                        currentVariantIds.every((idB) => productVariantIds.includes(idB))
+                        currentProductVariantIds.every((idB) => productVariantIds.includes(idB))
                     )
                     ?.value
                     ??
@@ -254,8 +254,8 @@ export const createStockMap = (productVariantGroupDiff: Pick<ProductVariantGroup
                 expandStockInfo(
                     variantGroupIndex + 1,
                     /* baseStockInfo: */{
-                        stock    : currentStock,
-                        variants : currentVariants,
+                        stock           : currentStock,
+                        productVariants : currentProductVariants,
                     },
                     expandedStockInfos
                 );
@@ -263,8 +263,8 @@ export const createStockMap = (productVariantGroupDiff: Pick<ProductVariantGroup
         } // if
         
         for (const productVariantAdd of productVariantGroupUpdate.productVariantAdds) {
-            const currentVariants = [
-                ...baseVariants,
+            const currentProductVariants = [
+                ...baseProductVariants,
                 {
                     groupSort : productVariantGroupUpdate.sort,
                     id        : productVariantAdd.id,
@@ -276,12 +276,12 @@ export const createStockMap = (productVariantGroupDiff: Pick<ProductVariantGroup
             expandStockInfo(
                 variantGroupIndex + 1,
                 /* baseStockInfo: */{
-                    stock    : (
+                    stock           : (
                         (productVariantAdd === productVariantGroupUpdate.productVariantAdds[0])
                         ? baseStockInfo.stock
                         : null
                     ),
-                    variants : currentVariants,
+                    productVariants : currentProductVariants,
                 },
                 expandedStockInfos
             );
@@ -291,13 +291,15 @@ export const createStockMap = (productVariantGroupDiff: Pick<ProductVariantGroup
     
     
     const expandedStockInfos: StockInfoRaw[] = [];
-    expandStockInfo(0, /* baseStockInfo: */{ stock: null, variants: [] }, expandedStockInfos);
-    expandedStockInfos.forEach(({variants}) => {
+    expandStockInfo(0, /* baseStockInfo: */{ stock: null, productVariants: [] }, expandedStockInfos);
+    
+    expandedStockInfos.forEach(({productVariants}) => {
         // sort each variant by variantGroup's sort:
-        variants.sort(({groupSort: groupSortA}, {groupSort: groupSortB}) => groupSortA - groupSortB);
+        productVariants.sort(({groupSort: groupSortA}, {groupSort: groupSortB}) => groupSortA - groupSortB);
     });
-    return expandedStockInfos.map(({variants, ...restStockInfo}) => ({
+    
+    return expandedStockInfos.map(({productVariants, ...restStockInfo}) => ({
         ...restStockInfo,
-        variants : variants.map(({id}) => id),
+        productVariantIds : productVariants.map(({id}) => id),
     }));
 }

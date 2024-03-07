@@ -804,9 +804,9 @@ You do not have the privilege to modify the product_variant visibility.`
                                 // delete all within current `productId`
                                 productId : productDetail.id,
                             },
-                            create : stockMap.map(({variants, stock}) => ({
-                                productVariantIds : variants,
-                                value             : stock,
+                            create : stockMap.map(({productVariantIds, stock}) => ({
+                                productVariantIds,
+                                value : stock,
                             })),
                         },
                     },
