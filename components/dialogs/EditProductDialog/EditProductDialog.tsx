@@ -275,10 +275,9 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
             setStocks(await Promise.all(
                 stockMap
-                .map(async ({stock, ...stockItem}) => ({
+                .map(async (stockItem) => ({
                     ...stockItem,
-                    id    : ` ${await nanoid()}`, // starts with space{random-temporary-id}
-                    value : stock,
+                    id : ` ${await nanoid()}`, // starts with space{random-temporary-id}
                 }))
             ));
         })();

@@ -112,7 +112,7 @@ export const createProductVariantGroupDiff = (productVariantGroups: ProductVaria
 
 
 export interface StockInfo {
-    stock             : number|null
+    value             : number|null
     productVariantIds : string[]
 }
 export const createStockMap = (productVariantGroupDiff: Pick<ProductVariantGroupDiff, 'productVariantGroupAdds'|'productVariantGroupMods'>, currentStocks: Pick<Stock, 'value'|'productVariantIds'>[], updatedProductVariantGroups: (Pick<ProductVariantGroupDetail, 'id'|'sort'|'hasDedicatedStocks'> & { productVariants: Pick<ProductVariantGroupDetail['productVariants'][number], 'id'>[] })[]): StockInfo[] => {
@@ -206,7 +206,7 @@ export const createStockMap = (productVariantGroupDiff: Pick<ProductVariantGroup
         ...productVariantGroupAdds, // then the adds
     ];
     interface StockInfoRaw {
-        stock           : number|null
+        value           : number|null
         productVariants : { groupSort: number, id: string }[]
     }
     const expandStockInfo = (variantGroupIndex: number, baseStockInfo: StockInfoRaw, expandedStockInfos: StockInfoRaw[]): void => {
@@ -254,7 +254,7 @@ export const createStockMap = (productVariantGroupDiff: Pick<ProductVariantGroup
                 expandStockInfo(
                     variantGroupIndex + 1,
                     /* baseStockInfo: */{
-                        stock           : currentStock,
+                        value           : currentStock,
                         productVariants : currentProductVariants,
                     },
                     expandedStockInfos
@@ -276,9 +276,9 @@ export const createStockMap = (productVariantGroupDiff: Pick<ProductVariantGroup
             expandStockInfo(
                 variantGroupIndex + 1,
                 /* baseStockInfo: */{
-                    stock           : (
+                    value           : (
                         (productVariantAdd === productVariantGroupUpdate.productVariantAdds[0])
-                        ? baseStockInfo.stock
+                        ? baseStockInfo.value
                         : null
                     ),
                     productVariants : currentProductVariants,
@@ -291,7 +291,7 @@ export const createStockMap = (productVariantGroupDiff: Pick<ProductVariantGroup
     
     
     const expandedStockInfos: StockInfoRaw[] = [];
-    expandStockInfo(0, /* baseStockInfo: */{ stock: null, productVariants: [] }, expandedStockInfos);
+    expandStockInfo(0, /* baseStockInfo: */{ value: null, productVariants: [] }, expandedStockInfos);
     
     expandedStockInfos.forEach(({productVariants}) => {
         // sort each variant by variantGroup's sort:
