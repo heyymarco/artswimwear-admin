@@ -98,6 +98,106 @@ export interface ProductDetail
 
 
 
+// utilities:
+interface ProductVariantDiff {
+    productVariantDels      : string[]
+    productVariantAdds      : Omit<ProductVariantDetail, 'id'>[]
+    productVariantMods      : ProductVariantDetail[]
+}
+interface ProductVariantGroupDiff {
+    productVariantGroupOris : ProductVariantGroupDetail[]
+    productVariantGroupDels : string[]
+    productVariantGroupAdds : (Omit<ProductVariantGroupDetail, 'id'|'productVariants'> & Pick<ProductVariantDiff, 'productVariantAdds'>)[]
+    productVariantGroupMods : (Omit<ProductVariantGroupDetail,      'productVariants'> & ProductVariantDiff)[]
+}
+const createProductVariantGroupDiff = (productVariantGroups: ProductVariantGroupDetail[], productVariantGroupOris : ProductVariantGroupDetail[]): ProductVariantGroupDiff => {
+    const productVariantGroupDels : ProductVariantGroupDiff['productVariantGroupDels'] = (() => {
+        const postedIds  : string[] = productVariantGroups.map(({id}) => id);
+        const currentIds : string[] = productVariantGroupOris.map(({id}) => id);
+        return currentIds.filter((currentId) => !postedIds.includes(currentId));
+    })();
+    const productVariantGroupAdds : ProductVariantGroupDiff['productVariantGroupAdds'] = [];
+    const productVariantGroupMods : ProductVariantGroupDiff['productVariantGroupMods'] = [];
+    let productVariantGroupSortCounter = 0;
+    for (const {id, sort, productVariants, ...restProductVariantGroup} of productVariantGroups) {
+        const {
+            productVariantDels,
+            productVariantAdds,
+            productVariantMods,
+        } = ((): ProductVariantDiff => {
+            const productVariantDels : ProductVariantDiff['productVariantDels'] = (() => {
+                const postedIds  : string[] = productVariants.map(({id}) => id);
+                const currentIds : string[] = productVariantGroupOris.find(({id: groupId}) => (groupId === id))?.productVariants.map(({id}) => id) ?? [];
+                return currentIds.filter((currentId) => !postedIds.includes(currentId));
+            })();
+            const productVariantAdds : ProductVariantDiff['productVariantAdds'] = [];
+            const productVariantMods : ProductVariantDiff['productVariantMods'] = [];
+            let productVariantSortCounter = 0;
+            for (const {id, sort, ...restProductVariant} of productVariants) {
+                if (!id || (id[0] === ' ')) {
+                    productVariantAdds.push({
+                        // data:
+                        sort: productVariantSortCounter++, // normalize sort, zero based
+                        ...restProductVariant,
+                    });
+                    continue;
+                } // if
+                
+                
+                
+                productVariantMods.push({
+                    // data:
+                    id,
+                    sort: productVariantSortCounter++, // normalize sort, zero based
+                    ...restProductVariant,
+                });
+            } // for
+            return {
+                productVariantDels,
+                productVariantAdds,
+                productVariantMods,
+            };
+        })();
+        
+        
+        
+        if (!id || (id[0] === ' ')) {
+            productVariantGroupAdds.push({
+                // data:
+                sort: productVariantGroupSortCounter++, // normalize sort, zero based
+                ...restProductVariantGroup,
+                
+                // relations:
+                productVariantAdds,
+            });
+            continue;
+        } // if
+        
+        
+        
+        productVariantGroupMods.push({
+            // data:
+            id,
+            sort: productVariantGroupSortCounter++, // normalize sort, zero based
+            ...restProductVariantGroup,
+            
+            // relations:
+            productVariantDels,
+            productVariantAdds,
+            productVariantMods,
+        });
+    } // for
+    return {
+        productVariantGroupOris,
+        
+        productVariantGroupDels,
+        productVariantGroupAdds,
+        productVariantGroupMods,
+    };
+}
+
+
+
 // routers:
 interface RequestContext {
     params: {
@@ -400,18 +500,7 @@ You do not have the privilege to view the products.`
             //#region normalize productVariantGroups
             const productVariantGroups : ProductVariantGroupDetail[]|undefined = productVariantGroupsRaw;
             
-            interface ProductVariantDiff {
-                productVariantDels      : string[]
-                productVariantAdds      : Omit<ProductVariantDetail, 'id'>[]
-                productVariantMods      : ProductVariantDetail[]
-            }
-            interface ProductVariantGroupDiff {
-                productVariantGroupOris : ProductVariantGroupDetail[]
-                productVariantGroupDels : string[]
-                productVariantGroupAdds : (Omit<ProductVariantGroupDetail, 'id'|'productVariants'> & Pick<ProductVariantDiff, 'productVariantAdds'>)[]
-                productVariantGroupMods : (Omit<ProductVariantGroupDetail,      'productVariants'> & ProductVariantDiff)[]
-            }
-            const productVariantGroupDiffs = (productVariantGroups === undefined) ? undefined : await (async (): Promise<ProductVariantGroupDiff> => {
+            const productVariantGroupDiff = (productVariantGroups === undefined) ? undefined : await (async (): Promise<ProductVariantGroupDiff> => {
                 const productVariantGroupOris : ProductVariantGroupDetail[] = !id ? [] : await prismaTransaction.productVariantGroup.findMany({
                     where : {
                         productId : id,
@@ -445,92 +534,7 @@ You do not have the privilege to view the products.`
                         sort: 'asc',
                     },
                 });
-                
-                
-                
-                const productVariantGroupDels : ProductVariantGroupDiff['productVariantGroupDels'] = (() => {
-                    const postedIds  : string[] = productVariantGroups.map(({id}) => id);
-                    const currentIds : string[] = productVariantGroupOris.map(({id}) => id);
-                    return currentIds.filter((currentId) => !postedIds.includes(currentId));
-                })();
-                const productVariantGroupAdds : ProductVariantGroupDiff['productVariantGroupAdds'] = [];
-                const productVariantGroupMods : ProductVariantGroupDiff['productVariantGroupMods'] = [];
-                let productVariantGroupSortCounter = 0;
-                for (const {id, sort, productVariants, ...restProductVariantGroup} of productVariantGroups) {
-                    const {
-                        productVariantDels,
-                        productVariantAdds,
-                        productVariantMods,
-                    } = ((): ProductVariantDiff => {
-                        const productVariantDels : ProductVariantDiff['productVariantDels'] = (() => {
-                            const postedIds  : string[] = productVariants.map(({id}) => id);
-                            const currentIds : string[] = productVariantGroupOris.find(({id: groupId}) => (groupId === id))?.productVariants.map(({id}) => id) ?? [];
-                            return currentIds.filter((currentId) => !postedIds.includes(currentId));
-                        })();
-                        const productVariantAdds : ProductVariantDiff['productVariantAdds'] = [];
-                        const productVariantMods : ProductVariantDiff['productVariantMods'] = [];
-                        let productVariantSortCounter = 0;
-                        for (const {id, sort, ...restProductVariant} of productVariants) {
-                            if (!id || (id[0] === ' ')) {
-                                productVariantAdds.push({
-                                    // data:
-                                    sort: productVariantSortCounter++, // normalize sort, zero based
-                                    ...restProductVariant,
-                                });
-                                continue;
-                            } // if
-                            
-                            
-                            
-                            productVariantMods.push({
-                                // data:
-                                id,
-                                sort: productVariantSortCounter++, // normalize sort, zero based
-                                ...restProductVariant,
-                            });
-                        } // for
-                        return {
-                            productVariantDels,
-                            productVariantAdds,
-                            productVariantMods,
-                        };
-                    })();
-                    
-                    
-                    
-                    if (!id || (id[0] === ' ')) {
-                        productVariantGroupAdds.push({
-                            // data:
-                            sort: productVariantGroupSortCounter++, // normalize sort, zero based
-                            ...restProductVariantGroup,
-                            
-                            // relations:
-                            productVariantAdds,
-                        });
-                        continue;
-                    } // if
-                    
-                    
-                    
-                    productVariantGroupMods.push({
-                        // data:
-                        id,
-                        sort: productVariantGroupSortCounter++, // normalize sort, zero based
-                        ...restProductVariantGroup,
-                        
-                        // relations:
-                        productVariantDels,
-                        productVariantAdds,
-                        productVariantMods,
-                    });
-                } // for
-                return {
-                    productVariantGroupOris,
-                    
-                    productVariantGroupDels,
-                    productVariantGroupAdds,
-                    productVariantGroupMods,
-                };
+                return createProductVariantGroupDiff(productVariantGroups, productVariantGroupOris);
             })();
             //#endregion normalize productVariantGroups
             
@@ -576,14 +580,14 @@ You do not have the privilege to modify the product stock.`
 You do not have the privilege to modify the product visibility.`
                 }, { status: 403 }); // handled with error: forbidden
                 
-                if (productVariantGroupDiffs !== undefined) {
+                if (productVariantGroupDiff !== undefined) {
                     const {
                         productVariantGroupOris,
                         
                         productVariantGroupDels,
                         productVariantGroupAdds,
                         productVariantGroupMods,
-                    } = productVariantGroupDiffs;
+                    } = productVariantGroupDiff;
                     
                     
                     
@@ -788,13 +792,13 @@ You do not have the privilege to modify the product_variant visibility.`
                 images,
                 
                 // relations:
-                productVariantGroups : (productVariantGroupDiffs === undefined) ? undefined : {
-                    delete : !productVariantGroupDiffs.productVariantGroupDels.length ? undefined : productVariantGroupDiffs.productVariantGroupDels.map((id) => ({
+                productVariantGroups : (productVariantGroupDiff === undefined) ? undefined : {
+                    delete : !productVariantGroupDiff.productVariantGroupDels.length ? undefined : productVariantGroupDiff.productVariantGroupDels.map((id) => ({
                         // conditions:
                         id : id,
                     })),
                     
-                    create : !productVariantGroupDiffs.productVariantGroupAdds.length ? undefined : productVariantGroupDiffs.productVariantGroupAdds.map(({productVariantAdds, ...restProductVariantGroup}) => ({
+                    create : !productVariantGroupDiff.productVariantGroupAdds.length ? undefined : productVariantGroupDiff.productVariantGroupAdds.map(({productVariantAdds, ...restProductVariantGroup}) => ({
                         // data:
                         ...restProductVariantGroup,
                         
@@ -804,7 +808,7 @@ You do not have the privilege to modify the product_variant visibility.`
                         },
                     })),
                     
-                    update : !productVariantGroupDiffs.productVariantGroupMods.length ? undefined : productVariantGroupDiffs.productVariantGroupMods.map(({id, productVariantDels, productVariantAdds, productVariantMods, ...restProductVariantGroup}) => ({
+                    update : !productVariantGroupDiff.productVariantGroupMods.length ? undefined : productVariantGroupDiff.productVariantGroupMods.map(({id, productVariantDels, productVariantAdds, productVariantMods, ...restProductVariantGroup}) => ({
                         where : {
                             // conditions:
                             id : id,
@@ -919,7 +923,7 @@ You do not have the privilege to modify the product_variant visibility.`
             
             
             //#region rebuild stock maps
-            if (productVariantGroupDiffs) {
+            if (productVariantGroupDiff) {
                 //#region normalize productVariantGroupUpdated
                 const updatedProductVariantGroups = productDetail.productVariantGroups;
                 
@@ -935,7 +939,7 @@ You do not have the privilege to modify the product_variant visibility.`
                     productVariantGroupAdds,
                     productVariantGroupMods,
                 } = ((): ProductVariantGroupUpdated => {
-                    const productVariantGroupModIds = productVariantGroupDiffs.productVariantGroupMods.map(({id}) => id);
+                    const productVariantGroupModIds = productVariantGroupDiff.productVariantGroupMods.map(({id}) => id);
                     const productVariantGroupAdds   : ProductVariantGroupUpdated['productVariantGroupAdds'] = [];
                     const productVariantGroupMods   : ProductVariantGroupUpdated['productVariantGroupMods'] = [];
                     for (const {id, sort, hasDedicatedStocks, productVariants} of updatedProductVariantGroups) {
@@ -948,7 +952,7 @@ You do not have the privilege to modify the product_variant visibility.`
                             productVariantAdds,
                             productVariantMods,
                         } = ((): ProductVariantUpdated => {
-                            const productVariantGroupMod = productVariantGroupDiffs.productVariantGroupMods.find(({id: groupId}) => (groupId === id));
+                            const productVariantGroupMod = productVariantGroupDiff.productVariantGroupMods.find(({id: groupId}) => (groupId === id));
                             const productVariantModIds   = productVariantGroupMod?.productVariantMods.map(({id}) => id);
                             const productVariantAdds     : ProductVariantUpdated['productVariantAdds'] = [];
                             for (const {id} of productVariants) {
