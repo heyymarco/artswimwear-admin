@@ -261,11 +261,9 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     const prevVariantGroups = useRef<ProductVariantGroupDetail[]|undefined>(variantGroups);
     if (prevVariantGroups.current !== variantGroups) {
         const productVariantGroupDiff = createProductVariantGroupDiff(variantGroups ?? [], prevVariantGroups.current ?? []);
-        // console.log(productVariantGroupDiff);
         const currentStocks : Pick<Stock, 'value'|'productVariantIds'>[] = stocks ?? [];
-        // console.log('currentStocks: ', currentStocks);
         const stockMap = createStockMap(productVariantGroupDiff, currentStocks, variantGroups ?? []);
-        // console.log('stockMap: ', stockMap);
+        
         const idSuffix = Date.now(); // use completely different id to the prev, so the prev state gone
         setStocks(
             stockMap
