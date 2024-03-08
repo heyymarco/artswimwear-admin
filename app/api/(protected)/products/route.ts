@@ -601,6 +601,26 @@ You do not have the privilege to modify the product_variant price and/or shippin
                     
                     
                     if (
+                        !session.role?.product_us
+                        &&
+                        productVariantGroupMods
+                        .some(({id, hasDedicatedStocks}) => {
+                            const productVariantGroupOri = productVariantGroupOris.find(({id: idOri}) => (idOri === id));
+                            return (
+                                !!productVariantGroupOri
+                                &&
+                                (hasDedicatedStocks !== productVariantGroupOri.hasDedicatedStocks)
+                            );
+                        })
+                    ) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the product_variant stock.`
+                    }, { status: 403 }); // handled with error: forbidden
+                    
+                    
+                    
+                    if (
                         !session.role?.product_uv
                         &&
                         productVariantGroupMods
