@@ -706,6 +706,11 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                     
                     
                     
+                    // accessibilities:
+                    readOnly={!(whenUpdate.stock || whenAdd)}
+                    
+                    
+                    
                     // values:
                     value={stocks}
                     onChange={(value) => {
