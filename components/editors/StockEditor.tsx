@@ -6,7 +6,6 @@ import {
     
     
     // hooks:
-    useState,
     useRef,
     useEffect,
 }                           from 'react'
@@ -16,6 +15,7 @@ import {
     // react helper hooks:
     useEvent,
     EventHandler,
+    useMergeEvents,
     useMergeRefs,
     
     
@@ -23,6 +23,12 @@ import {
     // basic variants of UI:
     useBasicVariantProps,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
+// heymarco:
+import {
+    // utilities:
+    useControllableAndUncontrollable,
+}                           from '@heymarco/events'
 
 // reusable-ui components:
 import {
@@ -37,6 +43,10 @@ import {
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internals:
+import type {
+    // types:
+    EditorChangeEventHandler,
+}                           from '@/components/editors/Editor'
 import {
     // react components:
     QuantityEditorProps,
@@ -129,10 +139,10 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
         
         
         // values:
-        defaultValue : defaultUncontrollableValue = 0,
-        value        : controllableValue,
-        onChange,
-        onChangeAsText,
+        defaultValue   : defaultUncontrollableValue = null,
+        value          : controllableValue,
+        onChange       : onControllableValueChange,
+        onChangeAsText : onControllableTextChange,
         
         
         
@@ -165,10 +175,32 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
     
     
     // states:
-    const value = (controllableValue !== undefined) ? controllableValue : defaultUncontrollableValue;
-    const [selectedTabLimited, setSelectedTabLimited] = useState<boolean>(
-        (value !== null) // null: unlimited, number: limited
+    const handleControllableValueChangeInternal = useEvent<EditorChangeEventHandler<number|null>>((newValue) => {
+        onControllableTextChange?.((newValue === null) ? '' : `${newValue}`);
+    });
+    const handleControllableValueChange         = useMergeEvents(
+        // preserves the original `onCollapseEnd` from `props`:
+        onControllableValueChange,
+        
+        
+        
+        // actions:
+        handleControllableValueChangeInternal,
     );
+    const {
+        value              : value,
+        triggerValueChange : triggerValueChange,
+    } = useControllableAndUncontrollable<number|null>({
+        defaultValue       : defaultUncontrollableValue,
+        value              : controllableValue,
+        onValueChange      : handleControllableValueChange,
+    });
+    const selectedTabLimited = (value !== null);
+    
+    const prevLimitedValue = useRef<number|null>(value ?? 0);
+    if ((value !== null) && (prevLimitedValue.current !== value)) {
+        prevLimitedValue.current = value;
+    } // if
     
     
     
@@ -183,18 +215,22 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
     
     // handlers:
     const handleExpandedChange = useEvent<EventHandler<TabExpandedChangeEvent>>(({tabIndex}) => {
-        const selectedTabLimited = (tabIndex === 1);
-        setSelectedTabLimited(selectedTabLimited);
-        onChange?.(
-            selectedTabLimited
-            ? (numberEditorRefInternal.current?.value ? numberEditorRefInternal.current?.valueAsNumber : null)
-            : null
-        );
+        triggerValueChange(
+            (tabIndex === 0)
+            ? null
+            : (!!numberEditorRefInternal.current?.value ? numberEditorRefInternal.current?.valueAsNumber : null)
+        , { triggerAt: 'immediately' });
+    });
+    const handleInputChange    = useEvent<EditorChangeEventHandler<number|null>>((newValue) => {
+        triggerValueChange(
+            newValue
+        , { triggerAt: 'immediately' });
     });
     
     
     
-    // dom effects:
+    // effects:
+    // auto focus on <QuantityEditor> when the tab is active:
     useEffect(() => {
         // conditions:
         if (!selectedTabLimited) return;
@@ -322,9 +358,8 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                         
                         
                         // values:
-                        defaultValue={value ?? 0} // force as UNCONTROLLED, so the last value when switching tab back & forth is NOT LOST
-                        onChange={onChange}
-                        onChangeAsText={onChangeAsText}
+                        value={prevLimitedValue.current}
+                        onChange={handleInputChange}
                         
                         
                         
