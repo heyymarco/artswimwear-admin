@@ -258,7 +258,11 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     
     
     
-    const prevVariantGroups = useRef<ProductVariantGroupDetail[]|undefined>(variantGroups);
+    const prevVariantGroups = useRef<ProductVariantGroupDetail[]|undefined|null>(
+        !!model?.id
+        ? variantGroups // has model => edit   mode => initially as synced
+        : null          // no  model => create mode => initially as unsynced
+    );
     if (prevVariantGroups.current !== variantGroups) {
         const productVariantGroupDiff = createProductVariantGroupDiff(variantGroups ?? [], prevVariantGroups.current ?? []);
         const currentStocks : Pick<Stock, 'value'|'productVariantIds'>[] = stocks ?? [];
