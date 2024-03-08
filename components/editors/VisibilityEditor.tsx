@@ -9,6 +9,11 @@ import {
     // react helper hooks:
     useEvent,
     EventHandler,
+    
+    
+    
+    // an accessibility management system:
+    usePropReadOnly,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // heymarco:
@@ -28,7 +33,13 @@ import type {
     EditorProps,
 }                           from '@/components/editors/Editor'
 import {
-    // react components:
+    // layout-components:
+    ListProps,
+    List,
+    
+    
+    
+    // composite-components:
     TabExpandedChangeEvent,
     TabProps,
     Tab,
@@ -118,6 +129,11 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
         defaultValue : defaultUncontrollableValue = 'DRAFT',
         value        : controllableValue,
         onChange     : onControllableValueChange,
+        
+        
+        
+        // components:
+        listComponent = (<List<Element> /> as React.ReactComponentElement<any, ListProps<Element>>),
     ...restTabProps} = props;
     
     
@@ -147,6 +163,11 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
     
     
     
+    // accessibilities:
+    const propReadOnly = usePropReadOnly(props);
+    
+    
+    
     // jsx:
     return (
         <Tab<TElement>
@@ -170,6 +191,19 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
                 .findIndex((valueOption) => (valueOption === value))
             }
             onExpandedChange={handleExpandedChange}
+            
+            
+            
+            // components:
+            listComponent={
+                React.cloneElement<ListProps<Element>>(listComponent,
+                    // props:
+                    {
+                        // accessibilities:
+                        enabled : listComponent.props.enabled ?? !propReadOnly,
+                    },
+                )
+            }
         >
             <TabPanel label={PAGE_PRODUCT_VISIBILITY_PUBLISHED}>
                 <p>

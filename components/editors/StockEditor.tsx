@@ -20,6 +20,11 @@ import {
     
     
     
+    // an accessibility management system:
+    usePropReadOnly,
+    
+    
+    
     // basic variants of UI:
     useBasicVariantProps,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
@@ -32,8 +37,18 @@ import {
 
 // reusable-ui components:
 import {
-    // react components:
+    // simple-components:
     Label,
+    
+    
+    
+    // layout-components:
+    ListProps,
+    List,
+    
+    
+    
+    // composite-components:
     Group,
     
     TabExpandedChangeEvent,
@@ -157,6 +172,7 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
         decreaseButtonComponent,
         increaseButtonComponent,
         inputComponent,
+        listComponent = (<List<Element> /> as React.ReactComponentElement<any, ListProps<Element>>),
         
         
         
@@ -243,6 +259,11 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
     
     
     
+    // accessibilities:
+    const propReadOnly = usePropReadOnly(props);
+    
+    
+    
     // jsx:
     return (
         <Tab<TElement>
@@ -264,6 +285,19 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
             // states:
             expandedTabIndex={selectedTabLimited ? 1 : 0}
             onExpandedChange={handleExpandedChange}
+            
+            
+            
+            // components:
+            listComponent={
+                React.cloneElement<ListProps<Element>>(listComponent,
+                    // props:
+                    {
+                        // accessibilities:
+                        enabled : listComponent.props.enabled ?? !propReadOnly,
+                    },
+                )
+            }
         >
             <TabPanel label={PAGE_PRODUCT_STOCK_UNLIMITED}>
                 <p>
