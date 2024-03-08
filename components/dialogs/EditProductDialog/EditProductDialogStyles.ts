@@ -1,6 +1,7 @@
 // cssfn:
 import {
     // writes css in javascript:
+    rule,
     fallback,
     children,
     style,
@@ -127,6 +128,9 @@ export const usesStocksTabLayout = () => {
         // layouts:
         display      : 'grid',
         alignContent : 'start',
+        ...rule(':not(:has(>ul>li>*>.variants))', {
+            alignContent : 'center',
+        }),
         
         
         

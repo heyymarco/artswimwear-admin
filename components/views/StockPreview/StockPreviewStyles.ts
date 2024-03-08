@@ -1,6 +1,7 @@
 // cssfn:
 import {
     // writes css in javascript:
+    rule,
     children,
     style,
 }                           from '@cssfn/core'          // writes css in javascript
@@ -17,6 +18,13 @@ const usesStockPreviewLayout = () => { // the <ListItem> of variantGroup list
             '/',
             '1fr 1fr',
         ]],
+        ...rule(':not(:has(>.variants))', {
+            gridTemplate : [[
+                '"... stock ..."',
+                '/',
+                '0.5fr 1fr 0.5fr',
+            ]],
+        }),
         
         
         

@@ -131,17 +131,15 @@ const StockPreview = (props: StockPreviewProps): JSX.Element|null => {
             {/* <p>
                 {JSON.stringify(model)}
             </p> */}
-            <Group orientation='block' className='variants' theme='primaryAlt'>
+            {!!productVariantIds.length && <Group orientation='block' className='variants' theme='primaryAlt'>
                 {
-                    !productVariantIds.length
-                    ? <span className='noValue'>No Variant</span>
-                    : productVariantIds.map((productVariantId) =>
+                    productVariantIds.map((productVariantId) =>
                         <Basic key={productVariantId} className='variant' size='sm'>
                             {productVariants?.find(({id}) => (id === productVariantId))?.name}
                         </Basic>
                     )
                 }
-            </Group>
+            </Group>}
             
             <StockEditor
                 // variants:
