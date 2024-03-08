@@ -37,6 +37,7 @@ export interface VariantPrivilege
         description   : boolean,
         images        : boolean,
         price         : boolean,
+        stock         : boolean,
         visibility    : boolean,
     }
     privilegeDelete  ?: boolean
@@ -49,6 +50,7 @@ export const privilegeVariantUpdateFullAccess : Required<VariantPrivilege>['priv
     description : true,
     images      : true,
     price       : true,
+    stock       : true,
     visibility  : true,
 };
 
@@ -73,10 +75,11 @@ const defaultVariantStateContext : VariantState = {
     // privileges:
     privilegeAdd    : false,
     privilegeUpdate : {
-        description   : false,
-        images        : false,
-        price         : false,
-        visibility    : false,
+        description : false,
+        images      : false,
+        price       : false,
+        stock       : false,
+        visibility  : false,
     },
     privilegeDelete : false,
     

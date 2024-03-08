@@ -215,7 +215,7 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
             })(),
             
             name               : (whenUpdate.description || whenAdd)               ? name               : (model?.name               ?? ''   ),
-            hasDedicatedStocks : (whenUpdate.description || whenAdd)               ? hasDedicatedStocks : (model?.hasDedicatedStocks ?? false),
+            hasDedicatedStocks : (whenUpdate.stock       || whenAdd)               ? hasDedicatedStocks : (model?.hasDedicatedStocks ?? false),
             
             productVariants    : (!!variants && (variants !== unmodifiedVariants)) ? variants           : (unmodifiedVariants        ?? []   ),
         };
@@ -336,7 +336,7 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                         
                         
                         // accessibilities:
-                        enabled={whenUpdate.description || whenAdd}
+                        enabled={whenUpdate.stock || whenAdd}
                         
                         
                         
