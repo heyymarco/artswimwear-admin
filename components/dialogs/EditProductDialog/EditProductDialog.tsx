@@ -701,6 +701,11 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                     
                     
                     
+                    // variants:
+                    listStyle='flush'
+                    
+                    
+                    
                     // values:
                     value={stocks}
                     onChange={(value) => {

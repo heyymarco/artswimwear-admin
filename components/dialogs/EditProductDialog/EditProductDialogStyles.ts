@@ -117,12 +117,21 @@ export const usesInfoTabLayout = () => {
 };
 export const usesVariantsTabLayout = () => {
     return style({
-        // TODO: style variant tab
+        // layouts:
+        display      : 'grid',
+        alignContent : 'start',
     });
 };
 export const usesStocksTabLayout = () => {
     return style({
-        // TODO: style variant tab
+        // layouts:
+        display      : 'grid',
+        alignContent : 'start',
+        
+        
+        
+        // spacings:
+        padding: 0,
     });
 };
 export const usesImagesTabLayout = () => {
@@ -204,10 +213,10 @@ export default () => [
     }),
     scope('variantsTab', {
         ...usesVariantsTabLayout(),
-    }),
+    }, { specificityWeight: 4 }),
     scope('stocksTab', {
         ...usesStocksTabLayout(),
-    }),
+    }, { specificityWeight: 4 }),
     scope('imagesTab', {
         ...usesImagesTabLayout(),
     }),
