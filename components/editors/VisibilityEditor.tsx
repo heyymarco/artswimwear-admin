@@ -11,8 +11,19 @@ import {
     EventHandler,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
+// heymarco:
+import {
+    // utilities:
+    useControllableAndUncontrollable,
+}                           from '@heymarco/events'
+
 // internals:
 import type {
+    // types:
+    EditorChangeEventHandler,
+    
+    
+    
     // react components:
     EditorProps,
 }                           from '@/components/editors/Editor'
@@ -104,22 +115,34 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
         // values:
         optionHidden = true,
         
-        defaultValue,
-        value,
-        onChange,
+        defaultValue : defaultUncontrollableValue = 'DRAFT',
+        value        : controllableValue,
+        onChange     : onControllableValueChange,
     ...restTabProps} = props;
+    
+    
+    
+    // states:
+    const {
+        value              : value,
+        triggerValueChange : triggerValueChange,
+    } = useControllableAndUncontrollable<ProductVisibility | ProductVariantVisibility>({
+        defaultValue       : defaultUncontrollableValue,
+        value              : controllableValue,
+        onValueChange      : onControllableValueChange as (EditorChangeEventHandler<ProductVisibility> & EditorChangeEventHandler<ProductVariantVisibility>),
+    });
     
     
     
     // handlers:
     const handleExpandedChange = useEvent<EventHandler<TabExpandedChangeEvent>>(({tabIndex}) => {
-        onChange?.(
+        triggerValueChange(
             (
                 optionHidden                    // if including hidden
                 ? valueOptions[tabIndex]        // with hidden
                 : reducedValueOptions[tabIndex] // without hidden
             ) as (ProductVisibility & ProductVariantVisibility)
-        );
+        , { triggerAt: 'immediately' });
     });
     
     
@@ -138,15 +161,13 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
             
             
             // states:
-            defaultExpandedTabIndex={
+            expandedTabIndex={
                 (
                     optionHidden          // if including hidden
                     ? valueOptions        // with hidden
                     : reducedValueOptions // without hidden
                 )
-                .findIndex((valueOption) =>
-                    (valueOption.toUpperCase() === (value ?? defaultValue)?.toUpperCase())
-                )
+                .findIndex((valueOption) => (valueOption === value))
             }
             onExpandedChange={handleExpandedChange}
         >
