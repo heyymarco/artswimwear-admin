@@ -266,11 +266,12 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         // console.log('currentStocks: ', currentStocks);
         const stockMap = createStockMap(productVariantGroupDiff, currentStocks, variantGroups ?? []);
         // console.log('stockMap: ', stockMap);
+        const idSuffix = Date.now(); // use completely different id to the prev, so the prev state gone
         setStocks(
             stockMap
             .map((stockItem, index) => ({
                 ...stockItem,
-                id : ` ${index}`, // starts with space{id-counter}
+                id : ` ${index}-${idSuffix}`, // starts with space{id-counter}
             }))
         );
         
