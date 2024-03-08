@@ -47,7 +47,6 @@ import type {
 }                           from '@/components/explorers/PagedModelExplorer'
 import type {
     // types:
-    ComplexEditModelDialogResult,
     UpdatedHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 
@@ -128,9 +127,6 @@ const StockPreview = (props: StockPreviewProps): JSX.Element|null => {
             // classes:
             className={styleSheet.main}
         >
-            {/* <p>
-                {JSON.stringify(model)}
-            </p> */}
             {!!productVariantIds.length && <Group orientation='block' className='variants' theme='primaryAlt'>
                 {
                     productVariantIds.map((productVariantId) =>
