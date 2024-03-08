@@ -171,6 +171,15 @@ import './EditProductDialogStyles';
 
 
 
+// utilities:
+const noVariantStockList : StockDetail[] = [{
+    id                : ' emptyId',
+    value             : null,
+    productVariantIds : [],
+}];
+
+
+
 // react components:
 export interface EditProductDialogProps
     extends
@@ -248,21 +257,17 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     
     
     
-    const stockList = model?.stocks;
-    const [unmodifiedStocks, setUnmodifiedStocks] = useState<StockDetail[]|undefined>(stockList);
-    const [stocks          , setStocks          ] = useState<StockDetail[]|undefined>(stockList);
-    if ((unmodifiedStocks?.length !== stockList?.length) || unmodifiedStocks?.some((item, index) => (item !== stockList?.[index]))) {
+    const stockList : StockDetail[] = model?.stocks ?? noVariantStockList;
+    const [unmodifiedStocks, setUnmodifiedStocks] = useState<StockDetail[]>(stockList);
+    const [stocks          , setStocks          ] = useState<StockDetail[]>(stockList);
+    if ((unmodifiedStocks.length !== stockList.length) || unmodifiedStocks.some((item, index) => (item !== stockList[index]))) {
         setUnmodifiedStocks(stockList); // tracks the new changes
         setStocks(stockList);           // discard the user changes
     } // if
     
     
     
-    const prevVariantGroups = useRef<ProductVariantGroupDetail[]|undefined|null>(
-        !!model?.id
-        ? variantGroups // has model => edit   mode => initially as synced
-        : null          // no  model => create mode => initially as unsynced
-    );
+    const prevVariantGroups = useRef<ProductVariantGroupDetail[]|undefined>(variantGroups);
     if (prevVariantGroups.current !== variantGroups) {
         const productVariantGroupDiff = createProductVariantGroupDiff(variantGroups ?? [], prevVariantGroups.current ?? []);
         const currentStocks : Pick<Stock, 'value'|'productVariantIds'>[] = stocks ?? [];
