@@ -251,22 +251,34 @@ export const createStockMap = (productVariantGroupDiff: Pick<ProductVariantGroup
                         id        : productVariantMod.id,
                     },
                 ];
-                const currentProductVariantIds = currentProductVariants.map(({id}) => id);
+                const requiredProductVariantIds = currentProductVariants.map(({id}) => id);
                 
                 
                 
-                const currentStock = (
+                const matchingStocks = (
                     currentStocks
-                    .find(({productVariantIds}) =>
-                        (productVariantIds.length === currentProductVariantIds.length)
+                    .filter(({productVariantIds: providedProductVariantIds}) =>
+                        (requiredProductVariantIds.length <= providedProductVariantIds.length)
                         &&
-                        productVariantIds.every((idA) => currentProductVariantIds.includes(idA))
-                        &&
-                        currentProductVariantIds.every((idB) => productVariantIds.includes(idB))
+                        requiredProductVariantIds.every((idB) => providedProductVariantIds.includes(idB))
                     )
-                    ?.value
-                    ??
-                    null
+                    .map(({value}) => value)
+                );
+                const currentStock = (
+                    !matchingStocks.length
+                    ? null
+                    : (
+                        (matchingStocks.length === 1)
+                        ? matchingStocks[0]
+                        : (
+                            matchingStocks
+                            .reduce((accum, current): number|null => {
+                                if (current === null) return accum; // ignore null
+                                if (accum === null) return current;
+                                return (accum + current);
+                            }, null)
+                        )
+                    )
                 );
                 
                 
