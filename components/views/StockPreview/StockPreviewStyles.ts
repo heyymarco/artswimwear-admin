@@ -15,7 +15,7 @@ const usesStockPreviewLayout = () => { // the <ListItem> of variantGroup list
         gridTemplate  : [[
             '"variants stock"',
             '/',
-            '1fr max-content',
+            '1fr 1fr',
         ]],
         
         
