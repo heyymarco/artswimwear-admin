@@ -11,7 +11,6 @@ import {
     useRef,
     useState,
     useMemo,
-    useEffect,
 }                           from 'react'
 
 // next-auth:
@@ -264,6 +263,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         const productVariantGroupDiff = createProductVariantGroupDiff(variantGroups ?? [], prevVariantGroups.current ?? []);
         // console.log(productVariantGroupDiff);
         const currentStocks : Pick<Stock, 'value'|'productVariantIds'>[] = stocks ?? [];
+        // console.log('currentStocks: ', currentStocks);
         const stockMap = createStockMap(productVariantGroupDiff, currentStocks, variantGroups ?? []);
         // console.log('stockMap: ', stockMap);
         setStocks(

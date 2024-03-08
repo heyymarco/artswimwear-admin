@@ -128,6 +128,9 @@ const StockPreview = (props: StockPreviewProps): JSX.Element|null => {
             // classes:
             className={styleSheet.main}
         >
+            {/* <p>
+                {JSON.stringify(model)}
+            </p> */}
             <Group orientation='block' className='variants' theme='primaryAlt'>
                 {
                     !productVariantIds.length

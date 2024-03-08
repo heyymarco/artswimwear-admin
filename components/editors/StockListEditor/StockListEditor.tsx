@@ -125,6 +125,7 @@ const StockListEditor = <TElement extends Element = HTMLElement>(props: StockLis
     
     
     // jsx:
+    // console.log('value: ', value);
     return (
         <List<TElement>
             // other props:
