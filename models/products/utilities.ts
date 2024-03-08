@@ -115,7 +115,7 @@ export interface StockInfo {
     value             : number|null
     productVariantIds : string[]
 }
-export const createStockMap = (productVariantGroupDiff: Pick<ProductVariantGroupDiff, 'productVariantGroupAdds'|'productVariantGroupMods'>, currentStocks: Pick<Stock, 'value'|'productVariantIds'>[], updatedProductVariantGroups: (Pick<ProductVariantGroupDetail, 'id'|'sort'|'hasDedicatedStocks'> & { productVariants: Pick<ProductVariantGroupDetail['productVariants'][number], 'id'>[] })[]): StockInfo[] => {
+export const createStockMap = (productVariantGroupDiff: Pick<ProductVariantGroupDiff, 'productVariantGroupOris'|'productVariantGroupAdds'|'productVariantGroupMods'>, currentStocks: Pick<Stock, 'value'|'productVariantIds'>[], updatedProductVariantGroups: (Pick<ProductVariantGroupDetail, 'id'|'sort'|'hasDedicatedStocks'> & { productVariants: Pick<ProductVariantGroupDetail['productVariants'][number], 'id'>[] })[]): StockInfo[] => {
     //#region normalize productVariantGroupUpdated
     interface ProductVariantUpdated {
         productVariantAdds      : Pick<ProductVariantDetail, 'id'>[]
@@ -174,6 +174,26 @@ export const createStockMap = (productVariantGroupDiff: Pick<ProductVariantGroup
                 });
                 continue;
             } // if
+            
+            
+            
+            // changed from not_exists => exists:
+            // if the group was previously `hasDedicatedStocks === false` => treat `productVariantMods` as `productVariantAdds`:
+            if (!productVariantGroupDiff.productVariantGroupOris.find(({id: groupId}) => (groupId === id))?.hasDedicatedStocks) {
+                productVariantGroupAdds.push({
+                    // data:
+                    sort,
+                    
+                    
+                    
+                    // relations:
+                    productVariantAdds : [
+                        ...productVariantMods,
+                        ...productVariantAdds,
+                    ],
+                });
+                continue;
+            } // IF
             
             
             
