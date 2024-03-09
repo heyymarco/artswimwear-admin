@@ -739,6 +739,15 @@ You do not have the privilege to modify the product stock(s).`
                         },
                     })),
                 },
+                stocks : (!id && ((productVariantGroupDiff === undefined) || (stocks === undefined))) ? { // when create new Product (no id) && (no variants defined || no stocks defined) => auto_create default single_stock
+                    create : {
+                        // data:
+                        value             : null, // defaults to unlimited stock
+                        
+                        // relations:
+                        productVariantIds : [],   // no related variants
+                    }
+                } : undefined,
             };
             const select = {
                 id             : true,
