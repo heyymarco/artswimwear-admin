@@ -886,7 +886,7 @@ You do not have the privilege to modify the product stock(s).`
             } else if (stocks) {
                 const productVariantGroupDiff = createProductVariantGroupDiff(productDetail.productVariantGroups, productDetail.productVariantGroups);
                 const stockMap = createStockMap(productVariantGroupDiff, productDetail.stocks, productDetail.productVariantGroups);
-                debugger;
+                
                 
                 
                 // sync stocks:
