@@ -48,6 +48,7 @@ export type {
     ProductDetail,
 }                           from '@/models/products/types'
 import {
+    ProductVariantGroupDiff,
     createProductVariantGroupDiff,
     createStockMap,
 }                           from '@/models/products/utilities'
@@ -269,6 +270,7 @@ You do not have the privilege to view the products.`
         images,
         
         productVariantGroups : productVariantGroupsRaw,
+        stocks               : stocksRaw,
     } = await req.json();
     //#endregion parsing request
     
@@ -347,6 +349,22 @@ You do not have the privilege to view the products.`
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
+    
+    if (
+        (stocksRaw !== undefined)
+        &&
+        (
+            !Array.isArray(stocksRaw)
+            ||
+            !stocksRaw.every((stock) =>
+                ((stock === null) || (typeof(stock) === 'number'))
+            )
+        )
+    ) {
+        return NextResponse.json({
+            error: 'Invalid data.',
+        }, { status: 400 }); // handled with error
+    }
     //#endregion validating request
     
     
@@ -356,7 +374,7 @@ You do not have the privilege to view the products.`
             //#region normalize productVariantGroups
             const productVariantGroups : ProductVariantGroupDetail[]|undefined = productVariantGroupsRaw;
             
-            const productVariantGroupDiff = (productVariantGroups === undefined) ? undefined : await (async (): Promise<ReturnType<typeof createProductVariantGroupDiff>> => {
+            const productVariantGroupDiff = (productVariantGroups === undefined) ? undefined : await (async (): Promise<ProductVariantGroupDiff> => {
                 const productVariantGroupOris : ProductVariantGroupDetail[] = !id ? [] : await prismaTransaction.productVariantGroup.findMany({
                     where : {
                         productId : id,
@@ -393,6 +411,8 @@ You do not have the privilege to view the products.`
                 return createProductVariantGroupDiff(productVariantGroups, productVariantGroupOris);
             })();
             //#endregion normalize productVariantGroups
+            
+            const stocks : (number|null)[]|undefined = stocksRaw;
             
             
             
@@ -644,6 +664,12 @@ You do not have the privilege to modify the product_variant stock.`
 You do not have the privilege to modify the product_variant visibility.`
                     }, { status: 403 }); // handled with error: forbidden
                 } // if
+                
+                if (!session.role?.product_us && (stocks !== undefined)) return NextResponse.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the product stock(s).`
+                }, { status: 403 }); // handled with error: forbidden
             } // if
             //#endregion validating privileges
             
@@ -800,7 +826,6 @@ You do not have the privilege to modify the product_variant visibility.`
             
             //#region rebuild stock maps
             if (productVariantGroupDiff) {
-                const updatedProductVariantGroups = productDetail.productVariantGroups;
                 const currentStocks = await prismaTransaction.stock.findMany({
                     where  : {
                         productId : productDetail.id,
@@ -810,10 +835,78 @@ You do not have the privilege to modify the product_variant visibility.`
                         productVariantIds : true,
                     },
                 });
-                const stockMap = createStockMap(productVariantGroupDiff, currentStocks, updatedProductVariantGroups);
+                const stockMap = createStockMap(productVariantGroupDiff, currentStocks, productDetail.productVariantGroups);
                 
                 
                 
+                // sync stocks:
+                if (stocks) {
+                    if (stocks.length !== stockMap.length) {
+                        return NextResponse.json({
+                            error: 'Invalid data.',
+                        }, { status: 400 }); // handled with error
+                    } // if
+                    
+                    
+                    
+                    for (let index = 0; index < stocks.length; index++) {
+                        stockMap[index].value = stocks[index];
+                    } // for
+                } // if
+                
+                
+                
+                // update db:
+                const changedProduct = await prismaTransaction.product.update({
+                    where  : {
+                        id: productDetail.id,
+                    },
+                    data   : {
+                        stocks : {
+                            deleteMany : {
+                                // delete all within current `productId`
+                                productId : productDetail.id,
+                            },
+                            create : stockMap,
+                        },
+                    },
+                    select : {
+                        stocks : {
+                            select: {
+                                id                : true,
+                                
+                                value             : true,
+                                
+                                productVariantIds : true,
+                            },
+                        },
+                    },
+                });
+                productDetail.stocks = changedProduct.stocks;
+            } else if (stocks) {
+                const productVariantGroupDiff = createProductVariantGroupDiff(productDetail.productVariantGroups, productDetail.productVariantGroups);
+                const stockMap = createStockMap(productVariantGroupDiff, productDetail.stocks, productDetail.productVariantGroups);
+                debugger;
+                
+                
+                // sync stocks:
+                {
+                    if (stocks.length !== stockMap.length) {
+                        return NextResponse.json({
+                            error: 'Invalid data.',
+                        }, { status: 400 }); // handled with error
+                    } // if
+                    
+                    
+                    
+                    for (let index = 0; index < stocks.length; index++) {
+                        stockMap[index].value = stocks[index];
+                    } // for
+                }
+                
+                
+                
+                // update db:
                 const changedProduct = await prismaTransaction.product.update({
                     where  : {
                         id: productDetail.id,

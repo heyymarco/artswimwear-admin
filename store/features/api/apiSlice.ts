@@ -139,7 +139,7 @@ export const apiSlice = createApi({
                 ];
             },
         }),
-        updateProduct               : builder.mutation<ProductDetail, MutationArgs<ProductDetail>>({
+        updateProduct               : builder.mutation<ProductDetail, MutationArgs<Omit<ProductDetail, 'stocks'> & { stocks?: (number|null)[] }>>({
             query: (patch) => ({
                 url    : 'products',
                 method : 'PATCH',

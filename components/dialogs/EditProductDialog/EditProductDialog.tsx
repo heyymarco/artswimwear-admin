@@ -346,6 +346,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                 description          : (whenUpdate.description || whenAdd)         ? ((description?.toJSON?.() ?? description) as any) : undefined,
                 
                 productVariantGroups : (variantGroups !== unmodifiedVariantGroups) ? variantGroups                                     : undefined,
+                stocks               : (stocks        !== unmodifiedStocks       ) ? stocks.map(({value}) => value)                    : undefined,
             }).unwrap();
         }
         finally {
