@@ -52,8 +52,8 @@ import {
     
     
     
-    // dialog-components:
-    ModalExpandedChangeEvent,
+    // utility-components:
+    useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // heymarco components:
@@ -86,9 +86,6 @@ import {
 import {
     MiniCarousel,
 }                           from '@/components/MiniCarousel'
-import {
-    CollapsibleSuspense,
-}                           from '@/components/CollapsibleSuspense'
 import {
     SimpleEditModelDialog,
 }                           from '@/components/dialogs/SimpleEditModelDialog'
@@ -153,12 +150,6 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
     
     
     
-    // states:
-    type EditMode = Exclude<keyof ProductDetail, 'id'>|'images'|'full'
-    const [editMode, setEditMode] = useState<EditMode|null>(null);
-    
-    
-    
     // sessions:
     const { data: session } = useSession();
     const role = session?.role;
@@ -186,15 +177,121 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
     
     
     
+    // dialogs:
+    const {
+        showDialog,
+    } = useDialogMessage();
+    
+    
+    
     // handlers:
-    const handleExpandedChange = useEvent<EventHandler<ModalExpandedChangeEvent>>(({expanded}): void => {
-        // conditions:
-        if (expanded) return; // ignore if expanded
-        
-        
-        
-        // actions:
-        setEditMode(null);
+    type EditMode = Exclude<keyof ProductDetail, 'id'>|'images'|'full'
+    const handleEdit = useEvent((editMode: EditMode): void => {
+        showDialog((() => {
+            switch (editMode) {
+                case 'name': return (
+                    <SimpleEditModelDialog<ProductDetail>
+                        // data:
+                        model={model}
+                        edit='name'
+                        
+                        
+                        
+                        // stores:
+                        updateModelApi={useUpdateProduct as any}
+                        
+                        
+                        
+                        // global stackable:
+                        viewport={listItemRef}
+                        
+                        
+                        
+                        // components:
+                        editorComponent={<NameEditor />}
+                    />
+                );
+                case 'price': return (
+                    <SimpleEditModelDialog<ProductDetail>
+                        // data:
+                        model={model}
+                        edit='price'
+                        
+                        
+                        
+                        // stores:
+                        updateModelApi={useUpdateProduct as any}
+                        
+                        
+                        
+                        // global stackable:
+                        viewport={listItemRef}
+                        
+                        
+                        
+                        // components:
+                        editorComponent={<PriceEditor />}
+                    />
+                );
+                case 'stock': return (
+                    <SimpleEditModelDialog<ProductDetail>
+                        // data:
+                        model={model}
+                        edit='stock'
+                        
+                        
+                        
+                        // stores:
+                        updateModelApi={useUpdateProduct as any}
+                        
+                        
+                        
+                        // global stackable:
+                        viewport={listItemRef}
+                        
+                        
+                        
+                        // components:
+                        editorComponent={<StockEditor theme='primaryAlt' />}
+                    />
+                );
+                case 'visibility': return (
+                    <SimpleEditModelDialog<ProductDetail>
+                        // data:
+                        model={model}
+                        edit='visibility'
+                        
+                        
+                        
+                        // stores:
+                        updateModelApi={useUpdateProduct as any}
+                        
+                        
+                        
+                        // global stackable:
+                        viewport={listItemRef}
+                        
+                        
+                        
+                        // components:
+                        editorComponent={<VisibilityEditor theme='primaryAlt' />}
+                    />
+                );
+                case 'images':
+                case 'full'  : return (
+                    <EditProductDialog
+                        // data:
+                        model={model} // modify current model
+                        
+                        
+                        
+                        // states:
+                        defaultExpandedTabIndex={(editMode === 'images') ? 1 : undefined}
+                    />
+                );
+                default: throw new Error('app error');
+            } // switch
+        })());
     });
     
     
@@ -232,7 +329,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                         floatingShift={10}
                         floatingOffset={-30}
                     >
-                        <EditButton className='edit overlay' onClick={() => setEditMode('images')} />
+                        <EditButton className='edit overlay' onClick={() => handleEdit('images')} />
                     </Badge>
                     : null
                 }
@@ -271,144 +368,25 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
             
             <h3 className='name'>
                 {name}
-                {privilegeUpdateDescription && <EditButton onClick={() => setEditMode('name')} />}
+                {privilegeUpdateDescription && <EditButton onClick={() => handleEdit('name')} />}
             </h3>
             <p className='price'>
                 <strong className='value'>{formatCurrency(price)}</strong>
-                {privilegeUpdatePrice       && <EditButton onClick={() => setEditMode('price')} />}
+                {privilegeUpdatePrice       && <EditButton onClick={() => handleEdit('price')} />}
             </p>
             <p className='stocks'>
                 {(stocks.length >= 2) ? 'Stocks' : 'Stock' }: <strong className='value'>{stocks.map(({value}) => (value === null) ? '∞' : value).join(', ')}</strong>
-                {privilegeUpdateStock       && <EditButton onClick={() => setEditMode('stock')} />}
+                {privilegeUpdateStock       && <EditButton onClick={() => handleEdit('stock')} />}
             </p>
             <p className='visibility'>
                 Visibility: <strong className='value'>{visibility}</strong>
-                {privilegeUpdateVisibility  && <EditButton onClick={() => setEditMode('visibility')} />}
+                {privilegeUpdateVisibility  && <EditButton onClick={() => handleEdit('visibility')} />}
             </p>
             <p className='fullEditor'>
-                {privilegeWrite             && <EditButton buttonStyle='regular' onClick={() => setEditMode('full')}>
+                {privilegeWrite             && <EditButton buttonStyle='regular' onClick={() => handleEdit('full')}>
                     Open Full Editor
                 </EditButton>}
             </p>
-            {/* edit dialog: */}
-            <CollapsibleSuspense>
-                <SimpleEditModelDialog<ProductDetail>
-                    // data:
-                    model={model}
-                    edit='name'
-                    
-                    
-                    
-                    // stores:
-                    updateModelApi={useUpdateProduct as any}
-                    
-                    
-                    
-                    // states:
-                    expanded={editMode === 'name'}
-                    onExpandedChange={handleExpandedChange}
-                    
-                    
-                    
-                    // global stackable:
-                    viewport={listItemRef}
-                    
-                    
-                    
-                    // components:
-                    editorComponent={<NameEditor />}
-                />
-                <SimpleEditModelDialog<ProductDetail>
-                    // data:
-                    model={model}
-                    edit='price'
-                    
-                    
-                    
-                    // stores:
-                    updateModelApi={useUpdateProduct as any}
-                    
-                    
-                    
-                    // states:
-                    expanded={editMode === 'price'}
-                    onExpandedChange={handleExpandedChange}
-                    
-                    
-                    
-                    // global stackable:
-                    viewport={listItemRef}
-                    
-                    
-                    
-                    // components:
-                    editorComponent={<PriceEditor />}
-                />
-                <SimpleEditModelDialog<ProductDetail>
-                    // data:
-                    model={model}
-                    edit='stock'
-                    
-                    
-                    
-                    // stores:
-                    updateModelApi={useUpdateProduct as any}
-                    
-                    
-                    
-                    // states:
-                    expanded={editMode === 'stock'}
-                    onExpandedChange={handleExpandedChange}
-                    
-                    
-                    
-                    // global stackable:
-                    viewport={listItemRef}
-                    
-                    
-                    
-                    // components:
-                    editorComponent={<StockEditor theme='primaryAlt' />}
-                />
-                <SimpleEditModelDialog<ProductDetail>
-                    // data:
-                    model={model}
-                    edit='visibility'
-                    
-                    
-                    
-                    // stores:
-                    updateModelApi={useUpdateProduct as any}
-                    
-                    
-                    
-                    // states:
-                    expanded={editMode === 'visibility'}
-                    onExpandedChange={handleExpandedChange}
-                    
-                    
-                    
-                    // global stackable:
-                    viewport={listItemRef}
-                    
-                    
-                    
-                    // components:
-                    editorComponent={<VisibilityEditor theme='primaryAlt' />}
-                />
-                
-                <EditProductDialog
-                    // data:
-                    model={model} // modify current model
-                    
-                    
-                    
-                    // states:
-                    expanded={(editMode === 'images') || (editMode === 'full')}
-                    onExpandedChange={handleExpandedChange}
-                    defaultExpandedTabIndex={(editMode === 'images') ? 1 : undefined}
-                />
-            </CollapsibleSuspense>
         </ListItem>
     );
 };
