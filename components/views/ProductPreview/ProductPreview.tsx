@@ -9,7 +9,6 @@ import {
     
     // hooks:
     useRef,
-    useState,
 }                           from 'react'
 
 // // next-js:
@@ -32,7 +31,6 @@ import {
 import {
     // react helper hooks:
     useEvent,
-    EventHandler,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -75,11 +73,14 @@ import {
     PriceEditor,
 }                           from '@/components/editors/PriceEditor'
 import {
-    StockEditor,
-}                           from '@/components/editors/StockEditor'
+    StockListEditor,
+}                           from '@/components/editors/StockListEditor'
 import {
     VisibilityEditor,
 }                           from '@/components/editors/VisibilityEditor'
+import {
+    StockPreview,
+}                           from '@/components/views/StockPreview'
 import {
     CompoundWithBadge,
 }                           from '@/components/CompoundWithBadge'
@@ -89,6 +90,9 @@ import {
 import {
     SimpleEditModelDialog,
 }                           from '@/components/dialogs/SimpleEditModelDialog'
+import {
+    SimpleEditStockListDialog,
+}                           from '@/components/dialogs/SimpleEditStockListDialog'
 import {
     EditProductDialog,
 }                           from '@/components/dialogs/EditProductDialog'
@@ -144,7 +148,6 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
         name,
         images,
         price,
-        stock,
         stocks,
     } = model;
     
@@ -233,26 +236,31 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                         editorComponent={<PriceEditor />}
                     />
                 );
-                case 'stock': return (
-                    <SimpleEditModelDialog<ProductDetail>
+                case 'stocks': return (
+                    <SimpleEditStockListDialog
                         // data:
                         model={model}
-                        edit='stock'
-                        
-                        
-                        
-                        // stores:
-                        updateModelApi={useUpdateProduct as any}
-                        
-                        
-                        
-                        // global stackable:
-                        viewport={listItemRef}
+                        edit='stocks'
                         
                         
                         
                         // components:
-                        editorComponent={<StockEditor theme='primaryAlt' />}
+                        editorComponent={
+                            <StockListEditor
+                                // models:
+                                productVariantGroups={model.productVariantGroups}
+                                
+                                
+                                
+                                // components:
+                                modelPreviewComponent={
+                                    <StockPreview
+                                        // data:
+                                        model={undefined as any}
+                                    />
+                                }
+                            />
+                        }
                     />
                 );
                 case 'visibility': return (
@@ -376,7 +384,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
             </p>
             <p className='stocks'>
                 {(stocks.length >= 2) ? 'Stocks' : 'Stock' }: <strong className='value'>{stocks.map(({value}) => (value === null) ? '∞' : value).join(', ')}</strong>
-                {privilegeUpdateStock       && <EditButton onClick={() => handleEdit('stock')} />}
+                {privilegeUpdateStock       && <EditButton onClick={() => handleEdit('stocks')} />}
             </p>
             <p className='visibility'>
                 Visibility: <strong className='value'>{visibility}</strong>
