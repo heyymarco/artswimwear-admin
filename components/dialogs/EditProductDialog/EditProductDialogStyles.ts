@@ -61,9 +61,6 @@ export const usesInfoTabLayout = () => {
                 '"sWeight-label    "', 'auto',
                 '"sWeight-editor   "', 'auto',
                 '"................."', spacers.sm,
-                '"stock-label      "', 'auto',
-                '"stock-editor     "', 'auto',
-                '"................."', spacers.sm,
                 '"visibility-label "', 'auto',
                 '"visibility-editor"', 'auto',
                 '/',
@@ -80,8 +77,8 @@ export const usesInfoTabLayout = () => {
                     '"price-label           sWeight-label"', 'auto',
                     '"price-editor         sWeight-editor"', 'auto',
                     '"................. ................."', spacers.sm,
-                    '"stock-label        visibility-label"', 'auto',
-                    '"stock-editor      visibility-editor"', 'auto',
+                    '"visibility-label   visibility-label"', 'auto',
+                    '"visibility-editor visibility-editor"', 'auto',
                     '/',
                     '1fr', '1fr'
                 ]],
@@ -107,9 +104,6 @@ export const usesInfoTabLayout = () => {
             
             ...children('.sWeight.label'    , { gridArea: 'sWeight-label'     }),
             ...children('.sWeight.editor'   , { gridArea: 'sWeight-editor'    }),
-            
-            ...children('.stock.label'      , { gridArea: 'stock-label'       }),
-            ...children('.stock.editor'     , { gridArea: 'stock-editor'      }),
             
             ...children('.visibility.label' , { gridArea: 'visibility-label'  }),
             ...children('.visibility.editor', { gridArea: 'visibility-editor' }),

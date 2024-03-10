@@ -60,9 +60,6 @@ import {
     ShippingWeightEditor,
 }                           from '@/components/editors/ShippingWeightEditor'
 import {
-    StockEditor,
-}                           from '@/components/editors/StockEditor'
-import {
     StockListEditor,
 }                           from '@/components/editors/StockListEditor'
 import {
@@ -215,7 +212,6 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     const [path            , setPath          ] = useState<string                 >(model?.path           ?? ''     );
     const [price           , setPrice         ] = useState<number                 >(model?.price          ?? 0      );
     const [shippingWeight  , setShippingWeight] = useState<number            |null>(model?.shippingWeight ?? null   ); // optional field
-    const [stock           , setStock         ] = useState<number            |null>(model?.stock          ?? null   ); // optional field
     const [images          , setImages        ] = useState<string[]               >(model?.images         ?? []     );
     const [description     , setDescription   ] = useState<WysiwygEditorState|null>(() => {                            // optional field
         const description = model?.description;
@@ -341,7 +337,6 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                 path                 : (whenUpdate.description || whenAdd)         ? path                                              : undefined,
                 price                : (whenUpdate.price       || whenAdd)         ? price                                             : undefined,
                 shippingWeight       : (whenUpdate.price       || whenAdd)         ? shippingWeight                                    : undefined,
-                stock                : (whenUpdate.stock       || whenAdd)         ? stock                                             : undefined,
                 images               : (whenUpdate.images      || whenAdd)         ? updatedImages                                     : undefined,
                 description          : (whenUpdate.description || whenAdd)         ? ((description?.toJSON?.() ?? description) as any) : undefined,
                 
@@ -587,31 +582,6 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         value={shippingWeight}
                         onChange={(value) => {
                             setShippingWeight(value);
-                            setIsModified(true);
-                        }}
-                    />
-                    
-                    <span className='stock label'>Stock:</span>
-                    <StockEditor
-                        // variants:
-                        theme='primaryAlt'
-                        
-                        
-                        
-                        // classes:
-                        className='stock editor'
-                        
-                        
-                        
-                        // accessibilities:
-                        enabled={whenUpdate.stock || whenAdd}
-                        
-                        
-                        
-                        // values:
-                        value={stock}
-                        onChange={(value) => {
-                            setStock(value);
                             setIsModified(true);
                         }}
                     />
