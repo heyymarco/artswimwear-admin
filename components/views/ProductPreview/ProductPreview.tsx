@@ -88,6 +88,9 @@ import {
     MiniCarousel,
 }                           from '@/components/MiniCarousel'
 import {
+    DummyDialog,
+}                           from '@/components/dialogs/DummyDialog'
+import {
     SimpleEditModelDialog,
 }                           from '@/components/dialogs/SimpleEditModelDialog'
 import {
@@ -190,7 +193,19 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
     // handlers:
     type EditMode = Exclude<keyof ProductDetail, 'id'>|'images'|'full'
     const handleEdit = useEvent((editMode: EditMode): void => {
-        showDialog((() => {
+        // just for cosmetic backdrop:
+        const dummyPromise = (
+            ((editMode === 'stocks') || (editMode === 'full'))
+            ? showDialog(
+                <DummyDialog
+                    // global stackable:
+                    viewport={listItemRef}
+                />
+            )
+            : undefined
+        );
+        
+        const dialogPromise = showDialog((() => {
             switch (editMode) {
                 case 'name': return (
                     <SimpleEditModelDialog<ProductDetail>
@@ -300,6 +315,10 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                 default: throw new Error('app error');
             } // switch
         })());
+        
+        if (dummyPromise) {
+            dialogPromise.collapseStartEvent().then(() => dummyPromise.closeDialog(undefined));
+        } // if
     });
     
     
