@@ -2,7 +2,6 @@
 import {
     children,
     descendants,
-    rule,
     style,
 }                           from '@cssfn/core'          // writes css in javascript
 import { basics } from '@reusable-ui/components';
@@ -91,27 +90,6 @@ const usesProductPreviewLayout = () => { // the <ListItem> of product list
             }),
             ...descendants('.edit', {
                 marginInlineStart: '0.25em',
-                opacity: 0.5,
-                transition: [
-                    ['transform', '300ms', 'ease-out'],
-                ],
-                ...rule(':hover', {
-                    opacity: 'unset',
-                    transform: 'scale(105%)',
-                }),
-                // no need to invert the edit overlay, assumes the product backgrounds are solid color
-                // ...rule('.overlay', {
-                //     opacity : 0.8,
-                //     
-                //     
-                //     
-                //     // children:
-                //     ...children('[role="img"]', {
-                //         filter : [[
-                //             'invert(1)',
-                //         ]],
-                //     }),
-                // }),
             }),
             ...children('.images', {
                 // positions:

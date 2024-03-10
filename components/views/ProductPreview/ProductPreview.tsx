@@ -40,6 +40,11 @@ import {
     
     
     
+    // simple-components:
+    Button,
+    
+    
+    
     // layout-components:
     ListItem,
     
@@ -309,7 +314,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                         
                         
                         // states:
-                        defaultExpandedTabIndex={(editMode === 'images') ? 1 : undefined}
+                        defaultExpandedTabIndex={(editMode === 'images') ? 3 : undefined}
                     />
                 );
                 default: throw new Error('app error');
@@ -410,9 +415,9 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                 {privilegeUpdateVisibility  && <EditButton onClick={() => handleEdit('visibility')} />}
             </p>
             <p className='fullEditor'>
-                {privilegeWrite             && <EditButton buttonStyle='regular' onClick={() => handleEdit('full')}>
-                    Open Full Editor
-                </EditButton>}
+                {privilegeWrite             && <Button buttonStyle='link' onClick={() => handleEdit('full')}>
+                    More...
+                </Button>}
             </p>
         </ListItem>
     );
