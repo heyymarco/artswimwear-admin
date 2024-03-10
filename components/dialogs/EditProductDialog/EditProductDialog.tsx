@@ -120,7 +120,7 @@ import type {
 import {
     createProductVariantGroupDiff,
     createStockMap,
-}                           from '@/models/products'
+}                           from '@/models'
 
 // stores:
 import {
