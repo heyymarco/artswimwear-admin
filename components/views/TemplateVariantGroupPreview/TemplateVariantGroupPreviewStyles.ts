@@ -82,32 +82,6 @@ const usesTemplateVariantGroupPreviewLayout = () => { // the <ListItem> of varia
                 
                 // spacings:
                 gap      : spacers.xs,
-                
-                
-                
-                // children:
-                ...children('.value', {
-                    // sizes:
-                    maxInlineSize : '10ch',
-                    
-                    
-                    
-                    // scrolls:
-                    overflow      : 'hidden',
-                    
-                    
-                    
-                    // spacings:
-                    padding       : spacers.xs,
-                    
-                    
-                    
-                    // typos:
-                    lineHeight    : 1,
-                    whiteSpace    : 'nowrap',
-                    overflowWrap  : 'normal',
-                    textOverflow  : 'ellipsis',
-                }),
             }),
             ...children('.noValue', {
                 // appearances:

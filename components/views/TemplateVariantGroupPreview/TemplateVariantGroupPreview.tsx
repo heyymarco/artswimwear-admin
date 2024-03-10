@@ -25,11 +25,6 @@ import {
 
 // reusable-ui components:
 import {
-    // base-components:
-    Indicator,
-    
-    
-    
     // simple-components:
     Icon,
     
@@ -49,6 +44,9 @@ import {
 import {
     EditButton,
 }                           from '@/components/EditButton'
+import {
+    VariantIndicator,
+}                           from '@/components/VariantIndicator'
 import type {
     // react components:
     ModelPreviewProps,
@@ -244,8 +242,8 @@ const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): J
                     !templateVariants.length
                     ? <span className='noValue'>No Variant</span>
                     : <span className='values'>
-                        {templateVariants.map(({id, name, visibility}) =>
-                            <Indicator key={id} tag='span' className='value' size='sm' active enabled={visibility === 'PUBLISHED'}>{name}</Indicator>
+                        {templateVariants.map((productVariant, variantIndex) =>
+                            <VariantIndicator key={variantIndex} model={productVariant} />
                         )}
                     </span>
                 }
