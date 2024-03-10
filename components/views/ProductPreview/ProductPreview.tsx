@@ -148,6 +148,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
         images,
         price,
         stock,
+        stocks,
     } = model;
     
     
@@ -276,8 +277,8 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                 <strong className='value'>{formatCurrency(price)}</strong>
                 {privilegeUpdatePrice       && <EditButton onClick={() => setEditMode('price')} />}
             </p>
-            <p className='stock'>
-                Stock: <strong className='value'>{stock ?? 'unlimited'}</strong>
+            <p className='stocks'>
+                {(stocks.length >= 2) ? 'Stocks' : 'Stock' }: <strong className='value'>{stocks.map(({value}) => (value === null) ? '∞' : value).join(', ')}</strong>
                 {privilegeUpdateStock       && <EditButton onClick={() => setEditMode('stock')} />}
             </p>
             <p className='visibility'>

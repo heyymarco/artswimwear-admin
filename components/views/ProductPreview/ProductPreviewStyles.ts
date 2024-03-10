@@ -51,7 +51,7 @@ const usesProductPreviewLayout = () => { // the <ListItem> of product list
             gridTemplate: [[
                 '"images      name "', 'auto',
                 '"images      price"', 'auto',
-                '"images      stock"', 'auto',
+                '"images     stocks"', 'auto',
                 '"images visibility"', 'auto',
                 '"images fullEditor"', 'auto',
                 '/',
@@ -158,8 +158,8 @@ const usesProductPreviewLayout = () => { // the <ListItem> of product list
             ...children('.price', {
                 gridArea: 'price',
             }),
-            ...children('.stock', {
-                gridArea: 'stock',
+            ...children('.stocks', {
+                gridArea: 'stocks',
             }),
             ...children('.visibility', {
                 gridArea: 'visibility',
