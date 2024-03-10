@@ -199,11 +199,11 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
     
     
     // handlers:
-    type EditMode = Exclude<keyof ProductDetail, 'id'>|'images'|'full'
+    type EditMode = Exclude<keyof ProductDetail, 'id'>|'variants'|'images'|'full'
     const handleEdit = useEvent((editMode: EditMode): void => {
         // just for cosmetic backdrop:
         const dummyPromise = (
-            ((editMode === 'stocks') || (editMode === 'full'))
+            ['stocks', 'variants', 'images', 'full'].includes(editMode)
             ? showDialog(
                 <DummyDialog
                     // global stackable:
@@ -215,7 +215,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
         
         const dialogPromise = showDialog((() => {
             switch (editMode) {
-                case 'name': return (
+                case 'name'       : return (
                     <SimpleEditModelDialog<ProductDetail>
                         // data:
                         model={model}
@@ -237,7 +237,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                         editorComponent={<NameEditor />}
                     />
                 );
-                case 'price': return (
+                case 'price'      : return (
                     <SimpleEditModelDialog<ProductDetail>
                         // data:
                         model={model}
@@ -259,7 +259,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                         editorComponent={<PriceEditor />}
                     />
                 );
-                case 'stocks': return (
+                case 'stocks'     : return (
                     <SimpleEditStockListDialog
                         // data:
                         model={model}
@@ -286,7 +286,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                         }
                     />
                 );
-                case 'visibility': return (
+                case 'visibility' : return (
                     <SimpleEditModelDialog<ProductDetail>
                         // data:
                         model={model}
@@ -308,8 +308,9 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                         editorComponent={<VisibilityEditor theme='primaryAlt' />}
                     />
                 );
-                case 'images':
-                case 'full'  : return (
+                case 'variants'   :
+                case 'images'     :
+                case 'full'       : return (
                     <EditProductDialog
                         // data:
                         model={model} // modify current model
@@ -317,10 +318,16 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                         
                         
                         // states:
-                        defaultExpandedTabIndex={(editMode === 'images') ? 3 : undefined}
+                        defaultExpandedTabIndex={(() => {
+                            switch (editMode) {
+                                case 'variants' : return 1;
+                                case 'images'   : return 3;
+                                default         : return undefined;
+                            } // switch
+                        })()}
                     />
                 );
-                default: throw new Error('app error');
+                default           : throw new Error('app error');
             } // switch
         })());
         
@@ -412,6 +419,21 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                         <VariantIndicator key={`${groupIndex}/${variantIndex}`} model={productVariant} />
                     )
                 )}
+                {
+                    (
+                        privilegeUpdateDescription
+                        ||
+                        privilegeUpdateImages
+                        ||
+                        privilegeUpdatePrice
+                        ||
+                        privilegeUpdateStock
+                        ||
+                        privilegeUpdateVisibility
+                    )
+                    &&
+                    <EditButton onClick={() => handleEdit('variants')} />
+                }
             </p>
             <p className='price'>
                 <strong className='value'>{formatCurrency(price)}</strong>
