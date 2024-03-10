@@ -34,8 +34,7 @@ VariantEditor			verified
 
 
 TODO:
-* create variant template
-* create stock map
+* fix product path validation when create product
 * apply variant to cart
 * apply variant to product explorer
 
