@@ -4,8 +4,8 @@ import {
     descendants,
     style,
 }                           from '@cssfn/core'          // writes css in javascript
+import { spacers, typos, usesBorder, usesGroupable, usesPadding } from '@reusable-ui/core';
 import { basics } from '@reusable-ui/components';
-import { typos, usesBorder, usesGroupable, usesPadding } from '@reusable-ui/core';
 import { commerces } from '@/config';
 
 
@@ -49,6 +49,7 @@ const usesProductPreviewLayout = () => { // the <ListItem> of product list
             display: 'grid',
             gridTemplate: [[
                 '"images      name "', 'auto',
+                '"images   variants"', 'auto',
                 '"images      price"', 'auto',
                 '"images     stocks"', 'auto',
                 '"images visibility"', 'auto',
@@ -76,8 +77,8 @@ const usesProductPreviewLayout = () => { // the <ListItem> of product list
             paddingInline : paddingVars.paddingInline,
             paddingBlock  : paddingVars.paddingBlock,
             
-            gapInline     : '1rem',
-            gapBlock      : '0.5rem',
+            gapInline     : spacers.md,
+            gapBlock      : spacers.xs,
             
             
             
@@ -87,6 +88,16 @@ const usesProductPreviewLayout = () => { // the <ListItem> of product list
             }),
             ...descendants('.value', {
                 fontWeight: typos.fontWeightSemibold,
+            }),
+            ...descendants('.noValue', {
+                // appearances:
+                opacity    : 0.5,
+                
+                
+                
+                // typos:
+                fontSize   : basics.fontSizeSm,
+                fontStyle  : 'italic',
             }),
             ...descendants('.edit', {
                 marginInlineStart: '0.25em',
@@ -132,6 +143,12 @@ const usesProductPreviewLayout = () => { // the <ListItem> of product list
             ...children('.name', {
                 gridArea: 'name',
                 fontSize: typos.fontSizeXl,
+            }),
+            ...children('.variants', {
+                gridArea : 'variants',
+                display  : 'flex',
+                flexWrap : 'wrap',
+                gap      : spacers.xs,
             }),
             ...children('.price', {
                 gridArea: 'price',

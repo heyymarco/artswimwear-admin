@@ -93,6 +93,9 @@ import {
     MiniCarousel,
 }                           from '@/components/MiniCarousel'
 import {
+    VariantIndicator,
+}                           from '@/components/VariantIndicator'
+import {
     DummyDialog,
 }                           from '@/components/dialogs/DummyDialog'
 import {
@@ -402,6 +405,14 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                 {name}
                 {privilegeUpdateDescription && <EditButton onClick={() => handleEdit('name')} />}
             </h3>
+            <p className='variants'>
+                {!model.productVariantGroups.flatMap(() => ({})).length && <span className='noValue'>No Variant</span>}
+                {model.productVariantGroups.map(({productVariants}, groupIndex) =>
+                    productVariants.map((productVariant, variantIndex) =>
+                        <VariantIndicator key={`${groupIndex}/${variantIndex}`} model={productVariant} />
+                    )
+                )}
+            </p>
             <p className='price'>
                 <strong className='value'>{formatCurrency(price)}</strong>
                 {privilegeUpdatePrice       && <EditButton onClick={() => handleEdit('price')} />}
