@@ -52,6 +52,9 @@ import {
 import {
     Grip,
 }                           from '@/components/Grip'
+import {
+    VariantIndicator,
+}                           from '@/components/VariantIndicator'
 import type {
     // react components:
     ModelPreviewProps,
@@ -241,8 +244,8 @@ const ProductVariantGroupPreview = (props: ProductVariantGroupPreviewProps): JSX
                     !productVariants.length
                     ? <span className='noValue'>No Variant</span>
                     : <span className='values'>
-                        {productVariants.map(({id, name, visibility}) =>
-                            <Indicator key={id} tag='span' className='value' size='sm' active enabled={visibility === 'PUBLISHED'}>{name}</Indicator>
+                        {productVariants.map((productVariant, variantIndex) =>
+                            <VariantIndicator key={variantIndex} model={productVariant} />
                         )}
                     </span>
                 }
