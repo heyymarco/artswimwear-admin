@@ -260,7 +260,7 @@ export const createStockMap = (productVariantGroupDiff: Pick<ProductVariantGroup
                     .filter(({productVariantIds: providedProductVariantIds}) =>
                         (requiredProductVariantIds.length <= providedProductVariantIds.length)
                         &&
-                        requiredProductVariantIds.every((idB) => providedProductVariantIds.includes(idB))
+                        requiredProductVariantIds.every((requiredProductVariantId) => providedProductVariantIds.includes(requiredProductVariantId))
                     )
                     .map(({value}) => value)
                 );
