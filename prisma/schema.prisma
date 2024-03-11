@@ -374,6 +374,8 @@ model OrdersOnProducts {
     
     productId               String?
     product                 Product?                @relation(fields: [productId]   , references: [id], onDelete: SetNull) // preserve the related Order(s) if the Product deleted
+    
+    productVariantIds       String[]                // manual relation foreign key(s)
 }
 model DraftOrder {
     // records:
@@ -410,6 +412,8 @@ model DraftOrdersOnProducts {
     
     productId               String?
     product                 Product?                @relation(fields: [productId]   , references: [id], onDelete: SetNull) // preserve the related DraftOrder(s) if the Product deleted
+    
+    productVariantIds       String[]                // manual relation foreign key(s)
 }
 model ShippingTracking {
     // records:
