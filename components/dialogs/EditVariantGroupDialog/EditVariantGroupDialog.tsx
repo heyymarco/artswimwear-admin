@@ -46,8 +46,8 @@ import {
 }                           from '@/components/editors/NameEditor'
 import {
     // react components:
-    EditProductVariantDialog,
-}                           from '@/components/dialogs/EditProductVariantDialog'
+    EditVariantDialog,
+}                           from '@/components/dialogs/EditVariantDialog'
 
 import {
     // types:
@@ -57,11 +57,11 @@ import {
     
     // react components:
     VariantStateProvider,
-    ProductVariantEditor,
-}                           from '@/components/editors/ProductVariantEditor'
+    VariantEditor,
+}                           from '@/components/editors/VariantEditor'
 import {
-    ProductVariantPreview,
-}                           from '@/components/views/ProductVariantPreview'
+    VariantPreview,
+}                           from '@/components/views/VariantPreview'
 import {
     // types:
     UpdateHandler,
@@ -86,8 +86,8 @@ import {
 // stores:
 import type {
     // types:
-    ProductVariantDetail,
-    ProductVariantGroupDetail,
+    VariantDetail,
+    VariantGroupDetail,
 }                           from '@/store/features/api/apiSlice'
 
 // configs:
@@ -99,19 +99,19 @@ import {
 
 
 // styles:
-const useEditProductVariantGroupDialogStyleSheet = dynamicStyleSheets(
-    () => import(/* webpackPrefetch: true */'./EditProductVariantGroupDialogStyles')
+const useEditVariantGroupDialogStyleSheet = dynamicStyleSheets(
+    () => import(/* webpackPrefetch: true */'./EditVariantGroupDialogStyles')
 , { id: 'w9r17m435e' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
-import './EditProductVariantGroupDialogStyles';
+import './EditVariantGroupDialogStyles';
 
 
 
 // react components:
-export interface EditProductVariantGroupDialogProps
+export interface EditVariantGroupDialogProps
     extends
         // bases:
-        ImplementedComplexEditModelDialogProps<ProductVariantGroupDetail>,
-        Partial<Pick<ComplexEditModelDialogProps<ProductVariantGroupDetail>,
+        ImplementedComplexEditModelDialogProps<VariantGroupDetail>,
+        Partial<Pick<ComplexEditModelDialogProps<VariantGroupDetail>,
             // data:
             |'modelName'
             
@@ -139,11 +139,11 @@ export interface EditProductVariantGroupDialogProps
         VariantState
 {
     // handlers
-    onUpdate         ?: UpdateDraftHandler<ProductVariantGroupDetail>
+    onUpdate         ?: UpdateDraftHandler<VariantGroupDetail>
 }
-const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps): JSX.Element|null => {
+const EditVariantGroupDialog = (props: EditVariantGroupDialogProps): JSX.Element|null => {
     // styles:
-    const styleSheet = useEditProductVariantGroupDialogStyleSheet();
+    const styleSheet = useEditVariantGroupDialogStyleSheet();
     
     
     
@@ -187,9 +187,9 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
     
     
     // stores:
-    const variantList = model?.productVariants;
-    const [unmodifiedVariants, setUnmodifiedVariants] = useState<ProductVariantDetail[]|undefined>(variantList);
-    const [variants, setVariants] = useState<ProductVariantDetail[]|undefined>(variantList);
+    const variantList = model?.variants;
+    const [unmodifiedVariants, setUnmodifiedVariants] = useState<VariantDetail[]|undefined>(variantList);
+    const [variants, setVariants] = useState<VariantDetail[]|undefined>(variantList);
     if ((unmodifiedVariants?.length !== variantList?.length) || unmodifiedVariants?.some((item, index) => (item !== variantList?.[index]))) {
         setUnmodifiedVariants(variantList); // tracks the new changes
         setVariants(variantList);           // discard the user changes
@@ -203,8 +203,8 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
     
     
     // handlers:
-    const handleUpdate               = useEvent<UpdateHandler<ProductVariantGroupDetail>>(async ({id, whenAdd, whenUpdate}) => {
-        const draftModel : ProductVariantGroupDetail = {
+    const handleUpdate               = useEvent<UpdateHandler<VariantGroupDetail>>(async ({id, whenAdd, whenUpdate}) => {
+        const draftModel : VariantGroupDetail = {
             ...model,
             
             sort               : model?.sort ?? 0,
@@ -217,12 +217,12 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
             name               : (whenUpdate.description || whenAdd)               ? name               : (model?.name               ?? ''   ),
             hasDedicatedStocks : (whenUpdate.stock       || whenAdd)               ? hasDedicatedStocks : (model?.hasDedicatedStocks ?? false),
             
-            productVariants    : (!!variants && (variants !== unmodifiedVariants)) ? variants           : (unmodifiedVariants        ?? []   ),
+            variants           : (!!variants && (variants !== unmodifiedVariants)) ? variants           : (unmodifiedVariants        ?? []   ),
         };
         return (onUpdate !== undefined) ? onUpdate({draftModel, whenAdd, whenUpdate}) : draftModel;
     });
     
-    const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<ProductVariantGroupDetail>>(({model}) => {
+    const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<VariantGroupDetail>>(({model}) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
@@ -235,7 +235,7 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
             </>,
         };
     });
-    const handleConfirmUnsaved       = useEvent<ConfirmUnsavedHandler<ProductVariantGroupDetail>>(() => {
+    const handleConfirmUnsaved       = useEvent<ConfirmUnsavedHandler<VariantGroupDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>
@@ -248,7 +248,7 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
     
     // jsx:
     return (
-        <ComplexEditModelDialog<ProductVariantGroupDetail>
+        <ComplexEditModelDialog<VariantGroupDetail>
             // other props:
             {...restComplexEditModelDialogProps}
             
@@ -363,7 +363,7 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                         registerAddedImage   = {registerAddedImage  }
                         registerDeletedImage = {registerDeletedImage}
                     >
-                        <ProductVariantEditor
+                        <VariantEditor
                             // classes:
                             className='variants editor'
                             
@@ -380,14 +380,14 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
                             
                             // components:
                             modelPreviewComponent={
-                                <ProductVariantPreview
+                                <VariantPreview
                                     // data:
                                     model={undefined as any}
                                 />
                             }
                             modelCreateComponent={
                                 privilegeAdd
-                                ? <EditProductVariantDialog
+                                ? <EditVariantDialog
                                     // data:
                                     model={null} // create a new model
                                     
@@ -409,6 +409,6 @@ const EditProductVariantGroupDialog = (props: EditProductVariantGroupDialogProps
     );
 };
 export {
-    EditProductVariantGroupDialog,
-    EditProductVariantGroupDialog as default,
+    EditVariantGroupDialog,
+    EditVariantGroupDialog as default,
 }

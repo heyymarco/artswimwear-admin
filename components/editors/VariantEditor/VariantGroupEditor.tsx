@@ -41,8 +41,8 @@ import type {
     DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
-    EditProductVariantGroupDialogProps,
-}                           from '@/components/dialogs/EditProductVariantGroupDialog'
+    EditVariantGroupDialogProps,
+}                           from '@/components/dialogs/EditVariantGroupDialog'
 import {
     ModelCreateProps,
     CreateHandler,
@@ -51,8 +51,8 @@ import {
     ModelEmpty,
 }                           from '@/components/explorers/PagedModelExplorer'
 import type {
-    ProductVariantGroupPreviewProps,
-}                           from '@/components/views/ProductVariantGroupPreview'
+    VariantGroupPreviewProps,
+}                           from '@/components/views/VariantGroupPreview'
 import {
     TemplateVariantMenuButton,
 }                           from '@/components/explorers/TemplateVariantMenuButton'
@@ -72,16 +72,16 @@ import {
 // stores:
 import type {
     // types:
-    ProductVariantGroupDetail,
+    VariantGroupDetail,
 }                           from '@/store/features/api/apiSlice'
 
 
 
 // react components:
-interface ProductVariantGroupEditorProps<TElement extends Element = HTMLElement>
+interface VariantGroupEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Pick<EditorProps<TElement, ProductVariantGroupDetail[]>,
+        Pick<EditorProps<TElement, VariantGroupDetail[]>,
             // values:
             |'defaultValue' // not supported, controllable only
             |'value'
@@ -100,7 +100,7 @@ interface ProductVariantGroupEditorProps<TElement extends Element = HTMLElement>
         >,
         
         // data:
-        Partial<Pick<ModelCreateOuterProps<ProductVariantGroupDetail>,
+        Partial<Pick<ModelCreateOuterProps<VariantGroupDetail>,
             // components:
             |'modelCreateComponent'
         >>,
@@ -109,10 +109,10 @@ interface ProductVariantGroupEditorProps<TElement extends Element = HTMLElement>
         VariantStateProps
 {
     // components:
-    modelCreateComponent  ?: React.ReactComponentElement<any, ModelCreateProps & EditProductVariantGroupDialogProps>
-    modelPreviewComponent  : React.ReactComponentElement<any, ProductVariantGroupPreviewProps>
+    modelCreateComponent  ?: React.ReactComponentElement<any, ModelCreateProps & EditVariantGroupDialogProps>
+    modelPreviewComponent  : React.ReactComponentElement<any, VariantGroupPreviewProps>
 }
-const ProductVariantGroupEditor = <TElement extends Element = HTMLElement>(props: ProductVariantGroupEditorProps<TElement>): JSX.Element|null => {
+const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: VariantGroupEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // values:
@@ -146,7 +146,7 @@ const ProductVariantGroupEditor = <TElement extends Element = HTMLElement>(props
     let {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllableAndUncontrollable<ProductVariantGroupDetail[]>({
+    } = useControllableAndUncontrollable<VariantGroupDetail[]>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
         onValueChange      : onControllableValueChange,
@@ -161,17 +161,17 @@ const ProductVariantGroupEditor = <TElement extends Element = HTMLElement>(props
         triggerValueChange(
             restChildren
             .map((modelPreviewComponent, index) => {
-                const model = (modelPreviewComponent.props as any).model as ProductVariantGroupDetail;
+                const model = (modelPreviewComponent.props as any).model as VariantGroupDetail;
                 return {
                     ...model,
                     sort: index,
-                } satisfies ProductVariantGroupDetail;
+                } satisfies VariantGroupDetail;
             })
         , { triggerAt: 'immediately' });
     });
-    const handleModelCreated   = useEvent<CreateHandler<ProductVariantGroupDetail>>((createdModel) => {
+    const handleModelCreated   = useEvent<CreateHandler<VariantGroupDetail>>((createdModel) => {
         const mutatedValue = value.slice(0); // copy
-        mutatedValue.unshift(createdModel as ProductVariantGroupDetail);
+        mutatedValue.unshift(createdModel as VariantGroupDetail);
         for (let index = 0; index < mutatedValue.length; index++) {
             mutatedValue[index] = {
                 ...mutatedValue[index],
@@ -180,19 +180,19 @@ const ProductVariantGroupEditor = <TElement extends Element = HTMLElement>(props
         } // for
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
-    const handleModelUpdated   = useEvent<UpdatedHandler<ProductVariantGroupDetail>>((updatedModel) => {
+    const handleModelUpdated   = useEvent<UpdatedHandler<VariantGroupDetail>>((updatedModel) => {
         const mutatedValue = value.slice(0); // copy
         const id = updatedModel.id;
         const modelIndex = mutatedValue.findIndex((model) => model.id === id);
         if (modelIndex < 0) {
-            mutatedValue.unshift(updatedModel as ProductVariantGroupDetail);
+            mutatedValue.unshift(updatedModel as VariantGroupDetail);
         }
         else {
-            mutatedValue[modelIndex] = updatedModel as ProductVariantGroupDetail;
+            mutatedValue[modelIndex] = updatedModel as VariantGroupDetail;
         } // if
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
-    const handleModelDeleted   = useEvent<DeleteHandler<ProductVariantGroupDetail>>(({id}) => {
+    const handleModelDeleted   = useEvent<DeleteHandler<VariantGroupDetail>>(({id}) => {
         const mutatedValue = value.slice(0); // copy
         const modelIndex = mutatedValue.findIndex((model) => model.id === id);
         if (modelIndex < 0) return;
@@ -249,7 +249,7 @@ const ProductVariantGroupEditor = <TElement extends Element = HTMLElement>(props
                 onChildrenChange={handleChildrenChange}
             >
                 {/* <ModelCreate> */}
-                {!!modelCreateComponent  && <ModelCreateOuter<ProductVariantGroupDetail>
+                {!!modelCreateComponent  && <ModelCreateOuter<VariantGroupDetail>
                     // classes:
                     className='solid'
                     
@@ -262,7 +262,7 @@ const ProductVariantGroupEditor = <TElement extends Element = HTMLElement>(props
                     
                     // components:
                     modelCreateComponent={
-                        React.cloneElement<ModelCreateProps & EditProductVariantGroupDialogProps>(modelCreateComponent,
+                        React.cloneElement<ModelCreateProps & EditVariantGroupDialogProps>(modelCreateComponent,
                             // props:
                             {
                                 // workaround for penetrating <VariantStateProvider> to showDialog():
@@ -292,7 +292,7 @@ const ProductVariantGroupEditor = <TElement extends Element = HTMLElement>(props
                 
                 {value.map((modelOption) =>
                     /* <ModelPreview> */
-                    React.cloneElement<ProductVariantGroupPreviewProps>(modelPreviewComponent,
+                    React.cloneElement<VariantGroupPreviewProps>(modelPreviewComponent,
                         // props:
                         {
                             // identifiers:
@@ -316,6 +316,6 @@ const ProductVariantGroupEditor = <TElement extends Element = HTMLElement>(props
     );
 };
 export {
-    ProductVariantGroupEditor,
-    ProductVariantGroupEditor as default,
+    VariantGroupEditor,
+    VariantGroupEditor as default,
 }

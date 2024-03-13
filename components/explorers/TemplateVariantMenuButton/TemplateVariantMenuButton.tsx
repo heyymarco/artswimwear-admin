@@ -65,7 +65,7 @@ import {
 import {
     // states:
     useVariantState,
-}                           from '@/components/editors/ProductVariantEditor/states/variantState'
+}                           from '@/components/editors/VariantEditor/states/variantState'
 
 // others:
 import {
@@ -75,7 +75,7 @@ import {
 // stores:
 import {
     // types:
-    ProductVariantGroupDetail,
+    VariantGroupDetail,
     TemplateVariantGroupDetail,
     TemplateVariantDetail,
     
@@ -97,7 +97,7 @@ export interface TemplateVariantMenuButtonProps
         >
 {
     // handlers:
-    onPaste ?: (newModel : ProductVariantGroupDetail) => void
+    onPaste ?: (newModel : VariantGroupDetail) => void
 }
 const TemplateVariantMenuButton = (props: TemplateVariantMenuButtonProps): JSX.Element|null => {
     // props:
@@ -141,7 +141,7 @@ const TemplateVariantMenuButton = (props: TemplateVariantMenuButtonProps): JSX.E
         setMenuExpanded(expanded);
     });
     const handleCreateNewTemplateVariant = useEvent<React.MouseEventHandler<HTMLElement>>(async (event): Promise<void> => {
-        await showDialog<ComplexEditModelDialogResult<ProductVariantGroupDetail>>(
+        await showDialog<ComplexEditModelDialogResult<VariantGroupDetail>>(
             <EditTemplateVariantGroupDialog
                 // data:
                 model={null} // create a new model
@@ -234,7 +234,7 @@ export {
 
 interface TemplateVariantMenuItemsProps {
     // handlers:
-    onPaste ?: (newModel : ProductVariantGroupDetail) => void
+    onPaste ?: (newModel : VariantGroupDetail) => void
     onClose ?: () => void
 }
 const TemplateVariantMenuItems = (props: TemplateVariantMenuItemsProps): JSX.Element|null => {
@@ -260,29 +260,30 @@ const TemplateVariantMenuItems = (props: TemplateVariantMenuItemsProps): JSX.Ele
         if (!onPaste) return;               // the `onPaste()` handler is not assigned => ignore
         
         
+        
         const {
             // @ts-ignore
-            productVariants  : productVariantsExist,
-            templateVariants : productVariants = productVariantsExist,
+            variants         : variantsExist,
+            templateVariants : variants = variantsExist,
             ...restTemplateVariantGroupDetail
         } = templateVariantGroupDetail;
         
-        const productVariantGroupDetail : ProductVariantGroupDetail = {
+        const variantGroupDetail : VariantGroupDetail = {
             ...restTemplateVariantGroupDetail,
             id   : await (async () => {
                 const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
                 return ` ${await nanoid()}`; // starts with space{random-temporary-id}
             })(),
             sort : 0,
-            productVariants : await Promise.all((productVariants as TemplateVariantDetail[]).map(async ({id, ...restProductVariant}) => ({
-                ...restProductVariant,
+            variants : await Promise.all((variants as TemplateVariantDetail[]).map(async ({id, ...restVariant}) => ({
+                ...restVariant,
                 id   : await (async () => {
                     const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
                     return ` ${await nanoid()}`; // starts with space{random-temporary-id}
                 })(),
             }))),
         };
-        onPaste(productVariantGroupDetail);
+        onPaste(variantGroupDetail);
     });
     const handleEditingTemplateVariant   = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
         event.preventDefault(); // prevents trigger <ListItem> => handleSelectTemplateVariant()

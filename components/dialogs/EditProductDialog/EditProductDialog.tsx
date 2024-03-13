@@ -94,8 +94,8 @@ import {
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
     // react components:
-    EditProductVariantGroupDialog,
-}                           from '@/components/dialogs/EditProductVariantGroupDialog'
+    EditVariantGroupDialog,
+}                           from '@/components/dialogs/EditVariantGroupDialog'
 import {
     // utilities:
     privilegeVariantUpdateFullAccess,
@@ -103,11 +103,11 @@ import {
     
     
     // react components:
-    ProductVariantGroupEditor,
-}                           from '@/components/editors/ProductVariantEditor'
+    VariantGroupEditor,
+}                           from '@/components/editors/VariantEditor'
 import {
-    ProductVariantGroupPreview,
-}                           from '@/components/views/ProductVariantGroupPreview'
+    VariantGroupPreview,
+}                           from '@/components/views/VariantGroupPreview'
 import {
     StockPreview,
 }                           from '@/components/views/StockPreview'
@@ -118,7 +118,7 @@ import type {
     Stock,
 }                           from '@prisma/client'
 import {
-    createProductVariantGroupDiff,
+    createVariantGroupDiff,
     createStockMap,
 }                           from '@/models'
 
@@ -126,7 +126,7 @@ import {
 import {
     // types:
     ProductDetail,
-    ProductVariantGroupDetail,
+    VariantGroupDetail,
     StockDetail,
     
     
@@ -170,9 +170,9 @@ import './EditProductDialogStyles';
 
 // utilities:
 const noVariantStockList : StockDetail[] = [{
-    id                : ' emptyId',
-    value             : null,
-    productVariantIds : [],
+    id         : ' emptyId',
+    value      : null,
+    variantIds : [],
 }];
 
 
@@ -243,9 +243,9 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
     const [commitMoveImage  , {isLoading : isLoadingCommitMoveImage  }] = useMoveImage();
     
-    const variantGroupList = model?.productVariantGroups;
-    const [unmodifiedVariantGroups, setUnmodifiedVariantGroups] = useState<ProductVariantGroupDetail[]|undefined>(variantGroupList);
-    const [variantGroups          , setVariantGroups          ] = useState<ProductVariantGroupDetail[]|undefined>(variantGroupList);
+    const variantGroupList = model?.variantGroups;
+    const [unmodifiedVariantGroups, setUnmodifiedVariantGroups] = useState<VariantGroupDetail[]|undefined>(variantGroupList);
+    const [variantGroups          , setVariantGroups          ] = useState<VariantGroupDetail[]|undefined>(variantGroupList);
     if ((unmodifiedVariantGroups?.length !== variantGroupList?.length) || unmodifiedVariantGroups?.some((item, index) => (item !== variantGroupList?.[index]))) {
         setUnmodifiedVariantGroups(variantGroupList); // tracks the new changes
         setVariantGroups(variantGroupList);           // discard the user changes
@@ -263,11 +263,11 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     
     
     
-    const prevVariantGroups = useRef<ProductVariantGroupDetail[]|undefined>(variantGroups);
+    const prevVariantGroups = useRef<VariantGroupDetail[]|undefined>(variantGroups);
     if (prevVariantGroups.current !== variantGroups) {
-        const productVariantGroupDiff = createProductVariantGroupDiff(variantGroups ?? [], prevVariantGroups.current ?? []);
-        const currentStocks : Pick<Stock, 'value'|'productVariantIds'>[] = stocks ?? [];
-        const stockMap = createStockMap(productVariantGroupDiff, currentStocks, variantGroups ?? []);
+        const variantGroupDiff = createVariantGroupDiff(variantGroups ?? [], prevVariantGroups.current ?? []);
+        const currentStocks : Pick<Stock, 'value'|'variantIds'>[] = stocks ?? [];
+        const stockMap = createStockMap(variantGroupDiff, currentStocks, variantGroups ?? []);
         
         const idSuffix = Date.now(); // use completely different id to the prev, so the prev state gone
         setStocks(
@@ -330,18 +330,18 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         
         try {
             return await updateProduct({
-                id                   : id ?? '',
+                id             : id ?? '',
                 
-                visibility           : (whenUpdate.visibility  || whenAdd)         ? visibility                                        : undefined,
-                name                 : (whenUpdate.description || whenAdd)         ? name                                              : undefined,
-                path                 : (whenUpdate.description || whenAdd)         ? path                                              : undefined,
-                price                : (whenUpdate.price       || whenAdd)         ? price                                             : undefined,
-                shippingWeight       : (whenUpdate.price       || whenAdd)         ? shippingWeight                                    : undefined,
-                images               : (whenUpdate.images      || whenAdd)         ? updatedImages                                     : undefined,
-                description          : (whenUpdate.description || whenAdd)         ? ((description?.toJSON?.() ?? description) as any) : undefined,
+                visibility     : (whenUpdate.visibility  || whenAdd)         ? visibility                                        : undefined,
+                name           : (whenUpdate.description || whenAdd)         ? name                                              : undefined,
+                path           : (whenUpdate.description || whenAdd)         ? path                                              : undefined,
+                price          : (whenUpdate.price       || whenAdd)         ? price                                             : undefined,
+                shippingWeight : (whenUpdate.price       || whenAdd)         ? shippingWeight                                    : undefined,
+                images         : (whenUpdate.images      || whenAdd)         ? updatedImages                                     : undefined,
+                description    : (whenUpdate.description || whenAdd)         ? ((description?.toJSON?.() ?? description) as any) : undefined,
                 
-                productVariantGroups : (variantGroups !== unmodifiedVariantGroups) ? variantGroups                                     : undefined,
-                stocks               : (stocks        !== unmodifiedStocks       ) ? stocks.map(({value}) => value)                    : undefined,
+                variantGroups  : (variantGroups !== unmodifiedVariantGroups) ? variantGroups                                     : undefined,
+                stocks         : (stocks        !== unmodifiedStocks       ) ? stocks.map(({value}) => value)                    : undefined,
             }).unwrap();
         }
         finally {
@@ -613,7 +613,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                 </form>
             </TabPanel>
             <TabPanel label={PAGE_PRODUCT_TAB_VARIANTS}     panelComponent={<Generic className={styleSheet.variantsTab} />}>
-                <ProductVariantGroupEditor
+                <VariantGroupEditor
                     // values:
                     value={variantGroups}
                     onChange={(value) => {
@@ -647,14 +647,14 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                     
                     // components:
                     modelPreviewComponent={
-                        <ProductVariantGroupPreview
+                        <VariantGroupPreview
                             // data:
                             model={undefined as any}
                         />
                     }
                     modelCreateComponent={
                         privilegeAdd
-                        ? <EditProductVariantGroupDialog
+                        ? <EditVariantGroupDialog
                             // data:
                             model={null} // create a new model
                             
@@ -673,7 +673,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             <TabPanel label={PAGE_PRODUCT_TAB_STOCKS}       panelComponent={<Generic className={styleSheet.stocksTab} />}>
                 <StockListEditor
                     // models:
-                    productVariantGroups={variantGroups}
+                    variantGroups={variantGroups}
                     
                     
                     

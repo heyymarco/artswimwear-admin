@@ -52,6 +52,9 @@ import {
 import {
     Grip,
 }                           from '@/components/Grip'
+import {
+    VariantIndicator,
+}                           from '@/components/VariantIndicator'
 import type {
     // react components:
     ModelPreviewProps,
@@ -63,9 +66,9 @@ import type {
     DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
-    EditProductVariantDialogProps,
-    EditProductVariantDialog,
-}                           from '@/components/dialogs/EditProductVariantDialog'
+    EditVariantGroupDialogProps,
+    EditVariantGroupDialog,
+}                           from '@/components/dialogs/EditVariantGroupDialog'
 import {
     // utilities:
     privilegeVariantUpdateFullAccess,
@@ -74,21 +77,21 @@ import {
     
     // states:
     useVariantState,
-}                           from '@/components/editors/ProductVariantEditor/states/variantState'
+}                           from '@/components/editors/VariantEditor/states/variantState'
 
 // stores:
 import type {
     // types:
-    ProductVariantDetail,
+    VariantGroupDetail,
 }                           from '@/store/features/api/apiSlice'
 
 
 
 // styles:
-const useProductVariantPreviewStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */'./ProductVariantPreviewStyles')
-, { specificityWeight: 2, id: 'ksusgysqhs' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
-import './ProductVariantPreviewStyles';
+const useVariantGroupPreviewStyleSheet = dynamicStyleSheet(
+    () => import(/* webpackPrefetch: true */'./VariantGroupPreviewStyles')
+, { specificityWeight: 2, id: 'iy5w85wh2c' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
+import './VariantGroupPreviewStyles';
 
 
 
@@ -100,21 +103,21 @@ const handleOrderStart = (event: OrderableListItemDragStartEvent<HTMLElement>): 
 
 
 // react components:
-export interface ProductVariantPreviewProps
+export interface VariantGroupPreviewProps
     extends
         // bases:
-        Omit<ModelPreviewProps<ProductVariantDetail>,
+        Omit<ModelPreviewProps<VariantGroupDetail>,
             // behaviors:
             |'draggable'
         >
 {
     // handlers:
-    onUpdated     ?: UpdatedHandler<ProductVariantDetail>
-    onDeleted     ?: DeleteHandler<ProductVariantDetail>
+    onUpdated     ?: UpdatedHandler<VariantGroupDetail>
+    onDeleted     ?: DeleteHandler<VariantGroupDetail>
 }
-const ProductVariantPreview = (props: ProductVariantPreviewProps): JSX.Element|null => {
+const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null => {
     // styles:
-    const styleSheet = useProductVariantPreviewStyleSheet();
+    const styleSheet = useVariantGroupPreviewStyleSheet();
     
     
     
@@ -132,6 +135,7 @@ const ProductVariantPreview = (props: ProductVariantPreviewProps): JSX.Element|n
     const {
         id,
         name,
+        variants,
     } = model;
     
     
@@ -174,8 +178,8 @@ const ProductVariantPreview = (props: ProductVariantPreviewProps): JSX.Element|n
     
     // handlers:
     const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async () => {
-        const updatedVariantModel = await showDialog<ComplexEditModelDialogResult<ProductVariantDetail>>(
-            <EditProductVariantDialog
+        const updatedVariantGroupModel = await showDialog<ComplexEditModelDialogResult<VariantGroupDetail>>(
+            <EditVariantGroupDialog
                 // data:
                 model={model} // modify current model
                 
@@ -192,7 +196,7 @@ const ProductVariantPreview = (props: ProductVariantPreviewProps): JSX.Element|n
                 privilegeDelete = {privilegeDelete}
             />
         );
-        switch (updatedVariantModel) {
+        switch (updatedVariantGroupModel) {
             case undefined: // dialog canceled
                 break;
             
@@ -201,7 +205,7 @@ const ProductVariantPreview = (props: ProductVariantPreviewProps): JSX.Element|n
                 break;
             
             default:        // dialog updated
-                await onUpdated?.(updatedVariantModel);
+                await onUpdated?.(updatedVariantGroupModel);
         } // switch
     });
     
@@ -235,7 +239,17 @@ const ProductVariantPreview = (props: ProductVariantPreviewProps): JSX.Element|n
         >
             <p className='name'>{name}</p>
             
-            {(model.visibility !== 'PUBLISHED') && <Indicator key={id} tag='span' className='visibility' size='sm' active enabled={false}>DRAFT</Indicator>}
+            <p className='preview'>
+                {
+                    !variants.length
+                    ? <span className='noValue'>No Variant</span>
+                    : <span className='values'>
+                        {variants.map((variant, variantIndex) =>
+                            <VariantIndicator key={variantIndex} model={variant} />
+                        )}
+                    </span>
+                }
+            </p>
             
             <Grip className='grip' enabled={!!privilegeUpdate?.description} />
             
@@ -247,6 +261,6 @@ const ProductVariantPreview = (props: ProductVariantPreviewProps): JSX.Element|n
     );
 };
 export {
-    ProductVariantPreview,
-    ProductVariantPreview as default,
+    VariantGroupPreview,
+    VariantGroupPreview as default,
 }

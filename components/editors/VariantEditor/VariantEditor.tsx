@@ -41,8 +41,8 @@ import type {
     DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import type {
-    EditProductVariantDialogProps,
-}                           from '@/components/dialogs/EditProductVariantDialog'
+    EditVariantDialogProps,
+}                           from '@/components/dialogs/EditVariantDialog'
 import {
     ModelCreateProps,
     CreateHandler,
@@ -51,8 +51,8 @@ import {
     ModelEmpty,
 }                           from '@/components/explorers/PagedModelExplorer'
 import type {
-    ProductVariantPreviewProps,
-}                           from '@/components/views/ProductVariantPreview'
+    VariantPreviewProps,
+}                           from '@/components/views/VariantPreview'
 
 // internals:
 import {
@@ -63,16 +63,16 @@ import {
 // stores:
 import type {
     // types:
-    ProductVariantDetail,
+    VariantDetail,
 }                           from '@/store/features/api/apiSlice'
 
 
 
 // react components:
-interface ProductVariantEditorProps<TElement extends Element = HTMLElement>
+interface VariantEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Pick<EditorProps<TElement, ProductVariantDetail[]>,
+        Pick<EditorProps<TElement, VariantDetail[]>,
             // values:
             |'defaultValue' // not supported, controllable only
             |'value'
@@ -91,16 +91,16 @@ interface ProductVariantEditorProps<TElement extends Element = HTMLElement>
         >,
         
         // data:
-        Partial<Pick<ModelCreateOuterProps<ProductVariantDetail>,
+        Partial<Pick<ModelCreateOuterProps<VariantDetail>,
             // components:
             |'modelCreateComponent'
         >>
 {
     // components:
-    modelCreateComponent  ?: React.ReactComponentElement<any, ModelCreateProps & EditProductVariantDialogProps>
-    modelPreviewComponent  : React.ReactComponentElement<any, ProductVariantPreviewProps>
+    modelCreateComponent  ?: React.ReactComponentElement<any, ModelCreateProps & EditVariantDialogProps>
+    modelPreviewComponent  : React.ReactComponentElement<any, VariantPreviewProps>
 }
-const ProductVariantEditor = <TElement extends Element = HTMLElement>(props: ProductVariantEditorProps<TElement>): JSX.Element|null => {
+const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // values:
@@ -124,7 +124,7 @@ const ProductVariantEditor = <TElement extends Element = HTMLElement>(props: Pro
     let {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllableAndUncontrollable<ProductVariantDetail[]>({
+    } = useControllableAndUncontrollable<VariantDetail[]>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
         onValueChange      : onControllableValueChange,
@@ -139,17 +139,17 @@ const ProductVariantEditor = <TElement extends Element = HTMLElement>(props: Pro
         triggerValueChange(
             restChildren
             .map((modelPreviewComponent, index) => {
-                const model = (modelPreviewComponent.props as any).model as ProductVariantDetail;
+                const model = (modelPreviewComponent.props as any).model as VariantDetail;
                 return {
                     ...model,
                     sort: index,
-                } satisfies ProductVariantDetail;
+                } satisfies VariantDetail;
             })
         , { triggerAt: 'immediately' });
     });
-    const handleModelCreated   = useEvent<CreateHandler<ProductVariantDetail>>((createdModel) => {
+    const handleModelCreated   = useEvent<CreateHandler<VariantDetail>>((createdModel) => {
         const mutatedValue = value.slice(0); // copy
-        mutatedValue.unshift(createdModel as ProductVariantDetail);
+        mutatedValue.unshift(createdModel as VariantDetail);
         for (let index = 0; index < mutatedValue.length; index++) {
             mutatedValue[index] = {
                 ...mutatedValue[index],
@@ -158,19 +158,19 @@ const ProductVariantEditor = <TElement extends Element = HTMLElement>(props: Pro
         } // for
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
-    const handleModelUpdated   = useEvent<UpdatedHandler<ProductVariantDetail>>((updatedModel) => {
+    const handleModelUpdated   = useEvent<UpdatedHandler<VariantDetail>>((updatedModel) => {
         const mutatedValue = value.slice(0); // copy
         const id = updatedModel.id;
         const modelIndex = mutatedValue.findIndex((model) => model.id === id);
         if (modelIndex < 0) {
-            mutatedValue.unshift(updatedModel as ProductVariantDetail);
+            mutatedValue.unshift(updatedModel as VariantDetail);
         }
         else {
-            mutatedValue[modelIndex] = updatedModel as ProductVariantDetail;
+            mutatedValue[modelIndex] = updatedModel as VariantDetail;
         } // if
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
-    const handleModelDeleted   = useEvent<DeleteHandler<ProductVariantDetail>>(({id}) => {
+    const handleModelDeleted   = useEvent<DeleteHandler<VariantDetail>>(({id}) => {
         const mutatedValue = value.slice(0); // copy
         const modelIndex = mutatedValue.findIndex((model) => model.id === id);
         if (modelIndex < 0) return;
@@ -198,7 +198,7 @@ const ProductVariantEditor = <TElement extends Element = HTMLElement>(props: Pro
             onChildrenChange={handleChildrenChange}
         >
             {/* <ModelCreate> */}
-            {!!modelCreateComponent  && <ModelCreateOuter<ProductVariantDetail>
+            {!!modelCreateComponent  && <ModelCreateOuter<VariantDetail>
                 // classes:
                 className='solid'
                 
@@ -211,7 +211,7 @@ const ProductVariantEditor = <TElement extends Element = HTMLElement>(props: Pro
                 
                 // components:
                 modelCreateComponent={
-                    React.cloneElement<ModelCreateProps & EditProductVariantDialogProps>(modelCreateComponent,
+                    React.cloneElement<ModelCreateProps & EditVariantDialogProps>(modelCreateComponent,
                         // props:
                         {
                             // workaround for penetrating <VariantStateProvider> to showDialog():
@@ -235,7 +235,7 @@ const ProductVariantEditor = <TElement extends Element = HTMLElement>(props: Pro
             
             {value.map((modelOption) =>
                 /* <ModelPreview> */
-                React.cloneElement<ProductVariantPreviewProps>(modelPreviewComponent,
+                React.cloneElement<VariantPreviewProps>(modelPreviewComponent,
                     // props:
                     {
                         // identifiers:
@@ -258,6 +258,6 @@ const ProductVariantEditor = <TElement extends Element = HTMLElement>(props: Pro
     );
 };
 export {
-    ProductVariantEditor,
-    ProductVariantEditor as default,
+    VariantEditor,
+    VariantEditor as default,
 }

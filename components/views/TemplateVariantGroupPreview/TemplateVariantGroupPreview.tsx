@@ -69,7 +69,7 @@ import {
     
     // states:
     useVariantState,
-}                           from '@/components/editors/ProductVariantEditor/states/variantState'
+}                           from '@/components/editors/VariantEditor/states/variantState'
 
 // stores:
 import type {
@@ -242,8 +242,8 @@ const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): J
                     !templateVariants.length
                     ? <span className='noValue'>No Variant</span>
                     : <span className='values'>
-                        {templateVariants.map((productVariant, variantIndex) =>
-                            <VariantIndicator key={variantIndex} model={productVariant} />
+                        {templateVariants.map((variant, variantIndex) =>
+                            <VariantIndicator key={variantIndex} model={variant} />
                         )}
                     </span>
                 }

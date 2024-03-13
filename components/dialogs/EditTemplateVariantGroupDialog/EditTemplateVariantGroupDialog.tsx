@@ -17,7 +17,7 @@ import {
 import type {
     // types:
     VariantState,
-}                           from '@/components/editors/ProductVariantEditor'
+}                           from '@/components/editors/VariantEditor'
 import type {
     // types:
     ComplexEditModelDialogExpandedChangeEvent,
@@ -33,9 +33,9 @@ import type {
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
     // react components:
-    EditProductVariantGroupDialogProps,
-    EditProductVariantGroupDialog,
-}                           from '@/components/dialogs/EditProductVariantGroupDialog'
+    EditVariantGroupDialogProps,
+    EditVariantGroupDialog,
+}                           from '@/components/dialogs/EditVariantGroupDialog'
 
 // internals:
 import type {
@@ -45,7 +45,7 @@ import type {
 // stores:
 import {
     // types:
-    ProductVariantGroupDetail,
+    VariantGroupDetail,
     TemplateVariantGroupDetail,
     
     
@@ -90,18 +90,18 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
         
         // handlers:
         onExpandedChange,
-    ...restEditProductVariantGroupDialogProps} = props;
+    ...restEditVariantGroupDialogProps} = props;
     
-    const model : ProductVariantGroupDetail|null = !templateVariantGroupDetail ? null : ((): ProductVariantGroupDetail => {
+    const model : VariantGroupDetail|null = !templateVariantGroupDetail ? null : ((): VariantGroupDetail => {
         const {
-            templateVariants : productVariants,
-            ...restProductVariantGroupDetail
+            templateVariants : variants,
+            ...restVariantGroupDetail
         } = templateVariantGroupDetail;
         
         return {
-            ...restProductVariantGroupDetail,
+            ...restVariantGroupDetail,
             sort : 0,
-            productVariants,
+            variants,
         };
     })();
     
@@ -114,18 +114,18 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
     
     
     // handlers:
-    const handleUpdate         = useEvent<UpdateDraftHandler<ProductVariantGroupDetail>>(async ({draftModel: productVariantGroupDetail}) => {
+    const handleUpdate         = useEvent<UpdateDraftHandler<VariantGroupDetail>>(async ({draftModel: variantGroupDetail}) => {
         const {
             id,
             sort : _sort, // remove
             // @ts-ignore
             templateVariants : templateVariantsExist,
-            productVariants  : templateVariants = templateVariantsExist,
-            ...restProductVariantGroupDetail
-        } = productVariantGroupDetail;
+            variants         : templateVariants = templateVariantsExist,
+            ...restVariantGroupDetail
+        } = variantGroupDetail;
         
         const templateVariantGroupDetail : TemplateVariantGroupDetail = {
-            ...restProductVariantGroupDetail,
+            ...restVariantGroupDetail,
             id : (!id || (id[0] === ' ')) ? '' : id,
             templateVariants,
         };
@@ -133,12 +133,12 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
         return await updateTemplateVariantGroup(templateVariantGroupDetail).unwrap();
     });
     
-    const handleDelete         = useEvent<DeleteHandler<ProductVariantGroupDetail>>(async ({id}) => {
+    const handleDelete         = useEvent<DeleteHandler<VariantGroupDetail>>(async ({id}) => {
         await deleteTemplateVariantGroup({
             id : id,
         }).unwrap();
     });
-    const handleExpandedChange = useEvent<EventHandler<ComplexEditModelDialogExpandedChangeEvent<ProductVariantGroupDetail>>>((event) => {
+    const handleExpandedChange = useEvent<EventHandler<ComplexEditModelDialogExpandedChangeEvent<VariantGroupDetail>>>((event) => {
         const data = event.data;
         if (!data) {
             onExpandedChange?.({...event, data});
@@ -152,12 +152,12 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
                 sort : _sort, // remove
                 // @ts-ignore
                 templateVariants : templateVariantsExist,
-                productVariants  : templateVariants = templateVariantsExist,
-                ...restProductVariantGroupDetail
+                variants         : templateVariants = templateVariantsExist,
+                ...restVariantGroupDetail
             } = data;
             
             const templateVariantGroupDetail : PartialModel<TemplateVariantGroupDetail> = {
-                ...restProductVariantGroupDetail,
+                ...restVariantGroupDetail,
                 templateVariants,
             };
             onExpandedChange({...event, data: templateVariantGroupDetail});
@@ -168,9 +168,9 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
     
     // jsx:
     return (
-        <EditProductVariantGroupDialog
+        <EditVariantGroupDialog
             // other props:
-            {...restEditProductVariantGroupDialogProps}
+            {...restEditVariantGroupDialogProps}
             
             
             
@@ -193,8 +193,8 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
             
             
             // components:
-            popupComponent={popupComponent as EditProductVariantGroupDialogProps['popupComponent']}
-            modalComponent={modalComponent as EditProductVariantGroupDialogProps['modalComponent']}
+            popupComponent={popupComponent as EditVariantGroupDialogProps['popupComponent']}
+            modalComponent={modalComponent as EditVariantGroupDialogProps['modalComponent']}
             
             
             

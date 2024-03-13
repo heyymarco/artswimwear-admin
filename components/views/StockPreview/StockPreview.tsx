@@ -53,7 +53,7 @@ import type {
 // stores:
 import type {
     // types:
-    ProductVariantDetail,
+    VariantDetail,
     StockDetail,
 }                           from '@/store/features/api/apiSlice'
 
@@ -74,12 +74,12 @@ export interface StockPreviewProps
         ModelPreviewProps<StockDetail>
 {
     // models:
-    productVariants ?: ProductVariantDetail[]
+    variants  ?: VariantDetail[]
     
     
     
     // handlers:
-    onUpdated       ?: UpdatedHandler<StockDetail>
+    onUpdated ?: UpdatedHandler<StockDetail>
 }
 const StockPreview = (props: StockPreviewProps): JSX.Element|null => {
     // styles:
@@ -91,7 +91,7 @@ const StockPreview = (props: StockPreviewProps): JSX.Element|null => {
     const {
         // data:
         model,
-        productVariants,
+        variants,
         
         
         
@@ -100,7 +100,7 @@ const StockPreview = (props: StockPreviewProps): JSX.Element|null => {
     ...restListItemProps} = props;
     const {
         id,
-        productVariantIds,
+        variantIds,
         value
     } = model;
     
@@ -127,11 +127,11 @@ const StockPreview = (props: StockPreviewProps): JSX.Element|null => {
             // classes:
             className={styleSheet.main}
         >
-            {!!productVariantIds.length && <Group orientation='block' className='variants' theme='primaryAlt'>
+            {!!variantIds.length && <Group orientation='block' className='variants' theme='primaryAlt'>
                 {
-                    productVariantIds.map((productVariantId) =>
-                        <Basic key={productVariantId} className='variant' size='sm'>
-                            {productVariants?.find(({id}) => (id === productVariantId))?.name}
+                    variantIds.map((variantId) =>
+                        <Basic key={variantId} className='variant' size='sm'>
+                            {variants?.find(({id}) => (id === variantId))?.name}
                         </Basic>
                     )
                 }

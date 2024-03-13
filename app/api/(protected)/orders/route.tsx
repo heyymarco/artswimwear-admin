@@ -201,7 +201,7 @@ You do not have the privilege to view the orders.`
                 items                     : {
                     select: {
                         productId         : true,
-                        productVariantIds : true,
+                        variantIds        : true,
                         
                         price             : true,
                         shippingWeight    : true,

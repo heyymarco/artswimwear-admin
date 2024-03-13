@@ -271,7 +271,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                         editorComponent={
                             <StockListEditor
                                 // models:
-                                productVariantGroups={model.productVariantGroups}
+                                variantGroups={model.variantGroups}
                                 
                                 
                                 
@@ -413,10 +413,10 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                 {privilegeUpdateDescription && <EditButton onClick={() => handleEdit('name')} />}
             </h3>
             <p className='variants'>
-                {!model.productVariantGroups.flatMap(() => ({})).length && <span className='noValue'>No Variant</span>}
-                {model.productVariantGroups.map(({productVariants}, groupIndex) =>
-                    productVariants.map((productVariant, variantIndex) =>
-                        <VariantIndicator key={`${groupIndex}/${variantIndex}`} model={productVariant} />
+                {!model.variantGroups.flatMap(() => ({})).length && <span className='noValue'>No Variant</span>}
+                {model.variantGroups.map(({variants}, groupIndex) =>
+                    variants.map((variant, variantIndex) =>
+                        <VariantIndicator key={`${groupIndex}/${variantIndex}`} model={variant} />
                     )
                 )}
                 {

@@ -27,19 +27,19 @@ import type {
 // models:
 import type {
     ProductPreview,
-    ProductVariantGroupDetail,
+    VariantGroupDetail,
     ProductDetail,
 }                           from '@/models'
 export type {
     ProductPreview,
-    ProductVariantDetail,
-    ProductVariantGroupDetail,
+    VariantDetail,
+    VariantGroupDetail,
     StockDetail,
     ProductDetail,
 }                           from '@/models'
 import {
-    ProductVariantGroupDiff,
-    createProductVariantGroupDiff,
+    VariantGroupDiff,
+    createVariantGroupDiff,
     createStockMap,
 }                           from '@/models'
 import {
@@ -181,7 +181,7 @@ You do not have the privilege to view the products.`
                 
                 images         : true,
                 
-                productVariantGroups : {
+                variantGroups : {
                     select: {
                         id                 : true,
                         
@@ -190,7 +190,7 @@ You do not have the privilege to view the products.`
                         name               : true,
                         hasDedicatedStocks : true,
                         
-                        productVariants    : {
+                        variants           : {
                             select: {
                                 id             : true,
                                 
@@ -213,11 +213,11 @@ You do not have the privilege to view the products.`
                 },
                 stocks : {
                     select: {
-                        id                : true,
+                        id         : true,
                         
-                        value             : true,
+                        value      : true,
                         
-                        productVariantIds : true,
+                        variantIds : true,
                     },
                 },
             },
@@ -267,8 +267,8 @@ You do not have the privilege to view the products.`
         
         images,
         
-        productVariantGroups : productVariantGroupsRaw,
-        stocks               : stocksRaw,
+        variantGroups : variantGroupsRaw,
+        stocks        : stocksRaw,
     } = await req.json();
     //#endregion parsing request
     
@@ -289,46 +289,46 @@ You do not have the privilege to view the products.`
     } // if
     
     if (
-        (productVariantGroupsRaw !== undefined)
+        (variantGroupsRaw !== undefined)
         &&
         (
-            !Array.isArray(productVariantGroupsRaw)
+            !Array.isArray(variantGroupsRaw)
             ||
-            !productVariantGroupsRaw.every((productVariantGroupRaw) =>
-                (typeof(productVariantGroupRaw) === 'object')
+            !variantGroupsRaw.every((variantGroupRaw) =>
+                (typeof(variantGroupRaw) === 'object')
                 &&
-                (Object.keys(productVariantGroupRaw).length === 5)
+                (Object.keys(variantGroupRaw).length === 5)
                 &&
-                /* 1: */ ((typeof(productVariantGroupRaw.id) === 'string') && ((!productVariantGroupRaw.id || (productVariantGroupRaw.id[0] === ' ')) || (!!id && (productVariantGroupRaw.id.length <= 40))))
+                /* 1: */ ((typeof(variantGroupRaw.id) === 'string') && ((!variantGroupRaw.id || (variantGroupRaw.id[0] === ' ')) || (!!id && (variantGroupRaw.id.length <= 40))))
                 &&
-                /* 2: */ ((typeof(productVariantGroupRaw.sort) === 'number') && (productVariantGroupRaw.sort >= Number.MIN_SAFE_INTEGER) && (productVariantGroupRaw.sort <= Number.MAX_SAFE_INTEGER))
+                /* 2: */ ((typeof(variantGroupRaw.sort) === 'number') && (variantGroupRaw.sort >= Number.MIN_SAFE_INTEGER) && (variantGroupRaw.sort <= Number.MAX_SAFE_INTEGER))
                 &&
-                /* 3: */ ((typeof(productVariantGroupRaw.name) === 'string') && !!productVariantGroupRaw.name)
+                /* 3: */ ((typeof(variantGroupRaw.name) === 'string') && !!variantGroupRaw.name)
                 &&
-                /* 4: */ (typeof(productVariantGroupRaw.hasDedicatedStocks) === 'boolean')
+                /* 4: */ (typeof(variantGroupRaw.hasDedicatedStocks) === 'boolean')
                 &&
                 /* 5: */ ((): boolean => {
-                    const {productVariants: productVariantsRaw} = productVariantGroupRaw;
+                    const {variants: variantsRaw} = variantGroupRaw;
                     return (
-                        Array.isArray(productVariantsRaw)
+                        Array.isArray(variantsRaw)
                         &&
-                        productVariantsRaw.every((productVariantRaw) =>
-                            (Object.keys(productVariantRaw).length === 7)
+                        variantsRaw.every((variantRaw) =>
+                            (Object.keys(variantRaw).length === 7)
                             &&
-                            /* 1: */ ((typeof(productVariantRaw.id) === 'string') && ((!productVariantRaw.id || (productVariantRaw.id[0] === ' ')) || (!!productVariantGroupRaw.id && (productVariantRaw.id.length <= 40))))
+                            /* 1: */ ((typeof(variantRaw.id) === 'string') && ((!variantRaw.id || (variantRaw.id[0] === ' ')) || (!!variantGroupRaw.id && (variantRaw.id.length <= 40))))
                             &&
-                            /* 2: */ ((typeof(productVariantRaw.visibility) === 'string') && ['PUBLISHED', 'DRAFT'].includes(productVariantRaw.visibility))
+                            /* 2: */ ((typeof(variantRaw.visibility) === 'string') && ['PUBLISHED', 'DRAFT'].includes(variantRaw.visibility))
                             &&
-                            /* 3: */ ((typeof(productVariantRaw.sort) === 'number') && (productVariantRaw.sort >= Number.MIN_SAFE_INTEGER) && (productVariantRaw.sort <= Number.MAX_SAFE_INTEGER))
+                            /* 3: */ ((typeof(variantRaw.sort) === 'number') && (variantRaw.sort >= Number.MIN_SAFE_INTEGER) && (variantRaw.sort <= Number.MAX_SAFE_INTEGER))
                             &&
-                            /* 4: */ ((typeof(productVariantGroupRaw.name) === 'string') && !!productVariantGroupRaw.name)
+                            /* 4: */ ((typeof(variantGroupRaw.name) === 'string') && !!variantGroupRaw.name)
                             &&
-                            /* 5: */ ((productVariantRaw.price === null) || ((typeof(productVariantRaw.price) === 'number') && (productVariantRaw.price >= 0) && (productVariantRaw.price <= Number.MAX_SAFE_INTEGER)))
+                            /* 5: */ ((variantRaw.price === null) || ((typeof(variantRaw.price) === 'number') && (variantRaw.price >= 0) && (variantRaw.price <= Number.MAX_SAFE_INTEGER)))
                             &&
-                            /* 6: */ ((productVariantRaw.shippingWeight === null) || ((typeof(productVariantRaw.shippingWeight) === 'number') && (productVariantRaw.shippingWeight >= 0) && (productVariantRaw.shippingWeight <= Number.MAX_SAFE_INTEGER)))
+                            /* 6: */ ((variantRaw.shippingWeight === null) || ((typeof(variantRaw.shippingWeight) === 'number') && (variantRaw.shippingWeight >= 0) && (variantRaw.shippingWeight <= Number.MAX_SAFE_INTEGER)))
                             &&
                             /* 7: */ ((): boolean => {
-                                const {images: imagesRaw} = productVariantRaw;
+                                const {images: imagesRaw} = variantRaw;
                                 return (
                                     Array.isArray(imagesRaw)
                                     &&
@@ -369,11 +369,11 @@ You do not have the privilege to view the products.`
     
     try {
         return await prisma.$transaction(async (prismaTransaction): Promise<NextResponse<ProductDetail|{ error: string }>> => {
-            //#region normalize productVariantGroups
-            const productVariantGroups : ProductVariantGroupDetail[]|undefined = productVariantGroupsRaw;
+            //#region normalize variantGroups
+            const variantGroups : VariantGroupDetail[]|undefined = variantGroupsRaw;
             
-            const productVariantGroupDiff = (productVariantGroups === undefined) ? undefined : await (async (): Promise<ProductVariantGroupDiff> => {
-                const productVariantGroupOris : ProductVariantGroupDetail[] = !id ? [] : await prismaTransaction.productVariantGroup.findMany({
+            const variantGroupDiff = (variantGroups === undefined) ? undefined : await (async (): Promise<VariantGroupDiff> => {
+                const variantGroupOris : VariantGroupDetail[] = !id ? [] : await prismaTransaction.variantGroup.findMany({
                     where : {
                         productId : id,
                     },
@@ -385,7 +385,7 @@ You do not have the privilege to view the products.`
                         name               : true,
                         hasDedicatedStocks : true,
                         
-                        productVariants    : {
+                        variants           : {
                             select: {
                                 id             : true,
                                 
@@ -406,9 +406,9 @@ You do not have the privilege to view the products.`
                         sort: 'asc',
                     },
                 });
-                return createProductVariantGroupDiff(productVariantGroups, productVariantGroupOris);
+                return createVariantGroupDiff(variantGroups, variantGroupOris);
             })();
-            //#endregion normalize productVariantGroups
+            //#endregion normalize variantGroups
             
             const stocks : (number|null)[]|undefined = stocksRaw;
             
@@ -454,14 +454,14 @@ You do not have the privilege to modify the product stock.`
 You do not have the privilege to modify the product visibility.`
                 }, { status: 403 }); // handled with error: forbidden
                 
-                if (productVariantGroupDiff !== undefined) {
+                if (variantGroupDiff !== undefined) {
                     const {
-                        productVariantGroupOris,
+                        variantGroupOris,
                         
-                        productVariantGroupDels,
-                        productVariantGroupAdds,
-                        productVariantGroupMods,
-                    } = productVariantGroupDiff;
+                        variantGroupDels,
+                        variantGroupAdds,
+                        variantGroupMods,
+                    } = variantGroupDiff;
                     
                     
                     
@@ -469,9 +469,9 @@ You do not have the privilege to modify the product visibility.`
                         !session.role?.product_c
                         &&
                         (
-                            !!productVariantGroupAdds.length
+                            !!variantGroupAdds.length
                             ||
-                            productVariantGroupMods.some(({productVariantAdds}) => !!productVariantAdds.length)
+                            variantGroupMods.some(({variantAdds}) => !!variantAdds.length)
                         )
                     ) return NextResponse.json({ error:
 `Access denied.
@@ -485,9 +485,9 @@ You do not have the privilege to add new product variant.`
                         !session.role?.product_d
                         &&
                         (
-                            !!productVariantGroupDels.length
+                            !!variantGroupDels.length
                             ||
-                            productVariantGroupMods.some(({productVariantDels}) => !!productVariantDels.length)
+                            variantGroupMods.some(({variantDels}) => !!variantDels.length)
                         )
                     ) return NextResponse.json({ error:
 `Access denied.
@@ -500,17 +500,17 @@ You do not have the privilege to delete the product variant.`
                     if (
                         !session.role?.product_ud
                         &&
-                        productVariantGroupMods
-                        .some(({id, name, productVariantMods}) => {
-                            const productVariantGroupOri = productVariantGroupOris.find(({id: idOri}) => (idOri === id));
+                        variantGroupMods
+                        .some(({id, name, variantMods}) => {
+                            const variantGroupOri = variantGroupOris.find(({id: idOri}) => (idOri === id));
                             return (
-                                (name !== productVariantGroupOri?.name)
+                                (name !== variantGroupOri?.name)
                                 ||
-                                productVariantMods
+                                variantMods
                                 .some(({id, name}) => {
-                                    const productVariantOri = productVariantGroupOri.productVariants.find(({id: idOri}) => (idOri === id));
+                                    const variantOri = variantGroupOri.variants.find(({id: idOri}) => (idOri === id));
                                     return (
-                                        (name !== productVariantOri?.name)
+                                        (name !== variantOri?.name)
                                     );
                                 })
                             );
@@ -528,20 +528,20 @@ You do not have the privilege to modify the product_variant name.`
                         &&
                         !((): boolean => {
                             // compare the modified order items, ignore added|deleted items:
-                            const productVariantGroupModSortIds = productVariantGroupMods.map(({id}) => id);
-                            const productVariantGroupOriSortIds = productVariantGroupOris.map(({id}) => id);
-                            if (productVariantGroupModSortIds.length !== productVariantGroupOriSortIds.length) return false; // not_equal
-                            for (let index = 0; index < productVariantGroupModSortIds.length; index++) {
-                                if (productVariantGroupModSortIds[index] !== productVariantGroupOriSortIds[index]) return false; // not_equal
+                            const variantGroupModSortIds = variantGroupMods.map(({id}) => id);
+                            const variantGroupOriSortIds = variantGroupOris.map(({id}) => id);
+                            if (variantGroupModSortIds.length !== variantGroupOriSortIds.length) return false; // not_equal
+                            for (let index = 0; index < variantGroupModSortIds.length; index++) {
+                                if (variantGroupModSortIds[index] !== variantGroupOriSortIds[index]) return false; // not_equal
                                 
                                 
                                 
-                                const productVariantModSortIds = productVariantGroupMods[index].productVariantMods.map(({id}) => id);
-                                const productVariantDeletedIds = productVariantGroupMods[index].productVariantDels;
-                                const productVariantOriSortIds = productVariantGroupOris[index].productVariants.map(({id}) => id).filter((id) => !productVariantDeletedIds.includes(id));
-                                if (productVariantModSortIds.length !== productVariantOriSortIds.length) return false; // not_deep_equal
-                                for (let index = 0; index < productVariantModSortIds.length; index++) {
-                                    if (productVariantModSortIds[index] !== productVariantOriSortIds[index]) return false; // not_deep_equal
+                                const variantModSortIds = variantGroupMods[index].variantMods.map(({id}) => id);
+                                const variantDeletedIds = variantGroupMods[index].variantDels;
+                                const variantOriSortIds = variantGroupOris[index].variants.map(({id}) => id).filter((id) => !variantDeletedIds.includes(id));
+                                if (variantModSortIds.length !== variantOriSortIds.length) return false; // not_deep_equal
+                                for (let index = 0; index < variantModSortIds.length; index++) {
+                                    if (variantModSortIds[index] !== variantOriSortIds[index]) return false; // not_deep_equal
                                 } // for
                             } // for
                             
@@ -560,15 +560,15 @@ You do not have the privilege to modify the product_variant order.`
                     if (
                         !session.role?.product_ui
                         &&
-                        productVariantGroupMods
-                        .some(({id, productVariantMods}) => {
-                            const productVariantGroupOri = productVariantGroupOris.find(({id: idOri}) => (idOri === id));
+                        variantGroupMods
+                        .some(({id, variantMods}) => {
+                            const variantGroupOri = variantGroupOris.find(({id: idOri}) => (idOri === id));
                             return (
-                                !!productVariantGroupOri
+                                !!variantGroupOri
                                 &&
-                                productVariantMods
+                                variantMods
                                 .some(({id, images}) => {
-                                    const imagesOri = productVariantGroupOri.productVariants.find(({id: idOri}) => (idOri === id))?.images ?? [];
+                                    const imagesOri = variantGroupOri.variants.find(({id: idOri}) => (idOri === id))?.images ?? [];
                                     return (
                                         (images.length !== (imagesOri.length ?? 0))
                                         ||
@@ -593,19 +593,19 @@ You do not have the privilege to modify the product_variant images.`
                     if (
                         !session.role?.product_up
                         &&
-                        productVariantGroupMods
-                        .some(({id, productVariantMods}) => {
-                            const productVariantGroupOri = productVariantGroupOris.find(({id: idOri}) => (idOri === id));
+                        variantGroupMods
+                        .some(({id, variantMods}) => {
+                            const variantGroupOri = variantGroupOris.find(({id: idOri}) => (idOri === id));
                             return (
-                                !!productVariantGroupOri
+                                !!variantGroupOri
                                 &&
-                                productVariantMods
+                                variantMods
                                 .some(({id, price, shippingWeight}) => {
-                                    const productVariantOri = productVariantGroupOri.productVariants.find(({id: idOri}) => (idOri === id));
+                                    const variantOri = variantGroupOri.variants.find(({id: idOri}) => (idOri === id));
                                     return (
-                                        (price !== productVariantOri?.price)
+                                        (price !== variantOri?.price)
                                         ||
-                                        (shippingWeight !== productVariantOri.shippingWeight)
+                                        (shippingWeight !== variantOri.shippingWeight)
                                     );
                                 })
                             );
@@ -621,13 +621,13 @@ You do not have the privilege to modify the product_variant price and/or shippin
                     if (
                         !session.role?.product_us
                         &&
-                        productVariantGroupMods
+                        variantGroupMods
                         .some(({id, hasDedicatedStocks}) => {
-                            const productVariantGroupOri = productVariantGroupOris.find(({id: idOri}) => (idOri === id));
+                            const variantGroupOri = variantGroupOris.find(({id: idOri}) => (idOri === id));
                             return (
-                                !!productVariantGroupOri
+                                !!variantGroupOri
                                 &&
-                                (hasDedicatedStocks !== productVariantGroupOri.hasDedicatedStocks)
+                                (hasDedicatedStocks !== variantGroupOri.hasDedicatedStocks)
                             );
                         })
                     ) return NextResponse.json({ error:
@@ -641,17 +641,17 @@ You do not have the privilege to modify the product_variant stock.`
                     if (
                         !session.role?.product_uv
                         &&
-                        productVariantGroupMods
-                        .some(({id, productVariantMods}) => {
-                            const productVariantGroupOri = productVariantGroupOris.find(({id: idOri}) => (idOri === id));
+                        variantGroupMods
+                        .some(({id, variantMods}) => {
+                            const variantGroupOri = variantGroupOris.find(({id: idOri}) => (idOri === id));
                             return (
-                                !!productVariantGroupOri
+                                !!variantGroupOri
                                 &&
-                                productVariantMods
+                                variantMods
                                 .some(({id, visibility}) => {
-                                    const productVariantOri = productVariantGroupOri.productVariants.find(({id: idOri}) => (idOri === id));
+                                    const variantOri = variantGroupOri.variants.find(({id: idOri}) => (idOri === id));
                                     return (
-                                        (visibility !== productVariantOri?.visibility)
+                                        (visibility !== variantOri?.visibility)
                                     );
                                 })
                             );
@@ -692,58 +692,58 @@ You do not have the privilege to modify the product stock(s).`
                 images,
                 
                 // relations:
-                productVariantGroups : (productVariantGroupDiff === undefined) ? undefined : {
-                    delete : !productVariantGroupDiff.productVariantGroupDels.length ? undefined : productVariantGroupDiff.productVariantGroupDels.map((id) => ({
+                variantGroups : (variantGroupDiff === undefined) ? undefined : {
+                    delete : !variantGroupDiff.variantGroupDels.length ? undefined : variantGroupDiff.variantGroupDels.map((id) => ({
                         // conditions:
                         id : id,
                     })),
                     
-                    create : !productVariantGroupDiff.productVariantGroupAdds.length ? undefined : productVariantGroupDiff.productVariantGroupAdds.map(({productVariantAdds, ...restProductVariantGroup}) => ({
+                    create : !variantGroupDiff.variantGroupAdds.length ? undefined : variantGroupDiff.variantGroupAdds.map(({variantAdds, ...restVariantGroup}) => ({
                         // data:
-                        ...restProductVariantGroup,
+                        ...restVariantGroup,
                         
                         // relations:
-                        productVariants: {
-                            create : productVariantAdds,
+                        variants: {
+                            create : variantAdds,
                         },
                     })),
                     
-                    update : !productVariantGroupDiff.productVariantGroupMods.length ? undefined : productVariantGroupDiff.productVariantGroupMods.map(({id, productVariantDels, productVariantAdds, productVariantMods, ...restProductVariantGroup}) => ({
+                    update : !variantGroupDiff.variantGroupMods.length ? undefined : variantGroupDiff.variantGroupMods.map(({id, variantDels, variantAdds, variantMods, ...restVariantGroup}) => ({
                         where : {
                             // conditions:
                             id : id,
                         },
                         data  : {
                             // data:
-                            ...restProductVariantGroup,
+                            ...restVariantGroup,
                             
                             // relations:
-                            productVariants : {
-                                delete : !productVariantDels.length ? undefined : productVariantDels.map((id) => ({
+                            variants : {
+                                delete : !variantDels.length ? undefined : variantDels.map((id) => ({
                                     // conditions:
                                     id : id,
                                 })),
                                 
-                                create : !productVariantAdds.length ? undefined : productVariantAdds,
+                                create : !variantAdds.length ? undefined : variantAdds,
                                 
-                                update : !productVariantMods.length ? undefined : productVariantMods.map(({id, ...restProductVariant}) => ({
+                                update : !variantMods.length ? undefined : variantMods.map(({id, ...restVariant}) => ({
                                     where : {
                                         // conditions:
                                         id: id,
                                     },
-                                    data  : restProductVariant,
+                                    data  : restVariant,
                                 })),
                             },
                         },
                     })),
                 },
-                stocks : (!id && ((productVariantGroupDiff === undefined) || (stocks === undefined))) ? { // when create new Product (no id) && (no variants defined || no stocks defined) => auto_create default single_stock
+                stocks : (!id && ((variantGroupDiff === undefined) || (stocks === undefined))) ? { // when create new Product (no id) && (no variants defined || no stocks defined) => auto_create default single_stock
                     create : {
                         // data:
-                        value             : null, // defaults to unlimited stock
+                        value      : null, // defaults to unlimited stock
                         
                         // relations:
-                        productVariantIds : [],   // no related variants
+                        variantIds : [],   // no related variants
                     }
                 } : undefined,
             };
@@ -766,7 +766,7 @@ You do not have the privilege to modify the product stock(s).`
                 
                 images         : true,
                 
-                productVariantGroups : {
+                variantGroups : {
                     select: {
                         id                 : true,
                         
@@ -775,7 +775,7 @@ You do not have the privilege to modify the product stock(s).`
                         name               : true,
                         hasDedicatedStocks : true,
                         
-                        productVariants    : {
+                        variants           : {
                             select: {
                                 id             : true,
                                 
@@ -800,11 +800,11 @@ You do not have the privilege to modify the product stock(s).`
                 },
                 stocks : {
                     select: {
-                        id                : true,
+                        id         : true,
                         
-                        value             : true,
+                        value      : true,
                         
-                        productVariantIds : true,
+                        variantIds : true,
                     },
                 },
             };
@@ -824,25 +824,25 @@ You do not have the privilege to modify the product stock(s).`
             );
             
             // a workaround of non_working_orderBy of product.create() & product.update():
-            productDetail.productVariantGroups.sort(({sort: sortA}, {sort: sortB}) => sortA - sortB); // mutate
-            for (const productVariantGroup of productDetail.productVariantGroups) {
-                productVariantGroup.productVariants.sort(({sort: sortA}, {sort: sortB}) => sortA - sortB); // mutate
+            productDetail.variantGroups.sort(({sort: sortA}, {sort: sortB}) => sortA - sortB); // mutate
+            for (const variantGroup of productDetail.variantGroups) {
+                variantGroup.variants.sort(({sort: sortA}, {sort: sortB}) => sortA - sortB); // mutate
             } // for
             
             
             
             //#region rebuild stock maps
-            if (productVariantGroupDiff) {
+            if (variantGroupDiff) {
                 const currentStocks = await prismaTransaction.stock.findMany({
                     where  : {
                         productId : productDetail.id,
                     },
                     select : {
-                        value             : true,
-                        productVariantIds : true,
+                        value      : true,
+                        variantIds : true,
                     },
                 });
-                const stockMap = createStockMap(productVariantGroupDiff, currentStocks, productDetail.productVariantGroups);
+                const stockMap = createStockMap(variantGroupDiff, currentStocks, productDetail.variantGroups);
                 
                 
                 
@@ -880,19 +880,19 @@ You do not have the privilege to modify the product stock(s).`
                     select : {
                         stocks : {
                             select: {
-                                id                : true,
+                                id         : true,
                                 
-                                value             : true,
+                                value      : true,
                                 
-                                productVariantIds : true,
+                                variantIds : true,
                             },
                         },
                     },
                 });
                 productDetail.stocks = changedProduct.stocks;
             } else if (stocks) {
-                const productVariantGroupDiff = createProductVariantGroupDiff(productDetail.productVariantGroups, productDetail.productVariantGroups);
-                const stockMap = createStockMap(productVariantGroupDiff, productDetail.stocks, productDetail.productVariantGroups);
+                const variantGroupDiff = createVariantGroupDiff(productDetail.variantGroups, productDetail.variantGroups);
+                const stockMap = createStockMap(variantGroupDiff, productDetail.stocks, productDetail.variantGroups);
                 
                 
                 
@@ -930,11 +930,11 @@ You do not have the privilege to modify the product stock(s).`
                     select : {
                         stocks : {
                             select: {
-                                id                : true,
+                                id         : true,
                                 
-                                value             : true,
+                                value      : true,
                                 
-                                productVariantIds : true,
+                                variantIds : true,
                             },
                         },
                     },

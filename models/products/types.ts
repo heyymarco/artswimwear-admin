@@ -1,7 +1,7 @@
 // models:
 import type {
-    ProductVariant,
-    ProductVariantGroup,
+    Variant,
+    VariantGroup,
     Product,
     Stock,
 }                           from '@prisma/client'
@@ -21,26 +21,26 @@ export interface ProductPreview
     image: Required<Product>['images'][number]|undefined
 }
 
-export interface ProductVariantDetail
+export interface VariantDetail
     extends
-        Omit<ProductVariant,
+        Omit<Variant,
             |'createdAt'
             |'updatedAt'
             
-            |'productVariantGroupId'
+            |'variantGroupId'
         >
 {
 }
-export interface ProductVariantGroupDetail
+export interface VariantGroupDetail
     extends
-        Omit<ProductVariantGroup,
+        Omit<VariantGroup,
             |'createdAt'
             |'updatedAt'
             
             |'productId'
         >
 {
-    productVariants : ProductVariantDetail[]
+    variants : VariantDetail[]
 }
 export interface StockDetail
     extends
@@ -56,6 +56,6 @@ export interface ProductDetail
             |'updatedAt'
         >
 {
-    productVariantGroups : ProductVariantGroupDetail[]
-    stocks               : StockDetail[]
+    variantGroups : VariantGroupDetail[]
+    stocks        : StockDetail[]
 }

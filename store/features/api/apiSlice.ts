@@ -15,8 +15,8 @@ export type OrderDetailWithOptions = OrderDetail & { sendConfirmationEmail?: boo
 
 // apis:
 export type { CountryPreview }                  from '@/app/api/(protected)/countries/route'
-export type { ProductVariantDetail }            from '@/app/api/(protected)/products/route'
-export type { ProductVariantGroupDetail }       from '@/app/api/(protected)/products/route'
+export type { VariantDetail }                   from '@/app/api/(protected)/products/route'
+export type { VariantGroupDetail }              from '@/app/api/(protected)/products/route'
 import type { ProductPreview, ProductDetail }   from '@/app/api/(protected)/products/route'
 export type { ProductPreview, ProductDetail }   from '@/app/api/(protected)/products/route'
 export type { StockDetail }                     from '@/app/api/(protected)/products/route'

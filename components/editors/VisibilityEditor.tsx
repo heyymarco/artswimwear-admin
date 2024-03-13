@@ -56,14 +56,14 @@ import {
 // models:
 import {
     ProductVisibility,
-    ProductVariantVisibility,
+    VariantVisibility,
 }                           from '@prisma/client'
 
 
 
 // types:
-const valueOptions        : ProductVisibility[]        = ['PUBLISHED', 'HIDDEN', 'DRAFT']; // with hidden
-const reducedValueOptions : ProductVariantVisibility[] = ['PUBLISHED',           'DRAFT']; // without hidden
+const valueOptions        : ProductVisibility[] = ['PUBLISHED', 'HIDDEN', 'DRAFT']; // with hidden
+const reducedValueOptions : VariantVisibility[] = ['PUBLISHED',           'DRAFT']; // without hidden
 
 
 
@@ -102,7 +102,7 @@ interface ReducedVisibilityEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
         BaseVisibilityEditorProps<TElement>,
-        Pick<EditorProps<TElement, ProductVariantVisibility>,
+        Pick<EditorProps<TElement, VariantVisibility>,
             // values:
             |'defaultValue'
             |'value'
@@ -142,10 +142,10 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
     const {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllableAndUncontrollable<ProductVisibility | ProductVariantVisibility>({
+    } = useControllableAndUncontrollable<ProductVisibility | VariantVisibility>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
-        onValueChange      : onControllableValueChange as (EditorChangeEventHandler<ProductVisibility> & EditorChangeEventHandler<ProductVariantVisibility>),
+        onValueChange      : onControllableValueChange as (EditorChangeEventHandler<ProductVisibility> & EditorChangeEventHandler<VariantVisibility>),
     });
     
     
@@ -157,7 +157,7 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
                 optionHidden                    // if including hidden
                 ? valueOptions[tabIndex]        // with hidden
                 : reducedValueOptions[tabIndex] // without hidden
-            ) as (ProductVisibility & ProductVariantVisibility)
+            ) as (ProductVisibility & VariantVisibility)
         , { triggerAt: 'immediately' });
     });
     

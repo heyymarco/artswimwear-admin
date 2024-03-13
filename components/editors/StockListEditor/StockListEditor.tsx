@@ -39,7 +39,7 @@ import type {
 // stores:
 import type {
     // types:
-    ProductVariantGroupDetail,
+    VariantGroupDetail,
     StockDetail,
 }                           from '@/store/features/api/apiSlice'
 
@@ -68,18 +68,18 @@ interface StockListEditorProps<TElement extends Element = HTMLElement>
         >
 {
     // models:
-    productVariantGroups ?: ProductVariantGroupDetail[]
+    variantGroups         ?: VariantGroupDetail[]
     
     
     
     // components:
-    modelPreviewComponent : React.ReactComponentElement<any, StockPreviewProps>
+    modelPreviewComponent  : React.ReactComponentElement<any, StockPreviewProps>
 }
 const StockListEditor = <TElement extends Element = HTMLElement>(props: StockListEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // models:
-        productVariantGroups,
+        variantGroups,
         
         
         
@@ -137,18 +137,18 @@ const StockListEditor = <TElement extends Element = HTMLElement>(props: StockLis
                     // props:
                     {
                         // identifiers:
-                        key             : modelPreviewComponent.key                   ?? stockItem.id,
+                        key       : modelPreviewComponent.key            ?? stockItem.id,
                         
                         
                         
                         // data:
-                        model           : modelPreviewComponent.props.model           ?? stockItem,
-                        productVariants : modelPreviewComponent.props.productVariants ?? (productVariantGroups?.flatMap(({productVariants}) => productVariants) ?? []),
+                        model     : modelPreviewComponent.props.model    ?? stockItem,
+                        variants  : modelPreviewComponent.props.variants ?? (variantGroups?.flatMap(({variants}) => variants) ?? []),
                         
                         
                         
                         // handlers:
-                        onUpdated       : handleModelUpdated,
+                        onUpdated : handleModelUpdated,
                     },
                 )
             )}

@@ -59,7 +59,7 @@ import {
 import type {
     // types:
     VariantState,
-}                           from '@/components/editors/ProductVariantEditor'
+}                           from '@/components/editors/VariantEditor'
 import {
     // types:
     UpdateHandler,
@@ -89,13 +89,13 @@ import {
 
 // models:
 import type {
-    ProductVariantVisibility,
+    VariantVisibility,
 }                           from '@prisma/client'
 
 // stores:
 import {
     // types:
-    ProductVariantDetail,
+    VariantDetail,
     
     
     
@@ -115,26 +115,26 @@ import {
 
 
 // styles:
-const useEditProductVariantDialogStyleSheet = dynamicStyleSheets(
-    () => import(/* webpackPrefetch: true */'./EditProductVariantDialogStyles')
+const useEditVariantDialogStyleSheet = dynamicStyleSheets(
+    () => import(/* webpackPrefetch: true */'./EditVariantDialogStyles')
 , { id: 'b4kzha6i3y' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
-import './EditProductVariantDialogStyles';
+import './EditVariantDialogStyles';
 
 
 
 // react components:
-export interface EditProductVariantDialogProps
+export interface EditVariantDialogProps
     extends
         // bases:
-        ImplementedComplexEditModelDialogProps<ProductVariantDetail>,
+        ImplementedComplexEditModelDialogProps<VariantDetail>,
         
         // privileges & states:
         VariantState
 {
 }
-const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Element|null => {
+const EditVariantDialog = (props: EditVariantDialogProps): JSX.Element|null => {
     // styles:
-    const styleSheet = useEditProductVariantDialogStyleSheet();
+    const styleSheet = useEditVariantDialogStyleSheet();
     
     
     
@@ -167,11 +167,11 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
     // states:
     const [isModified, setIsModified]         = useState<boolean>(false);
     
-    const [visibility    , setVisibility    ] = useState<ProductVariantVisibility>(model?.visibility     ?? 'PUBLISHED');
-    const [name          , setName          ] = useState<string>(model?.name ?? '');
-    const [price         , setPrice         ] = useState<number             |null>(model?.price          || null       ); // converts 0 to empty
-    const [shippingWeight, setShippingWeight] = useState<number             |null>(model?.shippingWeight ?? null       ); // optional field
-    const [images        , setImages        ] = useState<string[]                >(model?.images         ?? []         );
+    const [visibility    , setVisibility    ] = useState<VariantVisibility>(model?.visibility     ?? 'PUBLISHED');
+    const [name          , setName          ] = useState<string           >(model?.name           ?? ''         );
+    const [price         , setPrice         ] = useState<number      |null>(model?.price          || null       ); // converts 0 to empty
+    const [shippingWeight, setShippingWeight] = useState<number      |null>(model?.shippingWeight ?? null       ); // optional field
+    const [images        , setImages        ] = useState<string[]         >(model?.images         ?? []         );
     
     
     
@@ -188,7 +188,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
     
     
     // handlers:
-    const handleUpdate               = useEvent<UpdateHandler<ProductVariantDetail>>(async ({id, whenAdd, whenUpdate}) => {
+    const handleUpdate               = useEvent<UpdateHandler<VariantDetail>>(async ({id, whenAdd, whenUpdate}) => {
         const immigratedImages : string[] = [];
         let updatedImages = images;
         if (updatedImages.length) {
@@ -255,7 +255,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
         } // try
     });
     
-    const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<ProductVariantDetail>>(({model}) => {
+    const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<VariantDetail>>(({model}) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
@@ -268,7 +268,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
             </>,
         };
     });
-    const handleConfirmUnsaved       = useEvent<ConfirmUnsavedHandler<ProductVariantDetail>>(() => {
+    const handleConfirmUnsaved       = useEvent<ConfirmUnsavedHandler<VariantDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>
@@ -281,7 +281,7 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
     
     // jsx:
     return (
-        <ComplexEditModelDialog<ProductVariantDetail>
+        <ComplexEditModelDialog<VariantDetail>
             // other props:
             {...restComplexEditModelDialogProps}
             
@@ -509,6 +509,6 @@ const EditProductVariantDialog = (props: EditProductVariantDialogProps): JSX.Ele
     );
 };
 export {
-    EditProductVariantDialog,
-    EditProductVariantDialog as default,
+    EditVariantDialog,
+    EditVariantDialog as default,
 }
