@@ -23,6 +23,11 @@ import {
     Image,
 }                           from '@heymarco/image'
 
+// internal components:
+import {
+    VariantIndicator,
+}                           from '@/components/VariantIndicator'
+
 // stores:
 import type {
     // types:
@@ -61,6 +66,7 @@ export interface EditCartItemProps
     
     // relation data:
     productId   : string|null
+    variantIds  : string[]
     productList : EntityState<ProductPreview>|undefined
 }
 const ViewCartItem = (props: EditCartItemProps): JSX.Element|null => {
@@ -79,6 +85,7 @@ const ViewCartItem = (props: EditCartItemProps): JSX.Element|null => {
         
         // relation data:
         productId,
+        variantIds,
         productList,
     ...restListItemProps} = props;
     
@@ -86,6 +93,7 @@ const ViewCartItem = (props: EditCartItemProps): JSX.Element|null => {
     
     // fn props:
     const product          = productId ? productList?.entities?.[productId] : undefined;
+    const variants         = product?.variantGroups.flat();
     const isProductDeleted = !product; // the relation data is available but there is no specified productId in productList => it's a deleted product
     
     
@@ -122,6 +130,19 @@ const ViewCartItem = (props: EditCartItemProps): JSX.Element|null => {
                     : <em>Deleted Product</em>
                 }
             </h3>
+            
+            <p className='variants'>
+                {
+                    variantIds
+                    .map((variantId) =>
+                        variants?.find(({id}) => (id === variantId))
+                    )
+                    .filter((variant): variant is Exclude<typeof variant, undefined> => !!variant)
+                    .map((variant, variantIndex) =>
+                        <VariantIndicator key={variantIndex} model={variant} />
+                    )
+                }
+            </p>
             
             <Image
                 // appearances:

@@ -142,6 +142,7 @@ const usesViewCartItemLayout = () => {
         display      : 'grid',
         gridTemplate : [[
             '"title    title              title    title" max-content',
+            '"variants variants        variants variants" max-content',
             '"image    image              image    image" max-content',
             '".....    labelUnitPrice unitPrice ........" max-content',
             '".....    labelQuantity   quantity ........" max-content',
@@ -152,6 +153,7 @@ const usesViewCartItemLayout = () => {
         ...ifScreenWidthAtLeast('sm', {
             gridTemplate : [[
                 '"number image title              title" max-content',
+                '"number image variants        variants" max-content',
                 '"number image labelUnitPrice unitPrice" max-content',
                 '"number image labelQuantity   quantity" max-content',
                 '"number image subPrice        subPrice" max-content',
@@ -238,6 +240,11 @@ const usesViewCartItemLayout = () => {
             
             
             
+            // spacings:
+            margin       : 0,
+            
+            
+            
             // typos:
             whiteSpace   : 'normal',
             textOverflow : 'ellipsis', // long text...
@@ -247,6 +254,22 @@ const usesViewCartItemLayout = () => {
             ...ifScreenWidthSmallerThan('sm', {
                 textAlign: 'center',
             }),
+        }),
+        ...children('.variants', {
+            // positions:
+            gridArea    : 'variants',
+            
+            
+            
+            // layouts:
+            display  : 'flex',
+            flexWrap : 'wrap',
+            
+            
+            
+            // spacings:
+            margin   : 0,
+            gap      : spacers.xs,
         }),
         ...children(['.unitPrice', '.quantity'], {
             display             : 'grid',

@@ -409,10 +409,10 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         : 'UNPAID'
                     }</Basic>
                     <List className={styleSheet.viewCart} listStyle={['flush', 'numbered']}>
-                        {items?.map(({price: unitPrice, quantity, productId}, itemIndex) =>
+                        {items?.map(({price: unitPrice, quantity, productId, variantIds}, itemIndex) =>
                             <ViewCartItem
                                 // identifiers:
-                                key={productId || itemIndex}
+                                key={`${productId}/${variantIds.join('/')}` || itemIndex}
                                 
                                 
                                 
@@ -424,6 +424,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                 
                                 // relation data:
                                 productId={productId}
+                                variantIds={variantIds}
                                 productList={productList}
                             />
                         )}

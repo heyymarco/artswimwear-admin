@@ -16,7 +16,7 @@ import {
 // stores:
 import type {
     // types:
-    VariantDetail,
+    VariantPreview,
 }                           from '@/store/features/api/apiSlice'
 
 // styles:
@@ -33,7 +33,7 @@ export interface VariantIndicatorProps<TElement extends Element = HTMLElement>
         IndicatorProps<TElement>
 {
     // data:
-    model : VariantDetail
+    model : VariantPreview
 }
 const VariantIndicator = <TElement extends Element = HTMLElement>(props: VariantIndicatorProps<TElement>): JSX.Element|null => {
     // props:

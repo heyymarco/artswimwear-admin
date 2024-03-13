@@ -26,15 +26,18 @@ import type {
 
 // models:
 import type {
-    ProductPreview,
     VariantGroupDetail,
+    
+    ProductPreview,
     ProductDetail,
 }                           from '@/models'
 export type {
-    ProductPreview,
+    VariantPreview,
     VariantDetail,
     VariantGroupDetail,
     StockDetail,
+    
+    ProductPreview,
     ProductDetail,
 }                           from '@/models'
 import {
@@ -95,15 +98,42 @@ router
                 price          : true,
                 shippingWeight : true,
                 images         : true,
+                
+                variantGroups : {
+                    select : {
+                        variants : {
+                            select : {
+                                id         : true,
+                                
+                                visibility : true,
+                                
+                                name       : true,
+                            },
+                            orderBy : {
+                                sort : 'asc',
+                            },
+                        },
+                    },
+                    orderBy : {
+                        sort : 'asc',
+                    },
+                },
             },
         }))
         .map((product) => {
             const {
-                images, // take
+                images,        // take
+                variantGroups, // take
             ...restProduct} = product;
             return {
                 ...restProduct,
-                image : images?.[0]
+                image         : images?.[0],
+                variantGroups : (
+                    variantGroups
+                    .map(({variants}) =>
+                        variants
+                    )
+                ),
             };
         })
     );
