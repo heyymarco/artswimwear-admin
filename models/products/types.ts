@@ -9,18 +9,6 @@ import type {
 
 
 // types:
-export interface ProductPreview
-    extends
-        Pick<Product,
-            |'id'
-            |'name'
-            |'price'
-            |'shippingWeight'
-        >
-{
-    image: Required<Product>['images'][number]|undefined
-}
-
 export interface VariantDetail
     extends
         Omit<Variant,
@@ -49,6 +37,19 @@ export interface StockDetail
         >
 {
 }
+
+export interface ProductPreview
+    extends
+        Pick<Product,
+            |'id'
+            |'name'
+            |'price'
+            |'shippingWeight'
+        >
+{
+    image: Required<Product>['images'][number]|undefined
+}
+
 export interface ProductDetail
     extends
         Omit<Product,
