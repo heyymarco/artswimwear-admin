@@ -10,6 +10,7 @@ protect change user role from himself
 protect delete user from himself
 [high prior] create a random value of @unique nullable data of DraftOrder::paypalOrderId & Credentials::username
 [low  prior] update AddressEditor to accept/return null if all fields are empty
+[low  prior] make the Order sorting order matches to shopping cart sorting order
 
 learn tiptap vs prosemirror vs lexical
 
