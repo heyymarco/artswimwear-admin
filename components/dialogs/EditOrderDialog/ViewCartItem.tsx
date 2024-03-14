@@ -137,7 +137,7 @@ const ViewCartItem = (props: EditCartItemProps): JSX.Element|null => {
                     .map((variantId) =>
                         variants?.find(({id}) => (id === variantId))
                     )
-                    .filter((variant): variant is Exclude<typeof variant, undefined> => !!variant)
+                    // .filter((variant): variant is Exclude<typeof variant, undefined> => !!variant)
                     .map((variant, variantIndex) =>
                         <VariantIndicator key={variantIndex} model={variant} />
                     )

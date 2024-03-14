@@ -33,16 +33,13 @@ export interface VariantIndicatorProps<TElement extends Element = HTMLElement>
         IndicatorProps<TElement>
 {
     // data:
-    model : VariantPreview
+    model ?: VariantPreview
 }
 const VariantIndicator = <TElement extends Element = HTMLElement>(props: VariantIndicatorProps<TElement>): JSX.Element|null => {
     // props:
     const {
         // data:
-        model : {
-            name,
-            visibility,
-        },
+        model,
         
         
         
@@ -76,18 +73,31 @@ const VariantIndicator = <TElement extends Element = HTMLElement>(props: Variant
         
         // accessibilities:
         active    = true,                         // defaults to active
-        enabled   = (visibility === 'PUBLISHED'), // defaults to if_PUBLISHED
+        enabled   = (
+            !!model
+            ? (model.visibility === 'PUBLISHED')
+            : false
+        ),                                        // defaults to if_PUBLISHED
+        title     = (
+            !!model
+            ? undefined
+            : 'Unknown Variant'
+        ),                                        // defaults to undefined -or- 'Unknown Variant'
         
         
         
         // children:
-        children  = name,                         // defaults to name
+        children  = (
+            !!model
+            ? model.name
+            : '?'
+        ),                                        // defaults to name -or- '?'
         
         
         
         // other props:
         ...restIndicatorProps
-    } = restVariantIndicatorProps;
+    } = restVariantIndicatorProps as (typeof restVariantIndicatorProps & Pick<React.HTMLAttributes<TElement>, 'title'>);
     
     
     
@@ -114,9 +124,11 @@ const VariantIndicator = <TElement extends Element = HTMLElement>(props: Variant
             
             
             
-            // states:
+            // accessibilities:
             active={active}
             enabled={enabled}
+            // @ts-expect-error
+            title={title}
         >
             {children}
         </Indicator>
