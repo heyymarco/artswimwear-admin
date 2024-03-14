@@ -11,6 +11,8 @@
     "db:push": "npx prisma db push"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.533.0",
+    "@aws-sdk/lib-storage": "^3.533.0",
     "@cssfn/core": "^3.2.0",
     "@cssfn/cssfn-dom": "^3.2.0",
     "@cssfn/cssfn-react": "^3.2.0",
@@ -39,6 +41,7 @@
     "eslint-config-next": "^13.2.4",
     "lexical": "^0.12.4",
     "mime-matcher": "^1.0.5",
+    "mime-types": "^2.1.35",
     "next": "^13.2.4",
     "next-connect": "^1.0.0",
     "react": "^18.2.0",
@@ -50,6 +53,7 @@
   },
   "devDependencies": {
     "@types/bun": "^1.0.8",
+    "@types/mime-types": "^2.1.4",
     "prisma": "^5.0.0"
   }
 }

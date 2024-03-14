@@ -15,9 +15,8 @@ const nextConfig = {
       },
       {
         protocol : 'https',
-        hostname : '**.fbsbx.com',
+        hostname : '**.amazonaws.com',
         port     : '',
-        pathname : '**',
       },
     ],
   },

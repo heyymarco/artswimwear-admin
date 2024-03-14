@@ -24,7 +24,7 @@ import {
     uploadMedia,
     deleteMedia,
     moveMedia,
-}                           from '@/libs/mediaStorage.server'
+}                           from '@/libs/mediaStorage.aws.server'
 import {
     default as sharp,
 }                           from 'sharp'
