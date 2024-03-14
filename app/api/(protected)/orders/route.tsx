@@ -591,6 +591,7 @@ You do not have the privilege to modify the payment of the order.`
                     items                     : {
                         select: {
                             productId         : true,
+                            variantIds        : true,
                             
                             price             : true,
                             shippingWeight    : true,
@@ -682,7 +683,7 @@ You do not have the privilege to modify the payment of the order.`
         
         
         
-        return NextResponse.json(orderDetail); // handled with success
+        return NextResponse.json(orderDetail satisfies OrderDetail); // handled with success
     }
     catch (error: any) {
         console.log('ERROR: ', error);
