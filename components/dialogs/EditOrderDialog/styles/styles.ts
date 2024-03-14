@@ -315,9 +315,18 @@ const usesViewCartItemLayout = () => {
             
             
             
+            // layouts:
+            alignItems : 'center',
+            
+            
+            
             // children:
             ...children('.label', {
                 fontWeight  : typos.fontWeightLight,
+            }),
+            ...children('.value.number', {
+                fontSize   : typos.fontSizeLg,
+                fontWeight : typos.fontWeightSemibold,
             }),
         }),
         ...children('.subPrice', {
