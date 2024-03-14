@@ -42,7 +42,7 @@ export const uploadMedia = async (fileName: string, stream: ReadableStream, opti
     const fileNameNoExt  = (extensionIndex < 0) ? fileName : fileName.slice(0, extensionIndex);
     const fileExtensions = (extensionIndex < 0) ? '' : fileName.slice(extensionIndex);
     const nanoid         = customAlphabet('abcdefghijklmnopqrstuvwxyz', 5);
-    const uniqueFileName = `${fileNameNoExt}${await nanoid()}${fileExtensions}`;
+    const uniqueFileName = `${fileNameNoExt}-${await nanoid()}${fileExtensions}`;
     const filePath       = (folder ? `${folder}/${uniqueFileName}` : uniqueFileName);
     
     
