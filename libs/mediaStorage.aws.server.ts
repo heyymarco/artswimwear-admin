@@ -39,6 +39,11 @@ export const uploadMedia = async (fileName: string, stream: ReadableStream, opti
     
     
     
+    const contentType = mimeLookup(fileName);
+    if (!contentType || !['image/jpg', 'image/jpeg', 'image/png', 'image/webp'].includes(contentType)) throw Error('The supported media are: jpg, png, and webp.');
+    
+    
+    
     const extensionIndex = fileName.indexOf('.'); // the dot of the first extension
     const fileNameNoExt  = (extensionIndex < 0) ? fileName : fileName.slice(0, extensionIndex);
     const fileExtensions = (extensionIndex < 0) ? '' : fileName.slice(extensionIndex);
@@ -51,11 +56,12 @@ export const uploadMedia = async (fileName: string, stream: ReadableStream, opti
     const multipartUpload = new Upload({
         client : s3,
         params : {
-            // ACL         : 'public-read', // unsupported: the ACL is disabled in bucket-level
-            Bucket      : bucketName,
-            Key         : filePath,
-            Body        : stream,
-            ContentType : mimeLookup(fileName) || undefined,
+            // ACL       : 'public-read', // unsupported: the ACL is disabled in bucket-level
+            Bucket       : bucketName,
+            Key          : filePath,
+            Body         : stream,
+            ContentType  : mimeLookup(fileName) || undefined,
+            CacheControl : 'max-age=31536000', // cache to one year to reduce bandwidth usage
         },
     });
     const blobResult = await multipartUpload.done();
