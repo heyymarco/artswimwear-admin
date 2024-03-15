@@ -1,6 +1,7 @@
 // import { uploadData }    from 'aws-amplify/storage'
 import {
     S3Client,
+    DeleteObjectCommand,
 }                           from '@aws-sdk/client-s3'
 import {
     Upload,
@@ -68,9 +69,25 @@ export const uploadMedia = async (fileName: string, stream: ReadableStream, opti
 };
 
 export const deleteMedia = async (imageId: string): Promise<void> => {
-    // await deleteBlob(imageId, {
-    //     token : process.env.BLOB_READ_WRITE_TOKEN,
-    // });
+    const baseUrl  = `https://${encodeURIComponent(bucketName)}.s3.${encodeURIComponent(bucketRegion)}.amazonaws.com/`;
+    if (!imageId.startsWith(baseUrl)) return; // invalid aws_s3_url => ignore;
+    const pathUrl  = imageId.slice(baseUrl.length);
+    const filePath = decodeURIComponent(pathUrl);
+    
+    
+    
+    try {
+        await s3.send(
+            new DeleteObjectCommand({
+                Bucket : bucketName,
+                Key    : filePath,
+            })
+        );
+        // if (deleteResult.$metadata.httpStatusCode === 204) // nothing to delete => assumes as success
+    }
+    catch {
+        // ignore any error
+    } // try
 };
 
 export const hasMedia    = async (imageId: string): Promise<boolean> => {
