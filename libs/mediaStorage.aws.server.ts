@@ -16,14 +16,15 @@ import {
 
 
 
+const bucketName   = process.env.AWS_BUCKET_NAME ?? '';
+const bucketRegion = process.env.AWS_REGION      ?? '';
 const s3 = new S3Client({
-    region              : process.env.AWS_REGION ?? '',
+    region              : bucketRegion,
     credentials         : {
         accessKeyId     : process.env.AWS_ID     ?? '',
         secretAccessKey : process.env.AWS_SECRET ?? '',
     },
 });
-const bucket = process.env.AWS_BUCKET_NAME ?? '';
 
 
 
@@ -50,18 +51,19 @@ export const uploadMedia = async (fileName: string, stream: ReadableStream, opti
     const multipartUpload = new Upload({
         client : s3,
         params : {
-            // ACL         : 'public-read',
-            Bucket      : bucket,
+            // ACL         : 'public-read', // unsupported: the ACL is disabled in bucket-level
+            Bucket      : bucketName,
             Key         : filePath,
             Body        : stream,
             ContentType : mimeLookup(fileName) || undefined,
         },
     });
     const blobResult = await multipartUpload.done();
-    // console.log('blobResult: ', blobResult);
-    // https://artswimwear-bucket.s3.ap-southeast-1.amazonaws.com/products/Scrunchie+-+Mega+Mendung/website+service.webp
-    // return `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${filePath}`;
-    return blobResult.Location ?? `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${filePath}`;
+    return (
+        blobResult.Location
+        ??
+        `https://${encodeURIComponent(bucketName)}.s3.${encodeURIComponent(bucketRegion)}.amazonaws.com/${encodeURIComponent(filePath)}`
+    );
 };
 
 export const deleteMedia = async (imageId: string): Promise<void> => {
