@@ -121,15 +121,11 @@ export const moveMedia   = async (imageIds: string[], newFolder: string): Promis
             .map(async ({filePath: currentFilePath, fileName: currentFileName}) => {
                 const newFilePath = (newFolder ? `${newFolder}/${currentFileName}` : currentFileName);
                 try {
-                    console.log('param: ', {
-                        Bucket     : bucketName,
-                        CopySource : `/${bucketName}/${currentFilePath}`,
-                        Key        : newFilePath,
-                    });
                     await s3.send(
                         new CopyObjectCommand({
-                            Bucket     : bucketName,
                             CopySource : `/${bucketName}/${currentFilePath}`,
+                            
+                            Bucket     : bucketName,
                             Key        : newFilePath,
                         })
                     );
@@ -138,8 +134,7 @@ export const moveMedia   = async (imageIds: string[], newFolder: string): Promis
                         to   : newFilePath,
                     };
                 }
-                catch (error: any) {
-                    console.log('ERROR MOVE: ', error);
+                catch {
                     return false; // ignore any error
                 } // try
             })
