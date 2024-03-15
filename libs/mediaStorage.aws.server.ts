@@ -83,7 +83,7 @@ export const deleteMedia = async (imageId: string): Promise<void> => {
                 Key    : filePath,
             })
         );
-        // if (deleteResult.$metadata.httpStatusCode === 204) // nothing to delete => assumes as success
+        // if (deleteResult.$metadata.httpStatusCode === 204) // object was deleted -or- nothing to delete => assumes as success
     }
     catch {
         // ignore any error
