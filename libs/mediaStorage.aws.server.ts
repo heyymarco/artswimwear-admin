@@ -66,14 +66,14 @@ export const uploadMedia = async (fileName: string, stream: ReadableStream, opti
     return (
         blobResult.Location
         ??
-        `${baseMediaUrl}${encodeURIComponent(filePath)}`
+        `${baseMediaUrl}${encodeURI(filePath)}`
     );
-};
+}
 
 export const deleteMedia = async (imageId: string): Promise<void> => {
     if (!imageId.startsWith(baseMediaUrl)) return; // invalid aws_s3_url => ignore;
     const pathUrl  = imageId.slice(baseMediaUrl.length);
-    const filePath = decodeURIComponent(pathUrl);
+    const filePath = decodeURI(pathUrl);
     
     
     
@@ -89,7 +89,7 @@ export const deleteMedia = async (imageId: string): Promise<void> => {
     catch {
         // ignore any error
     } // try
-};
+}
 
 export const moveMedia   = async (imageIds: string[], newFolder: string): Promise<{ from: string, to: string }[]> => {
     const movableFileNames = (
@@ -98,11 +98,11 @@ export const moveMedia   = async (imageIds: string[], newFolder: string): Promis
             imageId.startsWith(baseMediaUrl) // only valid aws_s3_url
         )
         .map((imageId) => {
-            const filePath  = decodeURIComponent(imageId.slice(baseMediaUrl.length));
+            const pathUrl  = imageId.slice(baseMediaUrl.length);
+            const filePath  = decodeURI(pathUrl);
             const lastIndex = filePath.lastIndexOf('/');
             if (lastIndex < 0) return false;
             const currentFolder = filePath.slice(0, lastIndex);
-            console.log({currentFolder, newFolder});
             if (currentFolder === newFolder) return false; // already the same folder => nothing to move
             return {
                 filePath,
@@ -130,8 +130,8 @@ export const moveMedia   = async (imageIds: string[], newFolder: string): Promis
                         })
                     );
                     return {
-                        from : currentFilePath,
-                        to   : newFilePath,
+                        from : `${baseMediaUrl}${encodeURI(currentFilePath)}`,
+                        to   : `${baseMediaUrl}${encodeURI(newFilePath)}`,
                     };
                 }
                 catch {
