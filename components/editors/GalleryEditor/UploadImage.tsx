@@ -62,7 +62,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         uploadImageTitle          = 'Add New Image(s)',
         selectButtonText          = 'Select Images',
         uploadImageMessage        = 'or drop images here',
-        uploadImageType           = 'image/jpg, image/jpeg, image/png, image/svg',
+        uploadImageType           = 'image/jpg, image/jpeg, image/png, image/webp',
         
         
         
