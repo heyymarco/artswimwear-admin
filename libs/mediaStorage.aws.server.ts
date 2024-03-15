@@ -98,7 +98,7 @@ export const moveMedia   = async (imageIds: string[], newFolder: string): Promis
             imageId.startsWith(baseMediaUrl) // only valid aws_s3_url
         )
         .map((imageId) => {
-            const pathUrl  = imageId.slice(baseMediaUrl.length);
+            const pathUrl   = imageId.slice(baseMediaUrl.length);
             const filePath  = decodeURI(pathUrl);
             const lastIndex = filePath.lastIndexOf('/');
             if (lastIndex < 0) return false;
