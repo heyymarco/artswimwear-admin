@@ -60,7 +60,7 @@ export const uploadMedia = async (fileName: string, stream: ReadableStream, opti
             Bucket       : bucketName,
             Key          : filePath,
             Body         : stream,
-            ContentType  : mimeLookup(fileName) || undefined,
+            ContentType  : contentType,
             CacheControl : 'max-age=31536000', // cache to one year to reduce bandwidth usage
         },
     });
