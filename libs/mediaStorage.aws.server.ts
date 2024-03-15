@@ -2,6 +2,7 @@
 import {
     S3Client,
     DeleteObjectCommand,
+    CopyObjectCommand,
 }                           from '@aws-sdk/client-s3'
 import {
     Upload,
@@ -26,6 +27,7 @@ const s3 = new S3Client({
         secretAccessKey : process.env.AWS_SECRET ?? '',
     },
 });
+const baseMediaUrl = `https://${encodeURIComponent(bucketName)}.s3.${encodeURIComponent(bucketRegion)}.amazonaws.com/`;
 
 
 
@@ -64,14 +66,13 @@ export const uploadMedia = async (fileName: string, stream: ReadableStream, opti
     return (
         blobResult.Location
         ??
-        `https://${encodeURIComponent(bucketName)}.s3.${encodeURIComponent(bucketRegion)}.amazonaws.com/${encodeURIComponent(filePath)}`
+        `${baseMediaUrl}${encodeURIComponent(filePath)}`
     );
 };
 
 export const deleteMedia = async (imageId: string): Promise<void> => {
-    const baseUrl  = `https://${encodeURIComponent(bucketName)}.s3.${encodeURIComponent(bucketRegion)}.amazonaws.com/`;
-    if (!imageId.startsWith(baseUrl)) return; // invalid aws_s3_url => ignore;
-    const pathUrl  = imageId.slice(baseUrl.length);
+    if (!imageId.startsWith(baseMediaUrl)) return; // invalid aws_s3_url => ignore;
+    const pathUrl  = imageId.slice(baseMediaUrl.length);
     const filePath = decodeURIComponent(pathUrl);
     
     
@@ -90,64 +91,59 @@ export const deleteMedia = async (imageId: string): Promise<void> => {
     } // try
 };
 
-export const hasMedia    = async (imageId: string): Promise<boolean> => {
-    // try {
-    //     await infoBlob(imageId, {
-    //         token : process.env.BLOB_READ_WRITE_TOKEN,
-    //     });
-    //     
-    //     return true; // succeeded => the media is exist
-    // }
-    // catch {
-    //     return false; // errored => the media is not exist
-    // } // try
-    return false;
-};
-
-export const moveMedia   = async (imageIds: string[], folder: string): Promise<{ from: string, to: string }[]> => {
-    //const metaPromises = imageIds.map(async (imageId) => {
-    //    try {
-    //        const {
-    //            pathname,
-    //            url,
-    //        } = (await infoBlob(imageId, {
-    //            token : process.env.BLOB_READ_WRITE_TOKEN,
-    //        }));
-    //        
-    //        return {
-    //            pathname,
-    //            url,
-    //        };
-    //    }
-    //    catch {
-    //        return undefined; // ignore any error
-    //    } // try
-    //});
-    //const metas = (await Promise.all(metaPromises)).filter((meta): meta is Exclude<typeof meta, undefined> => (meta !== undefined));
-    //const movePromises = metas.map(async ({ pathname, url }) => {
-    //    try {
-    //        const fileName = pathname.split('/').at(-1) ?? pathname;
-    //        const desiredPathname = (folder ? `${folder}/${fileName}` : fileName);
-    //        if (pathname === desiredPathname) return undefined; // already the same, nothing to move
-    //        
-    //        const blobResult = await copyBlob(url, /* pathname: */desiredPathname, {
-    //            token              : process.env.BLOB_READ_WRITE_TOKEN,
-    //            access             : 'public',
-    //            contentType        : undefined,
-    //            addRandomSuffix    : true, // avoids name conflict
-    //            cacheControlMaxAge : undefined,
-    //        });
-    //        
-    //        return {
-    //            from : url,
-    //            to   : blobResult.url,
-    //        };
-    //    }
-    //    catch {
-    //        return undefined; // ignore any error
-    //    } // try
-    //});
-    //const moved = (await Promise.all(movePromises)).filter((item): item is Exclude<typeof item, undefined> => (item !== undefined));
-    //return moved;
-    return [];
+export const moveMedia   = async (imageIds: string[], newFolder: string): Promise<{ from: string, to: string }[]> => {
+    const movableFileNames = (
+        imageIds
+        .filter((imageId) =>
+            imageId.startsWith(baseMediaUrl) // only valid aws_s3_url
+        )
+        .map((imageId) => {
+            const filePath  = decodeURIComponent(imageId.slice(baseMediaUrl.length));
+            const lastIndex = filePath.lastIndexOf('/');
+            if (lastIndex < 0) return false;
+            const currentFolder = filePath.slice(0, lastIndex);
+            console.log({currentFolder, newFolder});
+            if (currentFolder === newFolder) return false; // already the same folder => nothing to move
+            return {
+                filePath,
+                fileName : filePath.slice(lastIndex + 1), // different folder => needs to move
+            };
+        })
+        .filter((filePath): filePath is Exclude<typeof filePath, false> => !!filePath)
+    );
+    if (!movableFileNames.length) return []; // nothing to move => returns empty array
+    
+    
+    
+    return (
+        (await Promise.all(
+            movableFileNames
+            .map(async ({filePath: currentFilePath, fileName: currentFileName}) => {
+                const newFilePath = (newFolder ? `${newFolder}/${currentFileName}` : currentFileName);
+                try {
+                    console.log('param: ', {
+                        Bucket     : bucketName,
+                        CopySource : `/${bucketName}/${currentFilePath}`,
+                        Key        : newFilePath,
+                    });
+                    await s3.send(
+                        new CopyObjectCommand({
+                            Bucket     : bucketName,
+                            CopySource : `/${bucketName}/${currentFilePath}`,
+                            Key        : newFilePath,
+                        })
+                    );
+                    return {
+                        from : currentFilePath,
+                        to   : newFilePath,
+                    };
+                }
+                catch (error: any) {
+                    console.log('ERROR MOVE: ', error);
+                    return false; // ignore any error
+                } // try
+            })
+        ))
+        .filter((result): result is Exclude<typeof result, false> => (result !== false))
+    );
 }
