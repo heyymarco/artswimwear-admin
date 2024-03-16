@@ -18,7 +18,7 @@ import {
 
 // configs:
 import {
-    COMMERCE_CURRENCY_FRACTION_MAX,
+    commerceConfig,
 }                           from '@/commerce.config'
 
 
@@ -40,8 +40,8 @@ const PriceEditor = <TElement extends Element = HTMLElement>(props: PriceEditorP
             
             
             // appearances:
-            currencySign     = {props.currencySign     ?? getCurrencySign()             }
-            currencyFraction = {props.currencyFraction ?? COMMERCE_CURRENCY_FRACTION_MAX}
+            currencySign     = {props.currencySign     ?? getCurrencySign()}
+            currencyFraction = {props.currencyFraction ?? commerceConfig.currencies[commerceConfig.defaultCurrency].fractionMax}
             
             
             
