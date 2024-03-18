@@ -226,6 +226,8 @@ You do not have the privilege to view the orders.`
                     },
                 },
                 
+                preferredCurrency         : true,
+                
                 shippingAddress           : true,
                 shippingCost              : true,
                 shippingProviderId        : true,
@@ -615,6 +617,8 @@ You do not have the privilege to modify the payment of the order.`
                             email             : true,
                         },
                     },
+                    
+                    preferredCurrency         : true,
                     
                     shippingAddress           : true,
                     shippingCost              : true,
