@@ -286,10 +286,8 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     const shippingProvider = shippingList?.entities?.[shippingProviderId ?? ''];
     
-    const totalProductPrices  = items?.reduce((accum, item) => {
-        const productUnitPrice = productList?.entities?.[`${item.productId}` || '']?.price;
-        if (!productUnitPrice) return accum;
-        return accum + (productUnitPrice * item.quantity);
+    const totalProductPrices  = items?.reduce((accum, {price, quantity}) => {
+        return accum + (price * quantity);
     }, 0) ?? 0;
     
     const paymentTypeUppercased  = paymentType?.toUpperCase();
