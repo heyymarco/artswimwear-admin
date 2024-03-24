@@ -280,7 +280,6 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
         // update:
         triggerValueChange(combinedValue, { triggerAt: 'immediately' });
     });
-    console.log({currencyRate});
     
     
     
@@ -305,6 +304,11 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
             sendConfirmationEmail : newConfirmation,
         });
     });
+    useEffect(() => {
+        setValue({
+            currencyRate,
+        });
+    }, [currencyRate]);
     
     const handleAmountFocus             = useEvent<React.FocusEventHandler<Element>>((event) => {
         setAmountFocused(true);
@@ -315,7 +319,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     
     
     
-    // dom effects:
+    // effects:
     useEffect(() => {
         // setups:
         const cancelWarning = setTimeout(() => {
