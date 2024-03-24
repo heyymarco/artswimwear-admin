@@ -33,7 +33,6 @@ export interface CurrencyEditorProps<TElement extends Element = HTMLSpanElement>
 {
     // appearances:
     currencyCode     ?: string
-    showCurrencyCode ?: boolean
     
     currencySign     ?: string
     currencyFraction ?: number
@@ -54,7 +53,6 @@ const CurrencyEditor = <TElement extends Element = HTMLSpanElement>(props: Curre
         
         // appearances:
         currencyCode,
-        showCurrencyCode = false,
         
         currencySign     = (
             !!currencyCode
@@ -127,12 +125,6 @@ const CurrencyEditor = <TElement extends Element = HTMLSpanElement>(props: Curre
             // styles:
             style={style}
         >
-            {!!showCurrencyCode && !!currencyCode && <Label
-                // classes:
-                className='solid'
-            >
-                {currencyCode}
-            </Label>}
             {!!currencySign && <Label
                 // classes:
                 className='solid'

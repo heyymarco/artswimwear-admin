@@ -475,7 +475,6 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     
                     // appearances:
                     currencyCode={confirmedCurrency}
-                    showCurrencyCode={true}
                     
                     
                     
@@ -535,7 +534,6 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     
                     // appearances:
                     currencyCode={confirmedCurrency}
-                    showCurrencyCode={true}
                     
                     
                     
