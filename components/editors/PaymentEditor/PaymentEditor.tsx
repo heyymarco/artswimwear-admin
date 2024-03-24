@@ -199,7 +199,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
         currency,
         onCurrencyChange,
         
-        currencyRate,
+        currencyRate = 1,
         
         
         
@@ -278,6 +278,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
         // update:
         triggerValueChange(combinedValue, { triggerAt: 'immediately' });
     });
+    console.log({currencyRate});
     
     
     
@@ -289,12 +290,12 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     });
     const handleAmountChange            = useEvent<EditorChangeEventHandler<number|null>>((newAmount) => {
         setValue({
-            amount                : newAmount,
+            amount                : (typeof(newAmount) === 'number') ? (newAmount / currencyRate) : null,
         });
     });
     const handleFeeChange               = useEvent<EditorChangeEventHandler<number|null>>((newFee) => {
         setValue({
-            fee                   : newFee,
+            fee                   : (typeof(newFee)    === 'number') ? (newFee    / currencyRate) : null,
         });
     });
     const handleConfirmationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active: newConfirmation}) => {
