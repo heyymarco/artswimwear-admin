@@ -138,6 +138,11 @@ const SelectDropdownEditor = <TElement extends Element = HTMLElement, TValue ext
                 // jsx:
                 return (
                     <ListItemWithClickHandler
+                        // identifiers:
+                        key={index}
+                        
+                        
+                        
                         // components:
                         listItemComponent={
                             React.cloneElement<ListItemProps<Element>>(listItemComponent,
@@ -145,11 +150,6 @@ const SelectDropdownEditor = <TElement extends Element = HTMLElement, TValue ext
                                 {
                                     // other props:
                                     ...restListItemProps,
-                                    
-                                    
-                                    
-                                    // identifiers:
-                                    key    : index,
                                     
                                     
                                     
