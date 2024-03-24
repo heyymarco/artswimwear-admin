@@ -79,6 +79,9 @@ import {
 }                           from '@reusable-ui/components'  // a set of official Reusable-UI components
 
 // internals components:
+import {
+    CurrencyDisplay,
+}                           from '@/components/CurrencyDisplay'
 import type {
     // types:
     EditorChangeEventHandler,
@@ -96,11 +99,6 @@ import {
 import type {
     Payment,
 }                           from '@prisma/client'
-
-// internals:
-import {
-    formatCurrency,
-}                           from '@/libs/formatters'
 
 
 
@@ -173,6 +171,7 @@ export interface PaymentEditorProps
     
     confirmedAmount    ?: number
     confirmedCurrency  ?: string
+    currencyRate       ?: number
     
     amountLabel        ?: string
     feeLabel           ?: string
@@ -197,6 +196,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
         
         confirmedAmount,
         confirmedCurrency,
+        currencyRate,
         
         amountLabel = 'Received Amount',
         feeLabel    = 'Fee (if any)',
@@ -367,7 +367,9 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     mild={true}
                 >
                     <p>
-                        Expected amount: <strong>{formatCurrency(expectedAmount)}</strong>.
+                        Expected amount: <strong>
+                            <CurrencyDisplay currency={confirmedCurrency} currencyRate={1} amount={expectedAmount} />
+                        </strong>.
                     </p>
                 </Basic>}
                 
@@ -377,7 +379,9 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     mild={true}
                 >
                     <p>
-                        Confirmed amount: <strong>{formatCurrency(confirmedAmount, confirmedCurrency)}</strong>.
+                        Confirmed amount: <strong>
+                            <CurrencyDisplay currency={confirmedCurrency} currencyRate={1} amount={confirmedAmount} />
+                        </strong>.
                     </p>
                 </Basic>}
                 
@@ -469,6 +473,12 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     
                     
                     
+                    // appearances:
+                    currencyCode={confirmedCurrency}
+                    showCurrencyCode={true}
+                    
+                    
+                    
                     // accessibilities:
                     aria-label={amountLabel}
                     
@@ -520,6 +530,12 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                 <PriceEditor
                     // classes:
                     className='fee'
+                    
+                    
+                    
+                    // appearances:
+                    currencyCode={confirmedCurrency}
+                    showCurrencyCode={true}
                     
                     
                     
