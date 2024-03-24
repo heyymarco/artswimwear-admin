@@ -239,7 +239,6 @@ You do not have the privilege to view the orders.`
                         reportedAt        : true,
                         reviewedAt        : true,
                         
-                        currency          : true,
                         amount            : true,
                         payerName         : true,
                         paymentDate       : true,
@@ -631,7 +630,6 @@ You do not have the privilege to modify the payment of the order.`
                             reportedAt        : true,
                             reviewedAt        : true,
                             
-                            currency          : true,
                             amount            : true,
                             payerName         : true,
                             paymentDate       : true,
