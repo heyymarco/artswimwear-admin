@@ -118,6 +118,7 @@ const emptyPaymentValue : Required<PaymentValue> = {
     brand                 : '',
     identifier            : '',
     
+    currencyRate          : 1,
     amount                : null,
     fee                   : null,
     sendConfirmationEmail : true,
@@ -132,6 +133,7 @@ Object.freeze(emptyPaymentValue);
 export type PaymentValue =
     Omit<Payment, 'id'|'amount'|'fee'>
     & {
+        currencyRate          ?: number
         amount                 : number|null
         fee                    : number|null
         sendConfirmationEmail ?: boolean
@@ -290,12 +292,12 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     });
     const handleAmountChange            = useEvent<EditorChangeEventHandler<number|null>>((newAmount) => {
         setValue({
-            amount                : (typeof(newAmount) === 'number') ? (newAmount / currencyRate) : null, // convert back to customer's preferred currency
+            amount                : newAmount,
         });
     });
     const handleFeeChange               = useEvent<EditorChangeEventHandler<number|null>>((newFee) => {
         setValue({
-            fee                   : (typeof(newFee)    === 'number') ? (newFee    / currencyRate) : null, // convert back to customer's preferred currency
+            fee                   : newFee,
         });
     });
     const handleConfirmationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active: newConfirmation}) => {

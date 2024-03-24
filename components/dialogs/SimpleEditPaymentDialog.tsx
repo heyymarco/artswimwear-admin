@@ -52,8 +52,13 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
     const handleInitialValue   = useEvent<InitialValueHandler<PaymentModel>>((edit, model) => {
         const value = model[edit];
         const isInitiallyUnpaid = (value.type === 'MANUAL');
+        
+        const {
+            currencyRate : _currencyRate, // remove
+        ...restValue} = value;
+        
         return {
-            ...value,
+            ...restValue,
             
             brand                 : ((isInitiallyUnpaid ? null : value.brand ) || null), // normalize to null if empty_string
             amount                : ((isInitiallyUnpaid ? null : value.amount)        ), // perserve zero
@@ -63,6 +68,7 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
     });
     const handleTransformValue = useEvent<TransformValueHandler<PaymentModel>>((value, edit, model) => {
         const {
+            currencyRate          = 1,
             sendConfirmationEmail = true,
         ...restValue} = value;
         
@@ -73,8 +79,8 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
                 // original:
                 ...restValue,
                 type   : 'MANUAL_PAID',
-                amount : restValue.amount ?? 0, // normalize to zero if null
-                fee    : restValue.fee    ?? 0, // normalize to zero if null
+                amount : (restValue.amount ?? 0) / currencyRate, // normalize to zero if null // convert back to customer's preferred currency
+                fee    : (restValue.fee    ?? 0) / currencyRate, // normalize to zero if null // convert back to customer's preferred currency
             },
             
             //@ts-ignore
