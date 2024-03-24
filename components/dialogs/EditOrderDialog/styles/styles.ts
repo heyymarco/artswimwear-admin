@@ -497,6 +497,26 @@ const usesBadgeLayout = () => {
         textAlign  : 'center',
     });
 };
+const usesSelectCurrencyBadgeLayout = () => {
+    return style({
+        // positions:
+        position         : 'absolute',
+        insetInlineEnd   : 0,
+        insetBlockStart  : 0,
+        
+        
+        
+        // sizes:
+        boxSizing     : 'content-box',
+        minInlineSize : '6em',
+        
+        
+        
+        // borders:
+        borderWidth  : 0,
+        borderRadius : 0,
+    });
+};
 const usesProgressBadgeLayout = () => {
     return style({
         // positions:
@@ -661,6 +681,9 @@ export default () => [
     
     scope('badge', {
         ...usesBadgeLayout(),
+    }, { specificityWeight: 2 }),
+    scope('selectCurrencyBadge', {
+        ...usesSelectCurrencyBadgeLayout(),
     }, { specificityWeight: 2 }),
     scope('progressBadge', {
         ...usesProgressBadgeLayout(),

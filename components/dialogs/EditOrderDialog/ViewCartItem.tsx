@@ -25,6 +25,9 @@ import {
 
 // internal components:
 import {
+    CurrencyDisplay,
+}                           from '@/components/CurrencyDisplay'
+import {
     VariantIndicator,
 }                           from '@/components/VariantIndicator'
 
@@ -35,9 +38,6 @@ import type {
 }                           from '@/store/features/api/apiSlice'
 
 // utilities:
-import {
-    formatCurrency,
-}                           from '@/libs/formatters'
 import {
     resolveMediaUrl,
 }                           from '@/libs/mediaStorage.client'
@@ -59,15 +59,18 @@ export interface EditCartItemProps
         >
 {
     // data:
-    unitPrice   : number
-    quantity    : number
+    currency      : string
+    currencyRate ?: number
+    
+    unitPrice     : number
+    quantity      : number
     
     
     
     // relation data:
-    productId   : string|null
-    variantIds  : string[]
-    productList : EntityState<ProductPreview>|undefined
+    productId     : string|null
+    variantIds    : string[]
+    productList   : EntityState<ProductPreview>|undefined
 }
 const ViewCartItem = (props: EditCartItemProps): JSX.Element|null => {
     // styles:
@@ -78,6 +81,9 @@ const ViewCartItem = (props: EditCartItemProps): JSX.Element|null => {
     // rest props:
     const {
         // data:
+        currency,
+        currencyRate,
+        
         unitPrice,
         quantity,
         
@@ -161,7 +167,7 @@ const ViewCartItem = (props: EditCartItemProps): JSX.Element|null => {
                         @
                     </span>
                     <span className='value txt-sec'>
-                        {formatCurrency(unitPrice)}
+                        <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={unitPrice} />
                     </span>
             </p>
             
@@ -178,7 +184,7 @@ const ViewCartItem = (props: EditCartItemProps): JSX.Element|null => {
                 {isProductDeleted && <>This product was deleted</>}
                 
                 {!isProductDeleted && <span className='currency'>
-                    {formatCurrency(unitPrice * quantity)}
+                <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={unitPrice} multiply={quantity} />
                 </span>}
             </p>
         </ListItem>

@@ -11,6 +11,7 @@ import {
     useState,
     useRef,
     useEffect,
+    useMemo,
 }                           from 'react'
 
 // next-auth:
@@ -92,8 +93,8 @@ import {
 
 // internal components:
 import {
-    CompoundWithBadge,
-}                           from '@/components/CompoundWithBadge'
+    CurrencyDisplay,
+}                           from '@/components/CurrencyDisplay'
 import {
     EditButton,
 }                           from '@/components/EditButton'
@@ -127,6 +128,9 @@ import {
 import {
     TimezoneEditor,
 }                           from '@/components/editors/TimezoneEditor'
+import {
+    SelectDropdownEditor,
+}                           from '@/components/editors/SelectDropdownEditor'
 import {
     CollapsibleSuspense,
 }                           from '@/components/CollapsibleSuspense'
@@ -183,9 +187,6 @@ import {
     useEditOrderDialogStyleSheet,
 }                           from './styles/loader'
 import {
-    formatCurrency,
-}                           from '@/libs/formatters'
-import {
     countryList,
 }                           from '@/libs/countryList'
 
@@ -194,6 +195,9 @@ import {
     PAGE_ORDER_TAB_ORDER_N_SHIPPING,
     PAGE_ORDER_TAB_PAYMENT,
 }                           from '@/website.config'
+import {
+    commerceConfig,
+}                           from '@/commerce.config'
 
 
 
@@ -253,6 +257,8 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         orderStatus,
         orderTrouble,
         
+        preferredCurrency,
+        
         items,
         
         shippingAddress    : shippingAddressDetail,
@@ -271,6 +277,21 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         paymentConfirmation,
         shippingTracking,
     } = model ?? { payment: {} };
+    
+    const [currency, setCurrency] = useState<string>(preferredCurrency?.currency ?? commerceConfig.defaultCurrency);
+    const currencyRate = (!!preferredCurrency && (currency !== preferredCurrency.currency)) ? (1 / preferredCurrency.rate) : undefined;
+    const currencyOptions = useMemo<string[]>(() => {
+        if (!preferredCurrency?.currency) return [commerceConfig.defaultCurrency];
+        return Array.from(
+            new Set<string>(
+                [
+                    preferredCurrency?.currency,
+                    commerceConfig.defaultCurrency
+                ]
+            )
+        );
+    }, [preferredCurrency?.currency]);
+    
     const {
         firstName      : shippingFirstName,
         lastName       : shippingLastName,
@@ -284,9 +305,9 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     const [preferredTimezone, setPreferredTimezone] = useState<number>(() => paymentConfirmation?.preferredTimezone ?? (0 - (new Date()).getTimezoneOffset()));
     
-    const shippingProvider = shippingList?.entities?.[shippingProviderId ?? ''];
+    const shippingProvider       = shippingList?.entities?.[shippingProviderId ?? ''];
     
-    const totalProductPrices  = items?.reduce((accum, {price, quantity}) => {
+    const totalProductPrice      = items?.reduce((accum, {price, quantity}) => {
         return accum + (price * quantity);
     }, 0) ?? 0;
     
@@ -406,6 +427,22 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         ? 'PAID'
                         : 'UNPAID'
                     }</Basic>
+                    {!printMode && (currencyOptions.length > 1) && <SelectDropdownEditor
+                        // variants:
+                        theme={isPaid ? 'success' : 'danger'}
+                        
+                        
+                        
+                        // classes:
+                        className={styleSheet.selectCurrencyBadge}
+                        
+                        
+                        
+                        // values:
+                        valueOptions={currencyOptions}
+                        value={currency}
+                        onChange={setCurrency}
+                    />}
                     <List className={styleSheet.viewCart} listStyle={['flush', 'numbered']}>
                         {items?.map(({price: unitPrice, quantity, productId, variantIds}, itemIndex) =>
                             <ViewCartItem
@@ -415,6 +452,9 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                 
                                 
                                 // data:
+                                currency={currency}
+                                currencyRate={currencyRate}
+                                
                                 unitPrice={unitPrice}
                                 quantity={quantity}
                                 
@@ -430,18 +470,18 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                     <hr />
                     <p className='currencyBlock'>
                         Subtotal <span className='currency'>
-                            {formatCurrency(totalProductPrices)}
+                            <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={totalProductPrice} />
                         </span>
                     </p>
                     {!!shippingAddressDetail && <p className='currencyBlock'>
                         Shipping <span className='currency'>
-                            {formatCurrency(totalShippingCosts)}
+                            <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={totalShippingCosts} />
                         </span>
                     </p>}
                     <hr />
                     <p className='currencyBlock totalCost'>
                         Total <span className='currency'>
-                            {formatCurrency(totalProductPrices + (totalShippingCosts ?? 0))}
+                            <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={[totalProductPrice, totalShippingCosts]} />
                         </span>
                     </p>
                 </Section>
@@ -722,7 +762,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     }
                                 >
                                     <strong>
-                                        {formatCurrency(paymentAmount)}
+                                        <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={paymentAmount} />
                                     </strong>
                                 </DataTableItem>
                                 <DataTableItem
@@ -742,7 +782,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     }
                                 >
                                     <span>
-                                        {formatCurrency(paymentFee)}
+                                        <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={paymentFee} />
                                     </span>
                                 </DataTableItem>
                                 <DataTableItem
@@ -762,7 +802,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     }
                                 >
                                     <strong>
-                                        {formatCurrency((paymentAmount !== undefined) ? (paymentAmount - (paymentFee ?? 0)) : undefined)}
+                                        <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={(paymentAmount !== undefined) ? (paymentAmount - (paymentFee ?? 0)) : undefined} />
                                     </strong>
                                 </DataTableItem>
                             </DataTableBody>
@@ -916,7 +956,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                             label='Amount'
                                         >
                                             <strong>
-                                                {formatCurrency(paymentConfirmation.amount, paymentConfirmation.currency ?? undefined)}
+                                                <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={paymentConfirmation.amount} />
                                             </strong>
                                         </DataTableItem>
                                         <DataTableItem
@@ -1117,7 +1157,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         <PaymentEditor
                             // accessibilities:
                             expectedAmount={
-                                totalProductPrices + (totalShippingCosts ?? 0)
+                                totalProductPrice + (totalShippingCosts ?? 0)
                             }
                             amountMinThreshold={20 /* percent */}
                             amountMaxThreshold={20 /* percent */}
