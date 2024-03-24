@@ -290,12 +290,12 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     });
     const handleAmountChange            = useEvent<EditorChangeEventHandler<number|null>>((newAmount) => {
         setValue({
-            amount                : (typeof(newAmount) === 'number') ? (newAmount / currencyRate) : null,
+            amount                : (typeof(newAmount) === 'number') ? (newAmount / currencyRate) : null, // convert back to customer's preferred currency
         });
     });
     const handleFeeChange               = useEvent<EditorChangeEventHandler<number|null>>((newFee) => {
         setValue({
-            fee                   : (typeof(newFee)    === 'number') ? (newFee    / currencyRate) : null,
+            fee                   : (typeof(newFee)    === 'number') ? (newFee    / currencyRate) : null, // convert back to customer's preferred currency
         });
     });
     const handleConfirmationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active: newConfirmation}) => {
