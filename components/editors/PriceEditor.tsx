@@ -11,11 +11,6 @@ import {
     CurrencyEditor,
 }                           from '@/components/editors/CurrencyEditor'
 
-// internals:
-import {
-    getCurrencySign,
-}                           from '@/libs/formatters'
-
 // configs:
 import {
     commerceConfig,
@@ -31,27 +26,49 @@ export interface PriceEditorProps<TElement extends Element = HTMLElement>
 {
 }
 const PriceEditor = <TElement extends Element = HTMLElement>(props: PriceEditorProps<TElement>): JSX.Element|null => {
+    // default props:
+    const {
+        // appearances:
+        currencyCode             = commerceConfig.defaultCurrency,
+        
+        
+        
+        // accessibilities:
+        "aria-label" : ariaLabel = 'Price',
+        
+        
+        
+        // validations:
+        required                 = true,
+        
+        
+        
+        // other props:
+        ...restPriceEditorProps
+    } = props;
+    
+    
+    
     // jsx:
     return (
         <CurrencyEditor<TElement>
             // other props:
-            {...props}
+            {...restPriceEditorProps}
             
             
             
             // appearances:
-            currencySign     = {props.currencySign     ?? getCurrencySign()}
-            currencyFraction = {props.currencyFraction ?? commerceConfig.currencies[commerceConfig.defaultCurrency].fractionMax}
+            currencyCode={currencyCode}
             
             
             
             // accessibilities:
-            aria-label={props['aria-label'] ?? 'Price'}
+            aria-label={ariaLabel}
             
             
             
             // validations:
-            required={props.required ?? true}
+            required={required}
         />
     );
 };

@@ -18,6 +18,11 @@ import {
     NumberEditor,
 }                           from '@/components/editors/NumberEditor'
 
+// configs:
+import {
+    commerceConfig,
+}                           from '@/commerce.config'
+
 
 
 // react components:
@@ -27,6 +32,9 @@ export interface CurrencyEditorProps<TElement extends Element = HTMLSpanElement>
         NumberEditorProps<TElement>
 {
     // appearances:
+    currencyCode     ?: string
+    showCurrencyCode ?: boolean
+    
     currencySign     ?: string
     currencyFraction ?: number
 }
@@ -45,8 +53,19 @@ const CurrencyEditor = <TElement extends Element = HTMLSpanElement>(props: Curre
         
         
         // appearances:
-        currencySign,
-        currencyFraction,
+        currencyCode,
+        showCurrencyCode = false,
+        
+        currencySign     = (
+            !!currencyCode
+            ? (commerceConfig.currencies[currencyCode] ?? commerceConfig.currencies[commerceConfig.defaultCurrency]).sign
+            : undefined
+        ),
+        currencyFraction = (
+            !!currencyCode
+            ? (commerceConfig.currencies[currencyCode] ?? commerceConfig.currencies[commerceConfig.defaultCurrency]).fractionMax
+            : undefined
+        ),
         
         
         
@@ -108,6 +127,12 @@ const CurrencyEditor = <TElement extends Element = HTMLSpanElement>(props: Curre
             // styles:
             style={style}
         >
+            {!!showCurrencyCode && !!currencyCode && <Label
+                // classes:
+                className='solid'
+            >
+                {currencyCode}
+            </Label>}
             {!!currencySign && <Label
                 // classes:
                 className='solid'
