@@ -753,7 +753,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     
                                     
                                     // components:
-                                    tableDataComponent={<Generic className={`${styleSheet.tableDataComposite} currencyData`} />}
+                                    tableDataComponent={<Generic className={`${styleSheet.tableDataAmount} currencyData`} />}
                                     
                                     
                                     
@@ -762,6 +762,22 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                         isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />
                                     }
                                 >
+                                    <SelectDropdownEditor
+                                        // variants:
+                                        theme='primary'
+                                        
+                                        
+                                        
+                                        // classes:
+                                        className={styleSheet.selectCurrencyDropdown}
+                                        
+                                        
+                                        
+                                        // values:
+                                        valueOptions={currencyOptions}
+                                        value={currency}
+                                        onChange={setCurrency}
+                                    />
                                     <strong>
                                         <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={paymentAmount} />
                                     </strong>
@@ -961,9 +977,6 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                             // components:
                                             tableDataComponent={<Generic className={styleSheet.tableDataAmount} />}
                                         >
-                                            <strong>
-                                                <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={paymentConfirmation.amount} />
-                                            </strong>
                                             <SelectDropdownEditor
                                                 // variants:
                                                 theme='primary'
@@ -980,6 +993,9 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                                 value={currency}
                                                 onChange={setCurrency}
                                             />
+                                            <strong>
+                                                <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={paymentConfirmation.amount} />
+                                            </strong>
                                         </DataTableItem>
                                         <DataTableItem
                                             // accessibilities:
