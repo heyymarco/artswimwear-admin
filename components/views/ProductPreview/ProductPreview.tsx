@@ -66,6 +66,9 @@ import {
 
 // internal components:
 import {
+    CurrencyDisplay,
+}                           from '@/components/CurrencyDisplay'
+import {
     ModelPreviewProps,
 }                           from '@/components/explorers/PagedModelExplorer'
 import {
@@ -120,9 +123,6 @@ import {
 }                           from '@/store/features/api/apiSlice'
 
 // internals:
-import {
-    formatCurrency,
-}                           from '@/libs/formatters'
 import {
     resolveMediaUrl,
 }                           from '@/libs/mediaStorage.client'
@@ -436,7 +436,9 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                 }
             </p>
             <p className='price'>
-                <strong className='value'>{formatCurrency(price)}</strong>
+                <strong className='value'>
+                    <CurrencyDisplay amount={price} />
+                </strong>
                 {privilegeUpdatePrice       && <EditButton onClick={() => handleEdit('price')} />}
             </p>
             <p className='stocks'>
