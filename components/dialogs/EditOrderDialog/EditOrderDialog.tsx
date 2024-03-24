@@ -292,6 +292,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
             )
         );
     }, [preferredCurrency?.currency]);
+    const isForeignCurrency = (currencyOptions.length > 1);
     
     const {
         firstName      : shippingFirstName,
@@ -428,7 +429,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         ? 'PAID'
                         : 'UNPAID'
                     }</Basic>
-                    {!printMode && (currencyOptions.length > 1) && <SelectDropdownEditor
+                    {!printMode && isForeignCurrency && <SelectDropdownEditor
                         // variants:
                         theme={isPaid ? 'success' : 'danger'}
                         
@@ -762,7 +763,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                         isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />
                                     }
                                 >
-                                    <SelectDropdownEditor
+                                    {isForeignCurrency && <SelectDropdownEditor
                                         // variants:
                                         theme='primary'
                                         
@@ -777,7 +778,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                         valueOptions={currencyOptions}
                                         value={currency}
                                         onChange={setCurrency}
-                                    />
+                                    />}
                                     <strong>
                                         <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={paymentAmount} />
                                     </strong>
@@ -977,7 +978,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                             // components:
                                             tableDataComponent={<Generic className={styleSheet.tableDataAmount} />}
                                         >
-                                            <SelectDropdownEditor
+                                            {isForeignCurrency && <SelectDropdownEditor
                                                 // variants:
                                                 theme='primary'
                                                 
@@ -992,7 +993,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                                 valueOptions={currencyOptions}
                                                 value={currency}
                                                 onChange={setCurrency}
-                                            />
+                                            />}
                                             <strong>
                                                 <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={paymentConfirmation.amount} />
                                             </strong>
