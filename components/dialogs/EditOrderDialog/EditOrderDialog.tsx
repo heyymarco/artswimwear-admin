@@ -1194,6 +1194,15 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                     // components:
                     editorComponent={
                         <PaymentEditor
+                            // data:
+                            currencyOptions={currencyOptions}
+                            currency={currency}
+                            onCurrencyChange={setCurrency}
+                            
+                            currencyRate={currencyRate}
+                            
+                            
+                            
                             // accessibilities:
                             expectedAmount={
                                 totalProductPrice + (totalShippingCosts ?? 0)
@@ -1202,8 +1211,6 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             amountMaxThreshold={20 /* percent */}
                             
                             confirmedAmount={paymentConfirmation?.amount ?? undefined}
-                            confirmedCurrency={preferredCurrency?.currency ?? commerceConfig.defaultCurrency}
-                            currencyRate={preferredCurrency?.rate ?? 1}
                         />
                     }
                 />

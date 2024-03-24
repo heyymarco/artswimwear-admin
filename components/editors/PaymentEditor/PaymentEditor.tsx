@@ -94,6 +94,9 @@ import type {
 import {
     PriceEditor,
 }                           from '@/components/editors/PriceEditor'
+import {
+    SelectDropdownEditor,
+}                           from '@/components/editors/SelectDropdownEditor'
 
 // models:
 import type {
@@ -159,6 +162,15 @@ export interface PaymentEditorProps
             |'children'     // not supported
         >
 {
+    // data:
+    currencyOptions    ?: string[]
+    currency           ?: string
+    onCurrencyChange   ?: EditorChangeEventHandler<string>
+    
+    currencyRate       ?: number
+    
+    
+    
     // refs:
     elmRef             ?: DropdownListButtonProps['elmRef']
     
@@ -170,8 +182,6 @@ export interface PaymentEditorProps
     amountMaxThreshold ?: number
     
     confirmedAmount    ?: number
-    confirmedCurrency  ?: string
-    currencyRate       ?: number
     
     amountLabel        ?: string
     feeLabel           ?: string
@@ -184,6 +194,15 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     
     // rest props:
     const {
+        // data:
+        currencyOptions,
+        currency,
+        onCurrencyChange,
+        
+        currencyRate,
+        
+        
+        
         // refs:
         elmRef,
         
@@ -195,8 +214,6 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
         amountMaxThreshold,
         
         confirmedAmount,
-        confirmedCurrency,
-        currencyRate,
         
         amountLabel = 'Received Amount',
         feeLabel    = 'Fee (if any)',
@@ -220,6 +237,8 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
         readOnly,        // take
         inheritReadOnly, // take
     ...restFormProps} = restIndicatorProps;
+    
+    const isForeignCurrency = !!currencyOptions && !!currency && (currencyOptions?.length > 1);
     
     
     
@@ -361,6 +380,18 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                 readOnly        = {readOnly       }
                 inheritReadOnly = {inheritReadOnly}
             >
+                {isForeignCurrency && <SelectDropdownEditor
+                    // variants:
+                    theme='primary'
+                    
+                    
+                    
+                    // values:
+                    valueOptions={currencyOptions}
+                    value={currency}
+                    onChange={onCurrencyChange}
+                />}
+                
                 {(expectedAmount !== undefined) && <Basic
                     // variants:
                     theme='success'
@@ -368,7 +399,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                 >
                     <p>
                         Expected amount: <strong>
-                            <CurrencyDisplay currency={confirmedCurrency} currencyRate={1} amount={expectedAmount} />
+                            <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={expectedAmount} />
                         </strong>
                     </p>
                 </Basic>}
@@ -380,7 +411,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                 >
                     <p>
                         Confirmed amount: <strong>
-                            <CurrencyDisplay currency={confirmedCurrency} currencyRate={1} amount={confirmedAmount} />
+                            <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={confirmedAmount} />
                         </strong>
                     </p>
                 </Basic>}
@@ -474,7 +505,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     
                     
                     // appearances:
-                    currencyCode={confirmedCurrency}
+                    currencyCode={currency}
                     
                     
                     
@@ -533,7 +564,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     
                     
                     // appearances:
-                    currencyCode={confirmedCurrency}
+                    currencyCode={currency}
                     
                     
                     
