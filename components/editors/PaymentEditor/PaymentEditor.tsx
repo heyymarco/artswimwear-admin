@@ -369,7 +369,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     <p>
                         Expected amount: <strong>
                             <CurrencyDisplay currency={confirmedCurrency} currencyRate={1} amount={expectedAmount} />
-                        </strong>.
+                        </strong>
                     </p>
                 </Basic>}
                 
@@ -381,7 +381,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     <p>
                         Confirmed amount: <strong>
                             <CurrencyDisplay currency={confirmedCurrency} currencyRate={1} amount={confirmedAmount} />
-                        </strong>.
+                        </strong>
                     </p>
                 </Basic>}
                 

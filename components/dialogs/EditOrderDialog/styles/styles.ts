@@ -455,6 +455,19 @@ const usesOutputDateLayout = () => {
         ...stripoutTextbox(),
     });
 };
+const usesTableDataAmountLayout = () => {
+    return style({
+        alignItems     : 'center',
+        justifyContent : 'space-between',
+    });
+}
+const usesSelectCurrencyDropdownLayout = () => {
+    return style({
+        // sizes:
+        boxSizing     : 'content-box',
+        minInlineSize : '3em',
+    });
+};
 const usesPaymentConfirmActionsLayout = () => {
     return style({
         display: 'grid',
@@ -674,6 +687,12 @@ export default () => [
     }),
     scope('outputDate', {
         ...usesOutputDateLayout(),
+    }),
+    scope('tableDataAmount', {
+        ...usesTableDataAmountLayout(),
+    }),
+    scope('selectCurrencyDropdown', {
+        ...usesSelectCurrencyDropdownLayout(),
     }),
     scope('paymentConfirmActions', {
         ...usesPaymentConfirmActionsLayout(),

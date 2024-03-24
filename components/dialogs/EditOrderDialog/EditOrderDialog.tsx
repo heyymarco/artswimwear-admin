@@ -198,6 +198,7 @@ import {
 import {
     commerceConfig,
 }                           from '@/commerce.config'
+import styles from '@/components/Grip/styles/styles'
 
 
 
@@ -954,10 +955,31 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                         <DataTableItem
                                             // accessibilities:
                                             label='Amount'
+                                            
+                                            
+                                            
+                                            // components:
+                                            tableDataComponent={<Generic className={styleSheet.tableDataAmount} />}
                                         >
                                             <strong>
                                                 <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={paymentConfirmation.amount} />
                                             </strong>
+                                            <SelectDropdownEditor
+                                                // variants:
+                                                theme='primary'
+                                                
+                                                
+                                                
+                                                // classes:
+                                                className={styleSheet.selectCurrencyDropdown}
+                                                
+                                                
+                                                
+                                                // values:
+                                                valueOptions={currencyOptions}
+                                                value={currency}
+                                                onChange={setCurrency}
+                                            />
                                         </DataTableItem>
                                         <DataTableItem
                                             // accessibilities:
