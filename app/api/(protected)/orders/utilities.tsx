@@ -98,8 +98,32 @@ const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof p
                         select : {
                             name   : true,
                             images : true,
+                            
+                            // relations:
+                            variantGroups : {
+                                select : {
+                                    variants : {
+                                        // always allow to access DRAFT variants when the customer is already ordered:
+                                        // where    : {
+                                        //     visibility : { not: 'DRAFT' } // allows access to Variant with visibility: 'PUBLISHED' but NOT 'DRAFT'
+                                        // },
+                                        select : {
+                                            id   : true,
+                                            
+                                            name : true,
+                                        },
+                                        orderBy : {
+                                            sort : 'asc',
+                                        },
+                                    },
+                                },
+                                orderBy : {
+                                    sort : 'asc',
+                                },
+                            },
                         },
                     },
+                    variantIds     : true,
                 },
             },
             
@@ -152,10 +176,13 @@ const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof p
         items: items.map((item) => ({
             ...item,
             product : !!item.product ? {
-                name        : item.product.name,
-                image       : item.product.images?.[0] ?? null,
-                imageBase64 : undefined,
-                imageId     : undefined,
+                name          : item.product.name,
+                image         : item.product.images?.[0] ?? null,
+                imageBase64   : undefined,
+                imageId       : undefined,
+                
+                // relations:
+                variantGroups : item.product.variantGroups.map(({variants}) => variants),
             } : null,
         })),
         

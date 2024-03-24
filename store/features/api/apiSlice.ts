@@ -15,12 +15,22 @@ export type OrderDetailWithOptions = OrderDetail & { sendConfirmationEmail?: boo
 
 // apis:
 export type { CountryPreview }                  from '@/app/api/(protected)/countries/route'
-export type { VariantPreview }                  from '@/app/api/(protected)/products/route'
-export type { VariantDetail }                   from '@/app/api/(protected)/products/route'
-export type { VariantGroupDetail }              from '@/app/api/(protected)/products/route'
-import type { ProductPreview, ProductDetail }   from '@/app/api/(protected)/products/route'
-export type { ProductPreview, ProductDetail }   from '@/app/api/(protected)/products/route'
-export type { StockDetail }                     from '@/app/api/(protected)/products/route'
+import type {
+    ProductPreview,
+    ProductDetail,
+}                                               from '@/app/api/(protected)/products/route'
+export type {
+    VariantPreview,
+    VariantDetail,
+    VariantGroupDetail,
+    
+    ProductPreview,
+    ProductDetail,
+    
+    ProductPricePart,
+    
+    StockDetail,
+}                                               from '@/app/api/(protected)/products/route'
 import type { TemplateVariantGroupDetail }      from '@/app/api/(protected)/products/template-variants/route'
 export type { TemplateVariantDetail }           from '@/app/api/(protected)/products/template-variants/route'
 export type { TemplateVariantGroupDetail }      from '@/app/api/(protected)/products/template-variants/route'

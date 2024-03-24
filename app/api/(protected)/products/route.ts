@@ -35,10 +35,13 @@ export type {
     VariantPreview,
     VariantDetail,
     VariantGroupDetail,
-    StockDetail,
     
     ProductPreview,
     ProductDetail,
+    
+    ProductPricePart,
+    
+    StockDetail,
 }                           from '@/models'
 import {
     VariantGroupDiff,

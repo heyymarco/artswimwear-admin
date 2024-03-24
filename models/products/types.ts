@@ -72,3 +72,10 @@ export interface ProductDetail
     variantGroups : VariantGroupDetail[]
     stocks        : StockDetail[]
 }
+
+
+
+export interface ProductPricePart {
+    priceParts : number[],
+    quantity   : number
+}

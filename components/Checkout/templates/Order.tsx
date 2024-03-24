@@ -16,11 +16,16 @@ import {
     // hooks:
     useOrderDataContext,
 }                           from './orderDataContext'
-
-// utilities:
 import {
-    formatCurrency,
-}                           from '@/libs/formatters'
+    // react components:
+    CurrencyDisplay,
+}                           from './CurrencyDisplay'
+
+// stores:
+import {
+    // types:
+    ProductPricePart,
+}                           from '@/store/features/api/apiSlice'
 
 // configs:
 import {
@@ -30,12 +35,15 @@ import {
 
 
 // utilities:
-const getTotalProductPrice = (items: ReturnType<typeof useOrderDataContext>['order']['items']): number => {
-    let totalProductPrice = 0;
+const getProductPriceParts = (items: ReturnType<typeof useOrderDataContext>['order']['items']): ProductPricePart[] => {
+    const productPriceParts  : ProductPricePart[] = [];
     for (const {price, quantity} of items) {
-        totalProductPrice += (price * quantity);
+        productPriceParts.push({
+            priceParts : [price],
+            quantity   : quantity,
+        });
     } // for
-    return totalProductPrice;
+    return productPriceParts;
 };
 
 
@@ -93,7 +101,7 @@ const OrderSubtotalValue = (props: OrderSubtotalProps): React.ReactNode => {
                 ...styles.numberCurrency,
             }}
         >
-            {formatCurrency(getTotalProductPrice(items))}
+            <CurrencyDisplay amount={getProductPriceParts(items)} />
         </span>
     );
 };
@@ -142,7 +150,7 @@ const OrderShippingValue = (props: OrderShippingProps): React.ReactNode => {
                 ...styles.numberCurrency,
             }}
         >
-            {formatCurrency(shippingCost)}
+            <CurrencyDisplay amount={shippingCost} />
         </span>
     );
 };
@@ -184,6 +192,7 @@ const OrderTotalValue = (props: OrderTotalProps): React.ReactNode => {
     const {
         // data:
         order : {
+            preferredCurrency,
             shippingCost,
             items,
         },
@@ -211,8 +220,8 @@ const OrderTotalValue = (props: OrderTotalProps): React.ReactNode => {
                 ...styles.numberCurrency,
             }}
         >
-            {formatCurrency(getTotalProductPrice(items) + (shippingCost ?? 0))}
-            <span>{commerceConfig.defaultCurrency}</span>
+            <CurrencyDisplay amount={[...getProductPriceParts(items), shippingCost]} />
+            <span>{preferredCurrency ? preferredCurrency.currency : commerceConfig.defaultCurrency}</span>
         </span>
     );
 };
@@ -278,7 +287,11 @@ const OrderItems = (props: OrderItemsProps): React.ReactNode => {
             // styles:
             style={style}
         >
-            {items.map(({price, quantity, product}, itemIndex, {length: itemsCount}) => {
+            {items.map(({price, quantity, product, variantIds}, itemIndex, {length: itemsCount}) => {
+                const variants = product?.variantGroups.flat();
+                
+                
+                
                 // jsx:
                 return (
                     <table
@@ -302,7 +315,7 @@ const OrderItems = (props: OrderItemsProps): React.ReactNode => {
                             {/* image + title */}
                             <tr>
                                 {/* image */}
-                                <td rowSpan={4}
+                                <td rowSpan={5}
                                     // styles:
                                     style={{
                                         // spacings:
@@ -349,6 +362,52 @@ const OrderItems = (props: OrderItemsProps): React.ReactNode => {
                                 </th>
                             </tr>
                             
+                            {/* variants */}
+                            <tr>
+                                <td colSpan={3}
+                                    // styles:
+                                    style={styles.tableColumnAutoSize}
+                                >
+                                    <div
+                                        // styles:
+                                        style={{
+                                            // layouts:
+                                            display      : 'flex',
+                                            
+                                            
+                                            
+                                            // spacings:
+                                            columnGap    : `calc(${spacerValues.md} / 4)`,
+                                            marginBottom : `calc(${spacerValues.md} / 4)`,
+                                        }}
+                                    >
+                                        {
+                                            variantIds
+                                            .map((variantId) =>
+                                                variants?.find(({id}) => (id === variantId))?.name
+                                            )
+                                            .filter((variantName): variantName is Exclude<typeof variantName, undefined> => !!variantName)
+                                            .map((variantName, variantIndex) =>
+                                                <span key={variantIndex}
+                                                    // styles:
+                                                    style={{
+                                                        // layouts:
+                                                        ...styles.basicBox,
+                                                        
+                                                        
+                                                        
+                                                        // typos:
+                                                        lineHeight: 1,
+                                                    }}
+                                                >
+                                                    {variantName}
+                                                </span>
+                                            )
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                            
                             {/* unit price */}
                             <tr>
                                 {/* label */}
@@ -379,7 +438,7 @@ const OrderItems = (props: OrderItemsProps): React.ReactNode => {
                                         ...styles.textSmall,
                                     }}
                                 >
-                                    {formatCurrency(price)}
+                                    <CurrencyDisplay amount={price} />
                                 </td>
                             </tr>
                             
@@ -431,7 +490,7 @@ const OrderItems = (props: OrderItemsProps): React.ReactNode => {
                                         textAlign : 'end', // align to right_most
                                     }}
                                 >
-                                    {formatCurrency((price !== undefined) ? (price * quantity) : undefined)}
+                                    <CurrencyDisplay amount={price} multiply={quantity} />
                                 </td>
                             </tr>
                             
