@@ -28,7 +28,7 @@ const sumReducer = <TNumber extends number|null|undefined>(accum: TNumber, value
 
 // react components:
 export interface CurrencyDisplayProps {
-    currency      : string
+    currency     ?: string
     currencyRate ?: number
     amount        : number|null|undefined | Array<number|null|undefined>
     multiply     ?: number
