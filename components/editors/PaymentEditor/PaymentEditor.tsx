@@ -320,6 +320,8 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     
     
     // effects:
+    
+    // warns if the entered amount is much different than the expected amount:
     useEffect(() => {
         // setups:
         const cancelWarning = setTimeout(() => {
@@ -353,6 +355,24 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
             clearTimeout(cancelWarning);
         };
     }, [amount, expectedAmount]);
+    
+    // convert app default currency <==> customer currency:
+    const prevCurrencyRateRef = useRef<number>(currencyRate);
+    useEffect(() => {
+        // conditions:
+        const prevCurrencyRate = prevCurrencyRateRef.current;
+        if (prevCurrencyRateRef.current === currencyRate) return; // no change => ignore
+        prevCurrencyRateRef.current = currencyRate;               // sync
+        
+        
+        
+        console.log({prevCurrencyRate, currencyRate});
+        // convert app default currency <==> customer currency:
+        setValue({
+            amount : (typeof(amount) === 'number') ? (amount * currencyRate / prevCurrencyRate) : null,
+            fee    : (typeof(fee)    === 'number') ? (fee    * currencyRate / prevCurrencyRate) : null,
+        });
+    }, [currencyRate]);
     
     
     
