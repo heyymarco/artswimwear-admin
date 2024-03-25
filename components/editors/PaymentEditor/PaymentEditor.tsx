@@ -273,6 +273,23 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     
     
     
+    const [editedAmount, setEditedAmount] = useState(() => convertSystemCurrencyIfRequired(amount, currencyRate));
+    const [editedFee   , setEditedFee   ] = useState(() => convertSystemCurrencyIfRequired(fee, currencyRate));
+    const prevCurrencyRateRef             = useRef(currencyRate);
+    useEffect(() => {
+        // conditions:
+        if (prevCurrencyRateRef.current === currencyRate) return; // still the same rate, nothing to convert
+        prevCurrencyRateRef.current = currencyRate;
+        
+        
+        
+        // actions:
+        setEditedAmount(convertSystemCurrencyIfRequired(amount, currencyRate));
+        setEditedFee(convertSystemCurrencyIfRequired(fee, currencyRate));
+    }, [currencyRate]);
+    
+    
+    
     // events:
     const setValue = useEvent((newValue: Partial<PaymentValue>) => {
         const combinedValue : PaymentValue = {
@@ -294,14 +311,16 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
             brand                 : newBrand,
         });
     });
-    const handleAmountChange            = useEvent<EditorChangeEventHandler<number|null>>((newAmount) => {
+    const handleAmountChange            = useEvent<EditorChangeEventHandler<number|null>>((newEditedAmount) => {
+        setEditedAmount(newEditedAmount);
         setValue({
-            amount                : revertSystemCurrencyIfRequired(newAmount, currencyRate, customerCurrency),
+            amount                : revertSystemCurrencyIfRequired(newEditedAmount, currencyRate, customerCurrency),
         });
     });
-    const handleFeeChange               = useEvent<EditorChangeEventHandler<number|null>>((newFee) => {
+    const handleFeeChange               = useEvent<EditorChangeEventHandler<number|null>>((newEditedFee) => {
+        setEditedFee(newEditedFee);
         setValue({
-            fee                   : revertSystemCurrencyIfRequired(newFee, currencyRate, customerCurrency),
+            fee                   : revertSystemCurrencyIfRequired(newEditedFee, currencyRate, customerCurrency),
         });
     });
     const handleConfirmationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active: newConfirmation}) => {
@@ -531,7 +550,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     
                     
                     // values:
-                    value={convertSystemCurrencyIfRequired(amount, currencyRate)}
+                    value={editedAmount}
                     onChange={handleAmountChange}
                     
                     
@@ -585,7 +604,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     
                     
                     // values:
-                    value={convertSystemCurrencyIfRequired(fee, currencyRate)}
+                    value={editedFee}
                     onChange={handleFeeChange}
                     
                     
