@@ -98,6 +98,12 @@ import {
     SelectDropdownEditor,
 }                           from '@/components/editors/SelectDropdownEditor'
 
+// internals:
+import {
+    convertSystemCurrencyIfRequired,
+    revertSystemCurrencyIfRequired,
+}                           from '@/libs/currencyExchanges'
+
 // models:
 import type {
     Payment,
@@ -118,7 +124,6 @@ const emptyPaymentValue : Required<PaymentValue> = {
     brand                 : '',
     identifier            : '',
     
-    currencyRate          : 1,
     amount                : null,
     fee                   : null,
     sendConfirmationEmail : true,
@@ -133,7 +138,6 @@ Object.freeze(emptyPaymentValue);
 export type PaymentValue =
     Omit<Payment, 'id'|'amount'|'fee'>
     & {
-        currencyRate          ?: number
         amount                 : number|null
         fee                    : number|null
         sendConfirmationEmail ?: boolean
@@ -241,6 +245,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     ...restFormProps} = restIndicatorProps;
     
     const isForeignCurrency = !!currencyOptions && !!currency && (currencyOptions?.length > 1);
+    const customerCurrency  = currencyOptions?.[0] ?? undefined;
     
     
     
@@ -291,12 +296,12 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     });
     const handleAmountChange            = useEvent<EditorChangeEventHandler<number|null>>((newAmount) => {
         setValue({
-            amount                : newAmount,
+            amount                : revertSystemCurrencyIfRequired(newAmount, currencyRate, customerCurrency),
         });
     });
     const handleFeeChange               = useEvent<EditorChangeEventHandler<number|null>>((newFee) => {
         setValue({
-            fee                   : newFee,
+            fee                   : revertSystemCurrencyIfRequired(newFee, currencyRate, customerCurrency),
         });
     });
     const handleConfirmationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active: newConfirmation}) => {
@@ -304,11 +309,6 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
             sendConfirmationEmail : newConfirmation,
         });
     });
-    useEffect(() => {
-        setValue({
-            currencyRate,
-        });
-    }, [currencyRate]);
     
     const handleAmountFocus             = useEvent<React.FocusEventHandler<Element>>((event) => {
         setAmountFocused(true);
@@ -328,16 +328,17 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
             let amountWarning : React.ReactNode = null;
             
             if ((amount !== null) && (expectedAmount !== undefined)) {
-                const revertedAmount = amount / currencyRate;
-                if (revertedAmount < expectedAmount) {
-                    if ((amountMinThreshold !== undefined) && (((expectedAmount - revertedAmount) * 100 / revertedAmount) > amountMinThreshold)) {
+                const convertedAmount         = convertSystemCurrencyIfRequired(amount        , currencyRate);
+                const convertedExpectedAmount = convertSystemCurrencyIfRequired(expectedAmount, currencyRate);
+                if (convertedAmount < convertedExpectedAmount) {
+                    if ((amountMinThreshold !== undefined) && (((convertedExpectedAmount - convertedAmount) * 100 / convertedAmount) > amountMinThreshold)) {
                         amountWarning = <>
                             The entered amount is <strong>much smaller</strong> than the expected amount. Are you sure?
                         </>;
                     } // if
                 }
-                else if (revertedAmount > expectedAmount) {
-                    if ((amountMaxThreshold !== undefined) && (((revertedAmount - expectedAmount) * 100 / revertedAmount) > amountMaxThreshold)) {
+                else if (convertedAmount > convertedExpectedAmount) {
+                    if ((amountMaxThreshold !== undefined) && (((convertedAmount - convertedExpectedAmount) * 100 / convertedAmount) > amountMaxThreshold)) {
                         amountWarning = <>
                             The entered amount is <strong>much greater</strong> than the expected amount. Are you sure?
                         </>;
@@ -355,24 +356,6 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
             clearTimeout(cancelWarning);
         };
     }, [amount, expectedAmount]);
-    
-    // convert app default currency <==> customer currency:
-    const prevCurrencyRateRef = useRef<number>(currencyRate);
-    useEffect(() => {
-        // conditions:
-        const prevCurrencyRate = prevCurrencyRateRef.current;
-        if (prevCurrencyRateRef.current === currencyRate) return; // no change => ignore
-        prevCurrencyRateRef.current = currencyRate;               // sync
-        
-        
-        
-        console.log({prevCurrencyRate, currencyRate});
-        // convert app default currency <==> customer currency:
-        setValue({
-            amount : (typeof(amount) === 'number') ? (amount * currencyRate / prevCurrencyRate) : null,
-            fee    : (typeof(fee)    === 'number') ? (fee    * currencyRate / prevCurrencyRate) : null,
-        });
-    }, [currencyRate]);
     
     
     
@@ -548,7 +531,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     
                     
                     // values:
-                    value={amount}
+                    value={convertSystemCurrencyIfRequired(amount, currencyRate)}
                     onChange={handleAmountChange}
                     
                     
@@ -602,7 +585,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     
                     
                     // values:
-                    value={fee}
+                    value={convertSystemCurrencyIfRequired(fee, currencyRate)}
                     onChange={handleFeeChange}
                     
                     
