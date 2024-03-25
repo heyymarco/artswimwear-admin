@@ -29,7 +29,7 @@ const PriceEditor = <TElement extends Element = HTMLElement>(props: PriceEditorP
     // default props:
     const {
         // appearances:
-        currencyCode             = commerceConfig.defaultCurrency,
+        currency                 = commerceConfig.defaultCurrency,
         
         
         
@@ -58,7 +58,7 @@ const PriceEditor = <TElement extends Element = HTMLElement>(props: PriceEditorP
             
             
             // appearances:
-            currencyCode={currencyCode}
+            currency={currency}
             
             
             

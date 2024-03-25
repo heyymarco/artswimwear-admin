@@ -513,7 +513,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     
                     
                     // appearances:
-                    currencyCode={currency}
+                    currency={currency}
                     
                     
                     
@@ -572,7 +572,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     
                     
                     // appearances:
-                    currencyCode={currency}
+                    currency={currency}
                     
                     
                     

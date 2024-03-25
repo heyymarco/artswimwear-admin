@@ -32,7 +32,7 @@ export interface CurrencyEditorProps<TElement extends Element = HTMLSpanElement>
         NumberEditorProps<TElement>
 {
     // appearances:
-    currencyCode     ?: string
+    currency         ?: string
     
     currencySign     ?: string
     currencyFraction ?: number
@@ -52,16 +52,16 @@ const CurrencyEditor = <TElement extends Element = HTMLSpanElement>(props: Curre
         
         
         // appearances:
-        currencyCode,
+        currency,
         
         currencySign     = (
-            !!currencyCode
-            ? (commerceConfig.currencies[currencyCode] ?? commerceConfig.currencies[commerceConfig.defaultCurrency]).sign
+            !!currency
+            ? (commerceConfig.currencies[currency] ?? commerceConfig.currencies[commerceConfig.defaultCurrency]).sign
             : undefined
         ),
         currencyFraction = (
-            !!currencyCode
-            ? (commerceConfig.currencies[currencyCode] ?? commerceConfig.currencies[commerceConfig.defaultCurrency]).fractionMax
+            !!currency
+            ? (commerceConfig.currencies[currency] ?? commerceConfig.currencies[commerceConfig.defaultCurrency]).fractionMax
             : undefined
         ),
         
