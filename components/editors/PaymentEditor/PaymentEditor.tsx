@@ -326,15 +326,16 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
             let amountWarning : React.ReactNode = null;
             
             if ((amount !== null) && (expectedAmount !== undefined)) {
-                if (amount < expectedAmount) {
-                    if ((amountMinThreshold !== undefined) && (((expectedAmount - amount) * 100 / amount) > amountMinThreshold)) {
+                const revertedAmount = amount / currencyRate;
+                if (revertedAmount < expectedAmount) {
+                    if ((amountMinThreshold !== undefined) && (((expectedAmount - revertedAmount) * 100 / revertedAmount) > amountMinThreshold)) {
                         amountWarning = <>
                             The entered amount is <strong>much smaller</strong> than the expected amount. Are you sure?
                         </>;
                     } // if
                 }
-                else if (amount > expectedAmount) {
-                    if ((amountMaxThreshold !== undefined) && (((amount - expectedAmount) * 100 / amount) > amountMaxThreshold)) {
+                else if (revertedAmount > expectedAmount) {
+                    if ((amountMaxThreshold !== undefined) && (((revertedAmount - expectedAmount) * 100 / revertedAmount) > amountMaxThreshold)) {
                         amountWarning = <>
                             The entered amount is <strong>much greater</strong> than the expected amount. Are you sure?
                         </>;
