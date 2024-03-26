@@ -1,3 +1,4 @@
+[high prior] verify breaking change <UpdateStatePlugin> .__first
 [high prior] removed paymentConfirmation.currency
 TODO: replace shippingCarrier from <NameEditor> to <Dropdown>
 TODO: notify to email template: shippingCarrier changed if (shippingCarrier !== shippingProvider)
