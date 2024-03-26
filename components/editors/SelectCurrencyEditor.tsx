@@ -41,15 +41,15 @@ const SelectCurrencyEditor = <TElement extends Element = HTMLElement>(props: Sel
     // jsx:
     return (
         <SelectDropdownEditor<TElement, string>
-            // values:
-            valueOptions={valueOptions}
-            
-            
-            
             // other props:
             {...restSelectDropdownEditorProps}
+            
+            
+            
+            // values:
+            valueOptions={valueOptions}
         />
-    )
+    );
 };
 export {
     SelectCurrencyEditor,            // named export for readibility
