@@ -7,6 +7,10 @@ import {
 // reusable-ui components:
 import {
     // layout-components:
+    useListActionItemStyleSheet,
+    
+    useListState,
+    
     ListItemProps,
     ListItem,
     ListItemComponentProps,
@@ -39,8 +43,21 @@ interface SelectDropdownEditorItemProps<TElement extends Element = HTMLElement>
 {
 }
 const SelectDropdownEditorItem = <TElement extends Element = HTMLElement>(props: SelectDropdownEditorItemProps<TElement>): JSX.Element|null => {
+    // states:
+    const {
+        // behaviors:
+        defaultActionCtrl,
+    } = useListState();
+    
+    
+    
     // props:
     const {
+        // behaviors:
+        actionCtrl              = defaultActionCtrl,
+        
+        
+        
         // components:
         listItemComponent       = (<ListItem />       as React.ReactComponentElement<any, ListItemProps<Element>>),
         radioDecoratorComponent = (<RadioDecorator /> as React.ReactComponentElement<any, RadioDecoratorProps<Element>>),
@@ -59,14 +76,19 @@ const SelectDropdownEditorItem = <TElement extends Element = HTMLElement>(props:
     
     
     // styles:
-    const styleSheet = useSelectDropdownEditorItemStyleSheet();
+    const styleSheet       = useSelectDropdownEditorItemStyleSheet();
+    const actionStyleSheet = useListActionItemStyleSheet();
     
     
     
     // default props:
     const {
         // classes:
-        mainClass                           = styleSheet.main, // defaults to internal styleSheet
+        mainClass                           = (
+            actionCtrl
+            ? `${styleSheet.main} ${actionStyleSheet.main}`
+            : styleSheet.main
+        ),                                                 // defaults to internal styleSheet
         
         
         
@@ -76,7 +98,7 @@ const SelectDropdownEditorItem = <TElement extends Element = HTMLElement>(props:
     
     const {
         // classes:
-        className : radioDecoratorClassName = 'indicator',     // defaults to 'indicator'
+        className : radioDecoratorClassName = 'indicator', // defaults to 'indicator'
         
         
         
