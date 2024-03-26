@@ -129,8 +129,8 @@ import {
     TimezoneEditor,
 }                           from '@/components/editors/TimezoneEditor'
 import {
-    SelectDropdownEditor,
-}                           from '@/components/editors/SelectDropdownEditor'
+    SelectCurrencyEditor,
+}                           from '@/components/editors/SelectCurrencyEditor'
 import {
     CollapsibleSuspense,
 }                           from '@/components/CollapsibleSuspense'
@@ -429,7 +429,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         ? 'PAID'
                         : 'UNPAID'
                     }</Basic>
-                    {!printMode && isForeignCurrency && <SelectDropdownEditor
+                    {!printMode && isForeignCurrency && <SelectCurrencyEditor
                         // variants:
                         theme={isPaid ? 'success' : 'danger'}
                         
@@ -763,7 +763,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                         isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />
                                     }
                                 >
-                                    {isForeignCurrency && <SelectDropdownEditor
+                                    {isForeignCurrency && <SelectCurrencyEditor
                                         // variants:
                                         theme='primary'
                                         
@@ -978,7 +978,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                             // components:
                                             tableDataComponent={<Generic className={styleSheet.tableDataAmount} />}
                                         >
-                                            {isForeignCurrency && <SelectDropdownEditor
+                                            {isForeignCurrency && <SelectCurrencyEditor
                                                 // variants:
                                                 theme='primary'
                                                 
