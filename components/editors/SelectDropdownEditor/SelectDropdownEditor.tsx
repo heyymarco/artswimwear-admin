@@ -98,12 +98,12 @@ const SelectDropdownEditor = <TElement extends Element = HTMLElement, TValue ext
     // default props:
     const {
         // variants:
-        floatingPlacement = 'bottom-end',
+        floatingPlacement = 'bottom-end',     // defaults to 'bottom-end'
         
         
         
         // children:
-        buttonChildren = valueToUi(value),
+        buttonChildren    = valueToUi(value), // defaults to `valueToUi(value)`
         
         
         

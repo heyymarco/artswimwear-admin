@@ -47,6 +47,11 @@ const SelectDropdownEditorItem = <TElement extends Element = HTMLElement>(props:
         
         
         
+        // children:
+        children,
+        
+        
+        
         // other props:
         ...restSelectDropdownEditorItem
     } = props;
@@ -61,12 +66,7 @@ const SelectDropdownEditorItem = <TElement extends Element = HTMLElement>(props:
     // default props:
     const {
         // classes:
-        mainClass = styleSheet.main, // defaults to internal styleSheet
-        
-        
-        
-        // children:
-        children,
+        mainClass                           = styleSheet.main, // defaults to internal styleSheet
         
         
         
@@ -76,7 +76,7 @@ const SelectDropdownEditorItem = <TElement extends Element = HTMLElement>(props:
     
     const {
         // classes:
-        className : radioDecoratorClassName = 'indicator', // defaults to 'indicator'
+        className : radioDecoratorClassName = 'indicator',     // defaults to 'indicator'
         
         
         
