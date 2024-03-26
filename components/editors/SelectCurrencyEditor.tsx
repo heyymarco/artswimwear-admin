@@ -18,7 +18,7 @@ import {
 
 
 // react components:
-interface SelectCurrencyEditorProps<TElement extends Element = HTMLElement>
+export interface SelectCurrencyEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
         SelectDropdownEditorProps<TElement, string>
