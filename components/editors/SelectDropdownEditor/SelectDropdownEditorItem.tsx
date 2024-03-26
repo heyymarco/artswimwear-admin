@@ -32,7 +32,7 @@ import {
 
 
 // react components:
-interface SelectDropdownEditorItemProps<TElement extends Element = HTMLElement>
+export interface SelectDropdownEditorItemProps<TElement extends Element = HTMLElement>
     extends
         // bases:
         ListItemProps<TElement>,
