@@ -1,6 +1,7 @@
 // cssfn:
 import {
     // writes css in javascript:
+    rule,
     children,
     style,
     
@@ -53,11 +54,13 @@ export const usesSelectDropdownEditorItemLayout   = (options?: OrientationableOp
         ...usesListItemLayout(options), // the options are already handled internally by `usesListItemBaseLayout`
         ...style({
             display      : 'grid',
-            gridTemplate : [[
-                '"indicator"  auto',
-                '/',
-                'max-content',
-            ]],
+            ...rule(':has(>.indicator)', {
+                gridTemplate : [[
+                    '"indicator"  auto',
+                    '/',
+                    'max-content',
+                ]],
+            }),
             gridAutoFlow : 'column',
             
             
