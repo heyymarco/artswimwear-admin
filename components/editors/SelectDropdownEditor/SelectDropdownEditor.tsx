@@ -193,7 +193,7 @@ const SelectDropdownEditor = <TElement extends Element = HTMLElement, TValue ext
                 );
             })}
         </DropdownListButton>
-    )
+    );
 };
 export {
     SelectDropdownEditor,            // named export for readibility
