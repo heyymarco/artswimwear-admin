@@ -108,5 +108,5 @@ export {
 export interface RadioDecoratorComponentProps
 {
     // components:
-    radioDecoratorComponent ?: React.ReactComponentElement<any, RadioDecoratorProps<Element>>
+    radioDecoratorComponent ?: React.ReactComponentElement<any, RadioDecoratorProps<Element>>|null
 }
