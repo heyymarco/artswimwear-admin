@@ -8,16 +8,19 @@ import {
 import {
     // layout-components:
     ListItemProps,
-    ListItem,
     ListItemComponentProps,
-    
-    
-    
+}                           from '@reusable-ui/list'                    // represents a series of content
+import {
     // menu-components:
     DropdownListExpandedChangeEvent,
     DropdownListButtonProps,
     DropdownListButton,
-}                           from '@reusable-ui/components'
+}                           from '@reusable-ui/dropdown-list-button'    // a button component with a dropdown list UI
+
+// internal components:
+import {
+    SelectDropdownEditorItem,
+}                           from './SelectDropdownEditorItem'
 
 // heymarco:
 import {
@@ -54,7 +57,7 @@ interface SelectDropdownEditorProps<TElement extends Element = HTMLElement, TVal
 {
     // values:
     valueOptions  : TValue[]
-    valueToText  ?: (value: TValue|null) => string
+    valueToUi    ?: (value: TValue|null) => string
     
     value         : TValue
 }
@@ -63,15 +66,15 @@ const SelectDropdownEditor = <TElement extends Element = HTMLElement, TValue ext
     const {
         // values:
         valueOptions,
-        valueToText   = (value) => `${value}`,
+        valueToUi         = (value) => `${value}`,
         
-        value         : controllableValue,
-        onChange      : onControllableValueChange,
+        value             : controllableValue,
+        onChange          : onControllableValueChange,
         
         
         
         // components:
-        listItemComponent = (<ListItem /> as React.ReactComponentElement<any, ListItemProps<Element>>),
+        listItemComponent = (<SelectDropdownEditorItem /> as React.ReactComponentElement<any, ListItemProps<Element>>),
         
         
         
@@ -94,8 +97,13 @@ const SelectDropdownEditor = <TElement extends Element = HTMLElement, TValue ext
     
     // default props:
     const {
+        // variants:
+        floatingPlacement = 'bottom-end',
+        
+        
+        
         // children:
-        buttonChildren = valueToText(value),
+        buttonChildren = valueToUi(value),
         
         
         
@@ -113,6 +121,11 @@ const SelectDropdownEditor = <TElement extends Element = HTMLElement, TValue ext
             
             
             
+            // variants:
+            floatingPlacement={floatingPlacement}
+            
+            
+            
             // children:
             buttonChildren={buttonChildren}
         >
@@ -125,7 +138,7 @@ const SelectDropdownEditor = <TElement extends Element = HTMLElement, TValue ext
                     
                     
                     // children:
-                    children = valueToText(valueOption),
+                    children = valueToUi(valueOption),
                     
                     
                     
