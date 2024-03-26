@@ -13,6 +13,9 @@ import {
 import type {
     DropdownProps,
 }                           from '@reusable-ui/dropdown'                // overlays contextual element such as lists, menus, and more
+import type {
+    DropdownListProps,
+}                           from '@reusable-ui/dropdown-list'           // overlays a list element (menu)
 import {
     // menu-components:
     DropdownListExpandedChangeEvent,
@@ -106,7 +109,7 @@ const SelectDropdownEditor = <TElement extends Element = HTMLElement, TValue ext
         
         
         // components:
-        dropdownComponent,
+        dropdownComponent : dropdownListComponentRaw,
         
         
         
@@ -185,9 +188,21 @@ const SelectDropdownEditor = <TElement extends Element = HTMLElement, TValue ext
         })}
     </>;
     
+    const dropdownListComponent = dropdownListComponentRaw as React.ReactElement<DropdownListProps<Element, TDropdownListExpandedChangeEvent>>|undefined;
+    const {
+        // components:
+        listComponent,
+        dropdownComponent,
+        
+        
+        
+        // children:
+        children : dropdownListChildren = defaultChildren,
+    } = dropdownListComponent?.props ?? {};
+    
     const {
         // children:
-        children : dropdownChildren = defaultChildren,
+        children : dropdownChildren,
     } = dropdownComponent?.props ?? {};
     
     
@@ -207,17 +222,40 @@ const SelectDropdownEditor = <TElement extends Element = HTMLElement, TValue ext
             
             // components:
             dropdownComponent={
-                (dropdownComponent === undefined)
+                (dropdownListComponent === undefined)
                 ? undefined
-                : React.cloneElement<DropdownProps<Element, TDropdownListExpandedChangeEvent>>(dropdownComponent,
+                
+                /* <DropdownList> */
+                : React.cloneElement<DropdownListProps<Element, TDropdownListExpandedChangeEvent>>(dropdownListComponent,
                     // props:
-                    undefined,
+                    {
+                        // components:
+                        listComponent     : listComponent,
+                        dropdownComponent : (
+                            (dropdownComponent === undefined)
+                            ? undefined
+                            /* <Dropdown> */
+                            : React.cloneElement<DropdownProps<Element, TDropdownListExpandedChangeEvent>>(dropdownComponent,
+                                // props:
+                                undefined,
+                                
+                                
+                                
+                                // children:
+                                (
+                                    (dropdownChildren !== listComponent)
+                                    ? dropdownChildren
+                                    : listComponent
+                                ),
+                            )
+                        ),
+                    },
                     
                     
                     
                     // children:
-                    dropdownChildren,
-                )
+                    dropdownListChildren,
+                ) as typeof dropdownListComponentRaw
             }
             
             
@@ -225,7 +263,7 @@ const SelectDropdownEditor = <TElement extends Element = HTMLElement, TValue ext
             // children:
             buttonChildren={buttonChildren}
         >
-            {dropdownChildren}
+            {dropdownListChildren}
         </DropdownListButton>
     );
 };
