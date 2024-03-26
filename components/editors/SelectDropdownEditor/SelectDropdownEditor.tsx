@@ -10,6 +10,9 @@ import {
     ListItemProps,
     ListItemComponentProps,
 }                           from '@reusable-ui/list'                    // represents a series of content
+import type {
+    DropdownProps,
+}                           from '@reusable-ui/dropdown'                // overlays contextual element such as lists, menus, and more
 import {
     // menu-components:
     DropdownListExpandedChangeEvent,
@@ -102,6 +105,11 @@ const SelectDropdownEditor = <TElement extends Element = HTMLElement, TValue ext
         
         
         
+        // components:
+        dropdownComponent,
+        
+        
+        
         // children:
         buttonChildren    = valueToUi(value), // defaults to `valueToUi(value)`
         
@@ -110,6 +118,77 @@ const SelectDropdownEditor = <TElement extends Element = HTMLElement, TValue ext
         // other props:
         ...restDropdownListButtonProps
     } = restSelectDropdownEditorProps;
+    
+    const defaultChildren : React.ReactElement = <>
+        {valueOptions.map((valueOption, index) => {
+            // default props:
+            const {
+                // states:
+                active   = Object.is(valueOption, value),
+                
+                
+                
+                // children:
+                children = valueToUi(valueOption),
+                
+                
+                
+                // other props:
+                ...restListItemProps
+            } = listItemComponent.props;
+            
+            
+            
+            // jsx:
+            return (
+                <ListItemWithClickHandler
+                    // identifiers:
+                    key={index}
+                    
+                    
+                    
+                    // components:
+                    listItemComponent={
+                        React.cloneElement<ListItemProps<Element>>(listItemComponent,
+                            // props:
+                            {
+                                // other props:
+                                ...restListItemProps,
+                                
+                                
+                                
+                                // states:
+                                active : active,
+                            },
+                            
+                            
+                            
+                            // children:
+                            children,
+                        )
+                    }
+                    
+                    
+                    
+                    // handlers:
+                    onClick={(event) => {
+                        // conditions:
+                        if (event.defaultPrevented) return;
+                        
+                        
+                        
+                        // actions:
+                        triggerValueChange(valueOption, { triggerAt: 'immediately' });
+                    }}
+                />
+            );
+        })}
+    </>;
+    
+    const {
+        // children:
+        children : dropdownChildren = defaultChildren,
+    } = dropdownComponent?.props ?? {};
     
     
     
@@ -126,72 +205,27 @@ const SelectDropdownEditor = <TElement extends Element = HTMLElement, TValue ext
             
             
             
-            // children:
-            buttonChildren={buttonChildren}
-        >
-            {valueOptions.map((valueOption, index) => {
-                // default props:
-                const {
-                    // states:
-                    active   = Object.is(valueOption, value),
+            // components:
+            dropdownComponent={
+                (dropdownComponent === undefined)
+                ? undefined
+                : React.cloneElement<DropdownProps<Element, TDropdownListExpandedChangeEvent>>(dropdownComponent,
+                    // props:
+                    undefined,
                     
                     
                     
                     // children:
-                    children = valueToUi(valueOption),
-                    
-                    
-                    
-                    // other props:
-                    ...restListItemProps
-                } = listItemComponent.props;
-                
-                
-                
-                // jsx:
-                return (
-                    <ListItemWithClickHandler
-                        // identifiers:
-                        key={index}
-                        
-                        
-                        
-                        // components:
-                        listItemComponent={
-                            React.cloneElement<ListItemProps<Element>>(listItemComponent,
-                                // props:
-                                {
-                                    // other props:
-                                    ...restListItemProps,
-                                    
-                                    
-                                    
-                                    // states:
-                                    active : active,
-                                },
-                                
-                                
-                                
-                                // children:
-                                children,
-                            )
-                        }
-                        
-                        
-                        
-                        // handlers:
-                        onClick={(event) => {
-                            // conditions:
-                            if (event.defaultPrevented) return;
-                            
-                            
-                            
-                            // actions:
-                            triggerValueChange(valueOption, { triggerAt: 'immediately' });
-                        }}
-                    />
-                );
-            })}
+                    dropdownChildren,
+                )
+            }
+            
+            
+            
+            // children:
+            buttonChildren={buttonChildren}
+        >
+            {dropdownChildren}
         </DropdownListButton>
     );
 };
