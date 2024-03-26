@@ -40,7 +40,7 @@ import {
 
 
 // react components:
-interface SelectDropdownEditorProps<TElement extends Element = HTMLElement, TValue extends any = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>
+export interface SelectDropdownEditorProps<TElement extends Element = HTMLElement, TValue extends any = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>
     extends
         // bases:
         Pick<EditorProps<TElement, TValue>,
