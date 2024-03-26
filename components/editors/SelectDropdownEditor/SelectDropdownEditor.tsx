@@ -196,6 +196,6 @@ const SelectDropdownEditor = <TElement extends Element = HTMLElement, TValue ext
     )
 };
 export {
-    SelectDropdownEditor,
-    SelectDropdownEditor as default,
+    SelectDropdownEditor,            // named export for readibility
+    SelectDropdownEditor as default, // default export to support React.lazy
 }
