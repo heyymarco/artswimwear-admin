@@ -14,7 +14,10 @@ import {
 
 // internal components:
 import {
+    RadioDecoratorProps,
     RadioDecorator,
+    
+    RadioDecoratorComponentProps,
 }                           from '@/components/RadioDecorator'
 
 // styles:
@@ -29,14 +32,18 @@ interface SelectDropdownEditorItemProps<TElement extends Element = HTMLElement>
     extends
         // bases:
         ListItemProps<TElement>,
-        ListItemComponentProps<Element>
+        ListItemComponentProps<Element>,
+        
+        // components:
+        RadioDecoratorComponentProps
 {
 }
 const SelectDropdownEditorItem = <TElement extends Element = HTMLElement>(props: SelectDropdownEditorItemProps<TElement>): JSX.Element|null => {
     // props:
     const {
         // components:
-        listItemComponent = (<ListItem /> as React.ReactComponentElement<any, ListItemProps<Element>>),
+        listItemComponent       = (<ListItem />       as React.ReactComponentElement<any, ListItemProps<Element>>),
+        radioDecoratorComponent = (<RadioDecorator /> as React.ReactComponentElement<any, RadioDecoratorProps<Element>>),
         
         
         
@@ -67,6 +74,16 @@ const SelectDropdownEditorItem = <TElement extends Element = HTMLElement>(props:
         ...restListItemProps
     } = restSelectDropdownEditorItem;
     
+    const {
+        // classes:
+        className : radioDecoratorClassName = 'indicator', // defaults to 'indicator'
+        
+        
+        
+        // other props:
+        ...restRadioDecoratorComponentProps
+    } = radioDecoratorComponent?.props ?? {};
+    
     
     
     // jsx:
@@ -85,7 +102,18 @@ const SelectDropdownEditorItem = <TElement extends Element = HTMLElement>(props:
         
         
         // children:
-        <RadioDecorator className='indicator' />,
+        (!!radioDecoratorComponent && React.cloneElement<RadioDecoratorProps<Element>>(radioDecoratorComponent,
+            // props:
+            {
+                // other props:
+                ...restRadioDecoratorComponentProps,
+                
+                
+                
+                // classes:
+                className : radioDecoratorClassName,
+            },
+        )),
         children,
     );
 };
