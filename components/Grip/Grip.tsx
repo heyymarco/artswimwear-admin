@@ -51,6 +51,12 @@ const Grip = <TElement extends Element = HTMLElement>(props: GripProps<TElement>
         
         
         
+        // handlers:
+        onMouseDown,
+        onTouchStart,
+        
+        
+        
         // other props:
         ...restGripProps
     } = props;
@@ -92,8 +98,8 @@ const Grip = <TElement extends Element = HTMLElement>(props: GripProps<TElement>
     });
     
     const handleMouseDown  = useMergeEvents(
-        // preserves the original `onMouseDown`:
-        props.onMouseDown,
+        // preserves the original `onMouseDown` from `props`:
+        onMouseDown,
         
         
         
@@ -101,8 +107,8 @@ const Grip = <TElement extends Element = HTMLElement>(props: GripProps<TElement>
         handleGrabbed,
     );
     const handleTouchStart = useMergeEvents(
-        // preserves the original `onTouchStart`:
-        props.onTouchStart,
+        // preserves the original `onTouchStart` from `props`:
+        onTouchStart,
         
         
         
@@ -234,7 +240,7 @@ const Grip = <TElement extends Element = HTMLElement>(props: GripProps<TElement>
             
             
             // handlers:
-            onMouseDown  = {handleMouseDown}
+            onMouseDown  = {handleMouseDown }
             onTouchStart = {handleTouchStart}
         >
             {children}
