@@ -14,13 +14,13 @@ import {
 
 
 // react components:
-export interface EmailEditorProps<TElement extends Element = HTMLElement>
+export interface EmailEditorProps<TElement extends Element = HTMLSpanElement>
     extends
         // bases:
         TextEditorProps<TElement>
 {
 }
-const EmailEditor = <TElement extends Element = HTMLElement>(props: EmailEditorProps<TElement>): JSX.Element|null => {
+const EmailEditor = <TElement extends Element = HTMLSpanElement>(props: EmailEditorProps<TElement>): JSX.Element|null => {
     // jsx:
     return (
         <TextEditor<TElement>

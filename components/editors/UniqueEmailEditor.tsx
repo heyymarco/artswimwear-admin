@@ -31,13 +31,13 @@ import {
 
 
 // react components:
-export interface UniqueEmailEditorProps<TElement extends Element = HTMLElement>
+export interface UniqueEmailEditorProps<TElement extends Element = HTMLSpanElement>
     extends
         // bases:
         ImplementedUniqueEditorProps<TElement>
 {
 }
-const UniqueEmailEditor = <TElement extends Element = HTMLElement>(props: UniqueEmailEditorProps<TElement>): JSX.Element|null => {
+const UniqueEmailEditor = <TElement extends Element = HTMLSpanElement>(props: UniqueEmailEditorProps<TElement>): JSX.Element|null => {
     // stores:
     const [availableEmail] = useAvailableEmail();
     

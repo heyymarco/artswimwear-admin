@@ -26,13 +26,13 @@ import {
 
 
 // react components:
-export interface UniqueRolenameEditorProps<TElement extends Element = HTMLElement>
+export interface UniqueRolenameEditorProps<TElement extends Element = HTMLSpanElement>
     extends
         // bases:
         ImplementedUniqueEditorProps<TElement>
 {
 }
-const UniqueRolenameEditor = <TElement extends Element = HTMLElement>(props: UniqueRolenameEditorProps<TElement>): JSX.Element|null => {
+const UniqueRolenameEditor = <TElement extends Element = HTMLSpanElement>(props: UniqueRolenameEditorProps<TElement>): JSX.Element|null => {
     // stores:
     const [availableRolename] = useAvailableRolename();
     

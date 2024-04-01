@@ -19,13 +19,13 @@ import {
 
 
 // react components:
-export interface PriceEditorProps<TElement extends Element = HTMLElement>
+export interface PriceEditorProps<TElement extends Element = HTMLDivElement>
     extends
         // bases:
         CurrencyEditorProps<TElement>
 {
 }
-const PriceEditor = <TElement extends Element = HTMLElement>(props: PriceEditorProps<TElement>): JSX.Element|null => {
+const PriceEditor = <TElement extends Element = HTMLDivElement>(props: PriceEditorProps<TElement>): JSX.Element|null => {
     // default props:
     const {
         // appearances:

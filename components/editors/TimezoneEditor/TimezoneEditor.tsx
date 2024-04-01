@@ -48,7 +48,7 @@ import {
 
 
 // react components:
-interface TimezoneEditorProps<TElement extends Element = HTMLElement>
+interface TimezoneEditorProps<TElement extends Element = HTMLButtonElement>
     extends
         // bases:
         Pick<EditorProps<TElement, number>,
@@ -73,7 +73,7 @@ interface TimezoneEditorProps<TElement extends Element = HTMLElement>
         >
 {
 }
-const TimezoneEditor = <TElement extends Element = HTMLElement>(props: TimezoneEditorProps<TElement>): JSX.Element|null => {
+const TimezoneEditor = <TElement extends Element = HTMLButtonElement>(props: TimezoneEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // values:

@@ -43,7 +43,7 @@ import {
 
 
 // react components:
-export interface UniquePathEditorProps<TElement extends Element = HTMLElement>
+export interface UniquePathEditorProps<TElement extends Element = HTMLSpanElement>
     extends
         // bases:
         ImplementedUniqueEditorProps<TElement>
@@ -51,7 +51,7 @@ export interface UniquePathEditorProps<TElement extends Element = HTMLElement>
     // appearances:
     homeUrl ?: string
 }
-const UniquePathEditor = <TElement extends Element = HTMLElement>(props: UniquePathEditorProps<TElement>): JSX.Element|null => {
+const UniquePathEditor = <TElement extends Element = HTMLSpanElement>(props: UniquePathEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // appearances:
