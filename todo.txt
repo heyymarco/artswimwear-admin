@@ -10,7 +10,7 @@ TODO: replace CollapsibleSuspense with showDialog()
 protect Admin role from deletion
 protect change user role from himself
 protect delete user from himself
-[high prior] create a random value of @unique nullable data of DraftOrder::paypalOrderId & Credentials::username
+[high prior] create a random value of @unique nullable data of DraftOrder::paymentId & Credentials::username
 [low  prior] update AddressEditor to accept/return null if all fields are empty
 
 learn tiptap vs prosemirror vs lexical
