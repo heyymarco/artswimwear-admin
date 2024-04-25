@@ -73,20 +73,10 @@ export const usesToolbarLayout = () => {
             
             // children:
             ...children(headingEditorElm, {
-                // sizes:
-                boxSizing  : 'content-box', // the final size is excluding borders & paddings
-                
-                
-                
                 // customize:
                 ...usesCssProps(usesPrefixedProps(wysiwygEditors, 'headingEditor')), // apply config's cssProps starting with headingEditor***
             }),
             ...children(alignmentEditorElm, {
-                // sizes:
-                boxSizing  : 'content-box', // the final size is excluding borders & paddings
-                
-                
-                
                 // customize:
                 ...usesCssProps(usesPrefixedProps(wysiwygEditors, 'alignmentEditor')), // apply config's cssProps starting with alignmentEditor***
             }),
