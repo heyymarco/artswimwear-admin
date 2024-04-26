@@ -117,7 +117,7 @@ const axiosBaseQuery = (
 export const apiSlice = createApi({
     reducerPath : 'api',
     baseQuery : axiosBaseQuery({
-        baseUrl: `${process.env.WEBSITE_URL ?? ''}/api`
+        baseUrl: `${process.env.APP_URL ?? ''}/api`
     }),
     tagTypes: ['Products', 'TemplateVariantGroups', 'Orders', 'Users', 'Roles'],
     endpoints : (builder) => ({
