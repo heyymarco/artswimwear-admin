@@ -71,6 +71,8 @@ export interface OrderDetail
             |'createdAt'
             |'updatedAt'
             
+            |'paymentId'
+            
             |'customerId'
             |'guestId'
         >
