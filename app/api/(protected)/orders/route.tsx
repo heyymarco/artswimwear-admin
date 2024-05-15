@@ -59,7 +59,7 @@ import type {
     EmailConfig,
 }                           from '@/components/Checkout/types'
 import {
-    checkoutConfig,
+    checkoutConfigServer,
 }                           from '@/checkout.config.server'
 
 
@@ -662,16 +662,16 @@ You do not have the privilege to modify the payment of the order.`
             let emailConfig : EmailConfig|undefined = undefined;
             
             if (rejectionReason && paymentConfirmationDetail.count) { // payment confirmation declined
-                emailConfig = checkoutConfig.emails.rejected;
+                emailConfig = checkoutConfigServer.emails.rejected;
             }
             else if (payment?.type === 'MANUAL_PAID') {   // payment approved (regradless having payment confirmation or not)
-                emailConfig = checkoutConfig.emails.checkout;
+                emailConfig = checkoutConfigServer.emails.checkout;
             }
             else if (orderStatus === 'ON_THE_WAY') { // shipping tracking number confirmation
-                emailConfig = checkoutConfig.emails.shipping;
+                emailConfig = checkoutConfigServer.emails.shipping;
             }
             else if (orderStatus === 'COMPLETED') {  // order completed confirmation
-                emailConfig = checkoutConfig.emails.completed;
+                emailConfig = checkoutConfigServer.emails.completed;
             } // if
             
             if (emailConfig) {

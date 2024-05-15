@@ -75,7 +75,7 @@ import type {
     EmailConfig,
 }                           from '@/components/Checkout/types'
 import {
-    checkoutConfig,
+    checkoutConfigServer,
 }                           from '@/checkout.config.server'
 
 
@@ -262,7 +262,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
             business,
             payment,
             shipping,
-        } = checkoutConfig;
+        } = checkoutConfigServer;
         
         
         
