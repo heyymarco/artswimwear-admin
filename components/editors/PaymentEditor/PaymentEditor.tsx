@@ -120,15 +120,17 @@ export const usePaymentEditorStyleSheet = dynamicStyleSheet(
 
 // utilities:
 const emptyPaymentValue : Required<PaymentValue> = {
-    type                  : 'MANUAL_PAID',
-    brand                 : '',
-    identifier            : '',
+    type                  : 'MANUAL_PAID', // 'MANUAL' (unedited) => 'MANUAL_PAID' (edited)
+    brand                 : '',            // 'BANK_TRANSFER'|'CHECK'|'OTHER'
+ // identifier            : '',            // unused
+ // expiresAt             : null,          // unused
     
-    amount                : null,
-    fee                   : null,
-    sendConfirmationEmail : true,
+    amount                : null,          // the transferred amount
+    fee                   : null,          // the transferred fee
     
-    billingAddress        : null,
+ // billingAddress        : null,          // unused
+    
+    sendConfirmationEmail : true,          // an additional option
 };
 Object.freeze(emptyPaymentValue);
 
@@ -136,11 +138,23 @@ Object.freeze(emptyPaymentValue);
 
 // react components:
 export type PaymentValue =
-    Omit<Payment, 'id'|'amount'|'fee'>
+    Pick<Payment,
+        // data:
+        |'type'
+        |'brand'
+        
+        // |'amount' // convert to nullable
+        // |'fee'    // convert to nullable
+    >
     & {
-        amount                 : number|null
-        fee                    : number|null
-        sendConfirmationEmail ?: boolean
+        // data:
+        amount                 : number|null // converted to nullable
+        fee                    : number|null // converted to nullable
+        
+        
+        
+        // options:
+        sendConfirmationEmail ?: boolean     // an additional option
     }
 export interface PaymentEditorProps
     extends

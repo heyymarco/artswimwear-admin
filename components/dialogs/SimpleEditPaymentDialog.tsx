@@ -57,8 +57,10 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
             ...value,
             
             brand                 : ((isInitiallyUnpaid ? null : value.brand ) || null), // normalize to null if empty_string
+            
             amount                : ((isInitiallyUnpaid ? null : value.amount)        ), // perserve zero
             fee                   : ((isInitiallyUnpaid ? null : value.fee   ) || null), // normalize to null if zero
+            
             sendConfirmationEmail :   isInitiallyUnpaid,
         };
     });
@@ -73,7 +75,9 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
             [edit] : {
                 // original:
                 ...restValue,
-                type   : 'MANUAL_PAID',
+                
+                type   : 'MANUAL_PAID',           // 'MANUAL' (unedited) => 'MANUAL_PAID' (edited)
+                
                 amount : (restValue.amount ?? 0), // normalize to zero if null
                 fee    : (restValue.fee    ?? 0), // normalize to zero if null
             },
