@@ -199,6 +199,7 @@ You do not have the privilege to view the orders.`
                 orderId                   : true,
                 orderStatus               : true,
                 orderTrouble              : true,
+                cancelationReason         : true,
                 
                 items                     : {
                     select: {
@@ -590,6 +591,7 @@ You do not have the privilege to modify the payment of the order.`
                     orderId                   : true,
                     orderStatus               : true,
                     orderTrouble              : true,
+                    cancelationReason         : true,
                     
                     items                     : {
                         select: {
