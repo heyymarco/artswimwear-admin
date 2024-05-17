@@ -328,7 +328,7 @@ You do not have the privilege to view the orders.`
     
     
     //#region validating request
-    if ((orderStatus !== undefined) && (typeof(orderStatus) !== 'string') && !['NEW_ORDER', 'PROCESSED', 'ON_THE_WAY', 'IN_TROUBLE', 'COMPLETED'].includes(orderStatus)) {
+    if ((orderStatus !== undefined) && (typeof(orderStatus) !== 'string') && !['NEW_ORDER', 'CANCELED', 'EXPIRED', 'PROCESSED', 'ON_THE_WAY', 'IN_TROUBLE', 'COMPLETED'].includes(orderStatus)) {
         return NextResponse.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
@@ -667,6 +667,7 @@ You do not have the privilege to modify the payment of the order.`
             else if (payment?.type === 'MANUAL_PAID') {   // payment approved (regradless having payment confirmation or not)
                 emailConfig = checkoutConfigServer.emails.checkout;
             }
+            // TODO: email for order 'CANCELED'|'EXPIRED'
             else if (orderStatus === 'ON_THE_WAY') { // shipping tracking number confirmation
                 emailConfig = checkoutConfigServer.emails.shipping;
             }

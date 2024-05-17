@@ -98,7 +98,7 @@ export interface OrderStatusButtonProps
     
     onChangeOnTheWay  ?: () => void
     onChangeCompleted ?: () => void
-    onChange          ?: (newOrderStatus: OrderStatus) => void|Promise<void>
+    onChangeNext      ?: (newOrderStatus: OrderStatus) => void|Promise<void>
 }
 const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
     // rest props:
@@ -132,7 +132,7 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
         
         onChangeOnTheWay,
         onChangeCompleted,
-        onChange,
+        onChangeNext,
         
         
         
@@ -170,7 +170,7 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
         if (orderStatus === newOrderStatus) return false;
         
         // show warning message if increase_status of unpaid order (no warning if decrease_status):
-        if ((orderStatus === 'NEW_ORDER') && (newOrderStatus !== 'NEW_ORDER') && !isPaid) {
+        if (!isPaid && (orderStatus === 'NEW_ORDER') && (newOrderStatus !== 'NEW_ORDER')) {
             if ((await showMessage<'yes'|'no'>({
                 theme   : 'warning',
                 title   : <h1>Process Unpaid Order</h1>,
@@ -205,7 +205,7 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
         setIsBusy(true);
         try {
             try {
-                await onChange?.(newOrderStatus);
+                await onChangeNext?.(newOrderStatus);
                 return true; // succeeded
             }
             catch (fetchError: any) {

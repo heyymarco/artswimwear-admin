@@ -584,6 +584,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             // classes:
                             className={styleSheet.progressBadge}
                         />
+                        {/* TODO: show expired status */}
                         <Collapse
                             // states:
                             expanded={(orderStatus === 'ON_THE_WAY')}
@@ -685,7 +686,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             
                             onChangeOnTheWay={handleEditShippingTracking}
                             onChangeCompleted={handleOrderCompleted}
-                            onChange={handleChangeOrderStatus}
+                            onChangeNext={handleChangeOrderStatus}
                         />}
                         <ButtonIcon
                             // variants:

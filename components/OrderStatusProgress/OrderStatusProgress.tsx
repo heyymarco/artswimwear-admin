@@ -69,7 +69,7 @@ const OrderStatusProgress = (props: OrderStatusProgressProps): JSX.Element|null 
             orientation='inline'
         >
             {orderStatusValues.map((orderStatusOption, listItemIndex) =>
-                ((orderStatusOption !== 'IN_TROUBLE') || (orderStatus === 'IN_TROUBLE'))
+                ((orderStatusOption !== 'IN_TROUBLE') || (orderStatus === 'IN_TROUBLE')) // hides IN_TROUBLE step except when the current status is IN_TROUBLE
                 &&
                 <ListItem
                     // identifiers:

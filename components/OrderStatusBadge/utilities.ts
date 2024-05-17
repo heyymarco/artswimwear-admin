@@ -19,7 +19,7 @@ import type {
 
 
 // utilities:
-export const orderStatusValues : OrderStatus[] = [
+export const orderStatusValues : Exclude<OrderStatus, 'CANCELED'|'EXPIRED'>[] = [
     'NEW_ORDER',
     'PROCESSED',
     'ON_THE_WAY',
@@ -38,8 +38,10 @@ export const orderStatusTheme = (orderStatus : OrderStatus, paymentType?: Paymen
         case 'NEW_ORDER'  :
             if (paymentType === 'MANUAL') return 'secondary';
             return 'danger';
-        case 'COMPLETED'  : return 'success';
+        case 'CANCELED'   :
+        case 'EXPIRED'    : return 'secondary';
         case 'IN_TROUBLE' : return 'danger';
+        case 'COMPLETED'  : return 'success';
         default           : return 'warning';
     } // switch
 };
@@ -54,6 +56,8 @@ export const orderStatusText = (orderStatus : OrderStatus, paymentType?: Payment
         case 'NEW_ORDER'  :
             if (paymentType === 'MANUAL') return 'Waiting for Payment';
             return 'New Order';
+        case 'CANCELED'   : return 'Canceled';
+        case 'EXPIRED'    : return 'Expired';
         case 'PROCESSED'  : return 'Being Processed';
         case 'ON_THE_WAY' : return 'On the Way';
         case 'IN_TROUBLE' : return 'In Trouble';
@@ -71,6 +75,8 @@ export const orderStatusIcon = (orderStatus : OrderStatus, paymentType?: Payment
         case 'NEW_ORDER'  :
             if (paymentType === 'MANUAL') return 'timer';
             return 'shopping_cart';
+        case 'CANCELED'   : return 'cancel_presentation';
+        case 'EXPIRED'    : return 'timer_off';
         case 'PROCESSED'  : return 'directions_run';
         case 'ON_THE_WAY' : return 'local_shipping';
         case 'IN_TROUBLE' : return 'report_problem';
@@ -81,10 +87,12 @@ export const orderStatusIcon = (orderStatus : OrderStatus, paymentType?: Payment
 export const orderStatusNext = (orderStatus : OrderStatus): OrderStatus => {
     switch (orderStatus) {
         case 'NEW_ORDER'  : return 'PROCESSED';
+        case 'CANCELED'   : return orderStatus;
+        case 'EXPIRED'    : return orderStatus;
         case 'PROCESSED'  : return 'ON_THE_WAY';
         case 'ON_THE_WAY' : return 'COMPLETED';
         case 'IN_TROUBLE' : return 'COMPLETED';
-        case 'COMPLETED'  : return 'COMPLETED';
-        default           : return 'PROCESSED';
+        case 'COMPLETED'  : return orderStatus;
+        default           : return orderStatus;
     } // switch
 }
