@@ -1174,7 +1174,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             <ToolbarPlugin className='solid' theme='primary' />
                             <EditorPlugin
                                 // accessibilities:
-                                placeholder='Type product description here...'
+                                placeholder='Type the trouble note here...'
                             />
                         </WysiwygEditor>
                     }
