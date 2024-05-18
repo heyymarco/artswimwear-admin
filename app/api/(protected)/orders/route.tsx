@@ -294,6 +294,7 @@ You do not have the privilege to view the orders.`
         
         orderStatus,
         orderTrouble,
+        cancelationReason,
         
         customer,
         guest,
@@ -335,6 +336,11 @@ You do not have the privilege to view the orders.`
         }, { status: 400 }); // handled with error
     } // if
     if ((orderTrouble !== undefined) && (orderTrouble !== null) && (typeof(orderTrouble) !== 'object')) {
+        return NextResponse.json({
+            error: 'Invalid data.',
+        }, { status: 400 }); // handled with error
+    } // if
+    if ((cancelationReason !== undefined) && (cancelationReason !== null) && (typeof(cancelationReason) !== 'object')) {
         return NextResponse.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
@@ -437,7 +443,7 @@ You do not have the privilege to view the orders.`
 //         }, { status: 403 }); // handled with error: forbidden
     }
     else {
-        if (!session.role?.order_us && ((orderStatus !== undefined) || (orderTrouble !== undefined) || (shippingCarrier !== undefined) || (shippingNumber !== undefined))) return NextResponse.json({ error:
+        if (!session.role?.order_us && ((orderStatus !== undefined) || (orderTrouble !== undefined) || (cancelationReason !== undefined) || (shippingCarrier !== undefined) || (shippingNumber !== undefined))) return NextResponse.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the order's status.`
@@ -534,6 +540,7 @@ You do not have the privilege to modify the payment of the order.`
                 data   : {
                     orderStatus,
                     orderTrouble,
+                    cancelationReason,
                     
                     customer : (
                         (customer !== undefined)

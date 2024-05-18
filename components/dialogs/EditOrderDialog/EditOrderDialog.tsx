@@ -118,6 +118,9 @@ import {
     PaymentEditor,
 }                           from '@/components/editors/PaymentEditor'
 import {
+    OrderCanceledEditor,
+}                           from '@/components/editors/OrderCanceledEditor'
+import {
     WysiwygEditorState,
     
     ToolbarPlugin,
@@ -147,6 +150,9 @@ import {
 import {
     SimpleEditPaymentDialog,
 }                           from '@/components/dialogs/SimpleEditPaymentDialog'
+import {
+    SimpleEditOrderCanceledDialog,
+}                           from '@/components/dialogs/SimpleEditOrderCanceledDialog'
 import {
     SimpleEditPaymentRejectedDialog,
 }                           from '@/components/dialogs/SimpleEditPaymentRejectedDialog'
@@ -489,6 +495,23 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         
                         confirmedAmount={paymentConfirmation?.amount ?? undefined}
                     />
+                }
+            />
+        );
+    });
+    
+    const handleCancelOrder          = useEvent(() => {
+        showDialog(
+            <SimpleEditOrderCanceledDialog
+                // data:
+                model={model!}
+                edit='cancelationReason'
+                
+                
+                
+                // components:
+                editorComponent={
+                    <OrderCanceledEditor />
                 }
             />
         );
@@ -1196,7 +1219,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                 // variants:
                                 size='lg'
                                 theme='danger'
-                                gradient={!isPaymentRejected}
+                                gradient={!isPaymentRejected} // no gradient if disabled
                                 
                                 
                                 
@@ -1210,6 +1233,25 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             >
                                 {isPaymentRejected ? 'Payment Rejected' : 'Reject Payment'}
                             </ButtonIcon>}
+                            
+                            <ButtonIcon
+                                // appearances:
+                                icon='delete_forever'
+                                
+                                
+                                
+                                // variants:
+                                size='sm'
+                                theme='danger'
+                                outlined={true}
+                                
+                                
+                                
+                                // handlers:
+                                onClick={handleCancelOrder}
+                            >
+                                Cancel Order
+                            </ButtonIcon>
                         </div>
                     </>}
                 </Section>
