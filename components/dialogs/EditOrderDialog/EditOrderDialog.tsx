@@ -75,6 +75,7 @@ import {
     // composite-components:
     Group,
     TabPanel,
+    useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // heymarco components:
@@ -131,9 +132,6 @@ import {
 import {
     SelectCurrencyEditor,
 }                           from '@/components/editors/SelectCurrencyEditor'
-import {
-    CollapsibleSuspense,
-}                           from '@/components/CollapsibleSuspense'
 import {
     SimpleEditAddressDialog,
 }                           from '@/components/dialogs/SimpleEditAddressDialog'
@@ -238,8 +236,6 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     
     // states:
-    type EditMode = 'shippingAddress'|'onTheWay'|'completed'|'trouble'|'payment'|'paymentRejected'|'printOrder'
-    const [editMode, setEditMode] = useState<EditMode|null>(null);
     const [shouldTriggerAutoFocus, setShouldTriggerAutoFocus] = useState<boolean>(false);
     
     
@@ -321,23 +317,50 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     
     
-    // handlers:
-    const handleExpandedChange       = useEvent<EventHandler<ModalExpandedChangeEvent>>(({expanded}): void => {
-        // conditions:
-        if (expanded) return; // ignore if expanded
-        
-        
-        
-        // actions:
-        setEditMode(null);
-    });
+    // dialogs:
+    const {
+        showDialog,
+    } = useDialogMessage();
     
+    
+    
+    // handlers:
     const handleEditShippingAddress  = useEvent(() => {
-        setEditMode('shippingAddress');
+        showDialog(
+            <SimpleEditAddressDialog
+                // data:
+                model={model!}
+                edit='shippingAddress'
+                
+                
+                
+                // components:
+                editorComponent={
+                    <AddressEditor
+                        countryList={countryList}
+                    />
+                }
+            />
+        );
     });
     
     const handlePrint                = useEvent(() => {
-        setEditMode('printOrder');
+        showDialog(
+            <PrintDialog
+                // variants:
+                theme='primary'
+                
+                
+                
+                // classes:
+                className={styleSheet.orderShippingTab}
+            >
+                <OrderAndShipping
+                    // appearances:
+                    printMode={true}
+                />
+            </PrintDialog>
+        );
     });
     const handleChangeOrderStatus    = useEvent(async (newOrderStatus: OrderStatus) => {
         // conditions:
@@ -353,25 +376,122 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     });
     
     const handleEditShippingTracking = useEvent(() => {
-        setEditMode('onTheWay');
+        showDialog(
+            <SimpleEditOrderOnTheWayDialog
+                // data:
+                model={model!}
+                edit='shippingTracking'
+                
+                
+                
+                // components:
+                editorComponent={
+                    <OrderOnTheWayEditor />
+                }
+            />
+        );
     });
     
     const handleOrderCompleted       = useEvent(() => {
-        setEditMode('completed');
+        showDialog(
+            <SimpleEditOrderCompletedDialog
+                // data:
+                model={model!}
+                edit='orderStatus'
+                
+                
+                
+                // components:
+                editorComponent={
+                    <OrderCompletedEditor />
+                }
+            />
+        );
     });
     
     const handleEditTrouble          = useEvent(() => {
-        setEditMode('trouble');
+        showDialog(
+            <SimpleEditOrderTroubleDialog
+                // data:
+                model={model!}
+                edit='orderTrouble'
+                
+                
+                
+                // components:
+                editorComponent={
+                    <WysiwygEditor>
+                        <ToolbarPlugin className='solid' theme='primary' />
+                        <EditorPlugin
+                            // accessibilities:
+                            placeholder='Type the trouble note here...'
+                        />
+                    </WysiwygEditor>
+                }
+            />
+        );
     });
     
-    const handleApprovePayment       = useEvent(() => {
-        setEditMode('payment');
-    });
     const handleRejectPayment        = useEvent(() => {
-        setEditMode('paymentRejected');
+        showDialog(
+            <SimpleEditPaymentRejectedDialog
+                // data:
+                model={model!}
+                edit='paymentConfirmation'
+                
+                
+                
+                // components:
+                editorComponent={
+                    <WysiwygEditor
+                        // validations:
+                        required={true}
+                    >
+                        <ToolbarPlugin className='solid' theme='primary' />
+                        <EditorPlugin
+                            // accessibilities:
+                            aria-label='Rejection Reason'
+                            data-icon={'chat' as IconProps['icon']}
+                            placeholder='Type the reason why the payment confirmation is rejected here...'
+                        />
+                    </WysiwygEditor>
+                }
+            />
+        );
     });
     const handleEditPayment          = useEvent(() => {
-        setEditMode('payment');
+        showDialog(
+            <SimpleEditPaymentDialog
+                // data:
+                model={model!}
+                edit='payment'
+                
+                
+                
+                // components:
+                editorComponent={
+                    <PaymentEditor
+                        // data:
+                        currencyOptions={currencyOptions}
+                        currency={currency}
+                        onCurrencyChange={setCurrency}
+                        
+                        currencyRate={currencyRate}
+                        
+                        
+                        
+                        // accessibilities:
+                        expectedAmount={
+                            totalProductPrice + (totalShippingCosts ?? 0)
+                        }
+                        amountMinThreshold={20 /* percent */}
+                        amountMaxThreshold={20 /* percent */}
+                        
+                        confirmedAmount={paymentConfirmation?.amount ?? undefined}
+                    />
+                }
+            />
+        );
     });
     
     const handleExpandedEnd          = useEvent(() => {
@@ -527,43 +647,146 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         );
     };
     return (
-        <>
-            <ComplexEditModelDialog<OrderDetail>
-                // other props:
-                {...restComplexEditModelDialogProps}
-                
-                
-                
-                // data:
-                modelName='Order'
-                modelEntryName={`#ORDER_${model?.orderId}`}
-                model={model}
-                
-                
-                
-                // stores:
-                isCommiting = {isUpdatingOrder}
-                
-                
-                
-                // states:
-                defaultExpandedTabIndex={defaultExpandedTabIndex}
-                
-                
-                
-                // auto focusable:
-                autoFocusOn={(typeof(autoFocusOn) === 'string') ? undefined : autoFocusOn}
-                
-                
-                
-                // handlers:
-                onExpandEnd={handleExpandedEnd}
-            >
-                <TabPanel label={PAGE_ORDER_TAB_ORDER_N_SHIPPING} panelComponent={<Generic className={styleSheet.orderShippingTab} />}>
-                    <OrderAndShipping />
-                    <Section
+        <ComplexEditModelDialog<OrderDetail>
+            // other props:
+            {...restComplexEditModelDialogProps}
+            
+            
+            
+            // data:
+            modelName='Order'
+            modelEntryName={`#ORDER_${model?.orderId}`}
+            model={model}
+            
+            
+            
+            // stores:
+            isCommiting = {isUpdatingOrder}
+            
+            
+            
+            // states:
+            defaultExpandedTabIndex={defaultExpandedTabIndex}
+            
+            
+            
+            // auto focusable:
+            autoFocusOn={(typeof(autoFocusOn) === 'string') ? undefined : autoFocusOn}
+            
+            
+            
+            // handlers:
+            onExpandEnd={handleExpandedEnd}
+        >
+            <TabPanel label={PAGE_ORDER_TAB_ORDER_N_SHIPPING} panelComponent={<Generic className={styleSheet.orderShippingTab} />}>
+                <OrderAndShipping />
+                <Section
+                    // refs:
+                    elmRef={(!role?.order_us && (autoFocusOn === 'OrderStatusButton')) ? autoFocusRef : undefined}
+                    
+                    
+                    
+                    // variants:
+                    theme='primary'
+                    
+                    
+                    
+                    // classes:
+                    className={styleSheet.actionSection}
+                >
+                    <OrderStatusProgress
+                        // data:
+                        model={model}
+                        
+                        
+                        
+                        // classes:
+                        className={styleSheet.progressBadge}
+                    />
+                    {/* TODO: show expired status */}
+                    <Collapse
+                        // states:
+                        expanded={(orderStatus === 'ON_THE_WAY')}
+                    >
+                        <Group
+                            // variants:
+                            orientation='block'
+                        >
+                            <Basic
+                                // classes:
+                                className={styleSheet.noteHeader}
+                            >
+                                Shipping Tracking Number
+                            </Basic>
+                            <Content
+                                // classes:
+                                className={styleSheet.noteBody}
+                            >
+                                {!shippingTracking?.shippingCarrier && !shippingTracking?.shippingNumber && <span
+                                    // classes:
+                                    className={`${styleSheet.noteEmpty} txt-sec`}
+                                >
+                                    -- no shipping tracking number --
+                                </span>}
+                                <span
+                                    // classes:
+                                    className={styleSheet.noteContentCenter}
+                                >
+                                    {!!shippingTracking?.shippingCarrier && <>
+                                        ({shippingTracking.shippingCarrier})&nbsp;
+                                    </>}
+                                    {shippingTracking?.shippingNumber}
+                                </span>
+                                {!!role?.order_us && <EditButton className={styleSheet.editTrouble} onClick={handleEditShippingTracking} />}
+                            </Content>
+                        </Group>
+                    </Collapse>
+                    <Collapse
+                        // states:
+                        expanded={(orderStatus === 'IN_TROUBLE')}
+                    >
+                        <Group
+                            // variants:
+                            theme='danger'
+                            orientation='block'
+                        >
+                            <Basic
+                                // classes:
+                                className={styleSheet.noteHeader}
+                            >
+                                Trouble Note
+                            </Basic>
+                            <Content
+                                // classes:
+                                className={styleSheet.noteBody}
+                            >
+                                {!orderTrouble && <span
+                                    // classes:
+                                    className={`${styleSheet.noteEmpty} txt-sec`}
+                                >
+                                    -- no trouble note --
+                                </span>}
+                                {!!orderTrouble && <WysiwygViewer
+                                    // variants:
+                                    nude={true}
+                                    
+                                    
+                                    
+                                    // values:
+                                    value={(orderTrouble ?? null) as unknown as WysiwygEditorState|undefined}
+                                />}
+                                {!!role?.order_us && <EditButton className={styleSheet.editTrouble} onClick={handleEditTrouble} />}
+                            </Content>
+                        </Group>
+                    </Collapse>
+                    {!!role?.order_us && <OrderStatusButton
                         // refs:
-                        elmRef={(!role?.order_us && (autoFocusOn === 'OrderStatusButton')) ? autoFocusRef : undefined}
+                        elmRef={(autoFocusOn === 'OrderStatusButton') ? (autoFocusRef as React.MutableRefObject<HTMLButtonElement|null>) : undefined}
+                        
+                        
+                        
+                        // data:
+                        model={model}
                         
                         
                         
@@ -572,263 +795,187 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         
                         
                         
+                        // states:
+                        assertiveFocusable={shouldTriggerAutoFocus && (autoFocusOn === 'OrderStatusButton')}
+                        
+                        
+                        
+                        // handlers:
+                        onPrint={handlePrint}
+                        
+                        onChangeOnTheWay={handleEditShippingTracking}
+                        onChangeCompleted={handleOrderCompleted}
+                        onChangeNext={handleChangeOrderStatus}
+                    />}
+                    <ButtonIcon
+                        // variants:
+                        theme='secondary'
+                        
+                        
+                        
                         // classes:
-                        className={styleSheet.actionSection}
+                        className='btnPrint'
+                        
+                        
+                        
+                        // components:
+                        iconComponent={<Icon icon='print' theme='primary' mild={true} />}
+                        
+                        
+                        
+                        // handlers:
+                        onClick={handlePrint}
                     >
-                        <OrderStatusProgress
-                            // data:
-                            model={model}
+                        Print
+                    </ButtonIcon>
+                </Section>
+            </TabPanel>
+            <TabPanel label={PAGE_ORDER_TAB_PAYMENT}          panelComponent={<Generic className={styleSheet.paymentTab} />}>
+                <Section className={styleSheet.paymentSection}>
+                    {isPaid && <DataTable className={styleSheet.dataTable} breakpoint='sm'>
+                        <DataTableBody>
+                            <DataTableItem
+                                // accessibilities:
+                                label='Method'
+                            >
+                                <span>
+                                    {paymentTypeUppercased}
+                                </span>
+                            </DataTableItem>
+                            <DataTableItem
+                                // accessibilities:
+                                label={isManualPaid ? 'Type' : 'Provider'}
+                                
+                                
+                                
+                                // components:
+                                tableDataComponent={<Generic className={styleSheet.tableDataComposite} />}
+                                
+                                
+                                
+                                // children:
+                                actionChildren={
+                                    isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />
+                                }
+                            >
+                                {
+                                    !!paymentBrand
+                                    ? (isManualPaid ? paymentBrand : <Image className='paymentProvider' alt={paymentBrand} src={`/brands/${paymentBrand}.svg`} width={42} height={26} />)
+                                    : '-'
+                                }
+                                <span className='paymentIdentifier'>
+                                    {!!paymentIdentifier && <>&nbsp;({paymentIdentifier})</>}
+                                </span>
+                            </DataTableItem>
+                            <DataTableItem
+                                // accessibilities:
+                                label='Amount'
+                                
+                                
+                                
+                                // components:
+                                tableDataComponent={<Generic className={`${styleSheet.tableDataAmount} currencyData`} />}
+                                
+                                
+                                
+                                // children:
+                                actionChildren={
+                                    isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />
+                                }
+                            >
+                                {isForeignCurrency && <SelectCurrencyEditor
+                                    // variants:
+                                    theme='primary'
+                                    
+                                    
+                                    
+                                    // classes:
+                                    className={styleSheet.selectCurrencyDropdown}
+                                    
+                                    
+                                    
+                                    // values:
+                                    valueOptions={currencyOptions}
+                                    value={currency}
+                                    onChange={setCurrency}
+                                />}
+                                <strong>
+                                    <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={paymentAmount} />
+                                </strong>
+                            </DataTableItem>
+                            <DataTableItem
+                                // accessibilities:
+                                label='Fee'
+                                
+                                
+                                
+                                // components:
+                                tableDataComponent={<Generic className={`${styleSheet.tableDataComposite} currencyData`} />}
+                                
+                                
+                                
+                                // children:
+                                actionChildren={
+                                    isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />
+                                }
+                            >
+                                <span>
+                                    <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={paymentFee} />
+                                </span>
+                            </DataTableItem>
+                            <DataTableItem
+                                // accessibilities:
+                                label='Net'
+                                
+                                
+                                
+                                // components:
+                                tableDataComponent={<Generic className={`${styleSheet.tableDataComposite} currencyData`} />}
+                                
+                                
+                                
+                                // children:
+                                actionChildren={
+                                    <></>
+                                }
+                            >
+                                <strong>
+                                    <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={(paymentAmount !== undefined) ? (paymentAmount - (paymentFee ?? 0)) : undefined} />
+                                </strong>
+                            </DataTableItem>
+                        </DataTableBody>
+                    </DataTable>}
+                    
+                    {!isPaid && !!role?.order_upmu && <>
+                        {!hasPaymentConfirmation && <Alert
+                            // variants:
+                            theme='warning'
                             
                             
                             
                             // classes:
-                            className={styleSheet.progressBadge}
-                        />
-                        {/* TODO: show expired status */}
-                        <Collapse
-                            // states:
-                            expanded={(orderStatus === 'ON_THE_WAY')}
-                        >
-                            <Group
-                                // variants:
-                                orientation='block'
-                            >
-                                <Basic
-                                    // classes:
-                                    className={styleSheet.noteHeader}
-                                >
-                                    Shipping Tracking Number
-                                </Basic>
-                                <Content
-                                    // classes:
-                                    className={styleSheet.noteBody}
-                                >
-                                    {!shippingTracking?.shippingCarrier && !shippingTracking?.shippingNumber && <span
-                                        // classes:
-                                        className={`${styleSheet.noteEmpty} txt-sec`}
-                                    >
-                                        -- no shipping tracking number --
-                                    </span>}
-                                    <span
-                                        // classes:
-                                        className={styleSheet.noteContentCenter}
-                                    >
-                                        {!!shippingTracking?.shippingCarrier && <>
-                                            ({shippingTracking.shippingCarrier})&nbsp;
-                                        </>}
-                                        {shippingTracking?.shippingNumber}
-                                    </span>
-                                    {!!role?.order_us && <EditButton className={styleSheet.editTrouble} onClick={handleEditShippingTracking} />}
-                                </Content>
-                            </Group>
-                        </Collapse>
-                        <Collapse
-                            // states:
-                            expanded={(orderStatus === 'IN_TROUBLE')}
-                        >
-                            <Group
-                                // variants:
-                                theme='danger'
-                                orientation='block'
-                            >
-                                <Basic
-                                    // classes:
-                                    className={styleSheet.noteHeader}
-                                >
-                                    Trouble Note
-                                </Basic>
-                                <Content
-                                    // classes:
-                                    className={styleSheet.noteBody}
-                                >
-                                    {!orderTrouble && <span
-                                        // classes:
-                                        className={`${styleSheet.noteEmpty} txt-sec`}
-                                    >
-                                        -- no trouble note --
-                                    </span>}
-                                    {!!orderTrouble && <WysiwygViewer
-                                        // variants:
-                                        nude={true}
-                                        
-                                        
-                                        
-                                        // values:
-                                        value={(orderTrouble ?? null) as unknown as WysiwygEditorState|undefined}
-                                    />}
-                                    {!!role?.order_us && <EditButton className={styleSheet.editTrouble} onClick={handleEditTrouble} />}
-                                </Content>
-                            </Group>
-                        </Collapse>
-                        {!!role?.order_us && <OrderStatusButton
-                            // refs:
-                            elmRef={(autoFocusOn === 'OrderStatusButton') ? (autoFocusRef as React.MutableRefObject<HTMLButtonElement|null>) : undefined}
-                            
-                            
-                            
-                            // data:
-                            model={model}
-                            
-                            
-                            
-                            // variants:
-                            theme='primary'
+                            className={styleSheet.paymentConfirmationAlert}
                             
                             
                             
                             // states:
-                            assertiveFocusable={shouldTriggerAutoFocus && (autoFocusOn === 'OrderStatusButton')}
-                            
-                            
-                            
-                            // handlers:
-                            onPrint={handlePrint}
-                            
-                            onChangeOnTheWay={handleEditShippingTracking}
-                            onChangeCompleted={handleOrderCompleted}
-                            onChangeNext={handleChangeOrderStatus}
-                        />}
-                        <ButtonIcon
-                            // variants:
-                            theme='secondary'
-                            
-                            
-                            
-                            // classes:
-                            className='btnPrint'
+                            expanded={true}
                             
                             
                             
                             // components:
-                            iconComponent={<Icon icon='print' theme='primary' mild={true} />}
-                            
-                            
-                            
-                            // handlers:
-                            onClick={handlePrint}
+                            controlComponent={<React.Fragment />}
                         >
-                            Print
-                        </ButtonIcon>
-                    </Section>
-                </TabPanel>
-                <TabPanel label={PAGE_ORDER_TAB_PAYMENT}          panelComponent={<Generic className={styleSheet.paymentTab} />}>
-                    <Section className={styleSheet.paymentSection}>
-                        {isPaid && <DataTable className={styleSheet.dataTable} breakpoint='sm'>
-                            <DataTableBody>
-                                <DataTableItem
-                                    // accessibilities:
-                                    label='Method'
-                                >
-                                    <span>
-                                        {paymentTypeUppercased}
-                                    </span>
-                                </DataTableItem>
-                                <DataTableItem
-                                    // accessibilities:
-                                    label={isManualPaid ? 'Type' : 'Provider'}
-                                    
-                                    
-                                    
-                                    // components:
-                                    tableDataComponent={<Generic className={styleSheet.tableDataComposite} />}
-                                    
-                                    
-                                    
-                                    // children:
-                                    actionChildren={
-                                        isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />
-                                    }
-                                >
-                                    {
-                                        !!paymentBrand
-                                        ? (isManualPaid ? paymentBrand : <Image className='paymentProvider' alt={paymentBrand} src={`/brands/${paymentBrand}.svg`} width={42} height={26} />)
-                                        : '-'
-                                    }
-                                    <span className='paymentIdentifier'>
-                                        {!!paymentIdentifier && <>&nbsp;({paymentIdentifier})</>}
-                                    </span>
-                                </DataTableItem>
-                                <DataTableItem
-                                    // accessibilities:
-                                    label='Amount'
-                                    
-                                    
-                                    
-                                    // components:
-                                    tableDataComponent={<Generic className={`${styleSheet.tableDataAmount} currencyData`} />}
-                                    
-                                    
-                                    
-                                    // children:
-                                    actionChildren={
-                                        isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />
-                                    }
-                                >
-                                    {isForeignCurrency && <SelectCurrencyEditor
-                                        // variants:
-                                        theme='primary'
-                                        
-                                        
-                                        
-                                        // classes:
-                                        className={styleSheet.selectCurrencyDropdown}
-                                        
-                                        
-                                        
-                                        // values:
-                                        valueOptions={currencyOptions}
-                                        value={currency}
-                                        onChange={setCurrency}
-                                    />}
-                                    <strong>
-                                        <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={paymentAmount} />
-                                    </strong>
-                                </DataTableItem>
-                                <DataTableItem
-                                    // accessibilities:
-                                    label='Fee'
-                                    
-                                    
-                                    
-                                    // components:
-                                    tableDataComponent={<Generic className={`${styleSheet.tableDataComposite} currencyData`} />}
-                                    
-                                    
-                                    
-                                    // children:
-                                    actionChildren={
-                                        isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />
-                                    }
-                                >
-                                    <span>
-                                        <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={paymentFee} />
-                                    </span>
-                                </DataTableItem>
-                                <DataTableItem
-                                    // accessibilities:
-                                    label='Net'
-                                    
-                                    
-                                    
-                                    // components:
-                                    tableDataComponent={<Generic className={`${styleSheet.tableDataComposite} currencyData`} />}
-                                    
-                                    
-                                    
-                                    // children:
-                                    actionChildren={
-                                        <></>
-                                    }
-                                >
-                                    <strong>
-                                        <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={(paymentAmount !== undefined) ? (paymentAmount - (paymentFee ?? 0)) : undefined} />
-                                    </strong>
-                                </DataTableItem>
-                            </DataTableBody>
-                        </DataTable>}
+                            <p>
+                                Attention: The buyer has <strong>not confirmed the payment</strong> yet.
+                            </p>
+                            <p>
+                                However, you can immediately approve the payment if you are sure that the buyer has completed the payment.
+                            </p>
+                        </Alert>}
                         
-                        {!isPaid && !!role?.order_upmu && <>
-                            {!hasPaymentConfirmation && <Alert
+                        {hasPaymentConfirmation && <>
+                            {!isPaymentRejected && <Alert
                                 // variants:
                                 theme='warning'
                                 
@@ -848,424 +995,226 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                 controlComponent={<React.Fragment />}
                             >
                                 <p>
-                                    Attention: The buyer has <strong>not confirmed the payment</strong> yet.
+                                    The buyer has <strong>confirmed the payment</strong>.
                                 </p>
                                 <p>
-                                    However, you can immediately approve the payment if you are sure that the buyer has completed the payment.
+                                    Please <strong>review</strong> to take approval or rejection action.
                                 </p>
                             </Alert>}
                             
-                            {hasPaymentConfirmation && <>
-                                {!isPaymentRejected && <Alert
-                                    // variants:
-                                    theme='warning'
-                                    
-                                    
-                                    
-                                    // classes:
-                                    className={styleSheet.paymentConfirmationAlert}
-                                    
-                                    
-                                    
-                                    // states:
-                                    expanded={true}
-                                    
-                                    
-                                    
-                                    // components:
-                                    controlComponent={<React.Fragment />}
-                                >
-                                    <p>
-                                        The buyer has <strong>confirmed the payment</strong>.
-                                    </p>
-                                    <p>
-                                        Please <strong>review</strong> to take approval or rejection action.
-                                    </p>
-                                </Alert>}
+                            {isPaymentRejected && <Alert
+                                // variants:
+                                theme='warning'
                                 
-                                {isPaymentRejected && <Alert
-                                    // variants:
-                                    theme='warning'
-                                    
-                                    
-                                    
-                                    // classes:
-                                    className={styleSheet.paymentConfirmationAlert}
-                                    
-                                    
-                                    
-                                    // states:
-                                    expanded={true}
-                                    
-                                    
-                                    
-                                    // components:
-                                    controlComponent={<React.Fragment />}
-                                >
-                                    <p>
-                                        You have <strong>rejected</strong> the buyer&apos;s payment confirmation.
-                                    </p>
-                                    <p>
-                                        However you can still change it as <strong>approved</strong>.
-                                    </p>
-                                    
-                                    <hr />
-                                    
-                                    <p>
-                                        Rejection reason:
-                                    </p>
-                                    <WysiwygViewer
-                                        // variants:
-                                        nude={true}
-                                        
-                                        
-                                        
-                                        // values:
-                                        value={(paymentConfirmation.rejectionReason ?? null) as WysiwygEditorState|null}
-                                    />
-                                </Alert>}
                                 
-                                <DataTable className={styleSheet.dataTable} breakpoint='sm'>
-                                    <DataTableHeader tableTitleComponent={<Basic />}>
-                                        Payment Confirmation
-                                    </DataTableHeader>
-                                    <DataTableBody>
-                                        <DataTableItem
-                                            // accessibilities:
-                                            label='Reviewed At'
-                                        >
-                                            {
-                                                paymentConfirmation.reviewedAt
-                                                ? <>
-                                                    <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.reviewedAt).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} />
-                                                    <TimezoneEditor
-                                                        // variants:
-                                                        theme='primary'
-                                                        mild={true}
-                                                        
-                                                        
-                                                        
-                                                        // values:
-                                                        value={preferredTimezone}
-                                                        onChange={setPreferredTimezone}
-                                                    />
-                                                </>
-                                                : <span className='txt-sec'>not yet reviewed</span>
-                                            }
-                                        </DataTableItem>
-                                        <DataTableItem
-                                            // accessibilities:
-                                            label='Reported At'
-                                        >
-                                            {!!paymentConfirmation.reportedAt && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.reportedAt).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} />}
-                                            <TimezoneEditor
-                                                // variants:
-                                                theme='primary'
-                                                mild={true}
-                                                
-                                                
-                                                
-                                                // values:
-                                                value={preferredTimezone}
-                                                onChange={setPreferredTimezone}
-                                            />
-                                        </DataTableItem>
-                                        <DataTableItem
-                                            // accessibilities:
-                                            label='Amount'
-                                            
-                                            
-                                            
-                                            // components:
-                                            tableDataComponent={<Generic className={styleSheet.tableDataAmount} />}
-                                        >
-                                            {isForeignCurrency && <SelectCurrencyEditor
-                                                // variants:
-                                                theme='primary'
-                                                
-                                                
-                                                
-                                                // classes:
-                                                className={styleSheet.selectCurrencyDropdown}
-                                                
-                                                
-                                                
-                                                // values:
-                                                valueOptions={currencyOptions}
-                                                value={currency}
-                                                onChange={setCurrency}
-                                            />}
-                                            <strong>
-                                                <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={paymentConfirmation.amount} />
-                                            </strong>
-                                        </DataTableItem>
-                                        <DataTableItem
-                                            // accessibilities:
-                                            label='Payer'
-                                        >
-                                            {paymentConfirmation.payerName}
-                                        </DataTableItem>
-                                        <DataTableItem
-                                            // accessibilities:
-                                            label='Payment Date'
-                                        >
-                                            {!!paymentConfirmation.paymentDate && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.paymentDate).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} />}
-                                            <TimezoneEditor
-                                                // variants:
-                                                theme='primary'
-                                                mild={true}
-                                                
-                                                
-                                                
-                                                // values:
-                                                value={preferredTimezone}
-                                                onChange={setPreferredTimezone}
-                                            />
-                                        </DataTableItem>
-                                        <DataTableItem
-                                            // accessibilities:
-                                            label='Originating Bank'
-                                        >
-                                            {paymentConfirmation.originatingBank}
-                                        </DataTableItem>
-                                        <DataTableItem
-                                            // accessibilities:
-                                            label='Destination Bank'
-                                        >
-                                            {paymentConfirmation.destinationBank}
-                                        </DataTableItem>
-                                    </DataTableBody>
-                                </DataTable>
-                            </>}
+                                
+                                // classes:
+                                className={styleSheet.paymentConfirmationAlert}
+                                
+                                
+                                
+                                // states:
+                                expanded={true}
+                                
+                                
+                                
+                                // components:
+                                controlComponent={<React.Fragment />}
+                            >
+                                <p>
+                                    You have <strong>rejected</strong> the buyer&apos;s payment confirmation.
+                                </p>
+                                <p>
+                                    However you can still change it as <strong>approved</strong>.
+                                </p>
+                                
+                                <hr />
+                                
+                                <p>
+                                    Rejection reason:
+                                </p>
+                                <WysiwygViewer
+                                    // variants:
+                                    nude={true}
+                                    
+                                    
+                                    
+                                    // values:
+                                    value={(paymentConfirmation.rejectionReason ?? null) as WysiwygEditorState|null}
+                                />
+                            </Alert>}
                             
-                            <div className={styleSheet.paymentConfirmActions}>
-                                <ButtonIcon
-                                    // refs:
-                                    elmRef={(autoFocusOn === 'ConfirmPaymentButton') ? (autoFocusRef as React.MutableRefObject<HTMLButtonElement|null>) : undefined}
-                                    
-                                    
-                                    
-                                    // appearances:
-                                    icon='done'
-                                    
-                                    
-                                    
-                                    // variants:
-                                    size='lg'
-                                    theme='success'
-                                    gradient={true}
-                                    
-                                    
-                                    
-                                    // states:
-                                    assertiveFocusable={shouldTriggerAutoFocus && (autoFocusOn === 'ConfirmPaymentButton')}
-                                    
-                                    
-                                    
-                                    // handlers:
-                                    onClick={handleApprovePayment}
-                                >
-                                    Approve Payment
-                                </ButtonIcon>
-                                
-                                {hasPaymentConfirmation && <ButtonIcon
-                                    // appearances:
-                                    icon='not_interested'
-                                    
-                                    
-                                    
-                                    // variants:
-                                    size='lg'
-                                    theme='danger'
-                                    gradient={!isPaymentRejected}
-                                    
-                                    
-                                    
-                                    // states:
-                                    enabled={!isPaymentRejected}
-                                    
-                                    
-                                    
-                                    // handlers:
-                                    onClick={handleRejectPayment}
-                                >
-                                    {isPaymentRejected ? 'Payment Rejected' : 'Reject Payment'}
-                                </ButtonIcon>}
-                            </div>
+                            <DataTable className={styleSheet.dataTable} breakpoint='sm'>
+                                <DataTableHeader tableTitleComponent={<Basic />}>
+                                    Payment Confirmation
+                                </DataTableHeader>
+                                <DataTableBody>
+                                    <DataTableItem
+                                        // accessibilities:
+                                        label='Reviewed At'
+                                    >
+                                        {
+                                            paymentConfirmation.reviewedAt
+                                            ? <>
+                                                <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.reviewedAt).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} />
+                                                <TimezoneEditor
+                                                    // variants:
+                                                    theme='primary'
+                                                    mild={true}
+                                                    
+                                                    
+                                                    
+                                                    // values:
+                                                    value={preferredTimezone}
+                                                    onChange={setPreferredTimezone}
+                                                />
+                                            </>
+                                            : <span className='txt-sec'>not yet reviewed</span>
+                                        }
+                                    </DataTableItem>
+                                    <DataTableItem
+                                        // accessibilities:
+                                        label='Reported At'
+                                    >
+                                        {!!paymentConfirmation.reportedAt && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.reportedAt).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} />}
+                                        <TimezoneEditor
+                                            // variants:
+                                            theme='primary'
+                                            mild={true}
+                                            
+                                            
+                                            
+                                            // values:
+                                            value={preferredTimezone}
+                                            onChange={setPreferredTimezone}
+                                        />
+                                    </DataTableItem>
+                                    <DataTableItem
+                                        // accessibilities:
+                                        label='Amount'
+                                        
+                                        
+                                        
+                                        // components:
+                                        tableDataComponent={<Generic className={styleSheet.tableDataAmount} />}
+                                    >
+                                        {isForeignCurrency && <SelectCurrencyEditor
+                                            // variants:
+                                            theme='primary'
+                                            
+                                            
+                                            
+                                            // classes:
+                                            className={styleSheet.selectCurrencyDropdown}
+                                            
+                                            
+                                            
+                                            // values:
+                                            valueOptions={currencyOptions}
+                                            value={currency}
+                                            onChange={setCurrency}
+                                        />}
+                                        <strong>
+                                            <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={paymentConfirmation.amount} />
+                                        </strong>
+                                    </DataTableItem>
+                                    <DataTableItem
+                                        // accessibilities:
+                                        label='Payer'
+                                    >
+                                        {paymentConfirmation.payerName}
+                                    </DataTableItem>
+                                    <DataTableItem
+                                        // accessibilities:
+                                        label='Payment Date'
+                                    >
+                                        {!!paymentConfirmation.paymentDate && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.paymentDate).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} />}
+                                        <TimezoneEditor
+                                            // variants:
+                                            theme='primary'
+                                            mild={true}
+                                            
+                                            
+                                            
+                                            // values:
+                                            value={preferredTimezone}
+                                            onChange={setPreferredTimezone}
+                                        />
+                                    </DataTableItem>
+                                    <DataTableItem
+                                        // accessibilities:
+                                        label='Originating Bank'
+                                    >
+                                        {paymentConfirmation.originatingBank}
+                                    </DataTableItem>
+                                    <DataTableItem
+                                        // accessibilities:
+                                        label='Destination Bank'
+                                    >
+                                        {paymentConfirmation.destinationBank}
+                                    </DataTableItem>
+                                </DataTableBody>
+                            </DataTable>
                         </>}
-                    </Section>
-                </TabPanel>
-            </ComplexEditModelDialog>
-            
-            {/* edit dialog: */}
-            <CollapsibleSuspense>
-                <SimpleEditAddressDialog
-                    // data:
-                    model={model!}
-                    edit='shippingAddress'
-                    
-                    
-                    
-                    // states:
-                    expanded={editMode === 'shippingAddress'}
-                    onExpandedChange={handleExpandedChange}
-                    
-                    
-                    
-                    // components:
-                    editorComponent={
-                        <AddressEditor
-                            countryList={countryList}
-                        />
-                    }
-                />
-                <SimpleEditOrderOnTheWayDialog
-                    // data:
-                    model={model!}
-                    edit='shippingTracking'
-                    
-                    
-                    
-                    // states:
-                    expanded={editMode === 'onTheWay'}
-                    onExpandedChange={handleExpandedChange}
-                    
-                    
-                    
-                    // components:
-                    editorComponent={
-                        <OrderOnTheWayEditor />
-                    }
-                />
-                <SimpleEditOrderCompletedDialog
-                    // data:
-                    model={model!}
-                    edit='orderStatus'
-                    
-                    
-                    
-                    // states:
-                    expanded={editMode === 'completed'}
-                    onExpandedChange={handleExpandedChange}
-                    
-                    
-                    
-                    // components:
-                    editorComponent={
-                        <OrderCompletedEditor />
-                    }
-                />
-                <SimpleEditOrderTroubleDialog
-                    // data:
-                    model={model!}
-                    edit='orderTrouble'
-                    
-                    
-                    
-                    // states:
-                    expanded={editMode === 'trouble'}
-                    onExpandedChange={handleExpandedChange}
-                    
-                    
-                    
-                    // components:
-                    editorComponent={
-                        <WysiwygEditor>
-                            <ToolbarPlugin className='solid' theme='primary' />
-                            <EditorPlugin
-                                // accessibilities:
-                                placeholder='Type the trouble note here...'
-                            />
-                        </WysiwygEditor>
-                    }
-                />
-                <SimpleEditPaymentDialog
-                    // data:
-                    model={model!}
-                    edit='payment'
-                    
-                    
-                    
-                    // states:
-                    expanded={editMode === 'payment'}
-                    onExpandedChange={handleExpandedChange}
-                    
-                    
-                    
-                    // components:
-                    editorComponent={
-                        <PaymentEditor
-                            // data:
-                            currencyOptions={currencyOptions}
-                            currency={currency}
-                            onCurrencyChange={setCurrency}
+                        
+                        <div className={styleSheet.paymentConfirmActions}>
+                            <ButtonIcon
+                                // refs:
+                                elmRef={(autoFocusOn === 'ConfirmPaymentButton') ? (autoFocusRef as React.MutableRefObject<HTMLButtonElement|null>) : undefined}
+                                
+                                
+                                
+                                // appearances:
+                                icon='done'
+                                
+                                
+                                
+                                // variants:
+                                size='lg'
+                                theme='success'
+                                gradient={true}
+                                
+                                
+                                
+                                // states:
+                                assertiveFocusable={shouldTriggerAutoFocus && (autoFocusOn === 'ConfirmPaymentButton')}
+                                
+                                
+                                
+                                // handlers:
+                                onClick={handleEditPayment}
+                            >
+                                Approve Payment
+                            </ButtonIcon>
                             
-                            currencyRate={currencyRate}
-                            
-                            
-                            
-                            // accessibilities:
-                            expectedAmount={
-                                totalProductPrice + (totalShippingCosts ?? 0)
-                            }
-                            amountMinThreshold={20 /* percent */}
-                            amountMaxThreshold={20 /* percent */}
-                            
-                            confirmedAmount={paymentConfirmation?.amount ?? undefined}
-                        />
-                    }
-                />
-                <SimpleEditPaymentRejectedDialog
-                    // data:
-                    model={model!}
-                    edit='paymentConfirmation'
-                    
-                    
-                    
-                    // states:
-                    expanded={editMode === 'paymentRejected'}
-                    onExpandedChange={handleExpandedChange}
-                    
-                    
-                    
-                    // components:
-                    editorComponent={
-                        <WysiwygEditor
-                            // validations:
-                            required={true}
-                        >
-                            <ToolbarPlugin className='solid' theme='primary' />
-                            <EditorPlugin
-                                // accessibilities:
-                                aria-label='Rejection Reason'
-                                data-icon={'chat' as IconProps['icon']}
-                                placeholder='Type the reason why the payment confirmation is rejected here...'
-                            />
-                        </WysiwygEditor>
-                    }
-                />
-                <PrintDialog
-                    // variants:
-                    theme='primary'
-                    
-                    
-                    
-                    // classes:
-                    className={styleSheet.orderShippingTab}
-                    
-                    
-                    
-                    // states:
-                    expanded={editMode === 'printOrder'}
-                    onExpandedChange={handleExpandedChange}
-                >
-                    <OrderAndShipping
-                        // appearances:
-                        printMode={true}
-                    />
-                </PrintDialog>
-            </CollapsibleSuspense>
-        </>
+                            {hasPaymentConfirmation && <ButtonIcon
+                                // appearances:
+                                icon='not_interested'
+                                
+                                
+                                
+                                // variants:
+                                size='lg'
+                                theme='danger'
+                                gradient={!isPaymentRejected}
+                                
+                                
+                                
+                                // states:
+                                enabled={!isPaymentRejected}
+                                
+                                
+                                
+                                // handlers:
+                                onClick={handleRejectPayment}
+                            >
+                                {isPaymentRejected ? 'Payment Rejected' : 'Reject Payment'}
+                            </ButtonIcon>}
+                        </div>
+                    </>}
+                </Section>
+            </TabPanel>
+        </ComplexEditModelDialog>
     );
 };
 export {
