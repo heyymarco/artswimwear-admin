@@ -884,7 +884,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         
                         
                         // variants:
-                        theme='primary'
+                        theme={isCanceledOrExpired ? 'danger' : 'primary'}
                         
                         
                         
