@@ -315,9 +315,8 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         return accum + (price * quantity);
     }, 0) ?? 0;
     
-    const paymentTypeUppercased  = paymentType?.toUpperCase();
-    const isPaid                 = !!paymentTypeUppercased && (paymentTypeUppercased !== 'MANUAL');
-    const isManualPaid           = (paymentTypeUppercased === 'MANUAL_PAID');
+    const isPaid                 = !!paymentType && (paymentType !== 'MANUAL');
+    const isManualPaid           = (paymentType === 'MANUAL_PAID');
     const hasPaymentConfirmation = !!paymentConfirmation?.reportedAt;
     const isPaymentRejected      = hasPaymentConfirmation && !!paymentConfirmation.rejectionReason;
     
@@ -862,7 +861,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                 label='Method'
                             >
                                 <span>
-                                    {paymentTypeUppercased}
+                                    {paymentType}
                                 </span>
                             </DataTableItem>
                             <DataTableItem
