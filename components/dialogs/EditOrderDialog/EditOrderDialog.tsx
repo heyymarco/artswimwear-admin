@@ -958,11 +958,11 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             </>}
                             {isExpired && <>
                                 <p>
-                                    The order has expired{!!paymentExpiresAt && <> at <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentExpiresAt).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} /></>}.
+                                    The order has expired.
                                 </p>
                             </>}
                         </Alert>
-                        {isCanceled && <Group
+                        <Group
                             // variants:
                             theme='danger'
                             orientation='block'
@@ -976,9 +976,10 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                 // classes:
                                 className={styleSheet.noteHeader}
                             >
-                                Cancelation Reason
+                                {isCanceled && <>Cancelation Reason</>}
+                                {isExpired  && <>Expired Date</>}
                             </Basic>
-                            <Content
+                            {isCanceled && <Content
                                 // classes:
                                 className={styleSheet.noteBody}
                             >
@@ -997,8 +998,22 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     // values:
                                     value={(cancelationReason ?? null) as unknown as WysiwygEditorState|undefined}
                                 />}
-                            </Content>
-                        </Group>}
+                            </Content>}
+                            {isExpired && <>
+                                {!!paymentExpiresAt && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentExpiresAt).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} />}
+                                <TimezoneEditor
+                                    // variants:
+                                    theme='primary'
+                                    mild={true}
+                                    
+                                    
+                                    
+                                    // values:
+                                    value={preferredTimezone}
+                                    onChange={setPreferredTimezone}
+                                />
+                            </>}
+                        </Group>
                     </>}
                     
                     {!isCanceledOrExpired && <>
