@@ -232,6 +232,11 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
     
     
     // jsx:
+    const canChangeStatus : boolean = (
+        !isCanceledOrExpired          // not CANCELED|EXPIRED orders
+        &&
+        (orderStatus !== 'COMPLETED') // not COMPLETED        orders
+    );
     return (
         <Group
             // variants:
@@ -263,7 +268,7 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
                 
                 
                 // states:
-                enabled={(orderStatus !== 'COMPLETED')}
+                enabled={canChangeStatus}
                 assertiveFocusable={assertiveFocusable}
                 
                 
@@ -273,11 +278,11 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
             >
                 {children ?? <>
                     {(orderStatus === 'NEW_ORDER') && <>Print and </>}
-                    {(orderStatus !== 'COMPLETED') && <>Mark as {orderStatusText(orderStatusNext(orderStatus))}</>}
-                    {(orderStatus === 'COMPLETED') && <>Order Completed</>}
+                    {canChangeStatus               && <>Mark as {orderStatusText(orderStatusNext(orderStatus))}</>}
+                    {!canChangeStatus              && <>Order {orderStatusText(orderStatus)}</>}
                 </>}
             </ButtonIcon>
-            <DropdownListButton
+            {!isCanceledOrExpired && <DropdownListButton
                 // variants:
                 theme='secondary'
                 
@@ -321,7 +326,7 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
                         <RadioDecorator />&nbsp;&nbsp;<Icon icon={orderStatusIcon(orderStatusOption)} />&nbsp;Mark as {orderStatusText(orderStatusOption)}
                     </ListItem>
                 )}
-            </DropdownListButton>
+            </DropdownListButton>}
         </Group>
     );
 };
