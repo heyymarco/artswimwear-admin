@@ -580,7 +580,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         ? 'light'           // a light theme for white_paper friendly prints
                         : (
                             isCanceledOrExpired
-                            ? 'secondary'   // a muted theme for CANCELED|EXPIRED orders
+                            ? 'danger'      // a danger theme for CANCELED|EXPIRED orders
                             : (
                                 isPaid
                                 ? 'primary' // a default theme for   PAID orders
@@ -606,7 +606,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             ? 'inherit'         // an inherit theme for white_paper friendly prints
                             : (
                                 isCanceledOrExpired
-                                ? 'secondary'   // a muted theme for CANCELED|EXPIRED orders
+                                ? 'danger'      // a danger theme for CANCELED|EXPIRED orders
                                 : (
                                     isPaid
                                     ? 'success' // a success theme for   PAID orders
@@ -636,7 +636,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         // variants:
                         theme={
                             isCanceledOrExpired
-                            ? 'secondary'   // a muted theme for CANCELED|EXPIRED orders
+                            ? 'danger'      // a danger theme for CANCELED|EXPIRED orders
                             : (
                                 isPaid
                                 ? 'success' // a success theme for   PAID orders
