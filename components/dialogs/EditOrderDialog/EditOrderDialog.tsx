@@ -259,6 +259,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     const {
         orderStatus,
         orderTrouble,
+        cancelationReason,
         
         preferredCurrency,
         
@@ -272,6 +273,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
             type           : paymentType,
             brand          : paymentBrand,
             identifier     : paymentIdentifier,
+            expiresAt      : paymentExpiresAt,
             
             amount         : paymentAmount,
             fee            : paymentFee,
@@ -925,9 +927,19 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                 <Section className={styleSheet.paymentSection}>
                     {isCanceledOrExpired && <>
                         <Alert
+                            // appearances:
+                            icon={isCanceled ? 'cancel_presentation' : 'timer_off'}
+                            
+                            
+                            
                             // variants:
-                            theme='secondary'
+                            theme='danger'
                             mild={false}
+                            
+                            
+                            
+                            // classes
+                            className={styleSheet.paymentAlert}
                             
                             
                             
@@ -939,13 +951,54 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             // components:
                             controlComponent={<React.Fragment />}
                         >
-                            {isCanceled && <p>
-                                The order was canceled.
-                            </p>}
-                            {isExpired && <p>
-                                The order has expired on 2022/11/11.
-                            </p>}
+                            {isCanceled && <>
+                                <p>
+                                    The order was canceled.
+                                </p>
+                            </>}
+                            {isExpired && <>
+                                <p>
+                                    The order has expired{!!paymentExpiresAt && <> at <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentExpiresAt).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} /></>}.
+                                </p>
+                            </>}
                         </Alert>
+                        {isCanceled && <Group
+                            // variants:
+                            theme='danger'
+                            orientation='block'
+                            
+                            
+                            
+                            // classes
+                            className={styleSheet.paymentNote}
+                        >
+                            <Basic
+                                // classes:
+                                className={styleSheet.noteHeader}
+                            >
+                                Cancelation Reason
+                            </Basic>
+                            <Content
+                                // classes:
+                                className={styleSheet.noteBody}
+                            >
+                                {!cancelationReason && <span
+                                    // classes:
+                                    className={`${styleSheet.noteEmpty} txt-sec`}
+                                >
+                                    -- no cancelation reason --
+                                </span>}
+                                {!!cancelationReason && <WysiwygViewer
+                                    // variants:
+                                    nude={true}
+                                    
+                                    
+                                    
+                                    // values:
+                                    value={(cancelationReason ?? null) as unknown as WysiwygEditorState|undefined}
+                                />}
+                            </Content>
+                        </Group>}
                     </>}
                     
                     {!isCanceledOrExpired && <>

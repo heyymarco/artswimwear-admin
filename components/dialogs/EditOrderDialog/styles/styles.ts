@@ -397,6 +397,33 @@ const usesPaymentSectionLayout = () => {
         }),
     });
 };
+const usesPaymentAlertLayout = () => {
+    return style({
+        // layouts:
+        justifyContent: 'center', // center horizontally
+        alignContent  : 'center', // center vertically
+        
+        
+        
+        // sizes:
+        alignSelf : 'stretch',
+        
+        
+        
+        // children:
+        ...children('.body', {
+            display: 'grid',
+            justifyContent: 'center', // center horizontally
+            alignContent  : 'center', // center vertically
+        }),
+    });
+};
+const usesPaymentNoteLayout = () => {
+    return style({
+        // sizes:
+        alignSelf : 'stretch',
+    });
+};
 const usesDataTableLayout = () => {
     return style({
         // sizes:
@@ -676,6 +703,12 @@ export default () => [
         ...usesPaymentSectionLayout(),
     }),
     
+    scope('paymentAlert', {
+        ...usesPaymentAlertLayout(),
+    }, { specificityWeight: 2 }),
+    scope('paymentNote', {
+        ...usesPaymentNoteLayout(),
+    }),
     scope('dataTable', {
         ...usesDataTableLayout(),
     }),
