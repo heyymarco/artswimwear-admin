@@ -19,12 +19,19 @@ import type {
 
 
 // utilities:
-export const orderStatusValues : Exclude<OrderStatus, 'CANCELED'|'EXPIRED'>[] = [
+export const orderStatusValues : OrderStatus[] = [
     'NEW_ORDER',
+    'CANCELED',
+    'EXPIRED',
     'PROCESSED',
     'ON_THE_WAY',
     'IN_TROUBLE',
     'COMPLETED',
+];
+export const problemOrderStatusValues : OrderStatus[] = [
+    'CANCELED',
+    'EXPIRED',
+    'IN_TROUBLE',
 ];
 
 export const orderStatusTheme = (orderStatus : OrderStatus, paymentType?: PaymentType, reportedAt?: Date|null, reviewedAt?: Date|null): ThemeName => {

@@ -141,7 +141,11 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
     ...restButtonIconProps} = props;
     const orderStatus = model?.orderStatus ?? 'NEW_ORDER';
     const paymentType = model?.payment.type;
-    const isPaid      = (paymentType !== 'MANUAL');
+    
+    const isCanceled          = (orderStatus === 'CANCELED');
+    const isExpired           = (orderStatus === 'EXPIRED');
+    const isCanceledOrExpired = isCanceled || isExpired;
+    const isPaid              = !isCanceledOrExpired && (paymentType !== 'MANUAL');
     
     
     
@@ -168,7 +172,7 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
         // conditions:
         if (orderStatus === newOrderStatus) return false;
         
-        // show warning message if increase_status of unpaid order (no warning if decrease_status):
+        // show warning message if increasing_status of UNPAID order (no warning if decrease_status):
         if (!isPaid && (orderStatus === 'NEW_ORDER') && (newOrderStatus !== 'NEW_ORDER')) {
             if ((await showMessage<'yes'|'no'>({
                 theme   : 'warning',
@@ -292,7 +296,7 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
                 // components:
                 listComponent={<List theme='primary' />}
             >
-                {orderStatusValues.map((orderStatusOption, listItemIndex) =>
+                {orderStatusValues.filter((orderStatusValue) => !['CANCELED', 'EXPIRED'].includes(orderStatusValue)).map((orderStatusOption, listItemIndex) =>
                     <ListItem
                         // identifiers:
                         key={listItemIndex}

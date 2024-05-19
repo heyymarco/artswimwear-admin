@@ -17,6 +17,7 @@ import {
 // internal components:
 import {
     orderStatusValues,
+    problemOrderStatusValues,
     orderStatusText,
 }                           from '@/components/OrderStatusBadge'
 
@@ -48,8 +49,12 @@ const OrderStatusProgress = (props: OrderStatusProgressProps): JSX.Element|null 
         // children:
         children,
     ...restListProps} = props;
-    const orderStatus      = model?.orderStatus ?? 'NEW_ORDER';
-    const orderStatusIndex = orderStatusValues.findIndex((value) => (value === orderStatus));
+    const orderStatus         = model?.orderStatus ?? 'NEW_ORDER';
+    const orderStatusIndex    = orderStatusValues.findIndex((value) => (value === orderStatus));
+    
+    const isCanceled          = (orderStatus === 'CANCELED');
+    const isExpired           = (orderStatus === 'EXPIRED');
+    const isCanceledOrExpired = isCanceled || isExpired;
     
     
     
@@ -69,7 +74,17 @@ const OrderStatusProgress = (props: OrderStatusProgressProps): JSX.Element|null 
             orientation='inline'
         >
             {orderStatusValues.map((orderStatusOption, listItemIndex) =>
-                ((orderStatusOption !== 'IN_TROUBLE') || (orderStatus === 'IN_TROUBLE')) // hides IN_TROUBLE step except when the current status is IN_TROUBLE
+                (
+                    !problemOrderStatusValues.includes(orderStatusOption) // must be a regular status progresses: 'NEW_ORDER'|'PROCESSED'|'ON_THE_WAY'|'COMPLETED'
+                    ||
+                    (orderStatusOption === orderStatus)                   // must be a special status progresses: 'CANCELED'|'EXPIRED'|'IN_TROUBLE' that MATCHES currentStatus
+                )
+                &&
+                (
+                    !isCanceledOrExpired                // the order is NOT 'CANCELED'|'EXPIRED'
+                    ||
+                    (listItemIndex <= orderStatusIndex) // if 'CANCELED'|'EXPIRED' => no need to render the next steps
+                )
                 &&
                 <ListItem
                     // identifiers:
@@ -79,7 +94,7 @@ const OrderStatusProgress = (props: OrderStatusProgressProps): JSX.Element|null 
                     
                     // variants:
                     size={props.size ?? 'sm'}
-                    theme={(orderStatusOption === 'IN_TROUBLE') ? 'danger' : undefined}
+                    theme={problemOrderStatusValues.includes(orderStatusOption) ? 'danger' : undefined}
                     
                     
                     
