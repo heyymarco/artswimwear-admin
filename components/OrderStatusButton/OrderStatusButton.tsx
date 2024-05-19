@@ -141,7 +141,7 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
     ...restButtonIconProps} = props;
     const orderStatus = model?.orderStatus ?? 'NEW_ORDER';
     const paymentType = model?.payment.type;
-    const isPaid      = !!paymentType && (paymentType !== 'MANUAL');
+    const isPaid      = (paymentType !== 'MANUAL');
     
     
     

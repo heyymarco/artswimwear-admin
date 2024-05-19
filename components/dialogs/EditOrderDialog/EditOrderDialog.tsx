@@ -315,7 +315,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         return accum + (price * quantity);
     }, 0) ?? 0;
     
-    const isPaid                 = !!paymentType && (paymentType !== 'MANUAL');
+    const isPaid                 = (paymentType !== 'MANUAL');
     const isManualPaid           = (paymentType === 'MANUAL_PAID');
     const hasPaymentConfirmation = !!paymentConfirmation?.reportedAt;
     const isPaymentRejected      = hasPaymentConfirmation && !!paymentConfirmation.rejectionReason;
