@@ -692,6 +692,13 @@ const usesAlternateSeparatorLayout = () => {
         gap: spacers.sm,
     });
 };
+const usesCountDownLayout = () => {
+    return style({
+        // layouts:
+        display: 'grid',
+        justifyItems: 'center',
+    });
+};
 
 export default () => [
     scope('orderShippingTab', {
@@ -787,4 +794,7 @@ export default () => [
     scope('alternateSeparator', {
         ...usesAlternateSeparatorLayout(),
     }),
+    scope('countDown', {
+        ...usesCountDownLayout(),
+    }, { specificityWeight: 2 }),
 ];

@@ -167,6 +167,9 @@ import {
 import {
     ViewCartItem,
 }                           from './ViewCartItem'
+import {
+    CountDown,
+}                           from './CountDown'
 
 // stores:
 import {
@@ -202,7 +205,6 @@ import {
 import {
     commerceConfig,
 }                           from '@/commerce.config'
-import styles from '@/components/Grip/styles/styles'
 
 
 
@@ -1422,6 +1424,10 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                 >
                                     Cancel Order
                                 </ButtonIcon>
+                                
+                                
+                                
+                                {!!paymentExpiresAt && <CountDown paymentExpiresAt={paymentExpiresAt} />}
                             </div>
                         </>}
                     </>}
