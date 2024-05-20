@@ -568,8 +568,9 @@ You do not have the privilege to modify the payment of the order.`
             if (orderStatus === 'CANCELED') {
                 const orderDetail = await prisma.$transaction(async (prismaTransaction) => {
                     return cancelOrderById(prismaTransaction, {
-                        id          : id,
-                        orderSelect : orderSelect,
+                        id                : id,
+                        orderSelect       : orderSelect,
+                        cancelationReason : cancelationReason,
                     });
                 });
                 return orderDetail || null;
@@ -634,7 +635,6 @@ You do not have the privilege to modify the payment of the order.`
                     data   : {
                         orderStatus,
                         orderTrouble,
-                        cancelationReason,
                         
                         customer : (
                             (customer !== undefined)

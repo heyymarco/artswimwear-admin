@@ -1,13 +1,16 @@
-// models:
+// types:
 import type {
-    Payment,
-    Order,
-    OrdersOnProducts,
-}                           from '@prisma/client'
+    // types:
+    WysiwygEditorState,
+}                           from '@/components/editors/WysiwygEditor/types'
 
 // models:
 import type {
     Prisma,
+    
+    Payment,
+    Order,
+    OrdersOnProducts,
 }                           from '@prisma/client'
 
 // ORMs:
@@ -35,10 +38,11 @@ type CancelOrder = Pick<Order,
     >[]
 }
 export interface CancelOrderData {
-    order        : CancelOrder
-    isExpired   ?: boolean
-    deleteOrder ?: boolean
-    orderSelect ?: Prisma.OrderSelect
+    order              : CancelOrder
+    isExpired         ?: boolean
+    deleteOrder       ?: boolean
+    orderSelect       ?: Prisma.OrderSelect
+    cancelationReason ?: WysiwygEditorState|null
 }
 export const cancelOrder = async (prismaTransaction: Parameters<Parameters<typeof prisma.$transaction>[0]>[0], cancelOrderData : CancelOrderData) => {
     // data:
@@ -49,6 +53,7 @@ export const cancelOrder = async (prismaTransaction: Parameters<Parameters<typeo
         orderSelect = {
             id : true,
         },
+        cancelationReason,
     } = cancelOrderData;
     
     
@@ -67,7 +72,8 @@ export const cancelOrder = async (prismaTransaction: Parameters<Parameters<typeo
                 id : order.id,
             },
             data   : {
-                orderStatus : (isExpired ? 'EXPIRED' : 'CANCELED'),
+                orderStatus       : (isExpired ? 'EXPIRED' : 'CANCELED'),
+                cancelationReason : cancelationReason,
             },
             select : orderSelect,
         }),
