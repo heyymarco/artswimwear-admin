@@ -486,7 +486,7 @@ You do not have the privilege to modify the payment of the order.`
     
     //#region save changes
     try {
-        const [paymentConfirmationDetail, orderDetail] = await prisma.$transaction([
+        const [, orderDetail] = await prisma.$transaction([
             (
                 (payment?.type === 'MANUAL_PAID')
                 ? prisma.paymentConfirmation.updateMany({
@@ -670,7 +670,7 @@ You do not have the privilege to modify the payment of the order.`
         if (performSendConfirmationEmail) {
             let emailConfig : EmailConfig|undefined = undefined;
             
-            if (rejectionReason && paymentConfirmationDetail.count) { // payment confirmation declined
+            if (rejectionReason) { // payment confirmation declined
                 emailConfig = checkoutConfigServer.emails.rejected;
             }
             else if (payment?.type === 'MANUAL_PAID') {   // payment approved (regradless having payment confirmation or not)
