@@ -1017,6 +1017,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                     </>}
                     
                     {!isCanceledOrExpired && <>
+                        {/* paid => displays payment information */}
                         {isPaid && <DataTable className={styleSheet.dataTable} breakpoint='sm'>
                             <DataTableBody>
                                 <DataTableItem
@@ -1131,6 +1132,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             </DataTableBody>
                         </DataTable>}
                         
+                        {/* unpaid => shows alert, payment confirmation (if any), and action buttons */}
                         {!isPaid && !!role?.order_upmu && <>
                             {!hasPaymentConfirmation && <Alert
                                 // variants:
@@ -1395,6 +1397,12 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                 >
                                     {isPaymentRejected ? 'Payment Rejected' : 'Reject Payment'}
                                 </ButtonIcon>}
+                                
+                                <div className={styleSheet.alternateSeparator}>
+                                    <hr />
+                                    <span>or</span>
+                                    <hr />
+                                </div>
                                 
                                 <ButtonIcon
                                     // appearances:
