@@ -26,6 +26,8 @@ import type {
 
 // models:
 import type {
+    Prisma,
+    
     Customer,
     Guest,
     Order,
@@ -45,6 +47,10 @@ import {
 }                           from '@/app/api/auth/[...nextauth]/route'
 
 // internals:
+import {
+    // utilities:
+    cancelOrderById,
+}                           from './order-utilities'
 import {
     sendConfirmationEmail,
 }                           from './email-utilities'
@@ -486,188 +492,210 @@ You do not have the privilege to modify the payment of the order.`
     
     //#region save changes
     try {
-        const [, orderDetail] = await prisma.$transaction([
-            (
-                (payment?.type === 'MANUAL_PAID')
-                ? prisma.paymentConfirmation.updateMany({
-                    where  : {
-                        orderId : id,
-                        OR : [
-                            { reviewedAt      : { equals : null  } }, // never approved or rejected
-                            { reviewedAt      : { isSet  : false } }, // never approved or rejected
-                            
-                            /* -or- */
-                            
-                            { rejectionReason : { not    : null  } }, // has reviewed as rejected (prevents to approve the *already_approved_payment_confirmation*)
-                        ],
+        const orderDetail = await (async (): Promise<OrderDetail|null> => {
+            const orderSelect : Prisma.OrderSelect = {
+                id                        : true,
+                
+                orderId                   : true,
+                orderStatus               : true,
+                orderTrouble              : true,
+                cancelationReason         : true,
+                
+                items                     : {
+                    select: {
+                        productId         : true,
+                        variantIds        : true,
+                        
+                        price             : true,
+                        shippingWeight    : true,
+                        quantity          : true,
                     },
-                    data: {
-                        reviewedAt      : new Date(), // the approval date
-                        rejectionReason : null,       // unset the rejection reason, because it's approved now
+                },
+                
+                customer                  : {
+                    select: {
+                        id                : true,
+                        
+                        name              : true,
+                        email             : true,
                     },
-                })
-                : (
-                    rejectionReason
+                },
+                guest                     : {
+                    select: {
+                        id                : true,
+                        
+                        name              : true,
+                        email             : true,
+                    },
+                },
+                
+                preferredCurrency         : true,
+                
+                shippingAddress           : true,
+                shippingCost              : true,
+                shippingProviderId        : true,
+                
+                payment                   : true,
+                
+                paymentConfirmation       : {
+                    select : {
+                        reportedAt        : true,
+                        reviewedAt        : true,
+                        
+                        amount            : true,
+                        payerName         : true,
+                        paymentDate       : true,
+                        preferredTimezone : true,
+                        
+                        originatingBank   : true,
+                        destinationBank   : true,
+                        
+                        rejectionReason   : true,
+                    },
+                },
+                
+                shippingTracking          : {
+                    select : {
+                        shippingCarrier   : true,
+                        shippingNumber    : true,
+                        preferredTimezone : true,
+                    },
+                },
+            };
+            
+            
+            
+            if (orderStatus === 'CANCELED') {
+                const orderDetail = await prisma.$transaction(async (prismaTransaction) => {
+                    return cancelOrderById(prismaTransaction, {
+                        id          : id,
+                        orderSelect : orderSelect,
+                    });
+                });
+                return orderDetail || null;
+            } // if
+            
+            
+            
+            const [, orderDetail] = await prisma.$transaction([
+                // update PaymentConfirmation (if any):
+                (
+                    (payment?.type === 'MANUAL_PAID')
                     ? prisma.paymentConfirmation.updateMany({
                         where  : {
                             orderId : id,
-                            
                             OR : [
-                                { reviewedAt      : { equals : null  } }, // never approved or rejected (prevents to reject the *already_rejected/approved_payment_confirmation*)
-                                { reviewedAt      : { isSet  : false } }, // never approved or rejected (prevents to reject the *already_rejected/approved_payment_confirmation*)
+                                { reviewedAt      : { equals : null  } }, // never approved or rejected
+                                { reviewedAt      : { isSet  : false } }, // never approved or rejected
+                                
+                                /* -or- */
+                                
+                                { rejectionReason : { not    : null  } }, // has reviewed as rejected (prevents to approve the *already_approved_payment_confirmation*)
                             ],
                         },
                         data: {
-                            reviewedAt      : new Date(),      // the rejection date
-                            rejectionReason : rejectionReason, // set the rejection reason
+                            reviewedAt      : new Date(), // the approval date
+                            rejectionReason : null,       // unset the rejection reason, because it's approved now
                         },
                     })
-                    : prisma.paymentConfirmation.updateMany({
-                        where : {
-                            AND : [
-                                { orderId : { equals : id } }, // never match, just for dummy transaction
-                                { orderId : { not    : id } }, // never match, just for dummy transaction
-                            ],
-                        },
-                        data : {},
-                    })
-                )
-            ),
-            prisma.order.update({
-                where  : {
-                    id : id,
-                },
-                data   : {
-                    orderStatus,
-                    orderTrouble,
-                    cancelationReason,
-                    
-                    customer : (
-                        (customer !== undefined)
-                        ? {
-                            update : {
-                                name  : customer.name,
-                                email : customer.email,
+                    : (
+                        rejectionReason
+                        ? prisma.paymentConfirmation.updateMany({
+                            where  : {
+                                orderId : id,
+                                
+                                OR : [
+                                    { reviewedAt      : { equals : null  } }, // never approved or rejected (prevents to reject the *already_rejected/approved_payment_confirmation*)
+                                    { reviewedAt      : { isSet  : false } }, // never approved or rejected (prevents to reject the *already_rejected/approved_payment_confirmation*)
+                                ],
                             },
-                        }
-                        : undefined
-                    ),
-                    guest : (
-                        (guest !== undefined)
-                        ? {
+                            data: {
+                                reviewedAt      : new Date(),      // the rejection date
+                                rejectionReason : rejectionReason, // set the rejection reason
+                            },
+                        })
+                        : prisma.paymentConfirmation.updateMany({
+                            where : {
+                                AND : [
+                                    { orderId : { equals : id } }, // never match, just for dummy transaction
+                                    { orderId : { not    : id } }, // never match, just for dummy transaction
+                                ],
+                            },
+                            data : {},
+                        })
+                    )
+                ),
+                
+                // update Order:
+                prisma.order.update({
+                    where  : {
+                        id : id,
+                    },
+                    data   : {
+                        orderStatus,
+                        orderTrouble,
+                        cancelationReason,
+                        
+                        customer : (
+                            (customer !== undefined)
+                            ? {
+                                update : {
+                                    name  : customer.name,
+                                    email : customer.email,
+                                },
+                            }
+                            : undefined
+                        ),
+                        guest : (
+                            (guest !== undefined)
+                            ? {
+                                upsert : {
+                                    update : {
+                                        name  : guest.name,
+                                        email : guest.email,
+                                    },
+                                    create : {
+                                        name  : guest.name  ?? '', // required field
+                                        email : guest.email ?? '', // required field
+                                    },
+                                },
+                            }
+                            : undefined
+                        ),
+                        
+                        shippingAddress,
+                        shippingCost,
+                        shippingProviderId,
+                        
+                        payment,
+                        
+                        shippingTracking : {
                             upsert : {
                                 update : {
-                                    name  : guest.name,
-                                    email : guest.email,
+                                    shippingCarrier : shippingCarrier || null, // null if empty_string
+                                    shippingNumber  : shippingNumber  || null, // null if empty_string
                                 },
                                 create : {
-                                    name  : guest.name  ?? '', // required field
-                                    email : guest.email ?? '', // required field
+                                    token           : await (async (): Promise<string> => {
+                                        const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
+                                        return await nanoid();
+                                    })(),
+                                    shippingCarrier : shippingCarrier || null, // null if empty_string
+                                    shippingNumber  : shippingNumber  || null, // null if empty_string
                                 },
                             },
-                        }
-                        : undefined
-                    ),
-                    
-                    shippingAddress,
-                    shippingCost,
-                    shippingProviderId,
-                    
-                    payment,
-                    
-                    shippingTracking : {
-                        upsert : {
-                            update : {
-                                shippingCarrier : shippingCarrier || null, // null if empty_string
-                                shippingNumber  : shippingNumber  || null, // null if empty_string
-                            },
-                            create : {
-                                token           : await (async (): Promise<string> => {
-                                    const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
-                                    return await nanoid();
-                                })(),
-                                shippingCarrier : shippingCarrier || null, // null if empty_string
-                                shippingNumber  : shippingNumber  || null, // null if empty_string
-                            },
                         },
                     },
-                },
-                select : {
-                    id                        : true,
-                    
-                    orderId                   : true,
-                    orderStatus               : true,
-                    orderTrouble              : true,
-                    cancelationReason         : true,
-                    
-                    items                     : {
-                        select: {
-                            productId         : true,
-                            variantIds        : true,
-                            
-                            price             : true,
-                            shippingWeight    : true,
-                            quantity          : true,
-                        },
-                    },
-                    
-                    customer                  : {
-                        select: {
-                            id                : true,
-                            
-                            name              : true,
-                            email             : true,
-                        },
-                    },
-                    guest                     : {
-                        select: {
-                            id                : true,
-                            
-                            name              : true,
-                            email             : true,
-                        },
-                    },
-                    
-                    preferredCurrency         : true,
-                    
-                    shippingAddress           : true,
-                    shippingCost              : true,
-                    shippingProviderId        : true,
-                    
-                    payment                   : true,
-                    
-                    paymentConfirmation       : {
-                        select : {
-                            reportedAt        : true,
-                            reviewedAt        : true,
-                            
-                            amount            : true,
-                            payerName         : true,
-                            paymentDate       : true,
-                            preferredTimezone : true,
-                            
-                            originatingBank   : true,
-                            destinationBank   : true,
-                            
-                            rejectionReason   : true,
-                        },
-                    },
-                    
-                    shippingTracking          : {
-                        select : {
-                            shippingCarrier   : true,
-                            shippingNumber    : true,
-                            preferredTimezone : true,
-                        },
-                    },
-                },
-            }),
-        ]);
+                    select : orderSelect,
+                }),
+            ]);
+            return orderDetail;
+        })();
         
         
         
         //#region send email confirmation
-        if (performSendConfirmationEmail) {
+        if (orderDetail && performSendConfirmationEmail) {
             let emailConfig : EmailConfig|undefined = undefined;
             
             if (rejectionReason) { // payment confirmation declined
@@ -676,7 +704,9 @@ You do not have the privilege to modify the payment of the order.`
             else if (payment?.type === 'MANUAL_PAID') {   // payment approved (regradless having payment confirmation or not)
                 emailConfig = checkoutConfigServer.emails.checkout;
             }
-            // TODO: email for order 'CANCELED' /* | 'EXPIRED' should be done in backend_only, not by http_request */
+            else if (orderStatus === 'CANCELED') { // order canceled confirmation
+                emailConfig = checkoutConfigServer.emails.canceled;
+            }
             else if (orderStatus === 'ON_THE_WAY') { // shipping tracking number confirmation
                 emailConfig = checkoutConfigServer.emails.shipping;
             }
@@ -697,6 +727,7 @@ You do not have the privilege to modify the payment of the order.`
         
         
         
+        if (!orderDetail) return NextResponse.json({ error: 'Order record not found.'}, { status: 404 }); // handled with error: not found
         return NextResponse.json(orderDetail satisfies OrderDetail); // handled with success
     }
     catch (error: any) {
