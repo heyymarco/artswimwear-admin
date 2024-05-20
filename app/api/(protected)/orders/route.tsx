@@ -47,7 +47,7 @@ import {
 // internals:
 import {
     sendConfirmationEmail,
-}                           from './utilities'
+}                           from './email-utilities'
 
 // others:
 import {
