@@ -323,7 +323,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     const isExpired              = (orderStatus === 'EXPIRED');
     const isCanceledOrExpired    = isCanceled || isExpired;
     const isPaid                 = !isCanceledOrExpired && (paymentType !== 'MANUAL');
-    const isManualPaid           = !isCanceledOrExpired && (paymentType === 'MANUAL_PAID') && !paymentBrand;
+    const isManualPaid           = !isCanceledOrExpired && (paymentType === 'MANUAL_PAID') && !paymentBrand /* assumes 'MANUAL_PAID' with 'indomaret'|'alfamart' as auto_payment */;
     const hasPaymentConfirmation = !!paymentConfirmation?.reportedAt;
     const isPaymentRejected      = hasPaymentConfirmation && !!paymentConfirmation.rejectionReason;
     
