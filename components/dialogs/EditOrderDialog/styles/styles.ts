@@ -453,15 +453,25 @@ const usesTableDataComposite = () => {
             }),
         }),
         ...children('.paymentProvider', {
-            width         : '42px',
-            height         : 'auto',
+            width           : 'auto',
+            height          : '26px',
+            
+            
+            
+            // backgrounds:
+            backgroundColor : 'white',
             
             
             
             // borders:
-            border         : borderVars.border,
-            borderWidth    : borders.defaultWidth,
-            borderRadius   : borderRadiuses.sm,
+            border          : borderVars.border,
+            borderWidth     : borders.defaultWidth,
+            borderRadius    : borderRadiuses.sm,
+            
+            
+            
+            // spacings:
+            padding         : spacers.xs,
         }),
         ...children('.paymentIdentifier', {
             // typos:

@@ -323,7 +323,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     const isExpired              = (orderStatus === 'EXPIRED');
     const isCanceledOrExpired    = isCanceled || isExpired;
     const isPaid                 = !isCanceledOrExpired && (paymentType !== 'MANUAL');
-    const isManualPaid           = !isCanceledOrExpired && (paymentType === 'MANUAL_PAID');
+    const isManualPaid           = !isCanceledOrExpired && (paymentType === 'MANUAL_PAID') && !paymentBrand;
     const hasPaymentConfirmation = !!paymentConfirmation?.reportedAt;
     const isPaymentRejected      = hasPaymentConfirmation && !!paymentConfirmation.rejectionReason;
     
@@ -1043,13 +1043,24 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     
                                     // children:
                                     actionChildren={
-                                        isManualPaid && !!role?.order_upmp && <EditButton onClick={handleEditPayment} />
+                                        (isManualPaid && !!role?.order_upmp) && <EditButton onClick={handleEditPayment} />
                                     }
                                 >
                                     {
-                                        !!paymentBrand
-                                        ? (isManualPaid ? paymentBrand : <Image className='paymentProvider' alt={paymentBrand} src={`/brands/${paymentBrand}.svg`} width={42} height={26} />)
-                                        : '-'
+                                        (!!paymentBrand && ['amex', 'discover', 'jcb', 'maestro', 'mastercard', 'paypal', 'visa', 'gopay', 'shopeepay', 'dana', 'ovo', 'tcash', 'linkaja', 'indomaret', 'alfamart'].includes(paymentBrand.toLowerCase()))
+                                        ? <img
+                                            // appearances:
+                                            alt={paymentBrand}
+                                            src={`/brands/${paymentBrand.toLowerCase()}.svg`}
+                                            // width={42}
+                                            // height={26}
+                                            
+                                            
+                                            
+                                            // classes:
+                                            className='paymentProvider'
+                                        />
+                                        : (paymentBrand || paymentType)
                                     }
                                     <span className='paymentIdentifier'>
                                         {!!paymentIdentifier && <>&nbsp;({paymentIdentifier})</>}
@@ -1124,7 +1135,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     
                                     // children:
                                     actionChildren={
-                                        <></>
+                                        isManualPaid && !!role?.order_upmp && <></>
                                     }
                                 >
                                     <strong>
