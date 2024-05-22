@@ -1,3 +1,5 @@
+[high prior] fix print dialog
+
 [high prior] verify breaking change <UpdateStatePlugin> .__first
 [high prior] removed paymentConfirmation.currency
 TODO: replace shippingCarrier from <NameEditor> to <Dropdown>
