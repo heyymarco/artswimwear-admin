@@ -1062,9 +1062,9 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                         />
                                         : (paymentBrand || paymentType)
                                     }
-                                    <span className='paymentIdentifier'>
-                                        {!!paymentIdentifier && <>&nbsp;({paymentIdentifier})</>}
-                                    </span>
+                                    {!!paymentIdentifier && <span className='paymentIdentifier txt-sec'>
+                                        ({paymentIdentifier})
+                                    </span>}
                                 </DataTableItem>
                                 <DataTableItem
                                     // accessibilities:

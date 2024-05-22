@@ -443,7 +443,12 @@ const usesTableDataComposite = () => {
     
     return style({
         // layouts:
-        alignItems          : 'center',
+        alignItems          : 'center', // center the each item vertically   (desktop mode)
+        justifyItems        : 'center', // center the each item horizontally (mobile mode)
+        gridAutoFlow        : 'row',    // stack the items vertically        (mobile mode)
+        ...ifScreenWidthAtLeast('sm', {
+            gridAutoFlow    : 'column', // stack the items horizontally      (desktop mode)
+        }),
         
         
         
@@ -453,6 +458,7 @@ const usesTableDataComposite = () => {
         
         
         ...children('.paymentProvider', {
+            // sizes:
             width           : 'auto',
             height          : '26px',
             
@@ -494,9 +500,9 @@ const usesOutputDateLayout = () => {
 };
 const usesTableDataAmountLayout = () => {
     return style({
-        alignItems         : 'center',
+        alignItems         : 'center',  // center     the items horizontally (mobile mode)
         ...ifScreenWidthAtLeast('sm', {
-            justifyContent : 'end',  // right_most the items horizontally
+            justifyContent : 'end',     // right_most the items horizontally (desktop mode)
         }),
     });
 }
