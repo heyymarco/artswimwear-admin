@@ -571,6 +571,7 @@ You do not have the privilege to modify the payment of the order.`
                 const orderDetail = await prisma.$transaction(async (prismaTransaction): Promise<OrderDetail|null> => {
                     const order = await findOrderById(prismaTransaction, {
                         id                : id,
+                        
                         orderSelect       : cancelOrderSelect,
                     });
                     if (!order) return null; // the order is not found => ignore
@@ -581,8 +582,9 @@ You do not have the privilege to modify the payment of the order.`
                     
                     return await cancelOrder(prismaTransaction, {
                         order             : order,
-                        orderSelect       : orderDetailSelect,
                         cancelationReason : cancelationReason,
+                        
+                        orderSelect       : orderDetailSelect,
                     });
                 });
                 return orderDetail || null;
