@@ -49,7 +49,9 @@ import {
 // internals:
 import {
     // utilities:
-    cancelOrderById,
+    findOrderById,
+    cancelOrderSelect,
+    cancelOrder,
 }                           from './order-utilities'
 import {
     sendConfirmationEmail,
@@ -493,7 +495,7 @@ You do not have the privilege to modify the payment of the order.`
     //#region save changes
     try {
         const orderDetail = await (async (): Promise<OrderDetail|null> => {
-            const orderSelect : Prisma.OrderSelect = {
+            const orderDetailSelect : Prisma.OrderSelect = {
                 id                        : true,
                 
                 orderId                   : true,
@@ -566,10 +568,20 @@ You do not have the privilege to modify the payment of the order.`
             
             
             if (orderStatus === 'CANCELED') {
-                const orderDetail = await prisma.$transaction(async (prismaTransaction) => {
-                    return cancelOrderById(prismaTransaction, {
+                const orderDetail = await prisma.$transaction(async (prismaTransaction): Promise<OrderDetail|null> => {
+                    const order = await findOrderById(prismaTransaction, {
                         id                : id,
-                        orderSelect       : orderSelect,
+                        orderSelect       : cancelOrderSelect,
+                    });
+                    if (!order) return null; // the order is not found => ignore
+                    if (['CANCELED', 'EXPIRED'].includes(order.orderStatus)) return null; // already 'CANCELED'|'EXPIRED' => ignore
+                    if (order.payment.type !== 'MANUAL') return null; // not 'MANUAL' payment => ignore
+                    
+                    
+                    
+                    return await cancelOrder(prismaTransaction, {
+                        order             : order,
+                        orderSelect       : orderDetailSelect,
                         cancelationReason : cancelationReason,
                     });
                 });
@@ -686,7 +698,7 @@ You do not have the privilege to modify the payment of the order.`
                             },
                         },
                     },
-                    select : orderSelect,
+                    select : orderDetailSelect,
                 }),
             ]);
             return orderDetail;
