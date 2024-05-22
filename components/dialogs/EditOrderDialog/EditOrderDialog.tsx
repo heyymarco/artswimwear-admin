@@ -1073,7 +1073,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     
                                     
                                     // components:
-                                    tableDataComponent={<Generic className={`${styleSheet.tableDataAmount} currencyData`} />}
+                                    tableDataComponent={<Generic className={styleSheet.tableDataAmount} />}
                                     
                                     
                                     
@@ -1109,7 +1109,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     
                                     
                                     // components:
-                                    tableDataComponent={<Generic className={`${styleSheet.tableDataComposite} currencyData`} />}
+                                    tableDataComponent={<Generic className={styleSheet.tableDataAmount} />}
                                     
                                     
                                     
@@ -1129,7 +1129,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     
                                     
                                     // components:
-                                    tableDataComponent={<Generic className={`${styleSheet.tableDataComposite} currencyData`} />}
+                                    tableDataComponent={<Generic className={styleSheet.tableDataAmount} />}
                                     
                                     
                                     

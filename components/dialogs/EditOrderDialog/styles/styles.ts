@@ -442,16 +442,16 @@ const usesTableDataComposite = () => {
     
     
     return style({
+        // layouts:
+        alignItems          : 'center',
+        
+        
+        
         // spacings:
-        gap                : spacers.sm,
+        gap                 : spacers.sm,
         
         
         
-        ...rule('.currencyData', {
-            ...ifScreenWidthAtLeast('sm', {
-                justifyContent : 'end',  // right_most the items horizontally
-            }),
-        }),
         ...children('.paymentProvider', {
             width           : 'auto',
             height          : '26px',
@@ -494,8 +494,10 @@ const usesOutputDateLayout = () => {
 };
 const usesTableDataAmountLayout = () => {
     return style({
-        alignItems     : 'center',
-        justifyContent : 'space-between',
+        alignItems         : 'center',
+        ...ifScreenWidthAtLeast('sm', {
+            justifyContent : 'end',  // right_most the items horizontally
+        }),
     });
 }
 const usesSelectCurrencyDropdownLayout = () => {
