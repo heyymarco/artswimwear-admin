@@ -494,7 +494,7 @@ You do not have the privilege to modify the payment of the order.`
     
     //#region save changes
     try {
-        const orderDetail = await (async (): Promise<OrderDetail|null> => {
+        const orderDetail : OrderDetail|null = await (async (): Promise<OrderDetail|null> => {
             const orderDetailSelect : Prisma.OrderSelect = {
                 id                        : true,
                 
@@ -568,7 +568,7 @@ You do not have the privilege to modify the payment of the order.`
             
             
             if (orderStatus === 'CANCELED') {
-                const orderDetail = await prisma.$transaction(async (prismaTransaction): Promise<OrderDetail|null> => {
+                const orderDetail : OrderDetail|null = await prisma.$transaction(async (prismaTransaction): Promise<OrderDetail|null> => {
                     const order = await findOrderById(prismaTransaction, {
                         id                : id,
                         
@@ -588,7 +588,7 @@ You do not have the privilege to modify the payment of the order.`
                         orderSelect       : orderDetailSelect,
                     });
                 });
-                return orderDetail || null;
+                return orderDetail;
             } // if
             
             
