@@ -394,11 +394,11 @@ You do not have the privilege to view the orders.`
         (payment !== undefined)
         &&
         (
-            ((typeof(payment?.type) !== 'string') || !['MANUAL', 'MANUAL_PAID'].includes(payment?.type))
+            ((typeof(payment?.type) !== 'string') || (payment?.type !== 'MANUAL_PAID'))
             ||
-            ((typeof(payment?.brand) !== 'string') || !['BANK_TRANSFER', 'CHECK', 'OTHER'].includes(payment?.brand)) // must be filled
+            ((typeof(payment?.brand) !== 'string') || !['BANK_TRANSFER', 'CHECK', 'OTHER', /* TODO: config dependent brands */].includes(payment?.brand)) // must be filled
             ||
-            (payment?.identifier !== null) // must be null
+            ((payment?.identifier !== undefined) && (typeof(payment?.identifier) !== 'string'))
             ||
             ((typeof(payment?.amount) !== 'number') || (payment?.amount < 0) || !isFinite(payment?.amount)) // the amount must be finite & non_negative
             ||

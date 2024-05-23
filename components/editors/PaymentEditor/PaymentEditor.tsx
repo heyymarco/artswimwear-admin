@@ -516,7 +516,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                             </EditableButton>
                         }
                     >
-                        {['BANK_TRANSFER', 'CHECK', 'OTHER'].map((provider, index) =>
+                        {['BANK_TRANSFER', 'CHECK', 'OTHER', /* TODO: config dependent brands */].map((provider, index) =>
                             <ListItem
                                 // identifiers:
                                 key={index}

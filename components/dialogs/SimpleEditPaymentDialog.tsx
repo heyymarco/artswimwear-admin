@@ -76,10 +76,11 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
                 // original:
                 ...restValue,
                 
-                type   : 'MANUAL_PAID',           // 'MANUAL' (unedited) => 'MANUAL_PAID' (edited)
+                type      : 'MANUAL_PAID',           // 'MANUAL' (unedited) => 'MANUAL_PAID' (edited)
+                expiresAt : null,                    // paid, no more payment expiry date
                 
-                amount : (restValue.amount ?? 0), // normalize to zero if null
-                fee    : (restValue.fee    ?? 0), // normalize to zero if null
+                amount    : (restValue.amount ?? 0), // normalize to zero if null
+                fee       : (restValue.fee    ?? 0), // normalize to zero if null
             },
             
             // @ts-ignore
