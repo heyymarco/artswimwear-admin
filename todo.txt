@@ -1,4 +1,6 @@
 [high prior] fix print dialog
+[high prior] add email notifications
+[high prior] add push notifications & refresh page
 
 [high prior] verify breaking change <UpdateStatePlugin> .__first
 [high prior] removed paymentConfirmation.currency
