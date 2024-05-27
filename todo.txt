@@ -1,4 +1,6 @@
 [high prior] fix print dialog
+[high prior] add shippings setting
+[high prior] add shipping tracking
 [high prior] add email notifications
 [high prior] add push notifications & refresh page
 
