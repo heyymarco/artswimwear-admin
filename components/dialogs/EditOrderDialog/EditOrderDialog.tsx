@@ -267,6 +267,9 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         
         items,
         
+        customer,
+        guest,
+        
         shippingAddress    : shippingAddressDetail,
         shippingProviderId : shippingProviderId,
         shippingCost       : totalShippingCosts,
@@ -284,6 +287,13 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         paymentConfirmation,
         shippingTracking,
     } = model ?? { payment: {} };
+    
+    const {
+        preference : customerOrGuestPreference,
+    } = customer ?? guest ?? {};
+    const {
+        timezone : customerOrGuestPreferredTimezone,
+    } = customerOrGuestPreference ?? {};
     
     const [currency, setCurrency] = useState<string>(preferredCurrency?.currency ?? checkoutConfigShared.intl.defaultCurrency);
     const currencyRate = (!!preferredCurrency && (currency !== preferredCurrency.currency)) ? (1 / preferredCurrency.rate) : undefined;
@@ -311,7 +321,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         country        : shippingCountry,
     } = shippingAddressDetail ?? {};
     
-    const [preferredTimezone, setPreferredTimezone] = useState<number>(() => paymentConfirmation?.preferredTimezone ?? (0 - (new Date()).getTimezoneOffset()));
+    const [preferredTimezone, setPreferredTimezone] = useState<number>(() => customerOrGuestPreferredTimezone ?? checkoutConfigShared.intl.defaultTimezone);
     
     const shippingProvider       = shippingList?.entities?.[shippingProviderId ?? ''];
     
@@ -1277,17 +1287,17 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                             label='Reported At'
                                         >
                                             {!!paymentConfirmation.reportedAt && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.reportedAt).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} />}
-                                            <TimezoneEditor
-                                                // variants:
-                                                theme='primary'
-                                                mild={true}
-                                                
-                                                
-                                                
-                                                // values:
-                                                value={preferredTimezone}
-                                                onChange={setPreferredTimezone}
-                                            />
+                                        <TimezoneEditor
+                                            // variants:
+                                            theme='primary'
+                                            mild={true}
+                                            
+                                            
+                                            
+                                            // values:
+                                            value={preferredTimezone}
+                                            onChange={setPreferredTimezone}
+                                        />
                                         </DataTableItem>
                                         <DataTableItem
                                             // accessibilities:

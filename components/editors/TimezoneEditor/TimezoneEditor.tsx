@@ -45,6 +45,11 @@ import {
     convertTimezoneToReadableClock,
 }                           from './utilities'
 
+// configs:
+import {
+    checkoutConfigShared,
+}                           from '@/checkout.config.shared'
+
 
 
 // react components:
@@ -77,7 +82,7 @@ const TimezoneEditor = <TElement extends Element = HTMLButtonElement>(props: Tim
     // rest props:
     const {
         // values:
-        defaultValue : defaultUncontrollableValue = (0 - (new Date()).getTimezoneOffset()),
+        defaultValue : defaultUncontrollableValue = checkoutConfigShared.intl.defaultTimezone,
         value        : controllableValue,
         onChange     : onControllableValueChange,
     ...restTabProps} = props;

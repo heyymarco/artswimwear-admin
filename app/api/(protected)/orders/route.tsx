@@ -29,7 +29,9 @@ import type {
     Prisma,
     
     Customer,
+    CustomerPreference,
     Guest,
+    GuestPreference,
     Order,
     OrdersOnProducts,
     PaymentConfirmation,
@@ -73,6 +75,20 @@ import {
 
 
 // types:
+export type CustomerOrGuestPreference =
+    &Pick<CustomerPreference, keyof CustomerPreference & keyof GuestPreference>
+    &Pick<GuestPreference   , keyof CustomerPreference & keyof GuestPreference>
+export type CustomerOrGuestPreferenceData = Omit<CustomerOrGuestPreference,
+    // records:
+    |'id'
+    
+    // data:
+    |'marketingOpt'
+    
+    // relations:
+    |'customerId'
+    |'guestId'
+>
 export interface OrderDetail
     extends
         Omit<Order,
@@ -91,14 +107,18 @@ export interface OrderDetail
         |'orderId'
     >[]
     
-    customer : null|Omit<Customer,
+    customer : null|(Omit<Customer,
         |'createdAt'
         |'updatedAt'
-    >
-    guest    : null|Omit<Guest,
+    > & {
+        preference : CustomerOrGuestPreferenceData|null
+    })
+    guest    : null|(Omit<Guest,
         |'createdAt'
         |'updatedAt'
-    >
+    > & {
+        preference : CustomerOrGuestPreferenceData|null
+    })
     
     paymentConfirmation : null|Partial<Omit<PaymentConfirmation,
         |'id'
@@ -116,6 +136,89 @@ export interface OrderDetail
         |'orderId'
     >>
 }
+const orderDetailSelect = {
+    id                        : true,
+    
+    orderId                   : true,
+    orderStatus               : true,
+    orderTrouble              : true,
+    cancelationReason         : true,
+    
+    items                     : {
+        select: {
+            productId         : true,
+            variantIds        : true,
+            
+            price             : true,
+            shippingWeight    : true,
+            quantity          : true,
+        },
+    },
+    
+    customer                  : {
+        select: {
+            id                : true,
+            
+            name              : true,
+            email             : true,
+            
+            
+            
+            customerPreference : {
+                select : {
+                    timezone : true,
+                },
+            },
+        },
+    },
+    guest                     : {
+        select: {
+            id                : true,
+            
+            name              : true,
+            email             : true,
+            
+            
+            
+            guestPreference : {
+                select : {
+                    timezone : true,
+                },
+            },
+        },
+    },
+    
+    preferredCurrency         : true,
+    
+    shippingAddress           : true,
+    shippingCost              : true,
+    shippingProviderId        : true,
+    
+    payment                   : true,
+    
+    paymentConfirmation       : {
+        select : {
+            reportedAt        : true,
+            reviewedAt        : true,
+            
+            amount            : true,
+            payerName         : true,
+            paymentDate       : true,
+            
+            originatingBank   : true,
+            destinationBank   : true,
+            
+            rejectionReason   : true,
+        },
+    },
+    
+    shippingTracking          : {
+        select : {
+            shippingCarrier   : true,
+            shippingNumber    : true,
+        },
+    },
+} satisfies Prisma.OrderSelect;
 
 
 
@@ -201,74 +304,7 @@ You do not have the privilege to view the orders.`
     const [total, paged] = await prisma.$transaction([
         prisma.order.count(),
         prisma.order.findMany({
-            select : {
-                id                        : true,
-                
-                orderId                   : true,
-                orderStatus               : true,
-                orderTrouble              : true,
-                cancelationReason         : true,
-                
-                items                     : {
-                    select: {
-                        productId         : true,
-                        variantIds        : true,
-                        
-                        price             : true,
-                        shippingWeight    : true,
-                        quantity          : true,
-                    },
-                },
-                
-                customer                  : {
-                    select: {
-                        id                : true,
-                        
-                        name              : true,
-                        email             : true,
-                    },
-                },
-                guest                     : {
-                    select: {
-                        id                : true,
-                        
-                        name              : true,
-                        email             : true,
-                    },
-                },
-                
-                preferredCurrency         : true,
-                
-                shippingAddress           : true,
-                shippingCost              : true,
-                shippingProviderId        : true,
-                
-                payment                   : true,
-                
-                paymentConfirmation       : {
-                    select : {
-                        reportedAt        : true,
-                        reviewedAt        : true,
-                        
-                        amount            : true,
-                        payerName         : true,
-                        paymentDate       : true,
-                        preferredTimezone : true,
-                        
-                        originatingBank   : true,
-                        destinationBank   : true,
-                        
-                        rejectionReason   : true,
-                    },
-                },
-                shippingTracking          : {
-                    select : {
-                        shippingCarrier   : true,
-                        shippingNumber    : true,
-                        preferredTimezone : true,
-                    },
-                },
-            },
+            select : orderDetailSelect,
             orderBy : {
                 createdAt: 'desc',
             },
@@ -278,7 +314,36 @@ You do not have the privilege to view the orders.`
     ]);
     const paginationOrderDetail : Pagination<OrderDetail> = {
         total    : total,
-        entities : paged,
+        entities : paged.map((orderDetailData) => {
+            const {
+                customer : customerData,
+                guest    : guestData,
+                ...restOrderDetail
+            } = orderDetailData;
+            return {
+                customer : !customerData ? null : ((): OrderDetail['customer'] => {
+                    const {
+                        customerPreference,
+                        ...restCustomer
+                    } = customerData;
+                    return {
+                        ...restCustomer,
+                        preference : customerPreference,
+                    };
+                })(),
+                guest : !guestData ? null : ((): OrderDetail['guest'] => {
+                    const {
+                        guestPreference,
+                        ...restCustomer
+                    } = guestData;
+                    return {
+                        ...restCustomer,
+                        preference : guestPreference,
+                    };
+                })(),
+                ...restOrderDetail,
+            } satisfies OrderDetail;
+        }),
     };
     return NextResponse.json(paginationOrderDetail); // handled with success
 })
@@ -331,7 +396,6 @@ You do not have the privilege to view the orders.`
     const {
         shippingCarrier,
         shippingNumber,
-        // preferredTimezone,
     } = shippingTracking ?? {};
     //#endregion parsing request
     
@@ -495,78 +559,6 @@ You do not have the privilege to modify the payment of the order.`
     //#region save changes
     try {
         const orderDetail : OrderDetail|null = await (async (): Promise<OrderDetail|null> => {
-            const orderDetailSelect : Prisma.OrderSelect = {
-                id                        : true,
-                
-                orderId                   : true,
-                orderStatus               : true,
-                orderTrouble              : true,
-                cancelationReason         : true,
-                
-                items                     : {
-                    select: {
-                        productId         : true,
-                        variantIds        : true,
-                        
-                        price             : true,
-                        shippingWeight    : true,
-                        quantity          : true,
-                    },
-                },
-                
-                customer                  : {
-                    select: {
-                        id                : true,
-                        
-                        name              : true,
-                        email             : true,
-                    },
-                },
-                guest                     : {
-                    select: {
-                        id                : true,
-                        
-                        name              : true,
-                        email             : true,
-                    },
-                },
-                
-                preferredCurrency         : true,
-                
-                shippingAddress           : true,
-                shippingCost              : true,
-                shippingProviderId        : true,
-                
-                payment                   : true,
-                
-                paymentConfirmation       : {
-                    select : {
-                        reportedAt        : true,
-                        reviewedAt        : true,
-                        
-                        amount            : true,
-                        payerName         : true,
-                        paymentDate       : true,
-                        preferredTimezone : true,
-                        
-                        originatingBank   : true,
-                        destinationBank   : true,
-                        
-                        rejectionReason   : true,
-                    },
-                },
-                
-                shippingTracking          : {
-                    select : {
-                        shippingCarrier   : true,
-                        shippingNumber    : true,
-                        preferredTimezone : true,
-                    },
-                },
-            };
-            
-            
-            
             if (orderStatus === 'CANCELED') {
                 const orderDetail : OrderDetail|null = await prisma.$transaction(async (prismaTransaction): Promise<OrderDetail|null> => {
                     const order = await findOrderById(prismaTransaction, {
@@ -581,19 +573,47 @@ You do not have the privilege to modify the payment of the order.`
                     
                     
                     // (pending)Order CANCELED => restore the `Product` stock and mark Order as 'CANCELED':
-                    return await cancelOrder(prismaTransaction, {
+                    const orderDetailData = await cancelOrder(prismaTransaction, {
                         order             : order,
                         cancelationReason : cancelationReason,
                         
                         orderSelect       : orderDetailSelect,
                     });
+                    const {
+                        customer : customerData,
+                        guest    : guestData,
+                        ...restOrderDetail
+                    } = orderDetailData;
+                    return {
+                        customer : !customerData ? null : ((): OrderDetail['customer'] => {
+                            const {
+                                customerPreference,
+                                ...restCustomer
+                            } = customerData;
+                            return {
+                                ...restCustomer,
+                                preference : customerPreference,
+                            };
+                        })(),
+                        guest : !guestData ? null : ((): OrderDetail['guest'] => {
+                            const {
+                                guestPreference,
+                                ...restCustomer
+                            } = guestData;
+                            return {
+                                ...restCustomer,
+                                preference : guestPreference,
+                            };
+                        })(),
+                        ...restOrderDetail,
+                    } satisfies OrderDetail;
                 });
                 return orderDetail;
             } // if
             
             
             
-            const [, orderDetail] = await prisma.$transaction([
+            const [, orderDetailData] = await prisma.$transaction([
                 // update PaymentConfirmation (if any):
                 (
                     (payment?.type === 'MANUAL_PAID')
@@ -704,7 +724,34 @@ You do not have the privilege to modify the payment of the order.`
                     select : orderDetailSelect,
                 }),
             ]);
-            return orderDetail;
+            const {
+                customer : customerData,
+                guest    : guestData,
+                ...restOrderDetail
+            } = orderDetailData;
+            return {
+                customer : !customerData ? null : ((): OrderDetail['customer'] => {
+                    const {
+                        customerPreference,
+                        ...restCustomer
+                    } = customerData;
+                    return {
+                        ...restCustomer,
+                        preference : customerPreference,
+                    };
+                })(),
+                guest : !guestData ? null : ((): OrderDetail['guest'] => {
+                    const {
+                        guestPreference,
+                        ...restCustomer
+                    } = guestData;
+                    return {
+                        ...restCustomer,
+                        preference : guestPreference,
+                    };
+                })(),
+                ...restOrderDetail,
+            } satisfies OrderDetail;
         })();
         
         
