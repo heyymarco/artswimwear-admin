@@ -203,8 +203,8 @@ import {
     PAGE_ORDER_TAB_PAYMENT,
 }                           from '@/website.config'
 import {
-    commerceConfig,
-}                           from '@/commerce.config'
+    checkoutConfigShared,
+}                           from '@/checkout.config.shared'
 
 
 
@@ -285,15 +285,15 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         shippingTracking,
     } = model ?? { payment: {} };
     
-    const [currency, setCurrency] = useState<string>(preferredCurrency?.currency ?? commerceConfig.defaultCurrency);
+    const [currency, setCurrency] = useState<string>(preferredCurrency?.currency ?? checkoutConfigShared.intl.defaultCurrency);
     const currencyRate = (!!preferredCurrency && (currency !== preferredCurrency.currency)) ? (1 / preferredCurrency.rate) : undefined;
     const currencyOptions = useMemo<string[]>(() => {
-        if (!preferredCurrency?.currency) return [commerceConfig.defaultCurrency];
+        if (!preferredCurrency?.currency) return [checkoutConfigShared.intl.defaultCurrency];
         return Array.from(
             new Set<string>(
                 [
                     preferredCurrency?.currency,
-                    commerceConfig.defaultCurrency
+                    checkoutConfigShared.intl.defaultCurrency
                 ]
             )
         );
