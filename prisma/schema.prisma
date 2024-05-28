@@ -217,6 +217,7 @@ model CustomerPreference {
     
     // data:
     marketingOpt            Boolean?
+    timezone                Float?
     
     // relations:
     customerId              String                  @unique
@@ -244,6 +245,7 @@ model GuestPreference {
     
     // data:
     marketingOpt            Boolean?
+    timezone                Float?
     
     // relations:
     guestId                 String                  @unique
