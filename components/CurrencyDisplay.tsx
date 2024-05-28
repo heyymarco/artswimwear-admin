@@ -10,10 +10,9 @@ import {
 }                           from '@/libs/formatters'
 
 // configs:
-
 import {
-    commerceConfig,
-}                           from '@/commerce.config'
+    checkoutConfigShared,
+}                           from '@/checkout.config.shared'
 
 
 
@@ -36,7 +35,7 @@ export interface CurrencyDisplayProps {
 const CurrencyDisplay = (props: CurrencyDisplayProps): JSX.Element|null => {
     // props:
     const {
-        currency     = commerceConfig.defaultCurrency,
+        currency     = checkoutConfigShared.intl.defaultCurrency,
         currencyRate = 1,
         
         amount       : amountRaw,
