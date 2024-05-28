@@ -5,8 +5,8 @@ import {
 
 // configs:
 import {
-    commerceConfig,
-}                           from '@/commerce.config'
+    checkoutConfigShared,
+}                           from '@/checkout.config.shared'
 
 
 
@@ -23,13 +23,13 @@ export const convertSystemCurrencyIfRequired = <TNumber extends number|null|unde
     
     
     
-    const fractionUnit = commerceConfig.currencies[commerceConfig.defaultCurrency].fractionUnit;
+    const fractionUnit = checkoutConfigShared.intl.currencies[checkoutConfigShared.intl.defaultCurrency].fractionUnit;
     const rawConverted = fromAmount * rate;
     const rounding     = {
         ROUND : Math.round,
         CEIL  : Math.ceil,
         FLOOR : Math.floor,
-    }[commerceConfig.currencyConversionRounding]; // reverts using app's currencyConversionRounding (usually ROUND)
+    }[checkoutConfigShared.intl.currencyConversionRounding]; // reverts using app's currencyConversionRounding (usually ROUND)
     const fractions    = rounding(rawConverted / fractionUnit);
     const stepped      = fractions * fractionUnit;
     
@@ -42,20 +42,20 @@ export const convertSystemCurrencyIfRequired = <TNumber extends number|null|unde
  * from the app's default currency  
  * to customer's preferred currency.
  */
-export const revertSystemCurrencyIfRequired = <TNumber extends number|null|undefined>(fromAmount: TNumber, rate: number, customerCurrency: string = commerceConfig.defaultCurrency): TNumber => {
+export const revertSystemCurrencyIfRequired  = <TNumber extends number|null|undefined>(fromAmount: TNumber, rate: number, customerCurrency: string = checkoutConfigShared.intl.defaultCurrency): TNumber => {
     // conditions:
     if (typeof(fromAmount) !== 'number') return fromAmount; // null|undefined => nothing to convert
     if (rate === 1)                      return fromAmount; // rate is 1      => nothing to convert
     
     
     
-    const fractionUnit = (commerceConfig.currencies[customerCurrency] ?? commerceConfig.currencies[commerceConfig.defaultCurrency]).fractionUnit;
+    const fractionUnit = (checkoutConfigShared.intl.currencies[customerCurrency] ?? checkoutConfigShared.intl.currencies[checkoutConfigShared.intl.defaultCurrency]).fractionUnit;
     const rawConverted = fromAmount / rate;
     const rounding     = {
         ROUND : Math.round,
         CEIL  : Math.ceil,
         FLOOR : Math.floor,
-    }[commerceConfig.currencyConversionRounding]; // reverts using app's currencyConversionRounding (usually ROUND)
+    }[checkoutConfigShared.intl.currencyConversionRounding]; // reverts using app's currencyConversionRounding (usually ROUND)
     const fractions    = rounding(rawConverted / fractionUnit);
     const stepped      = fractions * fractionUnit;
     
