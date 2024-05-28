@@ -13,8 +13,8 @@ import {
 
 // configs:
 import {
-    commerceConfig,
-}                           from '@/commerce.config'
+    checkoutConfigShared,
+}                           from '@/checkout.config.shared'
 
 
 
@@ -29,7 +29,7 @@ const PriceEditor = <TElement extends Element = HTMLDivElement>(props: PriceEdit
     // default props:
     const {
         // appearances:
-        currency                 = commerceConfig.defaultCurrency,
+        currency                 = checkoutConfigShared.intl.defaultCurrency,
         
         
         
