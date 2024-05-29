@@ -1012,7 +1012,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                 />}
                             </Content>}
                             {isExpired && <>
-                                {!!paymentExpiresAt && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentExpiresAt).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} />}
+                                {!!paymentExpiresAt && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentExpiresAt).valueOf() + (preferredTimezone * 60 * 60 * 1000 /* hours to milliseconds */))).toISOString().slice(0, 16)} />}
                                 <TimezoneEditor
                                     // variants:
                                     theme='primary'
@@ -1266,7 +1266,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                             {
                                                 paymentConfirmation.reviewedAt
                                                 ? <>
-                                                    <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.reviewedAt).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} />
+                                                    <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.reviewedAt).valueOf() + (preferredTimezone * 60 * 60 * 1000 /* hours to milliseconds */))).toISOString().slice(0, 16)} />
                                                     <TimezoneEditor
                                                         // variants:
                                                         theme='primary'
@@ -1286,7 +1286,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                             // accessibilities:
                                             label='Reported At'
                                         >
-                                            {!!paymentConfirmation.reportedAt && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.reportedAt).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} />}
+                                            {!!paymentConfirmation.reportedAt && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.reportedAt).valueOf() + (preferredTimezone * 60 * 60 * 1000 /* hours to milliseconds */))).toISOString().slice(0, 16)} />}
                                         <TimezoneEditor
                                             // variants:
                                             theme='primary'
@@ -1338,7 +1338,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                             // accessibilities:
                                             label='Payment Date'
                                         >
-                                            {!!paymentConfirmation.paymentDate && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.paymentDate).valueOf() + (preferredTimezone * 60 * 1000))).toISOString().slice(0, 16)} />}
+                                            {!!paymentConfirmation.paymentDate && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.paymentDate).valueOf() + (preferredTimezone * 60 * 60 * 1000 /* hours to milliseconds */))).toISOString().slice(0, 16)} />}
                                             <TimezoneEditor
                                                 // variants:
                                                 theme='primary'
