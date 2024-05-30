@@ -165,6 +165,9 @@ import {
     PrintDialog,
 }                           from '@/components/dialogs/PrintDialog'
 import {
+    DateTimeDisplay,
+}                           from '@/components/DateTimeDisplay'
+import {
     ViewCartItem,
 }                           from './ViewCartItem'
 import {
@@ -1012,7 +1015,10 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                 />}
                             </Content>}
                             {isExpired && <>
-                                {!!paymentExpiresAt && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentExpiresAt).valueOf() + (preferredTimezone * 60 * 60 * 1000 /* hours to milliseconds */))).toISOString().slice(0, 16)} />}
+                                {!!paymentExpiresAt && <span className={styleSheet.dateTime}>
+                                    <DateTimeDisplay dateTime={paymentExpiresAt} timezone={preferredTimezone} showTimezone={false} />
+                                </span>}
+                                
                                 <TimezoneEditor
                                     // variants:
                                     theme='primary'
@@ -1266,7 +1272,10 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                             {
                                                 paymentConfirmation.reviewedAt
                                                 ? <>
-                                                    <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.reviewedAt).valueOf() + (preferredTimezone * 60 * 60 * 1000 /* hours to milliseconds */))).toISOString().slice(0, 16)} />
+                                                    <span className={styleSheet.dateTime}>
+                                                        <DateTimeDisplay dateTime={paymentConfirmation.reviewedAt} timezone={preferredTimezone} showTimezone={false} />
+                                                    </span>
+                                                    
                                                     <TimezoneEditor
                                                         // variants:
                                                         theme='primary'
@@ -1286,18 +1295,21 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                             // accessibilities:
                                             label='Reported At'
                                         >
-                                            {!!paymentConfirmation.reportedAt && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.reportedAt).valueOf() + (preferredTimezone * 60 * 60 * 1000 /* hours to milliseconds */))).toISOString().slice(0, 16)} />}
-                                        <TimezoneEditor
-                                            // variants:
-                                            theme='primary'
-                                            mild={true}
+                                            {!!paymentConfirmation.reportedAt && <span className={styleSheet.dateTime}>
+                                                <DateTimeDisplay dateTime={paymentConfirmation.reportedAt} timezone={preferredTimezone} showTimezone={false} />
+                                            </span>}
                                             
-                                            
-                                            
-                                            // values:
-                                            value={preferredTimezone}
-                                            onChange={setPreferredTimezone}
-                                        />
+                                            <TimezoneEditor
+                                                // variants:
+                                                theme='primary'
+                                                mild={true}
+                                                
+                                                
+                                                
+                                                // values:
+                                                value={preferredTimezone}
+                                                onChange={setPreferredTimezone}
+                                            />
                                         </DataTableItem>
                                         <DataTableItem
                                             // accessibilities:
@@ -1338,7 +1350,10 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                             // accessibilities:
                                             label='Payment Date'
                                         >
-                                            {!!paymentConfirmation.paymentDate && <input type='datetime-local' className={styleSheet.outputDate} readOnly={true} value={(new Date(new Date(paymentConfirmation.paymentDate).valueOf() + (preferredTimezone * 60 * 60 * 1000 /* hours to milliseconds */))).toISOString().slice(0, 16)} />}
+                                            {!!paymentConfirmation.paymentDate && <span className={styleSheet.dateTime}>
+                                                <DateTimeDisplay dateTime={paymentConfirmation.paymentDate} timezone={preferredTimezone} showTimezone={false} />
+                                            </span>}
+                                            
                                             <TimezoneEditor
                                                 // variants:
                                                 theme='primary'

@@ -34,11 +34,6 @@ import {
     
     
     
-    // removes browser's default stylesheet:
-    stripoutTextbox,
-    
-    
-    
     // border (stroke) stuff of UI:
     usesBorder,
 }                           from '@reusable-ui/core'    // a set of reusable-ui packages which are responsible for building any component
@@ -493,9 +488,9 @@ const usesPaymentConfirmationAlertLayout = () => {
         width: '100%',
     });
 };
-const usesOutputDateLayout = () => {
+const usesDateTimeLayout = () => {
     return style({
-        ...stripoutTextbox(),
+        alignSelf: 'center',
     });
 };
 const usesTableDataAmountLayout = () => {
@@ -760,8 +755,8 @@ export default () => [
     scope('paymentConfirmationAlert', {
         ...usesPaymentConfirmationAlertLayout(),
     }),
-    scope('outputDate', {
-        ...usesOutputDateLayout(),
+    scope('dateTime', {
+        ...usesDateTimeLayout(),
     }),
     scope('tableDataAmount', {
         ...usesTableDataAmountLayout(),
