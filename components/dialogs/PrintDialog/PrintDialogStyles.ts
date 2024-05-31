@@ -32,6 +32,7 @@ const useDocumentLayout = () => {
 const useBackdropLayout = () => {
     return style({
         // positions:
+        position       : 'fixed',    // avoid document's scrolling effect
         ...rule('@media print', {
             position   : 'relative', // relative position on paper, keeps the default on screen
         }),
