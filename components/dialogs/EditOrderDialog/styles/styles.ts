@@ -77,7 +77,7 @@ const usesOrderShippingTabLayout = () => {
         
         // sizes:
         boxSizing          : 'content-box',
-        minInlineSize      : '32rem',
+        // minInlineSize      : '32rem',
         
         
         
