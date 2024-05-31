@@ -26,6 +26,7 @@ const useDocumentLayout = () => {
         // backgrounds:
         ...rule('@media print', {
             backg      : 'white',    // use white paper on out of printable area
+            overflow   : 'hidden',   // fix Chrome's empty pages
         }),
     });
 };
