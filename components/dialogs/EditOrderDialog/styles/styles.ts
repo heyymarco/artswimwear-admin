@@ -36,6 +36,11 @@ import {
     
     // border (stroke) stuff of UI:
     usesBorder,
+    
+    
+    
+    // padding (inner spacing) stuff of UI:
+    usesPadding,
 }                           from '@reusable-ui/core'    // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -85,8 +90,30 @@ const usesOrderShippingTabLayout = () => {
         padding            : '0px',
     });
 };
+const usesMinPaddingForBadge = () => {
+    // dependencies:
+    
+    // features:
+    const {paddingVars} = usesPadding();
+    
+    
+    
+    return style({
+        // children:
+        ...children(['&', 'article'], {
+            // spacings:
+            // add a minimum paddingBlock for <Badge>:
+            [paddingVars.paddingBlock] : `max(2.5rem, ${containers.paddingBlock})`,
+        }),
+    });
+};
 const usesOrderShippingSectionLayout = () => {
     return style({
+        // layouts:
+        ...usesMinPaddingForBadge(),
+        
+        
+        
         // children:
         ...children('article', {
             ...children('h3', {
@@ -333,6 +360,11 @@ const usesViewCartItemLayout = () => {
 };
 const usesOrderDeliverySectionLayout = () => {
     return style({
+        // layouts:
+        ...usesMinPaddingForBadge(),
+        
+        
+        
         // children:
         ...children('article', {
             ...children('h3', {
