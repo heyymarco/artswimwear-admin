@@ -25,8 +25,13 @@ const useDocumentLayout = () => {
     return style({
         // backgrounds:
         ...rule('@media print', {
-            backg      : 'white',    // use white paper on out of printable area
+            // sizes:
             overflow   : 'hidden',   // fix Chrome's empty pages
+            
+            
+            
+            // backgrounds:
+            backg      : 'white',    // use white paper on out of printable area
         }),
     });
 };
