@@ -38,16 +38,16 @@ const useDocumentLayout = () => {
 const useBackdropLayout = () => {
     return style({
         // positions:
-        position       : 'fixed',    // avoid document's scrolling effect
+        position         : 'fixed',    // avoid document's scrolling effect
         ...rule('@media print', {
-            position   : 'relative', // relative position on paper, keeps the default on screen
+            position     : 'relative', // relative position on paper, keeps the default on screen
         }),
         
         
         
         // layouts:
-        display        : 'grid',     // use css grid for layouting
-        gridTemplate   : [[
+        display          : 'grid',     // use css grid for layouting
+        gridTemplate     : [[
             '"content" 100%',
             '/',
             '100%'
@@ -56,7 +56,10 @@ const useBackdropLayout = () => {
         
         
         // sizes:
-        minBlockSize   : 'unset',    // overwrite of `minBlockSize: 100svh`
+        ...rule('@media print', {
+            minBlockSize : 'unset',    // overwrite of `minBlockSize: 100svh`
+            overflow     : 'hidden',   // no scrollbar on small paper
+        }),
     });
 };
 const usePopupLayout    = () => {
