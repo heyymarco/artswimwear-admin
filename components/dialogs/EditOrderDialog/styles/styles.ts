@@ -662,6 +662,13 @@ const usesPrintSpacerLayout = () => {
         
         
         
+        // prints:
+        ...rule('@media print', {
+            breakAfter : 'page',
+        }),
+        
+        
+        
         // children:
         ...children('.scissors', {
             // positions:
