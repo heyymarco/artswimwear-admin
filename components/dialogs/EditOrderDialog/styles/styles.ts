@@ -279,19 +279,23 @@ const usesViewCartItemLayout = () => {
         }),
         ...children('.variants', {
             // positions:
-            gridArea    : 'variants',
+            gridArea        : 'variants',
+            justifySelf     : 'center',  // center horizontally
+            ...ifScreenWidthAtLeast('sm', {
+                justifySelf : 'stretch', // fill the entire gridArea
+            }),
             
             
             
             // layouts:
-            display  : 'flex',
-            flexWrap : 'wrap',
+            display          : 'flex',
+            flexWrap         : 'wrap',   // wrap excess variant items
             
             
             
             // spacings:
-            margin   : 0,
-            gap      : spacers.xs,
+            margin           : 0,
+            gap              : spacers.xs,
         }),
         ...children(['.unitPrice', '.quantity'], {
             display             : 'grid',
