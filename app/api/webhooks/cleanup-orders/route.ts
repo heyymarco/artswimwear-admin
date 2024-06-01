@@ -28,6 +28,12 @@ import {
 
 
 
+// configs:
+export const fetchCache = 'force-no-store';
+export const maxDuration = 60; // This function can run for a maximum of 60 seconds
+
+
+
 export async function POST(req: Request, res: Response): Promise<Response> {
     const secretHeader = req.headers.get('X-Secret');
     console.log('webhook:cleanup-orders called: ', {secretHeader});
@@ -72,7 +78,7 @@ export async function POST(req: Request, res: Response): Promise<Response> {
                 .filter((result): result is Exclude<typeof result, PromiseRejectedResult> => (result.status === 'fulfilled'))
                 .map((succeededResult) => succeededResult.value)
             );
-        }))
+        }, { timeout: 30000 }))
         .map(convertOrderDetailDataToOrderDetail)
     );
     
