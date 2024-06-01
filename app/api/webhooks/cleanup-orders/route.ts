@@ -45,6 +45,9 @@ export async function POST(req: Request, res: Response): Promise<Response> {
             const now = new Date();
             const expiredOrders = await prismaTransaction.order.findMany({
                 where  : {
+                    orderStatus : {
+                        notIn : ['EXPIRED', 'CANCELED'],
+                    },
                     payment : {
                         // expiresAt : { lte }
                         is : {
