@@ -97,7 +97,7 @@ export const orderDetailSelect = {
     },
 } satisfies Prisma.OrderSelect;
 
-export const convertOrderDetailDataToOrderDetail = (orderDetailData: Awaited<ReturnType<typeof prisma.order.findFirstOrThrow<{ where: {}, select: typeof orderDetailSelect }>>>): OrderDetail => {
+export const convertOrderDetailDataToOrderDetail = (orderDetailData: Awaited<ReturnType<typeof prisma.order.findFirstOrThrow<{ select: typeof orderDetailSelect }>>>): OrderDetail => {
     const {
         customer : customerData,
         guest    : guestData,
