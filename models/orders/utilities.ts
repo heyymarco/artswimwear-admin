@@ -13,6 +13,131 @@ import {
 
 
 
+export const orderAndDataSelectAndExtra = {
+    // records:
+    id                : true,
+    createdAt         : true,
+    updatedAt         : true,
+    
+    // data:
+    orderId           : true,
+    paymentId         : true,
+    
+    orderStatus       : true,
+    orderTrouble      : true,
+    cancelationReason : true,
+    
+    preferredCurrency : true,
+    
+    shippingAddress   : true,
+    shippingCost      : true,
+    
+    payment           : true,
+    
+    // relations:
+    items : {
+        select : {
+            // data:
+            price          : true,
+            shippingWeight : true,
+            quantity       : true,
+            
+            // relations:
+            product        : {
+                select : {
+                    name   : true,
+                    images : true,
+                    
+                    // relations:
+                    variantGroups : {
+                        select : {
+                            variants : {
+                                // always allow to access DRAFT variants when the customer is already ordered:
+                                // where    : {
+                                //     visibility : { not: 'DRAFT' } // allows access to Variant with visibility: 'PUBLISHED' but NOT 'DRAFT'
+                                // },
+                                select : {
+                                    id   : true,
+                                    
+                                    name : true,
+                                },
+                                orderBy : {
+                                    sort : 'asc',
+                                },
+                            },
+                        },
+                        orderBy : {
+                            sort : 'asc',
+                        },
+                    },
+                },
+            },
+            variantIds     : true,
+        },
+    },
+    
+    customerId         : true,
+    customer           : {
+        select : {
+            name  : true,
+            email : true,
+            customerPreference : {
+                select : {
+                    marketingOpt : true,
+                    timezone     : true,
+                },
+            },
+        },
+    },
+    
+    guestId            : true,
+    guest              : {
+        select : {
+            name  : true,
+            email : true,
+            guestPreference : {
+                select : {
+                    marketingOpt : true,
+                    timezone     : true,
+                },
+            },
+        },
+    },
+    
+    shippingProviderId : true,
+    shippingProvider   : {
+        select : {
+            name            : true, // optional for displaying email report
+            
+            weightStep      : true, // required for calculating `getMatchingShipping()`
+            
+            estimate        : true, // optional for displaying email report
+            shippingRates   : true, // required for calculating `getMatchingShipping()`
+            
+            useSpecificArea : true, // required for calculating `getMatchingShipping()`
+            countries       : true, // required for calculating `getMatchingShipping()`
+        },
+    },
+    
+    
+    
+    // extra data:
+    paymentConfirmation : {
+        select : {
+            token           : true,
+            rejectionReason : true,
+        },
+    },
+    shippingTracking : {
+        select : {
+            token          : true,
+            shippingNumber : true,
+        },
+    },
+} satisfies Prisma.OrderSelect;
+
+
+
 export const orderDetailSelect = {
     id                        : true,
     
