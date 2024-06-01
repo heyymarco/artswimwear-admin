@@ -1,3 +1,33 @@
+// models:
+import {
+    orderDetailSelect,
+    convertOrderDetailDataToOrderDetail,
+    revertDraftOrderSelect,
+    cancelOrderSelect,
+}                           from '@/models'
+
+// ORMs:
+import {
+    prisma,
+}                           from '@/libs/prisma.server'
+
+// internals:
+import {
+    // utilities:
+    revertDraftOrder,
+    cancelOrder,
+}                           from '../../(protected)/orders/order-utilities'
+import {
+    sendConfirmationEmail,
+}                           from '../../(protected)/orders/email-utilities'
+
+// configs:
+import {
+    checkoutConfigServer,
+}                           from '@/checkout.config.server'
+
+
+
 export async function POST(req: Request, res: Response): Promise<Response> {
     const secretHeader = req.headers.get('X-Secret');
     console.log('webhook:cleanup-orders called: ', {secretHeader});
@@ -6,6 +36,73 @@ export async function POST(req: Request, res: Response): Promise<Response> {
             error: 'Unauthorized.',
         }, { status: 401 }); // handled with error: unauthorized
     } // if
+    
+    
+    
+    // find expired (Real)Order & cleaning up:
+    const expiredOrderDetails = (
+        (await prisma.$transaction(async (prismaTransaction) => {
+            const now = new Date();
+            const expiredOrders = await prismaTransaction.order.findMany({
+                where  : {
+                    payment : {
+                        // expiresAt : { lte }
+                        is : {
+                            expiresAt : { lt: now },
+                        },
+                    },
+                },
+                select : cancelOrderSelect,
+            });
+            return (
+                (await Promise.allSettled(
+                    expiredOrders.map(async (expiredOrder) =>
+                        // (Real)Order EXPIRED => restore the `Product` stock and mark Order as 'EXPIRED':
+                        cancelOrder(prismaTransaction, {
+                            order             : expiredOrder,
+                            isExpired         : true,
+                            
+                            orderSelect       : orderDetailSelect,
+                        })
+                    ),
+                ))
+                .filter((result): result is Exclude<typeof result, PromiseRejectedResult> => (result.status === 'fulfilled'))
+                .map((succeededResult) => succeededResult.value)
+            );
+        }))
+        .map(convertOrderDetailDataToOrderDetail)
+    );
+    
+    //#region send email confirmation
+    await Promise.allSettled(
+        expiredOrderDetails
+        .map((expiredOrderDetail) =>
+            // notify that the order has been expired:
+            sendConfirmationEmail(expiredOrderDetail.orderId, checkoutConfigServer.emails.expired)
+        )
+    );
+    //#endregion send email confirmation
+    
+    
+    
+    // find expired DraftOrder & cleaning up:
+    await prisma.$transaction(async (prismaTransaction): Promise<void> => {
+        const now = new Date();
+        const expiredDraftOrders = await prismaTransaction.draftOrder.findMany({
+            where  : {
+                expiresAt : { lt: now },
+            },
+            select : revertDraftOrderSelect,
+        });
+        await Promise.allSettled(
+            expiredDraftOrders.map(async (expiredDraftOrder) =>
+                // DraftOrder EXPIRED => restore the `Product` stock and mark DraftOrder as 'EXPIRED':
+                revertDraftOrder(prismaTransaction, {
+                    draftOrder        : expiredDraftOrder,
+                })
+            ),
+        );
+    });
     
     
     
