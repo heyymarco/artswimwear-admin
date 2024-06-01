@@ -1,4 +1,3 @@
-[high prior] fix print dialog
 [high prior] add cronjob for expired (draft|real)Order
 [high prior] add shippings setting
 [high prior] add shipping tracking
