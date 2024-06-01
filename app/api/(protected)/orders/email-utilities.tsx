@@ -266,7 +266,7 @@ const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof p
         ),
     } satisfies OrderAndDataAndExtra;
 };
-export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailConfig): Promise<void> => {
+export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailConfig): Promise<boolean|null> => {
     const [newOrder, countryList] = await prisma.$transaction(async (prismaTransaction) => {
         return await Promise.all([
             getOrderAndData(prismaTransaction, orderId),
@@ -290,7 +290,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
             })(),
         ]);
     });
-    if (!newOrder) return;
+    if (!newOrder) return null;
     const {
         // extra data:
         paymentConfirmation,
@@ -300,7 +300,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
         
         ...orderAndData
     } = newOrder;
-    if (!orderAndData.customerOrGuest) return;
+    if (!orderAndData.customerOrGuest) return null;
     
     
     
@@ -421,9 +421,17 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
         finally {
             transporter.close();
         } // try
+        
+        
+        
+        return true; // succeeded
     }
     catch (error: any) {
         console.log('ERROR: ', error);
         // ignore send email error
+        
+        
+        
+        return false; // failed
     } // try
 };

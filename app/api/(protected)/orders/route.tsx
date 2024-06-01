@@ -542,12 +542,7 @@ You do not have the privilege to modify the payment of the order.`
             } // if
             
             if (emailConfig) {
-                try {
-                    await sendConfirmationEmail(orderDetail.orderId, emailConfig);
-                }
-                catch {
-                    // ignore send email error
-                }
+                await sendConfirmationEmail(orderDetail.orderId, emailConfig);
             } // if
         } // if
         //#endregion send email confirmation
