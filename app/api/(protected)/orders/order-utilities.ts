@@ -1,7 +1,8 @@
 // models:
-import type {
-    FindOrderByIdData,
-    CancelOrderData,
+import {
+    type RevertDraftOrderData,
+    type FindOrderByIdData,
+    type CancelOrderData,
 }                           from '@/models'
 import type {
     Prisma,
@@ -11,6 +12,45 @@ import type {
 import {
     prisma,
 }                           from '@/libs/prisma.server'
+
+
+
+export const revertDraftOrder = async (prismaTransaction: Parameters<Parameters<typeof prisma.$transaction>[0]>[0], revertDraftOrderData : RevertDraftOrderData): Promise<void> => {
+    // data:
+    const {
+        draftOrder,
+    } = revertDraftOrderData;
+    
+    
+    
+    await Promise.all([
+        // revert Stock(s):
+        ...(draftOrder.items.map(({productId, variantIds, quantity}) =>
+            !productId
+            ? undefined
+            : prismaTransaction.stock.updateMany({
+                where  : {
+                    productId  : productId,
+                    value      : { not      : null       },
+                    variantIds : { hasEvery : variantIds },
+                },
+                data   : {
+                    value : { increment : quantity }
+                },
+            })
+        )),
+        
+        // delete DraftOrder:
+        prismaTransaction.draftOrder.delete({
+            where  : {
+                id : draftOrder.id,
+            },
+            select : {
+                id : true,
+            },
+        }),
+    ]);
+}
 
 
 

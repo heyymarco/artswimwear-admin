@@ -12,15 +12,20 @@ import type {
     Guest,
     GuestPreference,
     Payment,
+    PaymentConfirmation,
     Order,
     OrdersOnProducts,
-    PaymentConfirmation,
+    DraftOrder,
+    DraftOrdersOnProducts,
     ShippingTracking,
 }                           from '@prisma/client'
 
 
 
 // types:
+export type CustomerOrGuest =
+    &Pick<Customer, keyof Customer & keyof Guest>
+    &Pick<Guest   , keyof Customer & keyof Guest>
 export type CustomerOrGuestPreference =
     &Pick<CustomerPreference, keyof CustomerPreference & keyof GuestPreference>
     &Pick<GuestPreference   , keyof CustomerPreference & keyof GuestPreference>
@@ -35,6 +40,9 @@ export type CustomerOrGuestPreferenceData = Omit<CustomerOrGuestPreference,
     |'customerId'
     |'guestId'
 >
+
+
+
 export interface OrderDetail
     extends
         Omit<Order,
@@ -81,6 +89,28 @@ export interface OrderDetail
         
         |'orderId'
     >>
+}
+
+
+
+export type RevertDraftOrder = Pick<DraftOrder,
+    // records:
+    |'id'
+    
+    // data:
+    |'orderId'
+> & {
+    items : Pick<DraftOrdersOnProducts,
+        // data:
+        |'quantity'
+        
+        // relations:
+        |'productId'
+        |'variantIds'
+    >[]
+}
+export interface RevertDraftOrderData {
+    draftOrder: RevertDraftOrder
 }
 
 

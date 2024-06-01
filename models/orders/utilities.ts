@@ -255,6 +255,27 @@ export const convertOrderDetailDataToOrderDetail = (orderDetailData: Awaited<Ret
 
 
 
+export const revertDraftOrderSelect = {
+    // records:
+    id                     : true,
+    
+    // data:
+    orderId                : true,
+    
+    items : {
+        select : {
+            // data:
+            quantity       : true,
+            
+            // relations:
+            productId      : true,
+            variantIds     : true,
+        },
+    },
+} satisfies Prisma.DraftOrderSelect;
+
+
+
 export const cancelOrderSelect = {
     id                     : true,
     

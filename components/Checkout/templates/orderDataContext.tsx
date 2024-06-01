@@ -11,6 +11,10 @@ import type {
 
 // models:
 import type {
+    CustomerOrGuest,
+    CustomerOrGuestPreference,
+}                           from '@/models'
+import type {
     Product,
     Variant,
     Customer,
@@ -58,12 +62,6 @@ export type ProductData = Pick<Product, 'name'> & {
 export type OrderItemsAndData = Pick<OrdersOnProducts, 'price'|'quantity'|'variantIds'> & {
     product : ProductData|null
 }
-export type CustomerOrGuest =
-    &Pick<Customer, keyof Customer & keyof Guest>
-    &Pick<Guest   , keyof Customer & keyof Guest>
-export type CustomerOrGuestPreference =
-    &Pick<CustomerPreference, keyof CustomerPreference & keyof GuestPreference>
-    &Pick<GuestPreference   , keyof CustomerPreference & keyof GuestPreference>
 export type CustomerOrGuestData = Omit<CustomerOrGuest,
     // records:
     |'id'
