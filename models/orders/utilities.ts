@@ -1,7 +1,15 @@
 // models:
-import type {
-    Prisma,
+import {
+    type OrderDetail,
+}                           from './types'
+import {
+    type Prisma,
 }                           from '@prisma/client'
+
+// ORMs:
+import {
+    type prisma,
+}                           from '@/libs/prisma.server'
 
 
 
@@ -88,6 +96,37 @@ export const orderDetailSelect = {
         },
     },
 } satisfies Prisma.OrderSelect;
+
+export const convertOrderDetailDataToOrderDetail = (orderDetailData: Awaited<ReturnType<typeof prisma.order.findFirstOrThrow<{ where: {}, select: typeof orderDetailSelect }>>>): OrderDetail => {
+    const {
+        customer : customerData,
+        guest    : guestData,
+        ...restOrderDetail
+    } = orderDetailData;
+    return {
+        customer : !customerData ? null : ((): OrderDetail['customer'] => {
+            const {
+                customerPreference,
+                ...restCustomer
+            } = customerData;
+            return {
+                ...restCustomer,
+                preference : customerPreference,
+            };
+        })(),
+        guest : !guestData ? null : ((): OrderDetail['guest'] => {
+            const {
+                guestPreference,
+                ...restCustomer
+            } = guestData;
+            return {
+                ...restCustomer,
+                preference : guestPreference,
+            };
+        })(),
+        ...restOrderDetail,
+    } satisfies OrderDetail;
+};
 
 
 

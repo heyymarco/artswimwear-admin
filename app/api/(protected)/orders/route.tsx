@@ -31,6 +31,7 @@ import {
     
     
     orderDetailSelect,
+    convertOrderDetailDataToOrderDetail,
     cancelOrderSelect,
 }                           from '@/models'
 
@@ -161,36 +162,7 @@ You do not have the privilege to view the orders.`
     ]);
     const paginationOrderDetail : Pagination<OrderDetail> = {
         total    : total,
-        entities : paged.map((orderDetailData) => {
-            const {
-                customer : customerData,
-                guest    : guestData,
-                ...restOrderDetail
-            } = orderDetailData;
-            return {
-                customer : !customerData ? null : ((): OrderDetail['customer'] => {
-                    const {
-                        customerPreference,
-                        ...restCustomer
-                    } = customerData;
-                    return {
-                        ...restCustomer,
-                        preference : customerPreference,
-                    };
-                })(),
-                guest : !guestData ? null : ((): OrderDetail['guest'] => {
-                    const {
-                        guestPreference,
-                        ...restCustomer
-                    } = guestData;
-                    return {
-                        ...restCustomer,
-                        preference : guestPreference,
-                    };
-                })(),
-                ...restOrderDetail,
-            } satisfies OrderDetail;
-        }),
+        entities : paged.map(convertOrderDetailDataToOrderDetail),
     };
     return NextResponse.json(paginationOrderDetail); // handled with success
 })
@@ -426,34 +398,7 @@ You do not have the privilege to modify the payment of the order.`
                         
                         orderSelect       : orderDetailSelect,
                     });
-                    const {
-                        customer : customerData,
-                        guest    : guestData,
-                        ...restOrderDetail
-                    } = orderDetailData;
-                    return {
-                        customer : !customerData ? null : ((): OrderDetail['customer'] => {
-                            const {
-                                customerPreference,
-                                ...restCustomer
-                            } = customerData;
-                            return {
-                                ...restCustomer,
-                                preference : customerPreference,
-                            };
-                        })(),
-                        guest : !guestData ? null : ((): OrderDetail['guest'] => {
-                            const {
-                                guestPreference,
-                                ...restCustomer
-                            } = guestData;
-                            return {
-                                ...restCustomer,
-                                preference : guestPreference,
-                            };
-                        })(),
-                        ...restOrderDetail,
-                    } satisfies OrderDetail;
+                    return convertOrderDetailDataToOrderDetail(orderDetailData);
                 });
                 return orderDetail;
             } // if
@@ -571,34 +516,7 @@ You do not have the privilege to modify the payment of the order.`
                     select : orderDetailSelect,
                 }),
             ]);
-            const {
-                customer : customerData,
-                guest    : guestData,
-                ...restOrderDetail
-            } = orderDetailData;
-            return {
-                customer : !customerData ? null : ((): OrderDetail['customer'] => {
-                    const {
-                        customerPreference,
-                        ...restCustomer
-                    } = customerData;
-                    return {
-                        ...restCustomer,
-                        preference : customerPreference,
-                    };
-                })(),
-                guest : !guestData ? null : ((): OrderDetail['guest'] => {
-                    const {
-                        guestPreference,
-                        ...restCustomer
-                    } = guestData;
-                    return {
-                        ...restCustomer,
-                        preference : guestPreference,
-                    };
-                })(),
-                ...restOrderDetail,
-            } satisfies OrderDetail;
+            return convertOrderDetailDataToOrderDetail(orderDetailData);
         })();
         
         
