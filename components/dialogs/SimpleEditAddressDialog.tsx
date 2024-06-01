@@ -24,13 +24,13 @@ import {
     emptyAddressValue,
 }                           from '@/components/editors/AddressEditor/AddressEditor'
 
+// models:
+import type {
+    OrderDetail,
+}                           from '@/models'
+
 // stores:
 import {
-    // types:
-    OrderDetail,
-    
-    
-    
     // hooks:
     useUpdateOrder,
 }                           from '@/store/features/api/apiSlice'

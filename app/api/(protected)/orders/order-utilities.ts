@@ -1,16 +1,10 @@
-// types:
-import type {
-    // types:
-    WysiwygEditorState,
-}                           from '@/components/editors/WysiwygEditor/types'
-
 // models:
 import type {
+    FindOrderByIdData,
+    CancelOrderData,
+}                           from '@/models'
+import type {
     Prisma,
-    
-    Payment,
-    Order,
-    OrdersOnProducts,
 }                           from '@prisma/client'
 
 // ORMs:
@@ -20,13 +14,6 @@ import {
 
 
 
-export interface FindOrderByIdData<TSelect extends Prisma.OrderSelect> {
-    id          ?: string|null
-    orderId     ?: string|null
-    paymentId   ?: string|null
-    
-    orderSelect  : TSelect
-}
 export const findOrderById = async <TSelect extends Prisma.OrderSelect>(prismaTransaction: Parameters<Parameters<typeof prisma.$transaction>[0]>[0], findOrderByIdData: FindOrderByIdData<TSelect>) => {
     // data:
     const {
@@ -55,53 +42,6 @@ export const findOrderById = async <TSelect extends Prisma.OrderSelect>(prismaTr
 
 
 
-export const cancelOrderSelect = {
-    id                     : true,
-    
-    orderId                : true,
-    
-    orderStatus            : true,
-    
-    payment : {
-        select : {
-            type           : true,
-        },
-    },
-    
-    items : {
-        select : {
-            productId      : true,
-            variantIds     : true,
-            
-            quantity       : true,
-        },
-    },
-} satisfies Prisma.OrderSelect;
-type CancelOrder = Pick<Order,
-    |'id'
-    
-    |'orderId'
-    
-    |'orderStatus'
-> & {
-    payment : Pick<Payment,
-        |'type'
-    >
-    items : Pick<OrdersOnProducts,
-        |'productId'
-        |'variantIds'
-        
-        |'quantity'
-    >[]
-}
-export interface CancelOrderData<TSelect extends Prisma.OrderSelect> {
-    order              : CancelOrder
-    isExpired         ?: boolean
-    deleteOrder       ?: boolean
-    cancelationReason ?: WysiwygEditorState|null
-    
-    orderSelect        : TSelect
-}
 export const cancelOrder = async <TSelect extends Prisma.OrderSelect>(prismaTransaction: Parameters<Parameters<typeof prisma.$transaction>[0]>[0], cancelOrderData : CancelOrderData<TSelect>) => {
     // data:
     const {

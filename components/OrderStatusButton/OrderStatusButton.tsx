@@ -59,13 +59,10 @@ import {
     RadioDecorator,
 }                           from '@/components/RadioDecorator'
 
-// stores:
-import type {
-    // types:
-    OrderDetail,
-}                           from '@/store/features/api/apiSlice'
-
 // models:
+import type {
+    OrderDetail,
+}                           from '@/models'
 import type {
     OrderStatus,
 }                           from '@prisma/client'

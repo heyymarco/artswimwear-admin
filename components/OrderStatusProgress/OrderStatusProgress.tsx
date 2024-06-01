@@ -21,11 +21,10 @@ import {
     orderStatusText,
 }                           from '@/components/OrderStatusBadge'
 
-// stores:
+// models:
 import type {
-    // types:
     OrderDetail,
-}                           from '@/store/features/api/apiSlice'
+}                           from '@/models'
 
 
 

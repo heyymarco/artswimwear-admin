@@ -23,13 +23,13 @@ import type {
     PaymentValue,
 }                           from '@/components/editors/PaymentEditor/PaymentEditor'
 
+// models:
+import type {
+    OrderDetail,
+}                           from '@/models'
+
 // stores:
 import {
-    // types:
-    OrderDetail,
-    
-    
-    
     // hooks:
     useUpdateOrder,
 }                           from '@/store/features/api/apiSlice'

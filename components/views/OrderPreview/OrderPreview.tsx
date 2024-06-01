@@ -94,13 +94,13 @@ import {
     OrderStatusBadge,
 }                           from '@/components/OrderStatusBadge'
 
+// models:
+import type {
+    OrderDetail,
+}                           from '@/models'
+
 // stores:
 import {
-    // types:
-    OrderDetail,
-    
-    
-    
     // hooks:
     useGetProductList,
 }                           from '@/store/features/api/apiSlice';

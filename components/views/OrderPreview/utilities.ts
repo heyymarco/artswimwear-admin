@@ -1,8 +1,7 @@
-// stores:
-import {
-    // types:
+// models:
+import type {
     OrderDetail,
-}                           from '@/store/features/api/apiSlice'
+}                           from '@/models'
 
 
 

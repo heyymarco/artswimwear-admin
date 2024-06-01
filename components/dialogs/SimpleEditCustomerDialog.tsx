@@ -20,13 +20,13 @@ import {
     SimpleEditModelDialog,
 }                           from '@/components/dialogs/SimpleEditModelDialog'
 
+// models:
+import type {
+    OrderDetail,
+}                           from '@/models'
+
 // stores:
 import {
-    // types:
-    OrderDetail,
-    
-    
-    
     // hooks:
     useUpdateOrder,
 }                           from '@/store/features/api/apiSlice'

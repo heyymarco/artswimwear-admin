@@ -13,6 +13,11 @@ import type {
 }                           from '@/libs/types'
 export type OrderDetailWithOptions = OrderDetail & { sendConfirmationEmail?: boolean }
 
+// models:
+import type {
+    OrderDetail,
+}                                               from '@/models'
+
 // apis:
 export type { CountryPreview }                  from '@/app/api/(protected)/countries/route'
 import type {
@@ -34,8 +39,6 @@ export type {
 import type { TemplateVariantGroupDetail }      from '@/app/api/(protected)/products/template-variants/route'
 export type { TemplateVariantDetail }           from '@/app/api/(protected)/products/template-variants/route'
 export type { TemplateVariantGroupDetail }      from '@/app/api/(protected)/products/template-variants/route'
-import type { OrderDetail }                     from '@/app/api/(protected)/orders/route'
-export type { OrderDetail }                     from '@/app/api/(protected)/orders/route'
 import type { ShippingPreview }                 from '@/app/api/(protected)/shippings/route'
 export type { ShippingPreview }                 from '@/app/api/(protected)/shippings/route'
 import type { UserDetail }                      from '@/app/api/(protected)/users/route'

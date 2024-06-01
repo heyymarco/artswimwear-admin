@@ -41,13 +41,13 @@ import {
     OrderPreview,
 }                           from '@/components/views/OrderPreview'
 
+// models:
+import type {
+    OrderDetail,
+}                           from '@/models'
+
 // stores:
 import {
-    // types:
-    OrderDetail,
-    
-    
-    
     // hooks:
     useGetOrderPage,
 }                           from '@/store/features/api/apiSlice';

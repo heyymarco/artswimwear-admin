@@ -25,18 +25,14 @@ import type {
 }                           from '@/libs/types'
 
 // models:
-import type {
-    Prisma,
+import {
+    type OrderDetail,
     
-    Customer,
-    CustomerPreference,
-    Guest,
-    GuestPreference,
-    Order,
-    OrdersOnProducts,
-    PaymentConfirmation,
-    ShippingTracking,
-}                           from '@prisma/client'
+    
+    
+    orderDetailSelect,
+    cancelOrderSelect,
+}                           from '@/models'
 
 // ORMs:
 import {
@@ -52,7 +48,6 @@ import {
 import {
     // utilities:
     findOrderById,
-    cancelOrderSelect,
     cancelOrder,
 }                           from './order-utilities'
 import {
@@ -71,154 +66,6 @@ import type {
 import {
     checkoutConfigServer,
 }                           from '@/checkout.config.server'
-
-
-
-// types:
-export type CustomerOrGuestPreference =
-    &Pick<CustomerPreference, keyof CustomerPreference & keyof GuestPreference>
-    &Pick<GuestPreference   , keyof CustomerPreference & keyof GuestPreference>
-export type CustomerOrGuestPreferenceData = Omit<CustomerOrGuestPreference,
-    // records:
-    |'id'
-    
-    // data:
-    |'marketingOpt'
-    
-    // relations:
-    |'customerId'
-    |'guestId'
->
-export interface OrderDetail
-    extends
-        Omit<Order,
-            |'createdAt'
-            |'updatedAt'
-            
-            |'paymentId'
-            
-            |'customerId'
-            |'guestId'
-        >
-{
-    // relations:
-    items    : Omit<OrdersOnProducts,
-        |'id'
-        |'orderId'
-    >[]
-    
-    customer : null|(Omit<Customer,
-        |'createdAt'
-        |'updatedAt'
-    > & {
-        preference : CustomerOrGuestPreferenceData|null
-    })
-    guest    : null|(Omit<Guest,
-        |'createdAt'
-        |'updatedAt'
-    > & {
-        preference : CustomerOrGuestPreferenceData|null
-    })
-    
-    paymentConfirmation : null|Partial<Omit<PaymentConfirmation,
-        |'id'
-        
-        |'token'
-        
-        |'orderId'
-    >>
-    
-    shippingTracking : null|Partial<Omit<ShippingTracking,
-        |'id'
-        
-        |'token'
-        
-        |'orderId'
-    >>
-}
-const orderDetailSelect = {
-    id                        : true,
-    
-    orderId                   : true,
-    orderStatus               : true,
-    orderTrouble              : true,
-    cancelationReason         : true,
-    
-    items                     : {
-        select: {
-            productId         : true,
-            variantIds        : true,
-            
-            price             : true,
-            shippingWeight    : true,
-            quantity          : true,
-        },
-    },
-    
-    customer                  : {
-        select: {
-            id                : true,
-            
-            name              : true,
-            email             : true,
-            
-            
-            
-            customerPreference : {
-                select : {
-                    timezone : true,
-                },
-            },
-        },
-    },
-    guest                     : {
-        select: {
-            id                : true,
-            
-            name              : true,
-            email             : true,
-            
-            
-            
-            guestPreference : {
-                select : {
-                    timezone : true,
-                },
-            },
-        },
-    },
-    
-    preferredCurrency         : true,
-    
-    shippingAddress           : true,
-    shippingCost              : true,
-    shippingProviderId        : true,
-    
-    payment                   : true,
-    
-    paymentConfirmation       : {
-        select : {
-            reportedAt        : true,
-            reviewedAt        : true,
-            
-            amount            : true,
-            payerName         : true,
-            paymentDate       : true,
-            
-            originatingBank   : true,
-            destinationBank   : true,
-            
-            rejectionReason   : true,
-        },
-    },
-    
-    shippingTracking          : {
-        select : {
-            shippingCarrier   : true,
-            shippingNumber    : true,
-        },
-    },
-} satisfies Prisma.OrderSelect;
 
 
 

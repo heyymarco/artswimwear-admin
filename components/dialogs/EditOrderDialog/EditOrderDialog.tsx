@@ -174,23 +174,21 @@ import {
     CountDown,
 }                           from './CountDown'
 
+// models:
+import type {
+    OrderDetail,
+}                           from '@/models'
+import type {
+    OrderStatus,
+}                           from '@prisma/client'
+
 // stores:
 import {
-    // types:
-    OrderDetail,
-    
-    
-    
     // hooks:
     useUpdateOrder,
     useGetProductList,
     useGetShippingList,
 }                           from '@/store/features/api/apiSlice'
-
-// models:
-import type {
-    OrderStatus,
-}                           from '@prisma/client'
 
 // internals:
 import {

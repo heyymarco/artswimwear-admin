@@ -23,10 +23,17 @@ import type {
     WysiwygEditorState,
 }                           from '@/components/editors/WysiwygEditor'
 
+// models:
+import type {
+    OrderDetail,
+}                           from '@/models'
+import type {
+    Prisma,
+}                           from '@prisma/client'
+
 // stores:
 import {
     // types:
-    OrderDetail,
     OrderDetailWithOptions,
     
     
@@ -34,11 +41,6 @@ import {
     // hooks:
     useUpdateOrder,
 }                           from '@/store/features/api/apiSlice'
-
-// models:
-import type {
-    Prisma,
-}                           from '@prisma/client'
 
 
 
