@@ -1,4 +1,4 @@
-[high prior] add cronjob for expired (draft|real)Order
+[unverified] add cronjob for expired (draft|real)Order
 [high prior] add shippings setting
 [high prior] add shipping tracking
 [high prior] add email notifications
