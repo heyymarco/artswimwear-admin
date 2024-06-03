@@ -9,6 +9,7 @@
 [med  prior] fix PrintDialog split multiple pages on FireFox
 
 [low  prior] prefer to use Request|Response instead of NextRequest|NextResponse
+[low  prior] update DropdownList & ModalBackdrop to apply `scrollbar-gutter: stable`
 
 TODO: replace shippingCarrier from <NameEditor> to <Dropdown>
 TODO: notify to email template: shippingCarrier changed if (shippingCarrier !== shippingProvider)
