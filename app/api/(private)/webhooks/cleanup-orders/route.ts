@@ -51,7 +51,7 @@ export async function POST(req: Request, res: Response): Promise<Response> {
             const now = new Date();
             const expiredOrders = await prismaTransaction.order.findMany({
                 where  : {
-                    orderStatus       : 'NEW_ORDER', // only new_order can be 'EXPIRED'
+                    orderStatus       : 'NEW_ORDER', // only new_order can be 'EXPIRED', ignore prcessed orders
                     payment : {
                         is : {
                             type      : 'MANUAL',    // only manual_payment can be 'EXPIRED'
