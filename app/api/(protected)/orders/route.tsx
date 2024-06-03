@@ -287,7 +287,7 @@ You do not have the privilege to view the orders.`
             ||
             ((typeof(payment?.brand) !== 'string') || !['BANK_TRANSFER', 'CHECK', 'OTHER', /* TODO: config dependent brands */].includes(payment?.brand)) // must be filled
             ||
-            ((payment?.identifier !== undefined) && (typeof(payment?.identifier) !== 'string'))
+            ((payment?.identifier !== undefined) && (payment?.identifier !== null) && (typeof(payment?.identifier) !== 'string'))
             ||
             ((typeof(payment?.amount) !== 'number') || (payment?.amount < 0) || !isFinite(payment?.amount)) // the amount must be finite & non_negative
             ||
