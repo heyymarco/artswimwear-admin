@@ -81,7 +81,6 @@ export async function POST(req: Request, res: Response): Promise<Response> {
     );
     
     //#region send email confirmation
-    console.log('test: ', checkoutConfigServer.emails.expired.from);
     await Promise.allSettled(
         expiredOrderDetails
         .map((expiredOrderDetail) =>
