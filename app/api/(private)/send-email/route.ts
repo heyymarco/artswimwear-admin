@@ -50,7 +50,7 @@ export async function POST(req: Request, res: Response): Promise<Response> {
             to,
             
             subject,
-            html,
+            html : typeof(html),
             attachments,
         });
         return Response.json({
