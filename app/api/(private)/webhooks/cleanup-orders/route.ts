@@ -16,10 +16,10 @@ import {
     // utilities:
     revertDraftOrder,
     cancelOrder,
-}                           from '../../(protected)/orders/order-utilities'
+}                           from '../../../(protected)/orders/order-utilities'
 import {
     sendConfirmationEmail,
-}                           from '../../(protected)/orders/email-utilities'
+}                           from '../../../(protected)/orders/email-utilities'
 
 // configs:
 import {
@@ -51,13 +51,11 @@ export async function POST(req: Request, res: Response): Promise<Response> {
             const now = new Date();
             const expiredOrders = await prismaTransaction.order.findMany({
                 where  : {
-                    orderStatus : {
-                        notIn : ['EXPIRED', 'CANCELED'],
-                    },
+                    orderStatus       : 'NEW_ORDER', // only new_order can be 'EXPIRED'
                     payment : {
-                        // expiresAt : { lte }
                         is : {
-                            expiresAt : { lt: now },
+                            type      : 'MANUAL',    // only manual_payment can be 'EXPIRED'
+                            expiresAt : { lt: now }, // only payment_with_expires can be 'EXPIRED'
                         },
                     },
                 },
