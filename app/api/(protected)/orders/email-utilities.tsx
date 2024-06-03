@@ -9,13 +9,12 @@ import {
     createEntityAdapter
 }                           from '@reduxjs/toolkit'
 
-// webs:
-import {
-    default as nodemailer,
-}                           from 'nodemailer'
-
 // models:
 import {
+    type SendEmailData,
+    
+    
+    
     orderAndDataSelectAndExtra,
 }                           from '@/models'
 import type {
@@ -252,18 +251,12 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
         
         
         
-        const transporter = nodemailer.createTransport({
-            host     : emailConfig.host,
-            port     : emailConfig.port,
-            secure   : emailConfig.secure,
-            auth     : {
-                user : emailConfig.username,
-                pass : emailConfig.password,
+        await fetch(`${process.env.APP_URL ?? ''}/api/send-email`, {
+            method  : 'POST',
+            headers : {
+                'X-Secret' : process.env.APP_SECRET ?? '',
             },
-        });
-        try {
-            console.log('sending email...');
-            await transporter.sendMail({
+            body    : JSON.stringify({
                 from        : emailConfig.from,
                 to          : orderAndData.customerOrGuest.email,
                 subject     : renderToStaticMarkup(
@@ -296,12 +289,8 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
                         cid  : product?.imageId,
                     }))
                 ),
-            });
-            console.log('email sent.');
-        }
-        finally {
-            transporter.close();
-        } // try
+            } satisfies SendEmailData),
+        });
         
         
         
