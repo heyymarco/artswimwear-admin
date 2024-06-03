@@ -500,7 +500,12 @@ You do not have the privilege to modify the payment of the order.`
                         shippingCost,
                         shippingProviderId,
                         
-                        payment,
+                        payment : {
+                            ...payment,
+                            ...((payment?.type !== 'MANUAL_PAID') ? undefined : { // commitOrder:
+                                expiresAt : null, // paid, no more payment expiry date
+                            }),
+                        },
                         
                         shippingTracking : {
                             upsert : {
