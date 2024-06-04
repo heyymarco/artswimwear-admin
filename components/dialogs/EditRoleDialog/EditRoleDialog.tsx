@@ -147,15 +147,15 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
     const [product_uv, setProduct_uv] = useState<boolean>(model?.product_uv ?? false);
     const [product_d , setProduct_d ] = useState<boolean>(model?.product_d  ?? false);
     
-    const [user_r    , setUser_r    ] = useState<boolean>(model?.user_r     ?? false);
-    const [user_c    , setUser_c    ] = useState<boolean>(model?.user_c     ?? false);
-    const [user_un   , setUser_un   ] = useState<boolean>(model?.user_un    ?? false);
-    const [user_uu   , setUser_uu   ] = useState<boolean>(model?.user_uu    ?? false);
-    const [user_ue   , setUser_ue   ] = useState<boolean>(model?.user_ue    ?? false);
-    const [user_up   , setUser_up   ] = useState<boolean>(model?.user_up    ?? false);
-    const [user_ui   , setUser_ui   ] = useState<boolean>(model?.user_ui    ?? false);
-    const [user_ur   , setUser_ur   ] = useState<boolean>(model?.user_ur    ?? false);
-    const [user_d    , setUser_d    ] = useState<boolean>(model?.user_d     ?? false);
+    const [admin_r   , setAdmin_r   ] = useState<boolean>(model?.admin_r    ?? false);
+    const [admin_c   , setAdmin_c   ] = useState<boolean>(model?.admin_c    ?? false);
+    const [admin_un  , setAdmin_un  ] = useState<boolean>(model?.admin_un   ?? false);
+    const [admin_uu  , setAdmin_uu  ] = useState<boolean>(model?.admin_uu   ?? false);
+    const [admin_ue  , setAdmin_ue  ] = useState<boolean>(model?.admin_ue   ?? false);
+    const [admin_up  , setAdmin_up  ] = useState<boolean>(model?.admin_up   ?? false);
+    const [admin_ui  , setAdmin_ui  ] = useState<boolean>(model?.admin_ui   ?? false);
+    const [admin_ur  , setAdmin_ur  ] = useState<boolean>(model?.admin_ur   ?? false);
+    const [admin_d   , setAdmin_d   ] = useState<boolean>(model?.admin_d    ?? false);
     
     const [order_r   , setOrder_r   ] = useState<boolean>(model?.order_r    ?? false);
     const [order_us  , setOrder_us  ] = useState<boolean>(model?.order_us   ?? false);
@@ -202,15 +202,15 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             product_uv,
             product_d,
             
-            user_r,
-            user_c,
-            user_un,
-            user_uu,
-            user_ue,
-            user_up,
-            user_ui,
-            user_ur,
-            user_d,
+            admin_r,
+            admin_c,
+            admin_un,
+            admin_uu,
+            admin_ue,
+            admin_up,
+            admin_ui,
+            admin_ur,
+            admin_d,
             
             order_r,
             order_us,
@@ -224,8 +224,8 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
         }).unwrap();
     });
     const handleAfterUpdate    = useEvent<AfterUpdateHandler>(async () => {
-        const currentRoleId = session?.role?.id;
-        if (!!currentRoleId && (currentRoleId === model?.id)) await updateSession(); // update the session if updated current role
+        const currentAdminRoleId = session?.role?.id;
+        if (!!currentAdminRoleId && (currentAdminRoleId === model?.id)) await updateSession(); // update the session if updated current role
     });
     
     const handleDelete         = useEvent<DeleteHandler<RoleDetail>>(async ({id}) => {
@@ -242,7 +242,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
                     Are you sure to delete <strong>{model.name}</strong> role?
                 </p>
                 <p>
-                    The users associated with the {model.name} role will still be logged in but will not have any access.<br />
+                    The admins associated with the {model.name} role will still be logged in but will not have any access.<br />
                     You can re-assign their roles later.
                 </p>
             </>,
@@ -385,37 +385,37 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
                                 </AccessibilityProvider>
                             </AccordionItem>
                             
-                            <AccordionItem label='Users'    inheritEnabled={false}>
+                            <AccordionItem label='Admins'    inheritEnabled={false}>
                                 <AccessibilityProvider
                                     // accessibilities:
                                     /* enable|disable accessibility for all <Check> */
                                     enabled={whenUpdate.update || whenAdd}
                                 >
-                                    <Check className='check editor' active={user_r}     onActiveChange={({active}) => { setUser_r(active);     setIsModified(true); }}>
+                                    <Check className='check editor' active={admin_r}    onActiveChange={({active}) => { setAdmin_r(active);    setIsModified(true); }}>
                                         View
                                     </Check>
-                                    <Check className='check editor' active={user_c}     onActiveChange={({active}) => { setUser_c(active);     setIsModified(true); }}>
+                                    <Check className='check editor' active={admin_c}    onActiveChange={({active}) => { setAdmin_c(active);    setIsModified(true); }}>
                                         Add New
                                     </Check>
-                                    <Check className='check editor' active={user_un}    onActiveChange={({active}) => { setUser_un(active);    setIsModified(true); }}>
+                                    <Check className='check editor' active={admin_un}   onActiveChange={({active}) => { setAdmin_un(active);   setIsModified(true); }}>
                                         Change Name
                                     </Check>
-                                    <Check className='check editor' active={user_uu}    onActiveChange={({active}) => { setUser_uu(active);    setIsModified(true); }}>
+                                    <Check className='check editor' active={admin_uu}   onActiveChange={({active}) => { setAdmin_uu(active);   setIsModified(true); }}>
                                         Change Username
                                     </Check>
-                                    <Check className='check editor' active={user_ue}    onActiveChange={({active}) => { setUser_ue(active);    setIsModified(true); }}>
+                                    <Check className='check editor' active={admin_ue}   onActiveChange={({active}) => { setAdmin_ue(active);   setIsModified(true); }}>
                                         Change Email
                                     </Check>
-                                    <Check className='check editor' active={user_up}    onActiveChange={({active}) => { setUser_up(active);    setIsModified(true); }}>
+                                    <Check className='check editor' active={admin_up}   onActiveChange={({active}) => { setAdmin_up(active);   setIsModified(true); }}>
                                         Change Password
                                     </Check>
-                                    <Check className='check editor' active={user_ui}    onActiveChange={({active}) => { setUser_ui(active);    setIsModified(true); }}>
+                                    <Check className='check editor' active={admin_ui}   onActiveChange={({active}) => { setAdmin_ui(active);   setIsModified(true); }}>
                                         Change Image
                                     </Check>
-                                    <Check className='check editor' active={user_ur}    onActiveChange={({active}) => { setUser_ur(active);    setIsModified(true); }}>
+                                    <Check className='check editor' active={admin_ur}   onActiveChange={({active}) => { setAdmin_ur(active);   setIsModified(true); }}>
                                         Change Role
                                     </Check>
-                                    <Check className='check editor' active={user_d}     onActiveChange={({active}) => { setUser_d(active);     setIsModified(true); }}>
+                                    <Check className='check editor' active={admin_d}    onActiveChange={({active}) => { setAdmin_d(active);    setIsModified(true); }}>
                                         Delete
                                     </Check>
                                 </AccessibilityProvider>

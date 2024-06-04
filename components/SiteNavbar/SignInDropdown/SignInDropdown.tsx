@@ -91,7 +91,7 @@ const SignInDropdown = (props: SignInDropdownProps): JSX.Element|null => {
     
     // sessions:
     const { data: session } = useSession();
-    const { name: userName, email: userEmail, image: userImage } = session?.user ?? {};
+    const { name: adminName, email: adminEmail, image: adminImage } = session?.user ?? {};
     
     
     
@@ -138,7 +138,7 @@ const SignInDropdown = (props: SignInDropdownProps): JSX.Element|null => {
             >
                 <ProfileImage
                     // appearances:
-                    src={resolveMediaUrl(userImage ?? undefined)}
+                    src={resolveMediaUrl(adminImage ?? undefined)}
                     
                     
                     
@@ -154,13 +154,13 @@ const SignInDropdown = (props: SignInDropdownProps): JSX.Element|null => {
                     // classes:
                     className='name'
                 >
-                    {userName}
+                    {adminName}
                 </span>
                 <span
                     // classes:
                     className='email'
                 >
-                    {userEmail}
+                    {adminEmail}
                 </span>
                 <EditButton
                     // classes:

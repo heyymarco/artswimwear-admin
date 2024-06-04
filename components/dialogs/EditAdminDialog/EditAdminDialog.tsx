@@ -98,14 +98,14 @@ import {
 // stores:
 import {
     // types:
-    UserDetail,
+    AdminDetail,
     RoleDetail,
     
     
     
     // hooks:
-    useUpdateUser,
-    useDeleteUser,
+    useUpdateAdmin,
+    useDeleteAdmin,
     
     usePostImage,
     useDeleteImage,
@@ -123,32 +123,32 @@ import {
 
 // configs:
 import {
-    PAGE_USER_TAB_ACCOUNT,
-    PAGE_USER_TAB_IMAGE,
-    PAGE_USER_TAB_ROLE,
-    PAGE_USER_TAB_DELETE,
+    PAGE_ADMIN_TAB_ACCOUNT,
+    PAGE_ADMIN_TAB_IMAGE,
+    PAGE_ADMIN_TAB_ROLE,
+    PAGE_ADMIN_TAB_DELETE,
 }                           from '@/website.config'
 
 
 
 // styles:
-const useEditUserDialogStyleSheet = dynamicStyleSheets(
-    () => import(/* webpackPrefetch: true */'./EditUserDialogStyles')
+const useEditAdminDialogStyleSheet = dynamicStyleSheets(
+    () => import(/* webpackPrefetch: true */'./EditAdminDialogStyles')
 , { id: 'm4oi6itiaq' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
-import './EditUserDialogStyles';
+import './EditAdminDialogStyles';
 
 
 
 // react components:
-export interface EditUserDialogProps
+export interface EditAdminDialogProps
     extends
         // bases:
-        ImplementedComplexEditModelDialogProps<UserDetail>
+        ImplementedComplexEditModelDialogProps<AdminDetail>
 {
 }
-const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
+const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
     // styles:
-    const styleSheet = useEditUserDialogStyleSheet();
+    const styleSheet = useEditAdminDialogStyleSheet();
     
     
     
@@ -168,14 +168,14 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
     // states:
     const [isModified    , setIsModified    ] = useState<boolean>(false);
     
-    const [name          , setName          ] = useState<string     >(model?.name     ?? ''  );
-    const [email         , setEmail         ] = useState<string     >(model?.email    ?? ''  );
-    const [image         , setImage         ] = useState<string|null>(model?.image    ?? null); // optional field
-    const [roleId        , setRoleId        ] = useState<string|null>(model?.roleId   ?? null); // optional field
-    const [username      , setUsername      ] = useState<string|null>(model?.username ?? null); // optional field
+    const [name          , setName          ] = useState<string     >(model?.name        ?? ''  );
+    const [email         , setEmail         ] = useState<string     >(model?.email       ?? ''  );
+    const [image         , setImage         ] = useState<string|null>(model?.image       ?? null); // optional field
+    const [adminRoleId   , setAdminRoleId   ] = useState<string|null>(model?.adminRoleId ?? null); // optional field
+    const [username      , setUsername      ] = useState<string|null>(model?.username    ?? null); // optional field
     
-    const initialEmailRef                     = useRef  <string     >(model?.email    ?? ''  );
-    const initialImageRef                     = useRef  <string|null>(model?.image    ?? null); // optional field
+    const initialEmailRef                     = useRef  <string     >(model?.email       ?? ''  );
+    const initialImageRef                     = useRef  <string|null>(model?.image       ?? null); // optional field
     
     const draftDifferentialImages             = useDraftDifferentialImages();
     
@@ -190,8 +190,8 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
     
     
     // stores:
-    const [updateUser       , {isLoading : isLoadingUpdate           }] = useUpdateUser();
-    const [deleteUser       , {isLoading : isLoadingDelete           }] = useDeleteUser();
+    const [updateAdmin      , {isLoading : isLoadingUpdate           }] = useUpdateAdmin();
+    const [deleteAdmin      , {isLoading : isLoadingDelete           }] = useDeleteAdmin();
     const [postImage                                                  ] = usePostImage();
     const [commitDeleteImage, {isLoading : isLoadingCommitDeleteImage}] = useDeleteImage();
     const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
@@ -206,41 +206,41 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleUpdate               = useEvent<UpdateHandler<UserDetail>>(async ({id, whenAdd, whenUpdate}) => {
-        return await updateUser({
-            id       : id ?? '',
+    const handleUpdate               = useEvent<UpdateHandler<AdminDetail>>(async ({id, whenAdd, whenUpdate}) => {
+        return await updateAdmin({
+            id          : id ?? '',
             
-            name     : (whenUpdate.name     || whenAdd) ? name               : undefined,
-            email    : (whenUpdate.email    || whenAdd) ? email              : undefined,
-            image    : (whenUpdate.image    || whenAdd) ? image              : undefined,
-            roleId   : (whenUpdate.role                    ) ? roleId             : ((!id && whenAdd) ? null : undefined),
-            username : (whenUpdate.username || whenAdd) ? (username || null) : undefined, // convert empty string to null
+            name        : (whenUpdate.name     || whenAdd) ? name               : undefined,
+            email       : (whenUpdate.email    || whenAdd) ? email              : undefined,
+            image       : (whenUpdate.image    || whenAdd) ? image              : undefined,
+            adminRoleId : (whenUpdate.role               ) ? adminRoleId        : ((!id && whenAdd) ? null : undefined),
+            username    : (whenUpdate.username || whenAdd) ? (username || null) : undefined, // convert empty string to null
         }).unwrap();
     });
     const handleAfterUpdate          = useEvent<AfterUpdateHandler>(async () => {
         const sessionEmail = session?.user?.email;
-        if (!!sessionEmail && (sessionEmail.toLowerCase() === initialEmailRef.current.toLowerCase())) await updateSession(); // update the session if updated current user
+        if (!!sessionEmail && (sessionEmail.toLowerCase() === initialEmailRef.current.toLowerCase())) await updateSession(); // update the session if updated current admin
     });
     
-    const handleDelete               = useEvent<DeleteHandler<UserDetail>>(async ({id}) => {
-        await deleteUser({
+    const handleDelete               = useEvent<DeleteHandler<AdminDetail>>(async ({id}) => {
+        await deleteAdmin({
             id : id,
         }).unwrap();
     });
     
     const handleRoleCreated          = useEvent<CreateHandler<RoleDetail>>(async ({id}) => {
-        setRoleId(id); // select the last created role
+        setAdminRoleId(id); // select the last created role
         setIsModified(true);
     });
     const handleRoleDeleted          = useEvent<DeleteHandler<RoleDetail>>(async ({id}) => {
-        if (id && (id === roleId)) { // if currently selected
+        if (id && (id === adminRoleId)) { // if currently selected
             // the related role was deleted => set to null (no selection):
-            setRoleId(null);
+            setAdminRoleId(null);
             setIsModified(true);
-            console.log('related role deleted'); // TODO: refresh the user model
+            console.log('related role deleted'); // TODO: refresh the Admin model
         }
         else {
-            // TODO: refresh the user models where (user.roleId === id)
+            // TODO: refresh the Admin models where (admin.adminRoleId === id)
         } // if
     });
     
@@ -277,15 +277,15 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
         } // try
     });
     
-    const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<UserDetail>>(({model}) => {
+    const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<AdminDetail>>(({model}) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <p>
-                Are you sure to delete user <strong>{model.name}</strong>?
+                Are you sure to delete admin <strong>{model.name}</strong>?
             </p>,
         };
     });
-    const handleConfirmUnsaved       = useEvent<ConfirmUnsavedHandler<UserDetail>>(() => {
+    const handleConfirmUnsaved       = useEvent<ConfirmUnsavedHandler<AdminDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>
@@ -305,30 +305,30 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
     
     // jsx:
     return (
-        <ComplexEditModelDialog<UserDetail>
+        <ComplexEditModelDialog<AdminDetail>
             // other props:
             {...restComplexEditModelDialogProps}
             
             
             
             // data:
-            modelName='User'
+            modelName='Admin'
             modelEntryName={model?.name}
             model={model}
             
             
             
             // privileges:
-            privilegeAdd    = {!!role?.user_c}
+            privilegeAdd    = {!!role?.admin_c}
             privilegeUpdate = {useMemo(() => ({
-                name     : !!role?.user_un,
-                username : !!role?.user_uu,
-                email    : !!role?.user_ue,
-                password : !!role?.user_up,
-                image    : !!role?.user_ui,
-                role     : !!role?.user_ur,
+                name     : !!role?.admin_un,
+                username : !!role?.admin_uu,
+                email    : !!role?.admin_ue,
+                password : !!role?.admin_up,
+                image    : !!role?.admin_ui,
+                role     : !!role?.admin_ur,
             }), [role])}
-            privilegeDelete = {!!role?.user_d}
+            privilegeDelete = {!!role?.admin_d}
             
             
             
@@ -342,7 +342,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
             
             
             // tabs:
-            tabDelete={PAGE_USER_TAB_DELETE}
+            tabDelete={PAGE_ADMIN_TAB_DELETE}
             
             
             
@@ -369,7 +369,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
             onConfirmDelete={handleConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
-            <TabPanel label={PAGE_USER_TAB_ACCOUNT} panelComponent={<Generic className={styleSheet.accountTab} />}>
+            <TabPanel label={PAGE_ADMIN_TAB_ACCOUNT} panelComponent={<Generic className={styleSheet.accountTab} />}>
                 <form>
                     <span className='name label'>Name:</span>
                     <NameEditor
@@ -439,7 +439,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                     />
                 </form>
             </TabPanel>
-            <TabPanel label={PAGE_USER_TAB_IMAGE}   panelComponent={<Generic className={styleSheet.imageTab} />}>
+            <TabPanel label={PAGE_ADMIN_TAB_IMAGE}   panelComponent={<Generic className={styleSheet.imageTab} />}>
                 <UploadImage<HTMLElement, string>
                     // variants:
                     nude={true}
@@ -475,7 +475,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                         try {
                             const imageId = await postImage({
                                 image            : imageFile,
-                                folder           : 'users',
+                                folder           : 'admins',
                                 onUploadProgress : reportProgress,
                                 abortSignal      : abortSignal,
                             }).unwrap();
@@ -507,7 +507,7 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                     onResolveImageUrl={resolveMediaUrl<never>}
                 />
             </TabPanel>
-            <TabPanel label={PAGE_USER_TAB_ROLE}    panelComponent={<Generic className={styleSheet.roleTab} />} onCollapseStart={handleTabRoleCollapseStart} onExpandEnd={handleTabRoleExpandEnd}>{
+            <TabPanel label={PAGE_ADMIN_TAB_ROLE}    panelComponent={<Generic className={styleSheet.roleTab} />} onCollapseStart={handleTabRoleCollapseStart} onExpandEnd={handleTabRoleExpandEnd}>{
                 isLoadingRole
                 ? <LoadingBar />
                 : isErrorRole
@@ -515,9 +515,9 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                     : <RoleEditor
                         // values:
                         valueOptions={roleOptions}
-                        value={roleId}
+                        value={adminRoleId}
                         onChange={(value) => {
-                            setRoleId(value);
+                            setAdminRoleId(value);
                             setIsModified(true);
                         }}
                         
@@ -535,17 +535,17 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
                                 readOnly={((): boolean => {
                                     /*
                                         when edit_mode:
-                                            * if NO  privilege update_user_role => UNABLE to change user's role
-                                            * if HAS privilege update_user_role =>   ABLE to change user's role
+                                            * if NO  privilege update_admin_role => UNABLE to change admin's role
+                                            * if HAS privilege update_admin_role =>   ABLE to change admin's role
                                         
                                         when create_mode:
-                                            * ALWAYS be ABLE to change new_user's role
+                                            * ALWAYS be ABLE to change new_admin's role
                                     */
                                     if (model) { // has model => edit_mode
-                                        return !whenUpdate.role; // readOnly when NO  privilege update_user_role => UNABLE to change user's role
+                                        return !whenUpdate.role; // readOnly when NO  privilege update_admin_role => UNABLE to change admin's role
                                     }
                                     else {       // no model  => create_mode
-                                        return false;            // ALWAYS be ABLE to change new_user's role
+                                        return false;            // ALWAYS be ABLE to change new_admin's role
                                     } // if
                                 })()}
                                 
@@ -579,6 +579,6 @@ const EditUserDialog = (props: EditUserDialogProps): JSX.Element|null => {
     );
 };
 export {
-    EditUserDialog,
-    EditUserDialog as default,
+    EditAdminDialog,
+    EditAdminDialog as default,
 }

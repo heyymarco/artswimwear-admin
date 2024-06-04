@@ -122,10 +122,10 @@ const SignInMenu = (props: SignInMenuProps): JSX.Element|null => {
     const isFullySignedIn  = !isSigningOut && (sessionStatus === 'authenticated')   && !!session;
     const isFullySignedOut = !isSigningOut && (sessionStatus === 'unauthenticated') &&  !session;
     const isBusy           =  isSigningOut || (sessionStatus === 'loading');
-    const { name: userName, email: userEmail, image: userImage } = session?.user ?? {};
-    const userNameParts = userName?.split(/\s+/gi);
-    const userFirstName = userNameParts?.[0];
-    const userShortRestName = !!userNameParts && (userNameParts.length >= 2) ? userNameParts[userNameParts.length - 1][0] : undefined;
+    const { name: adminName, email: adminEmail, image: adminImage } = session?.user ?? {};
+    const adminNameParts = adminName?.split(/\s+/gi);
+    const adminFirstName = adminNameParts?.[0];
+    const adminShortRestName = !!adminNameParts && (adminNameParts.length >= 2) ? adminNameParts[adminNameParts.length - 1][0] : undefined;
     
     
     
@@ -295,7 +295,7 @@ const SignInMenu = (props: SignInMenuProps): JSX.Element|null => {
                 <TabPanel className={styleSheet.signInMenu}>
                     <ProfileImage
                         // appearances:
-                        src={resolveMediaUrl(userImage ?? undefined)}
+                        src={resolveMediaUrl(adminImage ?? undefined)}
                         
                         
                         
@@ -304,11 +304,11 @@ const SignInMenu = (props: SignInMenuProps): JSX.Element|null => {
                     />
                     <span className={styleSheet.signInName}>
                         <span>
-                            {userFirstName}
+                            {adminFirstName}
                         </span>
-                        {userShortRestName ? ' ' : ''}
+                        {adminShortRestName ? ' ' : ''}
                         <span>
-                            {userShortRestName}
+                            {adminShortRestName}
                         </span>
                     </span>
                 </TabPanel>

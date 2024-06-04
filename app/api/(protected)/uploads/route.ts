@@ -120,10 +120,10 @@ router
 You do not have the privilege to modify the product images.`
     }, { status: 403 }); // handled with error: forbidden
     
-    if (!session.role?.user_ui && folder.startsWith('users/')) return NextResponse.json({ error:
+    if (!session.role?.admin_ui && folder.startsWith('admins/')) return NextResponse.json({ error:
 `Access denied.
 
-You do not have the privilege to modify the user's image.`
+You do not have the privilege to modify the admin's image.`
     }, { status: 403 }); // handled with error: forbidden
     //#endregion validating privileges
     
@@ -137,7 +137,7 @@ You do not have the privilege to modify the user's image.`
         })
         .resize({
             ...((): { width: number, height: number } => {
-                if (folder === 'users') return { // for user profile image:
+                if (folder === 'admins') return { // for admin profile image:
                     width      : 160,
                     height     : 160,
                 };

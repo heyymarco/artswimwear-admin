@@ -174,10 +174,10 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
     // // sessions:
     // const { data: session } = useSession();
     // const role = session?.role;
- // // const privilegeAdd               = !!role?.user_c;
-    // const privilegeUpdateFoo         = !!role?.user_uf;
-    // const privilegeUpdateBoo         = !!role?.user_ub;
-    // const privilegeDelete            = !!role?.user_d;
+ // // const privilegeAdd               = !!role?.admin_c;
+    // const privilegeUpdateFoo         = !!role?.admin_uf;
+    // const privilegeUpdateBoo         = !!role?.admin_ub;
+    // const privilegeDelete            = !!role?.admin_d;
     // const privilegeWrite             = (
     //     /* privilegeAdd */ // except for add
     //     privilegeUpdateFoo

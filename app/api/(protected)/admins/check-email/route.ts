@@ -110,7 +110,7 @@ router
     
     //#region query result
     try {
-        const result = await prisma.user.findFirst({
+        const result = await prisma.admin.findFirst({
             where  : {
                 email : { equals: email, mode: 'insensitive' }, // case-insensitive comparison
             },

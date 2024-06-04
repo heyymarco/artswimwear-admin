@@ -89,18 +89,18 @@ import {
     SimpleEditModelDialog,
 }                           from '@/components/dialogs/SimpleEditModelDialog'
 import {
-    EditUserDialog,
-}                           from '@/components/dialogs/EditUserDialog'
+    EditAdminDialog,
+}                           from '@/components/dialogs/EditAdminDialog'
 
 // stores:
 import {
     // types:
-    UserDetail,
+    AdminDetail,
     
     
     
     // hooks:
-    useUpdateUser,
+    useUpdateAdmin,
     
     useGetRoleList,
 }                           from '@/store/features/api/apiSlice'
@@ -113,21 +113,21 @@ import {
 
 
 // styles:
-const useUserPreviewStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */'./UserPreviewStyles')
+const useAdminPreviewStyleSheet = dynamicStyleSheet(
+    () => import(/* webpackPrefetch: true */'./AdminPreviewStyles')
 , { specificityWeight: 2, id: 'rue4mgistn' });
-import './UserPreviewStyles';
+import './AdminPreviewStyles';
 
 
 
 // react components:
-export interface UserPreviewProps extends ModelPreviewProps<UserDetail> {
+export interface AdminPreviewProps extends ModelPreviewProps<AdminDetail> {
     // stores:
     getRolePaginationApi : ReturnType<typeof useGetRoleList>
 }
-const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
+const AdminPreview = (props: AdminPreviewProps): JSX.Element|null => {
     // styles:
-    const styleSheet = useUserPreviewStyleSheet();
+    const styleSheet = useAdminPreviewStyleSheet();
     
     
     
@@ -146,7 +146,7 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
         email,
         image,
         
-        roleId,
+        adminRoleId,
         
         username,
     } = model;
@@ -154,7 +154,7 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
     
     
     // states:
-    type EditMode = Exclude<keyof UserDetail, 'id'>|'full'
+    type EditMode = Exclude<keyof AdminDetail, 'id'>|'full'
     const [editMode, setEditMode] = useState<EditMode|null>(null);
     
     
@@ -162,14 +162,14 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
     // sessions:
     const { data: session } = useSession();
     const role = session?.role;
- // const privilegeAdd               = !!role?.user_c;
-    const privilegeUpdateName        = !!role?.user_un;
-    const privilegeUpdateUsername    = !!role?.user_uu;
-    const privilegeUpdateEmail       = !!role?.user_ue;
-    const privilegeUpdatePassword    = !!role?.user_up;
-    const privilegeUpdateImage       = !!role?.user_ui;
-    const privilegeUpdateRole        = !!role?.user_ur;
-    const privilegeDelete            = !!role?.user_d;
+ // const privilegeAdd               = !!role?.admin_c;
+    const privilegeUpdateName        = !!role?.admin_un;
+    const privilegeUpdateUsername    = !!role?.admin_uu;
+    const privilegeUpdateEmail       = !!role?.admin_ue;
+    const privilegeUpdatePassword    = !!role?.admin_up;
+    const privilegeUpdateImage       = !!role?.admin_ui;
+    const privilegeUpdateRole        = !!role?.admin_ur;
+    const privilegeDelete            = !!role?.admin_d;
     const privilegeWrite             = (
         /* privilegeAdd */ // except for add
         privilegeUpdateName
@@ -250,13 +250,13 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
                     !!image
                     ? <Basic
                         tag='span'
-                        className='userImg'
+                        className='adminImg'
                         
                         style={{
                             background: `no-repeat center/cover url("${resolveMediaUrl(image)}")`,
                         }}
                     />
-                    : <Generic className='userImg empty'><Icon icon='person' size='xl' /></Generic>
+                    : <Generic className='adminImg empty'><Icon icon='person' size='xl' /></Generic>
                 }
             />
             
@@ -274,8 +274,8 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
             </p>
             <p className='role'>
                 { isRoleLoadingAndNoData && <Busy />}
-                {!isRoleLoadingAndNoData && !!roles && !!roleId && roles?.entities?.[roleId]?.name || <span className='noValue'>No Access</span>}
-                {privilegeUpdateRole     && <EditButton onClick={() => setEditMode('roleId')} />}
+                {!isRoleLoadingAndNoData && !!roles && !!adminRoleId && roles?.entities?.[adminRoleId]?.name || <span className='noValue'>No Access</span>}
+                {privilegeUpdateRole     && <EditButton onClick={() => setEditMode('adminRoleId')} />}
             </p>
             <p className='fullEditor'>
                 {privilegeWrite          && <EditButton buttonStyle='regular' onClick={() => setEditMode('full')}>
@@ -284,7 +284,7 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
             </p>
             {/* edit dialog: */}
             <CollapsibleSuspense>
-                <SimpleEditModelDialog<UserDetail>
+                <SimpleEditModelDialog<AdminDetail>
                     // data:
                     model={model}
                     edit='name'
@@ -292,7 +292,7 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
                     
                     
                     // stores:
-                    updateModelApi={useUpdateUser}
+                    updateModelApi={useUpdateAdmin}
                     
                     
                     
@@ -310,7 +310,7 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
                     // components:
                     editorComponent={<NameEditor />}
                 />
-                <SimpleEditModelDialog<UserDetail>
+                <SimpleEditModelDialog<AdminDetail>
                     // data:
                     model={model}
                     edit='username'
@@ -318,7 +318,7 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
                     
                     
                     // stores:
-                    updateModelApi={useUpdateUser}
+                    updateModelApi={useUpdateAdmin}
                     
                     
                     
@@ -336,7 +336,7 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
                     // components:
                     editorComponent={<UniqueUsernameEditor currentValue={username ?? ''} />}
                 />
-                <SimpleEditModelDialog<UserDetail>
+                <SimpleEditModelDialog<AdminDetail>
                     // data:
                     model={model}
                     edit='email'
@@ -344,7 +344,7 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
                     
                     
                     // stores:
-                    updateModelApi={useUpdateUser}
+                    updateModelApi={useUpdateAdmin}
                     
                     
                     
@@ -363,21 +363,21 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
                     editorComponent={<UniqueEmailEditor    currentValue={email} />}
                 />
                 
-                <EditUserDialog
+                <EditAdminDialog
                     // data:
                     model={model} // modify current model
                     
                     
                     
                     // states:
-                    expanded={(editMode === 'image') || (editMode === 'roleId') || (editMode === 'full')}
+                    expanded={(editMode === 'image') || (editMode === 'adminRoleId') || (editMode === 'full')}
                     onExpandedChange={handleExpandedChange}
                     defaultExpandedTabIndex={((): number|undefined => {
-                        // switch (editMode === 'roleId') ? 2 : undefined
+                        // switch (editMode === 'adminRoleId') ? 2 : undefined
                         switch (editMode) {
-                            case 'image' : return 1;
-                            case 'roleId': return 2;
-                            default      : return undefined;
+                            case 'image'      : return 1;
+                            case 'adminRoleId': return 2;
+                            default           : return undefined;
                         } // switch
                     })()}
                 />
@@ -386,6 +386,6 @@ const UserPreview = (props: UserPreviewProps): JSX.Element|null => {
     );
 };
 export {
-    UserPreview,
-    UserPreview as default,
+    AdminPreview,
+    AdminPreview as default,
 }

@@ -12,7 +12,7 @@ import { typos, usesBorder, usesGroupable, usesPadding } from '@reusable-ui/core
 
 // styles:
 const imageSize = 128;  // 128px
-const usesUserPreviewLayout = () => { // the <ListItem> of user list
+const usesAdminPreviewLayout = () => { // the <ListItem> of admin list
     // dependencies:
     
     // capabilities:
@@ -48,11 +48,11 @@ const usesUserPreviewLayout = () => { // the <ListItem> of user list
             // layouts:
             display: 'grid',
             gridTemplate: [[
-                '"userImg      name "', 'auto',
-                '"userImg  username "', 'auto',
-                '"userImg     email "', 'auto',
-                '"userImg      role "', 'auto',
-                '"userImg fullEditor"', 'auto',
+                '"adminImg      name "', 'auto',
+                '"adminImg  username "', 'auto',
+                '"adminImg     email "', 'auto',
+                '"adminImg      role "', 'auto',
+                '"adminImg fullEditor"', 'auto',
                 '/',
                 `calc(${imageSize}px - ${paddingVars.paddingInline}) 1fr`,
             ]],
@@ -118,9 +118,9 @@ const usesUserPreviewLayout = () => { // the <ListItem> of user list
                     }),
                 }),
             }),
-            ...children('.userImg', {
+            ...children('.adminImg', {
                 // positions:
-                gridArea    : 'userImg',
+                gridArea    : 'adminImg',
                 
                 justifySelf : 'stretch', // stretch the self horizontally
                 alignSelf   : 'stretch', // stretch the self vertically
@@ -193,5 +193,5 @@ const usesUserPreviewLayout = () => { // the <ListItem> of user list
 
 export default style({
     // layouts:
-    ...usesUserPreviewLayout(),
+    ...usesAdminPreviewLayout(),
 });

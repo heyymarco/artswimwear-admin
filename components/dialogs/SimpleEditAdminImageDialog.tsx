@@ -48,7 +48,7 @@ import {
 // stores:
 import {
     // types:
-    UserDetail,
+    AdminDetail,
     
     
     
@@ -68,14 +68,14 @@ import {
 
 
 // react components:
-export interface SimpleEditUserImageDialogProps
+export interface SimpleEditAdminImageDialogProps
     extends
         // bases:
-        Omit<ImplementedSimpleEditModelDialogProps<Omit<UserDetail, 'roleId'>, 'image'>, 'editorComponent'>,
-        Partial<Pick<SimpleEditModelDialogProps<Omit<UserDetail, 'roleId'>, 'image'>, 'editorComponent'|'updateModelApi'>>
+        Omit<ImplementedSimpleEditModelDialogProps<Omit<AdminDetail, 'adminRoleId'>, 'image'>, 'editorComponent'>,
+        Partial<Pick<SimpleEditModelDialogProps<Omit<AdminDetail, 'adminRoleId'>, 'image'>, 'editorComponent'|'updateModelApi'>>
 {
 }
-export const SimpleEditUserImageDialog = (props: SimpleEditUserImageDialogProps) => {
+export const SimpleEditAdminImageDialog = (props: SimpleEditAdminImageDialogProps) => {
     // states:
     const [image, setImage      ] = useState<string|null>(props.model?.image ?? null); // optional field
     const initialImageRef         = useRef  <string|null>(props.model?.image ?? null); // optional field
@@ -127,8 +127,8 @@ export const SimpleEditUserImageDialog = (props: SimpleEditUserImageDialogProps)
     
     
     // other props:
-    interface UserImageModel {
-        id    : UserDetail['id']
+    interface AdminImageModel {
+        id    : AdminDetail['id']
         image : string|null
     }
     const {
@@ -162,7 +162,7 @@ export const SimpleEditUserImageDialog = (props: SimpleEditUserImageDialogProps)
                 try {
                     const imageId = await postImage({
                         image            : imageFile,
-                        folder           : 'users',
+                        folder           : 'admins',
                         onUploadProgress : reportProgress,
                         abortSignal      : abortSignal,
                     }).unwrap();
@@ -192,21 +192,21 @@ export const SimpleEditUserImageDialog = (props: SimpleEditUserImageDialogProps)
                 return true;
             }}
             onResolveImageUrl={resolveMediaUrl<never>}
-        /> as React.ReactComponentElement<any, EditorProps<Element, ValueOfModel<UserImageModel>>>),
+        /> as React.ReactComponentElement<any, EditorProps<Element, ValueOfModel<AdminImageModel>>>),
     } = props;
     
     
     
     // jsx:
     return (
-        <SimpleEditModelDialog<UserImageModel>
+        <SimpleEditModelDialog<AdminImageModel>
             // other props:
-            {...props as unknown as ImplementedSimpleEditModelDialogProps<UserImageModel>}
+            {...props as unknown as ImplementedSimpleEditModelDialogProps<AdminImageModel>}
             
             
             
             // stores:
-            updateModelApi={updateModelApi as (UpdateModelApi<UserImageModel> | (() => UpdateModelApi<UserImageModel>))}
+            updateModelApi={updateModelApi as (UpdateModelApi<AdminImageModel> | (() => UpdateModelApi<AdminImageModel>))}
             isCommiting={isLoadingCommitDeleteImage}
             isReverting={isLoadingRevertDeleteImage}
             

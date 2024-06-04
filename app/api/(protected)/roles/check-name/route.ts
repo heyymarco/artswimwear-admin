@@ -87,7 +87,7 @@ router
     
     //#region query result
     try {
-        const result = await prisma.role.findFirst({
+        const result = await prisma.adminRole.findFirst({
             where  : {
                 name : { equals: name, mode: 'insensitive' }, // case-insensitive comparison
             },

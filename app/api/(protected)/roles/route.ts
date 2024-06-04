@@ -21,7 +21,7 @@ import {
 
 // models:
 import type {
-    Role,
+    AdminRole,
 }                           from '@prisma/client'
 
 // ORMs:
@@ -39,7 +39,7 @@ import {
 // types:
 export interface RoleDetail
     extends
-        Omit<Role,
+        Omit<AdminRole,
             |'createdAt'
             |'updatedAt'
         >
@@ -83,7 +83,7 @@ router
     
     
     const roleDetails : RoleDetail[] = (
-        (await prisma.role.findMany({
+        (await prisma.adminRole.findMany({
             select: {
                 id         : true,
                 
@@ -98,15 +98,15 @@ router
                 product_uv : true,
                 product_d  : true,
                 
-                user_r     : true,
-                user_c     : true,
-                user_un    : true,
-                user_uu    : true,
-                user_ue    : true,
-                user_up    : true,
-                user_ui    : true,
-                user_ur    : true,
-                user_d     : true,
+                admin_r    : true,
+                admin_c    : true,
+                admin_un   : true,
+                admin_uu   : true,
+                admin_ue   : true,
+                admin_up   : true,
+                admin_ui   : true,
+                admin_ur   : true,
+                admin_d    : true,
                 
                 order_r    : true,
                 order_us   : true,
@@ -153,15 +153,15 @@ router
         product_uv,
         product_d,
         
-        user_r,
-        user_c,
-        user_un,
-        user_uu,
-        user_ue,
-        user_up,
-        user_ui,
-        user_ur,
-        user_d,
+        admin_r,
+        admin_c,
+        admin_un,
+        admin_uu,
+        admin_ue,
+        admin_up,
+        admin_ui,
+        admin_ur,
+        admin_d,
         
         order_r,
         order_us,
@@ -228,15 +228,15 @@ You do not have the privilege to modify the role.`
             product_uv,
             product_d,
             
-            user_r,
-            user_c,
-            user_un,
-            user_uu,
-            user_ue,
-            user_up,
-            user_ui,
-            user_ur,
-            user_d,
+            admin_r,
+            admin_c,
+            admin_un,
+            admin_uu,
+            admin_ue,
+            admin_up,
+            admin_ui,
+            admin_ur,
+            admin_d,
             
             order_r,
             order_us,
@@ -262,15 +262,15 @@ You do not have the privilege to modify the role.`
             product_uv : true,
             product_d  : true,
             
-            user_r     : true,
-            user_c     : true,
-            user_un    : true,
-            user_uu    : true,
-            user_ue    : true,
-            user_up    : true,
-            user_ui    : true,
-            user_ur    : true,
-            user_d     : true,
+            admin_r     : true,
+            admin_c     : true,
+            admin_un    : true,
+            admin_uu    : true,
+            admin_ue    : true,
+            admin_up    : true,
+            admin_ui    : true,
+            admin_ur    : true,
+            admin_d     : true,
             
             order_r    : true,
             order_us   : true,
@@ -284,11 +284,11 @@ You do not have the privilege to modify the role.`
         };
         const roleDetail : RoleDetail = (
             !id
-            ? await prisma.role.create({
+            ? await prisma.adminRole.create({
                 data   : data,
                 select : select,
             })
-            : await prisma.role.update({
+            : await prisma.adminRole.update({
                 where  : {
                     id : id,
                 },
@@ -350,7 +350,7 @@ You do not have the privilege to delete the role.`
     //#region save changes
     try {
         const deletedRole : Pick<RoleDetail, 'id'> = (
-            await prisma.role.delete({
+            await prisma.adminRole.delete({
                 where  : {
                     id : id,
                 },

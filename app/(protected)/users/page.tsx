@@ -43,29 +43,29 @@ import {
     PagedModelExplorer,
 }                           from '@/components/explorers/PagedModelExplorer'
 import {
-    EditUserDialog,
-}                           from '@/components/dialogs/EditUserDialog'
+    EditAdminDialog,
+}                           from '@/components/dialogs/EditAdminDialog'
 import {
-    UserPreview,
-}                           from '@/components/views/UserPreview'
+    AdminPreview,
+}                           from '@/components/views/AdminPreview'
 
 // stores:
 import {
     // types:
-    UserDetail,
+    AdminDetail,
     
     
     
     // hooks:
-    useGetUserPage,
+    useGetAdminPage,
     
     useGetRoleList,
 }                           from '@/store/features/api/apiSlice'
 
 // // configs:
 // import {
-//     PAGE_USER_TITLE,
-//     PAGE_USER_DESCRIPTION,
+//     PAGE_ADMIN_TITLE,
+//     PAGE_ADMIN_DESCRIPTION,
 // }                           from '@/website.config' // TODO: will be used soon
 
 
@@ -79,7 +79,7 @@ import './pageStyles';
 
 
 // react components:
-export default function UserPage(): JSX.Element|null {
+export default function AdminPage(): JSX.Element|null {
     // styles:
     const styleSheet = usePageStyleSheet();
     
@@ -94,12 +94,12 @@ export default function UserPage(): JSX.Element|null {
     // sessions:
     const { data: session, status: sessionStatus } = useSession();
     const role = session?.role;
-    const privilegeAdd = !!role?.user_c;
+    const privilegeAdd = !!role?.admin_c;
     
     
     
     // stores:
-    const getModelPaginationApi = useGetUserPage({ page, perPage });
+    const getModelPaginationApi = useGetAdminPage({ page, perPage });
     const {data, isLoading: isLoadingAndNoData, isError, refetch } = getModelPaginationApi;
     const isErrorAndNoData = isError && !data;
     
@@ -112,9 +112,9 @@ export default function UserPage(): JSX.Element|null {
     if (isErrorAndNoData   || (sessionStatus === 'unauthenticated')) return <PageError onRetry={refetch} />;
     return (
         <Main className={styleSheet.main}>
-            <PagedModelExplorer<UserDetail>
+            <PagedModelExplorer<AdminDetail>
                 // accessibilities:
-                createItemText='Add New User'
+                createItemText='Add New Admin'
                 
                 
                 
@@ -129,7 +129,7 @@ export default function UserPage(): JSX.Element|null {
                 
                 // components:
                 modelPreviewComponent={
-                    <UserPreview
+                    <AdminPreview
                         // data:
                         model={undefined as any}
                         
@@ -141,7 +141,7 @@ export default function UserPage(): JSX.Element|null {
                 }
                 modelCreateComponent={
                     privilegeAdd
-                    ? <EditUserDialog
+                    ? <EditAdminDialog
                         // data:
                         model={null} // create a new model
                     />
@@ -155,6 +155,6 @@ export default function UserPage(): JSX.Element|null {
 
 
 // export const metadata : Metadata = {
-//     title       : PAGE_USER_TITLE,
-//     description : PAGE_USER_DESCRIPTION,
+//     title       : PAGE_ADMIN_TITLE,
+//     description : PAGE_ADMIN_DESCRIPTION,
 // };

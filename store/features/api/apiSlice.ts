@@ -41,8 +41,8 @@ export type { TemplateVariantDetail }           from '@/app/api/(protected)/prod
 export type { TemplateVariantGroupDetail }      from '@/app/api/(protected)/products/template-variants/route'
 import type { ShippingPreview }                 from '@/app/api/(protected)/shippings/route'
 export type { ShippingPreview }                 from '@/app/api/(protected)/shippings/route'
-import type { UserDetail }                      from '@/app/api/(protected)/users/route'
-export type { UserDetail }                      from '@/app/api/(protected)/users/route'
+import type { AdminDetail }                     from '@/app/api/(protected)/admins/route'
+export type { AdminDetail }                     from '@/app/api/(protected)/admins/route'
 import type { RoleDetail }                      from '@/app/api/(protected)/roles/route'
 export type { RoleDetail }                      from '@/app/api/(protected)/roles/route'
 import type { ImageId }                         from '@/app/api/(protected)/uploads/route'
@@ -122,7 +122,7 @@ export const apiSlice = createApi({
     baseQuery : axiosBaseQuery({
         baseUrl: `${process.env.APP_URL ?? ''}/api`
     }),
-    tagTypes: ['Products', 'TemplateVariantGroups', 'Orders', 'Users', 'Roles'],
+    tagTypes: ['Products', 'TemplateVariantGroups', 'Orders', 'Admins', 'Roles'],
     endpoints : (builder) => ({
         getProductList              : builder.query<EntityState<ProductPreview>, void>({
             query : () => ({
@@ -302,77 +302,77 @@ export const apiSlice = createApi({
             },
         }),
         
-        getUserPage                 : builder.query<Pagination<UserDetail>, PaginationArgs>({
+        getAdminPage                : builder.query<Pagination<AdminDetail>, PaginationArgs>({
             query : (params) => ({
-                url    : 'users',
+                url    : 'admins',
                 method : 'POST',
                 body   : params,
             }),
             providesTags: (result, error, page)  => {
                 return [
-                    ...(result?.entities ?? []).map((user): { type: 'Users', id: string } => ({
-                        type : 'Users',
-                        id   : user.id,
+                    ...(result?.entities ?? []).map((admin): { type: 'Admins', id: string } => ({
+                        type : 'Admins',
+                        id   : admin.id,
                     })),
                     
                     {
-                        type : 'Users',
-                        id   : 'USER_LIST',
+                        type : 'Admins',
+                        id   : 'ADMIN_LIST',
                     },
                 ];
             },
         }),
-        updateUser                  : builder.mutation<UserDetail, MutationArgs<UserDetail>>({
+        updateAdmin                 : builder.mutation<AdminDetail, MutationArgs<AdminDetail>>({
             query: (patch) => ({
-                url    : 'users',
+                url    : 'admins',
                 method : 'PATCH',
                 body   : patch
             }),
             
             // inefficient:
-            // invalidatesTags: (user, error, arg) => [
-            //     ...((!user ? [] : [{
-            //         type : 'Users',
-            //         id   : user.id,
-            //     }]) as Array<{ type: 'Users', id: string }>),
+            // invalidatesTags: (admin, error, arg) => [
+            //     ...((!admin ? [] : [{
+            //         type : 'Admins',
+            //         id   : admin.id,
+            //     }]) as Array<{ type: 'Admins', id: string }>),
             // ],
             
             // more efficient:
             onCacheEntryAdded: async (arg, api) => {
-                await handleCumulativeUpdateCacheEntry('getUserPage', (arg.id !== ''), api);
+                await handleCumulativeUpdateCacheEntry('getAdminPage', (arg.id !== ''), api);
             },
         }),
-        deleteUser                  : builder.mutation<Pick<UserDetail, 'id'>, MutationArgs<Pick<UserDetail, 'id'>>>({
+        deleteAdmin                 : builder.mutation<Pick<AdminDetail, 'id'>, MutationArgs<Pick<AdminDetail, 'id'>>>({
             query: (params) => ({
-                url    : 'users',
+                url    : 'admins',
                 method : 'DELETE',
                 body   : params
             }),
-            invalidatesTags: (user, error, arg) => [
-                ...((!user ? [{
-                    type : 'Users',
-                    id   : 'USER_LIST', // delete unspecified => invalidates the whole list
+            invalidatesTags: (admin, error, arg) => [
+                ...((!admin ? [{
+                    type : 'Admins',
+                    id   : 'ADMIN_LIST', // delete unspecified => invalidates the whole list
                 }] : [{
-                    type : 'Users',
-                    id   : user.id,     // delete existing    => invalidates the modified
-                }]) as Array<{ type: 'Users', id: string }>),
+                    type : 'Admins',
+                    id   : admin.id,     // delete existing    => invalidates the modified
+                }]) as Array<{ type: 'Admins', id: string }>),
             ],
         }),
         availableUsername           : builder.mutation<boolean, string>({
             query: (username) => ({
-                url    : `users/check-username?username=${encodeURIComponent(username)}`, // cloned from @heymarco/next-auth, because this api was disabled in auth.config.shared
+                url    : `admins/check-username?username=${encodeURIComponent(username)}`, // cloned from @heymarco/next-auth, because this api was disabled in auth.config.shared
                 method : 'GET',
             }),
         }),
         notProhibitedUsername       : builder.mutation<boolean, string>({
             query: (username) => ({
-                url    : `users/check-username?username=${encodeURIComponent(username)}`, // cloned from @heymarco/next-auth, because this api was disabled in auth.config.shared
+                url    : `admins/check-username?username=${encodeURIComponent(username)}`, // cloned from @heymarco/next-auth, because this api was disabled in auth.config.shared
                 method : 'PUT',
             }),
         }),
         availableEmail              : builder.mutation<boolean, string>({
             query: (email) => ({
-                url    : `users/check-email?email=${encodeURIComponent(email)}`, // cloned from @heymarco/next-auth, because this api was disabled in auth.config.shared
+                url    : `admins/check-email?email=${encodeURIComponent(email)}`, // cloned from @heymarco/next-auth, because this api was disabled in auth.config.shared
                 method : 'GET',
             }),
         }),
@@ -481,7 +481,7 @@ export const apiSlice = createApi({
 
 
 
-const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, QueryArg, BaseQuery extends BaseQueryFn>(endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getUserPage'>, isUpdating: boolean, api: MutationCacheLifecycleApi<QueryArg, BaseQuery, TEntry, 'api'>) => {
+const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, QueryArg, BaseQuery extends BaseQueryFn>(endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getAdminPage'>, isUpdating: boolean, api: MutationCacheLifecycleApi<QueryArg, BaseQuery, TEntry, 'api'>) => {
     // updated TEntry data:
     const { data: entry } = await api.cacheDataLoaded;
     const { id } = entry;
@@ -610,9 +610,9 @@ export const {
     
     useGetShippingListQuery               : useGetShippingList,
     
-    useGetUserPageQuery                   : useGetUserPage,
-    useUpdateUserMutation                 : useUpdateUser,
-    useDeleteUserMutation                 : useDeleteUser,
+    useGetAdminPageQuery                  : useGetAdminPage,
+    useUpdateAdminMutation                : useUpdateAdmin,
+    useDeleteAdminMutation                : useDeleteAdmin,
     useAvailableUsernameMutation          : useAvailableUsername,
     useNotProhibitedUsernameMutation      : useNotProhibitedUsername,
     useAvailableEmailMutation             : useAvailableEmail,

@@ -26,7 +26,7 @@ import type {
 
 // models:
 import type {
-    User,
+    Admin,
 }                           from '@prisma/client'
 
 // ORMs:
@@ -42,9 +42,9 @@ import {
 
 
 // types:
-export interface UserDetail
+export interface AdminDetail
     extends
-        Omit<User,
+        Omit<Admin,
             |'createdAt'
             |'updatedAt'
             
@@ -86,7 +86,7 @@ router
     return await next();
 })
 .post(async (req) => {
-    /* required for displaying users page */
+    /* required for displaying admins page */
     
     
     
@@ -126,18 +126,18 @@ router
     
     //#region validating privileges
     const session = (req as any).session as Session;
-    if (!session.role?.user_r) return NextResponse.json({ error:
+    if (!session.role?.admin_r) return NextResponse.json({ error:
 `Access denied.
 
-You do not have the privilege to view the users.`
+You do not have the privilege to view the admins.`
     }, { status: 403 }); // handled with error: forbidden
     //#endregion validating privileges
     
     
     
     const [total, paged] = await prisma.$transaction([
-        prisma.user.count(),
-        prisma.user.findMany({
+        prisma.admin.count(),
+        prisma.admin.findMany({
             select: {
                 id               : true,
                 
@@ -145,9 +145,9 @@ You do not have the privilege to view the users.`
                 email            : true,
                 image            : true,
                 
-                roleId           : true,
+                adminRoleId      : true,
                 
-                credentials : {
+                adminCredentials : {
                     select : {
                         username : true,
                     },
@@ -160,20 +160,20 @@ You do not have the privilege to view the users.`
             take    : perPage,
         }),
     ]);
-    const paginationUserDetail : Pagination<UserDetail> = {
+    const paginationAdminDetail : Pagination<AdminDetail> = {
         total    : total,
-        entities : paged.map((user) => {
+        entities : paged.map((admin) => {
             const {
-                credentials,
-            ...restUser} = user;
+                adminCredentials,
+            ...restAdmin} = admin;
             
             return {
-                ...restUser,
-                username : credentials?.username ?? null,
+                ...restAdmin,
+                username : adminCredentials?.username ?? null,
             };
         }),
     };
-    return NextResponse.json(paginationUserDetail); // handled with success
+    return NextResponse.json(paginationAdminDetail); // handled with success
 })
 .patch(async (req) => {
     if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
@@ -197,7 +197,7 @@ You do not have the privilege to view the users.`
         password,
         image,
         
-        roleId,
+        adminRoleId,
         
         username,
     } = await req.json();
@@ -233,53 +233,53 @@ You do not have the privilege to view the users.`
     //#region validating privileges
     const session = (req as any).session as Session;
     if (!id) {
-        if (!session.role?.user_c) return NextResponse.json({ error:
+        if (!session.role?.admin_c) return NextResponse.json({ error:
 `Access denied.
 
-You do not have the privilege to add new user.`
+You do not have the privilege to add new admin.`
         }, { status: 403 }); // handled with error: forbidden
         
-        if (!session.role?.user_ur && (roleId !== null) && (roleId !== undefined)) return NextResponse.json({ error:
+        if (!session.role?.admin_ur && (adminRoleId !== null) && (adminRoleId !== undefined)) return NextResponse.json({ error:
 `Access denied.
 
-You do not have the privilege to add new user with a user role.`
+You do not have the privilege to add new admin with an admin role.`
         }, { status: 403 }); // handled with error: forbidden
     }
     else {
-        if (!session.role?.user_un && (name !== undefined)) return NextResponse.json({ error:
+        if (!session.role?.admin_un && (name !== undefined)) return NextResponse.json({ error:
 `Access denied.
 
-You do not have the privilege to modify the user's name.`
+You do not have the privilege to modify the admin's name.`
         }, { status: 403 }); // handled with error: forbidden
         
-        if (!session.role?.user_uu && (username !== undefined)) return NextResponse.json({ error:
+        if (!session.role?.admin_uu && (username !== undefined)) return NextResponse.json({ error:
 `Access denied.
 
-You do not have the privilege to modify the user's username.`
+You do not have the privilege to modify the admin's username.`
         }, { status: 403 }); // handled with error: forbidden
         
-        if (!session.role?.user_ue && (email !== undefined)) return NextResponse.json({ error:
+        if (!session.role?.admin_ue && (email !== undefined)) return NextResponse.json({ error:
 `Access denied.
 
-You do not have the privilege to modify the user's email.`
+You do not have the privilege to modify the admin's email.`
         }, { status: 403 }); // handled with error: forbidden
         
-        if (!session.role?.user_up && (password !== undefined)) return NextResponse.json({ error:
+        if (!session.role?.admin_up && (password !== undefined)) return NextResponse.json({ error:
 `Access denied.
 
-You do not have the privilege to modify the user's password.`
+You do not have the privilege to modify the admin's password.`
         }, { status: 403 }); // handled with error: forbidden
         
-        if (!session.role?.user_ui && (image !== undefined)) return NextResponse.json({ error:
+        if (!session.role?.admin_ui && (image !== undefined)) return NextResponse.json({ error:
 `Access denied.
 
-You do not have the privilege to modify the user's image.`
+You do not have the privilege to modify the admin's image.`
         }, { status: 403 }); // handled with error: forbidden
         
-        if (!session.role?.user_ur && (roleId !== undefined)) return NextResponse.json({ error:
+        if (!session.role?.admin_ur && (adminRoleId !== undefined)) return NextResponse.json({ error:
 `Access denied.
 
-You do not have the privilege to modify the user's role.`
+You do not have the privilege to modify the admin's role.`
         }, { status: 403 }); // handled with error: forbidden
     } // if
     //#endregion validating privileges
@@ -290,9 +290,9 @@ You do not have the privilege to modify the user's role.`
     try {
         const emailVerified : Date|undefined = (
             !id
-            ? new Date() // for a new User => mark email as verified
+            ? new Date() // for a new Admin => mark email as verified
             : (
-                !!(await prisma.user.findUnique({
+                !!(await prisma.admin.findUnique({
                 where  : {
                     id : id,
                 },
@@ -300,8 +300,8 @@ You do not have the privilege to modify the user's role.`
                     emailVerified : true,
                 },
                 }))?.emailVerified
-                ? undefined  // for existing user => if email already verified => do not modify
-                : new Date() // for existing user => if email not     verified => mark email as verified
+                ? undefined  // for existing admin => if email already verified => do not modify
+                : new Date() // for existing admin => if email not     verified => mark email as verified
             )
         );
         const data = {
@@ -311,7 +311,7 @@ You do not have the privilege to modify the user's role.`
             // password : TODO: hashed password,
             image,
             
-            roleId,
+            adminRoleId,
         };
         const select = {
             id               : true,
@@ -320,20 +320,20 @@ You do not have the privilege to modify the user's role.`
             email            : true,
             image            : true,
             
-            roleId           : true,
+            adminRoleId      : true,
             
-            credentials : {
+            adminCredentials : {
                 select : {
                     username : true,
                 },
             },
         };
-        const {credentials, ...restUser} = (
+        const {adminCredentials, ...restAdmin} = (
             !id
-            ? await prisma.user.create({
+            ? await prisma.admin.create({
                 data   : {
                     ...data,
-                    credentials : (username !== undefined) ? {
+                    adminCredentials : (username !== undefined) ? {
                         create : {
                             username,
                         },
@@ -341,13 +341,13 @@ You do not have the privilege to modify the user's role.`
                 },
                 select : select,
             })
-            : await prisma.user.update({
+            : await prisma.admin.update({
                 where  : {
                     id : id,
                 },
                 data   : {
                     ...data,
-                    credentials : (username !== undefined) ? {
+                    adminCredentials : (username !== undefined) ? {
                         upsert : {
                             update : {
                                 username,
@@ -361,11 +361,11 @@ You do not have the privilege to modify the user's role.`
                 select : select,
             })
         );
-        const userDetail : UserDetail = {
-            ...restUser,
-            username : credentials?.username ?? null,
+        const adminDetail : AdminDetail = {
+            ...restAdmin,
+            username : adminCredentials?.username ?? null,
         };
-        return NextResponse.json(userDetail); // handled with success
+        return NextResponse.json(adminDetail); // handled with success
     }
     catch (error: any) {
         console.log('ERROR: ', error);
@@ -407,10 +407,10 @@ You do not have the privilege to modify the user's role.`
     
     //#region validating privileges
     const session = (req as any).session as Session;
-    if (!session.role?.user_d) return NextResponse.json({ error:
+    if (!session.role?.admin_d) return NextResponse.json({ error:
 `Access denied.
 
-You do not have the privilege to delete the user.`
+You do not have the privilege to delete the admin.`
     }, { status: 403 }); // handled with error: forbidden
     //#endregion validating privileges
     
@@ -418,8 +418,8 @@ You do not have the privilege to delete the user.`
     
     //#region save changes
     try {
-        const deletedUser : Pick<UserDetail, 'id'> = (
-            await prisma.user.delete({
+        const deletedAdmin : Pick<AdminDetail, 'id'> = (
+            await prisma.admin.delete({
                 where  : {
                     id : id,
                 },
@@ -428,7 +428,7 @@ You do not have the privilege to delete the user.`
                 },
             })
         );
-        return NextResponse.json(deletedUser); // handled with success
+        return NextResponse.json(deletedAdmin); // handled with success
     }
     catch (error: any) {
         console.log('ERROR: ', error);

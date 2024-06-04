@@ -66,18 +66,18 @@ import {
     SimpleEditModelDialog,
 }                           from '@/components/dialogs/SimpleEditModelDialog'
 import {
-    SimpleEditUserImageDialog,
-}                           from '@/components/dialogs/SimpleEditUserImageDialog'
+    SimpleEditAdminImageDialog,
+}                           from '@/components/dialogs/SimpleEditAdminImageDialog'
 
 // stores:
 import {
     // types:
-    UserDetail,
+    AdminDetail,
     
     
     
     // hooks:
-    useUpdateUser,
+    useUpdateAdmin,
 }                           from '@/store/features/api/apiSlice'
 
 // internals:
@@ -102,22 +102,22 @@ export function ProfilePageContent() {
     
     // sessions:
     const { data: session, update: updateSession } = useSession();
-    const user = session?.user;
-    const userUsername = session?.credentials?.username ?? null;
-    const userModel = useMemo<Omit<UserDetail, 'roleId'>|null>(() => {
-        if (!user) return null;
+    const admin = session?.user;
+    const adminUsername = session?.credentials?.username ?? null;
+    const adminModel = useMemo<Omit<AdminDetail, 'adminRoleId'>|null>(() => {
+        if (!admin) return null;
         
         
         
         return {
-            id       : user.id,
-            name     : user.name,
-            email    : user.email,
-            image    : user.image,
-            username : userUsername,
-        } satisfies Omit<UserDetail, 'roleId'>;
-    }, [user, userUsername]);
-    const { name: userHumanName, email: userEmail, image: userImage } = userModel ?? {};
+            id       : admin.id,
+            name     : admin.name,
+            email    : admin.email,
+            image    : admin.image,
+            username : adminUsername,
+        } satisfies Omit<AdminDetail, 'adminRoleId'>;
+    }, [admin, adminUsername]);
+    const { name: adminName, email: adminEmail, image: adminImage } = adminModel ?? {};
     
     
     
@@ -130,27 +130,27 @@ export function ProfilePageContent() {
     
     // handlers:
     const handleEdit = useEvent(async (edit: 'image'|'name'|'username') => {
-        const updatedUserModel = await showDialog<SimpleEditModelDialogResult<Omit<UserDetail, 'roleId'>>>(
+        const updatedAdminModel = await showDialog<SimpleEditModelDialogResult<Omit<AdminDetail, 'adminRoleId'>>>(
             (edit === 'image')
-            ? <SimpleEditUserImageDialog
+            ? <SimpleEditAdminImageDialog
                 // data:
-                model={userModel!}
+                model={adminModel!}
                 edit={edit}
                 
                 
                 
                 // stores:
-                updateModelApi={useUpdateUser as any}
+                updateModelApi={useUpdateAdmin as any}
             />
-            : <SimpleEditModelDialog<Omit<UserDetail, 'roleId'>>
+            : <SimpleEditModelDialog<Omit<AdminDetail, 'adminRoleId'>>
                 // data:
-                model={userModel!}
+                model={adminModel!}
                 edit={edit}
                 
                 
                 
                 // stores:
-                updateModelApi={useUpdateUser as any}
+                updateModelApi={useUpdateAdmin as any}
                 
                 
                 
@@ -158,13 +158,13 @@ export function ProfilePageContent() {
                 editorComponent={(() => {
                     switch (edit) {
                         case 'name'     : return <NameEditor />;
-                        case 'username' : return <UniqueUsernameEditor currentValue={userModel!['username'] ?? ''} />;
+                        case 'username' : return <UniqueUsernameEditor currentValue={adminModel!['username'] ?? ''} />;
                         default         : throw Error('app error');
                     } // switch
                 })()}
             />
         );
-        if (updatedUserModel === undefined) return;
+        if (updatedAdminModel === undefined) return;
         updateSession();
     });
     
@@ -198,7 +198,7 @@ export function ProfilePageContent() {
                     elementComponent={
                         <ProfileImage
                             // appearances:
-                            src={resolveMediaUrl(userImage ?? undefined)}
+                            src={resolveMediaUrl(adminImage ?? undefined)}
                             
                             
                             
@@ -218,7 +218,7 @@ export function ProfilePageContent() {
                     <span className='label'>
                         Name:
                     </span>
-                    {userHumanName}
+                    {adminName}
                     <EditButton onClick={() => handleEdit('name')} />
                 </h3>
                 
@@ -226,7 +226,7 @@ export function ProfilePageContent() {
                     <span className='label'>
                         Username:
                     </span>
-                    {userUsername || <span className='noValue'>No Username</span>}
+                    {adminUsername || <span className='noValue'>No Username</span>}
                     <EditButton onClick={() => handleEdit('username')} />
                 </p>
                 
@@ -234,7 +234,7 @@ export function ProfilePageContent() {
                     <span className='label'>
                         Email:
                     </span>
-                    {userEmail}
+                    {adminEmail}
                 </p>
             </Section>
         </Main>

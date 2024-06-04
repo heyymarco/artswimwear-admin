@@ -130,7 +130,7 @@ const SiteNavbarMenu = ({
                     {isFullySignedIn && <NavItem><Link href='/'>Dashboard</Link></NavItem>}
                     {isFullySignedIn && !!role?.product_r && <NavItem><Link href='/products'>Products</Link></NavItem>}
                     {isFullySignedIn && !!role?.order_r   && <NavItem><Link href='/orders'>Orders</Link></NavItem>}
-                    {isFullySignedIn && !!role?.user_r    && <NavItem><Link href='/users'>Users</Link></NavItem>}
+                    {isFullySignedIn && !!role?.admin_r   && <NavItem><Link href='/admins'>Admins</Link></NavItem>}
                     
                     <SignInMenu />
                 </Nav>

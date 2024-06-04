@@ -474,146 +474,146 @@ model ShippingTrackingLog {
 
 
 
-model Account {
+model AdminAccount {
     // records:
-    id                      String                  @id @default(cuid()) @map("_id")
+    id                          String                          @id @default(cuid()) @map("_id")
     
     // provider types:
-    type                    String
-    provider                String
-    providerAccountId       String
+    type                        String
+    provider                    String
+    providerAccountId           String
     @@unique([provider, providerAccountId])
     
     // jwt sessions:
-    refresh_token           String?
-    access_token            String?
-    expires_at              Int?
+    refresh_token               String?
+    access_token                String?
+    expires_at                  Int?
     
     // jwt meta:
-    token_type              String?
-    scope                   String?
-    id_token                String?
-    session_state           String?
+    token_type                  String?
+    scope                       String?
+    id_token                    String?
+    session_state               String?
     
     // relations:
-    userId                  String
-    user                    User                    @relation(fields: [userId], references: [id], onDelete: Cascade) // delete the related Account(s) if the User deleted
+    adminId                     String
+    admin                       Admin                           @relation(fields: [adminId], references: [id], onDelete: Cascade) // delete the related AdminAccount(s) if the Admin deleted
 }
 
-model Session {
+model AdminSession {
     // records:
-    id                      String                  @id @default(cuid()) @map("_id")
-    expires                 DateTime
+    id                          String                          @id @default(cuid()) @map("_id")
+    expires                     DateTime
     
     // data:
-    sessionToken            String                  @unique
+    sessionToken                String                          @unique
     
     // relations:
-    userId                  String
-    user                    User                    @relation(fields: [userId], references: [id], onDelete: Cascade) // delete the related Session(s) if the User deleted
+    adminId                     String
+    admin                       Admin                           @relation(fields: [adminId], references: [id], onDelete: Cascade) // delete the related AdminSession(s) if the Admin deleted
 }
 
-model User {
+model Admin {
     // records:
-    id                      String                  @id @default(cuid()) @map("_id")
-    createdAt               DateTime                @default(now())
-    updatedAt               DateTime                @updatedAt
+    id                          String                          @id @default(cuid()) @map("_id")
+    createdAt                   DateTime                        @default(now())
+    updatedAt                   DateTime                        @updatedAt
     
     // data:
-    name                    String
-    email                   String                  @unique
+    name                        String
+    email                       String                          @unique
     
-    emailVerified           DateTime?
-    image                   String?
+    emailVerified               DateTime?
+    image                       String?
     
     // relations:
-    accounts                Account[]               // a User may have some related Account(s)              // one  to many
-    sessions                Session[]               // a User may have some related Session(s)              // one  to many
-    credentials             Credentials?            // a User may have one  related Credentials             // one  to one
-    passwordResetToken      PasswordResetToken?     // a User may have one  related PasswordResetToken      // one  to one
-    emailConfirmationToken  EmailConfirmationToken? // a User may have one  related EmailConfirmationToken  // one  to one
+    adminAccounts               AdminAccount[]                  // an Admin may have some related AdminAccount(s)             // one  to many
+    adminSessions               AdminSession[]                  // an Admin may have some related AdminSession(s)             // one  to many
+    adminCredentials            AdminCredentials?               // an Admin may have one  related AdminCredentials            // one  to one
+    adminPasswordResetToken     AdminPasswordResetToken?        // an Admin may have one  related AdminPasswordResetToken     // one  to one
+    adminEmailConfirmationToken AdminEmailConfirmationToken?    // an Admin may have one  related AdminEmailConfirmationToken // one  to one
     
-    roleId                  String?
-    role                    Role?                   @relation(fields: [roleId], references: [id], onDelete: SetNull) // preserve the related User(s) if the Role deleted
+    adminRoleId                 String?
+    adminRole                   AdminRole?                      @relation(fields: [adminRoleId], references: [id], onDelete: SetNull) // preserve the related Admin(s) if the AdminRole deleted
 }
 
-model Credentials {
+model AdminCredentials {
     // records:
-    id                      String                  @id @default(cuid()) @map("_id")
+    id                          String                          @id @default(cuid()) @map("_id")
     
     // data:
-    failureAttempts         Int?
-    lockedAt                DateTime?
-    username                String?                 @unique
-    password                String?
+    failureAttempts             Int?
+    lockedAt                    DateTime?
+    username                    String?                         @unique
+    password                    String?
     
     // relations:
-    userId                  String                  @unique
-    user                    User                    @relation(fields: [userId], references: [id], onDelete: Cascade) // delete the related Credentials if the User deleted
+    adminId                     String                          @unique
+    admin                       Admin                           @relation(fields: [adminId], references: [id], onDelete: Cascade) // delete the related AdminCredentials if the Admin deleted
 }
 
-model PasswordResetToken {
+model AdminPasswordResetToken {
     // records:
-    id                      String                  @id @default(cuid()) @map("_id")
-    updatedAt               DateTime                @updatedAt
-    expiresAt               DateTime
+    id                          String                          @id @default(cuid()) @map("_id")
+    updatedAt                   DateTime                        @updatedAt
+    expiresAt                   DateTime
     
     // data:
-    token                   String                  @unique
+    token                       String                          @unique
     
     // relations:
-    userId                  String                  @unique
-    user                    User                    @relation(fields: [userId], references: [id], onDelete: Cascade) // delete the related PasswordResetToken if the User deleted
+    adminId                     String                          @unique
+    admin                       Admin                           @relation(fields: [adminId], references: [id], onDelete: Cascade) // delete the related AdminPasswordResetToken if the Admin deleted
 }
 
-model EmailConfirmationToken {
+model AdminEmailConfirmationToken {
     // records:
-    id                      String                  @id @default(cuid()) @map("_id")
+    id                          String                          @id @default(cuid()) @map("_id")
     
     // data:
-    token                   String                  @unique
+    token                       String                          @unique
     
     // relations:
-    userId                  String                  @unique
-    user                    User                    @relation(fields: [userId], references: [id], onDelete: Cascade) // delete the related EmailConfirmationToken if the User deleted
+    adminId                     String                          @unique
+    admin                       Admin                           @relation(fields: [adminId], references: [id], onDelete: Cascade) // delete the related AdminEmailConfirmationToken if the Admin deleted
 }
 
-model Role {
+model AdminRole {
     // records:
-    id                      String                  @id @default(cuid()) @map("_id")
+    id                          String                          @id @default(cuid()) @map("_id")
     
     // data:
-    name                    String                  @unique
+    name                        String                          @unique
     
-    product_r               Boolean                 @default(false)
-    product_c               Boolean                 @default(false)
-    product_ud              Boolean                 @default(false)
-    product_ui              Boolean                 @default(false)
-    product_up              Boolean                 @default(false)
-    product_us              Boolean                 @default(false)
-    product_uv              Boolean                 @default(false)
-    product_d               Boolean                 @default(false)
+    product_r                   Boolean                         @default(false)
+    product_c                   Boolean                         @default(false)
+    product_ud                  Boolean                         @default(false)
+    product_ui                  Boolean                         @default(false)
+    product_up                  Boolean                         @default(false)
+    product_us                  Boolean                         @default(false)
+    product_uv                  Boolean                         @default(false)
+    product_d                   Boolean                         @default(false)
     
-    user_r                  Boolean                 @default(false)
-    user_c                  Boolean                 @default(false)
-    user_un                 Boolean                 @default(false)
-    user_uu                 Boolean                 @default(false)
-    user_ue                 Boolean                 @default(false)
-    user_up                 Boolean                 @default(false)
-    user_ui                 Boolean                 @default(false)
-    user_ur                 Boolean                 @default(false)
-    user_d                  Boolean                 @default(false)
+    admin_r                     Boolean                         @default(false)
+    admin_c                     Boolean                         @default(false)
+    admin_un                    Boolean                         @default(false)
+    admin_uu                    Boolean                         @default(false)
+    admin_ue                    Boolean                         @default(false)
+    admin_up                    Boolean                         @default(false)
+    admin_ui                    Boolean                         @default(false)
+    admin_ur                    Boolean                         @default(false)
+    admin_d                     Boolean                         @default(false)
     
-    order_r                 Boolean                 @default(false)
-    order_us                Boolean                 @default(false)
-    order_usa               Boolean                 @default(false)
-    order_upmu              Boolean                 @default(false)
-    order_upmp              Boolean                 @default(false)
+    order_r                     Boolean                         @default(false)
+    order_us                    Boolean                         @default(false)
+    order_usa                   Boolean                         @default(false)
+    order_upmu                  Boolean                         @default(false)
+    order_upmp                  Boolean                         @default(false)
     
-    role_c                  Boolean                 @default(false)
-    role_u                  Boolean                 @default(false)
-    role_d                  Boolean                 @default(false)
+    role_c                      Boolean                         @default(false)
+    role_u                      Boolean                         @default(false)
+    role_d                      Boolean                         @default(false)
     
     // relations:
-    users                   User[]                  // a Role may have some related User(s)  // one  to many
+    admins                      Admin[]                         // a AdminRole may have some related Admin(s)  // one  to many
 }

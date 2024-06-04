@@ -109,7 +109,7 @@ router
     
     //#region query result
     try {
-        const result = await prisma.credentials.findFirst({
+        const result = await prisma.adminCredentials.findFirst({
             where  : {
                 username : { equals: username, mode: 'insensitive' }, // case-insensitive comparison
             },

@@ -1,12 +1,12 @@
 // models:
 import type {
-    Role as ExtendedRole,
+    AdminRole,
 }                           from '@prisma/client'
 
 // stores:
 import type {
     // types:
-    UserDetail,
+    AdminDetail,
 }                           from '@/store/features/api/apiSlice'
 
 
@@ -14,13 +14,13 @@ import type {
 declare module 'next-auth' {
     interface Session
     {
-        user ?: Pick<UserDetail, 'id'|'name'|'email'|'image'>
+        user ?: Pick<AdminDetail, 'id'|'name'|'email'|'image'>
     }
 }
 declare module '@heymarco/next-auth' {
     interface Role
         extends
-            ExtendedRole
+            AdminRole
     {
     }
 }
