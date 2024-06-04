@@ -522,6 +522,7 @@ model User {
     // data:
     name                    String
     email                   String                  @unique
+    
     emailVerified           DateTime?
     image                   String?
     
