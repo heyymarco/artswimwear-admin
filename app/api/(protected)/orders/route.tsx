@@ -536,20 +536,23 @@ You do not have the privilege to modify the payment of the order.`
         if (orderDetail && performSendConfirmationEmail) {
             let emailConfig : EmailConfig|undefined = undefined;
             
+            const {
+                customerEmails,
+            } = checkoutConfigServer;
             if (rejectionReason) { // payment confirmation declined
-                emailConfig = checkoutConfigServer.emails.rejected;
+                emailConfig = customerEmails.rejected;
             }
             else if (payment?.type === 'MANUAL_PAID') {   // payment approved (regradless having payment confirmation or not)
-                emailConfig = checkoutConfigServer.emails.checkout;
+                emailConfig = customerEmails.checkout;
             }
             else if (orderStatus === 'CANCELED') { // order canceled confirmation
-                emailConfig = checkoutConfigServer.emails.canceled;
+                emailConfig = customerEmails.canceled;
             }
             else if (orderStatus === 'ON_THE_WAY') { // shipping tracking number confirmation
-                emailConfig = checkoutConfigServer.emails.shipping;
+                emailConfig = customerEmails.shipping;
             }
             else if (orderStatus === 'COMPLETED') {  // order completed confirmation
-                emailConfig = checkoutConfigServer.emails.completed;
+                emailConfig = customerEmails.completed;
             } // if
             
             if (emailConfig) {

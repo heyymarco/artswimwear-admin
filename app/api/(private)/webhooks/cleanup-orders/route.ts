@@ -85,7 +85,7 @@ export async function POST(req: Request, res: Response): Promise<Response> {
         expiredOrderDetails
         .map((expiredOrderDetail) =>
             // notify that the order has been expired:
-            sendConfirmationEmail(expiredOrderDetail.orderId, checkoutConfigServer.emails.expired)
+            sendConfirmationEmail(expiredOrderDetail.orderId, checkoutConfigServer.customerEmails.expired)
         )
     );
     //#endregion send email confirmation
