@@ -257,6 +257,12 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
                 'X-Secret' : process.env.APP_SECRET ?? '',
             },
             body    : JSON.stringify({
+                host        : emailConfig.host,
+                port        : emailConfig.port,
+                secure      : emailConfig.secure,
+                user        : emailConfig.username,
+                pass        : emailConfig.password,
+                
                 from        : emailConfig.from,
                 to          : orderAndData.customerOrGuest.email,
                 subject     : renderToStaticMarkup(
