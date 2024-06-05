@@ -11,6 +11,10 @@ datasource db {
 
 
 
+// e-commerce models --------------------------------------------------------------------------
+
+
+
 enum ProductVisibility {
     PUBLISHED
     HIDDEN
@@ -470,7 +474,7 @@ model ShippingTrackingLog {
 
 
 
-// auth models --------------------------------------------------------------------------------
+// admin models -------------------------------------------------------------------------------
 
 
 
@@ -497,6 +501,12 @@ model Admin {
     adminRoleId                     String?
     adminRole                       AdminRole?                      @relation(fields: [adminRoleId], references: [id], onDelete: SetNull) // preserve the related Admin(s) if the AdminRole deleted
 }
+
+
+
+// admin-auth models --------------------------------------------------------------------------
+
+
 
 model AdminAccount {
     // records:
