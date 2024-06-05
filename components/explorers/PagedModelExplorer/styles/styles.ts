@@ -26,6 +26,7 @@ import {
     
     // groups a list of UIs into a single UI
     usesGroupable,
+    spacers,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -37,7 +38,6 @@ import {
 
 
 // styles:
-// defaults:
 const usesListModelLayout = () => {
     // dependencies:
     
@@ -67,9 +67,8 @@ const usesListModelLayout = () => {
             
             
             // layouts:
-            display            : 'flex',
-            flexDirection      : 'column',
-            justifyContent     : 'start', // align to top
+            display            : 'grid',
+            gridAutoFlow       : 'row',
             
             
             
@@ -120,8 +119,7 @@ const usesModelListInnerLayout = () => { // the <List> of model
 const usesCreateModelLayout = () => { // the <ListItem> of model add_new
     return style({
         // layouts:
-        display: 'flex',
-        flexDirection: 'column',
+        display: 'grid',
     });
 };
 const usesEmptyModelLayout = () => {
@@ -143,27 +141,37 @@ const usesEmptyModelLayout = () => {
 };
 
 export default () => [
-    scope('sectionModel', {
+    scope('main', {
         flexGrow: 1,
         
-        display: 'flex',
-        flexDirection: 'column',
+        display: 'grid',
+        gridAutoFlow: 'row',
         ...children('article', {
             // layouts:
             display      : 'grid',
             gridTemplate : [[
-                '"paginTop"', 'auto',
+                '"paginTop "', 'auto',
                 '"modelList"', '1fr',
-                '"paginBtm"', 'auto',
+                '"paginBtm "', 'auto',
                 '/',
                 'auto',
             ]],
+            ...rule(':has(>.toolbar>*:not(:empty))', {
+                gridTemplate : [[
+                    '"toolbar  "', 'auto',
+                    '"paginTop "', 'auto',
+                    '"modelList"', '1fr',
+                    '"paginBtm "', 'auto',
+                    '/',
+                    'auto',
+                ]],
+            }),
             
             
             
             // spacings:
-            gapInline : '1rem',
-            gapBlock  : '1rem',
+            gapInline : spacers.md,
+            gapBlock  : spacers.sm,
             
             
             
@@ -173,6 +181,44 @@ export default () => [
             alignSelf     : 'center',
         }),
     }, { specificityWeight: 2 }),
+    
+    scope('toolbar', {
+        // positions:
+        gridArea: 'toolbar',
+        
+        
+        
+        // layouts:
+        display        : 'none',
+        ...rule(':has(>*:not(:empty))', {
+            display    : 'flex',
+        }),
+        flexWrap       : 'wrap',
+        flexDirection  : 'row',
+        justifyContent : 'space-between',
+        alignItems     : 'center',
+        
+        
+        
+        // spacings:
+        gap : spacers.md,
+        
+        
+        
+        // children:
+        ...children(['.toolbarBefore', '.toolbarMain', '.toolbarAfter'], {
+            display       : 'flex',
+            flexWrap      : 'wrap',
+            flexDirection : 'row',
+            alignItems     : 'center',
+            
+            
+            
+            // spacings:
+            gap : spacers.md,
+        }),
+    }),
+    
     scope('paginTop', {
         gridArea: 'paginTop',
         
@@ -181,14 +227,15 @@ export default () => [
     scope('listModel', {
         ...usesListModelLayout(),
     }, { specificityWeight: 2 }),
+    scope('listModelInner', { // the <List> of model
+        ...usesModelListInnerLayout(),
+    }, { specificityWeight: 2 }),
     scope('paginBtm', {
         gridArea: 'paginBtm',
         
         justifySelf: 'center',
     }),
-    scope('listModelInner', { // the <List> of model
-        ...usesModelListInnerLayout(),
-    }, { specificityWeight: 2 }),
+    
     scope('createModel', { // the <ListItem> of model add_new
         ...usesCreateModelLayout(),
     }),

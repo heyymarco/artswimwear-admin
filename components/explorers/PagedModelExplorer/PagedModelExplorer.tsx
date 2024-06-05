@@ -286,11 +286,17 @@ export interface PagedModelExplorerProps<TModel extends Model>
         PagedModelExplorerInternalProps<TModel>
 {
     // data:
-    page                  : number
-    perPage               : number
-    setPage               : (page: number) => void
-    setPerPage            : (perPage: number) => void
-    getModelPaginationApi : ModelPaginationStateProps<TModel>['getModelPaginationApi']
+    page                   : number
+    perPage                : number
+    setPage                : (page: number) => void
+    setPerPage             : (perPage: number) => void
+    getModelPaginationApi  : ModelPaginationStateProps<TModel>['getModelPaginationApi']
+    
+    
+    
+    // children:
+    menusBefore           ?: React.ReactNode
+    menusAfter            ?: React.ReactNode
 }
 const PagedModelExplorer         = <TModel extends Model>(props: PagedModelExplorerProps<TModel>): JSX.Element|null => {
     // styles:
@@ -306,6 +312,12 @@ const PagedModelExplorer         = <TModel extends Model>(props: PagedModelExplo
         setPage,
         setPerPage,
         getModelPaginationApi,
+        
+        
+        
+        // children:
+        menusBefore,
+        menusAfter,
     ...restPagedModelExplorerProps} = props;
     
     
@@ -323,7 +335,17 @@ const PagedModelExplorer         = <TModel extends Model>(props: PagedModelExplo
             // data:
             getModelPaginationApi={getModelPaginationApi}
         >
-            <Section className={`fill-self ${styleSheet.sectionModel}`}>
+            <Section className={`fill-self ${styleSheet.main}`} theme='primary'>
+                <div className={`toolbar ${styleSheet.toolbar}`}>
+                    <div className='toolbarBefore'>
+                        {menusBefore}
+                    </div>
+                    <div className='toolbarMain'>
+                    </div>
+                    <div className='toolbarAfter'>
+                        {menusAfter}
+                    </div>
+                </div>
                 <ModelPagination<TModel>
                     // paginations:
                     page={page}
@@ -420,7 +442,7 @@ const PagedModelExplorerInternal = <TModel extends Model>(props: PagedModelExplo
     
     // jsx:
     return (
-        <Basic className={`${styleSheet.listModel}${isDataEmpty ? ' empty' : ''}`} theme='primary' mild={true} elmRef={dataListRef}>
+        <Basic className={`${styleSheet.listModel}${isDataEmpty ? ' empty' : ''}`} mild={true} elmRef={dataListRef}>
             <ModalLoadingError
                 // data:
                 isFetching={isFetching}

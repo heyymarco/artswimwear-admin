@@ -65,6 +65,7 @@ const usePageStyleSheet = dynamicStyleSheet(
     () => import(/* webpackPrefetch: true */'./pageStyles')
 , { id: 'nxhip40jm2' });
 import './pageStyles';
+import { ButtonIcon } from '@reusable-ui/components'
 
 
 
@@ -114,6 +115,13 @@ export default function OrderPage(): JSX.Element|null {
                         model={undefined as any}
                     />
                 }
+                
+                
+                
+                // children:
+                menusAfter={<>
+                    <ButtonIcon size='sm' mild={true} icon='notifications' title='Notification settings' />
+                </>}
             />
         </Main>
     );
