@@ -492,6 +492,8 @@ model Admin {
     image                           String?
     
     // relations:
+    adminPreference                 AdminPreference?                // an Admin may have one  related AdminPreference             // one  to one
+    
     adminAccounts                   AdminAccount[]                  // an Admin may have some related AdminAccount(s)             // one  to many
     adminSessions                   AdminSession[]                  // an Admin may have some related AdminSession(s)             // one  to many
     adminCredentials                AdminCredentials?               // an Admin may have one  related AdminCredentials            // one  to one
@@ -500,6 +502,23 @@ model Admin {
     
     adminRoleId                     String?
     adminRole                       AdminRole?                      @relation(fields: [adminRoleId], references: [id], onDelete: SetNull) // preserve the related Admin(s) if the AdminRole deleted
+}
+model AdminPreference {
+    // records:
+    id                              String                          @id @default(cuid()) @map("_id")
+    
+    // data:
+    emailOrderNewPending            Boolean?
+    emailOrderNewPaid               Boolean?
+    emailOrderCanceled              Boolean?
+    emailOrderExpired               Boolean?
+    emailOrderRejected              Boolean?
+    emailOrderShipping              Boolean?
+    emailOrderCompleted             Boolean?
+    
+    // relations:
+    adminId                         String                          @unique
+    admin                           Admin                           @relation(fields: [adminId], references: [id], onDelete: Cascade) // delete the related AdminPreference if the Admin deleted
 }
 
 
