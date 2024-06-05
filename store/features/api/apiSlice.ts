@@ -45,6 +45,14 @@ import type { AdminDetail }                     from '@/app/api/(protected)/admi
 export type { AdminDetail }                     from '@/app/api/(protected)/admins/route'
 import type { RoleDetail }                      from '@/app/api/(protected)/roles/route'
 export type { RoleDetail }                      from '@/app/api/(protected)/roles/route'
+import type {
+    PreferenceData,
+    PreferenceDetail,
+}                                               from '@/app/api/(protected)/preferences/route'
+export type {
+    PreferenceData,
+    PreferenceDetail,
+}                                               from '@/app/api/(protected)/preferences/route'
 import type { ImageId }                         from '@/app/api/(protected)/uploads/route'
 export type { ImageId }                         from '@/app/api/(protected)/uploads/route'
 
@@ -122,7 +130,7 @@ export const apiSlice = createApi({
     baseQuery : axiosBaseQuery({
         baseUrl: `${process.env.APP_URL ?? ''}/api`
     }),
-    tagTypes: ['Products', 'TemplateVariantGroups', 'Orders', 'Admins', 'Roles'],
+    tagTypes: ['Products', 'TemplateVariantGroups', 'Orders', 'Admins', 'Preferences', 'Roles'],
     endpoints : (builder) => ({
         getProductList              : builder.query<EntityState<ProductPreview>, void>({
             query : () => ({
@@ -438,6 +446,34 @@ export const apiSlice = createApi({
             }),
         }),
         
+        getPreference               : builder.query<PreferenceDetail, void>({
+            query : () => ({
+                url    : 'preferences',
+                method : 'GET',
+            }),
+            providesTags: (result, error, page)  => {
+                return [
+                    {
+                        type : 'Preferences',
+                        id   : 'PREFERENCES',
+                    },
+                ];
+            },
+        }),
+        updatePreference            : builder.mutation<PreferenceDetail, MutationArgs<PreferenceData>>({
+            query: (patch) => ({
+                url    : 'preferences',
+                method : 'PATCH',
+                body   : patch
+            }),
+            invalidatesTags: (preference, error, arg) => [
+                {
+                    type : 'Preferences',
+                    id   : 'PREFERENCES',
+                },
+            ],
+        }),
+        
         postImage                   : builder.mutation<ImageId, { image: File, folder?: string, onUploadProgress?: (percentage: number) => void, abortSignal?: AbortSignal }>({
             query: ({ image, folder, onUploadProgress, abortSignal }) => ({
                 url     : 'uploads',
@@ -621,6 +657,9 @@ export const {
     useUpdateRoleMutation                 : useUpdateRole,
     useDeleteRoleMutation                 : useDeleteRole,
     useAvailableRolenameMutation          : useAvailableRolename,
+    
+    useGetPreferenceQuery                 : useGetPreference,
+    useUpdatePreferenceMutation           : useUpdatePreference,
     
     usePostImageMutation                  : usePostImage,
     useDeleteImageMutation                : useDeleteImage,

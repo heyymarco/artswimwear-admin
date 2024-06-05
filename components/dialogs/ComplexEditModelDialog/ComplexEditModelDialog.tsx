@@ -74,6 +74,15 @@ import {
     useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
+// internal components:
+import {
+    MessageLoading,
+}                           from '@/components/MessageLoading'
+import {
+    MessageErrorProps,
+    MessageError,
+}                           from '@/components/MessageError'
+
 // internals:
 import type {
     Model,
@@ -137,6 +146,10 @@ export interface ComplexEditModelDialogProps<TModel extends Model>
     
     
     // stores:
+    isModelLoading   ?: boolean
+    isModelError     ?: boolean
+    onModelRetry     ?: MessageErrorProps['onRetry']
+    
     isModified       ?: boolean
     isCommiting      ?: boolean
     isReverting      ?: boolean
@@ -222,10 +235,14 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
         
         
         // stores:
-        isModified  = false,
-        isCommiting = false,
-        isReverting = false,
-        isDeleting  = false,
+        isModelLoading = false,
+        isModelError   = false,
+        onModelRetry,
+        
+        isModified     = false,
+        isCommiting    = false,
+        isReverting    = false,
+        isDeleting     = false,
         
         
         
@@ -259,6 +276,8 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
         // children:
         children : childrenFn,
     ...restModalCardProps} = props;
+    const isModelNoData = isModelLoading || isModelError;
+    
     const whenAdd    : boolean                 =   !model && privilegeAdd;
     const whenUpdate : Record<string, boolean> =  !!model ?  privilegeUpdate : {};
     const whenDelete : boolean                 =  !!model && privilegeDelete;
@@ -517,7 +536,21 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
                     }</h1>
                     <CloseButton onClick={handleCloseDialog} />
                 </CardHeader>
-                <ValidationProvider
+                
+                {isModelNoData && <Content
+                    // variants:
+                    theme={isModelError ? 'danger' : undefined}
+                    
+                    
+                    
+                    // classes:
+                    className={`${styleSheet.cardBody} body noData`}
+                >
+                    {!isModelError && <MessageLoading />}
+                    {isModelError  && <MessageError onRetry={onModelRetry} />}
+                </Content>}
+                
+                {!isModelNoData && <ValidationProvider
                     // validations:
                     enableValidation={enableValidation}
                     inheritValidation={false}
@@ -573,10 +606,88 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
                             </ButtonIcon>
                         </TabPanel>}
                     </Tab>
-                </ValidationProvider>
+                </ValidationProvider>}
+                
                 <CardFooter>
-                    {whenWrite && <ButtonIcon className='btnSave' icon={isCommiting ? 'busy' : 'save'} theme='success' onClick={handleSave}>Save</ButtonIcon>}
-                    <ButtonIcon className='btnCancel' icon={whenWrite ? (isReverting ? 'busy' : 'cancel') : 'done'} theme={whenWrite ? 'danger' : 'primary'} onClick={handleCloseDialog}>{isReverting ? 'Reverting' : (whenWrite ? 'Cancel' : 'Close')}</ButtonIcon>
+                    {whenWrite && !isModelNoData && <ButtonIcon
+                        // appearances:
+                        icon={
+                            isCommiting
+                            ? 'busy'
+                            : 'save'
+                        }
+                        
+                        
+                        
+                        // variants:
+                        theme='success'
+                        
+                        
+                        
+                        // classes:
+                        className='btnSave'
+                        
+                        
+                        
+                        // handlers:
+                        onClick={handleSave}
+                    >
+                        Save
+                    </ButtonIcon>}
+                    
+                    <ButtonIcon
+                        // appearances:
+                        icon={
+                            isModelNoData
+                            ? 'cancel'
+                            : (
+                                whenWrite
+                                ? (
+                                    isReverting
+                                    ? 'busy'
+                                    : 'cancel'
+                                )
+                                : 'done'
+                            )
+                        }
+                        
+                        
+                        
+                        // variants:
+                        theme={
+                            isModelNoData
+                            ? 'primary'
+                            : (
+                                whenWrite
+                                ? 'danger'
+                                : 'primary'
+                            )
+                        }
+                        
+                        
+                        
+                        // classes:
+                        className='btnCancel'
+                        
+                        
+                        
+                        // handlers:
+                        onClick={handleCloseDialog}
+                    >
+                        {
+                            isModelNoData
+                            ? 'Close'
+                            : (
+                                isReverting
+                                ? 'Reverting'
+                                : (
+                                    whenWrite
+                                    ? 'Cancel'
+                                    : 'Close'
+                                )
+                            )
+                        }
+                    </ButtonIcon>
                 </CardFooter>
             </ModalCard>
         </AccessibilityProvider>

@@ -1,6 +1,8 @@
 // cssfn:
 import {
     // writes css in javascript:
+    rule,
+    children,
     style,
     vars,
     scope,
@@ -68,6 +70,22 @@ export const usesCardBodyLayout  = () => {
             [borderVars.borderStartEndRadius  ] : '0px',
             [borderVars.borderEndStartRadius  ] : '0px',
             [borderVars.borderEndEndRadius    ] : '0px',
+            
+            
+            
+            // typos:
+            ...rule('.noData', {
+                textAlign : 'center',
+            }),
+            
+            
+            
+            // children:
+            ...rule('.noData', {
+                ...children('button', {
+                    alignSelf: 'center',
+                }),
+            }),
         }),
     });
 };

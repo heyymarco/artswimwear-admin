@@ -22,6 +22,18 @@ import {
     dynamicStyleSheet,
 }                           from '@cssfn/cssfn-react'               // writes css in react hook
 
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useEvent,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
+// reusable-ui components:
+import {
+    // utility-components:
+    useDialogMessage,
+}                           from '@reusable-ui/components'          // a set of official Reusable-UI components
+
 // heymarco components:
 import {
     Main,
@@ -40,6 +52,9 @@ import {
 import {
     OrderPreview,
 }                           from '@/components/views/OrderPreview'
+import {
+    EditOrderNotificationsDialog,
+}                           from '@/components/dialogs/EditOrderNotificationsDialog'
 
 // models:
 import type {
@@ -93,6 +108,22 @@ export default function OrderPage(): JSX.Element|null {
     
     
     
+    // dialogs:
+    const {
+        showDialog,
+    } = useDialogMessage();
+    
+    
+    
+    // handlers:
+    const handleChangeNotificationSettings = useEvent(() => {
+        showDialog(
+            <EditOrderNotificationsDialog />
+        )
+    });
+    
+    
+    
     // jsx:
     if (isLoadingAndNoData) return <PageLoading />;
     if (isErrorAndNoData  ) return <PageError onRetry={refetch} />;
@@ -120,7 +151,7 @@ export default function OrderPage(): JSX.Element|null {
                 
                 // children:
                 menusAfter={<>
-                    <ButtonIcon size='sm' mild={true} icon='notifications' title='Notification settings' />
+                    <ButtonIcon size='sm' mild={true} icon='notifications' title='Notification settings' onClick={handleChangeNotificationSettings} />
                 </>}
             />
         </Main>
