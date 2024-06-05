@@ -1,6 +1,6 @@
 import '@reusable-ui/typos/effects'
 import { defineTheme, colorValues } from '@reusable-ui/core'
-import { basicValues, buttonValues } from '@reusable-ui/components'
+import { basicValues, buttonValues, containerValues } from '@reusable-ui/components'
 
 // other libs:
 import Color                from 'color'                // color utilities
@@ -39,6 +39,14 @@ basicValues.backgGrad = [
     ['linear-gradient(180deg, transparent, rgba(220, 220, 220, 1)) border-box'],
 ];
 basicValues.backgroundBlendMode = 'saturation';
+
+
+
+// <Container>:
+containerValues.paddingBlockLg   = containerValues.paddingBlockMd;
+containerValues.paddingBlockXl   = containerValues.paddingBlockMd;
+containerValues.paddingBlockXxl  = containerValues.paddingBlockMd;
+containerValues.paddingBlockXxxl = containerValues.paddingBlockMd;
 
 
 
