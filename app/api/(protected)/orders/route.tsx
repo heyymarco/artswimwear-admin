@@ -399,7 +399,7 @@ You do not have the privilege to modify the payment of the order.`
                     
                     
                     
-                    // (pending)Order CANCELED => restore the `Product` stock and mark Order as 'CANCELED':
+                    // (Real)Order CANCELED => restore the `Product` stock and mark Order as 'CANCELED':
                     const orderDetailData = await cancelOrder(prismaTransaction, {
                         order             : order,
                         cancelationReason : cancelationReason,
