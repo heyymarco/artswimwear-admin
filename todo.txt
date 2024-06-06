@@ -1,4 +1,5 @@
 [high prior] add confirmation email template for customer & admin
+[med  prior] add being_processed email template for admin
 [high prior] add shippings setting
 [high prior] add shipping tracking
 [high prior] add email notifications
