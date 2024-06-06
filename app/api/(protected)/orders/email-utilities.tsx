@@ -102,23 +102,23 @@ export interface OrderAndDataAndExtra extends OrderAndData {
     shippingTracking    : Pick<ShippingTracking, 'token'|'shippingNumber'>|null
 }
 const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof prisma.$transaction>[0]>[0], orderId : string): Promise<OrderAndDataAndExtra|null> => {
-    const newOrder = await prismaTransaction.order.findUnique({
+    const order = await prismaTransaction.order.findUnique({
         where  : {
             orderId : orderId,
         },
         select : orderAndDataSelectAndExtra,
     });
-    if (!newOrder) return null;
+    if (!order) return null;
     const {
         items,
         
         customer,
         guest,
-    ...restNewOrderData} = newOrder;
-    const shippingAddressData  = newOrder.shippingAddress;
-    const shippingProviderData = newOrder.shippingProvider;
+    ...restOrderData} = order;
+    const shippingAddressData  = order.shippingAddress;
+    const shippingProviderData = order.shippingProvider;
     return {
-        ...restNewOrderData,
+        ...restOrderData,
         items: items.map((item) => ({
             ...item,
             product : !!item.product ? {
@@ -173,7 +173,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
     
     
     
-    const [newOrder, countryList] = await prisma.$transaction(async (prismaTransaction) => {
+    const [order, countryList] = await prisma.$transaction(async (prismaTransaction) => {
         return await Promise.all([
             getOrderAndData(prismaTransaction, orderId),
             (async () => {
@@ -196,7 +196,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
             })(),
         ]);
     });
-    if (!newOrder) return null;
+    if (!order) return null;
     const {
         // extra data:
         paymentConfirmation,
@@ -205,7 +205,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
         
         
         ...orderAndData
-    } = newOrder;
+    } = order;
     if (!orderAndData.customerOrGuest) return null;
     
     
@@ -216,8 +216,8 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
     
     
     //#region download image url to base64
-    const newOrderItems = newOrder.items;
-    const imageUrls     = newOrderItems.map((item) => item.product?.image);
+    const orderItems = order.items;
+    const imageUrls     = orderItems.map((item) => item.product?.image);
     const imageBase64s  = await Promise.all(
         imageUrls.map(async (imageUrl): Promise<string|undefined> => {
             if (!imageUrl) return undefined;
@@ -235,7 +235,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
     console.log('downloaded images: ', imageBase64s);
     imageBase64s.forEach((imageBase64, index) => {
         if (!imageBase64) return;
-        const itemProduct = newOrderItems[index].product;
+        const itemProduct = orderItems[index].product;
         if (!itemProduct) return;
         itemProduct.imageBase64 = imageBase64;
         itemProduct.imageId     = `i${index}`;
@@ -329,7 +329,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
                     </BusinessContextProvider>
                 ),
                 attachments : (
-                    newOrderItems
+                    orderItems
                     .filter(({product}) => !!product && !!product.imageBase64 && !!product.imageId)
                     .map(({product}) => ({
                         path : product?.imageBase64,
