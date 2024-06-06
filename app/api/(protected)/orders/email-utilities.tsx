@@ -16,6 +16,7 @@ import {
     
     
     orderAndDataSelectAndExtra,
+    defaultPreferenceDetail,
 }                           from '@/models'
 import type {
     Prisma,
@@ -24,6 +25,8 @@ import type {
     Guest,
     PaymentConfirmation,
     ShippingTracking,
+    
+    AdminPreference,
 }                           from '@prisma/client'
 
 // apis:
@@ -57,6 +60,16 @@ import {
     ShippingContextProviderProps,
     ShippingContextProvider,
 }                           from '@/components/Checkout/templates/shippingDataContext'
+import {
+    // types:
+    AdminData,
+    
+    
+    
+    // react components:
+    AdminDataContextProviderProps,
+    AdminDataContextProvider,
+}                           from '@/components/Checkout/templates/adminDataContext'
 
 // ORMs:
 import {
@@ -146,7 +159,20 @@ const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof p
         ),
     } satisfies OrderAndDataAndExtra;
 };
-export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailConfig): Promise<boolean|null> => {
+
+
+
+export interface SendConfirmationEmailOptions {
+    admin ?: AdminData
+}
+export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailConfig, options?: SendConfirmationEmailOptions): Promise<boolean|null> => {
+    // options:
+    const {
+        admin,
+    } = options ?? {};
+    
+    
+    
     const [newOrder, countryList] = await prisma.$transaction(async (prismaTransaction) => {
         return await Promise.all([
             getOrderAndData(prismaTransaction, orderId),
@@ -181,6 +207,11 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
         ...orderAndData
     } = newOrder;
     if (!orderAndData.customerOrGuest) return null;
+    
+    
+    
+    const emailTo = admin?.email ?? orderAndData.customerOrGuest.email;
+    if (!emailTo) return null;
     
     
     
@@ -227,6 +258,12 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
             // data:
             model : business,
         };
+        const adminDataContextProviderProps : AdminDataContextProviderProps = {
+            admin: admin ?? {
+                name  : '',
+                email : '',
+            },
+        };
         const orderDataContextProviderProps : OrderDataContextProviderProps = {
             // data:
             order                : orderAndData,
@@ -240,7 +277,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
             // relation data:
             countryList          : countryList,
         };
-        const paymentContextProviderProps  : PaymentContextProviderProps = {
+        const paymentContextProviderProps   : PaymentContextProviderProps = {
             // data:
             model : payment,
         };
@@ -264,16 +301,18 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
                 pass        : emailConfig.password,
                 
                 from        : emailConfig.from,
-                to          : orderAndData.customerOrGuest.email,
+                to          : emailTo,
                 subject     : renderToStaticMarkup(
                     <BusinessContextProvider {...businessContextProviderProps}>
-                        <OrderDataContextProvider {...orderDataContextProviderProps}>
-                            <PaymentContextProvider {...paymentContextProviderProps}>
-                                <ShippingContextProvider {...shippingContextProviderProps}>
-                                    {emailConfig.subject}
-                                </ShippingContextProvider>
-                            </PaymentContextProvider>
-                        </OrderDataContextProvider>
+                        <AdminDataContextProvider {...adminDataContextProviderProps}>
+                            <OrderDataContextProvider {...orderDataContextProviderProps}>
+                                <PaymentContextProvider {...paymentContextProviderProps}>
+                                    <ShippingContextProvider {...shippingContextProviderProps}>
+                                        {emailConfig.subject}
+                                    </ShippingContextProvider>
+                                </PaymentContextProvider>
+                            </OrderDataContextProvider>
+                        </AdminDataContextProvider>
                     </BusinessContextProvider>
                 ).replace(/[\r\n\t]+/g, ' ').trim(),
                 html        : renderToStaticMarkup(
@@ -310,4 +349,65 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
         
         return false; // failed
     } // try
+};
+
+export type NotificationType = keyof Pick<AdminPreference,
+    // data:
+    |'emailOrderNewPending'
+    |'emailOrderNewPaid'
+    |'emailOrderCanceled'
+    |'emailOrderExpired'
+    |'emailOrderRejected'
+    |'emailOrderShipping'
+    |'emailOrderCompleted'
+>
+export interface BroadcastNotificationEmailOptions {
+    notificationType : NotificationType
+}
+export const broadcastNotificationEmail = async (orderId: string, emailConfig: EmailConfig, options: BroadcastNotificationEmailOptions): Promise<number|false|null> => {
+    // options:
+    const {
+        notificationType
+    } = options;
+    
+    
+    
+    const subscribedAdmins : AdminData[] = (
+        (await prisma.admin.findMany({
+            select : {
+                // data:
+                name  : true,
+                email : true,
+                
+                
+                
+                // relations:
+                adminPreference : {
+                    select : {
+                        [notificationType] : true,
+                    },
+                },
+            },
+        }))
+        .filter(({adminPreference}) =>
+            (adminPreference?.[notificationType] ?? defaultPreferenceDetail[notificationType]) === true
+        )
+    );
+    const sentResults = (
+        (await Promise.allSettled(
+            subscribedAdmins
+            .map((subscribedAdmin) =>
+                sendConfirmationEmail(orderId, emailConfig, {
+                    admin : subscribedAdmin,
+                })
+            )
+        ))
+        .filter((sentResult): sentResult is Exclude<typeof sentResult, PromiseRejectedResult> => (sentResult.status !== 'rejected'))
+    );
+    
+    
+    
+    if (sentResults.length && sentResults.every(({value}) => (value === null)) ) return null;
+    if (sentResults.length && sentResults.every(({value}) => (value === false))) return false;
+    return sentResults.filter(({value}) => (value === true)).length;
 };

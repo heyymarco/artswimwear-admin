@@ -73,7 +73,7 @@ export async function POST(req: Request, res: Response): Promise<Response> {
                         })
                     ),
                 ))
-                .filter((result): result is Exclude<typeof result, PromiseRejectedResult> => (result.status === 'fulfilled'))
+                .filter((result): result is Exclude<typeof result, PromiseRejectedResult> => (result.status !== 'rejected'))
                 .map((succeededResult) => succeededResult.value)
             );
         }, { timeout: 60000 })) // give a longer timeout for `cancelOrder`(s)

@@ -35,8 +35,10 @@ export interface PreferenceDetail
 type NoUndefinedField<T> = { [P in keyof T]-?: NoUndefinedField<NonNullable<T[P]>> }
 export const defaultPreferenceDetail : NoUndefinedField<Omit<PreferenceDetail, 'id'>> = {
     // data:
-    emailOrderNewPending : true,
-    emailOrderNewPaid    : true,
+    // emailOrderNewPending : true, // TODO: restore this line
+    // emailOrderNewPaid    : true, // TODO: restore this line
+    emailOrderNewPending : false,   // TODO: remove this line
+    emailOrderNewPaid    : false,   // TODO: remove this line
     emailOrderCanceled   : false,
     emailOrderExpired    : false,
     emailOrderRejected   : false,

@@ -53,6 +53,8 @@ import {
 }                           from './order-utilities'
 import {
     sendConfirmationEmail,
+    NotificationType,
+    broadcastNotificationEmail,
 }                           from './email-utilities'
 
 // others:
@@ -534,7 +536,8 @@ You do not have the privilege to modify the payment of the order.`
         
         //#region send email confirmation
         if (orderDetail && performSendConfirmationEmail) {
-            let emailConfig : EmailConfig|undefined = undefined;
+            let emailConfig      : EmailConfig|undefined = undefined;
+            let notificationType : NotificationType|undefined = undefined;
             
             const {
                 customerEmails,
@@ -546,7 +549,8 @@ You do not have the privilege to modify the payment of the order.`
                 emailConfig = customerEmails.checkout;
             }
             else if (orderStatus === 'CANCELED') { // order canceled confirmation
-                emailConfig = customerEmails.canceled;
+                emailConfig      = customerEmails.canceled;
+                notificationType = 'emailOrderCanceled';
             }
             else if (orderStatus === 'ON_THE_WAY') { // shipping tracking number confirmation
                 emailConfig = customerEmails.shipping;
@@ -555,8 +559,16 @@ You do not have the privilege to modify the payment of the order.`
                 emailConfig = customerEmails.completed;
             } // if
             
+            
+            
             if (emailConfig) {
-                await sendConfirmationEmail(orderDetail.orderId, emailConfig);
+                await Promise.all([
+                    sendConfirmationEmail(orderDetail.orderId, emailConfig),
+                    
+                    notificationType && broadcastNotificationEmail(orderDetail.orderId, emailConfig, {
+                        notificationType : notificationType,
+                    }),
+                ]);
             } // if
         } // if
         //#endregion send email confirmation
