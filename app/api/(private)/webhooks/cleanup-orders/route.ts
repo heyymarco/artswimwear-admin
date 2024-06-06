@@ -19,6 +19,7 @@ import {
 }                           from '../../../(protected)/orders/order-utilities'
 import {
     sendConfirmationEmail,
+    broadcastNotificationEmail,
 }                           from '../../../(protected)/orders/email-utilities'
 
 // configs:
@@ -83,10 +84,13 @@ export async function POST(req: Request, res: Response): Promise<Response> {
     //#region send email confirmation
     await Promise.allSettled(
         expiredOrderDetails
-        .map((expiredOrderDetail) =>
-            // notify that the order has been expired:
-            sendConfirmationEmail(expiredOrderDetail.orderId, checkoutConfigServer.customerEmails.expired)
-        )
+        .flatMap((expiredOrderDetail) => [
+            // notify to the customer that the order has been expired:
+            sendConfirmationEmail(expiredOrderDetail.orderId, checkoutConfigServer.customerEmails.expired),
+            
+            // notify to admins that the order has been expired:
+            broadcastNotificationEmail(expiredOrderDetail.orderId, checkoutConfigServer.adminEmails.expired, { notificationType: 'emailOrderExpired' }),
+        ])
     );
     //#endregion send email confirmation
     
