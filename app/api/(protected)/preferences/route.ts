@@ -125,6 +125,7 @@ router
         emailOrderCanceled,
         emailOrderExpired,
         emailOrderRejected,
+        emailOrderProcessing,
         emailOrderShipping,
         emailOrderCompleted,
     } = await req.json();
@@ -143,6 +144,8 @@ router
         ((emailOrderExpired    !== undefined) && (typeof(emailOrderExpired)    !== 'boolean'))
         ||
         ((emailOrderRejected   !== undefined) && (typeof(emailOrderRejected)   !== 'boolean'))
+        ||
+        ((emailOrderProcessing !== undefined) && (typeof(emailOrderProcessing) !== 'boolean'))
         ||
         ((emailOrderShipping   !== undefined) && (typeof(emailOrderShipping)   !== 'boolean'))
         ||
@@ -176,6 +179,7 @@ router
                 emailOrderCanceled,
                 emailOrderExpired,
                 emailOrderRejected,
+                emailOrderProcessing,
                 emailOrderShipping,
                 emailOrderCompleted,
             },
