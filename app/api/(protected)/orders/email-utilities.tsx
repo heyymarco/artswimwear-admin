@@ -360,6 +360,7 @@ export type NotificationType = keyof Pick<AdminPreference,
     |'emailOrderCanceled'
     |'emailOrderExpired'
     |'emailOrderRejected'
+    |'emailOrderProcessing'
     |'emailOrderShipping'
     |'emailOrderCompleted'
 >

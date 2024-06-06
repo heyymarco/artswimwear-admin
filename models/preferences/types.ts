@@ -42,6 +42,7 @@ export const defaultPreferenceDetail : NoUndefinedField<Omit<PreferenceDetail, '
     emailOrderCanceled   : false,
     emailOrderExpired    : false,
     emailOrderRejected   : false,
+    emailOrderProcessing : false,
     emailOrderShipping   : false,
     emailOrderCompleted  : false,
 }

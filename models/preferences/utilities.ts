@@ -20,6 +20,7 @@ export const preferenceDetailSelect = {
     emailOrderCanceled   : true,
     emailOrderExpired    : true,
     emailOrderRejected   : true,
+    emailOrderProcessing : true,
     emailOrderShipping   : true,
     emailOrderCompleted  : true,
     

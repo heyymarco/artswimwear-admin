@@ -559,6 +559,11 @@ You do not have the privilege to modify the payment of the order.`
                 adminEmailConfig    = adminEmails.canceled;
                 notificationType    = 'emailOrderCanceled';
             }
+            else if (orderStatus === 'PROCESSED') {
+                customerEmailConfig = undefined;
+                adminEmailConfig    = adminEmails.processing;
+                notificationType    = 'emailOrderProcessing';
+            }
             else if (orderStatus === 'ON_THE_WAY') { // shipping tracking number confirmation
                 customerEmailConfig = customerEmails.shipping;
                 adminEmailConfig    = adminEmails.shipping;
