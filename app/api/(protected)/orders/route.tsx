@@ -535,41 +535,42 @@ You do not have the privilege to modify the payment of the order.`
         
         
         //#region send email confirmation
-        if (orderDetail && performSendConfirmationEmail) {
-            let emailConfig      : EmailConfig|undefined = undefined;
-            let notificationType : NotificationType|undefined = undefined;
+        if (orderDetail) {
+            let customerEmailConfig : EmailConfig|undefined = undefined;
+            let adminEmailConfig    : EmailConfig|undefined = undefined;
+            let notificationType    : NotificationType|undefined = undefined;
             
             const {
                 customerEmails,
+                adminEmails,
             } = checkoutConfigServer;
             if (rejectionReason) { // payment confirmation declined
-                emailConfig = customerEmails.rejected;
+                customerEmailConfig = customerEmails.rejected;
             }
             else if (payment?.type === 'MANUAL_PAID') {   // payment approved (regradless having payment confirmation or not)
-                emailConfig = customerEmails.checkout;
+                customerEmailConfig = customerEmails.checkout;
             }
             else if (orderStatus === 'CANCELED') { // order canceled confirmation
-                emailConfig      = customerEmails.canceled;
-                notificationType = 'emailOrderCanceled';
+                customerEmailConfig = customerEmails.canceled;
+                adminEmailConfig    = adminEmails.canceled;
+                notificationType    = 'emailOrderCanceled';
             }
             else if (orderStatus === 'ON_THE_WAY') { // shipping tracking number confirmation
-                emailConfig = customerEmails.shipping;
+                customerEmailConfig = customerEmails.shipping;
             }
             else if (orderStatus === 'COMPLETED') {  // order completed confirmation
-                emailConfig = customerEmails.completed;
+                customerEmailConfig = customerEmails.completed;
             } // if
             
             
             
-            if (emailConfig) {
-                await Promise.all([
-                    sendConfirmationEmail(orderDetail.orderId, emailConfig),
-                    
-                    notificationType && broadcastNotificationEmail(orderDetail.orderId, emailConfig, {
-                        notificationType : notificationType,
-                    }),
-                ]);
-            } // if
+            await Promise.all([
+                performSendConfirmationEmail && customerEmailConfig && sendConfirmationEmail(orderDetail.orderId, customerEmailConfig),
+                
+                notificationType            && adminEmailConfig     && broadcastNotificationEmail(orderDetail.orderId, adminEmailConfig, {
+                    notificationType : notificationType,
+                }),
+            ]);
         } // if
         //#endregion send email confirmation
         
