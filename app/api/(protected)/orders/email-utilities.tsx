@@ -317,13 +317,15 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
                 ).replace(/[\r\n\t]+/g, ' ').trim(),
                 html        : renderToStaticMarkup(
                     <BusinessContextProvider {...businessContextProviderProps}>
-                        <OrderDataContextProvider {...orderDataContextProviderProps}>
-                            <PaymentContextProvider {...paymentContextProviderProps}>
-                                <ShippingContextProvider {...shippingContextProviderProps}>
-                                    {emailConfig.message}
-                                </ShippingContextProvider>
-                            </PaymentContextProvider>
-                        </OrderDataContextProvider>
+                        <AdminDataContextProvider {...adminDataContextProviderProps}>
+                            <OrderDataContextProvider {...orderDataContextProviderProps}>
+                                <PaymentContextProvider {...paymentContextProviderProps}>
+                                    <ShippingContextProvider {...shippingContextProviderProps}>
+                                        {emailConfig.message}
+                                    </ShippingContextProvider>
+                                </PaymentContextProvider>
+                            </OrderDataContextProvider>
+                        </AdminDataContextProvider>
                     </BusinessContextProvider>
                 ),
                 attachments : (
