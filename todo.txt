@@ -1,4 +1,3 @@
-[high prior] add webhook: canceled order
 [high prior] add webhook: new order (pending & paid)
 
 [high prior] add shippings setting
