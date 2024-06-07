@@ -1,7 +1,5 @@
 // models:
 import {
-    orderDetailSelect,
-    convertOrderDetailDataToOrderDetail,
     revertDraftOrderSelect,
     cancelOrderSelect,
 }                           from '@/models'
@@ -47,7 +45,7 @@ export async function POST(req: Request, res: Response): Promise<Response> {
     
     
     // find expired (Real)Order & cleaning up:
-    const expiredOrderDetails = (
+    const expiredOrderDatas = (
         (await prisma.$transaction(async (prismaTransaction) => {
             const now = new Date();
             const expiredOrders = await prismaTransaction.order.findMany({
@@ -67,10 +65,12 @@ export async function POST(req: Request, res: Response): Promise<Response> {
                     expiredOrders.map(async (expiredOrder) =>
                         // (Real)Order EXPIRED => restore the `Product` stock and mark Order as 'EXPIRED':
                         cancelOrder(prismaTransaction, {
-                            order             : expiredOrder,
-                            isExpired         : true,
+                            order       : expiredOrder,
+                            isExpired   : true,
                             
-                            orderSelect       : orderDetailSelect,
+                            orderSelect : {
+                                orderId : true,
+                            },
                         })
                     ),
                 ))
@@ -78,18 +78,19 @@ export async function POST(req: Request, res: Response): Promise<Response> {
                 .map((succeededResult) => succeededResult.value)
             );
         }, { timeout: 60000 })) // give a longer timeout for `cancelOrder`(s)
-        .map(convertOrderDetailDataToOrderDetail)
     );
+    
+    
     
     //#region send email confirmation
     await Promise.allSettled(
-        expiredOrderDetails
-        .flatMap((expiredOrderDetail) => [
+        expiredOrderDatas
+        .flatMap(({orderId}) => [
             // notify to the customer that the order has been expired:
-            sendConfirmationEmail(expiredOrderDetail.orderId, checkoutConfigServer.customerEmails.expired),
+            sendConfirmationEmail(orderId, checkoutConfigServer.customerEmails.expired),
             
             // notify to admins that the order has been expired:
-            broadcastNotificationEmail(expiredOrderDetail.orderId, checkoutConfigServer.adminEmails.expired, { notificationType: 'emailOrderExpired' }),
+            broadcastNotificationEmail(orderId, checkoutConfigServer.adminEmails.expired, { notificationType: 'emailOrderExpired' }),
         ])
     );
     //#endregion send email confirmation
