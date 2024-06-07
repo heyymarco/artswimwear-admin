@@ -124,7 +124,20 @@ export const orderAndDataSelectAndExtra = {
     // extra data:
     paymentConfirmation : {
         select : {
+            // records:
+            reportedAt      : true,
+            reviewedAt      : true,
+            
+            // data:
             token           : true,
+            
+            amount          : true,
+            payerName       : true,
+            paymentDate     : true,
+            
+            originatingBank : true,
+            destinationBank : true,
+            
             rejectionReason : true,
         },
     },
@@ -200,9 +213,11 @@ export const orderDetailSelect = {
     
     paymentConfirmation       : {
         select : {
+            // records:
             reportedAt        : true,
             reviewedAt        : true,
             
+            // data:
             amount            : true,
             payerName         : true,
             paymentDate       : true,

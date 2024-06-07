@@ -98,7 +98,7 @@ import {
 
 
 export interface OrderAndDataAndExtra extends OrderAndData {
-    paymentConfirmation : Pick<PaymentConfirmation, 'token'|'rejectionReason'>|null
+    paymentConfirmation : Omit<PaymentConfirmation, 'id'|'orderId'>|null
     shippingTracking    : Pick<ShippingTracking, 'token'|'shippingNumber'>|null
 }
 const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof prisma.$transaction>[0]>[0], orderId : string): Promise<OrderAndDataAndExtra|null> => {
