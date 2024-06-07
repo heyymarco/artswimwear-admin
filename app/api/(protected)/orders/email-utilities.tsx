@@ -215,6 +215,13 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
     
     
     
+    const isCanceled          = (orderAndData.orderStatus === 'CANCELED');
+    const isExpired           = (orderAndData.orderStatus === 'EXPIRED');
+    const isCanceledOrExpired = isCanceled || isExpired;
+    const isPaid              = !isCanceledOrExpired && (orderAndData.payment.type !== 'MANUAL');
+    
+    
+    
     //#region download image url to base64
     const orderItems = order.items;
     const imageUrls     = orderItems.map((item) => item.product?.image);
@@ -269,7 +276,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
             order                : orderAndData,
             customerOrGuest      : orderAndData.customerOrGuest,
             paymentConfirmation  : paymentConfirmation,
-            isPaid               : true,
+            isPaid               : isPaid,
             shippingTracking     : shippingTracking,
             
             
