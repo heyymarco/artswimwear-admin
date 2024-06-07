@@ -74,7 +74,7 @@ import {
 
 // configs:
 export const fetchCache = 'force-no-store';
-export const maxDuration = 20; // this function can run for a maximum of 20 seconds for complex transactions
+export const maxDuration = 60; // this function can run for a maximum of 60 seconds for many & complex transactions
 
 
 
@@ -407,7 +407,7 @@ You do not have the privilege to modify the payment of the order.`
                         orderSelect       : orderDetailSelect,
                     });
                     return convertOrderDetailDataToOrderDetail(orderDetailData);
-                }, { timeout: 60000 }); // give a longer timeout for `cancelOrder`(s)
+                }, { timeout: 50000 }); // give a longer timeout for `cancelOrder`(s)
                 return orderDetail;
             } // if
             

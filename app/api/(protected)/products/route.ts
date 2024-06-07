@@ -59,6 +59,12 @@ import {
 
 
 
+// configs:
+export const fetchCache = 'force-no-store';
+export const maxDuration = 30; // this function can run for a maximum of 30 seconds for rebuild stock maps
+
+
+
 // routers:
 interface RequestContext {
     params: {

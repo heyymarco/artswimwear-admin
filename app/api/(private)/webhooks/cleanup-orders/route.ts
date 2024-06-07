@@ -84,7 +84,7 @@ export async function POST(req: Request, res: Response): Promise<Response> {
                 .filter((result): result is Exclude<typeof result, PromiseRejectedResult> => (result.status !== 'rejected'))
                 .map((succeededResult) => succeededResult.value)
             );
-        }, { timeout: 60000 })) // give a longer timeout for `cancelOrder`(s)
+        }, { timeout: 50000 })) // give a longer timeout for `cancelOrder`(s)
     );
     
     
@@ -121,7 +121,7 @@ export async function POST(req: Request, res: Response): Promise<Response> {
                 })
             ),
         );
-    }, { timeout: 60000 }); // give a longer timeout for `revertDraftOrder`(s)
+    }, { timeout: 50000 }); // give a longer timeout for `revertDraftOrder`(s)
     
     
     
