@@ -1,5 +1,7 @@
-[high prior] add confirmation email template for customer & admin
-[med  prior] add being_processed email template for admin
+[high prior] add webhook: payment confirmation
+[high prior] add webhook: canceled order
+[high prior] add webhook: new order (pending & paid)
+
 [high prior] add shippings setting
 [high prior] add shipping tracking
 [high prior] add email notifications
