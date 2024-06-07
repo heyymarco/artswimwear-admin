@@ -17,10 +17,6 @@ import type {
 import type {
     Product,
     Variant,
-    Customer,
-    CustomerPreference,
-    Guest,
-    GuestPreference,
     PaymentConfirmation,
     Order,
     OrdersOnProducts,
@@ -87,7 +83,7 @@ export interface OrderDataApi {
     // data:
     order                : OrderAndData
     customerOrGuest      : CustomerOrGuestData|null
-    paymentConfirmation  : Pick<PaymentConfirmation, 'token'|'rejectionReason'>|null
+    paymentConfirmation  : Omit<PaymentConfirmation, 'id'|'orderId'>|null
     isPaid               : boolean
     shippingTracking     : Pick<ShippingTracking, 'token'|'shippingNumber'>|null
     
@@ -123,7 +119,7 @@ export interface OrderDataContextProviderProps {
     // data:
     order                : OrderAndData
     customerOrGuest      : CustomerOrGuestData|null
-    paymentConfirmation  : Pick<PaymentConfirmation, 'token'|'rejectionReason'>|null
+    paymentConfirmation  : Omit<PaymentConfirmation, 'id'|'orderId'>|null
     isPaid               : boolean
     shippingTracking     : Pick<ShippingTracking, 'token'|'shippingNumber'>|null
     
