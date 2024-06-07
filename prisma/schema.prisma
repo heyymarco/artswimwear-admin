@@ -512,6 +512,7 @@ model AdminPreference {
     emailOrderNewPaid               Boolean?
     emailOrderCanceled              Boolean?
     emailOrderExpired               Boolean?
+    emailOrderConfirmed             Boolean?
     emailOrderRejected              Boolean?
     emailOrderProcessing            Boolean?
     emailOrderShipping              Boolean?

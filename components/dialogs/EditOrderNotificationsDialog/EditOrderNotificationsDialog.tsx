@@ -121,6 +121,7 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
     const [emailOrderNewPaid   , setEmailOrderNewPaid   ] = useState<boolean>(false);
     const [emailOrderCanceled  , setEmailOrderCanceled  ] = useState<boolean>(false);
     const [emailOrderExpired   , setEmailOrderExpired   ] = useState<boolean>(false);
+    const [emailOrderConfirmed , setEmailOrderConfirmed ] = useState<boolean>(false);
     const [emailOrderRejected  , setEmailOrderRejected  ] = useState<boolean>(false);
     const [emailOrderProcessing, setEmailOrderProcessing] = useState<boolean>(false);
     const [emailOrderShipping  , setEmailOrderShipping  ] = useState<boolean>(false);
@@ -149,6 +150,7 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
         setEmailOrderNewPaid(   modelData.emailOrderNewPaid    ?? defaultPreferenceDetail.emailOrderNewPaid   );
         setEmailOrderCanceled(  modelData.emailOrderCanceled   ?? defaultPreferenceDetail.emailOrderCanceled  );
         setEmailOrderExpired(   modelData.emailOrderExpired    ?? defaultPreferenceDetail.emailOrderExpired   );
+        setEmailOrderConfirmed( modelData.emailOrderConfirmed  ?? defaultPreferenceDetail.emailOrderConfirmed );
         setEmailOrderRejected(  modelData.emailOrderRejected   ?? defaultPreferenceDetail.emailOrderRejected  );
         setEmailOrderProcessing(modelData.emailOrderProcessing ?? defaultPreferenceDetail.emailOrderProcessing)
         setEmailOrderShipping(  modelData.emailOrderShipping   ?? defaultPreferenceDetail.emailOrderShipping  );
@@ -167,6 +169,7 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
             emailOrderNewPaid,
             emailOrderCanceled,
             emailOrderExpired,
+            emailOrderConfirmed,
             emailOrderRejected,
             emailOrderProcessing,
             emailOrderShipping,
@@ -247,6 +250,9 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
                         </Check>
                         <Check className='check editor' active={emailOrderExpired}    onActiveChange={({active}) => { setEmailOrderExpired(active);    setIsModified(true); }}>
                             Email me if an <strong>order is expired</strong>.
+                        </Check>
+                        <Check className='check editor' active={emailOrderConfirmed}  onActiveChange={({active}) => { setEmailOrderConfirmed(active);  setIsModified(true); }}>
+                            Email me if a <strong>payment confirmation</strong> comes in.
                         </Check>
                         <Check className='check editor' active={emailOrderRejected}   onActiveChange={({active}) => { setEmailOrderRejected(active);   setIsModified(true); }}>
                             Email me if a <strong>payment confirmation is rejected</strong>.

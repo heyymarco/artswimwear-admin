@@ -124,6 +124,7 @@ router
         emailOrderNewPaid,
         emailOrderCanceled,
         emailOrderExpired,
+        emailOrderConfirmed,
         emailOrderRejected,
         emailOrderProcessing,
         emailOrderShipping,
@@ -142,6 +143,8 @@ router
         ((emailOrderCanceled   !== undefined) && (typeof(emailOrderCanceled)   !== 'boolean'))
         ||
         ((emailOrderExpired    !== undefined) && (typeof(emailOrderExpired)    !== 'boolean'))
+        ||
+        ((emailOrderConfirmed  !== undefined) && (typeof(emailOrderConfirmed)  !== 'boolean'))
         ||
         ((emailOrderRejected   !== undefined) && (typeof(emailOrderRejected)   !== 'boolean'))
         ||
@@ -178,6 +181,7 @@ router
                 emailOrderNewPaid,
                 emailOrderCanceled,
                 emailOrderExpired,
+                emailOrderConfirmed,
                 emailOrderRejected,
                 emailOrderProcessing,
                 emailOrderShipping,

@@ -41,6 +41,8 @@ export const defaultPreferenceDetail : NoUndefinedField<Omit<PreferenceDetail, '
     emailOrderNewPaid    : false,   // TODO: remove this line
     emailOrderCanceled   : false,
     emailOrderExpired    : false,
+    // emailOrderConfirmed  : true, // TODO: restore this line
+    emailOrderConfirmed  : false,   // TODO: remove this line
     emailOrderRejected   : false,
     emailOrderProcessing : false,
     emailOrderShipping   : false,
