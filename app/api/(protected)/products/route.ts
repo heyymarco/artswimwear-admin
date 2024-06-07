@@ -980,7 +980,7 @@ You do not have the privilege to modify the product stock(s).`
             
             return NextResponse.json(productDetail); // handled with success
             //#endregion save changes
-        }, { timeout: 10000 });
+        }, { timeout: 20000 }); // give a longer timeout for rebuild stock maps
     }
     catch (error: any) {
         console.log('ERROR: ', error);
