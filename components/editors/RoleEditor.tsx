@@ -30,11 +30,10 @@ import type {
     RolePreviewProps,
 }                           from '@/components/views/RolePreview'
 
-// stores:
-import type {
-    // types:
-    RoleDetail,
-}                           from '@/store/features/api/apiSlice'
+// models:
+import {
+    type RoleDetail,
+}                           from '@/models'
 
 
 

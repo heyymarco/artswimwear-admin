@@ -95,11 +95,15 @@ import {
     RolePreview,
 }                           from '@/components/views/RolePreview'
 
+// models:
+import {
+    type RoleDetail,
+}                           from '@/models'
+
 // stores:
 import {
     // types:
     AdminDetail,
-    RoleDetail,
     
     
     

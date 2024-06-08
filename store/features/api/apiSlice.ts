@@ -16,6 +16,7 @@ export type OrderDetailWithOptions = OrderDetail & { sendConfirmationEmail?: boo
 // models:
 import type {
     OrderDetail,
+    RoleDetail,
 }                                               from '@/models'
 
 // apis:
@@ -43,8 +44,6 @@ import type { ShippingPreview }                 from '@/app/api/(protected)/ship
 export type { ShippingPreview }                 from '@/app/api/(protected)/shippings/route'
 import type { AdminDetail }                     from '@/app/api/(protected)/admins/route'
 export type { AdminDetail }                     from '@/app/api/(protected)/admins/route'
-import type { RoleDetail }                      from '@/app/api/(protected)/roles/route'
-export type { RoleDetail }                      from '@/app/api/(protected)/roles/route'
 import type {
     PreferenceData,
     PreferenceDetail,

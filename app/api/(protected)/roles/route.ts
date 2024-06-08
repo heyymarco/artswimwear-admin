@@ -20,8 +20,12 @@ import {
 }                           from 'next-connect'
 
 // models:
-import type {
-    AdminRole,
+import {
+    type RoleDetail,
+    roleDetailSelect,
+}                           from '@/models'
+import {
+    type Prisma,
 }                           from '@prisma/client'
 
 // ORMs:
@@ -33,18 +37,6 @@ import {
 import {
     authOptions,
 }                           from '@/app/api/auth/[...nextauth]/route'
-
-
-
-// types:
-export interface RoleDetail
-    extends
-        Omit<AdminRole,
-            |'createdAt'
-            |'updatedAt'
-        >
-{
-}
 
 
 
@@ -84,40 +76,7 @@ router
     
     const roleDetails : RoleDetail[] = (
         (await prisma.adminRole.findMany({
-            select: {
-                id         : true,
-                
-                name       : true,
-                
-                product_r  : true,
-                product_c  : true,
-                product_ud : true,
-                product_ui : true,
-                product_up : true,
-                product_us : true,
-                product_uv : true,
-                product_d  : true,
-                
-                admin_r    : true,
-                admin_c    : true,
-                admin_un   : true,
-                admin_uu   : true,
-                admin_ue   : true,
-                admin_up   : true,
-                admin_ui   : true,
-                admin_ur   : true,
-                admin_d    : true,
-                
-                order_r    : true,
-                order_us   : true,
-                order_usa  : true,
-                order_upmu : true,
-                order_upmp : true,
-                
-                role_c     : true,
-                role_u     : true,
-                role_d     : true,
-            },
+            select: roleDetailSelect,
             orderBy : {
                 name : 'asc',
             },
@@ -153,6 +112,18 @@ router
         product_uv,
         product_d,
         
+        order_r,
+        order_us,
+        order_usa,
+        order_upmu,
+        order_upmp,
+        
+        shipping_r,
+        shipping_c,
+        shipping_ud,
+        shipping_up,
+        shipping_d,
+        
         admin_r,
         admin_c,
         admin_un,
@@ -162,12 +133,6 @@ router
         admin_ui,
         admin_ur,
         admin_d,
-        
-        order_r,
-        order_us,
-        order_usa,
-        order_upmu,
-        order_upmp,
         
         role_c,
         role_u,
@@ -228,6 +193,18 @@ You do not have the privilege to modify the role.`
             product_uv,
             product_d,
             
+            order_r,
+            order_us,
+            order_usa,
+            order_upmu,
+            order_upmp,
+            
+            shipping_r,
+            shipping_c,
+            shipping_ud,
+            shipping_up,
+            shipping_d,
+            
             admin_r,
             admin_c,
             admin_un,
@@ -238,62 +215,22 @@ You do not have the privilege to modify the role.`
             admin_ur,
             admin_d,
             
-            order_r,
-            order_us,
-            order_usa,
-            order_upmu,
-            order_upmp,
-            
             role_c,
             role_u,
             role_d,
-        };
-        const select = {
-            id         : true,
-            
-            name       : true,
-            
-            product_r  : true,
-            product_c  : true,
-            product_ud : true,
-            product_ui : true,
-            product_up : true,
-            product_us : true,
-            product_uv : true,
-            product_d  : true,
-            
-            admin_r     : true,
-            admin_c     : true,
-            admin_un    : true,
-            admin_uu    : true,
-            admin_ue    : true,
-            admin_up    : true,
-            admin_ui    : true,
-            admin_ur    : true,
-            admin_d     : true,
-            
-            order_r    : true,
-            order_us   : true,
-            order_usa  : true,
-            order_upmu : true,
-            order_upmp : true,
-            
-            role_c     : true,
-            role_u     : true,
-            role_d     : true,
-        };
+        } satisfies Prisma.AdminRoleUpdateInput;
         const roleDetail : RoleDetail = (
             !id
             ? await prisma.adminRole.create({
                 data   : data,
-                select : select,
+                select : roleDetailSelect,
             })
             : await prisma.adminRole.update({
                 where  : {
                     id : id,
                 },
                 data   : data,
-                select : select,
+                select : roleDetailSelect,
             })
         );
         return NextResponse.json(roleDetail); // handled with success

@@ -63,11 +63,10 @@ import {
     EditRoleDialog,
 }                           from '@/components/dialogs/EditRoleDialog'
 
-// stores:
-import type {
-    // types:
-    RoleDetail,
-}                           from '@/store/features/api/apiSlice'
+// models:
+import {
+    type RoleDetail,
+}                           from '@/models'
 
 
 

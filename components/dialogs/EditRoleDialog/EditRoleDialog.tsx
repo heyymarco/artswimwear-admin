@@ -79,13 +79,13 @@ import {
     ComplexEditModelDialog,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 
+// models:
+import {
+    type RoleDetail,
+}                           from '@/models'
+
 // stores:
 import {
-    // types:
-    RoleDetail,
-    
-    
-    
     // hooks:
     useUpdateRole,
     useDeleteRole,
@@ -134,38 +134,44 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
     
     
     // states:
-    const [isModified, setIsModified] = useState<boolean>(false);
+    const [isModified , setIsModified ] = useState<boolean>(false);
     
-    const [name      , setName      ] = useState<string >(model?.name       ?? ''   );
+    const [name       , setName       ] = useState<string >(model?.name       ?? ''   );
     
-    const [product_r , setProduct_r ] = useState<boolean>(model?.product_r  ?? false);
-    const [product_c , setProduct_c ] = useState<boolean>(model?.product_c  ?? false);
-    const [product_ud, setProduct_ud] = useState<boolean>(model?.product_ud ?? false);
-    const [product_ui, setProduct_ui] = useState<boolean>(model?.product_ui ?? false);
-    const [product_up, setProduct_up] = useState<boolean>(model?.product_up ?? false);
-    const [product_us, setProduct_us] = useState<boolean>(model?.product_us ?? false);
-    const [product_uv, setProduct_uv] = useState<boolean>(model?.product_uv ?? false);
-    const [product_d , setProduct_d ] = useState<boolean>(model?.product_d  ?? false);
+    const [product_r  , setProduct_r  ] = useState<boolean>(model?.product_r  ?? false);
+    const [product_c  , setProduct_c  ] = useState<boolean>(model?.product_c  ?? false);
+    const [product_ud , setProduct_ud ] = useState<boolean>(model?.product_ud ?? false);
+    const [product_ui , setProduct_ui ] = useState<boolean>(model?.product_ui ?? false);
+    const [product_up , setProduct_up ] = useState<boolean>(model?.product_up ?? false);
+    const [product_us , setProduct_us ] = useState<boolean>(model?.product_us ?? false);
+    const [product_uv , setProduct_uv ] = useState<boolean>(model?.product_uv ?? false);
+    const [product_d  , setProduct_d  ] = useState<boolean>(model?.product_d  ?? false);
     
-    const [admin_r   , setAdmin_r   ] = useState<boolean>(model?.admin_r    ?? false);
-    const [admin_c   , setAdmin_c   ] = useState<boolean>(model?.admin_c    ?? false);
-    const [admin_un  , setAdmin_un  ] = useState<boolean>(model?.admin_un   ?? false);
-    const [admin_uu  , setAdmin_uu  ] = useState<boolean>(model?.admin_uu   ?? false);
-    const [admin_ue  , setAdmin_ue  ] = useState<boolean>(model?.admin_ue   ?? false);
-    const [admin_up  , setAdmin_up  ] = useState<boolean>(model?.admin_up   ?? false);
-    const [admin_ui  , setAdmin_ui  ] = useState<boolean>(model?.admin_ui   ?? false);
-    const [admin_ur  , setAdmin_ur  ] = useState<boolean>(model?.admin_ur   ?? false);
-    const [admin_d   , setAdmin_d   ] = useState<boolean>(model?.admin_d    ?? false);
+    const [order_r    , setOrder_r    ] = useState<boolean>(model?.order_r     ?? false);
+    const [order_us   , setOrder_us   ] = useState<boolean>(model?.order_us    ?? false);
+    const [order_usa  , setOrder_usa  ] = useState<boolean>(model?.order_usa   ?? false);
+    const [order_upmu , setOrder_upmu ] = useState<boolean>(model?.order_upmu  ?? false);
+    const [order_upmp , setOrder_upmp ] = useState<boolean>(model?.order_upmp  ?? false);
     
-    const [order_r   , setOrder_r   ] = useState<boolean>(model?.order_r    ?? false);
-    const [order_us  , setOrder_us  ] = useState<boolean>(model?.order_us   ?? false);
-    const [order_usa , setOrder_usa ] = useState<boolean>(model?.order_usa  ?? false);
-    const [order_upmu, setOrder_upmu] = useState<boolean>(model?.order_upmu ?? false);
-    const [order_upmp, setOrder_upmp] = useState<boolean>(model?.order_upmp ?? false);
+    const [shipping_r , setShipping_r ] = useState<boolean>(model?.shipping_r  ?? false);
+    const [shipping_c , setShipping_c ] = useState<boolean>(model?.shipping_c  ?? false);
+    const [shipping_ud, setShipping_ud] = useState<boolean>(model?.shipping_ud ?? false);
+    const [shipping_up, setShipping_up] = useState<boolean>(model?.shipping_up ?? false);
+    const [shipping_d , setShipping_d ] = useState<boolean>(model?.shipping_d  ?? false);
     
-    const [role_c    , setRole_c    ] = useState<boolean>(model?.role_c     ?? false);
-    const [role_u    , setRole_u    ] = useState<boolean>(model?.role_u     ?? false);
-    const [role_d    , setRole_d    ] = useState<boolean>(model?.role_d     ?? false);
+    const [admin_r    , setAdmin_r    ] = useState<boolean>(model?.admin_r     ?? false);
+    const [admin_c    , setAdmin_c    ] = useState<boolean>(model?.admin_c     ?? false);
+    const [admin_un   , setAdmin_un   ] = useState<boolean>(model?.admin_un    ?? false);
+    const [admin_uu   , setAdmin_uu   ] = useState<boolean>(model?.admin_uu    ?? false);
+    const [admin_ue   , setAdmin_ue   ] = useState<boolean>(model?.admin_ue    ?? false);
+    const [admin_up   , setAdmin_up   ] = useState<boolean>(model?.admin_up    ?? false);
+    const [admin_ui   , setAdmin_ui   ] = useState<boolean>(model?.admin_ui    ?? false);
+    const [admin_ur   , setAdmin_ur   ] = useState<boolean>(model?.admin_ur    ?? false);
+    const [admin_d    , setAdmin_d    ] = useState<boolean>(model?.admin_d     ?? false);
+    
+    const [role_c     , setRole_c     ] = useState<boolean>(model?.role_c      ?? false);
+    const [role_u     , setRole_u     ] = useState<boolean>(model?.role_u      ?? false);
+    const [role_d     , setRole_d     ] = useState<boolean>(model?.role_d      ?? false);
     
     
     
@@ -202,6 +208,18 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             product_uv,
             product_d,
             
+            order_r,
+            order_us,
+            order_usa,
+            order_upmu,
+            order_upmp,
+            
+            shipping_r,
+            shipping_c,
+            shipping_ud,
+            shipping_up,
+            shipping_d,
+            
             admin_r,
             admin_c,
             admin_un,
@@ -211,12 +229,6 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             admin_ui,
             admin_ur,
             admin_d,
-            
-            order_r,
-            order_us,
-            order_usa,
-            order_upmu,
-            order_upmp,
             
             role_c,
             role_u,
@@ -385,6 +397,54 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
                                 </AccessibilityProvider>
                             </AccordionItem>
                             
+                            <AccordionItem label='Orders'    inheritEnabled={false}>
+                                <AccessibilityProvider
+                                    // accessibilities:
+                                    /* enable|disable accessibility for all <Check> */
+                                    enabled={whenUpdate.update || whenAdd}
+                                >
+                                    <Check className='check editor' active={order_r}    onActiveChange={({active}) => { setOrder_r(active);    setIsModified(true); }}>
+                                        View
+                                    </Check>
+                                    <Check className='check editor' active={order_us}   onActiveChange={({active}) => { setOrder_us(active);   setIsModified(true); }}>
+                                        Change Status
+                                    </Check>
+                                    <Check className='check editor' active={order_usa}  onActiveChange={({active}) => { setOrder_usa(active);  setIsModified(true); }}>
+                                        Change Shipping Address
+                                    </Check>
+                                    <Check className='check editor' active={order_upmu} onActiveChange={({active}) => { setOrder_upmu(active); setIsModified(true); }}>
+                                        Approve Manual Payment
+                                    </Check>
+                                    <Check className='check editor' active={order_upmp} onActiveChange={({active}) => { setOrder_upmp(active); setIsModified(true); }}>
+                                        Change Manual Payment
+                                    </Check>
+                                </AccessibilityProvider>
+                            </AccordionItem>
+                            
+                            <AccordionItem label='Shippings' inheritEnabled={false}>
+                                <AccessibilityProvider
+                                    // accessibilities:
+                                    /* enable|disable accessibility for all <Check> */
+                                    enabled={whenUpdate.update || whenAdd}
+                                >
+                                    <Check className='check editor' active={shipping_r}  onActiveChange={({active}) => { setShipping_r(active);  setIsModified(true); }}>
+                                        View
+                                    </Check>
+                                    <Check className='check editor' active={shipping_c}  onActiveChange={({active}) => { setShipping_c(active);  setIsModified(true); }}>
+                                        Add New
+                                    </Check>
+                                    <Check className='check editor' active={shipping_ud} onActiveChange={({active}) => { setShipping_ud(active); setIsModified(true); }}>
+                                        Change Name, Path &amp; Description
+                                    </Check>
+                                    <Check className='check editor' active={shipping_up} onActiveChange={({active}) => { setShipping_up(active); setIsModified(true); }}>
+                                        Change Price &amp; Shipping Weight
+                                    </Check>
+                                    <Check className='check editor' active={shipping_d}  onActiveChange={({active}) => { setShipping_d(active);  setIsModified(true); }}>
+                                        Delete
+                                    </Check>
+                                </AccessibilityProvider>
+                            </AccordionItem>
+                            
                             <AccordionItem label='Admins'    inheritEnabled={false}>
                                 <AccessibilityProvider
                                     // accessibilities:
@@ -417,30 +477,6 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
                                     </Check>
                                     <Check className='check editor' active={admin_d}    onActiveChange={({active}) => { setAdmin_d(active);    setIsModified(true); }}>
                                         Delete
-                                    </Check>
-                                </AccessibilityProvider>
-                            </AccordionItem>
-                            
-                            <AccordionItem label='Orders'    inheritEnabled={false}>
-                                <AccessibilityProvider
-                                    // accessibilities:
-                                    /* enable|disable accessibility for all <Check> */
-                                    enabled={whenUpdate.update || whenAdd}
-                                >
-                                    <Check className='check editor' active={order_r}    onActiveChange={({active}) => { setOrder_r(active);    setIsModified(true); }}>
-                                        View
-                                    </Check>
-                                    <Check className='check editor' active={order_us}   onActiveChange={({active}) => { setOrder_us(active);   setIsModified(true); }}>
-                                        Change Status
-                                    </Check>
-                                    <Check className='check editor' active={order_usa}  onActiveChange={({active}) => { setOrder_usa(active);  setIsModified(true); }}>
-                                        Change Shipping Address
-                                    </Check>
-                                    <Check className='check editor' active={order_upmu} onActiveChange={({active}) => { setOrder_upmu(active); setIsModified(true); }}>
-                                        Approve Manual Payment
-                                    </Check>
-                                    <Check className='check editor' active={order_upmp} onActiveChange={({active}) => { setOrder_upmp(active); setIsModified(true); }}>
-                                        Change Manual Payment
                                     </Check>
                                 </AccessibilityProvider>
                             </AccordionItem>

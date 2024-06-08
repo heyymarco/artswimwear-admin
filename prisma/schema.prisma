@@ -625,6 +625,18 @@ model AdminRole {
     product_uv                      Boolean                         @default(false)
     product_d                       Boolean                         @default(false)
     
+    order_r                         Boolean                         @default(false)
+    order_us                        Boolean                         @default(false)
+    order_usa                       Boolean                         @default(false)
+    order_upmu                      Boolean                         @default(false)
+    order_upmp                      Boolean                         @default(false)
+    
+    shipping_r                      Boolean                         @default(false)
+    shipping_c                      Boolean                         @default(false)
+    shipping_ud                     Boolean                         @default(false)
+    shipping_up                     Boolean                         @default(false)
+    shipping_d                      Boolean                         @default(false)
+    
     admin_r                         Boolean                         @default(false)
     admin_c                         Boolean                         @default(false)
     admin_un                        Boolean                         @default(false)
@@ -634,12 +646,6 @@ model AdminRole {
     admin_ui                        Boolean                         @default(false)
     admin_ur                        Boolean                         @default(false)
     admin_d                         Boolean                         @default(false)
-    
-    order_r                         Boolean                         @default(false)
-    order_us                        Boolean                         @default(false)
-    order_usa                       Boolean                         @default(false)
-    order_upmu                      Boolean                         @default(false)
-    order_upmp                      Boolean                         @default(false)
     
     role_c                          Boolean                         @default(false)
     role_u                          Boolean                         @default(false)
