@@ -1,5 +1,3 @@
-[high prior] add webhook: new order (pending & paid)
-
 [high prior] add shippings setting
 [high prior] add shipping tracking
 [high prior] add email notifications
