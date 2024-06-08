@@ -1,8 +1,7 @@
 [high prior] add shippings setting
 [high prior] add shipping tracking
-[high prior] add email notifications
 [high prior] add push notifications & refresh page
-[high prior] auto cleanup expired AdminSession
+[low  prior] auto cleanup expired AdminSession
 
 [high prior] verify breaking change <UpdateStatePlugin> .__first
 [high prior] removed paymentConfirmation.currency
