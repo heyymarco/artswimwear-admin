@@ -42,9 +42,9 @@ import {
 import {
     PagedModelExplorer,
 }                           from '@/components/explorers/PagedModelExplorer'
-// import {
-//     EditShippingDialog,
-// }                           from '@/components/dialogs/EditShippingDialog'
+import {
+    EditShippingDialog,
+}                           from '@/components/dialogs/EditShippingDialog'
 import {
     ShippingPreview,
 }                           from '@/components/views/ShippingPreview'
@@ -130,14 +130,14 @@ export default function ShippingPage(): JSX.Element|null {
                         model={undefined as any}
                     />
                 }
-                // modelCreateComponent={
-                //     privilegeAdd
-                //     ? <EditShippingDialog
-                //         // data:
-                //         model={null} // create a new model
-                //     />
-                //     : undefined
-                // }
+                modelCreateComponent={
+                    privilegeAdd
+                    ? <EditShippingDialog
+                        // data:
+                        model={null} // create a new model
+                    />
+                    : undefined
+                }
             />
         </Main>
     );
