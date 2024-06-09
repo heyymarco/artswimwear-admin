@@ -117,91 +117,8 @@ export const usesVariantsTabLayout = () => {
         alignContent : 'start',
     });
 };
-export const usesStocksTabLayout = () => {
+export const usesRatesTabLayout = () => {
     return style({
-        // layouts:
-        display      : 'grid',
-        alignContent : 'start',
-        ...rule(':not(:has(>ul>li>*>.variants))', {
-            alignContent : 'center',
-        }),
-        
-        
-        
-        // spacings:
-        padding: 0,
-    });
-};
-export const usesImagesTabLayout = () => {
-    return style({
-        // scrolls:
-        overscrollBehavior : 'none',
-    });
-};
-export const usesDescriptionTabLayout = () => {
-    return style({
-        // scrolls:
-        overscrollBehavior : 'none',
-    });
-};
-export const usesEditDescription = () => {
-    // dependencies:
-    
-    // capabilities:
-    const {groupableRule, groupableVars} = usesGroupable({
-        itemsSelector : '&', // select the <WysiwygEditor> itself
-    });
-    
-    // features:
-    const {borderRule, borderVars } = usesBorder({ borderWidth: '0px' });
-    
-    // spacings:
-    const positivePaddingInline = groupableVars.paddingInline;
-    const positivePaddingBlock  = groupableVars.paddingBlock;
-    const negativePaddingInline = `calc(0px - ${positivePaddingInline})`;
-    const negativePaddingBlock  = `calc(0px - ${positivePaddingBlock })`;
-    
-    
-    
-    return style({
-        // capabilities:
-        ...groupableRule(), // make a nicely rounded corners
-        
-        
-        
-        // layouts:
-        ...style({
-            // sizes:
-            contain       : 'inline-size', // ignores the inline-size of the children
-         // blockSize     : 'fill-available',
-            ...fallback({
-                blockSize : `calc(100% + (${positivePaddingBlock} * 2))`,
-            }),
-            
-            
-            
-            // borders:
-            // follows <parent>'s borderRadius
-            border                   : borderVars.border,
-         // borderRadius             : borderVars.borderRadius,
-            borderStartStartRadius   : borderVars.borderStartStartRadius,
-            borderStartEndRadius     : borderVars.borderStartEndRadius,
-            borderEndStartRadius     : borderVars.borderEndStartRadius,
-            borderEndEndRadius       : borderVars.borderEndEndRadius,
-            [borderVars.borderWidth] : '0px', // only setup borderRadius, no borderStroke
-            
-            
-            
-            // spacings:
-            // cancel-out parent's padding with negative margin:
-            marginInline : negativePaddingInline,
-            marginBlock  : negativePaddingBlock,
-        }),
-        
-        
-        
-        // features:
-        ...borderRule(), // must be placed at the last
     });
 };
 
@@ -212,16 +129,7 @@ export default () => [
     scope('variantsTab', {
         ...usesVariantsTabLayout(),
     }, { specificityWeight: 4 }),
-    scope('stocksTab', {
-        ...usesStocksTabLayout(),
-    }, { specificityWeight: 4 }),
-    scope('imagesTab', {
-        ...usesImagesTabLayout(),
+    scope('ratesTab', {
+        ...usesRatesTabLayout(),
     }),
-    scope('descriptionTab', {
-        ...usesDescriptionTabLayout(),
-    }),
-    scope('editDescription', {
-        ...usesEditDescription(),
-    }, { specificityWeight: 2 }),
 ];

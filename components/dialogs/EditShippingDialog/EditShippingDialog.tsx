@@ -84,6 +84,7 @@ import {
 // configs:
 import {
     PAGE_SHIPPING_TAB_INFORMATIONS,
+    PAGE_SHIPPING_TAB_RATES,
     PAGE_SHIPPING_TAB_DELETE,
 }                           from '@/website.config'
 
@@ -308,6 +309,9 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                         }}
                     />
                 </form>
+            </TabPanel>
+            <TabPanel label={PAGE_SHIPPING_TAB_RATES} panelComponent={<Generic className={styleSheet.ratesTab} />}>
+                // test
             </TabPanel>
         </>}</ComplexEditModelDialog>
     );
