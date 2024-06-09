@@ -17,6 +17,7 @@ export type OrderDetailWithOptions = OrderDetail & { sendConfirmationEmail?: boo
 import {
     type OrderDetail,
     type ShippingPreview,
+    type ShippingDetail,
     type RoleDetail,
 }                                               from '@/models'
 
@@ -128,7 +129,7 @@ export const apiSlice = createApi({
     baseQuery : axiosBaseQuery({
         baseUrl: `${process.env.APP_URL ?? ''}/api`
     }),
-    tagTypes: ['Products', 'TemplateVariantGroups', 'Orders', 'Admins', 'Preferences', 'Roles'],
+    tagTypes: ['Products', 'TemplateVariantGroups', 'Orders', 'Shippings', 'Admins', 'Preferences', 'Roles'],
     endpoints : (builder) => ({
         getProductList              : builder.query<EntityState<ProductPreview>, void>({
             query : () => ({
@@ -306,6 +307,62 @@ export const apiSlice = createApi({
             transformResponse(response: ShippingPreview[]) {
                 return shippingListAdapter.addMany(shippingListAdapter.getInitialState(), response);
             },
+        }),
+        getShippingPage             : builder.query<Pagination<ShippingDetail>, PaginationArgs>({
+            query : (params) => ({
+                url    : 'shippings',
+                method : 'POST',
+                body   : params,
+            }),
+            providesTags: (result, error, page)  => {
+                return [
+                    ...(result?.entities ?? []).map((shipping): { type: 'Shippings', id: string } => ({
+                        type : 'Shippings',
+                        id   : shipping.id,
+                    })),
+                    
+                    {
+                        type : 'Shippings',
+                        id   : 'SHIPPING_LIST',
+                    },
+                ];
+            },
+        }),
+        updateShipping              : builder.mutation<ShippingDetail, MutationArgs<ShippingDetail>>({
+            query: (patch) => ({
+                url    : 'shippings',
+                method : 'PATCH',
+                body   : patch
+            }),
+            
+            // inefficient:
+            // invalidatesTags: (shipping, error, arg) => [
+            //     ...((!shipping ? [] : [{
+            //         type : 'Shippings',
+            //         id   : shipping.id,
+            //     }]) as Array<{ type: 'Shippings', id: string }>),
+            // ],
+            
+            // more efficient:
+            onCacheEntryAdded: async (arg, api) => {
+                await handleCumulativeUpdateCacheEntry('getShippingPage', (arg.id !== ''), api);
+            },
+        }),
+        deleteShipping              : builder.mutation<Pick<ShippingDetail, 'id'>, MutationArgs<Pick<ShippingDetail, 'id'>>>({
+            query: (params) => ({
+                url    : 'shippings',
+                method : 'DELETE',
+                body   : params
+            }),
+            invalidatesTags: (shipping, error, arg) => [
+                ...((!shipping ? [{
+                    type : 'Shippings',
+                    id   : 'SHIPPING_LIST', // delete unspecified => invalidates the whole list
+                }] : [{
+                    type : 'Shippings',
+                    id   : shipping.id,     // delete existing    => invalidates the modified
+                }]) as Array<{ type: 'Shippings', id: string }>),
+            ],
         }),
         
         getAdminPage                : builder.query<Pagination<AdminDetail>, PaginationArgs>({
@@ -515,7 +572,7 @@ export const apiSlice = createApi({
 
 
 
-const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, QueryArg, BaseQuery extends BaseQueryFn>(endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getAdminPage'>, isUpdating: boolean, api: MutationCacheLifecycleApi<QueryArg, BaseQuery, TEntry, 'api'>) => {
+const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, QueryArg, BaseQuery extends BaseQueryFn>(endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, isUpdating: boolean, api: MutationCacheLifecycleApi<QueryArg, BaseQuery, TEntry, 'api'>) => {
     // updated TEntry data:
     const { data: entry } = await api.cacheDataLoaded;
     const { id } = entry;
@@ -643,6 +700,9 @@ export const {
     useUpdateOrderMutation                : useUpdateOrder,
     
     useGetShippingListQuery               : useGetShippingList,
+    useGetShippingPageQuery               : useGetShippingPage,
+    useUpdateShippingMutation             : useUpdateShipping,
+    useDeleteShippingMutation             : useDeleteShipping,
     
     useGetAdminPageQuery                  : useGetAdminPage,
     useUpdateAdminMutation                : useUpdateAdmin,
