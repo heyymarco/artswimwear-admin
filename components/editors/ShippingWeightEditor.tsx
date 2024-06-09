@@ -80,6 +80,8 @@ const ShippingWeightEditor = <TElement extends Element = HTMLSpanElement>(props:
             
             // validations:
             required={props.required ?? false}
+            min={0}
+            max={99}
             step={props.step ?? 0.01}
             
             
