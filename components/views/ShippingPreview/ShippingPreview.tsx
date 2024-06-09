@@ -68,9 +68,9 @@ import {
 import {
     SimpleEditModelDialog,
 }                           from '@/components/dialogs/SimpleEditModelDialog'
-// import {
-//     EditShippingDialog,
-// }                           from '@/components/dialogs/EditShippingDialog'
+import {
+    EditShippingDialog,
+}                           from '@/components/dialogs/EditShippingDialog'
 
 // models:
 import {
@@ -193,21 +193,21 @@ const ShippingPreview = (props: ShippingPreviewProps): JSX.Element|null => {
                         editorComponent={<VisibilityEditor theme='primaryAlt' optionHidden={false} />}
                     />
                 );
-                // case 'full'       : return (
-                //     <EditShippingDialog
-                //         // data:
-                //         model={model} // modify current model
-                //         
-                //         
-                //         
-                //         // states:
-                //         defaultExpandedTabIndex={(() => {
-                //             switch (editMode) {
-                //                 default         : return undefined;
-                //             } // switch
-                //         })()}
-                //     />
-                // );
+                case 'full'       : return (
+                    <EditShippingDialog
+                        // data:
+                        model={model} // modify current model
+                        
+                        
+                        
+                        // states:
+                        defaultExpandedTabIndex={(() => {
+                            switch (editMode) {
+                                default         : return undefined;
+                            } // switch
+                        })()}
+                    />
+                );
                 default           : throw new Error('app error');
             } // switch
         })());
