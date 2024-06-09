@@ -1,5 +1,6 @@
 export * from './products'
 export * from './orders'
+export * from './shippings'
 export * from './emails'
 export * from './preferences'
 export * from './roles'

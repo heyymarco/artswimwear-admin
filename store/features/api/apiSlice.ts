@@ -14,9 +14,10 @@ import type {
 export type OrderDetailWithOptions = OrderDetail & { sendConfirmationEmail?: boolean }
 
 // models:
-import type {
-    OrderDetail,
-    RoleDetail,
+import {
+    type OrderDetail,
+    type ShippingPreview,
+    type RoleDetail,
 }                                               from '@/models'
 
 // apis:
@@ -40,8 +41,6 @@ export type {
 import type { TemplateVariantGroupDetail }      from '@/app/api/(protected)/products/template-variants/route'
 export type { TemplateVariantDetail }           from '@/app/api/(protected)/products/template-variants/route'
 export type { TemplateVariantGroupDetail }      from '@/app/api/(protected)/products/template-variants/route'
-import type { ShippingPreview }                 from '@/app/api/(protected)/shippings/route'
-export type { ShippingPreview }                 from '@/app/api/(protected)/shippings/route'
 import type { AdminDetail }                     from '@/app/api/(protected)/admins/route'
 export type { AdminDetail }                     from '@/app/api/(protected)/admins/route'
 import type {

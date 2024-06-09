@@ -635,6 +635,7 @@ model AdminRole {
     shipping_c                      Boolean                         @default(false)
     shipping_ud                     Boolean                         @default(false)
     shipping_up                     Boolean                         @default(false)
+    shipping_uv                     Boolean                         @default(false)
     shipping_d                      Boolean                         @default(false)
     
     admin_r                         Boolean                         @default(false)

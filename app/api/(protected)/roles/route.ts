@@ -122,6 +122,7 @@ router
         shipping_c,
         shipping_ud,
         shipping_up,
+        shipping_uv,
         shipping_d,
         
         admin_r,
@@ -203,6 +204,7 @@ You do not have the privilege to modify the role.`
             shipping_c,
             shipping_ud,
             shipping_up,
+            shipping_uv,
             shipping_d,
             
             admin_r,

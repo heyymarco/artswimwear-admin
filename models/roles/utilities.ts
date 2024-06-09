@@ -34,6 +34,7 @@ export const roleDetailSelect = {
     shipping_c  : true,
     shipping_ud : true,
     shipping_up : true,
+    shipping_uv : true,
     shipping_d  : true,
     
     admin_r     : true,

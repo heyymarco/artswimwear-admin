@@ -157,6 +157,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
     const [shipping_c , setShipping_c ] = useState<boolean>(model?.shipping_c  ?? false);
     const [shipping_ud, setShipping_ud] = useState<boolean>(model?.shipping_ud ?? false);
     const [shipping_up, setShipping_up] = useState<boolean>(model?.shipping_up ?? false);
+    const [shipping_uv, setShipping_uv] = useState<boolean>(model?.shipping_uv ?? false);
     const [shipping_d , setShipping_d ] = useState<boolean>(model?.shipping_d  ?? false);
     
     const [admin_r    , setAdmin_r    ] = useState<boolean>(model?.admin_r     ?? false);
@@ -218,6 +219,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             shipping_c,
             shipping_ud,
             shipping_up,
+            shipping_uv,
             shipping_d,
             
             admin_r,
@@ -438,6 +440,9 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
                                     </Check>
                                     <Check className='check editor' active={shipping_up} onActiveChange={({active}) => { setShipping_up(active); setIsModified(true); }}>
                                         Change Price &amp; Shipping Weight
+                                    </Check>
+                                    <Check className='check editor' active={shipping_uv} onActiveChange={({active}) => { setShipping_uv(active); setIsModified(true); }}>
+                                        Change Visibility
                                     </Check>
                                     <Check className='check editor' active={shipping_d}  onActiveChange={({active}) => { setShipping_d(active);  setIsModified(true); }}>
                                         Delete
