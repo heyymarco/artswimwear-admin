@@ -1,9 +1,3 @@
-// next-js:
-import {
-    NextRequest,
-    NextResponse,
-}                           from 'next/server'
-
 // next-auth:
 import {
     getServerSession,
@@ -71,8 +65,8 @@ interface RequestContext {
         /* no params yet */
     }
 }
-const router  = createEdgeRouter<NextRequest, RequestContext>();
-const handler = async (req: NextRequest, ctx: RequestContext) => router.run(req, ctx) as Promise<any>;
+const router  = createEdgeRouter<Request, RequestContext>();
+const handler = async (req: Request, ctx: RequestContext) => router.run(req, ctx) as Promise<any>;
 export {
     handler as GET,
     handler as POST,
@@ -86,7 +80,7 @@ router
 .use(async (req, ctx, next) => {
     // conditions:
     const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ error: 'Please sign in.' }, { status: 401 }); // handled with error: unauthorized
+    if (!session) return Response.json({ error: 'Please sign in.' }, { status: 401 }); // handled with error: unauthorized
     (req as any).session = session;
     
     
@@ -146,7 +140,7 @@ router
             };
         })
     );
-    return NextResponse.json(productPreviews); // handled with success
+    return Response.json(productPreviews); // handled with success
 })
 .post(async (req) => {
     /* required for displaying products page */
@@ -179,7 +173,7 @@ router
         ||
         (typeof(perPage) !== 'number') || !isFinite(perPage) || (perPage < 1)
     ) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid parameter(s).',
         }, { status: 400 }); // handled with error
     } // if
@@ -189,7 +183,7 @@ router
     
     //#region validating privileges
     const session = (req as any).session as Session;
-    if (!session.role?.product_r) return NextResponse.json({ error:
+    if (!session.role?.product_r) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to view the products.`
@@ -271,7 +265,7 @@ You do not have the privilege to view the products.`
         total    : total,
         entities : paged,
     };
-    return NextResponse.json(paginationProductDetail); // handled with success
+    return Response.json(paginationProductDetail); // handled with success
 })
 .patch(async (req) => {
     if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
@@ -283,8 +277,8 @@ You do not have the privilege to view the products.`
     } // if
     
     // throw '';
-    // return NextResponse.json({ message: 'not found'    }, { status: 400 }); // handled with error
-    // return NextResponse.json({ message: 'server error' }, { status: 500 }); // handled with error
+    // return Response.json({ message: 'not found'    }, { status: 400 }); // handled with error
+    // return Response.json({ message: 'server error' }, { status: 500 }); // handled with error
     
     //#region parsing request
     const {
@@ -315,14 +309,29 @@ You do not have the privilege to view the products.`
     
     //#region validating request
     if (
-        // (typeof(id) !== 'string') || (id.length < 1)
-        (typeof(id) !== 'string')
-        ||
-        ((name !== undefined) && ((typeof(name) !== 'string') || (name.length < 1)))
+        (typeof(id)      !== 'string' )
         
-        // TODO: validating data type & constraints
+        ||
+        
+        ((visibility     !== undefined)                              && ((typeof(visibility)     !== 'string') || !['PUBLISHED', 'HIDDEN', 'DRAFT'].includes(visibility)))
+        ||
+        ((name           !== undefined)                              && ((typeof(name)           !== 'string') || (name.length    < 1)))
+        ||
+        ((price          !== undefined)                              && ((typeof(price)          !== 'number') || !isFinite(price)          || (price          < 0)))
+        ||
+        ((shippingWeight !== undefined) && (shippingWeight !== null) && ((typeof(shippingWeight) !== 'number') || !isFinite(shippingWeight) || (shippingWeight < 0)))
+        ||
+        ((stock          !== undefined) && (stock          !== null) && ((typeof(stock)          !== 'number') || !isFinite(stock)          || (stock          < 0) || ((stock % 1) !== 0)))
+        ||
+        ((path           !== undefined)                              && ((typeof(path)           !== 'string') || (path.length    < 1)))
+        ||
+        ((excerpt        !== undefined) && (excerpt        !== null) && ((typeof(excerpt)        !== 'string') || (excerpt.length < 1)))
+        ||
+        ((description    !== undefined) && (description    !== null) &&  (typeof(description)    !== 'object'))
+        ||
+        ((images         !== undefined)                              && ((Array.isArray(images)  !== true    ) || !images.every((image) => (typeof(image) === 'string') && !!image.length)))
     ) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
@@ -382,7 +391,7 @@ You do not have the privilege to view the products.`
             )
         )
     ) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
@@ -398,7 +407,7 @@ You do not have the privilege to view the products.`
             )
         )
     ) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     }
@@ -407,7 +416,7 @@ You do not have the privilege to view the products.`
     
     
     try {
-        return await prisma.$transaction(async (prismaTransaction): Promise<NextResponse<ProductDetail|{ error: string }>> => {
+        return await prisma.$transaction(async (prismaTransaction): Promise<Response> => {
             //#region normalize variantGroups
             const variantGroups : VariantGroupDetail[]|undefined = variantGroupsRaw;
             
@@ -456,38 +465,38 @@ You do not have the privilege to view the products.`
             //#region validating privileges
             const session = (req as any).session as Session;
             if (!id) {
-                if (!session.role?.product_c) return NextResponse.json({ error:
+                if (!session.role?.product_c) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to add new product.`
                 }, { status: 403 }); // handled with error: forbidden
             }
             else {
-                if (!session.role?.product_ud && ((name !== undefined) || (path !== undefined) || (excerpt !== undefined) || (description !== undefined))) return NextResponse.json({ error:
+                if (!session.role?.product_ud && ((name !== undefined) || (path !== undefined) || (excerpt !== undefined) || (description !== undefined))) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the product name, path, excerpt, and/or description.`
                 }, { status: 403 }); // handled with error: forbidden
                 
-                if (!session.role?.product_ui && (images !== undefined)) return NextResponse.json({ error:
+                if (!session.role?.product_ui && (images !== undefined)) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the product images.`
                 }, { status: 403 }); // handled with error: forbidden
                 
-                if (!session.role?.product_up && ((price !== undefined) || (shippingWeight !== undefined))) return NextResponse.json({ error:
+                if (!session.role?.product_up && ((price !== undefined) || (shippingWeight !== undefined))) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the product price and/or shipping weight.`
                 }, { status: 403 }); // handled with error: forbidden
                 
-                if (!session.role?.product_us && (stock !== undefined)) return NextResponse.json({ error:
+                if (!session.role?.product_us && (stock !== undefined)) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the product stock.`
                 }, { status: 403 }); // handled with error: forbidden
                 
-                if (!session.role?.product_uv && (visibility !== undefined)) return NextResponse.json({ error:
+                if (!session.role?.product_uv && (visibility !== undefined)) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the product visibility.`
@@ -512,7 +521,7 @@ You do not have the privilege to modify the product visibility.`
                             ||
                             variantGroupMods.some(({variantAdds}) => !!variantAdds.length)
                         )
-                    ) return NextResponse.json({ error:
+                    ) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to add new product variant.`
@@ -528,7 +537,7 @@ You do not have the privilege to add new product variant.`
                             ||
                             variantGroupMods.some(({variantDels}) => !!variantDels.length)
                         )
-                    ) return NextResponse.json({ error:
+                    ) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to delete the product variant.`
@@ -554,7 +563,7 @@ You do not have the privilege to delete the product variant.`
                                 })
                             );
                         })
-                    ) return NextResponse.json({ error:
+                    ) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the product_variant name.`
@@ -588,7 +597,7 @@ You do not have the privilege to modify the product_variant name.`
                             
                             return true; // deep_equal
                         })()
-                    ) return NextResponse.json({ error:
+                    ) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the product_variant order.`
@@ -621,7 +630,7 @@ You do not have the privilege to modify the product_variant order.`
                                 })
                             );
                         })
-                    ) return NextResponse.json({ error:
+                    ) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the product_variant images.`
@@ -649,7 +658,7 @@ You do not have the privilege to modify the product_variant images.`
                                 })
                             );
                         })
-                    ) return NextResponse.json({ error:
+                    ) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the product_variant price and/or shipping weight.`
@@ -669,7 +678,7 @@ You do not have the privilege to modify the product_variant price and/or shippin
                                 (hasDedicatedStocks !== variantGroupOri.hasDedicatedStocks)
                             );
                         })
-                    ) return NextResponse.json({ error:
+                    ) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the product_variant stock.`
@@ -695,14 +704,14 @@ You do not have the privilege to modify the product_variant stock.`
                                 })
                             );
                         })
-                    ) return NextResponse.json({ error:
+                    ) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the product_variant visibility.`
                     }, { status: 403 }); // handled with error: forbidden
                 } // if
                 
-                if (!session.role?.product_us && (stocks !== undefined)) return NextResponse.json({ error:
+                if (!session.role?.product_us && (stocks !== undefined)) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the product stock(s).`
@@ -888,7 +897,7 @@ You do not have the privilege to modify the product stock(s).`
                 // sync stocks:
                 if (stocks) {
                     if (stocks.length !== stockMap.length) {
-                        return NextResponse.json({
+                        return Response.json({
                             error: 'Invalid data.',
                         }, { status: 400 }); // handled with error
                     } // if
@@ -938,7 +947,7 @@ You do not have the privilege to modify the product stock(s).`
                 // sync stocks:
                 {
                     if (stocks.length !== stockMap.length) {
-                        return NextResponse.json({
+                        return Response.json({
                             error: 'Invalid data.',
                         }, { status: 400 }); // handled with error
                     } // if
@@ -984,14 +993,14 @@ You do not have the privilege to modify the product stock(s).`
             
             
             
-            return NextResponse.json(productDetail); // handled with success
+            return Response.json(productDetail); // handled with success
             //#endregion save changes
         }, { timeout: 20000 }); // give a longer timeout for rebuild stock maps
     }
     catch (error: any) {
         console.log('ERROR: ', error);
-        // if (error instanceof RecordNotFound) return NextResponse.json({ error: 'invalid ID' }, { status: 400 }); // handled with error
-        return NextResponse.json({ error: error }, { status: 500 }); // handled with error
+        // if (error instanceof RecordNotFound) return Response.json({ error: 'invalid ID' }, { status: 400 }); // handled with error
+        return Response.json({ error: error }, { status: 500 }); // handled with error
     } // try
 })
 .delete(async (req) => {
@@ -1017,7 +1026,7 @@ You do not have the privilege to modify the product stock(s).`
     if (
         ((typeof(id) !== 'string') || (id.length < 1))
     ) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
@@ -1027,7 +1036,7 @@ You do not have the privilege to modify the product stock(s).`
     
     //#region validating privileges
     const session = (req as any).session as Session;
-    if (!session.role?.product_d) return NextResponse.json({ error:
+    if (!session.role?.product_d) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to delete the product.`
@@ -1048,12 +1057,12 @@ You do not have the privilege to delete the product.`
                 },
             })
         );
-        return NextResponse.json(deletedProduct); // handled with success
+        return Response.json(deletedProduct); // handled with success
     }
     catch (error: any) {
         console.log('ERROR: ', error);
-        // if (error instanceof RecordNotFound) return NextResponse.json({ error: 'invalid ID' }, { status: 400 }); // handled with error
-        return NextResponse.json({ error: error }, { status: 500 }); // handled with error
+        // if (error instanceof RecordNotFound) return Response.json({ error: 'invalid ID' }, { status: 400 }); // handled with error
+        return Response.json({ error: error }, { status: 500 }); // handled with error
     } // try
     //#endregion save changes
 });
