@@ -52,15 +52,6 @@ export const usesInfoTabLayout = () => {
                 '"name-label       "', 'auto',
                 '"name-editor      "', 'auto',
                 '"................."', spacers.sm,
-                '"path-label       "', 'auto',
-                '"path-editor      "', 'auto',
-                '"................."', spacers.sm,
-                '"price-label      "', 'auto',
-                '"price-editor     "', 'auto',
-                '"................."', spacers.sm,
-                '"sWeight-label    "', 'auto',
-                '"sWeight-editor   "', 'auto',
-                '"................."', spacers.sm,
                 '"visibility-label "', 'auto',
                 '"visibility-editor"', 'auto',
                 '/',
@@ -70,12 +61,6 @@ export const usesInfoTabLayout = () => {
                 gridTemplate   : [[
                     '"name-label               name-label"', 'auto',
                     '"name-editor             name-editor"', 'auto',
-                    '"................. ................."', spacers.sm,
-                    '"path-label               path-label"', 'auto',
-                    '"path-editor             path-editor"', 'auto',
-                    '"................. ................."', spacers.sm,
-                    '"price-label           sWeight-label"', 'auto',
-                    '"price-editor         sWeight-editor"', 'auto',
                     '"................. ................."', spacers.sm,
                     '"visibility-label   visibility-label"', 'auto',
                     '"visibility-editor visibility-editor"', 'auto',
@@ -96,29 +81,54 @@ export const usesInfoTabLayout = () => {
             ...children('.name.label'       , { gridArea: 'name-label'        }),
             ...children('.name.editor'      , { gridArea: 'name-editor'       }),
             
-            ...children('.path.label'       , { gridArea: 'path-label'        }),
-            ...children('.path.editor'      , { gridArea: 'path-editor'       }),
-            
-            ...children('.price.label'      , { gridArea: 'price-label'       }),
-            ...children('.price.editor'     , { gridArea: 'price-editor'      }),
-            
-            ...children('.sWeight.label'    , { gridArea: 'sWeight-label'     }),
-            ...children('.sWeight.editor'   , { gridArea: 'sWeight-editor'    }),
-            
             ...children('.visibility.label' , { gridArea: 'visibility-label'  }),
             ...children('.visibility.editor', { gridArea: 'visibility-editor' }),
         }),
     });
 };
-export const usesVariantsTabLayout = () => {
-    return style({
-        // layouts:
-        display      : 'grid',
-        alignContent : 'start',
-    });
-};
 export const usesRatesTabLayout = () => {
     return style({
+        // layout:
+        display: 'grid',
+        
+        
+        
+        // scrolls:
+        overscrollBehavior      : 'none',
+        scrollPaddingBlockStart : '1.75rem', // makes scroll to field's label
+        
+        
+        
+        // children:
+        ...children('form', {
+            // layouts:
+            display            : 'grid',
+            alignContent       : 'start',
+            gridTemplate       : [[
+                '"weightStep-label "', 'auto',
+                '"weightStep-editor"', 'auto',
+                '"................."', spacers.sm,
+                '"estimate-label   "', 'auto',
+                '"estimate-editor  "', 'auto',
+                '/',
+                '1fr'
+            ]],
+            
+            
+            
+            // spacings:
+            gapInline          : spacers.default,
+            gapBlock           : spacers.xs,
+            
+            
+            
+            // children:
+            ...children('.weightStep.label' , { gridArea: 'weightStep-label'  }),
+            ...children('.weightStep.editor', { gridArea: 'weightStep-editor' }),
+            
+            ...children('.estimate.label'   , { gridArea: 'estimate-label'    }),
+            ...children('.estimate.editor'  , { gridArea: 'estimate-editor'   }),
+        }),
     });
 };
 
@@ -126,9 +136,6 @@ export default () => [
     scope('infoTab', {
         ...usesInfoTabLayout(),
     }),
-    scope('variantsTab', {
-        ...usesVariantsTabLayout(),
-    }, { specificityWeight: 4 }),
     scope('ratesTab', {
         ...usesRatesTabLayout(),
     }),

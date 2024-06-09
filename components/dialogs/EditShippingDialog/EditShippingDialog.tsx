@@ -43,11 +43,17 @@ import {
 
 // internal components:
 import {
+    TextEditor,
+}                           from '@/components/editors/TextEditor'
+import {
     NameEditor,
 }                           from '@/components/editors/NameEditor'
 import {
     VisibilityEditor,
 }                           from '@/components/editors/VisibilityEditor'
+import {
+    ShippingWeightEditor,
+}                           from '@/components/editors/ShippingWeightEditor'
 import {
     // types:
     UpdateHandler,
@@ -125,10 +131,13 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     
     
     // states:
-    const [isModified      , setIsModified    ] = useState<boolean>(false);
+    const [isModified, setIsModified] = useState<boolean>(false);
     
-    const [visibility      , setVisibility    ] = useState<ShippingVisibility      >(model?.visibility     ?? 'DRAFT');
-    const [name            , setName          ] = useState<string                 >(model?.name           ?? ''     );
+    const [visibility, setVisibility] = useState<ShippingVisibility>(model?.visibility     ?? 'DRAFT');
+    const [name      , setName      ] = useState<string            >(model?.name           ?? ''     );
+    
+    const [weightStep, setWeightStep] = useState<number            >(model?.weightStep     ?? 1      );
+    const [estimate  , setEstimate  ] = useState<string            >(model?.estimate       ?? ''     );
     
     
     
@@ -154,8 +163,11 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
         return await updateShipping({
             id             : id ?? '',
             
-            visibility     : (whenUpdate.visibility  || whenAdd)         ? visibility                                        : undefined,
-            name           : (whenUpdate.description || whenAdd)         ? name                                              : undefined,
+            visibility     : (whenUpdate.visibility  || whenAdd) ? visibility         : undefined,
+            name           : (whenUpdate.description || whenAdd) ? name               : undefined,
+            
+            weightStep     : (whenUpdate.price       || whenAdd) ? weightStep         : undefined,
+            estimate       : (whenUpdate.description || whenAdd) ? (estimate || null) : undefined,
         }).unwrap();
     });
     
@@ -311,7 +323,61 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                 </form>
             </TabPanel>
             <TabPanel label={PAGE_SHIPPING_TAB_RATES} panelComponent={<Generic className={styleSheet.ratesTab} />}>
-                // test
+                <form>
+                    <span className='weightStep label'>Weight Step:</span>
+                    <ShippingWeightEditor
+                        // classes:
+                        className='weightStep editor'
+                        
+                        
+                        
+                        // accessibilities:
+                        aria-label='Weight Step'
+                        min={0.01}
+                        max={20}
+                        enabled={whenUpdate.price || whenAdd}
+                        
+                        
+                        
+                        // validations:
+                        required={true}
+                        
+                        
+                        
+                        // values:
+                        value={weightStep}
+                        onChange={(value) => {
+                            setWeightStep(value || 1); // zero -or- null is not allowed => defaults to 1
+                            setIsModified(true);
+                        }}
+                    />
+                    
+                    <span className='estimate label'>Estimated Delivery Time:</span>
+                    <TextEditor
+                        // classes:
+                        className='estimate editor'
+                        
+                        
+                        
+                        // accessibilities:
+                        aria-label='Estimated Delivery Time'
+                        enabled={whenUpdate.description || whenAdd}
+                        
+                        
+                        
+                        // validations:
+                        required={false}
+                        
+                        
+                        
+                        // values:
+                        value={estimate}
+                        onChange={(value) => {
+                            setEstimate(value);
+                            setIsModified(true);
+                        }}
+                    />
+                </form>
             </TabPanel>
         </>}</ComplexEditModelDialog>
     );
