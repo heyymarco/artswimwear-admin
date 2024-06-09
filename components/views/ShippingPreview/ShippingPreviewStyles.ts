@@ -4,23 +4,14 @@ import {
     descendants,
     style,
 }                           from '@cssfn/core'          // writes css in javascript
-import { spacers, typos, usesBorder, usesGroupable, usesPadding } from '@reusable-ui/core';
+import { spacers, typos, usesBorder, usesPadding } from '@reusable-ui/core';
 import { basics } from '@reusable-ui/components';
-import { commerces } from '@/config';
 
 
 
 // styles:
-const imageSize = 128;  // 128px
 const usesShippingPreviewLayout = () => { // the <ListItem> of shipping list
     // dependencies:
-    
-    // capabilities:
-    const {groupableRule, groupableVars} = usesGroupable({
-        orientationInlineSelector : null,     // craft the <Carousel>'s borderRadius manually
-        orientationBlockSelector  : null,     // craft the <Carousel>'s borderRadius manually
-        itemsSelector             : '.items', // select the <Carousel>
-    });
     
     // features:
     const {borderRule , borderVars } = usesBorder({ borderWidth: '0px' });
@@ -29,33 +20,19 @@ const usesShippingPreviewLayout = () => { // the <ListItem> of shipping list
         paddingBlock  : '1rem',
     });
     
-    // spacings:
-    const positivePaddingInline = groupableVars.paddingInline;
-    const positivePaddingBlock  = groupableVars.paddingBlock;
-    const negativePaddingInline = `calc(0px - ${positivePaddingInline})`;
-    const negativePaddingBlock  = `calc(0px - ${positivePaddingBlock })`;
-    
     
     
     return style({
-        // capabilities:
-        ...groupableRule(), // make a nicely rounded corners
-        
-        
-        
         // layouts:
         ...style({
             // layouts:
             display: 'grid',
             gridTemplate: [[
-                '"images      name "', 'auto',
-                '"images   variants"', 'auto',
-                '"images      price"', 'auto',
-                '"images     stocks"', 'auto',
-                '"images visibility"', 'auto',
-                '"images fullEditor"', 'auto',
+                '"     name "', 'auto',
+                '"visibility"', 'auto',
+                '"fullEditor"', 'auto',
                 '/',
-                `calc(${imageSize}px - ${paddingVars.paddingInline}) 1fr`,
+                `1fr`,
             ]],
             
             
@@ -102,59 +79,9 @@ const usesShippingPreviewLayout = () => { // the <ListItem> of shipping list
             ...descendants('.edit', {
                 marginInlineStart: '0.25em',
             }),
-            ...children('.images', {
-                // positions:
-                gridArea    : 'images',
-                
-                justifySelf : 'stretch', // stretch the self horizontally
-                alignSelf   : 'stretch', // stretch the self vertically
-                
-                
-                
-                // sizes:
-                aspectRatio : commerces.defaultShippingAspectRatio,
-                
-                
-                
-                // borders:
-                // follows <parent>'s borderRadius
-                [borderVars.borderStartStartRadius] : groupableVars.borderStartStartRadius,
-                [borderVars.borderStartEndRadius  ] : '0px',
-                [borderVars.borderEndStartRadius  ] : groupableVars.borderEndStartRadius,
-                [borderVars.borderEndEndRadius    ] : '0px',
-                [borderVars.borderWidth           ] : '0px', // only setup borderRadius, no borderStroke
-                borderInlineEndWidth : basics.borderWidth,
-                
-                
-                
-                // spacings:
-                // cancel-out parent's padding with negative margin:
-                marginInlineStart : negativePaddingInline,
-                marginBlock       : negativePaddingBlock,
-                
-                
-                
-                // children:
-                ...children('ul>li>.prodImg', {
-                    inlineSize : '100%',
-                    blockSize  : '100%',
-                }),
-            }),
             ...children('.name', {
                 gridArea: 'name',
                 fontSize: typos.fontSizeXl,
-            }),
-            ...children('.variants', {
-                gridArea : 'variants',
-                display  : 'flex',
-                flexWrap : 'wrap',
-                gap      : spacers.xs,
-            }),
-            ...children('.price', {
-                gridArea: 'price',
-            }),
-            ...children('.stocks', {
-                gridArea: 'stocks',
             }),
             ...children('.visibility', {
                 gridArea: 'visibility',

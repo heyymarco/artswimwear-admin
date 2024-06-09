@@ -60,6 +60,9 @@ import {
     NameEditor,
 }                           from '@/components/editors/NameEditor'
 import {
+    VisibilityEditor,
+}                           from '@/components/editors/VisibilityEditor'
+import {
     DummyDialog,
 }                           from '@/components/dialogs/DummyDialog'
 import {
@@ -103,6 +106,7 @@ const ShippingPreview = (props: ShippingPreviewProps): JSX.Element|null => {
         model,
     ...restListItemProps} = props;
     const {
+        visibility,
         name,
     } = model;
     
@@ -143,7 +147,7 @@ const ShippingPreview = (props: ShippingPreviewProps): JSX.Element|null => {
     const handleEdit = useEvent((editMode: EditMode): void => {
         // just for cosmetic backdrop:
         const dummyPromise = (
-            ['full'].includes(editMode)
+            ['name', 'visibility', 'full'].includes(editMode)
             ? showDialog(
                 <DummyDialog
                     // global stackable:
@@ -168,13 +172,25 @@ const ShippingPreview = (props: ShippingPreviewProps): JSX.Element|null => {
                         
                         
                         
-                        // global stackable:
-                        viewport={listItemRef}
+                        // components:
+                        editorComponent={<NameEditor />}
+                    />
+                );
+                case 'visibility' : return (
+                    <SimpleEditModelDialog<ShippingDetail>
+                        // data:
+                        model={model}
+                        edit='visibility'
+                        
+                        
+                        
+                        // stores:
+                        updateModelApi={useUpdateShipping as any}
                         
                         
                         
                         // components:
-                        editorComponent={<NameEditor />}
+                        editorComponent={<VisibilityEditor theme='primaryAlt' optionHidden={false} />}
                     />
                 );
                 // case 'full'       : return (
@@ -223,6 +239,10 @@ const ShippingPreview = (props: ShippingPreviewProps): JSX.Element|null => {
                 {name}
                 {privilegeUpdateDescription && <EditButton onClick={() => handleEdit('name')} />}
             </h3>
+            <p className='visibility'>
+                Visibility: <strong className='value'>{visibility}</strong>
+                {privilegeUpdateVisibility  && <EditButton onClick={() => handleEdit('visibility')} />}
+            </p>
             <p className='fullEditor'>
                 {privilegeWrite             && <Button buttonStyle='link' onClick={() => handleEdit('full')}>
                     More...
