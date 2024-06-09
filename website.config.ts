@@ -37,6 +37,9 @@ export const PAGE_ORDER_DESCRIPTION                  = 'Order management.'
 export const PAGE_ORDER_TAB_ORDER_N_SHIPPING         = 'Order & Shipping'
 export const PAGE_ORDER_TAB_PAYMENT                  = 'Payment'
 
+export const PAGE_SHIPPING_TITLE                     = `Shippings - ${WEBSITE_TITLE}`
+export const PAGE_SHIPPING_DESCRIPTION               = 'Shipping management.'
+
 export const PAGE_ADMIN_TITLE                        = `Admins - ${WEBSITE_TITLE}`
 export const PAGE_ADMIN_DESCRIPTION                  = 'Admin management.'
 

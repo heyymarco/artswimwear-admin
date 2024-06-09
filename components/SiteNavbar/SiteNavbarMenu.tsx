@@ -4,39 +4,17 @@
 import {
     // react:
     default as React,
-    
-    
-    
-    // hooks:
-    useState,
-    useCallback,
-    useInsertionEffect,
 }                           from 'react'
 
 // next-auth:
 import {
     useSession,
-    signOut,
 }                           from 'next-auth/react'
-
-// reusable-ui core:
-import {
-    // react helper hooks:
-    useEvent,
-}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
 import {
     // simple-components:
-    ButtonProps,
-    ToggleButton,
-    ButtonIcon,
     HamburgerMenuButton,
-    
-    
-    
-    // status-components:
-    Busy,
     
     
     
@@ -48,7 +26,6 @@ import {
     // composite-components:
     NavItem,
     Nav,
-    navbars,
     NavbarParams,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 import {
@@ -128,9 +105,10 @@ const SiteNavbarMenu = ({
                     orientation={navbarExpanded ? 'inline' : 'block'}
                 >
                     {isFullySignedIn && <NavItem><Link href='/'>Dashboard</Link></NavItem>}
-                    {isFullySignedIn && !!role?.product_r && <NavItem><Link href='/products'>Products</Link></NavItem>}
-                    {isFullySignedIn && !!role?.order_r   && <NavItem><Link href='/orders'>Orders</Link></NavItem>}
-                    {isFullySignedIn && !!role?.admin_r   && <NavItem><Link href='/admins'>Admins</Link></NavItem>}
+                    {isFullySignedIn && !!role?.product_r  && <NavItem><Link href='/products' >Products</Link></NavItem>}
+                    {isFullySignedIn && !!role?.order_r    && <NavItem><Link href='/orders'   >Orders</Link></NavItem>}
+                    {isFullySignedIn && !!role?.shipping_r && <NavItem><Link href='/shippings'>Shippings</Link></NavItem>}
+                    {isFullySignedIn && !!role?.admin_r    && <NavItem><Link href='/admins'   >Admins</Link></NavItem>}
                     
                     <SignInMenu />
                 </Nav>

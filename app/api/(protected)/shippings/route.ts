@@ -71,6 +71,7 @@ router
     // conditions:
     const session = await getServerSession(authOptions);
     if (!session) return Response.json({ error: 'Please sign in.' }, { status: 401 }); // handled with error: unauthorized
+    (req as any).session = session;
     
     
     
