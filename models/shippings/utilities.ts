@@ -16,7 +16,7 @@ export const shippingPreviewSelect = {
 export const shippingDetailSelect = {
     id              : true,
     
-    enabled         : true,
+    visibility      : true,
     
     name            : true,
     estimate        : true,
