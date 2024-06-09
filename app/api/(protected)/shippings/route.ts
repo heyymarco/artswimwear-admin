@@ -177,9 +177,9 @@ You do not have the privilege to view the shippings.`
         visibility,
         
         name,
-        estimate,
         
         weightStep,
+        estimate,
         shippingRates,
         
         useSpecificArea,
@@ -199,9 +199,9 @@ You do not have the privilege to view the shippings.`
         ||
         ((name            !== undefined)                        && ((typeof(name)                 !== 'string') || (name.length     < 1)))
         ||
-        ((estimate        !== undefined) && (estimate !== null) && ((typeof(estimate)             !== 'string') || (estimate.length < 1)))
-        ||
         ((weightStep      !== undefined)                        && ((typeof(weightStep)           !== 'number') || !isFinite(weightStep) || (weightStep <= 0)))
+        ||
+        ((estimate        !== undefined) && (estimate !== null) && ((typeof(estimate)             !== 'string') || (estimate.length < 1)))
         ||
         ((shippingRates   !== undefined)                        && ((Array.isArray(shippingRates) !== true    ) || (shippingRates.every((shippingRate) =>
             (typeof(shippingRate) !== 'object')
@@ -246,16 +246,16 @@ You do not have the privilege to add new shipping.`
                 }, { status: 403 }); // handled with error: forbidden
             }
             else {
-                if (!session.role?.shipping_ud && ((name !== undefined) || (estimate !== undefined))) return Response.json({ error:
+                if (!session.role?.shipping_ud && ((name !== undefined))) return Response.json({ error:
 `Access denied.
 
-You do not have the privilege to modify the shipping name and/or shipping estimate.`
+You do not have the privilege to modify the shipping name.`
                 }, { status: 403 }); // handled with error: forbidden
                 
-                if (!session.role?.shipping_up && ((weightStep !== undefined) || (shippingRates !== undefined) || (useSpecificArea !== undefined) || (countries !== undefined))) return Response.json({ error:
+                if (!session.role?.shipping_up && ((weightStep !== undefined) || (estimate !== undefined) || (shippingRates !== undefined) || (useSpecificArea !== undefined) || (countries !== undefined))) return Response.json({ error:
 `Access denied.
 
-You do not have the privilege to modify the shipping weightStep, shippingRates, and/or areas.`
+You do not have the privilege to modify the shipping weightStep, estimate, shippingRates, and/or areas.`
                 }, { status: 403 }); // handled with error: forbidden
                 
                 if (!session.role?.shipping_uv && (visibility !== undefined)) return Response.json({ error:
@@ -273,9 +273,9 @@ You do not have the privilege to modify the shipping visibility.`
                 visibility,
                 
                 name,
-                estimate,
                 
                 weightStep,
+                estimate,
                 shippingRates,
                 
                 useSpecificArea,

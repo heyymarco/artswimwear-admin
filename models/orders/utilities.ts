@@ -108,9 +108,9 @@ export const orderAndDataSelectAndExtra = {
     shippingProvider   : {
         select : {
             name            : true, // optional for displaying email report
-            estimate        : true, // optional for displaying email report
             
             weightStep      : true, // required for calculating `getMatchingShipping()`
+            estimate        : true, // optional for displaying email report
             shippingRates   : true, // required for calculating `getMatchingShipping()`
             
             useSpecificArea : true, // required for calculating `getMatchingShipping()`
