@@ -14,6 +14,12 @@ import {
 import {
     // react helper hooks:
     useEvent,
+    
+    
+    
+    // an accessibility management system:
+    usePropEnabled,
+    usePropReadOnly,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
 // heymarco:
@@ -134,6 +140,13 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
     
     
     
+    // accessibilities:
+    const propEnabled          = usePropEnabled(props);
+    const propReadOnly         = usePropReadOnly(props);
+    const isDisabledOrReadOnly = (!propEnabled || propReadOnly);
+    
+    
+    
     // handlers:
     const handleModelCreate  = useEvent((): ShippingRate & { id: string } => {
         return {
@@ -224,7 +237,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
                 
                 // components:
                 modelCreateComponent={
-                    ((lastValue !== undefined) && (lastValue.startingWeight >= 1000)) // reaches the limit => disable adding
+                    (isDisabledOrReadOnly || ((lastValue !== undefined) && (lastValue.startingWeight >= 1000))) // reaches the limit => disable adding
                     ? false
                     : handleModelCreate
                 }

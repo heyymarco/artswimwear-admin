@@ -6,11 +6,6 @@ import {
     default as React,
 }                           from 'react'
 
-// next-auth:
-import {
-    useSession,
-}                           from 'next-auth/react'
-
 // cssfn:
 import {
     // style sheets:
@@ -21,6 +16,12 @@ import {
 import {
     // react helper hooks:
     useEvent,
+    
+    
+    
+    // an accessibility management system:
+    usePropEnabled,
+    usePropReadOnly,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -97,11 +98,10 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
     
     
     
-    // sessions:
-    const { data: session } = useSession();
-    const role = session?.role;
- // const privilegeAdd         = !!role?.shipping_c;
-    const privilegeUpdatePrice = !!role?.shipping_up;
+    // accessibilities:
+    const propEnabled          = usePropEnabled(props);
+    const propReadOnly         = usePropReadOnly(props);
+    const isDisabledOrReadOnly = (!propEnabled || propReadOnly);
     
     
     
@@ -150,6 +150,7 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
                 
                 
                 // accessibilities:
+                readOnly={isDisabledOrReadOnly}
                 aria-label='Starting Weight'
                 min={0}
                 max={1000}
@@ -173,6 +174,7 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
                 
                 
                 // accessibilities:
+                readOnly={isDisabledOrReadOnly}
                 aria-label='Rate'
                 min={0}
                 
@@ -205,6 +207,7 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
                 
                 
                 // accessibilities:
+                enabled={!isDisabledOrReadOnly}
                 title='Delete'
                 
                 
