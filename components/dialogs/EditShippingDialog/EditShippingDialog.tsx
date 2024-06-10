@@ -58,9 +58,6 @@ import {
     ShippingRateEditor,
 }                           from '@/components/editors/ShippingRateEditor'
 import {
-    ShippingRatePreview,
-}                           from '@/components/views/ShippingRatePreview'
-import {
     // types:
     UpdateHandler,
     
@@ -414,16 +411,6 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                             setShippingRates(value);
                             setIsModified(true);
                         }}
-                        
-                        
-                        
-                        // components:
-                        modelPreviewComponent={
-                            <ShippingRatePreview
-                                // data:
-                                model={undefined as any}
-                            />
-                        }
                     />
                 </form>
             </TabPanel>

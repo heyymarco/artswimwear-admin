@@ -46,8 +46,8 @@ import {
     ModelCreateOuter,
     ModelEmpty,
 }                           from '@/components/explorers/PagedModelExplorer'
-import type {
-    ShippingRatePreviewProps,
+import {
+    ShippingRatePreview,
 }                           from '@/components/views/ShippingRatePreview'
 
 // models:
@@ -85,9 +85,6 @@ export interface ShippingRateEditorProps<TElement extends Element = HTMLElement>
             |'children'     // already taken over
         >
 {
-    // components:
-    // modelCreateComponent  ?: React.ReactComponentElement<any, ModelCreateProps & EditShippingRateDialogProps>
-    modelPreviewComponent  : React.ReactComponentElement<any, ShippingRatePreviewProps>
 }
 const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: ShippingRateEditorProps<TElement>): JSX.Element|null => {
     // rest props:
@@ -96,12 +93,6 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
         defaultValue : defaultUncontrollableValue = [],
         value        : controllableValue,
         onChange     : onControllableValueChange,
-        
-        
-        
-        // components:
-        // modelCreateComponent,
-        modelPreviewComponent,
     ...restListProps} = props;
     
     
@@ -199,24 +190,21 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
             
             {mirrorValueWithId.map((shippingRate) =>
                 /* <ModelPreview> */
-                React.cloneElement<ShippingRatePreviewProps>(modelPreviewComponent,
-                    // props:
-                    {
-                        // identifiers:
-                        key       : modelPreviewComponent.key         ?? shippingRate.id,
-                        
-                        
-                        
-                        // data:
-                        model     : modelPreviewComponent.props.model ?? shippingRate,
-                        
-                        
-                        
-                        // handlers:
-                        onUpdated : handleModelUpdated,
-                        onDeleted : handleModelDeleted,
-                    },
-                )
+                <ShippingRatePreview
+                    // identifiers:
+                    key={shippingRate.id}
+                    
+                    
+                    
+                    // data:
+                    model={shippingRate}
+                    
+                    
+                    
+                    // handlers:
+                    onUpdated={handleModelUpdated}
+                    onDeleted={handleModelDeleted}
+                />
             )}
             
             {/* <ModelCreate> */}
