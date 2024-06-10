@@ -130,9 +130,9 @@ const EditCoverageCountryDialog = (props: EditCoverageCountryDialogProps): JSX.E
     // states:
     const [isModified     , setIsModified     ] = useState<boolean>(false);
     
-    const [country        , setCountry        ] = useState<string        >(model?.country        ?? ''     );
+    const [country        , setCountry        ] = useState<string        >(model?.country         ?? ''     );
     
-    const [estimate       , setEstimate       ] = useState<string        >(model?.estimate       ?? ''     );
+    const [estimate       , setEstimate       ] = useState<string        >(model?.estimate        ?? ''     );
     const [shippingRates  , setShippingRates  ] = useState<ShippingRate[]>(() => {
         const shippingRates = model?.shippingRates;
         if (!shippingRates) return [];
@@ -144,7 +144,7 @@ const EditCoverageCountryDialog = (props: EditCoverageCountryDialogProps): JSX.E
         );
     });
     
-    const [useSpecificArea, setUseSpecificArea] = useState<boolean>(true);
+    const [useSpecificArea, setUseSpecificArea] = useState<boolean       >(model?.useSpecificArea ?? true);
     const [zones          , setZones          ] = useState<CoverageZone[]>(() => {
         const zones = model?.zones;
         if (!zones) return [];
