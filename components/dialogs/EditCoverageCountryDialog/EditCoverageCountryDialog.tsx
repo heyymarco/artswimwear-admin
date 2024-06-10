@@ -54,12 +54,6 @@ import {
     NameEditor,
 }                           from '@/components/editors/NameEditor'
 import {
-    VisibilityEditor,
-}                           from '@/components/editors/VisibilityEditor'
-import {
-    ShippingWeightEditor,
-}                           from '@/components/editors/ShippingWeightEditor'
-import {
     ShippingRateEditor,
 }                           from '@/components/editors/ShippingRateEditor'
 import {
@@ -82,23 +76,12 @@ import {
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 
 // models:
-import type {
-    ShippingVisibility,
-    Stock,
-}                           from '@prisma/client'
 import {
     // types:
-    type ShippingDetail,
-    type ShippingRate,
     type CoverageCountry,
+    type ShippingRate,
+    type CoverageZone,
 }                           from '@/models'
-
-// stores:
-import {
-    // hooks:
-    useUpdateShipping,
-    useDeleteShipping,
-}                           from '@/store/features/api/apiSlice'
 
 // configs:
 import {
@@ -111,23 +94,23 @@ import {
 
 
 // styles:
-const useEditShippingDialogStyleSheet = dynamicStyleSheets(
-    () => import(/* webpackPrefetch: true */'./EditShippingDialogStyles')
-, { id: 'kpxedelumf' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
-import './EditShippingDialogStyles';
+const useEditCoverageCountryDialogStyleSheet = dynamicStyleSheets(
+    () => import(/* webpackPrefetch: true */'./EditCoverageCountryDialogStyles')
+, { id: 'rcv9mxdjhi' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
+import './EditCoverageCountryDialogStyles';
 
 
 
 // react components:
-export interface EditShippingDialogProps
+export interface EditCoverageCountryDialogProps
     extends
         // bases:
-        ImplementedComplexEditModelDialogProps<ShippingDetail>
+        ImplementedComplexEditModelDialogProps<CoverageCountry & { id: string }>
 {
 }
-const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null => {
+const EditCoverageCountryDialog = (props: EditCoverageCountryDialogProps): JSX.Element|null => {
     // styles:
-    const styleSheet = useEditShippingDialogStyleSheet();
+    const styleSheet = useEditCoverageCountryDialogStyleSheet();
     
     
     
@@ -147,12 +130,10 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     // states:
     const [isModified     , setIsModified     ] = useState<boolean>(false);
     
-    const [visibility     , setVisibility     ] = useState<ShippingVisibility>(model?.visibility     ?? 'DRAFT');
-    const [name           , setName           ] = useState<string            >(model?.name           ?? ''     );
+    const [country        , setCountry        ] = useState<string        >(model?.country        ?? ''     );
     
-    const [weightStep     , setWeightStep     ] = useState<number            >(model?.weightStep     ?? 1      );
-    const [estimate       , setEstimate       ] = useState<string            >(model?.estimate       ?? ''     );
-    const [shippingRates  , setShippingRates  ] = useState<ShippingRate[]    >(() => {
+    const [estimate       , setEstimate       ] = useState<string        >(model?.estimate       ?? ''     );
+    const [shippingRates  , setShippingRates  ] = useState<ShippingRate[]>(() => {
         const shippingRates = model?.shippingRates;
         if (!shippingRates) return [];
         return (
@@ -164,13 +145,13 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     });
     
     const [useSpecificArea, setUseSpecificArea] = useState<boolean>(true);
-    const [countries      , setCountries      ] = useState<CoverageCountry[] >(() => {
-        const countries = model?.countries;
-        if (!countries) return [];
+    const [zones          , setZones          ] = useState<CoverageZone[]>(() => {
+        const zones = model?.zones;
+        if (!zones) return [];
         return (
-            countries
-            .map((country) => ({
-                ...country, // clone => immutable => mutable
+            zones
+            .map((zone) => ({
+                ...zone, // clone => immutable => mutable
             }))
         );
     });
@@ -183,54 +164,37 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     
     
     
-    // stores:
-    const [updateShipping    , {isLoading : isLoadingUpdate           }] = useUpdateShipping();
-    const [deleteShipping    , {isLoading : isLoadingDelete           }] = useDeleteShipping();
-    
-    
-    
     // refs:
     const firstEditorRef = useRef<HTMLInputElement|null>(null); // TODO: finish this
     
     
     
     // handlers:
-    const handleUpdate               = useEvent<UpdateHandler<ShippingDetail>>(async ({id, whenAdd, whenUpdate}) => {
-        return await updateShipping({
+    const handleUpdate               = useEvent<UpdateHandler<CoverageCountry & { id: string }>>(({id, whenAdd, whenUpdate}) => {
+        return {
             id              : id ?? '',
             
-            visibility      : (whenUpdate.visibility  || whenAdd) ? visibility         : undefined,
-            name            : (whenUpdate.description || whenAdd) ? name               : undefined,
+            country         : (whenUpdate.description || whenAdd) ? country            : undefined,
             
-            weightStep      : (whenUpdate.price       || whenAdd) ? weightStep         : undefined,
             estimate        : (whenUpdate.description || whenAdd) ? (estimate || null) : undefined,
             shippingRates   : (whenUpdate.price       || whenAdd) ? shippingRates      : undefined,
             
             useSpecificArea : (whenUpdate.price       || whenAdd) ? useSpecificArea    : undefined,
-            countries       : (whenUpdate.price       || whenAdd) ? countries          : undefined,
-        }).unwrap();
+            zones           : (whenUpdate.price       || whenAdd) ? zones              : undefined,
+        } satisfies Partial<CoverageCountry & { id: string }>;
     });
     
-    const handleDelete               = useEvent<DeleteHandler<ShippingDetail>>(async ({id}) => {
-        await deleteShipping({
-            id : id,
-        }).unwrap();
-    });
-    
-    const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<ShippingDetail>>(({model}) => {
+    const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<(CoverageCountry & { id: string })>>(({model}) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
                 <p>
-                    Are you sure to delete shipping <strong>{model.name}</strong>?
-                </p>
-                <p>
-                    The associated shipping in existing orders will be marked as <strong>DELETED SHIPPING</strong>.
+                    Are you sure to delete <strong>{model.country}</strong>?
                 </p>
             </>,
         };
     });
-    const handleConfirmUnsaved       = useEvent<ConfirmUnsavedHandler<ShippingDetail>>(() => {
+    const handleConfirmUnsaved       = useEvent<ConfirmUnsavedHandler<(CoverageCountry & { id: string })>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>
@@ -254,15 +218,15 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     
     // jsx:
     return (
-        <ComplexEditModelDialog<ShippingDetail>
+        <ComplexEditModelDialog<CoverageCountry & { id: string }>
             // other props:
             {...restComplexEditModelDialogProps}
             
             
             
             // data:
-            modelName='Shipping'
-            modelEntryName={model?.name}
+            modelName='Country'
+            modelEntryName={model?.country}
             model={model}
             
             
@@ -276,9 +240,6 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             
             // stores:
             isModified  = {isModified}
-            
-            isCommiting = {isLoadingUpdate}
-            isDeleting  = {isLoadingDelete}
             
             
             
@@ -299,10 +260,6 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             
             // handlers:
             onUpdate={handleUpdate}
-            // onAfterUpdate={handleAfterUpdate}
-            
-            onDelete={handleDelete}
-            // onAfterDelete={undefined}
             
             onConfirmDelete={handleConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}
@@ -327,36 +284,9 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                         
                         
                         // values:
-                        value={name}
+                        value={country}
                         onChange={(value) => {
-                            setName(value);
-                            setIsModified(true);
-                        }}
-                    />
-                    
-                    <span className='visibility label'>Visibility:</span>
-                    <VisibilityEditor
-                        // variants:
-                        theme='primaryAlt'
-                        
-                        
-                        
-                        // classes:
-                        className='visibility editor'
-                        
-                        
-                        
-                        // accessibilities:
-                        modelName='shipping'
-                        enabled={whenUpdate.visibility || whenAdd}
-                        
-                        
-                        
-                        // values:
-                        optionHidden={false}
-                        value={visibility}
-                        onChange={(value) => {
-                            setVisibility(value);
+                            setCountry(value);
                             setIsModified(true);
                         }}
                     />
@@ -364,34 +294,6 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             </TabPanel>
             <TabPanel label={PAGE_SHIPPING_TAB_DEFAULT_RATES} panelComponent={<Generic className={styleSheet.defaultRatesTab} />}>
                 <form>
-                    <span className='weightStep label'>Weight Step:</span>
-                    <ShippingWeightEditor
-                        // classes:
-                        className='weightStep editor'
-                        
-                        
-                        
-                        // accessibilities:
-                        aria-label='Weight Step'
-                        min={0.01}
-                        max={20}
-                        enabled={whenUpdate.price || whenAdd}
-                        
-                        
-                        
-                        // validations:
-                        required={true}
-                        
-                        
-                        
-                        // values:
-                        value={weightStep}
-                        onChange={(value) => {
-                            setWeightStep(value || 1); // zero -or- null is not allowed => defaults to 1
-                            setIsModified(true);
-                        }}
-                    />
-                    
                     <span className='estimate label'>Estimated Delivery Time:</span>
                     <TextEditor
                         // classes:
@@ -458,32 +360,13 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                         setIsModified(true);
                     }}
                 >
-                    Use specific countries:
+                    Use specific zones:
                 </Check>
-                <CoverageCountryEditor
-                    // classes:
-                    className='country editor'
-                    
-                    
-                    
-                    // accessibilities:
-                    enabled={useSpecificArea}
-                    readOnly={!(whenUpdate.price || whenAdd)}
-                    
-                    
-                    
-                    // values:
-                    value={countries}
-                    onChange={(value) => {
-                        setCountries(value);
-                        setIsModified(true);
-                    }}
-                />
             </TabPanel>
         </>}</ComplexEditModelDialog>
     );
 };
 export {
-    EditShippingDialog,
-    EditShippingDialog as default,
+    EditCoverageCountryDialog,
+    EditCoverageCountryDialog as default,
 }

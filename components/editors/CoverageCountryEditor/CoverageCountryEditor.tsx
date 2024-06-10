@@ -52,6 +52,9 @@ import type {
     DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
+    EditCoverageCountryDialog,
+}                           from '@/components/dialogs/EditCoverageCountryDialog'
+import {
     CreateHandler,
     ModelCreateOuter,
     ModelEmpty,
@@ -163,17 +166,6 @@ const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: Co
     
     
     // handlers:
-    const handleModelCreate  = useEvent((): CoverageCountry & { id: string } => {
-        return {
-            id              : '', // will be removed
-            
-            country         : '',
-            estimate        : null,
-            shippingRates   : [],
-            useSpecificArea : true,
-            zones           : [],
-        };
-    });
     const handleModelCreated = useEvent<CreateHandler<CoverageCountry & { id: string }>>((createdModelWithId) => {
         const {
             id : _id, // remove
@@ -306,7 +298,10 @@ const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: Co
                     modelCreateComponent={
                         isDisabledOrReadOnly
                         ? false
-                        : handleModelCreate
+                        : <EditCoverageCountryDialog
+                            // data:
+                            model={null} // create a new model
+                        />
                     }
                     listItemComponent={
                         <ListItem />
