@@ -71,6 +71,11 @@ import './ShippingRatePreviewStyles';
 
 // react components:
 export interface ShippingRatePreviewProps extends ModelPreviewProps<ShippingRate & { id: string }> {
+    // values:
+    shippingRates  : ShippingRate[]
+    
+    
+    
     // handlers:
     onUpdated     ?: UpdatedHandler<ShippingRate & { id: string }>
     onDeleted     ?: DeleteHandler<ShippingRate & { id: string }>
@@ -83,7 +88,13 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
     
     // rest props:
     const {
+        // data:
         model,
+        
+        
+        
+        // values:
+        shippingRates,
         
         
         
@@ -110,10 +121,18 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
         // conditions:
         if (!onUpdated) return;
         
+        let newStartingWeight = newValue ?? 0;
+        const otherStartingWeights = shippingRates.map(({startingWeight}) => startingWeight);
+        if (otherStartingWeights.includes(newStartingWeight)) { // a duplicate found
+            // try to de-duplicate:
+            newStartingWeight += (newStartingWeight >= startingWeight) ? 0.01 : -0.01; // jump more
+            if (otherStartingWeights.includes(newStartingWeight)) return; // failed to recover
+        } // if
+        
         
         
         // actions:
-        model.startingWeight = newValue ?? 0;
+        model.startingWeight = newStartingWeight;
         onUpdated(model);
     });
     const handleRateChange           = useEvent<EditorChangeEventHandler<number | null>>((newValue) => {
