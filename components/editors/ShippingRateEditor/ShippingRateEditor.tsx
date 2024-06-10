@@ -117,7 +117,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
                 if (id === undefined) {
                     id = nanoid();
                     idMap.set(item, id);
-                    // console.log('auto generated id: ', item, id);
+                    console.log('auto generated id: ', item, id);
                 } // if
                 
                 
@@ -168,6 +168,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
             
             mutatedValue[modelIndex] = currentModel;
         } // if
+        mutatedValue.sort((a, b) => (a.startingWeight - b.startingWeight));
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
     const handleModelDeleted   = useEvent<DeleteHandler<ShippingRate & { id: string }>>(({id}) => {
