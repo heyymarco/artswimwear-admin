@@ -143,7 +143,7 @@ export interface ModelCreateOuterProps<TModel extends Model>
     
     
     // components:
-    modelCreateComponent  : React.ReactComponentElement<any, ModelCreateProps>
+    modelCreateComponent  : React.ReactComponentElement<any, ModelCreateProps> | (() => TModel|Promise<TModel>)
     moreButtonComponent  ?: React.ReactComponentElement<any, DropdownListButtonProps>
     
     
@@ -191,8 +191,12 @@ export const ModelCreateOuter = <TModel extends Model>(props: ModelCreateOuterPr
     
     // handlers:
     const handleShowDialog = useEvent(async (): Promise<void> => {
-        const createdModel = await showDialog<ComplexEditModelDialogResult<TModel>>(
-            modelCreateComponent
+        const createdModel = (
+            (typeof(modelCreateComponent) === 'function')
+            ? await modelCreateComponent()
+            : await showDialog<ComplexEditModelDialogResult<TModel>>(
+                modelCreateComponent
+            )
         );
         if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
         

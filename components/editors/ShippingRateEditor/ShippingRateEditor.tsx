@@ -25,7 +25,6 @@ import {
 // reusable-ui components:
 import {
     // layout-components:
-    type ListItemProps,
     ListItem,
     
     type ListProps,
@@ -43,9 +42,7 @@ import type {
     DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
-    ModelCreateProps,
     CreateHandler,
-    ModelCreateOuterProps,
     ModelCreateOuter,
     ModelEmpty,
 }                           from '@/components/explorers/PagedModelExplorer'
@@ -129,6 +126,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
                 if (id === undefined) {
                     id = nanoid();
                     idMap.set(item, id);
+                    // console.log('auto generated id: ', item, id);
                 } // if
                 
                 
@@ -144,9 +142,16 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
     
     
     // handlers:
+    const handleModelCreate    = useEvent((): ShippingRate & { id: string } => {
+        return {
+            id             : '',
+            startingWeight : 0,
+            rate           : 0,
+        };
+    });
     const handleModelCreated   = useEvent<CreateHandler<ShippingRate & { id: string }>>((createdModelWithId) => {
         const {
-            id,
+            id : _id, // remove
             ...createdModel
         } = createdModelWithId;
         
@@ -156,12 +161,12 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
     });
     const handleModelUpdated   = useEvent<UpdatedHandler<ShippingRate & { id: string }>>((updatedModelWithId) => {
         const {
-            id,
+            id : findId, // take
             ...mutatedModel
         } = updatedModelWithId;
         
         const mutatedValue = value.slice(0); // copy
-        const modelIndex = mirrorValueWithId.findIndex((model) => model.id === id);
+        const modelIndex = mirrorValueWithId.findIndex((model) => model.id === findId);
         if (modelIndex < 0) {
             mutatedValue.unshift(mutatedModel as ShippingRate & { id: string });
         }
@@ -190,33 +195,9 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
             // other props:
             {...restListProps}
         >
-            {/* <ModelCreate> */}
-            {/* <ModelCreateOuter<ShippingRate & { id: string }>
-                // classes:
-                className='solid'
-                
-                
-                
-                // accessibilities:
-                createItemText='Add New ShippingRate'
-                
-                
-                
-                // components:
-                modelCreateComponent={modelCreateComponent}
-                listItemComponent={
-                    <ListItem />
-                }
-                
-                
-                
-                // handlers:
-                onCreated={handleModelCreated}
-            /> */}
-            
             {!mirrorValueWithId.length && <ModelEmpty />}
             
-            {mirrorValueWithId.map((shippingRate, itemIndex) =>
+            {mirrorValueWithId.map((shippingRate) =>
                 /* <ModelPreview> */
                 React.cloneElement<ShippingRatePreviewProps>(modelPreviewComponent,
                     // props:
@@ -237,6 +218,30 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
                     },
                 )
             )}
+            
+            {/* <ModelCreate> */}
+            <ModelCreateOuter<ShippingRate & { id: string }>
+                // classes:
+                className='solid'
+                
+                
+                
+                // accessibilities:
+                createItemText='Add New Curve'
+                
+                
+                
+                // components:
+                modelCreateComponent={handleModelCreate}
+                listItemComponent={
+                    <ListItem />
+                }
+                
+                
+                
+                // handlers:
+                onCreated={handleModelCreated}
+            />
         </List>
     );
 };
