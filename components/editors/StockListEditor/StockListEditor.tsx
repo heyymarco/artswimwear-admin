@@ -97,7 +97,7 @@ const StockListEditor = <TElement extends Element = HTMLElement>(props: StockLis
     
     
     // states:
-    let {
+    const {
         value              : value,
         triggerValueChange : triggerValueChange,
     } = useControllableAndUncontrollable<StockDetail[]>({
