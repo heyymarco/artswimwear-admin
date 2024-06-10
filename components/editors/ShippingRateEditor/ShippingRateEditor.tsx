@@ -276,7 +276,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
                         
                         
                         // values:
-                        shippingRates={value}
+                        shippingRates={mirrorValueWithId}
                         
                         
                         

@@ -72,7 +72,7 @@ import './ShippingRatePreviewStyles';
 // react components:
 export interface ShippingRatePreviewProps extends ModelPreviewProps<ShippingRate & { id: string }> {
     // values:
-    shippingRates  : ShippingRate[]
+    shippingRates  : (ShippingRate & { id: string })[]
     
     
     
@@ -103,13 +103,10 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
         onDeleted,
     ...restListItemProps} = props;
     const {
+        id,
         startingWeight,
         rate,
     } = model;
-    
-    
-    
-    const otherStartingWeights = shippingRates.map(({startingWeight}) => startingWeight);
     
     
     
@@ -126,10 +123,10 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
         if (!onUpdated) return;
         
         let newStartingWeight = newValue ?? 0;
-        if (otherStartingWeights.filter((otherStartingWeight) => (otherStartingWeight === newStartingWeight)).length > 1) { // a duplicate found
+        if (shippingRates.some(({id: otherId, startingWeight: otherStartingWeight}) => (otherId !== id) && (otherStartingWeight === newStartingWeight))) { // a duplicate found
             // try to de-duplicate:
             newStartingWeight += (newStartingWeight >= startingWeight) ? 0.01 : -0.01; // jump more
-            if (otherStartingWeights.filter((otherStartingWeight) => (otherStartingWeight === newStartingWeight)).length > 1) return; // failed to recover
+            if (shippingRates.some(({id: otherId, startingWeight: otherStartingWeight}) => (otherId !== id) && (otherStartingWeight === newStartingWeight))) return; // failed to recover
         } // if
         
         
@@ -188,7 +185,7 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
                     &&
                     (((startingWeight % 0.01) < 0.0000001) || ((0.01 - (startingWeight % 0.01)) < 0.0000001))
                     &&
-                    (otherStartingWeights.filter((otherStartingWeight) => (otherStartingWeight === startingWeight)).length === 1)
+                    shippingRates.some(({id: otherId, startingWeight: otherStartingWeight}) => (otherId !== id) && (otherStartingWeight === startingWeight))
                 }
                 
                 
