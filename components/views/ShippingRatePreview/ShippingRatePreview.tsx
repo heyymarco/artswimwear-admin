@@ -126,10 +126,10 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
         if (!onUpdated) return;
         
         let newStartingWeight = newValue ?? 0;
-        if (otherStartingWeights.includes(newStartingWeight)) { // a duplicate found
+        if (otherStartingWeights.filter((otherStartingWeight) => (otherStartingWeight === newStartingWeight)).length > 1) { // a duplicate found
             // try to de-duplicate:
             newStartingWeight += (newStartingWeight >= startingWeight) ? 0.01 : -0.01; // jump more
-            if (otherStartingWeights.includes(newStartingWeight)) return; // failed to recover
+            if (otherStartingWeights.filter((otherStartingWeight) => (otherStartingWeight === newStartingWeight)).length > 1) return; // failed to recover
         } // if
         
         
