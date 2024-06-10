@@ -225,6 +225,12 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
         
         
         
+        // states:
+        focused = false,
+        arrived = false,
+        
+        
+        
         // other props:
         ...restEditableControlProps
     } = restShippingRateEditorProps;
@@ -246,6 +252,12 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
             
             // validations:
             isValid={isValid}
+            
+            
+            
+            // states:
+            focused={focused}
+            arrived={arrived}
         >
             <List>
                 {!mirrorValueWithId.length && <ModelEmpty />}
