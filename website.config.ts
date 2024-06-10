@@ -40,7 +40,8 @@ export const PAGE_ORDER_TAB_PAYMENT                  = 'Payment'
 export const PAGE_SHIPPING_TITLE                     = `Shippings - ${WEBSITE_TITLE}`
 export const PAGE_SHIPPING_DESCRIPTION               = 'Shipping management.'
 export const PAGE_SHIPPING_TAB_INFORMATIONS          = 'Informations'
-export const PAGE_SHIPPING_TAB_RATES                 = 'Rates'
+export const PAGE_SHIPPING_TAB_DEFAULT_RATES         = 'Default Rates'
+export const PAGE_SHIPPING_TAB_SPECIFIC_RATES        = 'Specific Rates'
 export const PAGE_SHIPPING_TAB_DELETE                = 'Delete'
 
 export const PAGE_ADMIN_TITLE                        = `Admins - ${WEBSITE_TITLE}`

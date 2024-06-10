@@ -94,7 +94,8 @@ import {
 // configs:
 import {
     PAGE_SHIPPING_TAB_INFORMATIONS,
-    PAGE_SHIPPING_TAB_RATES,
+    PAGE_SHIPPING_TAB_DEFAULT_RATES,
+    PAGE_SHIPPING_TAB_SPECIFIC_RATES,
     PAGE_SHIPPING_TAB_DELETE,
 }                           from '@/website.config'
 
@@ -337,7 +338,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                     />
                 </form>
             </TabPanel>
-            <TabPanel label={PAGE_SHIPPING_TAB_RATES} panelComponent={<Generic className={styleSheet.ratesTab} />}>
+            <TabPanel label={PAGE_SHIPPING_TAB_DEFAULT_RATES} panelComponent={<Generic className={styleSheet.defaultRatesTab} />}>
                 <form>
                     <span className='weightStep label'>Weight Step:</span>
                     <ShippingWeightEditor
@@ -413,6 +414,9 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                         }}
                     />
                 </form>
+            </TabPanel>
+            <TabPanel label={PAGE_SHIPPING_TAB_SPECIFIC_RATES} panelComponent={<Generic className={styleSheet.specificRatesTab} />}>
+                // test
             </TabPanel>
         </>}</ComplexEditModelDialog>
     );

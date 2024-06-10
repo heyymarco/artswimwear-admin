@@ -86,7 +86,7 @@ export const usesInfoTabLayout = () => {
         }),
     });
 };
-export const usesRatesTabLayout = () => {
+export const usesDefaultRatesTabLayout = () => {
     return style({
         // layout:
         display: 'grid',
@@ -137,12 +137,19 @@ export const usesRatesTabLayout = () => {
         }),
     });
 };
+export const usesSpecificRatesTabLayout = () => {
+    return style({
+    });
+};
 
 export default () => [
     scope('infoTab', {
         ...usesInfoTabLayout(),
     }),
-    scope('ratesTab', {
-        ...usesRatesTabLayout(),
+    scope('defaultRatesTab', {
+        ...usesDefaultRatesTabLayout(),
+    }),
+    scope('specificRatesTab', {
+        ...usesSpecificRatesTabLayout(),
     }),
 ];
