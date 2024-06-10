@@ -182,6 +182,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             
             weightStep     : (whenUpdate.price       || whenAdd) ? weightStep         : undefined,
             estimate       : (whenUpdate.description || whenAdd) ? (estimate || null) : undefined,
+            shippingRates  : (whenUpdate.price       || whenAdd) ? shippingRates      : undefined,
         }).unwrap();
     });
     

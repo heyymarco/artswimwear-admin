@@ -203,7 +203,7 @@ You do not have the privilege to view the shippings.`
         ||
         ((estimate        !== undefined) && (estimate !== null) && ((typeof(estimate)             !== 'string') || (estimate.length < 1)))
         ||
-        ((shippingRates   !== undefined)                        && ((Array.isArray(shippingRates) !== true    ) || (shippingRates.every((shippingRate) =>
+        ((shippingRates   !== undefined)                        && ((Array.isArray(shippingRates) !== true    ) || (shippingRates.some((shippingRate) =>
             (typeof(shippingRate) !== 'object')
             ||
             (Object.keys(shippingRate).length !== 2)
@@ -211,11 +211,11 @@ You do not have the privilege to view the shippings.`
             ((typeof(shippingRate.startingWeight) !== 'number') || !isFinite(shippingRate.startingWeight) || (shippingRate.startingWeight < 0))
             ||
             ((typeof(shippingRate.rate)           !== 'number') || !isFinite(shippingRate.rate)           || (shippingRate.rate           < 0))
-        ) !== true)))
+        ))))
         ||
         ((useSpecificArea !== undefined)                        && (typeof(useSpecificArea) !== 'boolean'))
         ||
-        ((countries       !== undefined)                        && ((Array.isArray(countries)     !== true    ) || (countries.every((country) =>
+        ((countries       !== undefined)                        && ((Array.isArray(countries)     !== true    ) || (countries.some((country) =>
             (typeof(country) !== 'object')
             ||
             (Object.keys(country).length !== 5)
@@ -223,7 +223,7 @@ You do not have the privilege to view the shippings.`
             ((typeof(country.country)  !== 'string') || (country.country.length < 1))
             ||
             ((country.estimate !== null) && (typeof(country.estimate) !== 'string') || (country.estimate.length < 1))
-        ) !== true)))
+        ))))
         /* TODO: too complicated - validate use ZOD */
     ) {
         return Response.json({
