@@ -147,11 +147,11 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     // states:
     const [isModified     , setIsModified     ] = useState<boolean>(false);
     
-    const [visibility     , setVisibility     ] = useState<ShippingVisibility>(model?.visibility     ?? 'DRAFT');
-    const [name           , setName           ] = useState<string            >(model?.name           ?? ''     );
+    const [visibility     , setVisibility     ] = useState<ShippingVisibility>(model?.visibility      ?? 'DRAFT');
+    const [name           , setName           ] = useState<string            >(model?.name            ?? ''     );
     
-    const [weightStep     , setWeightStep     ] = useState<number            >(model?.weightStep     ?? 1      );
-    const [estimate       , setEstimate       ] = useState<string            >(model?.estimate       ?? ''     );
+    const [weightStep     , setWeightStep     ] = useState<number            >(model?.weightStep      ?? 1      );
+    const [estimate       , setEstimate       ] = useState<string            >(model?.estimate        ?? ''     );
     const [shippingRates  , setShippingRates  ] = useState<ShippingRate[]    >(() => {
         const shippingRates = model?.shippingRates;
         if (!shippingRates) return [];
@@ -163,7 +163,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
         );
     });
     
-    const [useSpecificArea, setUseSpecificArea] = useState<boolean>(true);
+    const [useSpecificArea, setUseSpecificArea] = useState<boolean           >(model?.useSpecificArea ?? true);
     const [countries      , setCountries      ] = useState<CoverageCountry[] >(() => {
         const countries = model?.countries;
         if (!countries) return [];
