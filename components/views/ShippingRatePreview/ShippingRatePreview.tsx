@@ -86,7 +86,6 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
         onDeleted,
     ...restListItemProps} = props;
     const {
-        id,
         startingWeight,
         rate,
     } = model;

@@ -145,7 +145,16 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     
     const [weightStep   , setWeightStep   ] = useState<number            >(model?.weightStep     ?? 1      );
     const [estimate     , setEstimate     ] = useState<string            >(model?.estimate       ?? ''     );
-    const [shippingRates, setShippingRates] = useState<ShippingRate[]    >(model?.shippingRates  ?? []     );
+    const [shippingRates, setShippingRates] = useState<ShippingRate[]    >(() => {
+        const shippingRates = model?.shippingRates;
+        if (!shippingRates) return [];
+        return (
+            shippingRates
+            .map((shippingRate) => ({
+                ...shippingRate, // clone => immutable => mutable
+            }))
+        );
+    });
     
     
     

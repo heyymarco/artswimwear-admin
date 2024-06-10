@@ -2,6 +2,12 @@
 import {
     // react:
     default as React,
+    
+    
+    
+    // hooks:
+    useMemo,
+    useState,
 }                           from 'react'
 
 // reusable-ui core:
@@ -52,6 +58,11 @@ import {
     // types:
     type ShippingRate,
 }                           from '@/models'
+
+// others:
+import {
+    customAlphabet,
+}                           from 'nanoid'
 
 
 
@@ -108,30 +119,64 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
         onValueChange      : onControllableValueChange,
     });
     
+    const [idMap] = useState<Map<ShippingRate, string>>(() => new Map<ShippingRate, string>());
+    const mirrorValueWithId = useMemo((): (ShippingRate & { id: string })[] => {
+        const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
+        return (
+            value
+            .map((item) => {
+                let id = idMap.get(item);
+                if (id === undefined) {
+                    id = nanoid();
+                    idMap.set(item, id);
+                } // if
+                
+                
+                
+                return {
+                    ...item,
+                    id : id,
+                };
+            })
+        );
+    }, [value]);
+    
     
     
     // handlers:
-    const handleModelCreated   = useEvent<CreateHandler<ShippingRate & { id: string }>>((createdModel) => {
+    const handleModelCreated   = useEvent<CreateHandler<ShippingRate & { id: string }>>((createdModelWithId) => {
+        const {
+            id,
+            ...createdModel
+        } = createdModelWithId;
+        
         const mutatedValue = value.slice(0); // copy
-        mutatedValue.unshift(createdModel as ShippingRate);
-        mutatedValue.sort((a, b) => (a.startingWeight - b.startingWeight));
+        mutatedValue.push(createdModel as ShippingRate & { id: string });
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
-    const handleModelUpdated   = useEvent<UpdatedHandler<ShippingRate & { id: string }>>((updatedModel) => {
+    const handleModelUpdated   = useEvent<UpdatedHandler<ShippingRate & { id: string }>>((updatedModelWithId) => {
+        const {
+            id,
+            ...mutatedModel
+        } = updatedModelWithId;
+        
         const mutatedValue = value.slice(0); // copy
-        const id = updatedModel.id;
-        const modelIndex = Number.parseInt(id);
+        const modelIndex = mirrorValueWithId.findIndex((model) => model.id === id);
         if (modelIndex < 0) {
-            mutatedValue.unshift(updatedModel as ShippingRate);
+            mutatedValue.unshift(mutatedModel as ShippingRate & { id: string });
         }
         else {
-            mutatedValue[modelIndex] = updatedModel as ShippingRate;
+            const currentModel = mutatedValue[modelIndex];
+            currentModel.startingWeight = mutatedModel.startingWeight ?? 0;
+            currentModel.rate           = mutatedModel.rate ?? 0;
+            
+            mutatedValue[modelIndex] = currentModel;
         } // if
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
     const handleModelDeleted   = useEvent<DeleteHandler<ShippingRate & { id: string }>>(({id}) => {
         const mutatedValue = value.slice(0); // copy
-        const modelIndex = Number.parseInt(id);
+        const modelIndex = mirrorValueWithId.findIndex((model) => model.id === id);
         if (modelIndex < 0) return;
         mutatedValue.splice(modelIndex, 1);
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
@@ -169,23 +214,20 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
                 onCreated={handleModelCreated}
             /> */}
             
-            {!value.length && <ModelEmpty />}
+            {!mirrorValueWithId.length && <ModelEmpty />}
             
-            {value.map((shippingRate, itemIndex) =>
+            {mirrorValueWithId.map((shippingRate, itemIndex) =>
                 /* <ModelPreview> */
                 React.cloneElement<ShippingRatePreviewProps>(modelPreviewComponent,
                     // props:
                     {
                         // identifiers:
-                        key       : modelPreviewComponent.key         ?? itemIndex,
+                        key       : modelPreviewComponent.key         ?? shippingRate.id,
                         
                         
                         
                         // data:
-                        model     : modelPreviewComponent.props.model ?? {
-                            ...shippingRate,
-                            id: `${itemIndex}`,
-                        },
+                        model     : modelPreviewComponent.props.model ?? shippingRate,
                         
                         
                         
