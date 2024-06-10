@@ -143,7 +143,7 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
     
     
     // states:
-    let {
+    const {
         value              : value,
         triggerValueChange : triggerValueChange,
     } = useControllableAndUncontrollable<VariantGroupDetail[]>({

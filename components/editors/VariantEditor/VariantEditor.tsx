@@ -121,7 +121,7 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
     // workaround for penetrating <VariantStateProvider> to showDialog():
     const variantState = useVariantState();
     
-    let {
+    const {
         value              : value,
         triggerValueChange : triggerValueChange,
     } = useControllableAndUncontrollable<VariantDetail[]>({
