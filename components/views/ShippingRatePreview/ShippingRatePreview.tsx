@@ -185,7 +185,7 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
                     &&
                     (((startingWeight % 0.01) < 0.0000001) || ((0.01 - (startingWeight % 0.01)) < 0.0000001))
                     &&
-                    shippingRates.some(({id: otherId, startingWeight: otherStartingWeight}) => (otherId !== id) && (otherStartingWeight === startingWeight))
+                    !shippingRates.some(({id: otherId, startingWeight: otherStartingWeight}) => (otherId !== id) && (otherStartingWeight === startingWeight))
                 }
                 
                 
