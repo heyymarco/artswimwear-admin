@@ -245,7 +245,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
             
             
             // validations:
-            isValid={false}
+            isValid={isValid}
         >
             <List>
                 {!mirrorValueWithId.length && <ModelEmpty />}
