@@ -55,6 +55,12 @@ import {
     ShippingWeightEditor,
 }                           from '@/components/editors/ShippingWeightEditor'
 import {
+    ShippingRateEditor,
+}                           from '@/components/editors/ShippingRateEditor'
+import {
+    ShippingRatePreview,
+}                           from '@/components/views/ShippingRatePreview'
+import {
     // types:
     UpdateHandler,
     
@@ -78,6 +84,7 @@ import type {
 import {
     // types:
     type ShippingDetail,
+    type ShippingRate,
 }                           from '@/models'
 
 // stores:
@@ -131,13 +138,14 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     
     
     // states:
-    const [isModified, setIsModified] = useState<boolean>(false);
+    const [isModified   , setIsModified   ] = useState<boolean>(false);
     
-    const [visibility, setVisibility] = useState<ShippingVisibility>(model?.visibility     ?? 'DRAFT');
-    const [name      , setName      ] = useState<string            >(model?.name           ?? ''     );
+    const [visibility   , setVisibility   ] = useState<ShippingVisibility>(model?.visibility     ?? 'DRAFT');
+    const [name         , setName         ] = useState<string            >(model?.name           ?? ''     );
     
-    const [weightStep, setWeightStep] = useState<number            >(model?.weightStep     ?? 1      );
-    const [estimate  , setEstimate  ] = useState<string            >(model?.estimate       ?? ''     );
+    const [weightStep   , setWeightStep   ] = useState<number            >(model?.weightStep     ?? 1      );
+    const [estimate     , setEstimate     ] = useState<string            >(model?.estimate       ?? ''     );
+    const [shippingRates, setShippingRates] = useState<ShippingRate[]    >(model?.shippingRates  ?? []     );
     
     
     
@@ -376,6 +384,37 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                             setEstimate(value);
                             setIsModified(true);
                         }}
+                    />
+                    
+                    <span className='rate label'>Rate:</span>
+                    <ShippingRateEditor
+                        // classes:
+                        className='rate editor'
+                        
+                        
+                        
+                        // accessibilities:
+                        aria-label='Rate'
+                        enabled={whenUpdate.price || whenAdd}
+                        
+                        
+                        
+                        // values:
+                        value={shippingRates}
+                        onChange={(value) => {
+                            setShippingRates(value);
+                            setIsModified(true);
+                        }}
+                        
+                        
+                        
+                        // components:
+                        modelPreviewComponent={
+                            <ShippingRatePreview
+                                // data:
+                                model={undefined as any}
+                            />
+                        }
                     />
                 </form>
             </TabPanel>

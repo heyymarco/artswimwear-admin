@@ -110,6 +110,9 @@ export const usesRatesTabLayout = () => {
                 '"................."', spacers.sm,
                 '"estimate-label   "', 'auto',
                 '"estimate-editor  "', 'auto',
+                '"................."', spacers.sm,
+                '"rate-label       "', 'auto',
+                '"rate-editor      "', 'auto',
                 '/',
                 '1fr'
             ]],
@@ -128,6 +131,9 @@ export const usesRatesTabLayout = () => {
             
             ...children('.estimate.label'   , { gridArea: 'estimate-label'    }),
             ...children('.estimate.editor'  , { gridArea: 'estimate-editor'   }),
+            
+            ...children('.rate.label'       , { gridArea: 'rate-label'        }),
+            ...children('.rate.editor'      , { gridArea: 'rate-editor'       }),
         }),
     });
 };

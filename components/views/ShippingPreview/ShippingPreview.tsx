@@ -94,7 +94,7 @@ import './ShippingPreviewStyles';
 
 
 // react components:
-interface ShippingPreviewProps extends ModelPreviewProps<ShippingDetail> {}
+export interface ShippingPreviewProps extends ModelPreviewProps<ShippingDetail> {}
 const ShippingPreview = (props: ShippingPreviewProps): JSX.Element|null => {
     // styles:
     const styleSheet = usePageStyleSheet();
@@ -168,7 +168,7 @@ const ShippingPreview = (props: ShippingPreviewProps): JSX.Element|null => {
                         
                         
                         // stores:
-                        updateModelApi={useUpdateShipping as any}
+                        updateModelApi={useUpdateShipping}
                         
                         
                         
@@ -185,7 +185,7 @@ const ShippingPreview = (props: ShippingPreviewProps): JSX.Element|null => {
                         
                         
                         // stores:
-                        updateModelApi={useUpdateShipping as any}
+                        updateModelApi={useUpdateShipping}
                         
                         
                         
