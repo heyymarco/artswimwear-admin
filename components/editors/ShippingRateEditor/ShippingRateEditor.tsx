@@ -30,10 +30,14 @@ import {
 
 // reusable-ui components:
 import {
+    // base-components:
+    type EditableControlProps,
+    EditableControl,
+    
+    
+    
     // layout-components:
     ListItem,
-    
-    type ListProps,
     List,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
@@ -79,7 +83,7 @@ export interface ShippingRateEditorProps<TElement extends Element = HTMLElement>
             |'value'
             |'onChange'
         >,
-        Omit<ListProps<TElement>,
+        Omit<EditableControlProps<TElement>,
             // values:
             |'defaultValue' // already taken over
             |'value'        // already taken over
@@ -99,7 +103,12 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
         defaultValue : defaultUncontrollableValue = [],
         value        : controllableValue,
         onChange     : onControllableValueChange,
-    ...restListProps} = props;
+        
+        
+        
+        // other props:
+        ...restShippingRateEditorProps
+    } = props;
     
     
     
@@ -136,6 +145,14 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
                 };
             })
         );
+    }, [value]);
+    
+    const isValueValid = useMemo((): boolean => {
+        const uniqueStartingWiths = new Set(
+            value
+            .map(({startingWeight}) => startingWeight)
+        );
+        return (value.length === uniqueStartingWiths.size);
     }, [value]);
     
     
@@ -196,66 +213,96 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
     
     
     
+    // default props:
+    const {
+        // accessibilities:
+        'aria-label' : ariaLabel = 'Rate',
+        
+        
+        
+        // validations:
+        isValid = isValueValid,
+        
+        
+        
+        // other props:
+        ...restEditableControlProps
+    } = restShippingRateEditorProps;
+    
+    
+    
     // jsx:
     return (
-        <List<TElement>
+        <EditableControl<TElement>
             // other props:
-            {...restListProps}
-        >
-            {!mirrorValueWithId.length && <ModelEmpty />}
+            {...restEditableControlProps}
             
-            {mirrorValueWithId.map((shippingRate) =>
-                /* <ModelPreview> */
-                <ShippingRatePreview
-                    // identifiers:
-                    key={shippingRate.id}
+            
+            
+            // accessibilities:
+            aria-label={ariaLabel}
+            
+            
+            
+            // validations:
+            isValid={false}
+        >
+            <List>
+                {!mirrorValueWithId.length && <ModelEmpty />}
+                
+                {mirrorValueWithId.map((shippingRate) =>
+                    /* <ModelPreview> */
+                    <ShippingRatePreview
+                        // identifiers:
+                        key={shippingRate.id}
+                        
+                        
+                        
+                        // data:
+                        model={shippingRate}
+                        
+                        
+                        
+                        // values:
+                        shippingRates={value}
+                        
+                        
+                        
+                        // handlers:
+                        onUpdated={handleModelUpdated}
+                        onDeleted={handleModelDeleted}
+                    />
+                )}
+                
+                {/* <ModelCreate> */}
+                <ModelCreateOuter<ShippingRate & { id: string }>
+                    // classes:
+                    className='solid'
                     
                     
                     
-                    // data:
-                    model={shippingRate}
+                    // accessibilities:
+                    createItemText='Add New Curve'
                     
                     
                     
-                    // values:
-                    shippingRates={value}
+                    // components:
+                    modelCreateComponent={
+                        (isDisabledOrReadOnly || ((lastValue !== undefined) && (lastValue.startingWeight >= 1000))) // reaches the limit => disable adding
+                        ? false
+                        : handleModelCreate
+                    }
+                    listItemComponent={
+                        <ListItem />
+                    }
                     
                     
                     
                     // handlers:
-                    onUpdated={handleModelUpdated}
-                    onDeleted={handleModelDeleted}
+                    onCreated={handleModelCreated}
                 />
-            )}
-            
-            {/* <ModelCreate> */}
-            <ModelCreateOuter<ShippingRate & { id: string }>
-                // classes:
-                className='solid'
-                
-                
-                
-                // accessibilities:
-                createItemText='Add New Curve'
-                
-                
-                
-                // components:
-                modelCreateComponent={
-                    (isDisabledOrReadOnly || ((lastValue !== undefined) && (lastValue.startingWeight >= 1000))) // reaches the limit => disable adding
-                    ? false
-                    : handleModelCreate
-                }
-                listItemComponent={
-                    <ListItem />
-                }
-                
-                
-                
-                // handlers:
-                onCreated={handleModelCreated}
-            />
-        </List>
+            </List>
+        </EditableControl>
     );
 };
 export {

@@ -109,6 +109,10 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
     
     
     
+    const otherStartingWeights = shippingRates.map(({startingWeight}) => startingWeight);
+    
+    
+    
     // accessibilities:
     const propEnabled          = usePropEnabled(props);
     const propReadOnly         = usePropReadOnly(props);
@@ -122,7 +126,6 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
         if (!onUpdated) return;
         
         let newStartingWeight = newValue ?? 0;
-        const otherStartingWeights = shippingRates.map(({startingWeight}) => startingWeight);
         if (otherStartingWeights.includes(newStartingWeight)) { // a duplicate found
             // try to de-duplicate:
             newStartingWeight += (newStartingWeight >= startingWeight) ? 0.01 : -0.01; // jump more
@@ -178,6 +181,15 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
                 
                 // validations:
                 required={true}
+                isValid={
+                    (startingWeight >= 0)
+                    &&
+                    (startingWeight <= 1000)
+                    &&
+                    (((startingWeight % 0.01) < 0.0000001) || ((0.01 - (startingWeight % 0.01)) < 0.0000001))
+                    &&
+                    (otherStartingWeights.filter((otherStartingWeight) => (otherStartingWeight === startingWeight)).length === 1)
+                }
                 
                 
                 

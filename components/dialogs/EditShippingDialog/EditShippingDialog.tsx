@@ -400,7 +400,6 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                         
                         
                         // accessibilities:
-                        aria-label='Rate'
                         readOnly={!(whenUpdate.price || whenAdd)}
                         
                         
