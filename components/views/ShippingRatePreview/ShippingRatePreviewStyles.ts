@@ -1,20 +1,18 @@
 // cssfn:
 import {
     children,
-    descendants,
     style,
 }                           from '@cssfn/core'          // writes css in javascript
-import { spacers, typos, usesBorder, usesPadding } from '@reusable-ui/core';
-import { basics } from '@reusable-ui/components';
+
+// reusable-ui core:
+import {
+    spacers,
+}                           from '@reusable-ui/core'    // a set of reusable-ui packages which are responsible for building any component
 
 
 
 // styles:
 const usesShippingRatePreviewLayout = () => { // the <ListItem> of shipping list
-    // dependencies:
-    
-    
-    
     return style({
         // layouts:
         display            : 'grid',
@@ -28,8 +26,7 @@ const usesShippingRatePreviewLayout = () => { // the <ListItem> of shipping list
         
         
         // spacings:
-        gapInline          : spacers.sm,
-        gapBlock           : spacers.sm,
+        gapInline          : spacers.md,
         
         
         

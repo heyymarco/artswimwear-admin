@@ -4,26 +4,7 @@
 import {
     // react:
     default as React,
-    
-    
-    
-    // hooks:
-    useRef,
 }                           from 'react'
-
-// react-redux:
-import type {
-    MutationDefinition,
-    BaseQueryFn,
-}                           from '@reduxjs/toolkit/dist/query'
-import type {
-    MutationTrigger,
-}                           from '@reduxjs/toolkit/dist/query/react/buildHooks'
-
-// // next-js:
-// import type {
-//     Metadata,
-// }                           from 'next'
 
 // next-auth:
 import {
@@ -46,11 +27,6 @@ import {
 import {
     // layout-components:
     ListItem,
-    
-    
-    
-    // utility-components:
-    useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // internal components:
@@ -59,37 +35,23 @@ import {
 }                           from '@/components/explorers/PagedModelExplorer'
 import type {
     // types:
-    ComplexEditModelDialogResult,
     UpdatedHandler,
     DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
-    EditButton,
-}                           from '@/components/EditButton'
+    type EditorChangeEventHandler,
+}                           from '@/components/editors/Editor'
 import {
     ShippingWeightEditor,
 }                           from '@/components/editors/ShippingWeightEditor'
 import {
     PriceEditor,
 }                           from '@/components/editors/PriceEditor'
-import {
-    DummyDialog,
-}                           from '@/components/dialogs/DummyDialog'
-import {
-    UpdateModelApi,
-    SimpleEditModelDialog,
-}                           from '@/components/dialogs/SimpleEditModelDialog'
 
 // models:
 import {
     type ShippingRate,
 }                           from '@/models'
-
-// internals:
-import type {
-    Model,
-    MutationArgs,
-}                           from '@/libs/types'
 
 
 
@@ -139,6 +101,30 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
     
     
     
+    // handlers:
+    const handleStartingWeightChange = useEvent<EditorChangeEventHandler<number | null>>((newValue) => {
+        // conditions:
+        if (!onUpdated) return;
+        
+        
+        
+        // actions:
+        model.startingWeight = newValue ?? 0;
+        onUpdated(model);
+    });
+    const handleRateChange           = useEvent<EditorChangeEventHandler<number | null>>((newValue) => {
+        // conditions:
+        if (!onUpdated) return;
+        
+        
+        
+        // actions:
+        model.rate = newValue ?? 0;
+        onUpdated(model);
+    });
+    
+    
+    
     // jsx:
     return (
         <ListItem
@@ -170,7 +156,7 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
                 
                 // values:
                 value={startingWeight}
-                onChange={(newValue) => onUpdated?.({ id: id, startingWeight: newValue ?? 0 })}
+                onChange={handleStartingWeightChange}
             />
             
             <PriceEditor
@@ -180,7 +166,7 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
                 
                 
                 // accessibilities:
-                aria-label='Starting Weight'
+                aria-label='Rate'
                 min={0}
                 
                 
@@ -192,18 +178,8 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
                 
                 // values:
                 value={rate}
-                onChange={(newValue) => onUpdated?.({ id: id, rate: newValue ?? 0 })}
+                onChange={handleRateChange}
             />
-            
-            
-            {/* <p className='startingWeight'>
-                Starting Weight: <strong className='value'>{startingWeight}</strong>
-                {privilegeUpdatePrice  && <EditButton onClick={() => handleEdit('startingWeight')} />}
-            </p> */}
-            {/* <p className='rate'>
-                {rate}
-                {privilegeUpdatePrice && <EditButton onClick={() => handleEdit('rate')} />}
-            </p> */}
         </ListItem>
     );
 };
