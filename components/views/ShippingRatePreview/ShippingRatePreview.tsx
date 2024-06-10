@@ -25,6 +25,11 @@ import {
 
 // reusable-ui components:
 import {
+    // simple-components:
+    ButtonIcon,
+    
+    
+    
     // layout-components:
     ListItem,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
@@ -121,6 +126,9 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
         model.rate = newValue ?? 0;
         onUpdated(model);
     });
+    const handleDelete               = useEvent(() => {
+        onDeleted?.(model);
+    });
     
     
     
@@ -178,6 +186,31 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
                 // values:
                 value={rate}
                 onChange={handleRateChange}
+            />
+            
+            <ButtonIcon
+                // appearances:
+                icon='delete'
+                
+                
+                
+                // variants:
+                buttonStyle='link'
+                
+                
+                
+                // classes:
+                className='delete'
+                
+                
+                
+                // accessibilities:
+                title='Delete'
+                
+                
+                
+                // handlers:
+                onClick={handleDelete}
             />
         </ListItem>
     );
