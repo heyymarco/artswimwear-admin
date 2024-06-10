@@ -143,7 +143,7 @@ export interface ModelCreateOuterProps<TModel extends Model>
     
     
     // components:
-    modelCreateComponent  : React.ReactComponentElement<any, ModelCreateProps> | (() => TModel|Promise<TModel>)
+    modelCreateComponent  : React.ReactComponentElement<any, ModelCreateProps> | (() => TModel|Promise<TModel>) | false
     moreButtonComponent  ?: React.ReactComponentElement<any, DropdownListButtonProps>
     
     
@@ -191,6 +191,12 @@ export const ModelCreateOuter = <TModel extends Model>(props: ModelCreateOuterPr
     
     // handlers:
     const handleShowDialog = useEvent(async (): Promise<void> => {
+        // conditions:
+        if (modelCreateComponent === false) return;
+        
+        
+        
+        // actions:
         const createdModel = (
             (typeof(modelCreateComponent) === 'function')
             ? await modelCreateComponent()
@@ -211,7 +217,29 @@ export const ModelCreateOuter = <TModel extends Model>(props: ModelCreateOuterPr
     
     // jsx:
     const addNewBUtton = (
-        <ButtonIcon icon='create' className='fluid' onClick={handleShowDialog}>
+        <ButtonIcon
+            // appearances:
+            icon='create'
+            
+            
+            
+            // classes:
+            className='fluid'
+            
+            
+            
+            // states:
+            enabled={
+                (modelCreateComponent === false)
+                ? false
+                : true
+            }
+            
+            
+            
+            // handlers:
+            onClick={handleShowDialog}
+        >
             {createItemText ?? 'Add New Item'}
         </ButtonIcon>
     );

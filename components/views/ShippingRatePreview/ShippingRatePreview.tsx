@@ -152,7 +152,7 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
                 // accessibilities:
                 aria-label='Starting Weight'
                 min={0}
-                max={999}
+                max={1000}
                 
                 
                 
