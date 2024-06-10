@@ -118,7 +118,7 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
     
     
     // handlers:
-    const handleStartingWeightChange = useEvent<EditorChangeEventHandler<number | null>>((newValue) => {
+    const handleStartingWeightChange = useEvent<EditorChangeEventHandler<number|null>>((newValue) => {
         // conditions:
         if (!onUpdated) return;
         
@@ -135,7 +135,7 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
         model.startingWeight = newStartingWeight;
         onUpdated(model);
     });
-    const handleRateChange           = useEvent<EditorChangeEventHandler<number | null>>((newValue) => {
+    const handleRateChange           = useEvent<EditorChangeEventHandler<number|null>>((newValue) => {
         // conditions:
         if (!onUpdated) return;
         

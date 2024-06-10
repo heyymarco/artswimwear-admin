@@ -58,6 +58,9 @@ import {
     ShippingRateEditor,
 }                           from '@/components/editors/ShippingRateEditor'
 import {
+    CoverageCountryEditor,
+}                           from '@/components/editors/CoverageCountryEditor'
+import {
     // types:
     UpdateHandler,
     
@@ -82,6 +85,7 @@ import {
     // types:
     type ShippingDetail,
     type ShippingRate,
+    type CoverageCountry,
 }                           from '@/models'
 
 // stores:
@@ -150,6 +154,16 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             shippingRates
             .map((shippingRate) => ({
                 ...shippingRate, // clone => immutable => mutable
+            }))
+        );
+    });
+    const [countries    , setCountries    ] = useState<CoverageCountry[] >(() => {
+        const countries = model?.countries;
+        if (!countries) return [];
+        return (
+            countries
+            .map((country) => ({
+                ...country, // clone => immutable => mutable
             }))
         );
     });
@@ -416,7 +430,24 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                 </form>
             </TabPanel>
             <TabPanel label={PAGE_SHIPPING_TAB_SPECIFIC_RATES} panelComponent={<Generic className={styleSheet.specificRatesTab} />}>
-                // test
+                <CoverageCountryEditor
+                    // classes:
+                    className='country editor'
+                    
+                    
+                    
+                    // accessibilities:
+                    readOnly={!(whenUpdate.price || whenAdd)}
+                    
+                    
+                    
+                    // values:
+                    value={countries}
+                    onChange={(value) => {
+                        setCountries(value);
+                        setIsModified(true);
+                    }}
+                />
             </TabPanel>
         </>}</ComplexEditModelDialog>
     );

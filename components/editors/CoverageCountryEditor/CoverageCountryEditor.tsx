@@ -57,13 +57,13 @@ import {
     ModelEmpty,
 }                           from '@/components/explorers/PagedModelExplorer'
 import {
-    ShippingRatePreview,
-}                           from '@/components/views/ShippingRatePreview'
+    CoverageCountryPreview,
+}                           from '@/components/views/CoverageCountryPreview'
 
 // models:
 import {
     // types:
-    type ShippingRate,
+    type CoverageCountry,
 }                           from '@/models'
 
 // others:
@@ -74,10 +74,10 @@ import {
 
 
 // react components:
-export interface ShippingRateEditorProps<TElement extends Element = HTMLElement>
+export interface CoverageCountryEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Pick<EditorProps<TElement, ShippingRate[]>,
+        Pick<EditorProps<TElement, CoverageCountry[]>,
             // values:
             |'defaultValue' // not supported, controllable only
             |'value'
@@ -96,7 +96,7 @@ export interface ShippingRateEditorProps<TElement extends Element = HTMLElement>
         >
 {
 }
-const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: ShippingRateEditorProps<TElement>): JSX.Element|null => {
+const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: CoverageCountryEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // values:
@@ -107,7 +107,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
         
         
         // other props:
-        ...restShippingRateEditorProps
+        ...restCoverageCountryEditorProps
     } = props;
     
     
@@ -116,16 +116,14 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
     const {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllableAndUncontrollable<ShippingRate[]>({
+    } = useControllableAndUncontrollable<CoverageCountry[]>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
         onValueChange      : onControllableValueChange,
     });
     
-    const lastValue : ShippingRate|undefined = value.length ? value[value.length - 1] : undefined;
-    
-    const [idMap] = useState<Map<ShippingRate, string>>(() => new Map<ShippingRate, string>());
-    const mirrorValueWithId = useMemo((): (ShippingRate & { id: string })[] => {
+    const [idMap] = useState<Map<CoverageCountry, string>>(() => new Map<CoverageCountry, string>());
+    const mirrorValueWithId = useMemo((): (CoverageCountry & { id: string })[] => {
         const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
         return (
             value
@@ -148,11 +146,11 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
     }, [value]);
     
     const isValueValid = useMemo((): boolean => {
-        const uniqueStartingWiths = new Set(
+        const uniqueCountries = new Set(
             value
-            .map(({startingWeight}) => startingWeight)
+            .map(({country}) => country)
         );
-        return (value.length === uniqueStartingWiths.size);
+        return (value.length === uniqueCountries.size);
     }, [value]);
     
     
@@ -165,25 +163,28 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
     
     
     // handlers:
-    const handleModelCreate  = useEvent((): ShippingRate & { id: string } => {
+    const handleModelCreate  = useEvent((): CoverageCountry & { id: string } => {
         return {
-            id             : '', // will be removed
+            id              : '', // will be removed
             
-            startingWeight : (lastValue === undefined) ? 0 : ((lastValue.startingWeight) + 0.01),
-            rate           : (lastValue === undefined) ? 0 :   lastValue.rate,
+            country         : '',
+            estimate        : null,
+            shippingRates   : [],
+            useSpecificArea : true,
+            zones           : [],
         };
     });
-    const handleModelCreated = useEvent<CreateHandler<ShippingRate & { id: string }>>((createdModelWithId) => {
+    const handleModelCreated = useEvent<CreateHandler<CoverageCountry & { id: string }>>((createdModelWithId) => {
         const {
             id : _id, // remove
             ...createdModel
         } = createdModelWithId;
         
         const mutatedValue = value.slice(0); // copy
-        mutatedValue.push(createdModel as ShippingRate & { id: string });
+        mutatedValue.push(createdModel as CoverageCountry & { id: string });
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
-    const handleModelUpdated = useEvent<UpdatedHandler<ShippingRate & { id: string }>>((updatedModelWithId) => {
+    const handleModelUpdated = useEvent<UpdatedHandler<CoverageCountry & { id: string }>>((updatedModelWithId) => {
         const {
             id : findId, // take
             ...mutatedModel
@@ -192,19 +193,21 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
         const mutatedValue = value.slice(0); // copy
         const modelIndex = mirrorValueWithId.findIndex((model) => model.id === findId);
         if (modelIndex < 0) {
-            mutatedValue.unshift(mutatedModel as ShippingRate & { id: string });
+            mutatedValue.unshift(mutatedModel as CoverageCountry & { id: string });
         }
         else {
-            const currentModel          = mutatedValue[modelIndex];
-            currentModel.startingWeight = mutatedModel.startingWeight ?? 0;
-            currentModel.rate           = mutatedModel.rate ?? 0;
+            const currentModel           = mutatedValue[modelIndex];
+            currentModel.country         = mutatedModel.country         ?? '';
+            currentModel.estimate        = mutatedModel.estimate        || null;
+            currentModel.shippingRates   = mutatedModel.shippingRates   ?? [];
+            currentModel.useSpecificArea = mutatedModel.useSpecificArea ?? true;
+            currentModel.zones           = mutatedModel.zones           ?? [];
             
             mutatedValue[modelIndex] = currentModel;
         } // if
-        mutatedValue.sort((a, b) => (a.startingWeight - b.startingWeight));
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
-    const handleModelDeleted = useEvent<DeleteHandler<ShippingRate & { id: string }>>(({id}) => {
+    const handleModelDeleted = useEvent<DeleteHandler<CoverageCountry & { id: string }>>(({id}) => {
         const mutatedValue = value.slice(0); // copy
         const modelIndex = mirrorValueWithId.findIndex((model) => model.id === id);
         if (modelIndex < 0) return;
@@ -234,7 +237,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
         
         // other props:
         ...restEditableControlProps
-    } = restShippingRateEditorProps;
+    } = restCoverageCountryEditorProps;
     
     
     
@@ -263,21 +266,21 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
             <List>
                 {!mirrorValueWithId.length && <ModelEmpty />}
                 
-                {mirrorValueWithId.map((shippingRate) =>
+                {mirrorValueWithId.map((coverageCountry) =>
                     /* <ModelPreview> */
-                    <ShippingRatePreview
+                    <CoverageCountryPreview
                         // identifiers:
-                        key={shippingRate.id}
+                        key={coverageCountry.id}
                         
                         
                         
                         // data:
-                        model={shippingRate}
+                        model={coverageCountry}
                         
                         
                         
                         // values:
-                        shippingRates={mirrorValueWithId}
+                        coverageCountries={mirrorValueWithId}
                         
                         
                         
@@ -288,20 +291,20 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
                 )}
                 
                 {/* <ModelCreate> */}
-                <ModelCreateOuter<ShippingRate & { id: string }>
+                <ModelCreateOuter<CoverageCountry & { id: string }>
                     // classes:
                     className='solid'
                     
                     
                     
                     // accessibilities:
-                    createItemText='Add New Curve'
+                    createItemText='Add New Country'
                     
                     
                     
                     // components:
                     modelCreateComponent={
-                        (isDisabledOrReadOnly || ((lastValue !== undefined) && (lastValue.startingWeight >= 1000))) // reaches the limit => disable adding
+                        isDisabledOrReadOnly
                         ? false
                         : handleModelCreate
                     }
@@ -319,6 +322,6 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
     );
 };
 export {
-    ShippingRateEditor,
-    ShippingRateEditor as default,
+    CoverageCountryEditor,
+    CoverageCountryEditor as default,
 }
