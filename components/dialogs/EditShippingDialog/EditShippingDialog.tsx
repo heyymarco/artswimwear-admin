@@ -479,7 +479,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                 >
                     <CoverageCountryEditor
                         // data:
-                        shippingProviderId={model?.id ?? ' newId' /* a dummy id starting with empty space */}
+                        parentModelId={model?.id ?? ' newId' /* a dummy id starting with empty space */}
                         
                         
                         

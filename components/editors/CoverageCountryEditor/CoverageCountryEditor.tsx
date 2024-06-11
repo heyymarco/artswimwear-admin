@@ -121,13 +121,13 @@ export interface CoverageCountryEditorProps<TElement extends Element = HTMLEleme
         >
 {
     // data:
-    shippingProviderId : string
+    parentModelId : string
 }
 const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: CoverageCountryEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // data:
-        shippingProviderId,
+        parentModelId,
         
         
         
@@ -223,7 +223,7 @@ const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: Co
         ...restShippingState
     } = useShippingState();
     
-    const whenDraft = (shippingProviderId[0] === ' '); // any id(s) starting with a space => draft id
+    const whenDraft = (parentModelId[0] === ' '); // any id(s) starting with a space => draft id
     /*
         when edit_mode (update):
             * the editing  capability follows the `privilegeProductUpdate`
