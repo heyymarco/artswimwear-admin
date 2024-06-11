@@ -132,7 +132,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
             .map((item) => {
                 let id = idMap.get(item);
                 if (id === undefined) {
-                    id = ` ${nanoid()}`; // starts with space{random-temporary-id}
+                    id = nanoid();
                     idMap.set(item, id);
                     // console.log('auto generated id: ', item, id);
                 } // if
