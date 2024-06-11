@@ -141,6 +141,12 @@ export const usesSpecificRatesTabLayout = () => {
         
         
         
+        // scrolls:
+        overscrollBehavior      : 'none',
+        scrollPaddingBlockStart : '1.75rem', // makes scroll to field's label
+        
+        
+        
         // spacings:
         gapInline          : spacers.default,
         gapBlock           : spacers.xs,
