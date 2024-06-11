@@ -27,7 +27,12 @@ import {
 // reusable-ui components:
 import {
     // simple-components:
-    ButtonIcon,
+    Icon,
+    
+    
+    
+    // utility-components:
+    useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // heymarco components:
@@ -38,16 +43,23 @@ import {
 
 // internal components:
 import {
+    EditButton,
+}                           from '@/components/EditButton'
+import {
     Grip,
 }                           from '@/components/Grip'
 import {
     ModelPreviewProps,
 }                           from '@/components/explorers/PagedModelExplorer'
-import type {
+import {
     // types:
-    UpdatedHandler,
-    DeleteHandler,
+    type ComplexEditModelDialogResult,
+    type UpdatedHandler,
+    type DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
+import {
+    EditCoverageCountryDialog,
+}                           from '@/components/dialogs/EditCoverageCountryDialog'
 import {
     type EditorChangeEventHandler,
 }                           from '@/components/editors/Editor'
@@ -121,19 +133,68 @@ const CoverageCountryPreview = (props: CoverageCountryPreviewProps): JSX.Element
     
     
     
+    // dialogs:
+    const {
+        showDialog,
+    } = useDialogMessage();
+    
+    
+    
+    // // states:
+    // // workaround for penetrating <ShippingStateProvider> to showDialog():
+    // const {
+    //     // privileges:
+    //     privilegeAdd,
+    //     privilegeUpdate : privilegeUpdateRaw,
+    //     privilegeDelete : privilegeDeleteRaw,
+    // ...restShippingState} = useShippingState();
+    // 
+    // const whenDraft = (id[0] === ' '); // any id(s) starting with a space => draft id
+    // /*
+    //     when edit_mode (update):
+    //         * the editing  capability follows the `privilegeProductUpdate`
+    //         * the deleting capability follows the `privilegeProductDelete`
+    //     
+    //     when create_mode (add):
+    //         * ALWAYS be ABLE to edit   the Shipping (because the data is *not_yet_exsist* on the database)
+    //         * ALWAYS be ABLE to delete the Shipping (because the data is *not_yet_exsist* on the database)
+    // */
+    // const privilegeUpdate = whenDraft ? privilegeShippingUpdateFullAccess : privilegeUpdateRaw;
+    // const privilegeDelete = whenDraft ?               true                : privilegeDeleteRaw;
+    
+    
+    
     // handlers:
-    const handleCountryChange = useEvent<EditorChangeEventHandler<string|null>>((newValue) => {
-        // conditions:
-        if (!onUpdated) return;
-        
-        
-        
-        // actions:
-        model.country = newValue ?? '';
-        onUpdated(model);
-    });
-    const handleDelete        = useEvent(() => {
-        onDeleted?.(model);
+    const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async () => {
+        const updatedCoverageCountryModel = await showDialog<ComplexEditModelDialogResult<CoverageCountry & { id: string }>>(
+            <EditCoverageCountryDialog
+                // data:
+                model={model} // modify current model
+                
+                
+                
+                // // workaround for penetrating <ShippingStateProvider> to showDialog():
+                // {...restShippingState}
+                
+                
+                
+                // // privileges:
+                // privilegeAdd    = {privilegeAdd   }
+                // privilegeUpdate = {privilegeUpdate}
+                // privilegeDelete = {privilegeDelete}
+            />
+        );
+        switch (updatedCoverageCountryModel) {
+            case undefined: // dialog canceled
+                break;
+            
+            case false:     // dialog deleted
+                await onDeleted?.(model);
+                break;
+            
+            default:        // dialog updated
+                await onUpdated?.(updatedCoverageCountryModel);
+        } // switch
     });
     
     
@@ -158,30 +219,9 @@ const CoverageCountryPreview = (props: CoverageCountryPreviewProps): JSX.Element
             
             <Grip className='grip' enabled={!isDisabledOrReadOnly} />
             
-            <ButtonIcon
-                // appearances:
-                icon='delete'
-                
-                
-                
-                // variants:
-                buttonStyle='link'
-                
-                
-                
-                // classes:
-                className='delete'
-                
-                
-                
-                // accessibilities:
-                enabled={!isDisabledOrReadOnly}
-                title='Delete'
-                
-                
-                
-                // handlers:
-                onClick={handleDelete}
+            <EditButton
+                iconComponent={<Icon icon='edit' />}
+                onClick={handleEditButtonClick}
             />
         </OrderableListItem>
     );
