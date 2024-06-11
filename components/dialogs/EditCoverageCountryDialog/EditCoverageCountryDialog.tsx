@@ -373,7 +373,7 @@ const EditCoverageCountryDialog = (props: EditCoverageCountryDialogProps): JSX.E
                         privilegeUpdate = {privilegeUpdate}
                         privilegeDelete = {privilegeDelete}
                 >
-                    // todo add nested zone editor here
+                    {/* TODO add nested zone editor here */}
                 </ShippingStateProvider>
             </TabPanel>
         </>}</ComplexEditModelDialog>
