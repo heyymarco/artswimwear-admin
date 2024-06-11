@@ -86,7 +86,7 @@ import {
     // types:
     type CoverageCountry,
     type ShippingRate,
-    type CoverageZone,
+    type CoverageState,
 }                           from '@/models'
 
 // configs:
@@ -161,7 +161,7 @@ const EditCoverageCountryDialog = (props: EditCoverageCountryDialogProps): JSX.E
     });
     
     const [useSpecificArea, setUseSpecificArea] = useState<boolean       >(model?.useSpecificArea ?? true);
-    const [zones          , setZones          ] = useState<CoverageZone[]>(() => {
+    const [zones          , setZones          ] = useState<CoverageState[]>(() => {
         const zones = model?.zones;
         if (!zones) return [];
         return (
