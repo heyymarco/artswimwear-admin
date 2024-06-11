@@ -195,7 +195,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
         visibility  : !!role?.shipping_uv,
     }), [role]);
     const privilegeDelete = !!role?.shipping_d;
-    // const privilegeWrite             = (
+    // const privilegeWrite  = (
     //     /* privilegeAdd */ // except for add
     //     privilegeUpdate.description
     //     || privilegeUpdate.price
