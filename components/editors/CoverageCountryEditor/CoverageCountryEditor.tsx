@@ -183,11 +183,11 @@ const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: Co
     }, [value]);
     
     const isValueValid = useMemo((): boolean => {
-        const uniqueCountries = new Set(
+        const uniqueNames = new Set(
             value
-            .map(({country}) => country)
+            .map(({name}) => name)
         );
-        return (value.length === uniqueCountries.size);
+        return (value.length === uniqueNames.size);
     }, [value]);
     
     
@@ -273,7 +273,7 @@ const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: Co
         }
         else {
             const currentModel           = mutatedValue[modelIndex];
-            currentModel.country         = mutatedModel.country         ?? '';
+            currentModel.name            = mutatedModel.name            ?? '';
             currentModel.estimate        = mutatedModel.estimate        || null;
             currentModel.shippingRates   = mutatedModel.shippingRates   ?? [];
             currentModel.useSpecificArea = mutatedModel.useSpecificArea ?? true;

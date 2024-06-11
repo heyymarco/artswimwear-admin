@@ -146,7 +146,7 @@ const EditCoverageCountryDialog = (props: EditCoverageCountryDialogProps): JSX.E
     // states:
     const [isModified     , setIsModified     ] = useState<boolean>(false);
     
-    const [country        , setCountry        ] = useState<string        >(model?.country         ?? ''     );
+    const [name           , setName           ] = useState<string        >(model?.name            ?? ''     );
     
     const [estimate       , setEstimate       ] = useState<string        >(model?.estimate        ?? ''     );
     const [shippingRates  , setShippingRates  ] = useState<ShippingRate[]>(() => {
@@ -190,7 +190,7 @@ const EditCoverageCountryDialog = (props: EditCoverageCountryDialogProps): JSX.E
         return {
             id              : id ?? '',
             
-            country         : (whenUpdate.description || whenAdd) ? country            : undefined,
+            name            : (whenUpdate.description || whenAdd) ? name               : undefined,
             
             estimate        : (whenUpdate.description || whenAdd) ? (estimate || null) : undefined,
             shippingRates   : (whenUpdate.price       || whenAdd) ? shippingRates      : undefined,
@@ -205,7 +205,7 @@ const EditCoverageCountryDialog = (props: EditCoverageCountryDialogProps): JSX.E
             title   : <h1>Delete Confirmation</h1>,
             message : <>
                 <p>
-                    Are you sure to delete <strong>{model.country}</strong>?
+                    Are you sure to delete <strong>{model.name}</strong>?
                 </p>
             </>,
         };
@@ -231,7 +231,7 @@ const EditCoverageCountryDialog = (props: EditCoverageCountryDialogProps): JSX.E
             
             // data:
             modelName='Country'
-            modelEntryName={model?.country}
+            modelEntryName={model?.name}
             model={model}
             
             
@@ -289,9 +289,9 @@ const EditCoverageCountryDialog = (props: EditCoverageCountryDialogProps): JSX.E
                         
                         
                         // values:
-                        value={country}
+                        value={name}
                         onChange={(value) => {
-                            setCountry(value);
+                            setName(value);
                             setIsModified(true);
                         }}
                     />

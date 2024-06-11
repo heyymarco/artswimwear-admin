@@ -126,8 +126,8 @@ const CoverageCountryPreview = (props: CoverageCountryPreviewProps): JSX.Element
         onDeleted,
     ...restOrderableListItemProps} = props;
     const {
-        id : coverageCountryId,
-        country,
+        id : coverageZoneId,
+        name,
     } = model;
     
     
@@ -157,7 +157,7 @@ const CoverageCountryPreview = (props: CoverageCountryPreviewProps): JSX.Element
         ...restShippingState
     } = useShippingState();
     
-    const whenDraft = (coverageCountryId[0] === ' '); // any id(s) starting with a space => draft id
+    const whenDraft = (coverageZoneId[0] === ' '); // any id(s) starting with a space => draft id
     /*
         when edit_mode (update):
             * the editing  capability follows the `privilegeProductUpdate`
@@ -223,7 +223,7 @@ const CoverageCountryPreview = (props: CoverageCountryPreviewProps): JSX.Element
             // handlers:
             onOrderStart={handleOrderStart}
         >
-            {country}
+            {name}
             
             <Grip className='grip' enabled={!isDisabledOrReadOnly} />
             
