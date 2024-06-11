@@ -57,9 +57,6 @@ import {
     ShippingRateEditor,
 }                           from '@/components/editors/ShippingRateEditor'
 import {
-    CoverageCountryEditor,
-}                           from '@/components/editors/CoverageCountryEditor'
-import {
     // types:
     UpdateHandler,
     
@@ -170,7 +167,7 @@ const EditCoverageCountryDialog = (props: EditCoverageCountryDialogProps): JSX.E
     
     
     // handlers:
-    const handleUpdate               = useEvent<UpdateHandler<CoverageCountry & { id: string }>>(({id, whenAdd, whenUpdate}) => {
+    const handleUpdate         = useEvent<UpdateHandler<CoverageCountry & { id: string }>>(({id, whenAdd, whenUpdate}) => {
         return {
             id              : id ?? '',
             
@@ -184,7 +181,7 @@ const EditCoverageCountryDialog = (props: EditCoverageCountryDialogProps): JSX.E
         } satisfies Partial<CoverageCountry & { id: string }>;
     });
     
-    const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<(CoverageCountry & { id: string })>>(({model}) => {
+    const handleConfirmDelete  = useEvent<ConfirmDeleteHandler<(CoverageCountry & { id: string })>>(({model}) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
@@ -194,7 +191,7 @@ const EditCoverageCountryDialog = (props: EditCoverageCountryDialogProps): JSX.E
             </>,
         };
     });
-    const handleConfirmUnsaved       = useEvent<ConfirmUnsavedHandler<(CoverageCountry & { id: string })>>(() => {
+    const handleConfirmUnsaved = useEvent<ConfirmUnsavedHandler<(CoverageCountry & { id: string })>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>

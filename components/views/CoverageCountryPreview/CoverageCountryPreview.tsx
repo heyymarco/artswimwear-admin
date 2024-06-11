@@ -28,14 +28,18 @@ import {
 import {
     // simple-components:
     ButtonIcon,
-    
-    
-    
-    // layout-components:
-    ListItem,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
+// heymarco components:
+import {
+    OrderableListItemDragStartEvent,
+    OrderableListItem,
+}                           from '@heymarco/orderable-list'
+
 // internal components:
+import {
+    Grip,
+}                           from '@/components/Grip'
 import {
     ModelPreviewProps,
 }                           from '@/components/explorers/PagedModelExplorer'
@@ -60,6 +64,13 @@ const usePageStyleSheet = dynamicStyleSheet(
     () => import(/* webpackPrefetch: true */'./CoverageCountryPreviewStyles')
 , { specificityWeight: 2, id: 'uf3vqkp1o4' });
 import './CoverageCountryPreviewStyles';
+
+
+
+// handlers:
+const handleOrderStart = (event: OrderableListItemDragStartEvent<HTMLElement>): void => {
+    if (!(event.target as HTMLElement)?.classList?.contains?.('grip')) event.response = false;
+};
 
 
 
@@ -95,7 +106,7 @@ const CoverageCountryPreview = (props: CoverageCountryPreviewProps): JSX.Element
         // handlers:
         onUpdated,
         onDeleted,
-    ...restListItemProps} = props;
+    ...restOrderableListItemProps} = props;
     const {
         id,
         country,
@@ -129,16 +140,23 @@ const CoverageCountryPreview = (props: CoverageCountryPreviewProps): JSX.Element
     
     // jsx:
     return (
-        <ListItem
+        <OrderableListItem
             // other props:
-            {...restListItemProps}
+            {...restOrderableListItemProps}
             
             
             
             // classes:
             className={styleSheet.main}
+            
+            
+            
+            // handlers:
+            onOrderStart={handleOrderStart}
         >
             {country}
+            
+            <Grip className='grip' enabled={!isDisabledOrReadOnly} />
             
             <ButtonIcon
                 // appearances:
@@ -165,7 +183,7 @@ const CoverageCountryPreview = (props: CoverageCountryPreviewProps): JSX.Element
                 // handlers:
                 onClick={handleDelete}
             />
-        </ListItem>
+        </OrderableListItem>
     );
 };
 export {

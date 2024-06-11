@@ -116,6 +116,35 @@ export const usesDefaultRatesTabLayout = () => {
 };
 export const usesSpecificRatesTabLayout = () => {
     return style({
+        // layouts:
+        display            : 'grid',
+        alignContent       : 'start',
+        gridTemplate       : [[
+            '"useArea-editor"', 'auto',
+            '".............."', spacers.sm,
+            '"zone-editor   "', 'auto',
+            '/',
+            '1fr'
+        ]],
+        
+        
+        
+        // scrolls:
+        overscrollBehavior      : 'none',
+        scrollPaddingBlockStart : '1.75rem', // makes scroll to field's label
+        
+        
+        
+        // spacings:
+        gapInline          : spacers.default,
+        gapBlock           : spacers.xs,
+        
+        
+        
+        // children:
+        ...children('.useArea.editor', { gridArea: 'useArea-editor' }),
+        
+        ...children('.zone.editor'   , { gridArea: 'zone-editor' }),
     });
 };
 

@@ -33,13 +33,15 @@ import {
     // base-components:
     type EditableControlProps,
     EditableControl,
-    
-    
-    
-    // layout-components:
-    ListItem,
-    List,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
+
+// heymarco components:
+import {
+    OrderableListItemProps,
+    OrderableListItem,
+    
+    OrderableList,
+}                           from '@heymarco/orderable-list'
 
 // internal components:
 import type {
@@ -166,7 +168,18 @@ const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: Co
     
     
     // handlers:
-    const handleModelCreated = useEvent<CreateHandler<CoverageCountry & { id: string }>>((createdModelWithId) => {
+    const handleChildrenChange = useEvent((newChildren: React.ReactComponentElement<any, OrderableListItemProps<HTMLElement, unknown>>[]) => {
+        const restChildren = newChildren.slice(0); // copy
+        restChildren.splice(-1, 1); // remove the <ModelCreate> component
+        triggerValueChange(
+            restChildren
+            .map((modelPreviewComponent) => {
+                const model = (modelPreviewComponent.props as any).model as CoverageCountry & { id: string };
+                return model;
+            })
+        , { triggerAt: 'immediately' });
+    });
+    const handleModelCreated   = useEvent<CreateHandler<CoverageCountry & { id: string }>>((createdModelWithId) => {
         const {
             id : _id, // remove
             ...createdModel
@@ -176,7 +189,7 @@ const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: Co
         mutatedValue.push(createdModel as CoverageCountry & { id: string });
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
-    const handleModelUpdated = useEvent<UpdatedHandler<CoverageCountry & { id: string }>>((updatedModelWithId) => {
+    const handleModelUpdated   = useEvent<UpdatedHandler<CoverageCountry & { id: string }>>((updatedModelWithId) => {
         const {
             id : findId, // take
             ...mutatedModel
@@ -199,7 +212,7 @@ const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: Co
         } // if
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
-    const handleModelDeleted = useEvent<DeleteHandler<CoverageCountry & { id: string }>>(({id}) => {
+    const handleModelDeleted   = useEvent<DeleteHandler<CoverageCountry & { id: string }>>(({id}) => {
         const mutatedValue = value.slice(0); // copy
         const modelIndex = mirrorValueWithId.findIndex((model) => model.id === id);
         if (modelIndex < 0) return;
@@ -255,7 +268,10 @@ const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: Co
             focused={focused}
             arrived={arrived}
         >
-            <List>
+            <OrderableList<HTMLElement, unknown>
+                // values:
+                onChildrenChange={handleChildrenChange}
+            >
                 {!mirrorValueWithId.length && <ModelEmpty />}
                 
                 {mirrorValueWithId.map((coverageCountry) =>
@@ -304,7 +320,9 @@ const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: Co
                         />
                     }
                     listItemComponent={
-                        <ListItem />
+                        <OrderableListItem
+                            orderable={false}
+                        />
                     }
                     
                     
@@ -312,7 +330,7 @@ const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: Co
                     // handlers:
                     onCreated={handleModelCreated}
                 />
-            </List>
+            </OrderableList>
         </EditableControl>
     );
 };

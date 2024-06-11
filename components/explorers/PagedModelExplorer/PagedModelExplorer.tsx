@@ -275,7 +275,9 @@ export const ModelCreateOuter = <TModel extends Model>(props: ModelCreateOuterPr
 export interface ModelPreviewProps<TModel extends Model, TElement extends Element = HTMLElement>
     extends
         // bases:
-        ListItemProps<TElement>
+        Omit<ListItemProps<TElement>,
+            'draggable' // reserved for <OrderableList>
+        >
 {
     // data:
     model : Pagination<TModel>['entities'][number]
