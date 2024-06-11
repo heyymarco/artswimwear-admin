@@ -14,6 +14,7 @@ import {
 import {
     // react helper hooks:
     useEvent,
+    useMergeClasses,
     
     
     
@@ -76,6 +77,11 @@ import {
     customAlphabet,
 }                           from 'nanoid'
 
+// styles:
+import {
+    useCoverageCountryEditorStyleSheet,
+}                           from './styles/loader'
+
 
 
 // react components:
@@ -114,6 +120,11 @@ const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: Co
         // other props:
         ...restCoverageCountryEditorProps
     } = props;
+    
+    
+    
+    // styles:
+    const styleSheet = useCoverageCountryEditorStyleSheet();
     
     
     
@@ -157,6 +168,19 @@ const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: Co
         );
         return (value.length === uniqueCountries.size);
     }, [value]);
+    
+    
+    
+    // classes:
+    const mergedClasses = useMergeClasses(
+        // preserves the original `classes` from `props`:
+        props.classes,
+        
+        
+        
+        // classes:
+        styleSheet.main,
+    );
     
     
     
@@ -254,6 +278,11 @@ const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: Co
             
             
             
+            // classes:
+            classes={mergedClasses}
+            
+            
+            
             // accessibilities:
             aria-label={ariaLabel}
             
@@ -269,6 +298,11 @@ const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: Co
             arrived={arrived}
         >
             <OrderableList<HTMLElement, unknown>
+                // variants:
+                listStyle='flush'
+                
+                
+                
                 // values:
                 onChildrenChange={handleChildrenChange}
             >
