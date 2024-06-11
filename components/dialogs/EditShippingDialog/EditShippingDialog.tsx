@@ -195,7 +195,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     
     
     // handlers:
-    const handleUpdate               = useEvent<UpdateHandler<ShippingDetail>>(async ({id, whenAdd, whenUpdate}) => {
+    const handleUpdate         = useEvent<UpdateHandler<ShippingDetail>>(async ({id, whenAdd, whenUpdate}) => {
         return await updateShipping({
             id              : id ?? '',
             
@@ -211,13 +211,13 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
         }).unwrap();
     });
     
-    const handleDelete               = useEvent<DeleteHandler<ShippingDetail>>(async ({id}) => {
+    const handleDelete         = useEvent<DeleteHandler<ShippingDetail>>(async ({id}) => {
         await deleteShipping({
             id : id,
         }).unwrap();
     });
     
-    const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<ShippingDetail>>(({model}) => {
+    const handleConfirmDelete  = useEvent<ConfirmDeleteHandler<ShippingDetail>>(({model}) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
@@ -230,7 +230,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             </>,
         };
     });
-    const handleConfirmUnsaved       = useEvent<ConfirmUnsavedHandler<ShippingDetail>>(() => {
+    const handleConfirmUnsaved = useEvent<ConfirmUnsavedHandler<ShippingDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>
