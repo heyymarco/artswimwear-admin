@@ -57,17 +57,6 @@ export const usesInfoTabLayout = () => {
                 '/',
                 '1fr'
             ]],
-            ...ifScreenWidthAtLeast('lg', {
-                gridTemplate   : [[
-                    '"name-label               name-label"', 'auto',
-                    '"name-editor             name-editor"', 'auto',
-                    '"................. ................."', spacers.sm,
-                    '"visibility-label   visibility-label"', 'auto',
-                    '"visibility-editor visibility-editor"', 'auto',
-                    '/',
-                    '1fr', '1fr'
-                ]],
-            }),
             
             
             
@@ -139,6 +128,29 @@ export const usesDefaultRatesTabLayout = () => {
 };
 export const usesSpecificRatesTabLayout = () => {
     return style({
+        // layouts:
+        display            : 'grid',
+        alignContent       : 'start',
+        gridTemplate       : [[
+            '"useArea-editor"', 'auto',
+            '".............."', spacers.sm,
+            '"country-editor"', 'auto',
+            '/',
+            '1fr'
+        ]],
+        
+        
+        
+        // spacings:
+        gapInline          : spacers.default,
+        gapBlock           : spacers.xs,
+        
+        
+        
+        // children:
+        ...children('.useArea.editor', { gridArea: 'useArea-editor' }),
+        
+        ...children('.country.editor', { gridArea: 'country-editor' }),
     });
 };
 
