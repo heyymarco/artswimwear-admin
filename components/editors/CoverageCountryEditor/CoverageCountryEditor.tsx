@@ -65,6 +65,20 @@ import {
 import {
     CoverageCountryPreview,
 }                           from '@/components/views/CoverageCountryPreview'
+import {
+    // utilities:
+    privilegeShippingUpdateFullAccess,
+    
+    
+    
+    // states:
+    useShippingState,
+    
+    
+    
+    // react components:
+    ShippingStateProvider,
+}                           from '@/components/editors/CoverageCountryEditor/states/shippingState'
 
 // models:
 import {
@@ -106,10 +120,17 @@ export interface CoverageCountryEditorProps<TElement extends Element = HTMLEleme
             |'children'     // already taken over
         >
 {
+    // data:
+    shippingProviderId : string
 }
 const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: CoverageCountryEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
+        // data:
+        shippingProviderId,
+        
+        
+        
         // values:
         defaultValue : defaultUncontrollableValue = [],
         value        : controllableValue,
@@ -188,6 +209,32 @@ const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: Co
     const propEnabled          = usePropEnabled(props);
     const propReadOnly         = usePropReadOnly(props);
     const isDisabledOrReadOnly = (!propEnabled || propReadOnly);
+    
+    
+    
+    // states:
+    // workaround for penetrating <ShippingStateProvider> to showDialog():
+    const {
+        // privileges:
+        privilegeAdd,
+        privilegeUpdate : privilegeUpdateRaw,
+        privilegeDelete : privilegeDeleteRaw,
+        
+        ...restShippingState
+    } = useShippingState();
+    
+    const whenDraft = (shippingProviderId[0] === ' '); // any id(s) starting with a space => draft id
+    /*
+        when edit_mode (update):
+            * the editing  capability follows the `privilegeProductUpdate`
+            * the deleting capability follows the `privilegeProductDelete`
+        
+        when create_mode (add):
+            * ALWAYS be ABLE to edit   the CoverageZone of Shipping (because the data is *not_yet_exsist* on the database)
+            * ALWAYS be ABLE to delete the CoverageZone of Shipping (because the data is *not_yet_exsist* on the database)
+    */
+    const privilegeUpdate = whenDraft ? privilegeShippingUpdateFullAccess : privilegeUpdateRaw;
+    const privilegeDelete = whenDraft ?               true                : privilegeDeleteRaw;
     
     
     
@@ -297,74 +344,93 @@ const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: Co
             focused={focused}
             arrived={arrived}
         >
-            <OrderableList<HTMLElement, unknown>
-                // variants:
-                listStyle='flush'
-                
-                
-                
-                // values:
-                onChildrenChange={handleChildrenChange}
+            <ShippingStateProvider
+                // privileges:
+                privilegeAdd    = {privilegeAdd   }
+                privilegeUpdate = {privilegeUpdate}
+                privilegeDelete = {privilegeDelete}
             >
-                {!mirrorValueWithId.length && <ModelEmpty />}
-                
-                {mirrorValueWithId.map((coverageCountry) =>
-                    /* <ModelPreview> */
-                    <CoverageCountryPreview
-                        // identifiers:
-                        key={coverageCountry.id}
+                <OrderableList<HTMLElement, unknown>
+                    // variants:
+                    listStyle='flush'
+                    
+                    
+                    
+                    // values:
+                    onChildrenChange={handleChildrenChange}
+                >
+                    {!mirrorValueWithId.length && <ModelEmpty />}
+                    
+                    {mirrorValueWithId.map((coverageCountry) =>
+                        /* <ModelPreview> */
+                        <CoverageCountryPreview
+                            // identifiers:
+                            key={coverageCountry.id}
+                            
+                            
+                            
+                            // data:
+                            model={coverageCountry}
+                            
+                            
+                            
+                            // values:
+                            coverageCountries={mirrorValueWithId}
+                            
+                            
+                            
+                            // handlers:
+                            onUpdated={handleModelUpdated}
+                            onDeleted={handleModelDeleted}
+                        />
+                    )}
+                    
+                    {/* <ModelCreate> */}
+                    <ModelCreateOuter<CoverageCountry & { id: string }>
+                        // classes:
+                        className='solid'
                         
                         
                         
-                        // data:
-                        model={coverageCountry}
+                        // accessibilities:
+                        createItemText='Add New Country'
                         
                         
                         
-                        // values:
-                        coverageCountries={mirrorValueWithId}
+                        // components:
+                        modelCreateComponent={
+                            isDisabledOrReadOnly
+                            ? false
+                            : <EditCoverageCountryDialog
+                                // data:
+                                model={null} // create a new model
+                                
+                                
+                                
+                                // workaround for penetrating <ShippingStateProvider> to showDialog():
+                                {...restShippingState}
+                                
+                                
+                                
+                                // privileges:
+                                privilegeAdd    = {privilegeAdd   }
+                                privilegeUpdate = {privilegeUpdate}
+                                privilegeDelete = {privilegeDelete}
+                            />
+                        }
+                        listItemComponent={
+                            <OrderableListItem
+                                orderable={false}
+                            />
+                        }
                         
                         
                         
                         // handlers:
-                        onUpdated={handleModelUpdated}
-                        onDeleted={handleModelDeleted}
+                        onCreated={handleModelCreated}
                     />
-                )}
-                
-                {/* <ModelCreate> */}
-                <ModelCreateOuter<CoverageCountry & { id: string }>
-                    // classes:
-                    className='solid'
-                    
-                    
-                    
-                    // accessibilities:
-                    createItemText='Add New Country'
-                    
-                    
-                    
-                    // components:
-                    modelCreateComponent={
-                        isDisabledOrReadOnly
-                        ? false
-                        : <EditCoverageCountryDialog
-                            // data:
-                            model={null} // create a new model
-                        />
-                    }
-                    listItemComponent={
-                        <OrderableListItem
-                            orderable={false}
-                        />
-                    }
-                    
-                    
-                    
-                    // handlers:
-                    onCreated={handleModelCreated}
-                />
-            </OrderableList>
+                </OrderableList>
+            </ShippingStateProvider>
         </EditableControl>
     );
 };

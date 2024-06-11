@@ -71,6 +71,15 @@ import {
     ImplementedComplexEditModelDialogProps,
     ComplexEditModelDialog,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
+import {
+    // types:
+    type ShippingState,
+    
+    
+    
+    // react components:
+    ShippingStateProvider,
+}                           from '@/components/editors/CoverageCountryEditor/states/shippingState'
 
 // models:
 import {
@@ -102,7 +111,10 @@ import './EditCoverageCountryDialogStyles';
 export interface EditCoverageCountryDialogProps
     extends
         // bases:
-        ImplementedComplexEditModelDialogProps<CoverageCountry & { id: string }>
+        ImplementedComplexEditModelDialogProps<CoverageCountry & { id: string }>,
+        
+        // privileges & states:
+        ShippingState
 {
 }
 const EditCoverageCountryDialog = (props: EditCoverageCountryDialogProps): JSX.Element|null => {
@@ -115,6 +127,13 @@ const EditCoverageCountryDialog = (props: EditCoverageCountryDialogProps): JSX.E
     const {
         // data:
         model = null,
+        
+        
+        
+        // privileges:
+        privilegeAdd,
+        privilegeUpdate,
+        privilegeDelete,
         
         
         
@@ -199,17 +218,6 @@ const EditCoverageCountryDialog = (props: EditCoverageCountryDialogProps): JSX.E
             </p>,
         };
     });
-    
-    
-    
-    // privileges:
-    const privilegeAdd    = !!role?.shipping_c;
-    const privilegeUpdate = useMemo(() => ({
-        description : !!role?.shipping_ud,
-        price       : !!role?.shipping_up,
-        visibility  : !!role?.shipping_uv,
-    }), [role]);
-    const privilegeDelete = !!role?.shipping_d;
     
     
     
@@ -359,6 +367,14 @@ const EditCoverageCountryDialog = (props: EditCoverageCountryDialogProps): JSX.E
                 >
                     Use specific zones:
                 </Check>
+                <ShippingStateProvider
+                        // privileges:
+                        privilegeAdd    = {privilegeAdd   }
+                        privilegeUpdate = {privilegeUpdate}
+                        privilegeDelete = {privilegeDelete}
+                >
+                    // todo add nested zone editor here
+                </ShippingStateProvider>
             </TabPanel>
         </>}</ComplexEditModelDialog>
     );

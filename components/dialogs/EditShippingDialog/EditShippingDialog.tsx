@@ -80,6 +80,10 @@ import {
     ImplementedComplexEditModelDialogProps,
     ComplexEditModelDialog,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
+import {
+    // react components:
+    ShippingStateProvider,
+}                           from '@/components/editors/CoverageCountryEditor/states/shippingState'
 
 // models:
 import type {
@@ -183,6 +187,24 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     
     
     
+    // privileges:
+    const privilegeAdd    = !!role?.shipping_c;
+    const privilegeUpdate = useMemo(() => ({
+        description : !!role?.shipping_ud,
+        price       : !!role?.shipping_up,
+        visibility  : !!role?.shipping_uv,
+    }), [role]);
+    const privilegeDelete = !!role?.shipping_d;
+    // const privilegeWrite             = (
+    //     /* privilegeAdd */ // except for add
+    //     privilegeUpdate.description
+    //     || privilegeUpdate.price
+    //     || privilegeUpdate.visibility
+    //     || privilegeDelete
+    // );
+    
+    
+    
     // stores:
     const [updateShipping    , {isLoading : isLoadingUpdate           }] = useUpdateShipping();
     const [deleteShipping    , {isLoading : isLoadingDelete           }] = useDeleteShipping();
@@ -238,17 +260,6 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             </p>,
         };
     });
-    
-    
-    
-    // privileges:
-    const privilegeAdd    = !!role?.shipping_c;
-    const privilegeUpdate = useMemo(() => ({
-        description : !!role?.shipping_ud,
-        price       : !!role?.shipping_up,
-        visibility  : !!role?.shipping_uv,
-    }), [role]);
-    const privilegeDelete = !!role?.shipping_d;
     
     
     
@@ -460,25 +471,37 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                 >
                     Use specific countries:
                 </Check>
-                <CoverageCountryEditor
-                    // classes:
-                    className='country editor'
-                    
-                    
-                    
-                    // accessibilities:
-                    enabled={useSpecificArea}
-                    readOnly={!(whenUpdate.price || whenAdd)}
-                    
-                    
-                    
-                    // values:
-                    value={countries}
-                    onChange={(value) => {
-                        setCountries(value);
-                        setIsModified(true);
-                    }}
-                />
+                <ShippingStateProvider
+                        // privileges:
+                        privilegeAdd    = {privilegeAdd   }
+                        privilegeUpdate = {privilegeUpdate}
+                        privilegeDelete = {privilegeDelete}
+                >
+                    <CoverageCountryEditor
+                        // data:
+                        shippingProviderId={model?.id ?? ' newId' /* a dummy id starting with empty space */}
+                        
+                        
+                        
+                        // classes:
+                        className='country editor'
+                        
+                        
+                        
+                        // accessibilities:
+                        enabled={useSpecificArea}
+                        readOnly={!(whenUpdate.price || whenAdd)}
+                        
+                        
+                        
+                        // values:
+                        value={countries}
+                        onChange={(value) => {
+                            setCountries(value);
+                            setIsModified(true);
+                        }}
+                    />
+                </ShippingStateProvider>
             </TabPanel>
         </>}</ComplexEditModelDialog>
     );

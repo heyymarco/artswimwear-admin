@@ -9,6 +9,7 @@ import {
     
     // hooks:
     useRef,
+    useMemo,
 }                           from 'react'
 
 // // next-js:
@@ -115,16 +116,22 @@ const ShippingPreview = (props: ShippingPreviewProps): JSX.Element|null => {
     // sessions:
     const { data: session } = useSession();
     const role = session?.role;
- // const privilegeAdd               = !!role?.shipping_c;
-    const privilegeUpdateDescription = !!role?.shipping_ud;
-    const privilegeUpdatePrice       = !!role?.shipping_up;
-    const privilegeUpdateVisibility  = !!role?.shipping_uv;
-    const privilegeDelete            = !!role?.shipping_d;
+    
+    
+    
+    // privileges:
+    // const privilegeAdd    = !!role?.shipping_c;
+    const privilegeUpdate = useMemo(() => ({
+        description : !!role?.shipping_ud,
+        price       : !!role?.shipping_up,
+        visibility  : !!role?.shipping_uv,
+    }), [role]);
+    const privilegeDelete = !!role?.shipping_d;
     const privilegeWrite             = (
         /* privilegeAdd */ // except for add
-        privilegeUpdateDescription
-        || privilegeUpdatePrice
-        || privilegeUpdateVisibility
+        privilegeUpdate.description
+        || privilegeUpdate.price
+        || privilegeUpdate.visibility
         || privilegeDelete
     );
     
@@ -237,11 +244,11 @@ const ShippingPreview = (props: ShippingPreviewProps): JSX.Element|null => {
         >
             <h3 className='name'>
                 {name}
-                {privilegeUpdateDescription && <EditButton onClick={() => handleEdit('name')} />}
+                {privilegeUpdate.description && <EditButton onClick={() => handleEdit('name')} />}
             </h3>
             <p className='visibility'>
                 Visibility: <strong className='value'>{visibility}</strong>
-                {privilegeUpdateVisibility  && <EditButton onClick={() => handleEdit('visibility')} />}
+                {privilegeUpdate.visibility  && <EditButton onClick={() => handleEdit('visibility')} />}
             </p>
             <p className='fullEditor'>
                 {privilegeWrite             && <Button buttonStyle='link' onClick={() => handleEdit('full')}>

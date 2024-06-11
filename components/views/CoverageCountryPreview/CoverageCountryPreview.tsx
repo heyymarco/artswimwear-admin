@@ -61,8 +61,14 @@ import {
     EditCoverageCountryDialog,
 }                           from '@/components/dialogs/EditCoverageCountryDialog'
 import {
-    type EditorChangeEventHandler,
-}                           from '@/components/editors/Editor'
+    // utilities:
+    privilegeShippingUpdateFullAccess,
+    
+    
+    
+    // states:
+    useShippingState,
+}                           from '@/components/editors/CoverageCountryEditor/states/shippingState'
 
 // models:
 import {
@@ -120,7 +126,7 @@ const CoverageCountryPreview = (props: CoverageCountryPreviewProps): JSX.Element
         onDeleted,
     ...restOrderableListItemProps} = props;
     const {
-        id,
+        id : coverageCountryId,
         country,
     } = model;
     
@@ -140,27 +146,29 @@ const CoverageCountryPreview = (props: CoverageCountryPreviewProps): JSX.Element
     
     
     
-    // // states:
-    // // workaround for penetrating <ShippingStateProvider> to showDialog():
-    // const {
-    //     // privileges:
-    //     privilegeAdd,
-    //     privilegeUpdate : privilegeUpdateRaw,
-    //     privilegeDelete : privilegeDeleteRaw,
-    // ...restShippingState} = useShippingState();
-    // 
-    // const whenDraft = (id[0] === ' '); // any id(s) starting with a space => draft id
-    // /*
-    //     when edit_mode (update):
-    //         * the editing  capability follows the `privilegeProductUpdate`
-    //         * the deleting capability follows the `privilegeProductDelete`
-    //     
-    //     when create_mode (add):
-    //         * ALWAYS be ABLE to edit   the Shipping (because the data is *not_yet_exsist* on the database)
-    //         * ALWAYS be ABLE to delete the Shipping (because the data is *not_yet_exsist* on the database)
-    // */
-    // const privilegeUpdate = whenDraft ? privilegeShippingUpdateFullAccess : privilegeUpdateRaw;
-    // const privilegeDelete = whenDraft ?               true                : privilegeDeleteRaw;
+    // states:
+    // workaround for penetrating <ShippingStateProvider> to showDialog():
+    const {
+        // privileges:
+        privilegeAdd,
+        privilegeUpdate : privilegeUpdateRaw,
+        privilegeDelete : privilegeDeleteRaw,
+        
+        ...restShippingState
+    } = useShippingState();
+    
+    const whenDraft = (coverageCountryId[0] === ' '); // any id(s) starting with a space => draft id
+    /*
+        when edit_mode (update):
+            * the editing  capability follows the `privilegeProductUpdate`
+            * the deleting capability follows the `privilegeProductDelete`
+        
+        when create_mode (add):
+            * ALWAYS be ABLE to edit   the CoverageZone of Shipping (because the data is *not_yet_exsist* on the database)
+            * ALWAYS be ABLE to delete the CoverageZone of Shipping (because the data is *not_yet_exsist* on the database)
+    */
+    const privilegeUpdate = whenDraft ? privilegeShippingUpdateFullAccess : privilegeUpdateRaw;
+    const privilegeDelete = whenDraft ?               true                : privilegeDeleteRaw;
     
     
     
@@ -173,15 +181,15 @@ const CoverageCountryPreview = (props: CoverageCountryPreviewProps): JSX.Element
                 
                 
                 
-                // // workaround for penetrating <ShippingStateProvider> to showDialog():
-                // {...restShippingState}
+                // workaround for penetrating <ShippingStateProvider> to showDialog():
+                {...restShippingState}
                 
                 
                 
-                // // privileges:
-                // privilegeAdd    = {privilegeAdd   }
-                // privilegeUpdate = {privilegeUpdate}
-                // privilegeDelete = {privilegeDelete}
+                // privileges:
+                privilegeAdd    = {privilegeAdd   }
+                privilegeUpdate = {privilegeUpdate}
+                privilegeDelete = {privilegeDelete}
             />
         );
         switch (updatedCoverageCountryModel) {
