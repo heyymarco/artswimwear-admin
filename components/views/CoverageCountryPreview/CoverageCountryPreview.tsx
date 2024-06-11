@@ -121,7 +121,7 @@ const CoverageCountryPreview = (props: CoverageCountryPreviewProps): JSX.Element
         model.country = newValue ?? '';
         onUpdated(model);
     });
-    const handleDelete               = useEvent(() => {
+    const handleDelete        = useEvent(() => {
         onDeleted?.(model);
     });
     
