@@ -149,14 +149,14 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     
     
     // states:
-    const [isModified     , setIsModified     ] = useState<boolean>(false);
+    const [isModified    , setIsModified   ] = useState<boolean>(false);
     
-    const [visibility     , setVisibility     ] = useState<ShippingVisibility>(model?.visibility      ?? 'DRAFT');
-    const [name           , setName           ] = useState<string            >(model?.name            ?? ''     );
+    const [visibility    , setVisibility   ] = useState<ShippingVisibility>(model?.visibility ?? 'DRAFT');
+    const [name          , setName         ] = useState<string            >(model?.name       ?? ''     );
     
-    const [weightStep     , setWeightStep     ] = useState<number            >(model?.weightStep      ?? 1      );
-    const [estimate       , setEstimate       ] = useState<string            >(model?.estimate        ?? ''     );
-    const [shippingRates  , setShippingRates  ] = useState<ShippingRate[]    >(() => {
+    const [weightStep    , setWeightStep   ] = useState<number            >(model?.weightStep ?? 1      );
+    const [estimate      , setEstimate     ] = useState<string            >(model?.estimate   ?? ''     );
+    const [shippingRates , setShippingRates] = useState<ShippingRate[]    >(() => {
         const shippingRates = model?.shippingRates;
         if (!shippingRates) return [];
         return (
@@ -167,8 +167,8 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
         );
     });
     
-    const [useSpecificArea, setUseSpecificArea] = useState<boolean           >(model?.useSpecificArea ?? true);
-    const [countries      , setCountries      ] = useState<CoverageCountry[] >(() => {
+    const [useZones      , setUseZones     ] = useState<boolean           >(model?.useZones   ?? true   );
+    const [countries     , setCountries    ] = useState<CoverageCountry[] >(() => {
         const countries = model?.zones;
         if (!countries) return [];
         return (
@@ -219,17 +219,17 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     // handlers:
     const handleUpdate         = useEvent<UpdateHandler<ShippingDetail>>(async ({id, whenAdd, whenUpdate}) => {
         return await updateShipping({
-            id              : id ?? '',
+            id            : id ?? '',
             
-            visibility      : (whenUpdate.visibility  || whenAdd) ? visibility         : undefined,
-            name            : (whenUpdate.description || whenAdd) ? name               : undefined,
+            visibility    : (whenUpdate.visibility  || whenAdd) ? visibility         : undefined,
+            name          : (whenUpdate.description || whenAdd) ? name               : undefined,
             
-            weightStep      : (whenUpdate.price       || whenAdd) ? weightStep         : undefined,
-            estimate        : (whenUpdate.description || whenAdd) ? (estimate || null) : undefined,
-            shippingRates   : (whenUpdate.price       || whenAdd) ? shippingRates      : undefined,
+            weightStep    : (whenUpdate.price       || whenAdd) ? weightStep         : undefined,
+            estimate      : (whenUpdate.description || whenAdd) ? (estimate || null) : undefined,
+            shippingRates : (whenUpdate.price       || whenAdd) ? shippingRates      : undefined,
             
-            useSpecificArea : (whenUpdate.price       || whenAdd) ? useSpecificArea    : undefined,
-            zones           : (whenUpdate.price       || whenAdd) ? countries          : undefined,
+            useZones      : (whenUpdate.price       || whenAdd) ? useZones           : undefined,
+            zones         : (whenUpdate.price       || whenAdd) ? countries          : undefined,
         }).unwrap();
     });
     
@@ -463,9 +463,9 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                     
                     
                     // values:
-                    active={useSpecificArea}
+                    active={useZones}
                     onActiveChange={({active}) => {
-                        setUseSpecificArea(active);
+                        setUseZones(active);
                         setIsModified(true);
                     }}
                 >
@@ -489,7 +489,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                         
                         
                         // accessibilities:
-                        enabled={useSpecificArea}
+                        enabled={useZones}
                         readOnly={!(whenUpdate.price || whenAdd)}
                         
                         

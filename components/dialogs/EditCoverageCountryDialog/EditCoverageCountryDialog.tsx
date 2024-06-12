@@ -144,12 +144,12 @@ const EditCoverageCountryDialog = (props: EditCoverageCountryDialogProps): JSX.E
     
     
     // states:
-    const [isModified     , setIsModified     ] = useState<boolean>(false);
+    const [isModified    , setIsModified   ] = useState<boolean>(false);
     
-    const [name           , setName           ] = useState<string        >(model?.name            ?? ''     );
+    const [name          , setName         ] = useState<string        >(model?.name     ?? ''  );
     
-    const [estimate       , setEstimate       ] = useState<string        >(model?.estimate        ?? ''     );
-    const [shippingRates  , setShippingRates  ] = useState<ShippingRate[]>(() => {
+    const [estimate      , setEstimate     ] = useState<string        >(model?.estimate ?? ''  );
+    const [shippingRates , setShippingRates] = useState<ShippingRate[]>(() => {
         const shippingRates = model?.shippingRates;
         if (!shippingRates) return [];
         return (
@@ -160,8 +160,8 @@ const EditCoverageCountryDialog = (props: EditCoverageCountryDialogProps): JSX.E
         );
     });
     
-    const [useSpecificArea, setUseSpecificArea] = useState<boolean       >(model?.useSpecificArea ?? true);
-    const [zones          , setZones          ] = useState<CoverageState[]>(() => {
+    const [useZones      , setUseZones     ] = useState<boolean       >(model?.useZones ?? true);
+    const [zones         , setZones        ] = useState<CoverageState[]>(() => {
         const zones = model?.zones;
         if (!zones) return [];
         return (
@@ -188,15 +188,15 @@ const EditCoverageCountryDialog = (props: EditCoverageCountryDialogProps): JSX.E
     // handlers:
     const handleUpdate         = useEvent<UpdateHandler<CoverageCountry & { id: string }>>(({id, whenAdd, whenUpdate}) => {
         return {
-            id              : id ?? '',
+            id            : id ?? '',
             
-            name            : (whenUpdate.description || whenAdd) ? name               : undefined,
+            name          : (whenUpdate.description || whenAdd) ? name               : undefined,
             
-            estimate        : (whenUpdate.description || whenAdd) ? (estimate || null) : undefined,
-            shippingRates   : (whenUpdate.price       || whenAdd) ? shippingRates      : undefined,
+            estimate      : (whenUpdate.description || whenAdd) ? (estimate || null) : undefined,
+            shippingRates : (whenUpdate.price       || whenAdd) ? shippingRates      : undefined,
             
-            useSpecificArea : (whenUpdate.price       || whenAdd) ? useSpecificArea    : undefined,
-            zones           : (whenUpdate.price       || whenAdd) ? zones              : undefined,
+            useZones      : (whenUpdate.price       || whenAdd) ? useZones           : undefined,
+            zones         : (whenUpdate.price       || whenAdd) ? zones              : undefined,
         } satisfies Partial<CoverageCountry & { id: string }>;
     });
     
@@ -359,9 +359,9 @@ const EditCoverageCountryDialog = (props: EditCoverageCountryDialogProps): JSX.E
                     
                     
                     // values:
-                    active={useSpecificArea}
+                    active={useZones}
                     onActiveChange={({active}) => {
-                        setUseSpecificArea(active);
+                        setUseZones(active);
                         setIsModified(true);
                     }}
                 >

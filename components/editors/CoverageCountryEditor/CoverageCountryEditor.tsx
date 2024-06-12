@@ -272,12 +272,12 @@ const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: Co
             mutatedValue.unshift(mutatedModel as CoverageCountry & { id: string });
         }
         else {
-            const currentModel           = mutatedValue[modelIndex];
-            currentModel.name            = mutatedModel.name            ?? '';
-            currentModel.estimate        = mutatedModel.estimate        || null;
-            currentModel.shippingRates   = mutatedModel.shippingRates   ?? [];
-            currentModel.useSpecificArea = mutatedModel.useSpecificArea ?? true;
-            currentModel.zones           = mutatedModel.zones           ?? [];
+            const currentModel         = mutatedValue[modelIndex];
+            currentModel.name          = mutatedModel.name          ?? '';
+            currentModel.estimate      = mutatedModel.estimate      || null;
+            currentModel.shippingRates = mutatedModel.shippingRates ?? [];
+            currentModel.useZones      = mutatedModel.useZones      ?? true;
+            currentModel.zones         = mutatedModel.zones         ?? [];
             
             mutatedValue[modelIndex] = currentModel;
         } // if

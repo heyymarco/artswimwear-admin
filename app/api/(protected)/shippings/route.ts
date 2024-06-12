@@ -182,7 +182,7 @@ You do not have the privilege to view the shippings.`
         estimate,
         shippingRates,
         
-        useSpecificArea,
+        useZones,
         zones,
     } = await req.json();
     //#endregion parsing request
@@ -213,7 +213,7 @@ You do not have the privilege to view the shippings.`
             ((typeof(shippingRate.rate)           !== 'number') || !isFinite(shippingRate.rate)           || (shippingRate.rate           < 0))
         ))))
         ||
-        ((useSpecificArea !== undefined)                        && (typeof(useSpecificArea) !== 'boolean'))
+        ((useZones        !== undefined)                        && (typeof(useZones)        !== 'boolean'))
         ||
         ((zones           !== undefined)                        && ((Array.isArray(zones)   !== true    ) || (zones.some((country) =>
             (typeof(country) !== 'object')
@@ -252,7 +252,7 @@ You do not have the privilege to add new shipping.`
 You do not have the privilege to modify the shipping name.`
                 }, { status: 403 }); // handled with error: forbidden
                 
-                if (!session.role?.shipping_up && ((weightStep !== undefined) || (estimate !== undefined) || (shippingRates !== undefined) || (useSpecificArea !== undefined) || (zones !== undefined))) return Response.json({ error:
+                if (!session.role?.shipping_up && ((weightStep !== undefined) || (estimate !== undefined) || (shippingRates !== undefined) || (useZones !== undefined) || (zones !== undefined))) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the shipping weightStep, estimate, shippingRates, and/or areas.`
@@ -278,7 +278,7 @@ You do not have the privilege to modify the shipping visibility.`
                 estimate,
                 shippingRates,
                 
-                useSpecificArea,
+                useZones,
                 zones,
             } satisfies Prisma.ShippingProviderUpdateInput;
             const shippingDetail : ShippingDetail = (
