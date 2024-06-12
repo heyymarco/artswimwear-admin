@@ -79,9 +79,9 @@ import {
 
 // styles:
 const usePageStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */'./CoverageCountryPreviewStyles')
+    () => import(/* webpackPrefetch: true */'./CoverageZonePreviewStyles')
 , { specificityWeight: 2, id: 'uf3vqkp1o4' });
-import './CoverageCountryPreviewStyles';
+import './CoverageZonePreviewStyles';
 
 
 
@@ -93,7 +93,7 @@ const handleOrderStart = (event: OrderableListItemDragStartEvent<HTMLElement>): 
 
 
 // react components:
-export interface CoverageCountryPreviewProps extends ModelPreviewProps<CoverageCountry & { id: string }> {
+export interface CoverageZonePreviewProps extends ModelPreviewProps<CoverageCountry & { id: string }> {
     // values:
     coverageCountries  : (CoverageCountry & { id: string })[]
     
@@ -103,7 +103,7 @@ export interface CoverageCountryPreviewProps extends ModelPreviewProps<CoverageC
     onUpdated         ?: UpdatedHandler<CoverageCountry & { id: string }>
     onDeleted         ?: DeleteHandler<CoverageCountry & { id: string }>
 }
-const CoverageCountryPreview = (props: CoverageCountryPreviewProps): JSX.Element|null => {
+const CoverageZonePreview = (props: CoverageZonePreviewProps): JSX.Element|null => {
     // styles:
     const styleSheet = usePageStyleSheet();
     
@@ -235,6 +235,6 @@ const CoverageCountryPreview = (props: CoverageCountryPreviewProps): JSX.Element
     );
 };
 export {
-    CoverageCountryPreview,
-    CoverageCountryPreview as default,
+    CoverageZonePreview,
+    CoverageZonePreview as default,
 }

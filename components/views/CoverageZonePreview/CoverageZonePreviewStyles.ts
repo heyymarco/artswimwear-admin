@@ -12,7 +12,7 @@ import {
 
 
 // styles:
-const usesCoverageCountryPreviewLayout = () => { // the <ListItem> of shipping list
+const usesCoverageZonePreviewLayout = () => { // the <ListItem> of shipping list
     return style({
         // layouts:
         display            : 'grid',
@@ -39,5 +39,5 @@ const usesCoverageCountryPreviewLayout = () => { // the <ListItem> of shipping l
 
 export default style({
     // layouts:
-    ...usesCoverageCountryPreviewLayout(),
+    ...usesCoverageZonePreviewLayout(),
 });

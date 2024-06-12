@@ -63,8 +63,8 @@ import {
     ModelEmpty,
 }                           from '@/components/explorers/PagedModelExplorer'
 import {
-    CoverageCountryPreview,
-}                           from '@/components/views/CoverageCountryPreview'
+    CoverageZonePreview,
+}                           from '@/components/views/CoverageZonePreview'
 import {
     // utilities:
     privilegeShippingUpdateFullAccess,
@@ -363,7 +363,7 @@ const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: Co
                     
                     {mirrorValueWithId.map((coverageCountry) =>
                         /* <ModelPreview> */
-                        <CoverageCountryPreview
+                        <CoverageZonePreview
                             // identifiers:
                             key={coverageCountry.id}
                             
