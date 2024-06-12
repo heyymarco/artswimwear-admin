@@ -169,7 +169,7 @@ const CoverageZonePreview = <TCoverageZone extends CoverageZone<TCoverageSubzone
     
     // handlers:
     const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async () => {
-        const updatedCoverageCountryModel = await showDialog<ComplexEditModelDialogResult<TCoverageZone & { id: string }>>(
+        const updatedCoverageZoneModel = await showDialog<ComplexEditModelDialogResult<TCoverageZone & { id: string }>>(
             <EditCoverageZoneDialog<TCoverageZone, TCoverageSubzone>
                 // data:
                 model={model} // modify current model
@@ -187,7 +187,7 @@ const CoverageZonePreview = <TCoverageZone extends CoverageZone<TCoverageSubzone
                 privilegeDelete = {privilegeDelete}
             />
         );
-        switch (updatedCoverageCountryModel) {
+        switch (updatedCoverageZoneModel) {
             case undefined: // dialog canceled
                 break;
             
@@ -196,7 +196,7 @@ const CoverageZonePreview = <TCoverageZone extends CoverageZone<TCoverageSubzone
                 break;
             
             default:        // dialog updated
-                await onUpdated?.(updatedCoverageCountryModel);
+                await onUpdated?.(updatedCoverageZoneModel);
         } // switch
     });
     

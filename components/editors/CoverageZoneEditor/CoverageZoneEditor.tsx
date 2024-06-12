@@ -364,16 +364,16 @@ const CoverageZoneEditor = <TCoverageZone extends CoverageZone<TCoverageSubzone>
                 >
                     {!mirrorValueWithId.length && <ModelEmpty />}
                     
-                    {mirrorValueWithId.map((coverageCountry) =>
+                    {mirrorValueWithId.map((coverageZone) =>
                         /* <ModelPreview> */
                         <CoverageZonePreview<TCoverageZone, TCoverageSubzone>
                             // identifiers:
-                            key={coverageCountry.id}
+                            key={coverageZone.id}
                             
                             
                             
                             // data:
-                            model={coverageCountry}
+                            model={coverageZone}
                             
                             
                             
