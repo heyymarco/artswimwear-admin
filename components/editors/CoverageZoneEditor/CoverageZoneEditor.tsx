@@ -55,8 +55,8 @@ import type {
     DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
-    EditCoverageCountryDialog,
-}                           from '@/components/dialogs/EditCoverageCountryDialog'
+    EditCoverageZoneDialog,
+}                           from '@/components/dialogs/EditCoverageZoneDialog'
 import {
     CreateHandler,
     ModelCreateOuter,
@@ -401,7 +401,7 @@ const CoverageZoneEditor = <TElement extends Element = HTMLElement>(props: Cover
                         modelCreateComponent={
                             isDisabledOrReadOnly
                             ? false
-                            : <EditCoverageCountryDialog
+                            : <EditCoverageZoneDialog
                                 // data:
                                 model={null} // create a new model
                                 

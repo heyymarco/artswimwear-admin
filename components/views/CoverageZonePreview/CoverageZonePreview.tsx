@@ -58,8 +58,8 @@ import {
     type DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
-    EditCoverageCountryDialog,
-}                           from '@/components/dialogs/EditCoverageCountryDialog'
+    EditCoverageZoneDialog,
+}                           from '@/components/dialogs/EditCoverageZoneDialog'
 import {
     // utilities:
     privilegeShippingUpdateFullAccess,
@@ -175,7 +175,7 @@ const CoverageZonePreview = (props: CoverageZonePreviewProps): JSX.Element|null 
     // handlers:
     const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async () => {
         const updatedCoverageCountryModel = await showDialog<ComplexEditModelDialogResult<CoverageCountry & { id: string }>>(
-            <EditCoverageCountryDialog
+            <EditCoverageZoneDialog
                 // data:
                 model={model} // modify current model
                 

@@ -100,15 +100,15 @@ import {
 
 
 // styles:
-const useEditCoverageCountryDialogStyleSheet = dynamicStyleSheets(
-    () => import(/* webpackPrefetch: true */'./EditCoverageCountryDialogStyles')
+const useEditCoverageZoneDialogStyleSheet = dynamicStyleSheets(
+    () => import(/* webpackPrefetch: true */'./EditCoverageZoneDialogStyles')
 , { id: 'rcv9mxdjhi' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
-import './EditCoverageCountryDialogStyles';
+import './EditCoverageZoneDialogStyles';
 
 
 
 // react components:
-export interface EditCoverageCountryDialogProps
+export interface EditCoverageZoneDialogProps
     extends
         // bases:
         ImplementedComplexEditModelDialogProps<CoverageCountry & { id: string }>,
@@ -117,9 +117,9 @@ export interface EditCoverageCountryDialogProps
         ShippingState
 {
 }
-const EditCoverageCountryDialog = (props: EditCoverageCountryDialogProps): JSX.Element|null => {
+const EditCoverageZoneDialog = (props: EditCoverageZoneDialogProps): JSX.Element|null => {
     // styles:
-    const styleSheet = useEditCoverageCountryDialogStyleSheet();
+    const styleSheet = useEditCoverageZoneDialogStyleSheet();
     
     
     
@@ -380,6 +380,6 @@ const EditCoverageCountryDialog = (props: EditCoverageCountryDialogProps): JSX.E
     );
 };
 export {
-    EditCoverageCountryDialog,
-    EditCoverageCountryDialog as default,
+    EditCoverageZoneDialog,
+    EditCoverageZoneDialog as default,
 }
