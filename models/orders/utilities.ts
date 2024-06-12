@@ -114,7 +114,7 @@ export const orderAndDataSelectAndExtra = {
             shippingRates   : true, // required for calculating `getMatchingShipping()`
             
             useSpecificArea : true, // required for calculating `getMatchingShipping()`
-            countries       : true, // required for calculating `getMatchingShipping()`
+            zones           : true, // required for calculating `getMatchingShipping()`
         },
     },
     

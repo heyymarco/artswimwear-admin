@@ -169,7 +169,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     
     const [useSpecificArea, setUseSpecificArea] = useState<boolean           >(model?.useSpecificArea ?? true);
     const [countries      , setCountries      ] = useState<CoverageCountry[] >(() => {
-        const countries = model?.countries;
+        const countries = model?.zones;
         if (!countries) return [];
         return (
             countries
@@ -229,7 +229,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             shippingRates   : (whenUpdate.price       || whenAdd) ? shippingRates      : undefined,
             
             useSpecificArea : (whenUpdate.price       || whenAdd) ? useSpecificArea    : undefined,
-            countries       : (whenUpdate.price       || whenAdd) ? countries          : undefined,
+            zones           : (whenUpdate.price       || whenAdd) ? countries          : undefined,
         }).unwrap();
     });
     

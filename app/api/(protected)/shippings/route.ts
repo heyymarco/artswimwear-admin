@@ -183,7 +183,7 @@ You do not have the privilege to view the shippings.`
         shippingRates,
         
         useSpecificArea,
-        countries,
+        zones,
     } = await req.json();
     //#endregion parsing request
     
@@ -215,7 +215,7 @@ You do not have the privilege to view the shippings.`
         ||
         ((useSpecificArea !== undefined)                        && (typeof(useSpecificArea) !== 'boolean'))
         ||
-        ((countries       !== undefined)                        && ((Array.isArray(countries)     !== true    ) || (countries.some((country) =>
+        ((zones           !== undefined)                        && ((Array.isArray(zones)   !== true    ) || (zones.some((country) =>
             (typeof(country) !== 'object')
             ||
             (Object.keys(country).length !== 5)
@@ -252,7 +252,7 @@ You do not have the privilege to add new shipping.`
 You do not have the privilege to modify the shipping name.`
                 }, { status: 403 }); // handled with error: forbidden
                 
-                if (!session.role?.shipping_up && ((weightStep !== undefined) || (estimate !== undefined) || (shippingRates !== undefined) || (useSpecificArea !== undefined) || (countries !== undefined))) return Response.json({ error:
+                if (!session.role?.shipping_up && ((weightStep !== undefined) || (estimate !== undefined) || (shippingRates !== undefined) || (useSpecificArea !== undefined) || (zones !== undefined))) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the shipping weightStep, estimate, shippingRates, and/or areas.`
@@ -279,7 +279,7 @@ You do not have the privilege to modify the shipping visibility.`
                 shippingRates,
                 
                 useSpecificArea,
-                countries,
+                zones,
             } satisfies Prisma.ShippingProviderUpdateInput;
             const shippingDetail : ShippingDetail = (
                 !id
