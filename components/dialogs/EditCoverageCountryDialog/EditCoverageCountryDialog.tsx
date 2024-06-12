@@ -79,7 +79,7 @@ import {
     
     // react components:
     ShippingStateProvider,
-}                           from '@/components/editors/CoverageCountryEditor/states/shippingState'
+}                           from '@/components/editors/CoverageZoneEditor/states/shippingState'
 
 // models:
 import {

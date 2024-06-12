@@ -63,8 +63,12 @@ import {
     ShippingRateEditor,
 }                           from '@/components/editors/ShippingRateEditor'
 import {
-    CoverageCountryEditor,
-}                           from '@/components/editors/CoverageCountryEditor'
+    CoverageZoneEditor,
+}                           from '@/components/editors/CoverageZoneEditor'
+import {
+    // react components:
+    ShippingStateProvider,
+}                           from '@/components/editors/CoverageZoneEditor/states/shippingState'
 import {
     // types:
     UpdateHandler,
@@ -80,10 +84,6 @@ import {
     ImplementedComplexEditModelDialogProps,
     ComplexEditModelDialog,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
-import {
-    // react components:
-    ShippingStateProvider,
-}                           from '@/components/editors/CoverageCountryEditor/states/shippingState'
 
 // models:
 import type {
@@ -477,7 +477,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                         privilegeUpdate = {privilegeUpdate}
                         privilegeDelete = {privilegeDelete}
                 >
-                    <CoverageCountryEditor
+                    <CoverageZoneEditor
                         // data:
                         parentModelId={model?.id ?? ' newId' /* a dummy id starting with empty space */}
                         

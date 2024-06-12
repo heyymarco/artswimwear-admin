@@ -78,7 +78,7 @@ import {
     
     // react components:
     ShippingStateProvider,
-}                           from '@/components/editors/CoverageCountryEditor/states/shippingState'
+}                           from '@/components/editors/CoverageZoneEditor/states/shippingState'
 
 // models:
 import {
@@ -93,13 +93,13 @@ import {
 
 // styles:
 import {
-    useCoverageCountryEditorStyleSheet,
+    useCoverageZoneEditorStyleSheet,
 }                           from './styles/loader'
 
 
 
 // react components:
-export interface CoverageCountryEditorProps<TElement extends Element = HTMLElement>
+export interface CoverageZoneEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
         Pick<EditorProps<TElement, CoverageCountry[]>,
@@ -123,7 +123,7 @@ export interface CoverageCountryEditorProps<TElement extends Element = HTMLEleme
     // data:
     parentModelId : string
 }
-const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: CoverageCountryEditorProps<TElement>): JSX.Element|null => {
+const CoverageZoneEditor = <TElement extends Element = HTMLElement>(props: CoverageZoneEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // data:
@@ -139,13 +139,13 @@ const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: Co
         
         
         // other props:
-        ...restCoverageCountryEditorProps
+        ...restCoverageZoneEditorProps
     } = props;
     
     
     
     // styles:
-    const styleSheet = useCoverageCountryEditorStyleSheet();
+    const styleSheet = useCoverageZoneEditorStyleSheet();
     
     
     
@@ -313,7 +313,7 @@ const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: Co
         
         // other props:
         ...restEditableControlProps
-    } = restCoverageCountryEditorProps;
+    } = restCoverageZoneEditorProps;
     
     
     
@@ -435,6 +435,6 @@ const CoverageCountryEditor = <TElement extends Element = HTMLElement>(props: Co
     );
 };
 export {
-    CoverageCountryEditor,
-    CoverageCountryEditor as default,
+    CoverageZoneEditor,
+    CoverageZoneEditor as default,
 }

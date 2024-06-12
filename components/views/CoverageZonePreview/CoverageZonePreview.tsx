@@ -68,7 +68,7 @@ import {
     
     // states:
     useShippingState,
-}                           from '@/components/editors/CoverageCountryEditor/states/shippingState'
+}                           from '@/components/editors/CoverageZoneEditor/states/shippingState'
 
 // models:
 import {

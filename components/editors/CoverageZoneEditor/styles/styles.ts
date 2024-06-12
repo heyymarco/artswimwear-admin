@@ -17,7 +17,7 @@ import {
 
 
 // styles:
-const usesCoverageCountryEditorLayout = () => {
+const usesCoverageZoneEditorLayout = () => {
     // dependencies:
     
     // features:
@@ -54,5 +54,5 @@ const usesCoverageCountryEditorLayout = () => {
 
 export default style({
     // layouts:
-    ...usesCoverageCountryEditorLayout(),
+    ...usesCoverageZoneEditorLayout(),
 });
