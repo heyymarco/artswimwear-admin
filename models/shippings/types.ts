@@ -1,6 +1,9 @@
 // models:
 import {
     type ShippingProvider,
+    type CoverageCountry,
+    type CoverageState,
+    type CoverageCity,
 }                           from '@prisma/client'
 
 
@@ -22,4 +25,17 @@ export interface ShippingDetail
             |'updatedAt'
         >
 {
+}
+
+
+
+export type CoverageSubzone = CoverageCountry|CoverageState|never
+export interface CoverageZone<TSubzone extends CoverageSubzone>
+    extends
+        Omit<CoverageCountry, 'useZones'|'zones'>,
+        Omit<CoverageState  , 'useZones'|'zones'>,
+        Omit<CoverageCity   , 'useZones'|'zones'>
+{
+    useZones : TSubzone extends never ? never : boolean
+    zones    : TSubzone extends never ? never : TSubzone[]
 }

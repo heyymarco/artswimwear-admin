@@ -81,12 +81,17 @@ import {
     ShippingStateProvider,
 }                           from '@/components/editors/CoverageZoneEditor/states/shippingState'
 
+// types:
+import {
+    type PartialModel,
+}                           from '@/libs/types'
+
 // models:
 import {
     // types:
-    type CoverageCountry,
+    type CoverageZone,
+    type CoverageSubzone,
     type ShippingRate,
-    type CoverageState,
 }                           from '@/models'
 
 // configs:
@@ -108,16 +113,16 @@ import './EditCoverageZoneDialogStyles';
 
 
 // react components:
-export interface EditCoverageZoneDialogProps
+export interface EditCoverageZoneDialogProps<TCoverageZone extends CoverageZone<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone>
     extends
         // bases:
-        ImplementedComplexEditModelDialogProps<CoverageCountry & { id: string }>,
+        ImplementedComplexEditModelDialogProps<TCoverageZone & { id: string }>,
         
         // privileges & states:
         ShippingState
 {
 }
-const EditCoverageZoneDialog = (props: EditCoverageZoneDialogProps): JSX.Element|null => {
+const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone>(props: EditCoverageZoneDialogProps<TCoverageZone, TCoverageSubzone>): JSX.Element|null => {
     // styles:
     const styleSheet = useEditCoverageZoneDialogStyleSheet();
     
@@ -146,9 +151,9 @@ const EditCoverageZoneDialog = (props: EditCoverageZoneDialogProps): JSX.Element
     // states:
     const [isModified    , setIsModified   ] = useState<boolean>(false);
     
-    const [name          , setName         ] = useState<string        >(model?.name     ?? ''  );
+    const [name          , setName         ] = useState<string        >(model?.name     ?? ''   );
     
-    const [estimate      , setEstimate     ] = useState<string        >(model?.estimate ?? ''  );
+    const [estimate      , setEstimate     ] = useState<string        >(model?.estimate ?? ''   );
     const [shippingRates , setShippingRates] = useState<ShippingRate[]>(() => {
         const shippingRates = model?.shippingRates;
         if (!shippingRates) return [];
@@ -160,15 +165,15 @@ const EditCoverageZoneDialog = (props: EditCoverageZoneDialogProps): JSX.Element
         );
     });
     
-    const [useZones      , setUseZones     ] = useState<boolean       >(model?.useZones ?? true);
-    const [zones         , setZones        ] = useState<CoverageState[]>(() => {
+    const [useZones      , setUseZones     ] = useState<boolean       >(model?.useZones ?? false);
+    const [zones         , setZones        ] = useState<TCoverageSubzone[]>(() => {
         const zones = model?.zones;
         if (!zones) return [];
         return (
             zones
             .map((zone) => ({
                 ...zone, // clone => immutable => mutable
-            }))
+            } as TCoverageSubzone))
         );
     });
     
@@ -186,21 +191,21 @@ const EditCoverageZoneDialog = (props: EditCoverageZoneDialogProps): JSX.Element
     
     
     // handlers:
-    const handleUpdate         = useEvent<UpdateHandler<CoverageCountry & { id: string }>>(({id, whenAdd, whenUpdate}) => {
+    const handleUpdate         = useEvent<UpdateHandler<TCoverageZone & { id: string }>>(({id, whenAdd, whenUpdate}) => {
         return {
             id            : id ?? '',
             
-            name          : (whenUpdate.description || whenAdd) ? name               : undefined,
+            name          :                                     (whenUpdate.description || whenAdd)  ? name               : undefined,
             
-            estimate      : (whenUpdate.description || whenAdd) ? (estimate || null) : undefined,
-            shippingRates : (whenUpdate.price       || whenAdd) ? shippingRates      : undefined,
+            estimate      :                                     (whenUpdate.description || whenAdd)  ? (estimate || null) : undefined,
+            shippingRates :                                     (whenUpdate.price       || whenAdd)  ? shippingRates      : undefined,
             
-            useZones      : (whenUpdate.price       || whenAdd) ? useZones           : undefined,
-            zones         : (whenUpdate.price       || whenAdd) ? zones              : undefined,
-        } satisfies Partial<CoverageCountry & { id: string }>;
+            useZones      : ((model?.useZones !== undefined) && (whenUpdate.price       || whenAdd)) ? useZones           : undefined,
+            zones         : ((model?.useZones !== undefined) && (whenUpdate.price       || whenAdd)) ? zones              : undefined,
+        } as PartialModel<TCoverageZone & { id: string }>;
     });
     
-    const handleConfirmDelete  = useEvent<ConfirmDeleteHandler<(CoverageCountry & { id: string })>>(({model}) => {
+    const handleConfirmDelete  = useEvent<ConfirmDeleteHandler<(TCoverageZone & { id: string })>>(({model}) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
@@ -210,7 +215,7 @@ const EditCoverageZoneDialog = (props: EditCoverageZoneDialogProps): JSX.Element
             </>,
         };
     });
-    const handleConfirmUnsaved = useEvent<ConfirmUnsavedHandler<(CoverageCountry & { id: string })>>(() => {
+    const handleConfirmUnsaved = useEvent<ConfirmUnsavedHandler<(TCoverageZone & { id: string })>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>
@@ -223,7 +228,7 @@ const EditCoverageZoneDialog = (props: EditCoverageZoneDialogProps): JSX.Element
     
     // jsx:
     return (
-        <ComplexEditModelDialog<CoverageCountry & { id: string }>
+        <ComplexEditModelDialog<TCoverageZone & { id: string }>
             // other props:
             {...restComplexEditModelDialogProps}
             

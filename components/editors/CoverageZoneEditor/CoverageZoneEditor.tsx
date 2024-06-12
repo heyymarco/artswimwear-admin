@@ -83,7 +83,8 @@ import {
 // models:
 import {
     // types:
-    type CoverageCountry,
+    type CoverageZone,
+    type CoverageSubzone,
 }                           from '@/models'
 
 // others:
@@ -99,10 +100,10 @@ import {
 
 
 // react components:
-export interface CoverageZoneEditorProps<TElement extends Element = HTMLElement>
+export interface CoverageZoneEditorProps<TCoverageZone extends CoverageZone<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone, TElement extends Element = HTMLElement>
     extends
         // bases:
-        Pick<EditorProps<TElement, CoverageCountry[]>,
+        Pick<EditorProps<TElement, TCoverageZone[]>,
             // values:
             |'defaultValue' // not supported, controllable only
             |'value'
@@ -123,7 +124,7 @@ export interface CoverageZoneEditorProps<TElement extends Element = HTMLElement>
     // data:
     parentModelId : string
 }
-const CoverageZoneEditor = <TElement extends Element = HTMLElement>(props: CoverageZoneEditorProps<TElement>): JSX.Element|null => {
+const CoverageZoneEditor = <TCoverageZone extends CoverageZone<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone, TElement extends Element = HTMLElement>(props: CoverageZoneEditorProps<TCoverageZone, TCoverageSubzone, TElement>): JSX.Element|null => {
     // rest props:
     const {
         // data:
@@ -153,14 +154,14 @@ const CoverageZoneEditor = <TElement extends Element = HTMLElement>(props: Cover
     const {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllableAndUncontrollable<CoverageCountry[]>({
+    } = useControllableAndUncontrollable<TCoverageZone[]>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
         onValueChange      : onControllableValueChange,
     });
     
-    const [idMap] = useState<Map<CoverageCountry, string>>(() => new Map<CoverageCountry, string>());
-    const mirrorValueWithId = useMemo((): (CoverageCountry & { id: string })[] => {
+    const [idMap] = useState<Map<TCoverageZone, string>>(() => new Map<TCoverageZone, string>());
+    const mirrorValueWithId = useMemo((): (TCoverageZone & { id: string })[] => {
         const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
         return (
             value
@@ -230,8 +231,8 @@ const CoverageZoneEditor = <TElement extends Element = HTMLElement>(props: Cover
             * the deleting capability follows the `privilegeProductDelete`
         
         when create_mode (add):
-            * ALWAYS be ABLE to edit   the CoverageZone of Shipping (because the data is *not_yet_exsist* on the database)
-            * ALWAYS be ABLE to delete the CoverageZone of Shipping (because the data is *not_yet_exsist* on the database)
+            * ALWAYS be ABLE to edit   the TCoverageZone of Shipping (because the data is *not_yet_exsist* on the database)
+            * ALWAYS be ABLE to delete the TCoverageZone of Shipping (because the data is *not_yet_exsist* on the database)
     */
     const privilegeUpdate = whenDraft ? privilegeShippingUpdateFullAccess : privilegeUpdateRaw;
     const privilegeDelete = whenDraft ?               true                : privilegeDeleteRaw;
@@ -245,22 +246,22 @@ const CoverageZoneEditor = <TElement extends Element = HTMLElement>(props: Cover
         triggerValueChange(
             restChildren
             .map((modelPreviewComponent) => {
-                const model = (modelPreviewComponent.props as any).model as CoverageCountry & { id: string };
+                const model = (modelPreviewComponent.props as any).model as TCoverageZone & { id: string };
                 return model;
             })
         , { triggerAt: 'immediately' });
     });
-    const handleModelCreated   = useEvent<CreateHandler<CoverageCountry & { id: string }>>((createdModelWithId) => {
+    const handleModelCreated   = useEvent<CreateHandler<TCoverageZone & { id: string }>>((createdModelWithId) => {
         const {
             id : _id, // remove
             ...createdModel
         } = createdModelWithId;
         
         const mutatedValue = value.slice(0); // copy
-        mutatedValue.push(createdModel as CoverageCountry & { id: string });
+        mutatedValue.push(createdModel as unknown as TCoverageZone & { id: string });
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
-    const handleModelUpdated   = useEvent<UpdatedHandler<CoverageCountry & { id: string }>>((updatedModelWithId) => {
+    const handleModelUpdated   = useEvent<UpdatedHandler<TCoverageZone & { id: string }>>((updatedModelWithId) => {
         const {
             id : findId, // take
             ...mutatedModel
@@ -269,21 +270,23 @@ const CoverageZoneEditor = <TElement extends Element = HTMLElement>(props: Cover
         const mutatedValue = value.slice(0); // copy
         const modelIndex = mirrorValueWithId.findIndex((model) => model.id === findId);
         if (modelIndex < 0) {
-            mutatedValue.unshift(mutatedModel as CoverageCountry & { id: string });
+            mutatedValue.unshift(mutatedModel as unknown as TCoverageZone & { id: string });
         }
         else {
             const currentModel         = mutatedValue[modelIndex];
             currentModel.name          = mutatedModel.name          ?? '';
             currentModel.estimate      = mutatedModel.estimate      || null;
             currentModel.shippingRates = mutatedModel.shippingRates ?? [];
-            currentModel.useZones      = mutatedModel.useZones      ?? true;
-            currentModel.zones         = mutatedModel.zones         ?? [];
+            if (currentModel.useZones !== undefined) {
+                currentModel.useZones      = mutatedModel.useZones      ?? (true as any);
+                currentModel.zones         = mutatedModel.zones         ?? ([] as any);
+            } // if
             
             mutatedValue[modelIndex] = currentModel;
         } // if
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
-    const handleModelDeleted   = useEvent<DeleteHandler<CoverageCountry & { id: string }>>(({id}) => {
+    const handleModelDeleted   = useEvent<DeleteHandler<TCoverageZone & { id: string }>>(({id}) => {
         const mutatedValue = value.slice(0); // copy
         const modelIndex = mirrorValueWithId.findIndex((model) => model.id === id);
         if (modelIndex < 0) return;
@@ -363,7 +366,7 @@ const CoverageZoneEditor = <TElement extends Element = HTMLElement>(props: Cover
                     
                     {mirrorValueWithId.map((coverageCountry) =>
                         /* <ModelPreview> */
-                        <CoverageZonePreview
+                        <CoverageZonePreview<TCoverageZone, TCoverageSubzone>
                             // identifiers:
                             key={coverageCountry.id}
                             
@@ -374,11 +377,6 @@ const CoverageZoneEditor = <TElement extends Element = HTMLElement>(props: Cover
                             
                             
                             
-                            // values:
-                            coverageCountries={mirrorValueWithId}
-                            
-                            
-                            
                             // handlers:
                             onUpdated={handleModelUpdated}
                             onDeleted={handleModelDeleted}
@@ -386,7 +384,7 @@ const CoverageZoneEditor = <TElement extends Element = HTMLElement>(props: Cover
                     )}
                     
                     {/* <ModelCreate> */}
-                    <ModelCreateOuter<CoverageCountry & { id: string }>
+                    <ModelCreateOuter<TCoverageZone & { id: string }>
                         // classes:
                         className='solid'
                         
@@ -401,7 +399,7 @@ const CoverageZoneEditor = <TElement extends Element = HTMLElement>(props: Cover
                         modelCreateComponent={
                             isDisabledOrReadOnly
                             ? false
-                            : <EditCoverageZoneDialog
+                            : <EditCoverageZoneDialog<TCoverageZone, TCoverageSubzone>
                                 // data:
                                 model={null} // create a new model
                                 

@@ -95,6 +95,7 @@ import {
     type ShippingDetail,
     type ShippingRate,
     type CoverageCountry,
+    type CoverageState,
 }                           from '@/models'
 
 // stores:
@@ -477,7 +478,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                         privilegeUpdate = {privilegeUpdate}
                         privilegeDelete = {privilegeDelete}
                 >
-                    <CoverageZoneEditor
+                    <CoverageZoneEditor<CoverageCountry, CoverageState>
                         // data:
                         parentModelId={model?.id ?? ' newId' /* a dummy id starting with empty space */}
                         
