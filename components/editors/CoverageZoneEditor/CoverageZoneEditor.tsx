@@ -139,22 +139,22 @@ export interface CoverageZoneEditorProps<TCoverageZone extends CoverageZone<TCov
         SubzoneCoverageZoneEditorProps
 {
     // data:
-    modelName     : string
-    parentModelId : string
+    modelName      : string
+    parentModelId ?: string
 }
 const CoverageZoneEditor = <TCoverageZone extends CoverageZone<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone, TElement extends Element = HTMLElement>(props: CoverageZoneEditorProps<TCoverageZone, TCoverageSubzone, TElement>): JSX.Element|null => {
     // rest props:
     const {
         // data:
         modelName,
-        parentModelId,
+        parentModelId = '',
         
         
         
         // values:
-        defaultValue : defaultUncontrollableValue = [],
-        value        : controllableValue,
-        onChange     : onControllableValueChange,
+        defaultValue  : defaultUncontrollableValue = [],
+        value         : controllableValue,
+        onChange      : onControllableValueChange,
         
         
         

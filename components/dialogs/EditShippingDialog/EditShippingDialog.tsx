@@ -511,17 +511,6 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                             subzoneEditorComponent : <CoverageZoneEditor<CoverageCountry, CoverageState>
                                 // data:
                                 modelName='State'
-                                parentModelId={model?.id ?? ' newId' /* a dummy id starting with empty space */}
-                                
-                                
-                                
-                                // classes:
-                                className='zone editor'
-                                
-                                
-                                
-                                // accessibilities:
-                                readOnly={!(whenUpdate.price || whenAdd)}
                                 
                                 
                                 

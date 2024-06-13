@@ -395,14 +395,25 @@ const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubz
                     {React.cloneElement<CoverageZoneEditorProps<CoverageZone<CoverageSubzone>, CoverageSubzone>>(subzoneCoverageZoneEditor.subzoneEditorComponent,
                         // props:
                         {
+                            // data:
+                            parentModelId : model?.id ?? ' newId' /* a dummy id starting with empty space */,
+                            
+                            
+                            
+                            // classes:
+                            className     : 'zone editor',
+                            
+                            
+                            
                             // accessibilities:
-                            enabled  : useZones,
+                            enabled       : useZones,
+                            readOnly      : !(whenUpdate.price || whenAdd),
                             
                             
                             
                             // values:
-                            value   : zones as CoverageZone<CoverageSubzone>[],
-                            onChange : ((value) => {
+                            value         : zones as CoverageZone<CoverageSubzone>[],
+                            onChange      : ((value) => {
                                 setZones(value as TCoverageSubzone[]);
                                 setIsModified(true);
                             }),
