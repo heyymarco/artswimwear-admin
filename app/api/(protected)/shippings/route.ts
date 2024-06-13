@@ -199,7 +199,7 @@ You do not have the privilege to view the shippings.`
         ||
         ((name            !== undefined)                        && ((typeof(name)                 !== 'string') || (name.length     < 1)))
         ||
-        ((weightStep      !== undefined)                        && ((typeof(weightStep)           !== 'number') || !isFinite(weightStep) || (weightStep <= 0)))
+        ((weightStep      !== undefined)                        && ((typeof(weightStep)           !== 'number') || !isFinite(weightStep) || (weightStep < 0)))
         ||
         ((estimate        !== undefined) && (estimate !== null) && ((typeof(estimate)             !== 'string') || (estimate.length < 1)))
         ||
