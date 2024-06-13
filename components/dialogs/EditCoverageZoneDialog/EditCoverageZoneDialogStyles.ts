@@ -144,7 +144,7 @@ export const usesSpecificRatesTabLayout = () => {
         // children:
         ...children('.useArea.editor', { gridArea: 'useArea-editor' }),
         
-        ...children('.zone.editor'   , { gridArea: 'zone-editor' }),
+        ...children('.zone.editor'   , { gridArea: 'zone-editor'    }),
     });
 };
 
