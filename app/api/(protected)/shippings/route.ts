@@ -203,7 +203,7 @@ You do not have the privilege to view the shippings.`
         ||
         ((estimate        !== undefined) && (estimate !== null) && ((typeof(estimate)             !== 'string') || (estimate.length < 1)))
         ||
-        ((shippingRates   !== undefined)                        && ((Array.isArray(shippingRates) !== true    ) || (shippingRates.some((shippingRate) =>
+        ((shippingRates   !== undefined)                        && ((Array.isArray(shippingRates) !== true    ) || (shippingRates.length && shippingRates.some((shippingRate) =>
             (typeof(shippingRate) !== 'object')
             ||
             (Object.keys(shippingRate).length !== 2)
@@ -215,14 +215,14 @@ You do not have the privilege to view the shippings.`
         ||
         ((useZones        !== undefined)                        && (typeof(useZones)        !== 'boolean'))
         ||
-        ((zones           !== undefined)                        && ((Array.isArray(zones)   !== true    ) || (zones.some((country) =>
-            (typeof(country) !== 'object')
+        ((zones           !== undefined)                        && ((Array.isArray(zones)   !== true    ) || (zones.length && zones.some((zone) =>
+            (typeof(zone) !== 'object')
             ||
-            (Object.keys(country).length !== 5)
+            (Object.keys(zone).length !== 5)
             ||
-            ((typeof(country.country)  !== 'string') || (country.country.length < 1))
+            ((typeof(zone.name)  !== 'string') || (zone.name.length < 1))
             ||
-            ((country.estimate !== null) && (typeof(country.estimate) !== 'string') || (country.estimate.length < 1))
+            ((zone.estimate !== null) && (typeof(zone.estimate) !== 'string') || (zone.estimate.length < 1))
         ))))
         /* TODO: too complicated - validate use ZOD */
     ) {
