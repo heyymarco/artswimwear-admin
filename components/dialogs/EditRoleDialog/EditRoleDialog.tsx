@@ -436,10 +436,10 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
                                         Add New
                                     </Check>
                                     <Check className='check editor' active={shipping_ud} onActiveChange={({active}) => { setShipping_ud(active); setIsModified(true); }}>
-                                        Change Name, Path &amp; Description
+                                        Change Name &amp; Estimated Delivery Time
                                     </Check>
                                     <Check className='check editor' active={shipping_up} onActiveChange={({active}) => { setShipping_up(active); setIsModified(true); }}>
-                                        Change Price &amp; Shipping Weight
+                                        Change Default Rate &amp; Specific Rates
                                     </Check>
                                     <Check className='check editor' active={shipping_uv} onActiveChange={({active}) => { setShipping_uv(active); setIsModified(true); }}>
                                         Change Visibility
