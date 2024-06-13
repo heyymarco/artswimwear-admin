@@ -247,26 +247,16 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
             })
         , { triggerAt: 'immediately' });
     });
-    const handleModelCreated   = useEvent<CreateHandler<TCoverageZoneWithId>>((createdModelWithId) => {
-        const {
-            id : _id, // remove
-            ...createdModel
-        } = createdModelWithId;
-        
+    const handleModelCreated   = useEvent<CreateHandler<TCoverageZoneWithId>>((createdModel) => {
         const mutatedValue = value.slice(0); // copy
-        mutatedValue.push(createdModel as unknown as TCoverageZoneWithId);
+        mutatedValue.push(createdModel as TCoverageZoneWithId);
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
-    const handleModelUpdated   = useEvent<UpdatedHandler<TCoverageZoneWithId>>((updatedModelWithId) => {
-        const {
-            id : findId, // take
-            ...mutatedModel
-        } = updatedModelWithId;
-        
+    const handleModelUpdated   = useEvent<UpdatedHandler<TCoverageZoneWithId>>((mutatedModel) => {
         const mutatedValue = value.slice(0); // copy
-        const modelIndex = value.findIndex((model) => model.id === findId);
+        const modelIndex = value.findIndex((model) => model.id === mutatedModel.id);
         if (modelIndex < 0) {
-            mutatedValue.unshift(mutatedModel as unknown as TCoverageZoneWithId);
+            mutatedValue.unshift(mutatedModel as TCoverageZoneWithId);
         }
         else {
             const currentModel         = mutatedValue[modelIndex];
