@@ -480,6 +480,9 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                 >
                     <CoverageZoneEditor<CoverageCountry, CoverageState>
                         // data:
+                        modelName='Country'
+                        hasSubzones={true}
+                        subzoneNamePlural='States'
                         parentModelId={model?.id ?? ' newId' /* a dummy id starting with empty space */}
                         
                         
