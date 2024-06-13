@@ -99,9 +99,16 @@ export interface CoverageZonePreviewProps<TCoverageZone extends CoverageZone<TCo
         // bases:
         ModelPreviewProps<TCoverageZone & { id: string }>
 {
+    // data:
+    modelName          : string
+    hasSubzones        : boolean
+    subzoneNamePlural  : string
+    
+    
+    
     // handlers:
-    onUpdated ?: UpdatedHandler<TCoverageZone & { id: string }>
-    onDeleted ?: DeleteHandler<TCoverageZone & { id: string }>
+    onUpdated         ?: UpdatedHandler<TCoverageZone & { id: string }>
+    onDeleted         ?: DeleteHandler<TCoverageZone & { id: string }>
 }
 const CoverageZonePreview = <TCoverageZone extends CoverageZone<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone>(props: CoverageZonePreviewProps<TCoverageZone, TCoverageSubzone>): JSX.Element|null => {
     // styles:
@@ -113,13 +120,21 @@ const CoverageZonePreview = <TCoverageZone extends CoverageZone<TCoverageSubzone
     const {
         // data:
         model,
+        modelName,
+        hasSubzones,
+        subzoneNamePlural,
         
         
         
         // handlers:
         onUpdated,
         onDeleted,
-    ...restOrderableListItemProps} = props;
+        
+        
+        
+        // other props:
+        ...restOrderableListItemProps
+    } = props;
     const {
         id : coverageZoneId,
         name,
@@ -173,6 +188,9 @@ const CoverageZonePreview = <TCoverageZone extends CoverageZone<TCoverageSubzone
             <EditCoverageZoneDialog<TCoverageZone, TCoverageSubzone>
                 // data:
                 model={model} // modify current model
+                modelName={modelName}
+                hasSubzones={hasSubzones}
+                subzoneNamePlural={subzoneNamePlural}
                 
                 
                 
