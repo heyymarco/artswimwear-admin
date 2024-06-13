@@ -188,14 +188,14 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
         return (
             countries
             .map((coverageCountry: CoverageCountry) => ({
-                ...coverageCountry, // clone => immutable => mutable
-                id    : nanoid(),
+                ...coverageCountry,       // clone => immutable => mutable
+                id    : nanoid(),         // add a temporary id
                 zones : coverageCountry.zones.map((coverageState: CoverageState) => ({
-                    ...coverageState, // clone => immutable => mutable
-                    id    : nanoid(),
+                    ...coverageState,     // clone => immutable => mutable
+                    id    : nanoid(),     // add a temporary id
                     zones : coverageState.zones.map((coverageCity: CoverageCity) => ({
-                        ...coverageCity,
-                        id    : nanoid(),
+                        ...coverageCity,  // clone => immutable => mutable
+                        id    : nanoid(), // add a temporary id
                     } satisfies CoverageCityWithId)),
                 } satisfies CoverageStateWithId)),
             } satisfies CoverageCountryWithId))
@@ -252,7 +252,19 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             shippingRates : (whenUpdate.price       || whenAdd) ? shippingRates      : undefined,
             
             useZones      : (whenUpdate.price       || whenAdd) ? useZones           : undefined,
-            zones         : (whenUpdate.price       || whenAdd) ? countries          : undefined,
+            zones         : (whenUpdate.price       || whenAdd) ? ((): CoverageCountry[] =>
+                // remove id(s) from nested zone(s):
+                countries
+                .map(({id : _id, ...coverageCountry}: CoverageCountryWithId) => ({
+                    ...coverageCountry,
+                    zones : coverageCountry.zones.map(({id : _id, ...coverageState}: CoverageStateWithId) => ({
+                        ...coverageState,
+                        zones : coverageState.zones.map(({id : _id, ...coverageCity}: CoverageCityWithId) => ({
+                            ...coverageCity,
+                        } satisfies CoverageCity)),
+                    } satisfies CoverageState)),
+                } satisfies CoverageCountry))
+            )() : undefined,
         }).unwrap();
     });
     
