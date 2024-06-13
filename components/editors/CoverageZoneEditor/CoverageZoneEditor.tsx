@@ -105,6 +105,15 @@ import {
 
 
 // react components:
+export interface SubzoneCoverageZoneEditor {
+    // components:
+    subzoneNamePlural      : string
+    subzoneEditorComponent : React.ReactElement<CoverageZoneEditorProps<CoverageZone<CoverageSubzone>, CoverageSubzone>>
+}
+export interface SubzoneCoverageZoneEditorProps {
+    // components:
+    subzoneCoverageZoneEditor ?: SubzoneCoverageZoneEditor
+}
 export interface CoverageZoneEditorProps<TCoverageZone extends CoverageZone<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone, TElement extends Element = HTMLElement>
     extends
         // bases:
@@ -124,21 +133,20 @@ export interface CoverageZoneEditorProps<TCoverageZone extends CoverageZone<TCov
             
             // children:
             |'children'     // already taken over
-        >
+        >,
+        
+        // components:
+        SubzoneCoverageZoneEditorProps
 {
     // data:
-    modelName         : string
-    hasSubzones       : boolean
-    subzoneNamePlural : string
-    parentModelId     : string
+    modelName     : string
+    parentModelId : string
 }
 const CoverageZoneEditor = <TCoverageZone extends CoverageZone<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone, TElement extends Element = HTMLElement>(props: CoverageZoneEditorProps<TCoverageZone, TCoverageSubzone, TElement>): JSX.Element|null => {
     // rest props:
     const {
         // data:
         modelName,
-        hasSubzones,
-        subzoneNamePlural,
         parentModelId,
         
         
@@ -147,6 +155,11 @@ const CoverageZoneEditor = <TCoverageZone extends CoverageZone<TCoverageSubzone>
         defaultValue : defaultUncontrollableValue = [],
         value        : controllableValue,
         onChange     : onControllableValueChange,
+        
+        
+        
+        // components:
+        subzoneCoverageZoneEditor,
         
         
         
@@ -288,7 +301,7 @@ const CoverageZoneEditor = <TCoverageZone extends CoverageZone<TCoverageSubzone>
             currentModel.name          = mutatedModel.name          ?? '';
             currentModel.estimate      = mutatedModel.estimate      || null;
             currentModel.shippingRates = mutatedModel.shippingRates ?? [];
-            if (hasSubzones) {
+            if (!!subzoneCoverageZoneEditor) {
                 currentModel.useZones  = mutatedModel.useZones      ?? (true as any);
                 currentModel.zones     = mutatedModel.zones         ?? ([]   as any);
             } // if
@@ -386,8 +399,11 @@ const CoverageZoneEditor = <TCoverageZone extends CoverageZone<TCoverageSubzone>
                             // data:
                             model={coverageZone}
                             modelName={modelName}
-                            hasSubzones={hasSubzones}
-                            subzoneNamePlural={subzoneNamePlural}
+                            
+                            
+                            
+                            // components:
+                            subzoneCoverageZoneEditor={subzoneCoverageZoneEditor}
                             
                             
                             
@@ -417,8 +433,6 @@ const CoverageZoneEditor = <TCoverageZone extends CoverageZone<TCoverageSubzone>
                                 // data:
                                 model={null} // create a new model
                                 modelName={modelName}
-                                hasSubzones={hasSubzones}
-                                subzoneNamePlural={subzoneNamePlural}
                                 
                                 
                                 
@@ -431,6 +445,11 @@ const CoverageZoneEditor = <TCoverageZone extends CoverageZone<TCoverageSubzone>
                                 privilegeAdd    = {privilegeAdd   }
                                 privilegeUpdate = {privilegeUpdate}
                                 privilegeDelete = {privilegeDelete}
+                                
+                                
+                                
+                                // components:
+                                subzoneCoverageZoneEditor={subzoneCoverageZoneEditor}
                             />
                         }
                         listItemComponent={

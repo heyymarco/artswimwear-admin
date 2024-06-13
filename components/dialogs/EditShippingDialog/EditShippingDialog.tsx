@@ -481,14 +481,12 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                     <CoverageZoneEditor<CoverageCountry, CoverageState>
                         // data:
                         modelName='Country'
-                        hasSubzones={true}
-                        subzoneNamePlural='States'
                         parentModelId={model?.id ?? ' newId' /* a dummy id starting with empty space */}
                         
                         
                         
                         // classes:
-                        className='country editor'
+                        className='zone editor'
                         
                         
                         
@@ -503,6 +501,33 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                         onChange={(value) => {
                             setCountries(value);
                             setIsModified(true);
+                        }}
+                        
+                        
+                        
+                        // components:
+                        subzoneCoverageZoneEditor={{
+                            subzoneNamePlural      : 'States',
+                            subzoneEditorComponent : <CoverageZoneEditor<CoverageCountry, CoverageState>
+                                // data:
+                                modelName='State'
+                                parentModelId={model?.id ?? ' newId' /* a dummy id starting with empty space */}
+                                
+                                
+                                
+                                // classes:
+                                className='zone editor'
+                                
+                                
+                                
+                                // accessibilities:
+                                readOnly={!(whenUpdate.price || whenAdd)}
+                                
+                                
+                                
+                                // components:
+                                subzoneCoverageZoneEditor={undefined}
+                            />,
                         }}
                     />
                 </ShippingStateProvider>

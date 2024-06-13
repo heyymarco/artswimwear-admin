@@ -43,6 +43,9 @@ import {
 
 // internal components:
 import {
+    type SubzoneCoverageZoneEditorProps,
+}                           from '@/components/editors/CoverageZoneEditor'
+import {
     EditButton,
 }                           from '@/components/EditButton'
 import {
@@ -97,12 +100,13 @@ const handleOrderStart = (event: OrderableListItemDragStartEvent<HTMLElement>): 
 export interface CoverageZonePreviewProps<TCoverageZone extends CoverageZone<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone>
     extends
         // bases:
-        ModelPreviewProps<TCoverageZone & { id: string }>
+        ModelPreviewProps<TCoverageZone & { id: string }>,
+        
+        // components:
+        SubzoneCoverageZoneEditorProps
 {
     // data:
     modelName          : string
-    hasSubzones        : boolean
-    subzoneNamePlural  : string
     
     
     
@@ -121,14 +125,17 @@ const CoverageZonePreview = <TCoverageZone extends CoverageZone<TCoverageSubzone
         // data:
         model,
         modelName,
-        hasSubzones,
-        subzoneNamePlural,
         
         
         
         // handlers:
         onUpdated,
         onDeleted,
+        
+        
+        
+        // components:
+        subzoneCoverageZoneEditor,
         
         
         
@@ -189,8 +196,6 @@ const CoverageZonePreview = <TCoverageZone extends CoverageZone<TCoverageSubzone
                 // data:
                 model={model} // modify current model
                 modelName={modelName}
-                hasSubzones={hasSubzones}
-                subzoneNamePlural={subzoneNamePlural}
                 
                 
                 
@@ -203,6 +208,11 @@ const CoverageZonePreview = <TCoverageZone extends CoverageZone<TCoverageSubzone
                 privilegeAdd    = {privilegeAdd   }
                 privilegeUpdate = {privilegeUpdate}
                 privilegeDelete = {privilegeDelete}
+                
+                
+                
+                // components:
+                subzoneCoverageZoneEditor={subzoneCoverageZoneEditor}
             />
         );
         switch (updatedCoverageZoneModel) {

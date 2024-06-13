@@ -134,7 +134,7 @@ export const usesSpecificRatesTabLayout = () => {
         gridTemplate       : [[
             '"useArea-editor"', 'auto',
             '".............."', spacers.sm,
-            '"country-editor"', 'auto',
+            '"zone-editor   "', 'auto',
             '/',
             '1fr'
         ]],
@@ -156,7 +156,7 @@ export const usesSpecificRatesTabLayout = () => {
         // children:
         ...children('.useArea.editor', { gridArea: 'useArea-editor' }),
         
-        ...children('.country.editor', { gridArea: 'country-editor' }),
+        ...children('.zone.editor'   , { gridArea: 'zone-editor'    }),
     });
 };
 

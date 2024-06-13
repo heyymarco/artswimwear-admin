@@ -70,6 +70,10 @@ import {
     ComplexEditModelDialog,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
+    type SubzoneCoverageZoneEditorProps,
+    type CoverageZoneEditorProps,
+}                           from '@/components/editors/CoverageZoneEditor'
+import {
     // types:
     type ShippingState,
     
@@ -117,12 +121,13 @@ export interface EditCoverageZoneDialogProps<TCoverageZone extends CoverageZone<
         ImplementedComplexEditModelDialogProps<TCoverageZone & { id: string }>,
         
         // privileges & states:
-        ShippingState
+        ShippingState,
+        
+        // components:
+        SubzoneCoverageZoneEditorProps
 {
     // data:
     modelName         : string
-    hasSubzones       : boolean
-    subzoneNamePlural : string
 }
 const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone>(props: EditCoverageZoneDialogProps<TCoverageZone, TCoverageSubzone>): JSX.Element|null => {
     // styles:
@@ -135,8 +140,6 @@ const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubz
         // data:
         model = null,
         modelName,
-        hasSubzones,
-        subzoneNamePlural,
         
         
         
@@ -152,9 +155,15 @@ const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubz
         
         
         
+        // components:
+        subzoneCoverageZoneEditor,
+        
+        
+        
         // other props:
         ...restComplexEditModelDialogProps
     } = props;
+    const hasSubzones = !!subzoneCoverageZoneEditor;
     
     
     
@@ -356,7 +365,7 @@ const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubz
                     />
                 </form>
             </TabPanel>
-            {hasSubzones && <TabPanel label={PAGE_SHIPPING_TAB_SPECIFIC_RATES} panelComponent={<Generic className={styleSheet.specificRatesTab} />}>
+            {!!subzoneCoverageZoneEditor && <TabPanel label={PAGE_SHIPPING_TAB_SPECIFIC_RATES} panelComponent={<Generic className={styleSheet.specificRatesTab} />}>
                 <Check
                     // classes:
                     className='useArea editor'
@@ -375,7 +384,7 @@ const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubz
                         setIsModified(true);
                     }}
                 >
-                    Use specific {startsDecapitalized(subzoneNamePlural)}:
+                    Use specific {startsDecapitalized(subzoneCoverageZoneEditor.subzoneNamePlural)}:
                 </Check>
                 <ShippingStateProvider
                         // privileges:
@@ -383,7 +392,22 @@ const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubz
                         privilegeUpdate = {privilegeUpdate}
                         privilegeDelete = {privilegeDelete}
                 >
-                    {/* TODO add nested zone editor here */}
+                    {React.cloneElement<CoverageZoneEditorProps<CoverageZone<CoverageSubzone>, CoverageSubzone>>(subzoneCoverageZoneEditor.subzoneEditorComponent,
+                        // props:
+                        {
+                            // accessibilities:
+                            enabled  : useZones,
+                            
+                            
+                            
+                            // values:
+                            value   : zones as CoverageZone<CoverageSubzone>[],
+                            onChange : ((value) => {
+                                setZones(value as TCoverageSubzone[]);
+                                setIsModified(true);
+                            }),
+                        },
+                    )}
                 </ShippingStateProvider>
             </TabPanel>}
         </>}</ComplexEditModelDialog>
