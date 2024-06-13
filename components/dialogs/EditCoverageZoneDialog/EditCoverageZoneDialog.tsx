@@ -91,7 +91,7 @@ import {
 // models:
 import {
     // types:
-    type CoverageZone,
+    type CoverageZoneWithId,
     type CoverageSubzone,
     type ShippingRate,
 }                           from '@/models'
@@ -115,10 +115,10 @@ import './EditCoverageZoneDialogStyles';
 
 
 // react components:
-export interface EditCoverageZoneDialogProps<TCoverageZone extends CoverageZone<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone>
+export interface EditCoverageZoneDialogProps<TCoverageZoneWithId extends CoverageZoneWithId<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone>
     extends
         // bases:
-        ImplementedComplexEditModelDialogProps<TCoverageZone & { id: string }>,
+        ImplementedComplexEditModelDialogProps<TCoverageZoneWithId>,
         
         // privileges & states:
         ShippingState,
@@ -129,7 +129,7 @@ export interface EditCoverageZoneDialogProps<TCoverageZone extends CoverageZone<
     // data:
     modelName         : string
 }
-const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone>(props: EditCoverageZoneDialogProps<TCoverageZone, TCoverageSubzone>): JSX.Element|null => {
+const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone>(props: EditCoverageZoneDialogProps<TCoverageZoneWithId, TCoverageSubzone>): JSX.Element|null => {
     // styles:
     const styleSheet = useEditCoverageZoneDialogStyleSheet();
     
@@ -205,7 +205,7 @@ const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubz
     
     
     // handlers:
-    const handleUpdate         = useEvent<UpdateHandler<TCoverageZone & { id: string }>>(({id, whenAdd, whenUpdate}) => {
+    const handleUpdate         = useEvent<UpdateHandler<TCoverageZoneWithId>>(({id, whenAdd, whenUpdate}) => {
         return {
             id            : id ?? '',
             
@@ -216,10 +216,10 @@ const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubz
             
             useZones      : (hasSubzones && (whenUpdate.price       || whenAdd)) ? useZones           : undefined,
             zones         : (hasSubzones && (whenUpdate.price       || whenAdd)) ? zones              : undefined,
-        } as PartialModel<TCoverageZone & { id: string }>;
+        } as PartialModel<TCoverageZoneWithId>;
     });
     
-    const handleConfirmDelete  = useEvent<ConfirmDeleteHandler<(TCoverageZone & { id: string })>>(({model}) => {
+    const handleConfirmDelete  = useEvent<ConfirmDeleteHandler<TCoverageZoneWithId>>(({model}) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
@@ -229,7 +229,7 @@ const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubz
             </>,
         };
     });
-    const handleConfirmUnsaved = useEvent<ConfirmUnsavedHandler<(TCoverageZone & { id: string })>>(() => {
+    const handleConfirmUnsaved = useEvent<ConfirmUnsavedHandler<TCoverageZoneWithId>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>
@@ -242,7 +242,7 @@ const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubz
     
     // jsx:
     return (
-        <ComplexEditModelDialog<TCoverageZone & { id: string }>
+        <ComplexEditModelDialog<TCoverageZoneWithId>
             // other props:
             {...restComplexEditModelDialogProps}
             
@@ -392,7 +392,7 @@ const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubz
                         privilegeUpdate = {privilegeUpdate}
                         privilegeDelete = {privilegeDelete}
                 >
-                    {React.cloneElement<CoverageZoneEditorProps<CoverageZone<CoverageSubzone>, CoverageSubzone>>(subzoneCoverageZoneEditor.subzoneEditorComponent,
+                    {React.cloneElement<CoverageZoneEditorProps<CoverageZoneWithId<CoverageSubzone>, CoverageSubzone>>(subzoneCoverageZoneEditor.subzoneEditorComponent,
                         // props:
                         {
                             // data:
@@ -412,9 +412,9 @@ const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubz
                             
                             
                             // values:
-                            value         : zones as CoverageZone<CoverageSubzone>[],
+                            value         : zones as TCoverageSubzone[] as unknown as CoverageZoneWithId<CoverageSubzone>[],
                             onChange      : ((value) => {
-                                setZones(value as TCoverageSubzone[]);
+                                setZones(value as CoverageZoneWithId<CoverageSubzone>[] as unknown as TCoverageSubzone[]);
                                 setIsModified(true);
                             }),
                         },

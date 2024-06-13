@@ -75,7 +75,7 @@ import {
 
 // models:
 import {
-    type CoverageZone,
+    type CoverageZoneWithId,
     type CoverageSubzone,
 }                           from '@/models'
 
@@ -97,10 +97,10 @@ const handleOrderStart = (event: OrderableListItemDragStartEvent<HTMLElement>): 
 
 
 // react components:
-export interface CoverageZonePreviewProps<TCoverageZone extends CoverageZone<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone>
+export interface CoverageZonePreviewProps<TCoverageZoneWithId extends CoverageZoneWithId<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone>
     extends
         // bases:
-        ModelPreviewProps<TCoverageZone & { id: string }>,
+        ModelPreviewProps<TCoverageZoneWithId>,
         
         // components:
         SubzoneCoverageZoneEditorProps
@@ -111,10 +111,10 @@ export interface CoverageZonePreviewProps<TCoverageZone extends CoverageZone<TCo
     
     
     // handlers:
-    onUpdated         ?: UpdatedHandler<TCoverageZone & { id: string }>
-    onDeleted         ?: DeleteHandler<TCoverageZone & { id: string }>
+    onUpdated         ?: UpdatedHandler<TCoverageZoneWithId>
+    onDeleted         ?: DeleteHandler<TCoverageZoneWithId>
 }
-const CoverageZonePreview = <TCoverageZone extends CoverageZone<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone>(props: CoverageZonePreviewProps<TCoverageZone, TCoverageSubzone>): JSX.Element|null => {
+const CoverageZonePreview = <TCoverageZoneWithId extends CoverageZoneWithId<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone>(props: CoverageZonePreviewProps<TCoverageZoneWithId, TCoverageSubzone>): JSX.Element|null => {
     // styles:
     const styleSheet = usePageStyleSheet();
     
@@ -181,8 +181,8 @@ const CoverageZonePreview = <TCoverageZone extends CoverageZone<TCoverageSubzone
             * the deleting capability follows the `privilegeProductDelete`
         
         when create_mode (add):
-            * ALWAYS be ABLE to edit   the TCoverageZone of Shipping (because the data is *not_yet_exsist* on the database)
-            * ALWAYS be ABLE to delete the TCoverageZone of Shipping (because the data is *not_yet_exsist* on the database)
+            * ALWAYS be ABLE to edit   the TCoverageZoneWithId of Shipping (because the data is *not_yet_exsist* on the database)
+            * ALWAYS be ABLE to delete the TCoverageZoneWithId of Shipping (because the data is *not_yet_exsist* on the database)
     */
     const privilegeUpdate = whenDraft ? privilegeShippingUpdateFullAccess : privilegeUpdateRaw;
     const privilegeDelete = whenDraft ?               true                : privilegeDeleteRaw;
@@ -191,8 +191,8 @@ const CoverageZonePreview = <TCoverageZone extends CoverageZone<TCoverageSubzone
     
     // handlers:
     const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async () => {
-        const updatedCoverageZoneModel = await showDialog<ComplexEditModelDialogResult<TCoverageZone & { id: string }>>(
-            <EditCoverageZoneDialog<TCoverageZone, TCoverageSubzone>
+        const updatedCoverageZoneModel = await showDialog<ComplexEditModelDialogResult<TCoverageZoneWithId>>(
+            <EditCoverageZoneDialog<TCoverageZoneWithId, TCoverageSubzone>
                 // data:
                 model={model} // modify current model
                 modelName={modelName}

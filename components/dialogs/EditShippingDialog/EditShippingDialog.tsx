@@ -95,8 +95,11 @@ import {
     type ShippingDetail,
     type ShippingRate,
     type CoverageCountry,
+    type CoverageCountryWithId,
     type CoverageState,
+    type CoverageStateWithId,
     type CoverageCity,
+    type CoverageCityWithId,
 }                           from '@/models'
 
 // stores:
@@ -105,6 +108,11 @@ import {
     useUpdateShipping,
     useDeleteShipping,
 }                           from '@/store/features/api/apiSlice'
+
+// others:
+import {
+    customAlphabet,
+}                           from 'nanoid'
 
 // configs:
 import {
@@ -153,12 +161,12 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     // states:
     const [isModified    , setIsModified   ] = useState<boolean>(false);
     
-    const [visibility    , setVisibility   ] = useState<ShippingVisibility>(model?.visibility ?? 'DRAFT');
-    const [name          , setName         ] = useState<string            >(model?.name       ?? ''     );
+    const [visibility    , setVisibility   ] = useState<ShippingVisibility     >(model?.visibility ?? 'DRAFT');
+    const [name          , setName         ] = useState<string                 >(model?.name       ?? ''     );
     
-    const [weightStep    , setWeightStep   ] = useState<number            >(model?.weightStep ?? 1      );
-    const [estimate      , setEstimate     ] = useState<string            >(model?.estimate   ?? ''     );
-    const [shippingRates , setShippingRates] = useState<ShippingRate[]    >(() => {
+    const [weightStep    , setWeightStep   ] = useState<number                 >(model?.weightStep ?? 1      );
+    const [estimate      , setEstimate     ] = useState<string                 >(model?.estimate   ?? ''     );
+    const [shippingRates , setShippingRates] = useState<ShippingRate[]         >(() => {
         const shippingRates = model?.shippingRates;
         if (!shippingRates) return [];
         return (
@@ -169,15 +177,28 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
         );
     });
     
-    const [useZones      , setUseZones     ] = useState<boolean           >(model?.useZones   ?? true   );
-    const [countries     , setCountries    ] = useState<CoverageCountry[] >(() => {
+    const [useZones      , setUseZones     ] = useState<boolean                >(model?.useZones   ?? true   );
+    const [countries     , setCountries    ] = useState<CoverageCountryWithId[]>((): CoverageCountryWithId[] => {
         const countries = model?.zones;
         if (!countries) return [];
+        
+        
+        
+        const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
         return (
             countries
-            .map((country) => ({
-                ...country, // clone => immutable => mutable
-            }))
+            .map((coverageCountry: CoverageCountry) => ({
+                ...coverageCountry, // clone => immutable => mutable
+                id    : nanoid(),
+                zones : coverageCountry.zones.map((coverageState: CoverageState) => ({
+                    ...coverageState, // clone => immutable => mutable
+                    id    : nanoid(),
+                    zones : coverageState.zones.map((coverageCity: CoverageCity) => ({
+                        ...coverageCity,
+                        id    : nanoid(),
+                    } satisfies CoverageCityWithId)),
+                } satisfies CoverageStateWithId)),
+            } satisfies CoverageCountryWithId))
         );
     });
     
@@ -479,7 +500,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                         privilegeUpdate = {privilegeUpdate}
                         privilegeDelete = {privilegeDelete}
                 >
-                    <CoverageZoneEditor<CoverageCountry, CoverageState>
+                    <CoverageZoneEditor<CoverageCountryWithId, CoverageStateWithId>
                         // data:
                         modelName='Country'
                         parentModelId={model?.id ?? ' newId' /* a dummy id starting with empty space */}
@@ -509,7 +530,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                         // components:
                         subzoneCoverageZoneEditor={{
                             subzoneNamePlural      : 'States',
-                            subzoneEditorComponent : <CoverageZoneEditor<CoverageState, CoverageCity>
+                            subzoneEditorComponent : <CoverageZoneEditor<CoverageStateWithId, CoverageCityWithId>
                                 // data:
                                 modelName='State'
                                 
@@ -518,7 +539,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                                 // components:
                                 subzoneCoverageZoneEditor={{
                                     subzoneNamePlural      : 'Cities',
-                                    subzoneEditorComponent : <CoverageZoneEditor<CoverageCity & { useZones: never, zones: never }, never>
+                                    subzoneEditorComponent : <CoverageZoneEditor<CoverageCityWithId & { useZones: never, zones: never }, never>
                                         // data:
                                         modelName='City'
                                         

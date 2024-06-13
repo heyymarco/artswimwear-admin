@@ -36,7 +36,6 @@ export interface ShippingRateWithId extends ShippingRate {
 
 
 
-export type CoverageSubzone = CoverageState|CoverageCity|never
 export interface CoverageZone<TSubzone extends CoverageSubzone>
     extends
         Omit<CoverageCountry, 'useZones'|'zones'>,
@@ -45,4 +44,23 @@ export interface CoverageZone<TSubzone extends CoverageSubzone>
 {
     useZones : TSubzone extends never ? never : boolean
     zones    : TSubzone extends never ? never : TSubzone[]
+}
+export interface CoverageZoneWithId<TSubzone extends CoverageSubzone> extends CoverageZone<TSubzone> {
+    id       : string
+}
+
+export type CoverageSubzone = CoverageState|CoverageCity|never
+
+
+
+export interface CoverageCountryWithId extends Omit<CoverageCountry, 'zones'> {
+    id    : string
+    zones : CoverageStateWithId[]
+}
+export interface CoverageStateWithId extends Omit<CoverageState, 'zones'> {
+    id    : string
+    zones : CoverageCityWithId[]
+}
+export interface CoverageCityWithId extends Omit<CoverageCity, 'zones'> {
+    id    : string
 }

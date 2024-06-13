@@ -88,14 +88,9 @@ import {
 // models:
 import {
     // types:
-    type CoverageZone,
+    type CoverageZoneWithId,
     type CoverageSubzone,
 }                           from '@/models'
-
-// others:
-import {
-    customAlphabet,
-}                           from 'nanoid'
 
 // styles:
 import {
@@ -108,16 +103,16 @@ import {
 export interface SubzoneCoverageZoneEditor {
     // components:
     subzoneNamePlural      : string
-    subzoneEditorComponent : React.ReactElement<CoverageZoneEditorProps<CoverageZone<CoverageSubzone>, CoverageSubzone>>
+    subzoneEditorComponent : React.ReactElement<CoverageZoneEditorProps<CoverageZoneWithId<CoverageSubzone>, CoverageSubzone>>
 }
 export interface SubzoneCoverageZoneEditorProps {
     // components:
     subzoneCoverageZoneEditor ?: SubzoneCoverageZoneEditor
 }
-export interface CoverageZoneEditorProps<TCoverageZone extends CoverageZone<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone, TElement extends Element = HTMLElement>
+export interface CoverageZoneEditorProps<TCoverageZoneWithId extends CoverageZoneWithId<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone, TElement extends Element = HTMLElement>
     extends
         // bases:
-        Pick<EditorProps<TElement, TCoverageZone[]>,
+        Pick<EditorProps<TElement, TCoverageZoneWithId[]>,
             // values:
             |'defaultValue' // not supported, controllable only
             |'value'
@@ -142,7 +137,7 @@ export interface CoverageZoneEditorProps<TCoverageZone extends CoverageZone<TCov
     modelName      : string
     parentModelId ?: string
 }
-const CoverageZoneEditor = <TCoverageZone extends CoverageZone<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone, TElement extends Element = HTMLElement>(props: CoverageZoneEditorProps<TCoverageZone, TCoverageSubzone, TElement>): JSX.Element|null => {
+const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone, TElement extends Element = HTMLElement>(props: CoverageZoneEditorProps<TCoverageZoneWithId, TCoverageSubzone, TElement>): JSX.Element|null => {
     // rest props:
     const {
         // data:
@@ -178,34 +173,11 @@ const CoverageZoneEditor = <TCoverageZone extends CoverageZone<TCoverageSubzone>
     const {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllableAndUncontrollable<TCoverageZone[]>({
+    } = useControllableAndUncontrollable<TCoverageZoneWithId[]>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
         onValueChange      : onControllableValueChange,
     });
-    
-    const [idMap] = useState<Map<TCoverageZone, string>>(() => new Map<TCoverageZone, string>());
-    const mirrorValueWithId = useMemo((): (TCoverageZone & { id: string })[] => {
-        const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
-        return (
-            value
-            .map((item) => {
-                let id = idMap.get(item);
-                if (id === undefined) {
-                    id = nanoid();
-                    idMap.set(item, id);
-                    // console.log('auto generated id: ', item, id);
-                } // if
-                
-                
-                
-                return {
-                    ...item,
-                    id : id,
-                };
-            })
-        );
-    }, [value]);
     
     const isValueValid = useMemo((): boolean => {
         const uniqueNames = new Set(
@@ -255,8 +227,8 @@ const CoverageZoneEditor = <TCoverageZone extends CoverageZone<TCoverageSubzone>
             * the deleting capability follows the `privilegeProductDelete`
         
         when create_mode (add):
-            * ALWAYS be ABLE to edit   the TCoverageZone of Shipping (because the data is *not_yet_exsist* on the database)
-            * ALWAYS be ABLE to delete the TCoverageZone of Shipping (because the data is *not_yet_exsist* on the database)
+            * ALWAYS be ABLE to edit   the TCoverageZoneWithId of Shipping (because the data is *not_yet_exsist* on the database)
+            * ALWAYS be ABLE to delete the TCoverageZoneWithId of Shipping (because the data is *not_yet_exsist* on the database)
     */
     const privilegeUpdate = whenDraft ? privilegeShippingUpdateFullAccess : privilegeUpdateRaw;
     const privilegeDelete = whenDraft ?               true                : privilegeDeleteRaw;
@@ -270,31 +242,31 @@ const CoverageZoneEditor = <TCoverageZone extends CoverageZone<TCoverageSubzone>
         triggerValueChange(
             restChildren
             .map((modelPreviewComponent) => {
-                const model = (modelPreviewComponent.props as any).model as TCoverageZone & { id: string };
+                const model = (modelPreviewComponent.props as any).model as TCoverageZoneWithId;
                 return model;
             })
         , { triggerAt: 'immediately' });
     });
-    const handleModelCreated   = useEvent<CreateHandler<TCoverageZone & { id: string }>>((createdModelWithId) => {
+    const handleModelCreated   = useEvent<CreateHandler<TCoverageZoneWithId>>((createdModelWithId) => {
         const {
             id : _id, // remove
             ...createdModel
         } = createdModelWithId;
         
         const mutatedValue = value.slice(0); // copy
-        mutatedValue.push(createdModel as unknown as TCoverageZone & { id: string });
+        mutatedValue.push(createdModel as unknown as TCoverageZoneWithId);
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
-    const handleModelUpdated   = useEvent<UpdatedHandler<TCoverageZone & { id: string }>>((updatedModelWithId) => {
+    const handleModelUpdated   = useEvent<UpdatedHandler<TCoverageZoneWithId>>((updatedModelWithId) => {
         const {
             id : findId, // take
             ...mutatedModel
         } = updatedModelWithId;
         
         const mutatedValue = value.slice(0); // copy
-        const modelIndex = mirrorValueWithId.findIndex((model) => model.id === findId);
+        const modelIndex = value.findIndex((model) => model.id === findId);
         if (modelIndex < 0) {
-            mutatedValue.unshift(mutatedModel as unknown as TCoverageZone & { id: string });
+            mutatedValue.unshift(mutatedModel as unknown as TCoverageZoneWithId);
         }
         else {
             const currentModel         = mutatedValue[modelIndex];
@@ -310,9 +282,9 @@ const CoverageZoneEditor = <TCoverageZone extends CoverageZone<TCoverageSubzone>
         } // if
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
-    const handleModelDeleted   = useEvent<DeleteHandler<TCoverageZone & { id: string }>>(({id}) => {
+    const handleModelDeleted   = useEvent<DeleteHandler<TCoverageZoneWithId>>(({id}) => {
         const mutatedValue = value.slice(0); // copy
-        const modelIndex = mirrorValueWithId.findIndex((model) => model.id === id);
+        const modelIndex = value.findIndex((model) => model.id === id);
         if (modelIndex < 0) return;
         mutatedValue.splice(modelIndex, 1);
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
@@ -386,11 +358,11 @@ const CoverageZoneEditor = <TCoverageZone extends CoverageZone<TCoverageSubzone>
                     // values:
                     onChildrenChange={handleChildrenChange}
                 >
-                    {!mirrorValueWithId.length && <ModelEmpty />}
+                    {!value.length && <ModelEmpty />}
                     
-                    {mirrorValueWithId.map((coverageZone) =>
+                    {value.map((coverageZone) =>
                         /* <ModelPreview> */
-                        <CoverageZonePreview<TCoverageZone, TCoverageSubzone>
+                        <CoverageZonePreview<TCoverageZoneWithId, TCoverageSubzone>
                             // identifiers:
                             key={coverageZone.id}
                             
@@ -414,7 +386,7 @@ const CoverageZoneEditor = <TCoverageZone extends CoverageZone<TCoverageSubzone>
                     )}
                     
                     {/* <ModelCreate> */}
-                    <ModelCreateOuter<TCoverageZone & { id: string }>
+                    <ModelCreateOuter<TCoverageZoneWithId>
                         // classes:
                         className='solid'
                         
@@ -429,7 +401,7 @@ const CoverageZoneEditor = <TCoverageZone extends CoverageZone<TCoverageSubzone>
                         modelCreateComponent={
                             isDisabledOrReadOnly
                             ? false
-                            : <EditCoverageZoneDialog<TCoverageZone, TCoverageSubzone>
+                            : <EditCoverageZoneDialog<TCoverageZoneWithId, TCoverageSubzone>
                                 // data:
                                 model={null} // create a new model
                                 modelName={modelName}
