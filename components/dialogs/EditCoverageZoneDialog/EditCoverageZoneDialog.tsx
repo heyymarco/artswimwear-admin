@@ -149,7 +149,12 @@ const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubz
         
         // states:
         defaultExpandedTabIndex = 0,
-    ...restComplexEditModelDialogProps} = props;
+        
+        
+        
+        // other props:
+        ...restComplexEditModelDialogProps
+    } = props;
     
     
     
