@@ -195,7 +195,7 @@ You do not have the privilege to view the shippings.`
         
         ||
         
-        ((visibility      !== undefined)                        && (typeof(visibility)            !== 'string') || !['PUBLISHED', 'DRAFT'].includes(visibility))
+        ((visibility      !== undefined)                        && ((typeof(visibility)            !== 'string') || !['PUBLISHED', 'DRAFT'].includes(visibility)))
         ||
         ((name            !== undefined)                        && ((typeof(name)                 !== 'string') || (name.length     < 1)))
         ||
