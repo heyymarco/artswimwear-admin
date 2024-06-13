@@ -96,6 +96,11 @@ import {
     type ShippingRate,
 }                           from '@/models'
 
+// others:
+import {
+    customAlphabet,
+}                           from 'nanoid'
+
 // configs:
 import {
     PAGE_SHIPPING_TAB_INFORMATIONS,
@@ -207,7 +212,10 @@ const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<T
     // handlers:
     const handleUpdate         = useEvent<UpdateHandler<TCoverageZoneWithId>>(({id, whenAdd, whenUpdate}) => {
         return {
-            id            : id ?? '',
+            id            : id ?? (() => {
+                const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
+                return ` ${nanoid()}`; // starts with space{random-temporary-id}
+            })(),
             
             name          :                 (whenUpdate.description || whenAdd)  ? name               : undefined,
             
