@@ -10,6 +10,11 @@ import {
     useState,
 }                           from 'react'
 
+// cssfn:
+import {
+    startsCapitalized,
+}                           from '@cssfn/core'                      // writes css in javascript
+
 // reusable-ui core:
 import {
     // react helper hooks:
@@ -122,12 +127,18 @@ export interface CoverageZoneEditorProps<TCoverageZone extends CoverageZone<TCov
         >
 {
     // data:
-    parentModelId : string
+    modelName         : string
+    hasSubzones       : boolean
+    subzoneNamePlural : string
+    parentModelId     : string
 }
 const CoverageZoneEditor = <TCoverageZone extends CoverageZone<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone, TElement extends Element = HTMLElement>(props: CoverageZoneEditorProps<TCoverageZone, TCoverageSubzone, TElement>): JSX.Element|null => {
     // rest props:
     const {
         // data:
+        modelName,
+        hasSubzones,
+        subzoneNamePlural,
         parentModelId,
         
         
@@ -277,9 +288,9 @@ const CoverageZoneEditor = <TCoverageZone extends CoverageZone<TCoverageSubzone>
             currentModel.name          = mutatedModel.name          ?? '';
             currentModel.estimate      = mutatedModel.estimate      || null;
             currentModel.shippingRates = mutatedModel.shippingRates ?? [];
-            if (currentModel.useZones !== undefined) {
-                currentModel.useZones      = mutatedModel.useZones      ?? (true as any);
-                currentModel.zones         = mutatedModel.zones         ?? ([] as any);
+            if (hasSubzones) {
+                currentModel.useZones  = mutatedModel.useZones      ?? (true as any);
+                currentModel.zones     = mutatedModel.zones         ?? ([]   as any);
             } // if
             
             mutatedValue[modelIndex] = currentModel;
@@ -391,7 +402,7 @@ const CoverageZoneEditor = <TCoverageZone extends CoverageZone<TCoverageSubzone>
                         
                         
                         // accessibilities:
-                        createItemText='Add New Country'
+                        createItemText={`Add New ${startsCapitalized(modelName)}`}
                         
                         
                         
@@ -402,6 +413,9 @@ const CoverageZoneEditor = <TCoverageZone extends CoverageZone<TCoverageSubzone>
                             : <EditCoverageZoneDialog<TCoverageZone, TCoverageSubzone>
                                 // data:
                                 model={null} // create a new model
+                                modelName={modelName}
+                                hasSubzones={hasSubzones}
+                                subzoneNamePlural={subzoneNamePlural}
                                 
                                 
                                 
