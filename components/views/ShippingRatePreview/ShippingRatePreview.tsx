@@ -56,7 +56,7 @@ import {
 
 // models:
 import {
-    type ShippingRate,
+    type ShippingRateWithId,
 }                           from '@/models'
 
 
@@ -70,15 +70,15 @@ import './ShippingRatePreviewStyles';
 
 
 // react components:
-export interface ShippingRatePreviewProps extends ModelPreviewProps<ShippingRate & { id: string }> {
+export interface ShippingRatePreviewProps extends ModelPreviewProps<ShippingRateWithId> {
     // values:
-    shippingRates  : (ShippingRate & { id: string })[]
+    shippingRates  : ShippingRateWithId[]
     
     
     
     // handlers:
-    onUpdated     ?: UpdatedHandler<ShippingRate & { id: string }>
-    onDeleted     ?: DeleteHandler<ShippingRate & { id: string }>
+    onUpdated     ?: UpdatedHandler<ShippingRateWithId>
+    onDeleted     ?: DeleteHandler<ShippingRateWithId>
 }
 const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null => {
     // styles:

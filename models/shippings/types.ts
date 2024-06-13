@@ -1,6 +1,7 @@
 // models:
 import {
     type ShippingProvider,
+    type ShippingRate,
     type CoverageCountry,
     type CoverageState,
     type CoverageCity,
@@ -25,6 +26,12 @@ export interface ShippingDetail
             |'updatedAt'
         >
 {
+}
+
+
+
+export interface ShippingRateWithId extends ShippingRate {
+    id : string
 }
 
 

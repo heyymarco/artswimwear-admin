@@ -64,6 +64,7 @@ import {
 import {
     // types:
     type ShippingRate,
+    type ShippingRateWithId,
 }                           from '@/models'
 
 // others:
@@ -125,7 +126,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
     const lastValue : ShippingRate|undefined = value.length ? value[value.length - 1] : undefined;
     
     const [idMap] = useState<Map<ShippingRate, string>>(() => new Map<ShippingRate, string>());
-    const mirrorValueWithId = useMemo((): (ShippingRate & { id: string })[] => {
+    const mirrorValueWithId = useMemo((): ShippingRateWithId[] => {
         const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
         return (
             value
@@ -165,7 +166,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
     
     
     // handlers:
-    const handleModelCreate  = useEvent((): ShippingRate & { id: string } => {
+    const handleModelCreate  = useEvent((): ShippingRateWithId => {
         return {
             id             : '', // will be removed
             
@@ -173,17 +174,17 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
             rate           : (lastValue === undefined) ? 0 :   lastValue.rate,
         };
     });
-    const handleModelCreated = useEvent<CreateHandler<ShippingRate & { id: string }>>((createdModelWithId) => {
+    const handleModelCreated = useEvent<CreateHandler<ShippingRateWithId>>((createdModelWithId) => {
         const {
             id : _id, // remove
             ...createdModel
         } = createdModelWithId;
         
         const mutatedValue = value.slice(0); // copy
-        mutatedValue.push(createdModel as ShippingRate & { id: string });
+        mutatedValue.push(createdModel as ShippingRateWithId);
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
-    const handleModelUpdated = useEvent<UpdatedHandler<ShippingRate & { id: string }>>((updatedModelWithId) => {
+    const handleModelUpdated = useEvent<UpdatedHandler<ShippingRateWithId>>((updatedModelWithId) => {
         const {
             id : findId, // take
             ...mutatedModel
@@ -192,7 +193,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
         const mutatedValue = value.slice(0); // copy
         const modelIndex = mirrorValueWithId.findIndex((model) => model.id === findId);
         if (modelIndex < 0) {
-            mutatedValue.unshift(mutatedModel as ShippingRate & { id: string });
+            mutatedValue.unshift(mutatedModel as ShippingRateWithId);
         }
         else {
             const currentModel          = mutatedValue[modelIndex];
@@ -204,7 +205,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
         mutatedValue.sort((a, b) => (a.startingWeight - b.startingWeight));
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
-    const handleModelDeleted = useEvent<DeleteHandler<ShippingRate & { id: string }>>(({id}) => {
+    const handleModelDeleted = useEvent<DeleteHandler<ShippingRateWithId>>(({id}) => {
         const mutatedValue = value.slice(0); // copy
         const modelIndex = mirrorValueWithId.findIndex((model) => model.id === id);
         if (modelIndex < 0) return;
@@ -288,7 +289,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
                 )}
                 
                 {/* <ModelCreate> */}
-                <ModelCreateOuter<ShippingRate & { id: string }>
+                <ModelCreateOuter<ShippingRateWithId>
                     // classes:
                     className='solid'
                     
