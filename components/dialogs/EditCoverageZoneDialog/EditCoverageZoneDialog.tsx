@@ -16,17 +16,17 @@ import {
 import {
     startsCapitalized,
     startsDecapitalized,
-}                           from '@cssfn/core'                  // writes css in javascript
+}                           from '@cssfn/core'                      // writes css in javascript
 import {
     // style sheets:
     dynamicStyleSheets,
-}                           from '@cssfn/cssfn-react'           // writes css in react hook
+}                           from '@cssfn/cssfn-react'               // writes css in react hook
 
 // reusable-ui core:
 import {
     // react helper hooks:
     useEvent,
-}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+}                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
 import {
@@ -42,7 +42,7 @@ import {
     
     // composite-components:
     TabPanel,
-}                           from '@reusable-ui/components'      // a set of official Reusable-UI components
+}                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // internal components:
 import {
