@@ -96,6 +96,7 @@ import {
     type ShippingRate,
     type CoverageCountry,
     type CoverageState,
+    type CoverageCity,
 }                           from '@/models'
 
 // stores:
@@ -508,14 +509,25 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                         // components:
                         subzoneCoverageZoneEditor={{
                             subzoneNamePlural      : 'States',
-                            subzoneEditorComponent : <CoverageZoneEditor<CoverageCountry, CoverageState>
+                            subzoneEditorComponent : <CoverageZoneEditor<CoverageState, CoverageCity>
                                 // data:
                                 modelName='State'
                                 
                                 
                                 
                                 // components:
-                                subzoneCoverageZoneEditor={undefined}
+                                subzoneCoverageZoneEditor={{
+                                    subzoneNamePlural      : 'Cities',
+                                    subzoneEditorComponent : <CoverageZoneEditor<CoverageCity & { useZones: never, zones: never }, never>
+                                        // data:
+                                        modelName='City'
+                                        
+                                        
+                                        
+                                        // components:
+                                        subzoneCoverageZoneEditor={undefined}
+                                    />,
+                                }}
                             />,
                         }}
                     />

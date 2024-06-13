@@ -29,7 +29,7 @@ export interface ShippingDetail
 
 
 
-export type CoverageSubzone = CoverageCountry|CoverageState|never
+export type CoverageSubzone = CoverageState|CoverageCity|never
 export interface CoverageZone<TSubzone extends CoverageSubzone>
     extends
         Omit<CoverageCountry, 'useZones'|'zones'>,
