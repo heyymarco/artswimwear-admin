@@ -10,15 +10,13 @@ import {
     // hooks:
     useRef,
     useState,
-    useMemo,
 }                           from 'react'
 
-// next-auth:
-import {
-    useSession,
-}                           from 'next-auth/react'
-
 // cssfn:
+import {
+    startsCapitalized,
+    startsDecapitalized,
+}                           from '@cssfn/core'
 import {
     // style sheets:
     dynamicStyleSheets,
@@ -121,6 +119,10 @@ export interface EditCoverageZoneDialogProps<TCoverageZone extends CoverageZone<
         // privileges & states:
         ShippingState
 {
+    // data:
+    modelName         : string
+    hasSubzones       : boolean
+    subzoneNamePlural : string
 }
 const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone>(props: EditCoverageZoneDialogProps<TCoverageZone, TCoverageSubzone>): JSX.Element|null => {
     // styles:
@@ -132,6 +134,9 @@ const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubz
     const {
         // data:
         model = null,
+        modelName,
+        hasSubzones,
+        subzoneNamePlural,
         
         
         
@@ -151,10 +156,10 @@ const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubz
     // states:
     const [isModified    , setIsModified   ] = useState<boolean>(false);
     
-    const [name          , setName         ] = useState<string        >(model?.name     ?? ''   );
+    const [name          , setName         ] = useState<string            >(model?.name     ?? '');
     
-    const [estimate      , setEstimate     ] = useState<string        >(model?.estimate ?? ''   );
-    const [shippingRates , setShippingRates] = useState<ShippingRate[]>(() => {
+    const [estimate      , setEstimate     ] = useState<string            >(model?.estimate ?? '');
+    const [shippingRates , setShippingRates] = useState<ShippingRate[]    >(() => {
         const shippingRates = model?.shippingRates;
         if (!shippingRates) return [];
         return (
@@ -165,8 +170,9 @@ const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubz
         );
     });
     
-    const [useZones      , setUseZones     ] = useState<boolean       >(model?.useZones ?? false);
+    const [useZones      , setUseZones     ] = useState<boolean           >(hasSubzones && (model?.useZones ?? true /* default to true for no model (create new) */));
     const [zones         , setZones        ] = useState<TCoverageSubzone[]>(() => {
+        if (!hasSubzones) return [];
         const zones = model?.zones;
         if (!zones) return [];
         return (
@@ -176,12 +182,6 @@ const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubz
             } as TCoverageSubzone))
         );
     });
-    
-    
-    
-    // sessions:
-    const { data: session } = useSession();
-    const role = session?.role;
     
     
     
@@ -195,13 +195,13 @@ const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubz
         return {
             id            : id ?? '',
             
-            name          :                                     (whenUpdate.description || whenAdd)  ? name               : undefined,
+            name          :                 (whenUpdate.description || whenAdd)  ? name               : undefined,
             
-            estimate      :                                     (whenUpdate.description || whenAdd)  ? (estimate || null) : undefined,
-            shippingRates :                                     (whenUpdate.price       || whenAdd)  ? shippingRates      : undefined,
+            estimate      :                 (whenUpdate.description || whenAdd)  ? (estimate || null) : undefined,
+            shippingRates :                 (whenUpdate.price       || whenAdd)  ? shippingRates      : undefined,
             
-            useZones      : ((model?.useZones !== undefined) && (whenUpdate.price       || whenAdd)) ? useZones           : undefined,
-            zones         : ((model?.useZones !== undefined) && (whenUpdate.price       || whenAdd)) ? zones              : undefined,
+            useZones      : (hasSubzones && (whenUpdate.price       || whenAdd)) ? useZones           : undefined,
+            zones         : (hasSubzones && (whenUpdate.price       || whenAdd)) ? zones              : undefined,
         } as PartialModel<TCoverageZone & { id: string }>;
     });
     
@@ -235,7 +235,7 @@ const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubz
             
             
             // data:
-            modelName='Country'
+            modelName={startsCapitalized(modelName)}
             modelEntryName={model?.name}
             model={model}
             
@@ -351,7 +351,7 @@ const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubz
                     />
                 </form>
             </TabPanel>
-            <TabPanel label={PAGE_SHIPPING_TAB_SPECIFIC_RATES} panelComponent={<Generic className={styleSheet.specificRatesTab} />}>
+            {hasSubzones && <TabPanel label={PAGE_SHIPPING_TAB_SPECIFIC_RATES} panelComponent={<Generic className={styleSheet.specificRatesTab} />}>
                 <Check
                     // classes:
                     className='useArea editor'
@@ -370,7 +370,7 @@ const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubz
                         setIsModified(true);
                     }}
                 >
-                    Use specific zones:
+                    Use specific {startsDecapitalized(subzoneNamePlural)}:
                 </Check>
                 <ShippingStateProvider
                         // privileges:
@@ -380,7 +380,7 @@ const EditCoverageZoneDialog = <TCoverageZone extends CoverageZone<TCoverageSubz
                 >
                     {/* TODO add nested zone editor here */}
                 </ShippingStateProvider>
-            </TabPanel>
+            </TabPanel>}
         </>}</ComplexEditModelDialog>
     );
 };
