@@ -385,6 +385,9 @@ const CoverageZoneEditor = <TCoverageZone extends CoverageZone<TCoverageSubzone>
                             
                             // data:
                             model={coverageZone}
+                            modelName={modelName}
+                            hasSubzones={hasSubzones}
+                            subzoneNamePlural={subzoneNamePlural}
                             
                             
                             
