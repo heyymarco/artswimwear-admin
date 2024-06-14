@@ -12,14 +12,9 @@ import {
 
 // privates:
 import {
-    default as defaultCountryMap
-}                           from './defaultCountryMap'
-
-
-
-// utilities:
-const defaultValueToUi   = (value: string|null): string => (value ? defaultCountryMap.get(value) : undefined) ?? 'Select Country';
-const defaultCountryList = Array.from(defaultCountryMap.keys());
+    getCountryDisplay,
+    countryList,
+}                           from './utilities'
 
 
 
@@ -46,8 +41,8 @@ const SelectCountryEditor = <TElement extends Element = HTMLButtonElement>(props
         
         
         // values:
-        valueOptions = defaultCountryList,
-        valueToUi    = defaultValueToUi,
+        valueOptions = countryList,
+        valueToUi    = getCountryDisplay,
         
         
         
