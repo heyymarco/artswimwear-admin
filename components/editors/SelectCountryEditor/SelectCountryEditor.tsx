@@ -40,6 +40,11 @@ export interface SelectCountryEditorProps<TElement extends Element = HTMLButtonE
 const SelectCountryEditor = <TElement extends Element = HTMLButtonElement>(props: SelectCountryEditorProps<TElement>): JSX.Element|null => {
     // default props:
     const {
+        // accessibilities:
+        'aria-label' : ariaLabel = 'Select Country',
+        
+        
+        
         // values:
         valueOptions = defaultCountryList,
         valueToUi    = defaultValueToUi,
@@ -57,6 +62,11 @@ const SelectCountryEditor = <TElement extends Element = HTMLButtonElement>(props
         <SelectDropdownEditor<TElement, string>
             // other props:
             {...restSelectDropdownEditorProps}
+            
+            
+            
+            // accessibilities:
+            aria-label={ariaLabel}
             
             
             
