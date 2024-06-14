@@ -168,16 +168,16 @@ const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<T
         
         
         // components:
-        subzoneCoverageZoneEditor,
         zoneNameEditor = <NameEditor /> as React.ReactElement<NameEditorProps>,
         zoneNameOverride,
+        subzoneEditor,
         
         
         
         // other props:
         ...restComplexEditModelDialogProps
     } = props;
-    const hasSubzones = !!subzoneCoverageZoneEditor;
+    const hasSubzones = !!subzoneEditor;
     
     
     
@@ -395,7 +395,7 @@ const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<T
                     />
                 </form>
             </TabPanel>
-            {!!subzoneCoverageZoneEditor && <TabPanel label={PAGE_SHIPPING_TAB_SPECIFIC_RATES} panelComponent={<Generic className={styleSheet.specificRatesTab} />}>
+            {!!subzoneEditor && <TabPanel label={PAGE_SHIPPING_TAB_SPECIFIC_RATES} panelComponent={<Generic className={styleSheet.specificRatesTab} />}>
                 <Check
                     // classes:
                     className='useArea editor'
@@ -414,7 +414,7 @@ const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<T
                         setIsModified(true);
                     }}
                 >
-                    Use specific {startsDecapitalized(subzoneCoverageZoneEditor.subzoneNamePlural)}:
+                    Use specific {startsDecapitalized(subzoneEditor.props.modelNamePlural)}:
                 </Check>
                 <ShippingStateProvider
                         // privileges:
@@ -422,7 +422,7 @@ const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<T
                         privilegeUpdate = {privilegeUpdate}
                         privilegeDelete = {privilegeDelete}
                 >
-                    {React.cloneElement<CoverageZoneEditorProps<CoverageZoneWithId<CoverageSubzone>, CoverageSubzone>>(subzoneCoverageZoneEditor.subzoneEditorComponent,
+                    {React.cloneElement<CoverageZoneEditorProps<CoverageZoneWithId<CoverageSubzone>, CoverageSubzone>>(subzoneEditor,
                         // props:
                         {
                             // data:

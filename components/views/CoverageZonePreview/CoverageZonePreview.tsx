@@ -140,9 +140,9 @@ const CoverageZonePreview = <TCoverageZoneWithId extends CoverageZoneWithId<TCov
         
         
         // components:
-        subzoneCoverageZoneEditor,
         zoneNameEditor,
         zoneNameOverride,
+        subzoneEditor,
         
         
         
@@ -219,9 +219,9 @@ const CoverageZonePreview = <TCoverageZoneWithId extends CoverageZoneWithId<TCov
                 
                 
                 // components:
-                subzoneCoverageZoneEditor={subzoneCoverageZoneEditor}
                 zoneNameEditor={zoneNameEditor}
                 zoneNameOverride={zoneNameOverride}
+                subzoneEditor={subzoneEditor}
             />
         );
         switch (updatedCoverageZoneModel) {

@@ -556,31 +556,6 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                         
                         
                         // components:
-                        subzoneCoverageZoneEditor={{
-                            subzoneNamePlural      : 'States',
-                            subzoneEditorComponent : <CoverageZoneEditor<CoverageStateWithId, CoverageCityWithId>
-                                // data:
-                                modelName='State'
-                                modelNamePlural='States'
-                                
-                                
-                                
-                                // components:
-                                subzoneCoverageZoneEditor={{
-                                    subzoneNamePlural      : 'Cities',
-                                    subzoneEditorComponent : <CoverageZoneEditor<CoverageCityWithId & { useZones: never, zones: never }, never>
-                                        // data:
-                                        modelName='City'
-                                        modelNamePlural='Cities'
-                                        
-                                        
-                                        
-                                        // components:
-                                        subzoneCoverageZoneEditor={undefined}
-                                    />,
-                                }}
-                            />,
-                        }}
                         zoneNameEditor={
                             <SelectCountryEditor
                                 // values:
@@ -594,6 +569,29 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                             />
                         }
                         zoneNameOverride={getCountryByCode}
+                        subzoneEditor={
+                            <CoverageZoneEditor<CoverageStateWithId, CoverageCityWithId>
+                                // data:
+                                modelName='State'
+                                modelNamePlural='States'
+                                
+                                
+                                
+                                // components:
+                                subzoneEditor={
+                                    <CoverageZoneEditor<CoverageCityWithId & { useZones: never, zones: never }, never>
+                                        // data:
+                                        modelName='City'
+                                        modelNamePlural='Cities'
+                                        
+                                        
+                                        
+                                        // components:
+                                        subzoneEditor={undefined}
+                                    />
+                                }
+                            />
+                        }
                     />
                 </ShippingStateProvider>
             </TabPanel>

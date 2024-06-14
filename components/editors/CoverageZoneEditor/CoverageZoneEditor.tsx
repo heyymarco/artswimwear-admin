@@ -100,14 +100,9 @@ import {
 
 
 // react components:
-export interface SubzoneCoverageZoneEditor {
-    // components:
-    subzoneNamePlural      : string
-    subzoneEditorComponent : React.ReactElement<CoverageZoneEditorProps<CoverageZoneWithId<CoverageSubzone>, CoverageSubzone>>
-}
 export interface SubzoneCoverageZoneEditorProps {
     // components:
-    subzoneCoverageZoneEditor ?: SubzoneCoverageZoneEditor
+    subzoneEditor ?: React.ReactElement<CoverageZoneEditorProps<CoverageZoneWithId<CoverageSubzone>, CoverageSubzone>>
 }
 export interface CoverageZoneEditorProps<TCoverageZoneWithId extends CoverageZoneWithId<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone, TElement extends Element = HTMLElement>
     extends
@@ -160,9 +155,9 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
         
         
         // components:
-        subzoneCoverageZoneEditor,
         zoneNameEditor,
         zoneNameOverride,
+        subzoneEditor,
         
         
         
@@ -271,7 +266,7 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
             currentModel.name          = mutatedModel.name          ?? '';
             currentModel.estimate      = mutatedModel.estimate      || null;
             currentModel.shippingRates = mutatedModel.shippingRates ?? [];
-            if (!!subzoneCoverageZoneEditor) {
+            if (!!subzoneEditor) {
                 currentModel.useZones  = mutatedModel.useZones      ?? (true as any);
                 currentModel.zones     = mutatedModel.zones         ?? ([]   as any);
             } // if
@@ -378,9 +373,9 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
                             
                             
                             // components:
-                            subzoneCoverageZoneEditor={subzoneCoverageZoneEditor}
                             zoneNameEditor={zoneNameEditor}
                             zoneNameOverride={zoneNameOverride}
+                            subzoneEditor={subzoneEditor}
                             
                             
                             
@@ -426,9 +421,9 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
                                 
                                 
                                 // components:
-                                subzoneCoverageZoneEditor={subzoneCoverageZoneEditor}
                                 zoneNameEditor={zoneNameEditor}
                                 zoneNameOverride={zoneNameOverride}
+                                subzoneEditor={subzoneEditor}
                             />
                         }
                         listItemComponent={
