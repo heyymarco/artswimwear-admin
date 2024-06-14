@@ -49,6 +49,7 @@ import {
     TextEditor,
 }                           from '@/components/editors/TextEditor'
 import {
+    type NameEditorProps,
     NameEditor,
 }                           from '@/components/editors/NameEditor'
 import {
@@ -133,6 +134,11 @@ export interface EditCoverageZoneDialogProps<TCoverageZoneWithId extends Coverag
 {
     // data:
     modelName         : string
+    
+    
+    
+    // components:
+    zoneNameEditor   ?: React.ReactElement<NameEditorProps>
 }
 const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone>(props: EditCoverageZoneDialogProps<TCoverageZoneWithId, TCoverageSubzone>): JSX.Element|null => {
     // styles:
@@ -162,6 +168,7 @@ const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<T
         
         // components:
         subzoneCoverageZoneEditor,
+        zoneNameEditor = <NameEditor /> as React.ReactElement<NameEditorProps>,
         
         
         
@@ -299,29 +306,32 @@ const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<T
             <TabPanel label={PAGE_SHIPPING_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>
                     <span className='name label'>Name:</span>
-                    <NameEditor
-                        // refs:
-                        elmRef={(defaultExpandedTabIndex === 0) ? firstEditorRef : undefined}
-                        
-                        
-                        
-                        // classes:
-                        className='name editor'
-                        
-                        
-                        
-                        // accessibilities:
-                        enabled={whenUpdate.description || whenAdd}
-                        
-                        
-                        
-                        // values:
-                        value={name}
-                        onChange={(value) => {
-                            setName(value);
-                            setIsModified(true);
-                        }}
-                    />
+                    {React.cloneElement<NameEditorProps>(zoneNameEditor,
+                        // props:
+                        {
+                            // refs:
+                            elmRef    : (defaultExpandedTabIndex === 0) ? firstEditorRef : undefined,
+                            
+                            
+                            
+                            // classes:
+                            className : 'name editor',
+                            
+                            
+                            
+                            // accessibilities:
+                            enabled   : whenUpdate.description || whenAdd,
+                            
+                            
+                            
+                            // values:
+                            value     : name,
+                            onChange  : (value) => {
+                                setName(value);
+                                setIsModified(true);
+                            }
+                        },
+                    )}
                 </form>
             </TabPanel>
             <TabPanel label={PAGE_SHIPPING_TAB_DEFAULT_RATES} panelComponent={<Generic className={styleSheet.defaultRatesTab} />}>
