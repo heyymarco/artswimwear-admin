@@ -71,6 +71,7 @@ import {
 }                           from '@/components/editors/CoverageZoneEditor/states/shippingState'
 import {
     SelectCountryEditor,
+    CountryDisplay,
 }                           from '@/components/editors/SelectCountryEditor'
 import {
     // types:
@@ -575,6 +576,12 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                                 
                                 // floatable:
                                 floatingPlacement='bottom'
+                            />
+                        }
+                        zoneNameDisplay={
+                            <CountryDisplay
+                                // values:
+                                value=''
                             />
                         }
                     />

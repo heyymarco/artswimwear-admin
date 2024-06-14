@@ -114,6 +114,11 @@ export interface CoverageZonePreviewProps<TCoverageZoneWithId extends CoverageZo
     
     
     
+    // components:
+    zoneNameDisplay   ?: React.ReactElement<{ value: string }>
+    
+    
+    
     // handlers:
     onUpdated         ?: UpdatedHandler<TCoverageZoneWithId>
     onDeleted         ?: DeleteHandler<TCoverageZoneWithId>
@@ -141,6 +146,7 @@ const CoverageZonePreview = <TCoverageZoneWithId extends CoverageZoneWithId<TCov
         // components:
         subzoneCoverageZoneEditor,
         zoneNameEditor,
+        zoneNameDisplay,
         
         
         
@@ -252,7 +258,12 @@ const CoverageZonePreview = <TCoverageZoneWithId extends CoverageZoneWithId<TCov
             // handlers:
             onOrderStart={handleOrderStart}
         >
-            {name}
+            {!zoneNameDisplay ? name : React.cloneElement<{ value: string }>(zoneNameDisplay,
+                // props:
+                {
+                    value : name,
+                },
+            )}
             
             <Grip className='grip' enabled={!isDisabledOrReadOnly} />
             
