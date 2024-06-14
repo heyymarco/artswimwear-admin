@@ -208,11 +208,11 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     });
     
     const unselectedCountries = useMemo((): string[] => {
-        const uniqueCountries = new Set<string>(countries.map(({name}) => name));
+        const uniqueCountries = new Set<string>(countries.map(({name}) => name.trim().toLowerCase()));
         return (
             countryList
             .filter((countryItem) =>
-                !uniqueCountries.has(countryItem)
+                !uniqueCountries.has(countryItem.trim().toLowerCase())
             )
         );
     }, [countries]);
