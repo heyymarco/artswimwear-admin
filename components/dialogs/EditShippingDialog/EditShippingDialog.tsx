@@ -72,6 +72,7 @@ import {
 import {
     SelectCountryEditor,
     getCountryByCode,
+    countryList,
 }                           from '@/components/editors/SelectCountryEditor'
 import {
     // types:
@@ -205,6 +206,16 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             } satisfies CoverageCountryWithId))
         );
     });
+    
+    const unselectedCountries = useMemo((): string[] => {
+        const uniqueCountries = new Set<string>(countries.map(({name}) => name));
+        return (
+            countryList
+            .filter((countryItem) =>
+                !uniqueCountries.has(countryItem)
+            )
+        );
+    }, [countries]);
     
     
     
@@ -570,6 +581,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                         zoneNameEditor={
                             <SelectCountryEditor
                                 // values:
+                                valueOptions={unselectedCountries}
                                 value=''
                                 
                                 
