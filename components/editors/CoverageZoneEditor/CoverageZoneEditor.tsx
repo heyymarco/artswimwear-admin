@@ -373,6 +373,11 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
                             
                             
                             
+                            // variants:
+                            outlined={isValueValid ? undefined : (value.some(({id, name}) => (name === coverageZone.name) && (id !== coverageZone.id)) ? true : undefined)}
+                            
+                            
+                            
                             // components:
                             subzoneCoverageZoneEditor={subzoneCoverageZoneEditor}
                             zoneNameEditor={zoneNameEditor}
