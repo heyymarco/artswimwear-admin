@@ -138,14 +138,16 @@ export interface CoverageZoneEditorProps<TCoverageZoneWithId extends CoverageZon
         >
 {
     // data:
-    modelName      : string
-    parentModelId ?: string
+    modelName        : string
+    modelNamePlural  : string
+    parentModelId   ?: string
 }
 const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone, TElement extends Element = HTMLElement>(props: CoverageZoneEditorProps<TCoverageZoneWithId, TCoverageSubzone, TElement>): JSX.Element|null => {
     // rest props:
     const {
         // data:
         modelName,
+        modelNamePlural,
         parentModelId = '',
         
         
@@ -291,7 +293,7 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
     // default props:
     const {
         // accessibilities:
-        'aria-label' : ariaLabel = 'Rate',
+        'aria-label' : ariaLabel = startsCapitalized(modelNamePlural),
         
         
         

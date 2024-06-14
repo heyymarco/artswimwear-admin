@@ -530,6 +530,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                     <CoverageZoneEditor<CoverageCountryWithId, CoverageStateWithId>
                         // data:
                         modelName='Country'
+                        modelNamePlural='Countries'
                         parentModelId={model?.id ?? ' newId' /* a dummy id starting with empty space */}
                         
                         
@@ -560,6 +561,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                             subzoneEditorComponent : <CoverageZoneEditor<CoverageStateWithId, CoverageCityWithId>
                                 // data:
                                 modelName='State'
+                                modelNamePlural='States'
                                 
                                 
                                 
@@ -569,6 +571,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                                     subzoneEditorComponent : <CoverageZoneEditor<CoverageCityWithId & { useZones: never, zones: never }, never>
                                         // data:
                                         modelName='City'
+                                        modelNamePlural='Cities'
                                         
                                         
                                         
