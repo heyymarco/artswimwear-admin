@@ -70,6 +70,9 @@ import {
     ShippingStateProvider,
 }                           from '@/components/editors/CoverageZoneEditor/states/shippingState'
 import {
+    SelectCountryEditor,
+}                           from '@/components/editors/SelectCountryEditor'
+import {
     // types:
     UpdateHandler,
     
@@ -563,6 +566,17 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                                 }}
                             />,
                         }}
+                        zoneNameEditor={
+                            <SelectCountryEditor
+                                // values:
+                                value=''
+                                
+                                
+                                
+                                // floatable:
+                                floatingPlacement='bottom'
+                            />
+                        }
                     />
                 </ShippingStateProvider>
             </TabPanel>
