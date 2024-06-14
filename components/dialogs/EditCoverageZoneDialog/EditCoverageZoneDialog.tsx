@@ -241,7 +241,7 @@ const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<T
             title   : <h1>Delete Confirmation</h1>,
             message : <>
                 <p>
-                    Are you sure to delete <strong>{model.name}</strong>?
+                    Are you sure to delete <strong>{zoneNameOverride ? zoneNameOverride(model.name) : model.name}</strong>?
                 </p>
             </>,
         };
