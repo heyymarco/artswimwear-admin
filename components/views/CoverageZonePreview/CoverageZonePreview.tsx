@@ -61,6 +61,7 @@ import {
     type DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
+    type EditCoverageZoneDialogProps,
     EditCoverageZoneDialog,
 }                           from '@/components/dialogs/EditCoverageZoneDialog'
 import {
@@ -103,7 +104,10 @@ export interface CoverageZonePreviewProps<TCoverageZoneWithId extends CoverageZo
         ModelPreviewProps<TCoverageZoneWithId>,
         
         // components:
-        SubzoneCoverageZoneEditorProps
+        SubzoneCoverageZoneEditorProps,
+        Pick<EditCoverageZoneDialogProps<TCoverageZoneWithId, TCoverageSubzone>,
+            |'zoneNameEditor'
+        >
 {
     // data:
     modelName          : string
@@ -136,6 +140,7 @@ const CoverageZonePreview = <TCoverageZoneWithId extends CoverageZoneWithId<TCov
         
         // components:
         subzoneCoverageZoneEditor,
+        zoneNameEditor,
         
         
         
@@ -213,6 +218,7 @@ const CoverageZonePreview = <TCoverageZoneWithId extends CoverageZoneWithId<TCov
                 
                 // components:
                 subzoneCoverageZoneEditor={subzoneCoverageZoneEditor}
+                zoneNameEditor={zoneNameEditor}
             />
         );
         switch (updatedCoverageZoneModel) {

@@ -7,7 +7,6 @@ import {
     
     // hooks:
     useMemo,
-    useState,
 }                           from 'react'
 
 // cssfn:
@@ -60,6 +59,7 @@ import type {
     DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
+    type EditCoverageZoneDialogProps,
     EditCoverageZoneDialog,
 }                           from '@/components/dialogs/EditCoverageZoneDialog'
 import {
@@ -131,7 +131,10 @@ export interface CoverageZoneEditorProps<TCoverageZoneWithId extends CoverageZon
         >,
         
         // components:
-        SubzoneCoverageZoneEditorProps
+        SubzoneCoverageZoneEditorProps,
+        Pick<EditCoverageZoneDialogProps<TCoverageZoneWithId, TCoverageSubzone>,
+            |'zoneNameEditor'
+        >
 {
     // data:
     modelName      : string
@@ -155,6 +158,7 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
         
         // components:
         subzoneCoverageZoneEditor,
+        zoneNameEditor,
         
         
         
@@ -366,6 +370,7 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
                             
                             // components:
                             subzoneCoverageZoneEditor={subzoneCoverageZoneEditor}
+                            zoneNameEditor={zoneNameEditor}
                             
                             
                             
@@ -412,6 +417,7 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
                                 
                                 // components:
                                 subzoneCoverageZoneEditor={subzoneCoverageZoneEditor}
+                                zoneNameEditor={zoneNameEditor}
                             />
                         }
                         listItemComponent={

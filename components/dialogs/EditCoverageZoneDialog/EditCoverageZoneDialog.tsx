@@ -314,6 +314,11 @@ const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<T
                             
                             
                             
+                            // variants:
+                            theme     : 'primary',
+                            
+                            
+                            
                             // classes:
                             className : 'name editor',
                             
@@ -321,6 +326,11 @@ const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<T
                             
                             // accessibilities:
                             enabled   : whenUpdate.description || whenAdd,
+                            
+                            
+                            
+                            // validations:
+                            required  : true,
                             
                             
                             
