@@ -53,13 +53,14 @@ import {
     NameEditor,
 }                           from '@/components/editors/NameEditor'
 import {
+    type SelectDropdownEditorProps,
+}                           from '@/components/editors/SelectDropdownEditor'
+import {
     ShippingRateEditor,
 }                           from '@/components/editors/ShippingRateEditor'
 import {
     // types:
     UpdateHandler,
-    
-    DeleteHandler,
     
     ConfirmDeleteHandler,
     ConfirmUnsavedHandler,
@@ -138,7 +139,7 @@ export interface EditCoverageZoneDialogProps<TCoverageZoneWithId extends Coverag
     
     
     // components:
-    zoneNameEditor   ?: React.ReactElement<NameEditorProps>
+    zoneNameEditor   ?: React.ReactElement<SelectDropdownEditorProps>
     zoneNameOverride ?: (zoneName: string|null|undefined) => string|null|undefined
 }
 const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone>(props: EditCoverageZoneDialogProps<TCoverageZoneWithId, TCoverageSubzone>): JSX.Element|null => {
@@ -168,7 +169,7 @@ const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<T
         
         
         // components:
-        zoneNameEditor = <NameEditor /> as React.ReactElement<NameEditorProps>,
+        zoneNameEditor,
         zoneNameOverride,
         subzoneEditor,
         
@@ -308,7 +309,7 @@ const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<T
             <TabPanel label={PAGE_SHIPPING_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>
                     <span className='name label'>Name:</span>
-                    {React.cloneElement<NameEditorProps>(zoneNameEditor,
+                    {React.cloneElement<SelectDropdownEditorProps|NameEditorProps>(zoneNameEditor ?? <NameEditor />,
                         // props:
                         {
                             // refs:

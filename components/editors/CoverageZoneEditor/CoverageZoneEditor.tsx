@@ -53,6 +53,9 @@ import type {
     // react components:
     EditorProps,
 }                           from '@/components/editors/Editor'
+import {
+    type SelectDropdownEditorProps,
+}                           from '@/components/editors/SelectDropdownEditor'
 import type {
     // types:
     UpdatedHandler,
@@ -189,6 +192,31 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
         );
         return (value.length === uniqueNames.size);
     }, [value]);
+    
+    const zoneNameEditorWithOptions = useMemo((): React.ReactElement<SelectDropdownEditorProps>|undefined => {
+        // conditions:
+        if (zoneNameEditor === undefined) return undefined;
+        const valueOptions = zoneNameEditor.props.valueOptions;
+        if (!valueOptions.length) zoneNameEditor;
+        
+        
+        
+        // actions:
+        const uniqueZones = new Set<string>(value.map(({name}) => name.trim().toLowerCase()));
+        const limitedValueOptions : string[] = (
+            valueOptions
+            .filter((valueOption) =>
+                !uniqueZones.has(valueOption.trim().toLowerCase())
+            )
+        );
+        return React.cloneElement<SelectDropdownEditorProps>(zoneNameEditor,
+            // props:
+            {
+                // values:
+                valueOptions : limitedValueOptions, // replace the original `valueOptions` with `limitedValueOptions`
+            },
+        );
+    }, [zoneNameEditor, value]);
     
     
     
@@ -373,7 +401,7 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
                             
                             
                             // components:
-                            zoneNameEditor={zoneNameEditor}
+                            zoneNameEditor={zoneNameEditorWithOptions}
                             zoneNameOverride={zoneNameOverride}
                             subzoneEditor={subzoneEditor}
                             
@@ -421,7 +449,7 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
                                 
                                 
                                 // components:
-                                zoneNameEditor={zoneNameEditor}
+                                zoneNameEditor={zoneNameEditorWithOptions}
                                 zoneNameOverride={zoneNameOverride}
                                 subzoneEditor={subzoneEditor}
                             />

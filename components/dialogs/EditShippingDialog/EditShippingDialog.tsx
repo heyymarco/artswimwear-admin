@@ -93,7 +93,6 @@ import {
 // models:
 import type {
     ShippingVisibility,
-    Stock,
 }                           from '@prisma/client'
 import {
     // types:
@@ -206,16 +205,6 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             } satisfies CoverageCountryWithId))
         );
     });
-    
-    const unselectedCountries = useMemo((): string[] => {
-        const uniqueCountries = new Set<string>(countries.map(({name}) => name.trim().toLowerCase()));
-        return (
-            countryList
-            .filter((countryItem) =>
-                !uniqueCountries.has(countryItem.trim().toLowerCase())
-            )
-        );
-    }, [countries]);
     
     
     
@@ -559,7 +548,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                         zoneNameEditor={
                             <SelectCountryEditor
                                 // values:
-                                valueOptions={unselectedCountries}
+                                valueOptions={countryList}
                                 value=''
                                 
                                 
