@@ -139,6 +139,7 @@ export interface EditCoverageZoneDialogProps<TCoverageZoneWithId extends Coverag
     
     // components:
     zoneNameEditor   ?: React.ReactElement<NameEditorProps>
+    zoneNameOverride ?: (zoneName: string|null|undefined) => string|null|undefined
 }
 const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone>(props: EditCoverageZoneDialogProps<TCoverageZoneWithId, TCoverageSubzone>): JSX.Element|null => {
     // styles:
@@ -169,6 +170,7 @@ const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<T
         // components:
         subzoneCoverageZoneEditor,
         zoneNameEditor = <NameEditor /> as React.ReactElement<NameEditorProps>,
+        zoneNameOverride,
         
         
         
@@ -265,7 +267,7 @@ const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<T
             
             // data:
             modelName={startsCapitalized(modelName)}
-            modelEntryName={model?.name}
+            modelEntryName={zoneNameOverride ? zoneNameOverride(model?.name) : model?.name}
             model={model}
             
             

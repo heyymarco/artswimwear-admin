@@ -107,21 +107,17 @@ export interface CoverageZonePreviewProps<TCoverageZoneWithId extends CoverageZo
         SubzoneCoverageZoneEditorProps,
         Pick<EditCoverageZoneDialogProps<TCoverageZoneWithId, TCoverageSubzone>,
             |'zoneNameEditor'
+            |'zoneNameOverride'
         >
 {
     // data:
-    modelName          : string
-    
-    
-    
-    // components:
-    zoneNameDisplay   ?: React.ReactElement<{ value: string }>
+    modelName  : string
     
     
     
     // handlers:
-    onUpdated         ?: UpdatedHandler<TCoverageZoneWithId>
-    onDeleted         ?: DeleteHandler<TCoverageZoneWithId>
+    onUpdated ?: UpdatedHandler<TCoverageZoneWithId>
+    onDeleted ?: DeleteHandler<TCoverageZoneWithId>
 }
 const CoverageZonePreview = <TCoverageZoneWithId extends CoverageZoneWithId<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone>(props: CoverageZonePreviewProps<TCoverageZoneWithId, TCoverageSubzone>): JSX.Element|null => {
     // styles:
@@ -146,7 +142,7 @@ const CoverageZonePreview = <TCoverageZoneWithId extends CoverageZoneWithId<TCov
         // components:
         subzoneCoverageZoneEditor,
         zoneNameEditor,
-        zoneNameDisplay,
+        zoneNameOverride,
         
         
         
@@ -225,6 +221,7 @@ const CoverageZonePreview = <TCoverageZoneWithId extends CoverageZoneWithId<TCov
                 // components:
                 subzoneCoverageZoneEditor={subzoneCoverageZoneEditor}
                 zoneNameEditor={zoneNameEditor}
+                zoneNameOverride={zoneNameOverride}
             />
         );
         switch (updatedCoverageZoneModel) {
@@ -258,12 +255,7 @@ const CoverageZonePreview = <TCoverageZoneWithId extends CoverageZoneWithId<TCov
             // handlers:
             onOrderStart={handleOrderStart}
         >
-            {!zoneNameDisplay ? name : React.cloneElement<{ value: string }>(zoneNameDisplay,
-                // props:
-                {
-                    value : name,
-                },
-            )}
+            {!zoneNameOverride ? name : zoneNameOverride(name)}
             
             <Grip className='grip' enabled={!isDisabledOrReadOnly} />
             

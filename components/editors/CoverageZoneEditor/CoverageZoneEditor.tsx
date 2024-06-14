@@ -68,7 +68,6 @@ import {
     ModelEmpty,
 }                           from '@/components/explorers/PagedModelExplorer'
 import {
-    type CoverageZonePreviewProps,
     CoverageZonePreview,
 }                           from '@/components/views/CoverageZonePreview'
 import {
@@ -135,9 +134,7 @@ export interface CoverageZoneEditorProps<TCoverageZoneWithId extends CoverageZon
         SubzoneCoverageZoneEditorProps,
         Pick<EditCoverageZoneDialogProps<TCoverageZoneWithId, TCoverageSubzone>,
             |'zoneNameEditor'
-        >,
-        Pick<CoverageZonePreviewProps<TCoverageZoneWithId, TCoverageSubzone>,
-            |'zoneNameDisplay'
+            |'zoneNameOverride'
         >
 {
     // data:
@@ -163,7 +160,7 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
         // components:
         subzoneCoverageZoneEditor,
         zoneNameEditor,
-        zoneNameDisplay,
+        zoneNameOverride,
         
         
         
@@ -381,7 +378,7 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
                             // components:
                             subzoneCoverageZoneEditor={subzoneCoverageZoneEditor}
                             zoneNameEditor={zoneNameEditor}
-                            zoneNameDisplay={zoneNameDisplay}
+                            zoneNameOverride={zoneNameOverride}
                             
                             
                             
@@ -429,6 +426,7 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
                                 // components:
                                 subzoneCoverageZoneEditor={subzoneCoverageZoneEditor}
                                 zoneNameEditor={zoneNameEditor}
+                                zoneNameOverride={zoneNameOverride}
                             />
                         }
                         listItemComponent={

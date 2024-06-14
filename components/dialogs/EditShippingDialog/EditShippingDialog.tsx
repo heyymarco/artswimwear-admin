@@ -71,7 +71,7 @@ import {
 }                           from '@/components/editors/CoverageZoneEditor/states/shippingState'
 import {
     SelectCountryEditor,
-    CountryDisplay,
+    getCountryByCode,
 }                           from '@/components/editors/SelectCountryEditor'
 import {
     // types:
@@ -578,12 +578,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                                 floatingPlacement='bottom'
                             />
                         }
-                        zoneNameDisplay={
-                            <CountryDisplay
-                                // values:
-                                value=''
-                            />
-                        }
+                        zoneNameOverride={getCountryByCode}
                     />
                 </ShippingStateProvider>
             </TabPanel>
