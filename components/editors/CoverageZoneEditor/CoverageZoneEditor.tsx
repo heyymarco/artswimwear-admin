@@ -188,7 +188,7 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
     const isValueValid = useMemo((): boolean => {
         const uniqueNames = new Set(
             value
-            .map(({name}) => name)
+            .map(({name}) => name.trim().toLowerCase())
         );
         return (value.length === uniqueNames.size);
     }, [value]);
@@ -371,7 +371,7 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
                             
                             
                             // variants:
-                            outlined={isValueValid ? undefined : (value.some(({id, name}) => (name === coverageZone.name) && (id !== coverageZone.id)) ? true : undefined)}
+                            outlined={isValueValid ? undefined : (value.some(({id, name}) => (name.trim().toLowerCase() === coverageZone.name.trim().toLowerCase()) && (id !== coverageZone.id)) ? true : undefined)}
                             
                             
                             
