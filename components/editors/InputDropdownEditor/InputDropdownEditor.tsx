@@ -20,6 +20,11 @@ import {
     
     // a possibility of UI having an invalid state:
     ValidityChangeEvent,
+    
+    
+    
+    // basic variants of UI:
+    useBasicVariantProps,
 }                           from '@reusable-ui/core'                    // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -122,6 +127,11 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TValue e
         // other props:
         ...restSelectDropdownEditorProps
     } = props;
+    
+    
+    
+    // basic variant props:
+    const basicVariantProps = useBasicVariantProps(props);
     
     
     
@@ -246,6 +256,11 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TValue e
                 onChange           = {handleValueChange} // internally controllable
             />
             <SelectDropdownEditor<Element, TValue>
+                // variants:
+                {...basicVariantProps}
+                
+                
+                
                 // validations:
                 enableValidation   = {props.enableValidation}  // follows <Editor>
                 isValid            = {isValid}                 // controllable
@@ -264,6 +279,11 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TValue e
                 
                 value              = {value}             // internally controllable
                 onChange           = {handleValueChange} // internally controllable
+                
+                
+                
+                // children:
+                buttonChildren={null}
             />
         </Group>
     );
