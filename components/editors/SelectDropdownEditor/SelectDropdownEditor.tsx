@@ -22,7 +22,10 @@ import {
 }                           from '@reusable-ui/button-icon'             // a button component with a nice icon
 import {
     // simple-components:
+    type EditableButtonProps,
     EditableButton,
+    
+    type EditableButtonComponentProps,
 }                           from '@reusable-ui/editable-button'         // a button with validation indicator
 import {
     // layout-components:
@@ -98,7 +101,10 @@ export interface SelectDropdownEditorProps<TElement extends Element = HTMLButton
             |'value'
             |'onChange'
         >,
-        ListItemComponentProps<Element>
+        
+        // components:
+        ListItemComponentProps<Element>,
+        EditableButtonComponentProps
 {
     // validations:
     customValidator ?: CustomValidatorHandler
@@ -135,8 +141,9 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
         
         
         // components:
-        listItemComponent = (<SelectDropdownEditorItem />                      as React.ReactElement<ListItemProps<Element>>),
-        buttonComponent   = (<ButtonIcon iconPosition='end' icon='dropdown' /> as React.ReactElement<ButtonProps>),
+        listItemComponent       = (<SelectDropdownEditorItem />                      as React.ReactElement<ListItemProps<Element>>),
+        buttonComponent         = (<ButtonIcon iconPosition='end' icon='dropdown' /> as React.ReactElement<ButtonProps>),
+        editableButtonComponent = (<EditableButton />                                as React.ReactElement<EditableButtonProps>),
         
         
         
@@ -315,23 +322,27 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
             
             // components:
             buttonComponent={
-                <EditableButton
-                    // accessibilities:
-                    assertiveFocusable={true}
-                    
-                    
-                    
-                    // validations:
-                    enableValidation  = {enableValidation}
-                    isValid           = {isValid}
-                    inheritValidation = {inheritValidation}
-                    onValidation      = {handleValidation}  // to be handled by `useRequiredValidator()`
-                    
-                    
-                    
-                    // components:
-                    buttonComponent={buttonComponent}
-                />
+                /* <EditableButton> */
+                React.cloneElement<EditableButtonProps>(editableButtonComponent,
+                    // props:
+                    {
+                        // accessibilities:
+                        assertiveFocusable : true,
+                        
+                        
+                        
+                        // validations:
+                        enableValidation   : enableValidation,
+                        isValid            : isValid,
+                        inheritValidation  : inheritValidation,
+                        onValidation       : handleValidation,  // to be handled by `useRequiredValidator()`
+                        
+                        
+                        
+                        // components:
+                        buttonComponent    : buttonComponent,
+                    },
+                )
             }
             dropdownComponent={
                 (dropdownListComponent === undefined)
