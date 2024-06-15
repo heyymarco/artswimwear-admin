@@ -15,6 +15,7 @@ import {
     useEvent,
     EventHandler,
     useMergeEvents,
+    useMountedFlag,
     
     
     
@@ -165,13 +166,29 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TValue e
     
     
     
+    // effects:
+    const isMounted = useMountedFlag();
+    
+    
+    
     // handlers:
-    const handleValueChange = useEvent<EditorChangeEventHandler<TValue>>((newValue) => {
+    const handleInputChange = useEvent<EditorChangeEventHandler<string>>((newValue) => {
+        triggerValueChange(newValue as TValue, { triggerAt: 'immediately' });
+    });
+    const handleDropdownChange = useEvent<EditorChangeEventHandler<TValue>>((newValue) => {
         triggerValueChange(newValue, { triggerAt: 'immediately' });
     });
     
     const handleValidationInternal = useEvent<EventHandler<ValidityChangeEvent>>(({isValid}) => {
-        setIsValid(isValid);
+        Promise.resolve().then(() => {
+            // conditions:
+            if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
+            
+            
+            
+            // actions:
+            setIsValid(isValid);
+        });
     });
     const handleValidation = useMergeEvents(
         // preserves the original `onValidation`:
@@ -253,7 +270,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TValue e
                 
                 // values:
                 value              = {value}             // internally controllable
-                onChange           = {handleValueChange} // internally controllable
+                onChangeAsText     = {handleInputChange} // internally controllable
             />
             <SelectDropdownEditor<Element, TValue>
                 // variants:
@@ -277,8 +294,8 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TValue e
                 valueOptions       = {valueOptions}
                 valueToUi          = {valueToUi}
                 
-                value              = {value}             // internally controllable
-                onChange           = {handleValueChange} // internally controllable
+                value              = {value}                // internally controllable
+                onChange           = {handleDropdownChange} // internally controllable
                 
                 
                 
