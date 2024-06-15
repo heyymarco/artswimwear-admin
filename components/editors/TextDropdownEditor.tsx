@@ -7,6 +7,7 @@ import {
     
     // hooks:
     useState,
+    useRef,
 }                           from 'react'
 
 // reusable-ui core:
@@ -15,6 +16,7 @@ import {
     useEvent,
     EventHandler,
     useMergeEvents,
+    useMergeRefs,
     useMountedFlag,
     
     
@@ -33,10 +35,6 @@ import {
     // react components:
     Group,
 }                           from '@reusable-ui/components'              // groups a list of components as a single component
-import {
-    // menu-components:
-    type DropdownListExpandedChangeEvent,
-}                           from '@reusable-ui/dropdown-list-button'    // a button component with a dropdown list UI
 
 // heymarco:
 import {
@@ -63,7 +61,7 @@ import {
 
 
 // react components:
-export interface TextDropdownEditorProps<TElement extends Element = HTMLDivElement, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<string> = DropdownListExpandedChangeEvent<string>>
+export interface TextDropdownEditorProps<TElement extends Element = HTMLDivElement>
     extends
         // bases:
         TextEditorProps<TElement>,
@@ -76,11 +74,11 @@ export interface TextDropdownEditorProps<TElement extends Element = HTMLDivEleme
     // validations:
     // customValidator ?: CustomValidatorHandler
 }
-const TextDropdownEditor = <TElement extends Element = HTMLDivElement, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<string> = DropdownListExpandedChangeEvent<string>>(props: TextDropdownEditorProps<TElement, TDropdownListExpandedChangeEvent>): JSX.Element|null => {
+const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: TextDropdownEditorProps<TElement>): JSX.Element|null => {
     // props:
     const {
         // refs:
-        elmRef,         // take, moved to <Editor>
+        elmRef,         // take, moved to <TextEditor>
         outerRef,       // take, moved to <Group>
         
         
@@ -110,6 +108,11 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement, TDropdown
         
         // styles:
         style,          // take, moved to <Group>
+        
+        
+        
+        // validations:
+        onValidation,   // take, moved to <TextEditor>
         
         
         
@@ -165,6 +168,19 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement, TDropdown
     
     
     
+    // refs:
+    const inputRefInternal = useRef<HTMLInputElement|null>(null);
+    const mergedInputRef   = useMergeRefs(
+        // preserves the original `elmRef` from `props`:
+        elmRef,
+        
+        
+        
+        inputRefInternal,
+    );
+    
+    
+    
     // effects:
     const isMounted = useMountedFlag();
     
@@ -175,7 +191,18 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement, TDropdown
         triggerValueChange(newValue, { triggerAt: 'immediately' });
     });
     const handleDropdownChange     = useEvent<EditorChangeEventHandler<string>>((newValue) => {
-        triggerValueChange(newValue, { triggerAt: 'immediately' });
+        const inputElm = inputRefInternal.current;
+        if (inputElm) {
+            // react *hack*: trigger `onChange` event:
+            const oldValue = inputElm.value;                     // react *hack* get_prev_value *before* modifying
+            inputElm.value = newValue;                           // react *hack* set_value *before* firing `input` event
+            (inputElm as any)._valueTracker?.setValue(oldValue); // react *hack* in order to React *see* the changes when `input` event fired
+            
+            
+            
+            // fire `input` native event to trigger `onChange` synthetic event:
+            inputElm.dispatchEvent(new InputEvent('input', { bubbles: true, cancelable: false, composed: true, data: newValue, dataTransfer: null, inputType: 'insertText', isComposing: false, view: null, detail: 0 }));
+        } // if
     });
     
     const handleValidationInternal = useEvent<EventHandler<ValidityChangeEvent>>(({isValid}) => {
@@ -190,8 +217,8 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement, TDropdown
         });
     });
     const handleValidation         = useMergeEvents(
-        // preserves the original `onValidation`:
-        props.onValidation,
+        // preserves the original `onValidation` from `props`:
+        onValidation,
         
         
         
@@ -250,7 +277,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement, TDropdown
                 
                 
                 // refs:
-                elmRef={elmRef}
+                elmRef={mergedInputRef}
                 
                 
                 
