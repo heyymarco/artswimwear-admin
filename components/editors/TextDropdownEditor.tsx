@@ -269,7 +269,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement, TDropdown
                 
                 // values:
                 value              = {value}            // internally controllable
-                onChangeAsText     = {handleTextChange} // internally controllable
+                onChange           = {handleTextChange} // internally controllable
             />
             <SelectDropdownEditor<Element, string>
                 // variants:
