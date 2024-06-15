@@ -160,6 +160,11 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
         customValidator,
     });
     const handleValidation  = useMergeEvents(
+        // preserves the original `onValidation` from `editableButtonComponent`:
+        editableButtonComponent.props.onValidation,
+        
+        
+        
         // preserves the original `onValidation` from `props`:
         onValidation,
         
@@ -220,6 +225,23 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
         // other props:
         ...restDropdownListButtonProps
     } = restSelectDropdownEditorProps;
+    
+    const {
+        // validations:
+        enableValidation   : editableButtonEnableValidation  = enableValidation,
+        isValid            : editableButtonIsValid           = isValid,
+        inheritValidation  : editableButtonInheritValidation = inheritValidation,
+        
+        
+        
+        // components:
+        buttonComponent    : editableButtonButtonComponent   = buttonComponent,
+        
+        
+        
+        // other props:
+        ...restEditableButtonProps
+    } = editableButtonComponent.props;
     
     const defaultChildren : React.ReactElement = <>
         {valueOptions.map((valueOption, index) => {
@@ -326,21 +348,21 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
                 React.cloneElement<EditableButtonProps>(editableButtonComponent,
                     // props:
                     {
-                        // accessibilities:
-                        assertiveFocusable : true,
+                        // other props:
+                        ...restEditableButtonProps,
                         
                         
                         
                         // validations:
-                        enableValidation   : enableValidation,
-                        isValid            : isValid,
-                        inheritValidation  : inheritValidation,
+                        enableValidation   : editableButtonEnableValidation,
+                        isValid            : editableButtonIsValid,
+                        inheritValidation  : editableButtonInheritValidation,
                         onValidation       : handleValidation,  // to be handled by `useRequiredValidator()`
                         
                         
                         
                         // components:
-                        buttonComponent    : buttonComponent,
+                        buttonComponent    : editableButtonButtonComponent,
                     },
                 )
             }
