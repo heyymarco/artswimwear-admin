@@ -192,7 +192,8 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
     
     // states:
     const handleControllableValueChangeInternal = useEvent<EditorChangeEventHandler<number|null>>((newValue) => {
-        onControllableTextChange?.((newValue === null) ? '' : `${newValue}`);
+        // normalize: null => empty string, TValue => toString:
+        onControllableTextChange?.((newValue !== null) ? `${newValue}` /* any TValue => toString */ : '' /* null => empty string */);
     });
     const handleControllableValueChange         = useMergeEvents(
         // preserves the original `onCollapseEnd` from `props`:
