@@ -9,6 +9,12 @@ import {
     // react helper hooks:
     useIsomorphicLayoutEffect,
     useMergeEvents,
+    
+    
+    
+    // a capability of UI to rotate its layout:
+    OrientationName,
+    useOrientationableWithDirection,
 }                           from '@reusable-ui/core'                    // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -43,6 +49,11 @@ import {
     DropdownListExpandedChangeEvent,
     DropdownListButtonProps,
     DropdownListButton,
+    
+    
+    
+    // defaults:
+    defaultOrientationableWithDirectionOptions,
 }                           from '@reusable-ui/dropdown-list-button'    // a button component with a dropdown list UI
 
 // internal components:
@@ -118,6 +129,38 @@ export interface SelectDropdownEditorProps<TElement extends Element = HTMLButton
     value            : TValue
 }
 const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TValue extends any = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>(props: SelectDropdownEditorProps<TElement, TValue, TDropdownListExpandedChangeEvent>): JSX.Element|null => {
+    // variants:
+    const dropdownOrientationableVariant = useOrientationableWithDirection(props, defaultOrientationableWithDirectionOptions);
+    const determineDropdownIcon = () => {
+        // TODO: RTL direction aware
+        switch(dropdownOrientationableVariant.orientation) {
+            case 'inline-start': return 'dropleft';
+            case 'inline-end'  : return 'dropright';
+            case 'block-start' : return 'dropup';
+            default            : return 'dropdown';
+        } // switch
+    };
+    const determineDropdownIconPosition = (buttonOrientation: OrientationName) => {
+        switch(dropdownOrientationableVariant.orientation) {
+            case 'inline-start':
+                if (buttonOrientation === 'inline') return 'start';
+                break;
+            case 'inline-end'  :
+                if (buttonOrientation === 'inline') return 'end';
+                break;
+            case 'block-start' :
+                if (buttonOrientation === 'block') return 'start';
+                break;
+            default            :
+                if (buttonOrientation === 'block') return 'end';
+                break;
+        } // switch
+        
+        return 'end';
+    };
+    
+    
+    
     // props:
     const {
         // validations:
@@ -141,9 +184,10 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
         
         
         // components:
-        listItemComponent       = (<SelectDropdownEditorItem />                      as React.ReactElement<ListItemProps<Element>>),
-        buttonComponent         = (<ButtonIcon iconPosition='end' icon='dropdown' /> as React.ReactElement<ButtonProps>),
-        editableButtonComponent = (<EditableButton />                                as React.ReactElement<EditableButtonProps>),
+        listItemComponent       = (<SelectDropdownEditorItem />                                                                                  as React.ReactElement<ListItemProps<Element>>),
+        buttonOrientation       = 'inline',
+        buttonComponent         = (<ButtonIcon iconPosition={determineDropdownIconPosition(buttonOrientation)} icon={determineDropdownIcon()} /> as React.ReactElement<ButtonProps>),
+        editableButtonComponent = (<EditableButton />                                                                                            as React.ReactElement<EditableButtonProps>),
         
         
         
