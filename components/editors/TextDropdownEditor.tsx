@@ -48,13 +48,12 @@ import {
 import {
     // types:
     type EditorChangeEventHandler,
-    
-    
-    
-    // react components:
-    type EditorProps,
-    Editor,
 }                           from '@/components/editors/Editor'
+import {
+    // react components:
+    type TextEditorProps,
+    TextEditor,
+}                           from '@/components/editors/TextEditor'
 import {
     // react components:
     type SelectDropdownEditorProps,
@@ -64,11 +63,11 @@ import {
 
 
 // react components:
-export interface TextDropdownEditorProps<TElement extends Element = HTMLDivElement, TValue extends any = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>
+export interface TextDropdownEditorProps<TElement extends Element = HTMLDivElement, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<string> = DropdownListExpandedChangeEvent<string>>
     extends
         // bases:
-        EditorProps<TElement, TValue>,
-        Pick<SelectDropdownEditorProps<Element, TValue>,
+        TextEditorProps<TElement>,
+        Pick<SelectDropdownEditorProps<Element, string>,
             // values:
             |'valueOptions'
             |'valueToUi'
@@ -77,7 +76,7 @@ export interface TextDropdownEditorProps<TElement extends Element = HTMLDivEleme
     // validations:
     // customValidator ?: CustomValidatorHandler
 }
-const TextDropdownEditor = <TElement extends Element = HTMLDivElement, TValue extends any = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>(props: TextDropdownEditorProps<TElement, TValue, TDropdownListExpandedChangeEvent>): JSX.Element|null => {
+const TextDropdownEditor = <TElement extends Element = HTMLDivElement, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<string> = DropdownListExpandedChangeEvent<string>>(props: TextDropdownEditorProps<TElement, TDropdownListExpandedChangeEvent>): JSX.Element|null => {
     // props:
     const {
         // refs:
@@ -118,7 +117,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement, TValue ex
         valueOptions,   // take, moved to <SelectDropdownEditor>
         valueToUi,      // take, moved to <SelectDropdownEditor>
         
-        defaultValue   : defaultUncontrollableValue = '' as TValue,
+        defaultValue   : defaultUncontrollableValue = '',
         value          : controllableValue,
         onChange       : onControllableValueChange,
         onChangeAsText : onControllableTextChange,
@@ -137,9 +136,9 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement, TValue ex
     
     
     // states:
-    const handleControllableValueChangeInternal = useEvent<EditorChangeEventHandler<TValue>>((newValue) => {
-        // normalize: null => empty string, TValue => toString:
-        onControllableTextChange?.((newValue !== null) ? `${newValue}` /* any TValue => toString */ : '' /* null => empty string */);
+    const handleControllableValueChangeInternal = useEvent<EditorChangeEventHandler<string>>((newValue) => {
+        // normalize: null => empty string, string => string:
+        onControllableTextChange?.((newValue !== null) ? newValue : '' /* null => empty string */);
     });
     const handleControllableValueChange         = useMergeEvents(
         // preserves the original `onCollapseEnd` from `props`:
@@ -153,7 +152,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement, TValue ex
     const {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllableAndUncontrollable<TValue>({
+    } = useControllableAndUncontrollable<string>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
         onValueChange      : handleControllableValueChange,
@@ -172,10 +171,10 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement, TValue ex
     
     
     // handlers:
-    const handleTextChange     = useEvent<EditorChangeEventHandler<string>>((newValue) => {
-        triggerValueChange(newValue as TValue, { triggerAt: 'immediately' });
+    const handleTextChange         = useEvent<EditorChangeEventHandler<string>>((newValue) => {
+        triggerValueChange(newValue, { triggerAt: 'immediately' });
     });
-    const handleDropdownChange = useEvent<EditorChangeEventHandler<TValue>>((newValue) => {
+    const handleDropdownChange     = useEvent<EditorChangeEventHandler<string>>((newValue) => {
         triggerValueChange(newValue, { triggerAt: 'immediately' });
     });
     
@@ -190,7 +189,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement, TValue ex
             setIsValid(isValid);
         });
     });
-    const handleValidation = useMergeEvents(
+    const handleValidation         = useMergeEvents(
         // preserves the original `onValidation`:
         props.onValidation,
         
@@ -244,7 +243,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement, TValue ex
             // styles:
             style={style}
         >
-            <Editor<TElement, TValue>
+            <TextEditor<TElement>
                 // other props:
                 {...restTextEditorProps}
                 
@@ -272,7 +271,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement, TValue ex
                 value              = {value}            // internally controllable
                 onChangeAsText     = {handleTextChange} // internally controllable
             />
-            <SelectDropdownEditor<Element, TValue>
+            <SelectDropdownEditor<Element, string>
                 // variants:
                 {...basicVariantProps}
                 
