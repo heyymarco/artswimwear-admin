@@ -179,6 +179,16 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         inputRefInternal,
     );
     
+    const outerRefInternal = useRef<TElement|null>(null);
+    const mergedOuterRef   = useMergeRefs(
+        // preserves the original `outerRef` from `props`:
+        outerRef,
+        
+        
+        
+        outerRefInternal,
+    );
+    
     
     
     // effects:
@@ -238,9 +248,9 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
     
     // jsx:
     return (
-        <Group
+        <Group<TElement>
             // refs:
-            outerRef={outerRef}
+            outerRef={mergedOuterRef}
             
             
             
@@ -322,6 +332,16 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                 
                 value              = {value}                // internally controllable
                 onChange           = {handleDropdownChange} // internally controllable
+                
+                
+                
+                // states:
+                // expanded={true}
+                
+                
+                
+                // floatable:
+                floatingOn={outerRefInternal}
                 
                 
                 
