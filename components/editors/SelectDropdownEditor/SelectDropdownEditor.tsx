@@ -9,9 +9,13 @@ import {
     // react helper hooks:
     useIsomorphicLayoutEffect,
     useMergeEvents,
-}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+}                           from '@reusable-ui/core'                    // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
+import {
+    // simple-components:
+    type ButtonProps,
+}                           from '@reusable-ui/button'                  // a button component for initiating an action
 import {
     // simple-components:
     ButtonIcon,
@@ -131,7 +135,8 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
         
         
         // components:
-        listItemComponent = (<SelectDropdownEditorItem /> as React.ReactComponentElement<any, ListItemProps<Element>>),
+        listItemComponent = (<SelectDropdownEditorItem />                      as React.ReactElement<ListItemProps<Element>>),
+        buttonComponent   = (<ButtonIcon iconPosition='end' icon='dropdown' /> as React.ReactElement<ButtonProps>),
         
         
         
@@ -320,18 +325,12 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
                     enableValidation  = {enableValidation}
                     isValid           = {isValid}
                     inheritValidation = {inheritValidation}
-                    onValidation      = {handleValidation}
+                    onValidation      = {handleValidation}  // to be handled by `useRequiredValidator()`
                     
                     
                     
                     // components:
-                    buttonComponent={
-                        <ButtonIcon
-                            // appearances:
-                            icon='dropdown'
-                            iconPosition='end'
-                        />
-                    }
+                    buttonComponent={buttonComponent}
                 />
             }
             dropdownComponent={
