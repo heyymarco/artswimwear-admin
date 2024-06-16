@@ -130,8 +130,8 @@ export interface TextDropdownEditorProps<TElement extends Element = HTMLDivEleme
             |'editableButtonComponent'
         >
 {
-    // validations:
-    // customValidator ?: CustomValidatorHandler
+    // behaviors:
+    showDropdownOnFocus ?: boolean
 }
 const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: TextDropdownEditorProps<TElement>): JSX.Element|null => {
     // props:
@@ -170,11 +170,6 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         
         
         
-        // validations:
-        onValidation,   // take, moved to <TextEditor>
-        
-        
-        
         // values:
         valueOptions,   // take, moved to <SelectDropdownEditor>
         valueToUi,      // take, moved to <SelectDropdownEditor>
@@ -183,6 +178,11 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         value          : controllableValue,
         onChange       : onControllableValueChange,
         onChangeAsText : onControllableTextChange,
+        
+        
+        
+        // validations:
+        onValidation,   // take, moved to <TextEditor>
         
         
         
@@ -377,21 +377,30 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                 
                 
                 
+                // values:
+                value              = {value}            // internally controllable
+                onChange           = {handleTextChange} // internally controllable
+                
+                
+                
                 // validations:
                 // a "validation_event" callback (only called when [isValid === undefined]):
                 onValidation       = {handleValidation}         // if [isValid === undefined] => uncontrollable => `useInvalidable()` => calls onValidation() => calls `useInputValidator()::handleValidation()` => mutates ValidityChangeEvent::isValid
                 // // a "validation_override" function:
                 // customValidator = {props.customValidator} // called by `useInputValidator()` when `handleInit()`|`handleChange()` => calls `validate()` => calls `customValidator()`
-                
-                
-                
-                // values:
-                value              = {value}            // internally controllable
-                onChange           = {handleTextChange} // internally controllable
             />
             <SelectDropdownEditor<Element, string>
                 // variants:
                 {...basicVariantProps}
+                
+                
+                
+                // values:
+                valueOptions       = {valueOptions}
+                valueToUi          = {valueToUi}
+                
+                value              = {value}                // internally controllable
+                onChange           = {handleDropdownChange} // internally controllable
                 
                 
                 
@@ -404,15 +413,6 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                 // onValidation    = {undefined}
                 // // a "validation_override" function:
                 // customValidator = {undefined}
-                
-                
-                
-                // values:
-                valueOptions       = {valueOptions}
-                valueToUi          = {valueToUi}
-                
-                value              = {value}                // internally controllable
-                onChange           = {handleDropdownChange} // internally controllable
                 
                 
                 
