@@ -33,9 +33,12 @@ import {
 
 // reusable-ui components:
 import {
+    type DropdownListExpandedChangeEvent,
+}                           from '@reusable-ui/dropdown-list'           // overlays a list element (menu)
+import {
     // react components:
     Group,
-}                           from '@reusable-ui/components'              // groups a list of components as a single component
+}                           from '@reusable-ui/group'                   // groups a list of components as a single component
 
 // heymarco:
 import {
@@ -330,8 +333,12 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         handleValidationInternal,
     );
     
-    const handleFocus              = useEvent<React.FocusEventHandler<TElement>>((event) => {
+    const handleTextFocus          = useEvent<React.FocusEventHandler<TElement>>((event) => {
         setAutoShowDropdown(true);
+    });
+    
+    const handleExpandedChange     = useEvent<EventHandler<DropdownListExpandedChangeEvent<string>>>(({expanded}) => {
+        setAutoShowDropdown(expanded);
     });
     
     
@@ -389,21 +396,6 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         ...restTextEditorProps
     } = restSelectDropdownEditorProps;
     
-    const {
-        // states:
-        expanded   = autoShowDropdown ? true : undefined,
-        
-        
-        
-        // floatable:
-        floatingOn = outerRefInternal,
-        
-        
-        
-        // auto focusable:
-        autoFocus  = autoShowDropdown ? false : undefined,
-    } = dropdownComponent?.props ?? {};
-    
     
     
     // jsx:
@@ -439,11 +431,6 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
             
             // styles:
             style={style}
-            
-            
-            
-            // handlers:
-            onFocus={handleFocus}
         >
             <TextEditor<TElement>
                 // other props:
@@ -472,6 +459,11 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                 onValidation       = {handleValidation}         // if [isValid === undefined] => uncontrollable => `useInvalidable()` => calls onValidation() => calls `useInputValidator()::handleValidation()` => mutates ValidityChangeEvent::isValid
                 // // a "validation_override" function:
                 // customValidator = {props.customValidator} // called by `useInputValidator()` when `handleInit()`|`handleChange()` => calls `validate()` => calls `customValidator()`
+                
+                
+                
+                // handlers:
+                onFocus={handleTextFocus}
             />
             <SelectDropdownEditor<Element, string>
                 // variants:
@@ -501,17 +493,18 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                 
                 
                 // states:
-                expanded={expanded}
+                expanded={autoShowDropdown}
+                onExpandedChange={handleExpandedChange}
                 
                 
                 
                 // floatable:
-                floatingOn={floatingOn}
+                floatingOn={outerRefInternal}
                 
                 
                 
                 // auto focusable:
-                autoFocus={autoFocus}
+                autoFocus={autoShowDropdown ? false : undefined} // do not autoFocus when autoExpanded, otherwise do autoFocus}
                 
                 
                 
