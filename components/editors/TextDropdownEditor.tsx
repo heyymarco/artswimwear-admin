@@ -66,9 +66,68 @@ export interface TextDropdownEditorProps<TElement extends Element = HTMLDivEleme
         // bases:
         TextEditorProps<TElement>,
         Pick<SelectDropdownEditorProps<Element, string>,
+            // // // ONLY NECESSARY props:
+            // // // variants:
+            // // |'buttonStyle'
+            // // |'orientation' // the orientation of <Dropdown> __relative_to__ <Button>
+            // // 
             // values:
             |'valueOptions'
             |'valueToUi'
+            // // // ONLY NECESSARY props:
+            // // 
+            // // // states:
+            // // |'defaultExpanded'
+            // // |'expanded'
+            // // |'onExpandedChange'
+            // // 
+            // // |'onExpandStart'
+            // // |'onCollapseStart'
+            // // |'onExpandEnd'
+            // // |'onCollapseEnd'
+            // // 
+            // // // floatable:
+            // // |'floatingRef'
+            // // 
+            // // |'floatingOn'
+            // // // |'floatingFriends'
+            // // |'floatingPlacement'
+            // // |'floatingMiddleware'
+            // // |'floatingStrategy'
+            // // 
+            // // |'floatingAutoFlip'
+            // // |'floatingAutoShift'
+            // // |'floatingOffset'
+            // // |'floatingShift'
+            // // 
+            // // |'onFloatingUpdate'
+            // // 
+            // // // global stackable:
+            // // |'viewport'
+            // // 
+            // // // auto focusable:
+            // // |'autoFocusOn'
+            // // |'restoreFocusOn'
+            // // |'autoFocus'
+            // // |'restoreFocus'
+            // // |'autoFocusScroll'
+            // // |'restoreFocusScroll'
+            
+            // components:
+            |'buttonRef'
+            |'buttonOrientation'
+            |'buttonComponent'
+            |'buttonChildren'
+            |'toggleButtonComponent'
+            |'dropdownRef'
+            |'dropdownOrientation'
+            |'dropdownComponent'
+            |'listRef'
+            |'listOrientation'
+            |'listStyle'
+            |'listComponent'
+            |'listItemComponent'
+            |'editableButtonComponent'
         >
 {
     // validations:
@@ -124,6 +183,24 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         value          : controllableValue,
         onChange       : onControllableValueChange,
         onChangeAsText : onControllableTextChange,
+        
+        
+        
+        // components:
+        buttonRef,                                         // take, moved to <SelectDropdownEditor>
+        buttonOrientation,                                 // take, moved to <SelectDropdownEditor>
+        buttonComponent,                                   // take, moved to <SelectDropdownEditor>
+        buttonChildren = null /* remove text on button */, // take, moved to <SelectDropdownEditor>
+        toggleButtonComponent,                             // take, moved to <SelectDropdownEditor>
+        dropdownRef,                                       // take, moved to <SelectDropdownEditor>
+        dropdownOrientation,                               // take, moved to <SelectDropdownEditor>
+        dropdownComponent,                                 // take, moved to <SelectDropdownEditor>
+        listRef,                                           // take, moved to <SelectDropdownEditor>
+        listOrientation,                                   // take, moved to <SelectDropdownEditor>
+        listStyle,                                         // take, moved to <SelectDropdownEditor>
+        listComponent,                                     // take, moved to <SelectDropdownEditor>
+        listItemComponent,                                 // take, moved to <SelectDropdownEditor>
+        editableButtonComponent,                           // take, moved to <SelectDropdownEditor>
         
         
         
@@ -244,6 +321,10 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         ...restTextEditorProps
     } = restSelectDropdownEditorProps;
     
+    const {
+        floatingOn = outerRefInternal,
+    } = dropdownComponent?.props ?? {};
+    
     
     
     // jsx:
@@ -341,12 +422,25 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                 
                 
                 // floatable:
-                floatingOn={outerRefInternal}
+                floatingOn={floatingOn}
                 
                 
                 
-                // children:
-                buttonChildren={null}
+                // components:
+                buttonRef={buttonRef}
+                buttonOrientation={buttonOrientation}
+                buttonComponent={buttonComponent}
+                buttonChildren={buttonChildren}
+                toggleButtonComponent={toggleButtonComponent}
+                dropdownRef={dropdownRef}
+                dropdownOrientation={dropdownOrientation}
+                dropdownComponent={dropdownComponent}
+                listRef={listRef}
+                listOrientation={listOrientation}
+                listStyle={listStyle}
+                listComponent={listComponent}
+                listItemComponent={listItemComponent}
+                editableButtonComponent={editableButtonComponent}
             />
         </Group>
     );
