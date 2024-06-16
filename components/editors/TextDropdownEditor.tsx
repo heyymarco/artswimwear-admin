@@ -530,7 +530,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                 
                 
                 // auto focusable:
-                autoFocus={(showDropdown === ShowDropdown.SHOW_BY_TOGGLE) ? true : undefined} // do autoFocus when manualDropdown, otherwise do NOT autoFocus}
+                autoFocus={(showDropdown === ShowDropdown.SHOW_BY_TOGGLE) ? true : false} // do autoFocus when manualDropdown, otherwise do NOT autoFocus}
                 
                 
                 
