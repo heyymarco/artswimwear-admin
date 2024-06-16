@@ -135,7 +135,7 @@ export interface TextDropdownEditorProps<TElement extends Element = HTMLDivEleme
         >
 {
     // behaviors:
-    showDropdownOnFocus ?: boolean
+    autoShowDropdownOnFocus ?: boolean
 }
 const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: TextDropdownEditorProps<TElement>): JSX.Element|null => {
     // props:
@@ -191,7 +191,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         
         
         // behaviors:
-        showDropdownOnFocus = true,
+        autoShowDropdownOnFocus = true,
         
         
         
@@ -251,7 +251,17 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
     
     // states:
     const [isValid     , setIsValid     ] = useState<boolean|null>(null);
-    const [showDropdown, setShowDropdown] = useState<boolean|'force'>(false);
+    
+    const enum ShowDropdown {
+        SHOW_BY_TOGGLE     = 2,  // absolute set
+        SHOW_BY_TEXT_FOCUS = 1,  // condition:      if     HIDE_BY_BLUR|HIDE_BY_SELECT
+        
+        HIDE_BY_TYPING     = -1, // condition:      if NOT HIDE_BY_BLUR
+        HIDE_BY_SELECT     = -2, // condition:      if NOT HIDE_BY_BLUR
+        HIDE_BY_TOGGLE     = -3, // condition:      if NOT HIDE_BY_BLUR
+        HIDE_BY_BLUR       = -4, // absolute reset
+    }
+    const [showDropdown, setShowDropdown] = useState<ShowDropdown>(ShowDropdown.HIDE_BY_BLUR);
     
     
     
@@ -296,6 +306,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
     // handlers:
     const handleTextChange         = useEvent<EditorChangeEventHandler<string>>((newValue) => {
         triggerValueChange(newValue, { triggerAt: 'immediately' });
+        if (showDropdown !== ShowDropdown.HIDE_BY_BLUR) setShowDropdown(ShowDropdown.HIDE_BY_TYPING); // autoClose the <Dropdown> when the user type on <Input>
     });
     const handleDropdownChange     = useEvent<EditorChangeEventHandler<string>>((newValue) => {
         const inputElm = inputRefInternal.current;
@@ -334,11 +345,26 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
     );
     
     const handleTextFocus          = useEvent<React.FocusEventHandler<TElement>>((event) => {
-        setShowDropdown(true);
+        // conditions:
+        if (!autoShowDropdownOnFocus) return; // the autoDropdown is not active => ignore
+        
+        
+        
+        // actions:
+        if ((showDropdown === ShowDropdown.HIDE_BY_BLUR) || (showDropdown === ShowDropdown.HIDE_BY_SELECT)) setShowDropdown(ShowDropdown.SHOW_BY_TEXT_FOCUS);
     });
     
-    const handleExpandedChange     = useEvent<EventHandler<DropdownListExpandedChangeEvent<string>>>(({expanded}) => {
-        setShowDropdown(expanded ? 'force' : false);
+    const handleExpandedChange     = useEvent<EventHandler<DropdownListExpandedChangeEvent<string>>>(({expanded, actionType}) => {
+        if (expanded) {
+            setShowDropdown(ShowDropdown.SHOW_BY_TOGGLE);
+        }
+        else if (showDropdown !== ShowDropdown.HIDE_BY_BLUR) {
+            setShowDropdown(
+                (typeof(actionType) === 'number')
+                ? ShowDropdown.HIDE_BY_SELECT
+                : ShowDropdown.HIDE_BY_TOGGLE
+            );
+        } // if
     });
     
     
@@ -346,7 +372,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
     // effects:
     useEffect(() => {
         // conditions:
-        if (!showDropdown) return; // ignore if not shown
+        if (showDropdown === ShowDropdown.HIDE_BY_BLUR) return; // ignore if fully hidden
         
         
         
@@ -370,7 +396,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                 if (outerRefInternal.current?.contains(focusedTarget))    return; // consider still focus if has focus inside <Group>
                 if (dropdownRefInternal.current?.contains(focusedTarget)) return; // consider still focus if has focus inside <Dropdown>
             } // if
-            setShowDropdown(false);
+            setShowDropdown(ShowDropdown.HIDE_BY_BLUR);
         };
         
         
@@ -493,7 +519,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                 
                 
                 // states:
-                expanded={!!showDropdown}
+                expanded={showDropdown >= 1}
                 onExpandedChange={handleExpandedChange}
                 
                 
@@ -504,7 +530,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                 
                 
                 // auto focusable:
-                autoFocus={(showDropdown === true) ? false : undefined} // do not autoFocus when autoExpanded, otherwise do autoFocus}
+                autoFocus={(showDropdown === ShowDropdown.SHOW_BY_TOGGLE) ? true : undefined} // do autoFocus when manualDropdown, otherwise do NOT autoFocus}
                 
                 
                 
