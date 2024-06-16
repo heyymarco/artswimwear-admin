@@ -250,8 +250,8 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
     
     
     // states:
-    const [isValid, setIsValid] = useState<boolean|null>(null);
-    const [autoShowDropdown, setAutoShowDropdown] = useState<boolean>(false);
+    const [isValid     , setIsValid     ] = useState<boolean|null>(null);
+    const [showDropdown, setShowDropdown] = useState<boolean|'force'>(false);
     
     
     
@@ -334,11 +334,11 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
     );
     
     const handleTextFocus          = useEvent<React.FocusEventHandler<TElement>>((event) => {
-        setAutoShowDropdown(true);
+        setShowDropdown(true);
     });
     
     const handleExpandedChange     = useEvent<EventHandler<DropdownListExpandedChangeEvent<string>>>(({expanded}) => {
-        setAutoShowDropdown(expanded);
+        setShowDropdown(expanded ? 'force' : false);
     });
     
     
@@ -346,7 +346,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
     // effects:
     useEffect(() => {
         // conditions:
-        if (!autoShowDropdown) return; // ignore if not shown
+        if (!showDropdown) return; // ignore if not shown
         
         
         
@@ -370,7 +370,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                 if (outerRefInternal.current?.contains(focusedTarget))    return; // consider still focus if has focus inside <Group>
                 if (dropdownRefInternal.current?.contains(focusedTarget)) return; // consider still focus if has focus inside <Dropdown>
             } // if
-            setAutoShowDropdown(false);
+            setShowDropdown(false);
         };
         
         
@@ -386,7 +386,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
             document.removeEventListener('mousedown', handleMouseDown);
             document.removeEventListener('focus'    , handleFocus    , { capture: true });
         };
-    }, [autoShowDropdown]);
+    }, [showDropdown]);
     
     
     
@@ -493,7 +493,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                 
                 
                 // states:
-                expanded={autoShowDropdown}
+                expanded={!!showDropdown}
                 onExpandedChange={handleExpandedChange}
                 
                 
@@ -504,7 +504,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                 
                 
                 // auto focusable:
-                autoFocus={autoShowDropdown ? false : undefined} // do not autoFocus when autoExpanded, otherwise do autoFocus}
+                autoFocus={(showDropdown === true) ? false : undefined} // do not autoFocus when autoExpanded, otherwise do autoFocus}
                 
                 
                 
