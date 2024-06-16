@@ -372,7 +372,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
     // effects:
     useEffect(() => {
         // conditions:
-        if (showDropdown === ShowDropdown.HIDE_BY_BLUR) return; // ignore if fully hidden
+        if (showDropdown === ShowDropdown.HIDE_BY_BLUR) return; // ignore if already fully hidden
         
         
         
