@@ -263,6 +263,8 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
     }
     const [showDropdown, setShowDropdown] = useState<ShowDropdown>(ShowDropdown.HIDE_BY_BLUR);
     
+    const noAutoShowDropdown              = useRef<boolean>(false);
+    
     
     
     // refs:
@@ -347,6 +349,10 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
     const handleTextFocus          = useEvent<React.FocusEventHandler<TElement>>((event) => {
         // conditions:
         if (!autoShowDropdownOnFocus) return; // the autoDropdown is not active => ignore
+        if (noAutoShowDropdown.current) {
+            noAutoShowDropdown.current = false;
+            return; // ignore focus internal_programatically
+        } // if
         
         
         
@@ -359,11 +365,32 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
             setShowDropdown(ShowDropdown.SHOW_BY_TOGGLE);
         }
         else if (showDropdown !== ShowDropdown.HIDE_BY_BLUR) {
+            const isHideBySelect = (typeof(actionType) === 'number');
             setShowDropdown(
-                (typeof(actionType) === 'number')
+                isHideBySelect
                 ? ShowDropdown.HIDE_BY_SELECT
                 : ShowDropdown.HIDE_BY_TOGGLE
             );
+            
+            
+            
+            // restore focus to <Input>:
+            const performRestoreFocus = () => {
+                const inputElm = inputRefInternal.current;
+                if (inputElm) {
+                    const textLength = inputElm.value.length; // get the latest text replacement
+                    inputElm.setSelectionRange(textLength, textLength);
+                    noAutoShowDropdown.current = true;
+                    inputElm.focus({ preventScroll: true });
+                } // if
+            };
+            if (isHideBySelect) {
+                // wait until <Input>'s text is fully replaced:
+                setTimeout(performRestoreFocus, 0);
+            } else {
+                // nothing was replaced => restore immediately:
+                performRestoreFocus();
+            } // if
         } // if
     });
     
@@ -530,7 +557,8 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                 
                 
                 // auto focusable:
-                autoFocus={(showDropdown === ShowDropdown.SHOW_BY_TOGGLE) ? true : false} // do autoFocus when manualDropdown, otherwise do NOT autoFocus}
+                autoFocus={(showDropdown === ShowDropdown.SHOW_BY_TEXT_FOCUS) ? false : true} // do NOT autoFocus when autoDropdown, otherwise do autoFocus}
+                restoreFocus={false} // use hard coded restore focus
                 
                 
                 
