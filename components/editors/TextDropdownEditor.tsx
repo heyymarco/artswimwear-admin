@@ -8,6 +8,7 @@ import {
     // hooks:
     useState,
     useRef,
+    useEffect,
 }                           from 'react'
 
 // reusable-ui core:
@@ -186,6 +187,11 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         
         
         
+        // behaviors:
+        showDropdownOnFocus = true,
+        
+        
+        
         // components:
         buttonRef,                                         // take, moved to <SelectDropdownEditor>
         buttonOrientation,                                 // take, moved to <SelectDropdownEditor>
@@ -242,12 +248,13 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
     
     // states:
     const [isValid, setIsValid] = useState<boolean|null>(null);
+    const [autoShowDropdown, setAutoShowDropdown] = useState<boolean>(false);
     
     
     
     // refs:
-    const inputRefInternal = useRef<HTMLInputElement|null>(null);
-    const mergedInputRef   = useMergeRefs(
+    const inputRefInternal    = useRef<HTMLInputElement|null>(null);
+    const mergedInputRef      = useMergeRefs(
         // preserves the original `elmRef` from `props`:
         elmRef,
         
@@ -256,14 +263,24 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         inputRefInternal,
     );
     
-    const outerRefInternal = useRef<TElement|null>(null);
-    const mergedOuterRef   = useMergeRefs(
+    const outerRefInternal    = useRef<TElement|null>(null);
+    const mergedOuterRef      = useMergeRefs(
         // preserves the original `outerRef` from `props`:
         outerRef,
         
         
         
         outerRefInternal,
+    );
+    
+    const dropdownRefInternal = useRef<Element|null>(null);
+    const mergedDropdownRef   = useMergeRefs(
+        // preserves the original `dropdownRef` from `props`:
+        dropdownRef,
+        
+        
+        
+        dropdownRefInternal,
     );
     
     
@@ -313,6 +330,57 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         handleValidationInternal,
     );
     
+    const handleFocus              = useEvent<React.FocusEventHandler<TElement>>((event) => {
+        setAutoShowDropdown(true);
+    });
+    
+    
+    
+    // effects:
+    useEffect(() => {
+        // conditions:
+        if (!autoShowDropdown) return; // ignore if not shown
+        
+        
+        
+        // handlers:
+        const handleMouseDown = (event: MouseEvent): void => {
+            // conditions:
+            if (event.button !== 0) return; // only handle left click
+            
+            
+            
+            // although clicking on page won't change the focus, but we decided this event as lost focus on <Dropdown>:
+            handleFocus({ target: event.target } as FocusEvent);
+        };
+        const handleFocus     = (event: FocusEvent): void => {
+            const focusedTarget = event.target;
+            if (!focusedTarget) return;
+            
+            
+            
+            if (focusedTarget instanceof Element) {
+                if (outerRefInternal.current?.contains(focusedTarget))    return; // consider still focus if has focus inside <Group>
+                if (dropdownRefInternal.current?.contains(focusedTarget)) return; // consider still focus if has focus inside <Dropdown>
+            } // if
+            setAutoShowDropdown(false);
+        };
+        
+        
+        
+        // setups:
+        document.addEventListener('mousedown', handleMouseDown);
+        document.addEventListener('focus'    , handleFocus    , { capture: true }); // force `focus` as bubbling
+        
+        
+        
+        // cleanups:
+        return () => {
+            document.removeEventListener('mousedown', handleMouseDown);
+            document.removeEventListener('focus'    , handleFocus    , { capture: true });
+        };
+    }, [autoShowDropdown]);
+    
     
     
     // default props:
@@ -322,7 +390,18 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
     } = restSelectDropdownEditorProps;
     
     const {
+        // states:
+        expanded   = autoShowDropdown ? true : undefined,
+        
+        
+        
+        // floatable:
         floatingOn = outerRefInternal,
+        
+        
+        
+        // auto focusable:
+        autoFocus  = autoShowDropdown ? false : undefined,
     } = dropdownComponent?.props ?? {};
     
     
@@ -360,6 +439,11 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
             
             // styles:
             style={style}
+            
+            
+            
+            // handlers:
+            onFocus={handleFocus}
         >
             <TextEditor<TElement>
                 // other props:
@@ -417,12 +501,17 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                 
                 
                 // states:
-                // expanded={true}
+                expanded={expanded}
                 
                 
                 
                 // floatable:
                 floatingOn={floatingOn}
+                
+                
+                
+                // auto focusable:
+                autoFocus={autoFocus}
                 
                 
                 
@@ -432,7 +521,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                 buttonComponent={buttonComponent}
                 buttonChildren={buttonChildren}
                 toggleButtonComponent={toggleButtonComponent}
-                dropdownRef={dropdownRef}
+                dropdownRef={mergedDropdownRef}
                 dropdownOrientation={dropdownOrientation}
                 dropdownComponent={dropdownComponent}
                 listRef={listRef}
