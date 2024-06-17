@@ -133,25 +133,26 @@ export interface SelectDropdownEditorProps<TElement extends Element = HTMLButton
         EditableButtonComponentProps
 {
     // appearances:
-    iconLoading     ?: IconList|null,
+    iconLoading          ?: IconList|null,
     
     
     
     // values:
-    valueOptions     : TValue[]|Promise<TValue[]> | React.RefObject<TValue[]|Promise<TValue[]>>
-    valueToUi       ?: (value: TValue|null) => string
+    valueOptions          : TValue[]|Promise<TValue[]> | React.RefObject<TValue[]|Promise<TValue[]>>
+    excludedValueOptions ?: TValue[]|Promise<TValue[]> | React.RefObject<TValue[]|Promise<TValue[]>>
+    valueToUi            ?: (value: TValue|null) => string
     
-    value            : TValue
+    value                 : TValue
     
     
     
     // validations:
-    customValidator ?: CustomValidatorHandler
+    customValidator      ?: CustomValidatorHandler
     
     
     
     // components:
-    buttonComponent ?: React.ReactElement<ButtonIconProps>
+    buttonComponent      ?: React.ReactElement<ButtonIconProps>
 }
 const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TValue extends any = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>(props: SelectDropdownEditorProps<TElement, TValue, TDropdownListExpandedChangeEvent>): JSX.Element|null => {
     // variants:
@@ -189,16 +190,17 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
     // props:
     const {
         // appearances:
-        iconLoading       = 'busy',
+        iconLoading             = 'busy',
         
         
         
         // values:
         valueOptions,
-        valueToUi         = defaultValueToUi,
+        excludedValueOptions,
+        valueToUi               = defaultValueToUi,
         
-        value             : controllableValue,
-        onChange          : onControllableValueChange,
+        value                   : controllableValue,
+        onChange                : onControllableValueChange,
         
         
         
@@ -292,15 +294,27 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
                     ? await (valueOptions.current ?? [])
                     : await valueOptions
                 );
+                const resolvedExcludedValueOptions = (
+                    ((typeof(excludedValueOptions) === 'object') && ('current' in excludedValueOptions))
+                    ? await (excludedValueOptions.current ?? [])
+                    : await excludedValueOptions
+                );
+                const finalValueOptions = (
+                    !resolvedExcludedValueOptions?.length
+                    ? resolvedValueOptions
+                    : resolvedValueOptions.filter((item) =>
+                        !resolvedExcludedValueOptions.includes(item)
+                    )
+                );
                 if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
-                setIsLoading(resolvedValueOptions); // loaded
+                setIsLoading(finalValueOptions); // loaded
             }
             catch {
                 if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
                 setIsLoading(false); // error
             } // try
         })();
-    }, [valueOptions]);
+    }, [valueOptions, excludedValueOptions]);
     
     
     

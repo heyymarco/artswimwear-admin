@@ -77,6 +77,7 @@ export interface TextDropdownEditorProps<TElement extends Element = HTMLDivEleme
             // // 
             // values:
             |'valueOptions'
+            |'excludedValueOptions'
             |'valueToUi'
             // // // ONLY NECESSARY props:
             // // 
@@ -141,42 +142,43 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
     // props:
     const {
         // refs:
-        elmRef,         // take, moved to <TextEditor>
-        outerRef,       // take, moved to <Group>
+        elmRef,               // take, moved to <TextEditor>
+        outerRef,             // take, moved to <Group>
         
         
         
         // identifiers:
-        id,             // take, moved to <Group>
+        id,                   // take, moved to <Group>
         
         
         
         // variants:
-        size,           // take, moved to <Group>
-        theme,          // take, moved to <Group>
-        gradient,       // take, moved to <Group>
-        outlined,       // take, moved to <Group>
-        mild,           // take, moved to <Group>
+        size,                 // take, moved to <Group>
+        theme,                // take, moved to <Group>
+        gradient,             // take, moved to <Group>
+        outlined,             // take, moved to <Group>
+        mild,                 // take, moved to <Group>
         
         
         
         // classes:
-        mainClass,      // take, moved to <Group>
-        classes,        // take, moved to <Group>
-        variantClasses, // take, moved to <Group>
-        stateClasses,   // take, moved to <Group>
-        className,      // take, moved to <Group>
+        mainClass,            // take, moved to <Group>
+        classes,              // take, moved to <Group>
+        variantClasses,       // take, moved to <Group>
+        stateClasses,         // take, moved to <Group>
+        className,            // take, moved to <Group>
         
         
         
         // styles:
-        style,          // take, moved to <Group>
+        style,                // take, moved to <Group>
         
         
         
         // values:
-        valueOptions,   // take, moved to <SelectDropdownEditor>
-        valueToUi,      // take, moved to <SelectDropdownEditor>
+        valueOptions,         // take, moved to <SelectDropdownEditor>
+        excludedValueOptions, // take, moved to <SelectDropdownEditor>
+        valueToUi,            // take, moved to <SelectDropdownEditor>
         
         defaultValue   : defaultUncontrollableValue = '',
         value          : controllableValue,
@@ -186,7 +188,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         
         
         // validations:
-        onValidation,   // take, moved to <TextEditor>
+        onValidation,         // take, moved to <TextEditor>
         
         
         
@@ -525,23 +527,24 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                 
                 
                 // values:
-                valueOptions       = {valueOptions}
-                valueToUi          = {valueToUi}
+                valueOptions         = {valueOptions}
+                excludedValueOptions = {excludedValueOptions}
+                valueToUi            = {valueToUi}
                 
-                value              = {value}                // internally controllable
-                onChange           = {handleDropdownChange} // internally controllable
+                value                = {value}                // internally controllable
+                onChange             = {handleDropdownChange} // internally controllable
                 
                 
                 
                 // validations:
-                enableValidation   = {props.enableValidation}  // follows <Editor>
-                isValid            = {isValid}                 // controllable
-                inheritValidation  = {props.inheritValidation} // follows <Editor>
+                enableValidation     = {props.enableValidation}  // follows <Editor>
+                isValid              = {isValid}                 // controllable
+                inheritValidation    = {props.inheritValidation} // follows <Editor>
                 
                 // // a "validation_event" callback (only called when [isValid === undefined]):
-                // onValidation    = {undefined}
+                // onValidation      = {undefined}
                 // // a "validation_override" function:
-                // customValidator = {undefined}
+                // customValidator   = {undefined}
                 
                 
                 
