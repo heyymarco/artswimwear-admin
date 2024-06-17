@@ -2,6 +2,11 @@
 import {
     // react:
     default as React,
+    
+    
+    
+    // hooks:
+    useState,
 }                           from 'react'
 
 // reusable-ui core:
@@ -9,6 +14,7 @@ import {
     // react helper hooks:
     useIsomorphicLayoutEffect,
     useMergeEvents,
+    useMountedFlag,
     
     
     
@@ -19,11 +25,15 @@ import {
 
 // reusable-ui components:
 import {
+    type IconList,
+}                           from '@reusable-ui/icon'                    // an icon set component for React app
+import {
     // simple-components:
     type ButtonProps,
 }                           from '@reusable-ui/button'                  // a button component for initiating an action
 import {
     // simple-components:
+    type ButtonIconProps,
     ButtonIcon,
 }                           from '@reusable-ui/button-icon'             // a button component with a nice icon
 import {
@@ -111,14 +121,24 @@ export interface SelectDropdownEditorProps<TElement extends Element = HTMLButton
             // values:
             |'value'
             |'onChange'
+            
+            
+            
+            // components:
+            |'buttonComponent' // we use a more specific button: <ButtonIcon>
         >,
         
         // components:
         ListItemComponentProps<Element>,
         EditableButtonComponentProps
 {
+    // appearances:
+    iconLoading     ?: IconList|null,
+    
+    
+    
     // values:
-    valueOptions     : TValue[]
+    valueOptions     : TValue[]|Promise<TValue[]>
     valueToUi       ?: (value: TValue|null) => string
     
     value            : TValue
@@ -127,6 +147,11 @@ export interface SelectDropdownEditorProps<TElement extends Element = HTMLButton
     
     // validations:
     customValidator ?: CustomValidatorHandler
+    
+    
+    
+    // components:
+    buttonComponent ?: React.ReactElement<ButtonIconProps>
 }
 const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TValue extends any = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>(props: SelectDropdownEditorProps<TElement, TValue, TDropdownListExpandedChangeEvent>): JSX.Element|null => {
     // variants:
@@ -163,6 +188,11 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
     
     // props:
     const {
+        // appearances:
+        iconLoading       = 'busy',
+        
+        
+        
         // values:
         valueOptions,
         valueToUi         = defaultValueToUi,
@@ -186,7 +216,7 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
         // components:
         listItemComponent       = (<SelectDropdownEditorItem />                                                                                  as React.ReactElement<ListItemProps<Element>>),
         buttonOrientation       = 'inline',
-        buttonComponent         = (<ButtonIcon iconPosition={determineDropdownIconPosition(buttonOrientation)} icon={determineDropdownIcon()} /> as React.ReactElement<ButtonProps>),
+        buttonComponent         = (<ButtonIcon iconPosition={determineDropdownIconPosition(buttonOrientation)} icon={determineDropdownIcon()} /> as React.ReactElement<ButtonIconProps>),
         editableButtonComponent = (<EditableButton />                                                                                            as React.ReactElement<EditableButtonProps>),
         
         
@@ -240,10 +270,33 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
     
     
     
+    // states:
+    const [isLoading, setIsLoading] = useState<undefined|false|TValue[]>(undefined);
+    
+    
+    
     // effects:
+    const isMounted = useMountedFlag();
+    
     useIsomorphicLayoutEffect(() => {
         requiredValidator.handleInit(value);
     }, []);
+    
+    useIsomorphicLayoutEffect(() => {
+        // setups:
+        setIsLoading(undefined); // loading
+        (async (): Promise<void> => {
+            try {
+                const resolvedValueOptions = await valueOptions;
+                if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
+                setIsLoading(resolvedValueOptions); // loaded
+            }
+            catch {
+                if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
+                setIsLoading(false); // error
+            } // try
+        })();
+    }, [valueOptions]);
     
     
     
@@ -285,8 +338,8 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
         ...restEditableButtonProps
     } = editableButtonComponent.props;
     
-    const defaultChildren : React.ReactElement = <>
-        {valueOptions.map((valueOption, index) => {
+    const defaultChildren : React.ReactElement|false = !!isLoading && <>
+        {isLoading.map((valueOption, index) => {
             // default props:
             const {
                 // states:
@@ -404,7 +457,25 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
                         
                         
                         // components:
-                        buttonComponent    : editableButtonButtonComponent,
+                        buttonComponent    : (!!isLoading ? editableButtonButtonComponent : React.cloneElement<ButtonIconProps>(editableButtonButtonComponent,
+                            // props:
+                            (
+                                (isLoading === undefined)
+                                ? {
+                                    // appearances:
+                                    icon    : iconLoading ?? undefined,
+                                    
+                                    
+                                    
+                                    // states:
+                                    enabled : false,
+                                }
+                                : {
+                                    // states:
+                                    enabled : false,
+                                }
+                            ),
+                        )) as React.ReactElement<ButtonProps>,
                     },
                 )
             }
