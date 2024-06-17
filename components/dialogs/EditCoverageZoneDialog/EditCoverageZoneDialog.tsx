@@ -26,6 +26,7 @@ import {
 import {
     // react helper hooks:
     useEvent,
+    useMergeEvents,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -45,6 +46,9 @@ import {
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // internal components:
+import {
+    type EditorChangeEventHandler,
+}                           from '@/components/editors/Editor'
 import {
     TextEditor,
 }                           from '@/components/editors/TextEditor'
@@ -258,6 +262,10 @@ const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<T
     
     
     
+    
+    
+    
+    
     // jsx:
     return (
         <ComplexEditModelDialog<TCoverageZoneWithId>
@@ -309,42 +317,92 @@ const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<T
             <TabPanel label={PAGE_SHIPPING_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>
                     <span className='name label'>Name:</span>
-                    {React.cloneElement<SelectDropdownEditorProps|NameEditorProps>(zoneNameEditor ?? <NameEditor />,
-                        // props:
-                        {
+                    {((): JSX.Element => {
+                        // handlers:
+                        const handleChangeInternal = useEvent<EditorChangeEventHandler<string>>((value) => {
+                            setName(value);
+                            setIsModified(true);
+                        });
+                        const handleChange         = useMergeEvents(
+                            // preserves the original `onChange` from `zoneNameEditor`:
+                            zoneNameEditor?.props.onChange,
+                            
+                            
+                            
+                            // actions:
+                            handleChangeInternal,
+                        );
+                        
+                        
+                        
+                        // default props:
+                        const {
                             // refs:
-                            elmRef    : (defaultExpandedTabIndex === 0) ? firstEditorRef : undefined,
+                            elmRef    = (defaultExpandedTabIndex === 0) ? firstEditorRef : undefined,
                             
                             
                             
                             // variants:
-                            theme     : 'primary',
+                            theme     = 'primary',
                             
                             
                             
                             // classes:
-                            className : 'name editor',
+                            className = 'name editor',
                             
                             
                             
                             // accessibilities:
-                            enabled   : whenUpdate.description || whenAdd,
+                            enabled   = whenUpdate.description || whenAdd,
                             
                             
                             
                             // validations:
-                            required  : true,
+                            required  = true,
                             
                             
                             
                             // values:
-                            value     : name,
-                            onChange  : (value) => {
-                                setName(value);
-                                setIsModified(true);
-                            }
-                        },
-                    )}
+                            value     = name,
+                        } = (zoneNameEditor?.props ?? {}) as (SelectDropdownEditorProps & NameEditorProps);
+                        
+                        
+                        
+                        // jsx:
+                        return React.cloneElement<SelectDropdownEditorProps|NameEditorProps>(zoneNameEditor ?? <NameEditor />,
+                            // props:
+                            {
+                                // refs:
+                                elmRef    : elmRef,
+                                
+                                
+                                
+                                // variants:
+                                theme     : theme,
+                                
+                                
+                                
+                                // classes:
+                                className : className,
+                                
+                                
+                                
+                                // accessibilities:
+                                enabled   : enabled,
+                                
+                                
+                                
+                                // validations:
+                                required  : required,
+                                
+                                
+                                
+                                // values:
+                                value     : value,
+                                onChange  : handleChange,
+                            },
+                        );
+                    })()}
                 </form>
             </TabPanel>
             <TabPanel label={PAGE_SHIPPING_TAB_DEFAULT_RATES} panelComponent={<Generic className={styleSheet.defaultRatesTab} />}>
