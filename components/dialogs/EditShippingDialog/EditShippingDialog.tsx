@@ -146,6 +146,11 @@ import './EditShippingDialogStyles';
 
 
 
+// utilities:
+const emptyStringPromise = Promise.resolve<string[]>([]);
+
+
+
 // react components:
 export interface EditShippingDialogProps
     extends
@@ -224,30 +229,22 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     
     const [getStateList] = useGetStateList();
     const [getCityList ] = useGetCityList();
-    const stateListRef   = useRef<string[]>([]);
-    const cityListRef    = useRef<string[]>([]);
+    const stateListRef   = useRef<Promise<string[]>>(emptyStringPromise);
+    const cityListRef    = useRef<Promise<string[]>>(emptyStringPromise);
     useEffect(() => {
         if (!country) {
-            const stateList = stateListRef.current;
-            stateList.splice(0) // clear
+            stateListRef.current = emptyStringPromise; // clear
         }
         else {
-            getStateList({ countryCode: country }).unwrap().then((states) => {
-                const stateList = stateListRef.current;
-                stateList.splice(0, stateList.length, ...states); // replace all
-            });
+            stateListRef.current = getStateList({ countryCode: country }).unwrap();
         } // if
     }, [country]);
     useEffect(() => {
         if (!country || !state) {
-            const cityList = cityListRef.current;
-            cityList.splice(0) // clear
+            cityListRef.current = emptyStringPromise; // clear
         }
         else {
-            getCityList({ countryCode: country, state: state }).unwrap().then((cities) => {
-                const cityList = cityListRef.current;
-                cityList.splice(0, cityList.length, ...cities); // replace all
-            });
+            cityListRef.current = getCityList({ countryCode: country, state: state }).unwrap();
         } // if
     }, [country, state]);
     
