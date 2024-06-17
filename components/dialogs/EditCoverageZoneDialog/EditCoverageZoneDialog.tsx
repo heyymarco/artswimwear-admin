@@ -25,6 +25,7 @@ import {
 // reusable-ui core:
 import {
     // react helper hooks:
+    useIsomorphicLayoutEffect,
     useEvent,
     useMergeEvents,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
@@ -332,6 +333,14 @@ const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<T
                             // actions:
                             handleChangeInternal,
                         );
+                        
+                        
+                        
+                        // effects:
+                        // informs the __initial_value__ of the zone name to <Parent>:
+                        useIsomorphicLayoutEffect(() => {
+                            zoneNameEditor?.props.onChange?.(name);
+                        }, []);
                         
                         
                         
