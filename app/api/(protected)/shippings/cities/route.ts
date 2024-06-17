@@ -89,10 +89,13 @@ router
     
     
     const stateLowercase = state.trim().toLowerCase();
+    const validStates    = State.getStatesOfCountry(countryCode);
     const stateCode = (
-        (state.length === 2)
-        ? state
-        : (State.getStatesOfCountry(countryCode).find(({name}) => (name.trim().toLowerCase() === stateLowercase))?.isoCode ?? state)
+        validStates.find(({isoCode}) => (isoCode.toLowerCase() === stateLowercase))?.isoCode // normalize stateCode => uppercased stateCode
+        ??
+        validStates.find(({name   }) => (name.toLowerCase()    === stateLowercase))?.isoCode // convert   stateName => uppercased stateCode
+        ??
+        state
     );
     const cities : Array<string> = (
         City.getCitiesOfState(countryCode, stateCode)
