@@ -37,6 +37,7 @@
     "@vercel/blob": "^0.19.0",
     "axios": "^1.4.0",
     "cloudinary-build-url": "^0.2.4",
+    "country-state-city": "^3.2.1",
     "eslint": "^8.37.0",
     "eslint-config-next": "^13.2.4",
     "lexical": "^0.12.4",

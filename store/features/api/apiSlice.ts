@@ -129,7 +129,7 @@ export const apiSlice = createApi({
     baseQuery : axiosBaseQuery({
         baseUrl: `${process.env.APP_URL ?? ''}/api`
     }),
-    tagTypes: ['Products', 'TemplateVariantGroups', 'Orders', 'Shippings', 'Admins', 'Preferences', 'Roles'],
+    tagTypes: ['Products', 'TemplateVariantGroups', 'Orders', 'Shippings', 'States', 'Admins', 'Preferences', 'Roles'],
     endpoints : (builder) => ({
         getProductList              : builder.query<EntityState<ProductPreview>, void>({
             query : () => ({
@@ -363,6 +363,18 @@ export const apiSlice = createApi({
                     id   : shipping.id,     // delete existing    => invalidates the modified
                 }]) as Array<{ type: 'Shippings', id: string }>),
             ],
+        }),
+        getStateList                : builder.query<string[], { countryCode: string }>({
+            query : ({countryCode}) => ({
+                url    : `shippings/states?countryCode=${encodeURIComponent(countryCode)}`,
+                method : 'GET',
+            }),
+        }),
+        getCityList                 : builder.query<string[], { countryCode: string, state: string }>({
+            query : ({countryCode, state}) => ({
+                url    : `shippings/cities?countryCode=${encodeURIComponent(countryCode)}&state=${encodeURIComponent(state)}`,
+                method : 'GET',
+            }),
         }),
         
         getAdminPage                : builder.query<Pagination<AdminDetail>, PaginationArgs>({
@@ -703,6 +715,8 @@ export const {
     useGetShippingPageQuery               : useGetShippingPage,
     useUpdateShippingMutation             : useUpdateShipping,
     useDeleteShippingMutation             : useDeleteShipping,
+    useLazyGetStateListQuery              : useGetStateList,
+    useLazyGetCityListQuery               : useGetCityList,
     
     useGetAdminPageQuery                  : useGetAdminPage,
     useUpdateAdminMutation                : useUpdateAdmin,
