@@ -138,7 +138,7 @@ export interface SelectDropdownEditorProps<TElement extends Element = HTMLButton
     
     
     // values:
-    valueOptions     : TValue[]|Promise<TValue[]>
+    valueOptions     : TValue[]|Promise<TValue[]> | React.RefObject<TValue[]|Promise<TValue[]>>
     valueToUi       ?: (value: TValue|null) => string
     
     value            : TValue
@@ -287,7 +287,11 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
         setIsLoading(undefined); // loading
         (async (): Promise<void> => {
             try {
-                const resolvedValueOptions = await valueOptions;
+                const resolvedValueOptions = (
+                    ((typeof(valueOptions) === 'object') && ('current' in valueOptions))
+                    ? await (valueOptions.current ?? [])
+                    : await valueOptions
+                );
                 if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
                 setIsLoading(resolvedValueOptions); // loaded
             }
