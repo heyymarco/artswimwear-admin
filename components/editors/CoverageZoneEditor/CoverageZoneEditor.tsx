@@ -197,16 +197,28 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
         // conditions:
         if (zoneNameEditor === undefined) return undefined;
         const valueOptions = zoneNameEditor.props.valueOptions;
-        if (!valueOptions.length) zoneNameEditor;
+        if (!(valueOptions instanceof Promise) && !valueOptions.length) zoneNameEditor;
         
         
         
         // actions:
         const uniqueZones = new Set<string>(value.map(({name}) => name.trim().toLowerCase()));
-        const limitedValueOptions : string[] = (
-            valueOptions
-            .filter((valueOption) =>
-                !uniqueZones.has(valueOption.trim().toLowerCase())
+        const limitedValueOptions : string[]|Promise<string[]> = (
+            (valueOptions instanceof Promise)
+            ? (
+                valueOptions
+                .then((resolvedValueOptions) =>
+                    resolvedValueOptions
+                    .filter((valueOption) =>
+                        !uniqueZones.has(valueOption.trim().toLowerCase())
+                    )
+                )
+            )
+            : (
+                valueOptions
+                .filter((valueOption) =>
+                    !uniqueZones.has(valueOption.trim().toLowerCase())
+                )
             )
         );
         return React.cloneElement<SelectDropdownEditorProps>(zoneNameEditor,
