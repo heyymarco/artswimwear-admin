@@ -193,43 +193,6 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
         return (value.length === uniqueNames.size);
     }, [value]);
     
-    const zoneNameEditorWithOptions = useMemo((): React.ReactElement<SelectDropdownEditorProps>|undefined => {
-        // conditions:
-        if (zoneNameEditor === undefined) return undefined;
-        const valueOptions = zoneNameEditor.props.valueOptions;
-        if (!(valueOptions instanceof Promise) && !valueOptions.length) zoneNameEditor;
-        
-        
-        
-        // actions:
-        const uniqueZones = new Set<string>(value.map(({name}) => name.trim().toLowerCase()));
-        const limitedValueOptions : string[]|Promise<string[]> = (
-            (valueOptions instanceof Promise)
-            ? (
-                valueOptions
-                .then((resolvedValueOptions) =>
-                    resolvedValueOptions
-                    .filter((valueOption) =>
-                        !uniqueZones.has(valueOption.trim().toLowerCase())
-                    )
-                )
-            )
-            : (
-                valueOptions
-                .filter((valueOption) =>
-                    !uniqueZones.has(valueOption.trim().toLowerCase())
-                )
-            )
-        );
-        return React.cloneElement<SelectDropdownEditorProps>(zoneNameEditor,
-            // props:
-            {
-                // values:
-                valueOptions : limitedValueOptions, // replace the original `valueOptions` with `limitedValueOptions`
-            },
-        );
-    }, [zoneNameEditor, value]);
-    
     
     
     // classes:
@@ -413,7 +376,7 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
                             
                             
                             // components:
-                            zoneNameEditor={zoneNameEditorWithOptions}
+                            zoneNameEditor={zoneNameEditor}
                             zoneNameOverride={zoneNameOverride}
                             subzoneEditor={subzoneEditor}
                             
@@ -461,7 +424,17 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
                                 
                                 
                                 // components:
-                                zoneNameEditor={zoneNameEditorWithOptions}
+                                zoneNameEditor={
+                                    (!!zoneNameEditor && !!zoneNameEditor.props.valueOptions)
+                                    ? React.cloneElement<SelectDropdownEditorProps>(zoneNameEditor,
+                                        // props:
+                                        {
+                                            // values:
+                                            excludedValueOptions : value.map(({name}) => name),
+                                        },
+                                    )
+                                    : zoneNameEditor
+                                }
                                 zoneNameOverride={zoneNameOverride}
                                 subzoneEditor={subzoneEditor}
                             />
