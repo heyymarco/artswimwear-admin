@@ -11,6 +11,7 @@ import {
     useRef,
     useState,
     useMemo,
+    useEffect,
 }                           from 'react'
 
 // next-auth:
@@ -75,6 +76,12 @@ import {
     countryList,
 }                           from '@/components/editors/SelectCountryEditor'
 import {
+    SelectStateEditor,
+}                           from '@/components/editors/SelectStateEditor'
+import {
+    SelectCityEditor,
+}                           from '@/components/editors/SelectCityEditor'
+import {
     // types:
     UpdateHandler,
     
@@ -111,6 +118,9 @@ import {
     // hooks:
     useUpdateShipping,
     useDeleteShipping,
+    
+    useGetStateList,
+    useGetCityList,
 }                           from '@/store/features/api/apiSlice'
 
 // others:
@@ -205,6 +215,41 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             } satisfies CoverageCountryWithId))
         );
     });
+    
+    
+    
+    // stores:
+    const [country, setCountry] = useState<string>('');
+    const [state  , setState  ] = useState<string>('');
+    
+    const [getStateList] = useGetStateList();
+    const [getCityList ] = useGetCityList();
+    const stateListRef   = useRef<string[]>([]);
+    const cityListRef    = useRef<string[]>([]);
+    useEffect(() => {
+        if (!country) {
+            const stateList = stateListRef.current;
+            stateList.splice(0) // clear
+        }
+        else {
+            getStateList({ countryCode: country }).unwrap().then((states) => {
+                const stateList = stateListRef.current;
+                stateList.splice(0, stateList.length, ...states); // replace all
+            });
+        } // if
+    }, [country]);
+    useEffect(() => {
+        if (!country || !state) {
+            const cityList = cityListRef.current;
+            cityList.splice(0) // clear
+        }
+        else {
+            getCityList({ countryCode: country, state: state }).unwrap().then((cities) => {
+                const cityList = cityListRef.current;
+                cityList.splice(0, cityList.length, ...cities); // replace all
+            });
+        } // if
+    }, [country, state]);
     
     
     
@@ -550,6 +595,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                                 // values:
                                 valueOptions={countryList}
                                 value=''
+                                onChange={setCountry}
                                 
                                 
                                 
@@ -567,6 +613,13 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                                 
                                 
                                 // components:
+                                zoneNameEditor={
+                                    <SelectStateEditor
+                                        // data:
+                                        valueOptions={stateListRef}
+                                        onChange={setState}
+                                    />
+                                }
                                 subzoneEditor={
                                     <CoverageZoneEditor<CoverageCityWithId & { useZones: never, zones: never }, never>
                                         // data:
@@ -576,7 +629,13 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                                         
                                         
                                         // components:
-                                        subzoneEditor={undefined}
+                                        zoneNameEditor={
+                                            <SelectCityEditor
+                                                // data:
+                                                valueOptions={cityListRef}
+                                            />
+                                        }
+                                        subzoneEditor={undefined} // no more nested subZones
                                     />
                                 }
                             />
