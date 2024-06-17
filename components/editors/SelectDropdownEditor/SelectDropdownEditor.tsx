@@ -457,7 +457,7 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
                         
                         
                         // components:
-                        buttonComponent    : (!!isLoading ? editableButtonButtonComponent : React.cloneElement<ButtonIconProps>(editableButtonButtonComponent,
+                        buttonComponent    : ((!!isLoading && !!isLoading.length) ? editableButtonButtonComponent : React.cloneElement<ButtonIconProps>(editableButtonButtonComponent,
                             // props:
                             (
                                 (isLoading === undefined)
