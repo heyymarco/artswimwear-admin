@@ -1,3 +1,5 @@
+export type *       from './types'
+
 export *            from './states/SelectValidator'
 
 export *            from './styles/config'
