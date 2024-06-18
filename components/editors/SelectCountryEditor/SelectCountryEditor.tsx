@@ -16,8 +16,8 @@ import {
     countryList,
 }                           from './utilities'
 import {
-    DummyInput,
-}                           from './DummyInput'
+    DummyTextEditor,
+}                           from './DummyTextEditor'
 
 
 
@@ -89,7 +89,7 @@ const SelectCountryEditor = <TElement extends Element = HTMLButtonElement>(props
             valueToUi={valueToUi}
             // components:
             textEditorComponent={
-                <DummyInput
+                <DummyTextEditor
                     // values:
                     valueToUi={valueToUi}
                 />

@@ -6,6 +6,11 @@ import {
 
 // reusable-ui core:
 import {
+    // react helper hooks:
+    useMergeEvents,
+    
+    
+    
     // an accessibility management system:
     usePropEnabled,
     usePropReadOnly,
@@ -28,14 +33,18 @@ import {
 
 
 
+// handlers:
+const handleChangeDummy : React.ChangeEventHandler<HTMLInputElement> = (_event) => {
+    /* nothing to do */
+};
+
+
+
 // react components:
 export interface DummyInputProps<TElement extends Element = HTMLSpanElement>
     extends
         // bases:
-        Omit<InputProps<TElement>,
-            // values:
-            |'defaultValue' // changed to controllable
-        >,
+        InputProps<TElement>,
         
         // values:
         Required<Pick<SelectZoneEditorProps<TElement>,
@@ -66,6 +75,7 @@ const DummyInput = <TElement extends Element = HTMLSpanElement>(props: DummyInpu
         
         // values:
         valueToUi,
+        defaultValue,
         value,
         onChange, // forwards to `input[type]`
         
@@ -119,6 +129,19 @@ const DummyInput = <TElement extends Element = HTMLSpanElement>(props: DummyInpu
     
     
     
+    // handlers:
+    const handleChange = useMergeEvents(
+        // preserves the original `onChange`:
+        onChange,
+        
+        
+        
+        // dummy:
+        handleChangeDummy, // just for satisfying React of controllable <input>
+    );
+    
+    
+    
     // jsx:
     return (
         <EditableControl<TElement>
@@ -163,8 +186,9 @@ const DummyInput = <TElement extends Element = HTMLSpanElement>(props: DummyInpu
                 
                 // values:
                 {...{
+                    defaultValue,
                     value,
-                    onChange,
+                    onChange : handleChange,
                 }}
                 
                 
