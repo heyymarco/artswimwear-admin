@@ -18,6 +18,11 @@ import {
 
 
 
+// utilities:
+const equalityZoneComparison = (a: string, b: string): boolean => (a.trim().toLowerCase() === b.trim().toLowerCase());
+
+
+
 // react components:
 export interface SelectZoneEditorProps<TElement extends Element = HTMLButtonElement>
     extends
@@ -40,6 +45,11 @@ const SelectZoneEditor = <TElement extends Element = HTMLButtonElement>(props: S
         
         
         
+        // validations:
+        equalityValueComparison  = equalityZoneComparison,
+        
+        
+        
         // other props:
         ...restTextDropdownEditorProps
     } = props;
@@ -56,6 +66,11 @@ const SelectZoneEditor = <TElement extends Element = HTMLButtonElement>(props: S
             
             // accessibilities:
             aria-label={ariaLabel}
+            
+            
+            
+            // validations:
+            equalityValueComparison={equalityValueComparison}
         />
     );
 };
