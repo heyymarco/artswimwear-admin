@@ -561,6 +561,68 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         ...restTextEditorComponentProps
     } = textEditorComponent.props;
     
+    const {
+        // values:
+        valueOptions            : selectDropdownEditorValueOptions         = valueOptions,
+        excludedValueOptions    : selectDropdownEditorExcludedValueOptions = excludedValueOptions,
+        valueToUi               : selectDropdownEditorValueToUi            = valueToUi,
+        
+        value                   : selectDropdownEditorValue                = value,                // internally controllable
+        onChange                : selectDropdownEditorOnChange             = handleDropdownChange, // internally controllable
+        
+        
+        
+        // validations:
+        enableValidation        : selectDropdownEnableValidation           = props.enableValidation,  // follows <Editor>
+        isValid                 : selectDropdownIsValid                    = isValid,                 // controllable
+        inheritValidation       : selectDropdownInheritValidation          = props.inheritValidation, // follows <Editor>
+        
+        // // a "validation_event" callback (only called when [isValid === undefined]):
+        // onValidation         : selectDropdownOnValidation               = undefined,
+        // // a "validation_override" function:
+        // customValidator      : selectDropdownCustomValidator            = undefined,
+        
+        
+        
+        // states:
+        expanded                : selectDropdownexpanded                   = (showDropdown >= 1),
+        onExpandedChange        : selectDropdownonExpandedChange           = handleExpandedChange,
+        
+        
+        
+        // floatable:
+        floatingOn              : selectDropdownonFloatingOn               = outerRefInternal,
+        
+        
+        
+        // auto focusable:
+        autoFocus               : selectDropdownonAutoFocus                = (showDropdown === ShowDropdown.SHOW_BY_TEXT_FOCUS) ? false : true, // do NOT autoFocus when autoDropdown, otherwise do autoFocus}
+        restoreFocus            : selectDropdownonRestoreFocus             = false, // use hard coded restore focus
+        
+        
+        
+        // components:
+        buttonRef               : selectDropdownonButtonRef                = buttonRef,
+        buttonOrientation       : selectDropdownonButtonOrientation        = buttonOrientation,
+        buttonComponent         : selectDropdownonButtonComponent          = buttonComponent,
+        buttonChildren          : selectDropdownonButtonChildren           = buttonChildren,
+        toggleButtonComponent   : selectDropdownonToggleButtonComponent    = toggleButtonComponent,
+        dropdownRef             : selectDropdownonDropdownRef              = mergedDropdownRef,
+        dropdownOrientation     : selectDropdownonDropdownOrientation      = dropdownOrientation,
+        dropdownComponent       : selectDropdownonDropdownComponent        = dropdownComponent,
+        listRef                 : selectDropdownonListRef                  = listRef,
+        listOrientation         : selectDropdownonListOrientation          = listOrientation,
+        listStyle               : selectDropdownonListStyle                = listStyle,
+        listComponent           : selectDropdownonListComponent            = listComponent,
+        listItemComponent       : selectDropdownonListItemComponent        = listItemComponent,
+        editableButtonComponent : selectDropdownonEditableButtonComponent  = editableButtonComponent,
+        
+        
+        
+        // other props:
+        ...restSelectDropdownEditorComponentProps
+    } = selectDropdownEditorComponent.props;
+    
     
     
     // jsx:
@@ -597,6 +659,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
             // styles:
             style={style}
         >
+            {/* <TextEditor> */}
             {React.cloneElement<TextEditorProps<TElement>>(textEditorComponent,
                 // props:
                 {
@@ -634,67 +697,77 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                     onFocus            : handleTextFocus,
                 },
             )}
-            <SelectDropdownEditor<Element, string, DropdownListExpandedChangeEvent<string>>
-                // variants:
-                {...basicVariantProps}
-                
-                
-                
-                // values:
-                valueOptions         = {valueOptions}
-                excludedValueOptions = {excludedValueOptions}
-                valueToUi            = {valueToUi}
-                
-                value                = {value}                // internally controllable
-                onChange             = {handleDropdownChange} // internally controllable
-                
-                
-                
-                // validations:
-                enableValidation     = {props.enableValidation}  // follows <Editor>
-                isValid              = {isValid}                 // controllable
-                inheritValidation    = {props.inheritValidation} // follows <Editor>
-                
-                // // a "validation_event" callback (only called when [isValid === undefined]):
-                // onValidation      = {undefined}
-                // // a "validation_override" function:
-                // customValidator   = {undefined}
-                
-                
-                
-                // states:
-                expanded={showDropdown >= 1}
-                onExpandedChange={handleExpandedChange}
-                
-                
-                
-                // floatable:
-                floatingOn={outerRefInternal}
-                
-                
-                
-                // auto focusable:
-                autoFocus={(showDropdown === ShowDropdown.SHOW_BY_TEXT_FOCUS) ? false : true} // do NOT autoFocus when autoDropdown, otherwise do autoFocus}
-                restoreFocus={false} // use hard coded restore focus
-                
-                
-                
-                // components:
-                buttonRef={buttonRef}
-                buttonOrientation={buttonOrientation}
-                buttonComponent={buttonComponent}
-                buttonChildren={buttonChildren}
-                toggleButtonComponent={toggleButtonComponent}
-                dropdownRef={mergedDropdownRef}
-                dropdownOrientation={dropdownOrientation}
-                dropdownComponent={dropdownComponent}
-                listRef={listRef}
-                listOrientation={listOrientation}
-                listStyle={listStyle}
-                listComponent={listComponent}
-                listItemComponent={listItemComponent}
-                editableButtonComponent={editableButtonComponent}
-            />
+            
+            
+            {React.cloneElement<SelectDropdownEditorProps<Element, string, DropdownListExpandedChangeEvent<string>>>(selectDropdownEditorComponent,
+                // props:
+                {
+                    // other props:
+                    ...restSelectDropdownEditorComponentProps,
+                    
+                    
+                    
+                    // variants:
+                    ...basicVariantProps,
+                    
+                    
+                    
+                    // values:
+                    valueOptions            : selectDropdownEditorValueOptions,
+                    excludedValueOptions    : selectDropdownEditorExcludedValueOptions,
+                    valueToUi               : selectDropdownEditorValueToUi,
+                    
+                    value                   : selectDropdownEditorValue,    // internally controllable
+                    onChange                : selectDropdownEditorOnChange, // internally controllable
+                    
+                    
+                    
+                    // validations:
+                    enableValidation        : selectDropdownEnableValidation,  // follows <Editor>
+                    isValid                 : selectDropdownIsValid,           // controllable
+                    inheritValidation       : selectDropdownInheritValidation, // follows <Editor>
+                    
+                    // // a "validation_event" callback (only called when [isValid === undefined]):
+                    // onValidation         : selectDropdownOnValidation,
+                    // // a "validation_override" function:
+                    // customValidator      : selectDropdownCustomValidator,
+                    
+                    
+                    
+                    // states:
+                    expanded                : selectDropdownexpanded,
+                    onExpandedChange        : selectDropdownonExpandedChange,
+                    
+                    
+                    
+                    // floatable:
+                    floatingOn              : selectDropdownonFloatingOn,
+                    
+                    
+                    
+                    // auto focusable:
+                    autoFocus               : selectDropdownonAutoFocus,
+                    restoreFocus            : selectDropdownonRestoreFocus,
+                    
+                    
+                    
+                    // components:
+                    buttonRef               : selectDropdownonButtonRef,
+                    buttonOrientation       : selectDropdownonButtonOrientation,
+                    buttonComponent         : selectDropdownonButtonComponent,
+                    buttonChildren          : selectDropdownonButtonChildren,
+                    toggleButtonComponent   : selectDropdownonToggleButtonComponent,
+                    dropdownRef             : selectDropdownonDropdownRef,
+                    dropdownOrientation     : selectDropdownonDropdownOrientation,
+                    dropdownComponent       : selectDropdownonDropdownComponent,
+                    listRef                 : selectDropdownonListRef,
+                    listOrientation         : selectDropdownonListOrientation,
+                    listStyle               : selectDropdownonListStyle,
+                    listComponent           : selectDropdownonListComponent,
+                    listItemComponent       : selectDropdownonListItemComponent,
+                    editableButtonComponent : selectDropdownonEditableButtonComponent,
+                },
+            )}
         </Group>
     );
 };
