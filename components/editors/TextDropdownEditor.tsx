@@ -466,7 +466,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         handleTextFocusInternal,
     );
     
-    const handleExpandedChange         = useEvent<EventHandler<DropdownListExpandedChangeEvent<string>>>(({expanded, actionType}) => {
+    const handleExpandedChangeInternal = useEvent<EventHandler<DropdownListExpandedChangeEvent<string>>>(({expanded, actionType}) => {
         if (expanded) {
             setShowDropdown(ShowDropdown.SHOW_BY_TOGGLE);
         }
@@ -499,6 +499,15 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
             } // if
         } // if
     });
+    const handleExpandedChange         = useMergeEvents(
+        // preserves the original `onExpandedChange` from `selectDropdownEditorComponent`:
+        selectDropdownEditorComponent.props.onExpandedChange,
+        
+        
+        
+        // actions:
+        handleExpandedChangeInternal,
+    );
     
     
     
@@ -594,7 +603,6 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         
         // states:
         expanded                : selectDropdownexpanded                   = (showDropdown >= 1),
-        onExpandedChange        : selectDropdownonExpandedChange           = handleExpandedChange,
         
         
         
@@ -744,7 +752,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                     
                     // states:
                     expanded                : selectDropdownexpanded,
-                    onExpandedChange        : selectDropdownonExpandedChange,
+                    onExpandedChange        : handleExpandedChange,
                     
                     
                     
