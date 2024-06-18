@@ -89,3 +89,11 @@ export {
     TextEditor,            // named export for readibility
     TextEditor as default, // default export to support React.lazy
 }
+
+
+
+export interface TextEditorComponentProps<TElement extends Element = HTMLSpanElement>
+{
+    // components:
+    inputComponent ?: React.ReactElement<TextEditorProps<TElement>>
+}
