@@ -88,8 +88,8 @@ import {
 import {
     // states:
     CustomValidatorHandler,
-    useRequiredValidator,
-}                           from './states/RequiredValidator'
+    useSelectValidator,
+}                           from './states/SelectValidator'
 
 
 
@@ -209,10 +209,10 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
         enableValidation,  // take, to be handled by `<EditableButton>`
         isValid,           // take, to be handled by `<EditableButton>`
         inheritValidation, // take, to be handled by `<EditableButton>`
-        onValidation,      // take, to be handled by `<EditableButton>` and `useRequiredValidator`
-        customValidator,   // take, to be handled by                        `useRequiredValidator`
+        onValidation,      // take, to be handled by `<EditableButton>` and `useSelectValidator`
+        customValidator,   // take, to be handled by                        `useSelectValidator`
         
-        required,          // take, to be handled by                        `useRequiredValidator`
+        required,          // take, to be handled by                        `useSelectValidator`
         
         
         
@@ -231,12 +231,12 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
     
     
     // states:
-    const requiredValidator = useRequiredValidator<TValue>({
+    const selectValidator  = useSelectValidator<TValue>({
         // validations:
         required,
         customValidator,
     });
-    const handleValidation  = useMergeEvents(
+    const handleValidation = useMergeEvents(
         // preserves the original `onValidation` from `editableButtonComponent`:
         editableButtonComponent.props.onValidation,
         
@@ -248,7 +248,7 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
         
         
         // states:
-        requiredValidator.handleValidation,
+        selectValidator.handleValidation,
     );
     
     
@@ -261,7 +261,7 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
         
         
         // validations:
-        requiredValidator.handleChange,
+        selectValidator.handleChange,
     );
     const {
         value              : value,
@@ -283,7 +283,7 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
     const isMounted = useMountedFlag();
     
     useIsomorphicLayoutEffect(() => {
-        requiredValidator.handleInit(value);
+        selectValidator.handleInit(value);
     }, []);
     
     useIsomorphicLayoutEffect(() => {
@@ -472,7 +472,7 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
                         enableValidation   : editableButtonEnableValidation,
                         isValid            : editableButtonIsValid,
                         inheritValidation  : editableButtonInheritValidation,
-                        onValidation       : handleValidation,  // to be handled by `useRequiredValidator()`
+                        onValidation       : handleValidation,  // to be handled by `useSelectValidator()`
                         
                         
                         

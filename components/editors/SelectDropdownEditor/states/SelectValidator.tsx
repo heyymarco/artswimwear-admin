@@ -43,7 +43,7 @@ import {
 
 // states:
 
-//#region RequiredValidator
+//#region SelectValidator
 export type CustomValidatorHandler = (isValid: ValResult) => ValResult
 
 const isSelectValid = <TValue extends unknown>(required: boolean, value: TValue): ValResult => {
@@ -51,17 +51,17 @@ const isSelectValid = <TValue extends unknown>(required: boolean, value: TValue)
     return true; // valid
 };
 
-export interface RequiredValidatorProps {
+export interface SelectValidatorProps {
     // validations:
     required        ?: boolean
     customValidator ?: CustomValidatorHandler
 }
-export interface RequiredValidatorApi<TValue extends unknown> {
+export interface SelectValidatorApi<TValue extends unknown> {
     handleValidation : EventHandler<ValidityChangeEvent>
     handleInit       : EditorChangeEventHandler<TValue>
     handleChange     : EditorChangeEventHandler<TValue>
 }
-export const useRequiredValidator      = <TValue extends unknown>(props: RequiredValidatorProps): RequiredValidatorApi<TValue> => {
+export const useSelectValidator      = <TValue extends unknown>(props: SelectValidatorProps): SelectValidatorApi<TValue> => {
     // props:
     const {
         // validations:
@@ -133,4 +133,4 @@ export const useRequiredValidator      = <TValue extends unknown>(props: Require
         handleChange : handleInitOrChange,
     };
 };
-//#endregion RequiredValidator
+//#endregion SelectValidator
