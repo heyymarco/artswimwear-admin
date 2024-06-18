@@ -33,6 +33,9 @@ import {
 
 // reusable-ui components:
 import {
+    type CustomValidatorHandler,
+}                           from '@reusable-ui/editable-control'        // a base editable UI (with validation indicator) of Reusable-UI components
+import {
     type DropdownListExpandedChangeEvent,
 }                           from '@reusable-ui/dropdown-list'           // overlays a list element (menu)
 import {
@@ -79,6 +82,10 @@ export interface TextDropdownEditorProps<TElement extends Element = HTMLDivEleme
             |'valueOptions'
             |'excludedValueOptions'
             |'valueToUi'
+            // // 
+            // validations:
+            |'freeTextInput'
+            |'equalityValueComparison'
             // // // ONLY NECESSARY props:
             // // 
             // // // states:
@@ -142,43 +149,43 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
     // props:
     const {
         // refs:
-        elmRef,               // take, moved to <TextEditor>
-        outerRef,             // take, moved to <Group>
+        elmRef,                              // take, moved to <TextEditor>
+        outerRef,                            // take, moved to <Group>
         
         
         
         // identifiers:
-        id,                   // take, moved to <Group>
+        id,                                  // take, moved to <Group>
         
         
         
         // variants:
-        size,                 // take, moved to <Group>
-        theme,                // take, moved to <Group>
-        gradient,             // take, moved to <Group>
-        outlined,             // take, moved to <Group>
-        mild,                 // take, moved to <Group>
+        size,                                // take, moved to <Group>
+        theme,                               // take, moved to <Group>
+        gradient,                            // take, moved to <Group>
+        outlined,                            // take, moved to <Group>
+        mild,                                // take, moved to <Group>
         
         
         
         // classes:
-        mainClass,            // take, moved to <Group>
-        classes,              // take, moved to <Group>
-        variantClasses,       // take, moved to <Group>
-        stateClasses,         // take, moved to <Group>
-        className,            // take, moved to <Group>
+        mainClass,                           // take, moved to <Group>
+        classes,                             // take, moved to <Group>
+        variantClasses,                      // take, moved to <Group>
+        stateClasses,                        // take, moved to <Group>
+        className,                           // take, moved to <Group>
         
         
         
         // styles:
-        style,                // take, moved to <Group>
+        style,                               // take, moved to <Group>
         
         
         
         // values:
-        valueOptions,         // take, moved to <SelectDropdownEditor>
-        excludedValueOptions, // take, moved to <SelectDropdownEditor>
-        valueToUi,            // take, moved to <SelectDropdownEditor>
+        valueOptions,                        // take, moved to <SelectDropdownEditor>
+        excludedValueOptions,                // take, moved to <SelectDropdownEditor>
+        valueToUi,                           // take, moved to <SelectDropdownEditor>
         
         defaultValue   : defaultUncontrollableValue = '',
         value          : controllableValue,
@@ -188,7 +195,10 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         
         
         // validations:
-        onValidation,         // take, moved to <TextEditor>
+        onValidation,                        // take, moved to <TextEditor>
+        freeTextInput           = true,      // take, to be handled by internal customValidator
+        equalityValueComparison = Object.is, // take, to be handled by internal customValidator
+        customValidator,                     // take, to be handled by internal customValidator
         
         
         
@@ -347,6 +357,41 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         // states:
         handleValidationInternal,
     );
+    
+    const handleCustomValidator = useEvent<CustomValidatorHandler>(async (validityState, value) => {
+        if (validityState.valid) { // if valid => perform further validations
+            if (!freeTextInput) { // if no freeTextInput => no further validations
+                try {
+                    const resolvedValueOptions = (
+                        ((typeof(valueOptions) === 'object') && ('current' in valueOptions))
+                        ? await (valueOptions.current ?? [])
+                        : await valueOptions
+                    );
+                    const resolvedExcludedValueOptions = (
+                        ((typeof(excludedValueOptions) === 'object') && ('current' in excludedValueOptions))
+                        ? await (excludedValueOptions.current ?? [])
+                        : await excludedValueOptions
+                    );
+                    const finalValueOptions = (
+                        !resolvedExcludedValueOptions?.length
+                        ? resolvedValueOptions
+                        : resolvedValueOptions.filter((item) =>
+                            !resolvedExcludedValueOptions.includes(item)
+                        )
+                    );
+                    if (!finalValueOptions.some((finalValueOption) => equalityValueComparison(finalValueOption, value))) return false; // match option is not found => invalid
+                }
+                catch {
+                    return false; // unknown error
+                } // try
+            } // if
+        } // if
+        
+        
+        
+        // all validation passes => perform custom validation:
+        return (customValidator ? (await customValidator(validityState, value)) : validityState.valid);
+    });
     
     const handleTextFocus          = useEvent<React.FocusEventHandler<TElement>>((event) => {
         // conditions:
@@ -511,9 +556,9 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                 
                 // validations:
                 // a "validation_event" callback (only called when [isValid === undefined]):
-                onValidation       = {handleValidation}         // if [isValid === undefined] => uncontrollable => `useInvalidable()` => calls onValidation() => calls `useInputValidator()::handleValidation()` => mutates ValidityChangeEvent::isValid
-                // // a "validation_override" function:
-                // customValidator = {props.customValidator} // called by `useInputValidator()` when `handleInit()`|`handleChange()` => calls `validate()` => calls `customValidator()`
+                onValidation       = {handleValidation}      // if [isValid === undefined] => uncontrollable => `useInvalidable()` => calls onValidation() => calls `useInputValidator()::handleValidation()` => mutates ValidityChangeEvent::isValid
+                // a "validation_override" function:
+                customValidator    = {handleCustomValidator} // called by `useInputValidator()` when `handleInit()`|`handleChange()` => calls `validate()` => calls `customValidator()`
                 
                 
                 
