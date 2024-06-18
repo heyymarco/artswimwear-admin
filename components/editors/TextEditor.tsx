@@ -95,5 +95,5 @@ export {
 export interface TextEditorComponentProps<TElement extends Element = HTMLSpanElement>
 {
     // components:
-    inputComponent ?: React.ReactElement<TextEditorProps<TElement>>
+    textEditorComponent ?: React.ReactElement<TextEditorProps<TElement>>
 }
