@@ -74,7 +74,7 @@ import {
 // heymarco:
 import {
     // utilities:
-    useControllable,
+    useControllableAndUncontrollable,
 }                           from '@heymarco/events'
 
 // internals:
@@ -104,6 +104,7 @@ export interface SelectDropdownEditorProps<TElement extends Element = HTMLButton
         // bases:
         Pick<EditorProps<TElement, TValue>,
             // values:
+            |'defaultValue'
             |'value'
             |'onChange'
             
@@ -119,6 +120,7 @@ export interface SelectDropdownEditorProps<TElement extends Element = HTMLButton
         >,
         Omit<DropdownListButtonProps<TDropdownListExpandedChangeEvent>,
             // values:
+            |'defaultValue'
             |'value'
             |'onChange'
             
@@ -141,8 +143,6 @@ export interface SelectDropdownEditorProps<TElement extends Element = HTMLButton
     valueOptions          : TValue[]|Promise<TValue[]> | React.RefObject<TValue[]|Promise<TValue[]>>
     excludedValueOptions ?: TValue[]|Promise<TValue[]> | React.RefObject<TValue[]|Promise<TValue[]>>
     valueToUi            ?: (value: TValue|null) => string
-    
-    value                 : TValue
     
     
     
@@ -199,6 +199,7 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
         excludedValueOptions,
         valueToUi               = defaultValueToUi,
         
+        defaultValue            : defaultUncontrollableValue = '' as TValue,
         value                   : controllableValue,
         onChange                : onControllableValueChange,
         
@@ -253,7 +254,7 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
     
     
     // states:
-    const handleControllableValueChangeInternal = useMergeEvents(
+    const handleControllableValueChange = useMergeEvents(
         // preserves the original `onChange` from `props`:
         onControllableValueChange,
         
@@ -265,9 +266,10 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
     const {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllable<TValue>({
+    } = useControllableAndUncontrollable<TValue>({
+        defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
-        onValueChange      : handleControllableValueChangeInternal,
+        onValueChange      : handleControllableValueChange,
     });
     
     
