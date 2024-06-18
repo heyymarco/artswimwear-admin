@@ -58,11 +58,19 @@ import {
     // react components:
     type TextEditorProps,
     TextEditor,
+    
+    
+    
+    type TextEditorComponentProps,
 }                           from '@/components/editors/TextEditor'
 import {
     // react components:
     type SelectDropdownEditorProps,
     SelectDropdownEditor,
+    
+    
+    
+    type SelectDropdownEditorComponentProps,
 }                           from '@/components/editors/SelectDropdownEditor'
 
 
@@ -140,7 +148,11 @@ export interface TextDropdownEditorProps<TElement extends Element = HTMLDivEleme
             |'listComponent'
             |'listItemComponent'
             |'editableButtonComponent'
-        >
+        >,
+        
+        // components:
+        TextEditorComponentProps<TElement>,
+        SelectDropdownEditorComponentProps<Element, string, DropdownListExpandedChangeEvent<string>>
 {
     // behaviors:
     autoShowDropdownOnFocus ?: boolean
@@ -222,6 +234,8 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         listComponent,                                     // take, moved to <SelectDropdownEditor>
         listItemComponent,                                 // take, moved to <SelectDropdownEditor>
         editableButtonComponent,                           // take, moved to <SelectDropdownEditor>
+        textEditorComponent           = (<TextEditor<TElement> />                                                                                       as React.ReactElement<TextEditorProps<TElement>>),
+        selectDropdownEditorComponent = (<SelectDropdownEditor<Element, string, DropdownListExpandedChangeEvent<string>> valueOptions={valueOptions} /> as React.ReactElement<SelectDropdownEditorProps<Element, string, DropdownListExpandedChangeEvent<string>>>),
         
         
         
@@ -282,6 +296,11 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
     // refs:
     const inputRefInternal    = useRef<HTMLInputElement|null>(null);
     const mergedInputRef      = useMergeRefs(
+        // preserves the original `elmRef` from `textEditorComponent`:
+        textEditorComponent.props.elmRef,
+        
+        
+        
         // preserves the original `elmRef` from `props`:
         elmRef,
         
@@ -318,10 +337,20 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
     
     
     // handlers:
-    const handleTextChange         = useEvent<EditorChangeEventHandler<string>>((newValue) => {
+    const handleTextChangeInternal = useEvent<EditorChangeEventHandler<string>>((newValue) => {
         triggerValueChange(newValue, { triggerAt: 'immediately' });
         if (showDropdown !== ShowDropdown.HIDE_BY_BLUR) setShowDropdown(ShowDropdown.HIDE_BY_TYPING); // autoClose the <Dropdown> when the user type on <Input>
     });
+    const handleTextChange         = useMergeEvents(
+        // preserves the original `onChange` from `textEditorComponent`:
+        textEditorComponent.props.onChange,
+        
+        
+        
+        // states:
+        handleTextChangeInternal,
+    );
+    
     const handleDropdownChange     = useEvent<EditorChangeEventHandler<string>>((newValue) => {
         const inputElm = inputRefInternal.current;
         if (inputElm) {
@@ -349,6 +378,11 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         });
     });
     const handleValidation         = useMergeEvents(
+        // preserves the original `onValidation` from `textEditorComponent`:
+        textEditorComponent.props.onValidation,
+        
+        
+        
         // preserves the original `onValidation` from `props`:
         onValidation,
         
@@ -389,11 +423,17 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         
         
         
-        // all validation passes => perform custom validation:
+        // above validation passes => perform custom validation:
+        const textCustomValidator = textEditorComponent.props.customValidator;
+        if (textCustomValidator && !(await textCustomValidator(validityState, value))) return false;
+        
+        
+        
+        // above validation passes => perform custom validation:
         return (customValidator ? (await customValidator(validityState, value)) : validityState.valid);
     });
     
-    const handleTextFocus          = useEvent<React.FocusEventHandler<TElement>>((event) => {
+    const handleTextFocusInternal      = useEvent<React.FocusEventHandler<TElement>>((event) => {
         // conditions:
         if (!autoShowDropdownOnFocus) return; // the autoDropdown is not active => ignore
         if (noAutoShowDropdown.current) {
@@ -406,6 +446,20 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         // actions:
         if ((showDropdown === ShowDropdown.HIDE_BY_BLUR) || (showDropdown === ShowDropdown.HIDE_BY_SELECT)) setShowDropdown(ShowDropdown.SHOW_BY_TEXT_FOCUS);
     });
+    const handleTextFocus              = useMergeEvents(
+        // preserves the original `onFocus` from `textEditorComponent`:
+        textEditorComponent.props.onFocus,
+        
+        
+        
+        // preserves the original `onFocus` from `props`:
+        props.onFocus,
+        
+        
+        
+        // actions:
+        handleTextFocusInternal,
+    );
     
     const handleExpandedChange     = useEvent<EventHandler<DropdownListExpandedChangeEvent<string>>>(({expanded, actionType}) => {
         if (expanded) {
@@ -496,6 +550,17 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         ...restTextEditorProps
     } = restSelectDropdownEditorProps;
     
+    const {
+        // classes:
+        className : textEditorClassName = 'fluid',
+        
+        // values:
+        value     : textEditorValue     = value,
+        
+        // other props:
+        ...restTextEditorComponentProps
+    } = textEditorComponent.props;
+    
     
     
     // jsx:
@@ -532,40 +597,44 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
             // styles:
             style={style}
         >
-            <TextEditor<TElement>
-                // other props:
-                {...restTextEditorProps}
-                
-                
-                
-                // refs:
-                elmRef={mergedInputRef}
-                
-                
-                
-                // classes:
-                className='fluid'
-                
-                
-                
-                // values:
-                value              = {value}            // internally controllable
-                onChange           = {handleTextChange} // internally controllable
-                
-                
-                
-                // validations:
-                // a "validation_event" callback (only called when [isValid === undefined]):
-                onValidation       = {handleValidation}      // if [isValid === undefined] => uncontrollable => `useInvalidable()` => calls onValidation() => calls `useInputValidator()::handleValidation()` => mutates ValidityChangeEvent::isValid
-                // a "validation_override" function:
-                customValidator    = {handleCustomValidator} // called by `useInputValidator()` when `handleInit()`|`handleChange()` => calls `validate()` => calls `customValidator()`
-                
-                
-                
-                // handlers:
-                onFocus={handleTextFocus}
-            />
-            <SelectDropdownEditor<Element, string>
+            {React.cloneElement<TextEditorProps<TElement>>(textEditorComponent,
+                // props:
+                {
+                    // other props:
+                    ...restTextEditorProps,
+                    ...restTextEditorComponentProps, // overwrites restTextEditorProps (if any conflics)
+                    
+                    
+                    
+                    // refs:
+                    elmRef             : mergedInputRef,
+                    
+                    
+                    
+                    // classes:
+                    className          : textEditorClassName,
+                    
+                    
+                    
+                    // values:
+                    value              : textEditorValue,  // internally controllable
+                    onChange           : handleTextChange, // internally controllable
+                    
+                    
+                    
+                    // validations:
+                    // a "validation_event" callback (only called when [isValid === undefined]):
+                    onValidation       : handleValidation,      // if [isValid === undefined] => uncontrollable => `useInvalidable()` => calls onValidation() => calls `useInputValidator()::handleValidation()` => mutates ValidityChangeEvent::isValid
+                    // a "validation_override" function:
+                    customValidator    : handleCustomValidator, // called by `useInputValidator()` when `handleInit()`|`handleChange()` => calls `validate()` => calls `customValidator()`
+                    
+                    
+                    
+                    // handlers:
+                    onFocus            : handleTextFocus,
+                },
+            )}
+            <SelectDropdownEditor<Element, string, DropdownListExpandedChangeEvent<string>>
                 // variants:
                 {...basicVariantProps}
                 
