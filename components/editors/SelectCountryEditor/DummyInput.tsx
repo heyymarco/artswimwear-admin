@@ -119,7 +119,12 @@ const DummyInput = <TElement extends Element = HTMLSpanElement>(props: DummyInpu
     // default props:
     const {
         // semantics:
-        tag = 'span',
+        tag                = 'span',
+        
+        
+        
+        // states:
+        assertiveFocusable = true,
         
         
         
@@ -157,6 +162,11 @@ const DummyInput = <TElement extends Element = HTMLSpanElement>(props: DummyInpu
             
             // classes:
             // mainClass={props.mainClass ?? styleSheet.main}
+            
+            
+            
+            // states:
+            assertiveFocusable={assertiveFocusable}
         >
             <input
                 // refs:
