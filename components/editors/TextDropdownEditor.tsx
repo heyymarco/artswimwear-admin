@@ -256,7 +256,12 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         onControllableTextChange?.((newValue !== null) ? newValue : '' /* null => empty string */);
     });
     const handleControllableValueChange         = useMergeEvents(
-        // preserves the original `onCollapseEnd` from `props`:
+        // preserves the original `onChange` from `textEditorComponent`:
+        textEditorComponent.props.onChange,
+        
+        
+        
+        // preserves the original `onChange` from `props`:
         onControllableValueChange,
         
         
@@ -337,19 +342,10 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
     
     
     // handlers:
-    const handleTextChangeInternal = useEvent<EditorChangeEventHandler<string>>((newValue) => {
+    const handleTextChange         = useEvent<EditorChangeEventHandler<string>>((newValue) => {
         triggerValueChange(newValue, { triggerAt: 'immediately' });
         if (showDropdown !== ShowDropdown.HIDE_BY_BLUR) setShowDropdown(ShowDropdown.HIDE_BY_TYPING); // autoClose the <Dropdown> when the user type on <Input>
     });
-    const handleTextChange         = useMergeEvents(
-        // preserves the original `onChange` from `textEditorComponent`:
-        textEditorComponent.props.onChange,
-        
-        
-        
-        // states:
-        handleTextChangeInternal,
-    );
     
     const handleDropdownChange     = useEvent<EditorChangeEventHandler<string>>((newValue) => {
         const inputElm = inputRefInternal.current;
@@ -423,13 +419,13 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         
         
         
-        // above validation passes => perform custom validation:
+        // above validation passes => perform custom validation from `textEditorComponent`:
         const textCustomValidator = textEditorComponent.props.customValidator;
         if (textCustomValidator && !(await textCustomValidator(validityState, value))) return false;
         
         
         
-        // above validation passes => perform custom validation:
+        // above validation passes => perform custom validation from `props`:
         return (customValidator ? (await customValidator(validityState, value)) : validityState.valid);
     });
     
@@ -554,8 +550,12 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         // classes:
         className : textEditorClassName = 'fluid',
         
+        
+        
         // values:
         value     : textEditorValue     = value,
+        
+        
         
         // other props:
         ...restTextEditorComponentProps
