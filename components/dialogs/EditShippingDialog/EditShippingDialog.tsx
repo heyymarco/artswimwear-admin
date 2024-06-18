@@ -591,7 +591,6 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                             <SelectCountryEditor
                                 // values:
                                 valueOptions={countryList}
-                                value=''
                                 onChange={setCountry}
                                 
                                 
