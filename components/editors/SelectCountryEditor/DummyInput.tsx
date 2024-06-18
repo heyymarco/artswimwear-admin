@@ -4,23 +4,8 @@ import {
     default as React,
 }                           from 'react'
 
-// cssfn:
-import {
-    // checks if a certain css feature is supported by the running browser:
-    supportsHasPseudoClass,
-}                           from '@cssfn/core'                          // writes css in javascript
-import {
-    // style sheets:
-    dynamicStyleSheet,
-}                           from '@cssfn/cssfn-react'                   // writes css in react hook
-
 // reusable-ui core:
 import {
-    // react helper hooks:
-    useMergeEvents,
-    
-    
-    
     // an accessibility management system:
     usePropEnabled,
     usePropReadOnly,
@@ -29,16 +14,9 @@ import {
 // reusable-ui components:
 import {
     // react components:
-    type EditableControlProps,
     EditableControl,
 }                           from '@reusable-ui/editable-control'        // a base editable UI (with validation indicator) of Reusable-UI components
 import {
-    // types:
-    type InputType,
-    type InputHTMLAttributes,
-    
-    
-    
     // react components:
     type InputProps,
 }                           from '@reusable-ui/input'                   // an interactive control in order to accept data from the user
@@ -47,12 +25,6 @@ import {
 import {
     type SelectZoneEditorProps,
 }                           from '@/components/editors/SelectZoneEditor'
-
-
-// handlers:
-const handleChangeDummy : React.ChangeEventHandler<HTMLInputElement> = (_event) => {
-    /* nothing to do */
-};
 
 
 

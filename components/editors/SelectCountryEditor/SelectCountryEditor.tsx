@@ -26,18 +26,29 @@ export interface SelectCountryEditorProps<TElement extends Element = HTMLButtonE
     extends
         // bases:
         Omit<SelectZoneEditorProps<TElement>,
+            // data:
+            |'modelName'    // changed to optional
+            
             // values:
-            |'valueOptions'
+            |'valueOptions' // changed to optional
         >,
         Partial<Pick<SelectZoneEditorProps<TElement>,
+            // data:
+            |'modelName'    // changed to optional
+            
             // values:
-            |'valueOptions'
+            |'valueOptions' // changed to optional
         >>
 {
 }
 const SelectCountryEditor = <TElement extends Element = HTMLButtonElement>(props: SelectCountryEditorProps<TElement>): JSX.Element|null => {
     // default props:
     const {
+        // data:
+        modelName    = 'Country',
+        
+        
+        
         // accessibilities:
         'aria-label' : ariaLabel = 'Select Country',
         
@@ -60,6 +71,11 @@ const SelectCountryEditor = <TElement extends Element = HTMLButtonElement>(props
         <SelectZoneEditor<TElement>
             // other props:
             {...restSelectDropdownEditorProps}
+            
+            
+            
+            // data:
+            modelName={modelName}
             
             
             

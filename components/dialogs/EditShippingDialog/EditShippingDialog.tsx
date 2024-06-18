@@ -592,11 +592,6 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                                 // values:
                                 valueOptions={countryList}
                                 onChange={setCountry}
-                                
-                                
-                                
-                                // floatable:
-                                floatingPlacement='bottom'
                             />
                         }
                         zoneNameOverride={getCountryByCode}
