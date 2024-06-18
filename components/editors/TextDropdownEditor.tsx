@@ -342,12 +342,12 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
     
     
     // handlers:
-    const handleTextChange         = useEvent<EditorChangeEventHandler<string>>((newValue) => {
+    const handleTextChange             = useEvent<EditorChangeEventHandler<string>>((newValue) => {
         triggerValueChange(newValue, { triggerAt: 'immediately' });
         if (showDropdown !== ShowDropdown.HIDE_BY_BLUR) setShowDropdown(ShowDropdown.HIDE_BY_TYPING); // autoClose the <Dropdown> when the user type on <Input>
     });
     
-    const handleDropdownChange     = useEvent<EditorChangeEventHandler<string>>((newValue) => {
+    const handleDropdownChangeInternal = useEvent<EditorChangeEventHandler<string>>((newValue) => {
         const inputElm = inputRefInternal.current;
         if (inputElm) {
             // react *hack*: trigger `onChange` event:
@@ -361,8 +361,17 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
             inputElm.dispatchEvent(new InputEvent('input', { bubbles: true, cancelable: false, composed: true, data: newValue, dataTransfer: null, inputType: 'insertText', isComposing: false, view: null, detail: 0 }));
         } // if
     });
+    const handleDropdownChange         = useMergeEvents(
+        // preserves the original `onChange` from `selectDropdownEditorComponent`:
+        selectDropdownEditorComponent.props.onChange,
+        
+        
+        
+        // actions:
+        handleDropdownChangeInternal,
+    );
     
-    const handleValidationInternal = useEvent<EventHandler<ValidityChangeEvent>>(({isValid}) => {
+    const handleValidationInternal     = useEvent<EventHandler<ValidityChangeEvent>>(({isValid}) => {
         Promise.resolve().then(() => {
             // conditions:
             if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
@@ -373,7 +382,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
             setIsValid(isValid);
         });
     });
-    const handleValidation         = useMergeEvents(
+    const handleValidation             = useMergeEvents(
         // preserves the original `onValidation` from `textEditorComponent`:
         textEditorComponent.props.onValidation,
         
@@ -388,7 +397,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         handleValidationInternal,
     );
     
-    const handleCustomValidator = useEvent<CustomValidatorHandler>(async (validityState, value) => {
+    const handleCustomValidator        = useEvent<CustomValidatorHandler>(async (validityState, value) => {
         if (validityState.valid) { // if valid => perform further validations
             if (!freeTextInput) { // if no freeTextInput => no further validations
                 try {
@@ -457,7 +466,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         handleTextFocusInternal,
     );
     
-    const handleExpandedChange     = useEvent<EventHandler<DropdownListExpandedChangeEvent<string>>>(({expanded, actionType}) => {
+    const handleExpandedChange         = useEvent<EventHandler<DropdownListExpandedChangeEvent<string>>>(({expanded, actionType}) => {
         if (expanded) {
             setShowDropdown(ShowDropdown.SHOW_BY_TOGGLE);
         }
@@ -567,8 +576,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         excludedValueOptions    : selectDropdownEditorExcludedValueOptions = excludedValueOptions,
         valueToUi               : selectDropdownEditorValueToUi            = valueToUi,
         
-        value                   : selectDropdownEditorValue                = value,                // internally controllable
-        onChange                : selectDropdownEditorOnChange             = handleDropdownChange, // internally controllable
+        value                   : selectDropdownEditorValue                = value, // internally controllable
         
         
         
@@ -717,8 +725,8 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                     excludedValueOptions    : selectDropdownEditorExcludedValueOptions,
                     valueToUi               : selectDropdownEditorValueToUi,
                     
-                    value                   : selectDropdownEditorValue,    // internally controllable
-                    onChange                : selectDropdownEditorOnChange, // internally controllable
+                    value                   : selectDropdownEditorValue, // internally controllable
+                    onChange                : handleDropdownChange,      // internally controllable
                     
                     
                     
