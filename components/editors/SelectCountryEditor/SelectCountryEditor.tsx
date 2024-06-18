@@ -6,15 +6,18 @@ import {
 
 // internal components:
 import {
-    SelectDropdownEditorProps,
-    SelectDropdownEditor,
-}                           from '@/components/editors/SelectDropdownEditor'
+    type SelectZoneEditorProps,
+    SelectZoneEditor,
+}                           from '@/components/editors/SelectZoneEditor'
 
 // privates:
 import {
     getCountryDisplay,
     countryList,
 }                           from './utilities'
+import {
+    DummyInput,
+}                           from './DummyInput'
 
 
 
@@ -22,11 +25,11 @@ import {
 export interface SelectCountryEditorProps<TElement extends Element = HTMLButtonElement>
     extends
         // bases:
-        Omit<SelectDropdownEditorProps<TElement, string>,
+        Omit<SelectZoneEditorProps<TElement>,
             // values:
             |'valueOptions'
         >,
-        Partial<Pick<SelectDropdownEditorProps<TElement, string>,
+        Partial<Pick<SelectZoneEditorProps<TElement>,
             // values:
             |'valueOptions'
         >>
@@ -54,7 +57,7 @@ const SelectCountryEditor = <TElement extends Element = HTMLButtonElement>(props
     
     // jsx:
     return (
-        <SelectDropdownEditor<TElement, string>
+        <SelectZoneEditor<TElement>
             // other props:
             {...restSelectDropdownEditorProps}
             
@@ -68,6 +71,13 @@ const SelectCountryEditor = <TElement extends Element = HTMLButtonElement>(props
             // values:
             valueOptions={valueOptions}
             valueToUi={valueToUi}
+            // components:
+            textEditorComponent={
+                <DummyInput
+                    // values:
+                    valueToUi={valueToUi}
+                />
+            }
         />
     );
 };
