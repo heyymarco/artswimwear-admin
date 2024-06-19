@@ -51,6 +51,7 @@ const SelectCountryEditor = <TElement extends Element = HTMLButtonElement>(props
         
         // accessibilities:
         'aria-label' : ariaLabel = 'Select Country',
+        placeholder  = 'Select Country',
         
         
         
@@ -81,6 +82,7 @@ const SelectCountryEditor = <TElement extends Element = HTMLButtonElement>(props
             
             // accessibilities:
             aria-label={ariaLabel}
+            placeholder={placeholder}
             
             
             

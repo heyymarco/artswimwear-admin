@@ -254,7 +254,8 @@ const DummyInput = <TElement extends Element = HTMLSpanElement>(props: DummyInpu
         >
             {/* the span must be the :first-child in order to be styled like native <input> */}
             <span>
-                {valueToUi ? valueToUi(value ?? null) : value}
+                {!!value && (valueToUi ? valueToUi(value ?? null) : value)}
+                { !value && !!placeholder && <span className='placeholder'>{placeholder}</span>}
             </span>
             
             <input
