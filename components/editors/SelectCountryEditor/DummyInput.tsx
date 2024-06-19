@@ -232,6 +232,8 @@ const DummyInput = <TElement extends Element = HTMLSpanElement>(props: DummyInpu
             // states:
             assertiveFocusable={assertiveFocusable}
         >
+            {valueToUi(value ?? null)}
+            
             <input
                 // refs:
                 ref={mergedInputRef}
@@ -292,8 +294,6 @@ const DummyInput = <TElement extends Element = HTMLSpanElement>(props: DummyInpu
                     inputMode,
                 }}
             />
-            
-            {valueToUi(value ?? null)}
         </EditableControl>
     );
 };
