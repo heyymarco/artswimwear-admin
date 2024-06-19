@@ -42,6 +42,7 @@ const SelectZoneEditor = <TElement extends Element = HTMLButtonElement>(props: S
         
         // accessibilities:
         'aria-label' : ariaLabel = `Select ${startsCapitalized(modelName)}`,
+        placeholder  = ariaLabel,
         
         
         
@@ -66,6 +67,7 @@ const SelectZoneEditor = <TElement extends Element = HTMLButtonElement>(props: S
             
             // accessibilities:
             aria-label={ariaLabel}
+            placeholder={placeholder}
             
             
             
