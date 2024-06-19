@@ -314,16 +314,6 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         inputRefInternal,
     );
     
-    const focusInputRefInternal = useRef<TElement|null>(null);
-    const mergedFocusInputRef   = useMergeRefs(
-        // preserves the original `outerRef` from `textEditorComponent`:
-        textEditorComponent.props.outerRef,
-        
-        
-        
-        focusInputRefInternal,
-    );
-    
     const outerRefInternal      = useRef<TElement|null>(null);
     const mergedOuterRef        = useMergeRefs(
         // preserves the original `outerRef` from `props`:
@@ -497,7 +487,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                     const textLength = inputElm.value.length; // get the latest text replacement
                     inputElm.setSelectionRange(textLength, textLength);
                     noAutoShowDropdown.current = true;
-                    (focusInputRefInternal.current as HTMLElement|null)?.focus?.({ preventScroll: true });
+                    inputElm.focus?.({ preventScroll: true });
                 } // if
             };
             if (isHideBySelect) {
@@ -697,7 +687,6 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                     
                     // refs:
                     elmRef             : mergedInputRef,
-                    outerRef           : mergedFocusInputRef,
                     
                     
                     
