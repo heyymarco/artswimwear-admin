@@ -596,6 +596,9 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         
         // // a "validation_event" callback (only called when [isValid === undefined]):
         // onValidation         : selectDropdownOnValidation               = undefined,
+        
+        equalityValueComparison : selectDropdownEqualityValueComparison    = equalityValueComparison,
+        
         // // a "validation_override" function:
         // customValidator      : selectDropdownCustomValidator            = undefined,
         
@@ -745,6 +748,9 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                     
                     // // a "validation_event" callback (only called when [isValid === undefined]):
                     // onValidation         : selectDropdownOnValidation,
+                    
+                    equalityValueComparison : selectDropdownEqualityValueComparison,
+                    
                     // // a "validation_override" function:
                     // customValidator      : selectDropdownCustomValidator,
                     
