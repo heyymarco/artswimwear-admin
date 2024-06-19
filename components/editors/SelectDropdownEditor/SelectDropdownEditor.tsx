@@ -202,15 +202,15 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
         
         
         // validations:
-        enableValidation,        // take, to be handled by `<EditableButton>`
-        isValid,                 // take, to be handled by `<EditableButton>`
-        inheritValidation,       // take, to be handled by `<EditableButton>`
-        onValidation,            // take, to be handled by `<EditableButton>` and `useSelectValidator`
-        equalityValueComparison, // take, to be handled by                        `useSelectValidator`
-        customValidator,         // take, to be handled by                        `useSelectValidator`
+        enableValidation,                    // take, to be handled by `<EditableButton>`
+        isValid,                             // take, to be handled by `<EditableButton>`
+        inheritValidation,                   // take, to be handled by `<EditableButton>`
+        onValidation,                        // take, to be handled by `<EditableButton>` and `useSelectValidator`
+        equalityValueComparison = Object.is, // take, to be handled by                        `useSelectValidator`
+        customValidator,                     // take, to be handled by                        `useSelectValidator`
         
-        required,                // take, to be handled by                        `useSelectValidator`
-        freeTextInput,           // take, to be handled by                        `useSelectValidator`
+        required,                            // take, to be handled by                        `useSelectValidator`
+        freeTextInput,                       // take, to be handled by                        `useSelectValidator`
         
         
         
@@ -369,7 +369,7 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
             // default props:
             const {
                 // states:
-                active   = Object.is(valueOption, value),
+                active   = equalityValueComparison(valueOption, value),
                 
                 
                 
