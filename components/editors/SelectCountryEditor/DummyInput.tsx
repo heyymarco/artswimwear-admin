@@ -2,12 +2,19 @@
 import {
     // react:
     default as React,
+    
+    
+    
+    // hooks:
+    useRef,
 }                           from 'react'
 
 // reusable-ui core:
 import {
     // react helper hooks:
+    useIsomorphicLayoutEffect,
     useMergeEvents,
+    useMergeRefs,
     
     
     
@@ -58,6 +65,7 @@ const DummyInput = <TElement extends Element = HTMLSpanElement>(props: DummyInpu
     const {
         // refs:
         elmRef,
+        outerRef,
         
         
         
@@ -116,6 +124,70 @@ const DummyInput = <TElement extends Element = HTMLSpanElement>(props: DummyInpu
     
     
     
+    // handlers:
+    const handleChange = useMergeEvents(
+        // preserves the original `onChange`:
+        onChange,
+        
+        
+        
+        // dummy:
+        handleChangeDummy, // just for satisfying React of controllable <input>
+    );
+    
+    
+    
+    // refs:
+    const inputRefInternal = useRef<HTMLInputElement|null>(null);
+    const mergedInputRef   = useMergeRefs(
+        // preserves the original `elmRef` from `props`:
+        elmRef,
+        
+        
+        
+        inputRefInternal,
+    );
+    
+    const outerRefInternal = useRef<TElement|null>(null);
+    const mergedOuterRef   = useMergeRefs(
+        // preserves the original `outerRef` from `props`:
+        outerRef,
+        
+        
+        
+        outerRefInternal,
+    );
+    
+    
+    
+    // effects:
+    useIsomorphicLayoutEffect(() => {
+        // conditions:
+        const inputElm = inputRefInternal.current;
+        const dummyElm = outerRefInternal.current;
+        if (!inputElm) return;
+        if (!dummyElm) return;
+        
+        
+        
+        // setups:
+        const backupOriginFocusFunc = inputElm.focus;
+        inputElm.focus = (options?: FocusOptions) => {
+            const dummyFocus = (dummyElm as unknown as HTMLElement)?.focus;
+            if (!dummyFocus) return;
+            dummyFocus.call(/* this: */dummyElm, options);
+        };
+        
+        
+        
+        // celanups:
+        return () => {
+            inputElm.focus = backupOriginFocusFunc;
+        };
+    }, []);
+    
+    
+    
     // default props:
     const {
         // semantics:
@@ -134,24 +206,16 @@ const DummyInput = <TElement extends Element = HTMLSpanElement>(props: DummyInpu
     
     
     
-    // handlers:
-    const handleChange = useMergeEvents(
-        // preserves the original `onChange`:
-        onChange,
-        
-        
-        
-        // dummy:
-        handleChangeDummy, // just for satisfying React of controllable <input>
-    );
-    
-    
-    
     // jsx:
     return (
         <EditableControl<TElement>
             // other props:
             {...restEditableControlProps}
+            
+            
+            
+            // refs:
+            outerRef={mergedOuterRef}
             
             
             
@@ -170,7 +234,7 @@ const DummyInput = <TElement extends Element = HTMLSpanElement>(props: DummyInpu
         >
             <input
                 // refs:
-                ref={elmRef}
+                ref={mergedInputRef}
                 
                 
                 
