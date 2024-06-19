@@ -63,9 +63,9 @@ export interface DummyInputProps<TElement extends Element = HTMLSpanElement>
         InputProps<TElement>,
         
         // values:
-        Required<Pick<SelectZoneEditorProps<TElement>,
+        Pick<SelectZoneEditorProps<TElement>,
             |'valueToUi'
-        >>
+        >
 {
     value ?: string // disallow number as value
 }
@@ -252,8 +252,9 @@ const DummyInput = <TElement extends Element = HTMLSpanElement>(props: DummyInpu
             // states:
             assertiveFocusable={assertiveFocusable}
         >
+            {/* the span must be the :first-child in order to be styled like native <input> */}
             <span>
-                {valueToUi(value ?? null)}
+                {valueToUi ? valueToUi(value ?? null) : value}
             </span>
             
             <input
