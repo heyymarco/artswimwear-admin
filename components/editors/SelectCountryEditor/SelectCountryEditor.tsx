@@ -92,6 +92,12 @@ const SelectCountryEditor = <TElement extends Element = HTMLButtonElement>(props
                 <DummyTextEditor
                     // values:
                     valueToUi={valueToUi}
+                    
+                    
+                    
+                    // validations:
+                    minLength={2}
+                    maxLength={2}
                 />
             }
         />

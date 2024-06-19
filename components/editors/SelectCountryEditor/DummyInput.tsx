@@ -31,7 +31,16 @@ import {
 import {
     // react components:
     type InputProps,
+    
+    
+    
+    // styles:
+    useInputStyleSheet,
 }                           from '@reusable-ui/input'                   // an interactive control in order to accept data from the user
+import {
+    // styles:
+    useVisuallyHiddenStyleSheet,
+}                           from '@reusable-ui/visually-hidden'         // a generic element that is visually invisible while still allowing it to be exposed to screen readers
 
 // internal components:
 import {
@@ -118,6 +127,12 @@ const DummyInput = <TElement extends Element = HTMLSpanElement>(props: DummyInpu
     
     
     
+    // styles:
+    const inputStyleSheet          = useInputStyleSheet();
+    const visuallyHiddenstyleSheet = useVisuallyHiddenStyleSheet();
+    
+    
+    
     // fn props:
     const propEnabled  = usePropEnabled(props);
     const propReadOnly = usePropReadOnly(props);
@@ -195,6 +210,11 @@ const DummyInput = <TElement extends Element = HTMLSpanElement>(props: DummyInpu
         
         
         
+        // classes:
+        mainClass          = inputStyleSheet.main,
+        
+        
+        
         // states:
         assertiveFocusable = true,
         
@@ -225,18 +245,25 @@ const DummyInput = <TElement extends Element = HTMLSpanElement>(props: DummyInpu
             
             
             // classes:
-            // mainClass={props.mainClass ?? styleSheet.main}
+            mainClass={mainClass}
             
             
             
             // states:
             assertiveFocusable={assertiveFocusable}
         >
-            {valueToUi(value ?? null)}
+            <span>
+                {valueToUi(value ?? null)}
+            </span>
             
             <input
                 // refs:
                 ref={mergedInputRef}
+                
+                
+                
+                // classes:
+                className={visuallyHiddenstyleSheet.main}
                 
                 
                 
