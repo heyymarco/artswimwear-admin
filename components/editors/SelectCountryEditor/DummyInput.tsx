@@ -271,7 +271,7 @@ const DummyInput = <TElement extends Element = HTMLSpanElement>(props: DummyInpu
                 // accessibilities:
                 {...{
                     autoFocus,
-                    tabIndex : -1, // makes non focusable (except programatically)
+                    tabIndex : -2, // not focusable // do not use `tabIndex : -1`, causing to be ignored by <EditableControl> for `inputValidator.handleInit()`
                     enterKeyHint,
                 }}
                 
