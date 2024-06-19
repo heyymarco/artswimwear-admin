@@ -87,6 +87,9 @@ const SelectCountryEditor = <TElement extends Element = HTMLButtonElement>(props
             // values:
             valueOptions={valueOptions}
             valueToUi={valueToUi}
+            
+            
+            
             // components:
             textEditorComponent={
                 <DummyTextEditor
