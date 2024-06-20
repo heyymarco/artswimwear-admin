@@ -84,11 +84,11 @@ import type {
 import {
     // states:
     useWysiwygValidator,
-}                           from './states/WysiwygValidator'
+}                           from './states/xxxWysiwygValidator'
 import {
     // react components:
     WysiwygEditorStateProvider,
-}                           from './states/WysiwygEditorState'
+}                           from './states/xxxWysiwygEditorState'
 
 // theme:
 import {
