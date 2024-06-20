@@ -45,19 +45,24 @@ const SelectCountryEditor = <TElement extends Element = HTMLButtonElement>(props
     // default props:
     const {
         // data:
-        modelName    = 'Country',
+        modelName     = 'Country',
         
         
         
         // accessibilities:
-        'aria-label' : ariaLabel = 'Select Country',
-        placeholder  = ariaLabel,
+        'aria-label'  : ariaLabel = 'Select Country',
+        placeholder   = ariaLabel,
         
         
         
         // values:
-        valueOptions = countryList,
-        valueToUi    = getCountryDisplay,
+        valueOptions  = countryList,
+        valueToUi     = getCountryDisplay,
+        
+        
+        
+        // validations:
+        freeTextInput = false,
         
         
         
@@ -89,6 +94,11 @@ const SelectCountryEditor = <TElement extends Element = HTMLButtonElement>(props
             // values:
             valueOptions={valueOptions}
             valueToUi={valueToUi}
+            
+            
+            
+            // validations:
+            freeTextInput={freeTextInput}
             
             
             
