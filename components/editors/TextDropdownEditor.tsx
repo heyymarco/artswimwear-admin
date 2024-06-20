@@ -472,7 +472,6 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
     );
     
     const handleTextClickInternal      = useEvent<React.MouseEventHandler<TElement>>(() => {
-        console.log('click');
         // conditions:
         if (preferFocusOnTextEditor) return; // prefer focus on textEditor => no need to autoDropdown => ignore
         
