@@ -50,7 +50,7 @@ import {
 import {
     // react components:
     useWysiwygEditorState,
-}                           from '../states/xxxWysiwygEditorState'
+}                           from '../states/WysiwygEditorState'
 
 
 
