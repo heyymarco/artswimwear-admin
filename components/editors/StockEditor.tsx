@@ -130,7 +130,6 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
         isValid,
         inheritValidation,
         onValidation,
-        customValidator,
         
         required,
         
@@ -365,7 +364,6 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                             isValid           : props.isValid ?? (selectedTabLimited ? undefined : true),
                             inheritValidation,
                             onValidation,
-                            customValidator,
                         }}
                         
                         required={required}
