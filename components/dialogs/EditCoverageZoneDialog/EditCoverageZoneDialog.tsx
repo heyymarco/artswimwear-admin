@@ -318,100 +318,29 @@ const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<T
             <TabPanel label={PAGE_SHIPPING_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>
                     <span className='name label'>Name:</span>
-                    {((): JSX.Element => {
-                        // handlers:
-                        const handleChangeInternal = useEvent<EditorChangeEventHandler<string>>((value) => {
-                            setName(value);
-                            setIsModified(true);
-                        });
-                        const handleChange         = useMergeEvents(
-                            // preserves the original `onChange` from `zoneNameEditor`:
-                            zoneNameEditor?.props.onChange,
-                            
-                            
-                            
-                            // actions:
-                            handleChangeInternal,
-                        );
+                    <NameEditorWithHandler
+                        // privileges:
+                        whenAdd={whenAdd}
+                        whenUpdate={whenUpdate}
                         
                         
                         
-                        // effects:
-                        // informs the __initial_value__ of the zone name to <Parent>:
-                        useIsomorphicLayoutEffect(() => {
-                            zoneNameEditor?.props.onChange?.(name);
-                        }, []);
+                        // refs:
+                        firstEditorRef={firstEditorRef}
                         
                         
                         
-                        // default props:
-                        const {
-                            // refs:
-                            elmRef    = (defaultExpandedTabIndex === 0) ? firstEditorRef : undefined,
-                            
-                            
-                            
-                            // variants:
-                            theme     = 'primary',
-                            
-                            
-                            
-                            // classes:
-                            className = 'name editor',
-                            
-                            
-                            
-                            // accessibilities:
-                            enabled   = whenUpdate.description || whenAdd,
-                            
-                            
-                            
-                            // validations:
-                            required  = true,
-                            
-                            
-                            
-                            // values:
-                            value     = name,
-                        } = (zoneNameEditor?.props ?? {}) as (SelectDropdownEditorProps & NameEditorProps);
+                        // states:
+                        name={name}
+                        setName={setName}
+                        setIsModified={setIsModified}
+                        defaultExpandedTabIndex={defaultExpandedTabIndex}
                         
                         
                         
-                        // jsx:
-                        return React.cloneElement<SelectDropdownEditorProps|NameEditorProps>(zoneNameEditor ?? <NameEditor />,
-                            // props:
-                            {
-                                // refs:
-                                elmRef    : elmRef,
-                                
-                                
-                                
-                                // variants:
-                                theme     : theme,
-                                
-                                
-                                
-                                // classes:
-                                className : className,
-                                
-                                
-                                
-                                // accessibilities:
-                                enabled   : enabled,
-                                
-                                
-                                
-                                // validations:
-                                required  : required,
-                                
-                                
-                                
-                                // values:
-                                value     : value,
-                                onChange  : handleChange,
-                            },
-                        );
-                    })()}
+                        // components:
+                        zoneNameEditor={zoneNameEditor}
+                    />
                 </form>
             </TabPanel>
             <TabPanel label={PAGE_SHIPPING_TAB_DEFAULT_RATES} panelComponent={<Generic className={styleSheet.defaultRatesTab} />}>
@@ -526,3 +455,151 @@ export {
     EditCoverageZoneDialog,
     EditCoverageZoneDialog as default,
 }
+
+
+
+// nested components:
+interface NameEditorWithHandlerProps {
+    // privileges:
+    whenAdd                 : boolean
+    whenUpdate              : Record<string, boolean>
+    
+    
+    
+    // refs:
+    firstEditorRef          : React.MutableRefObject<HTMLInputElement|null>
+    
+    
+    
+    // states:
+    name                    : string
+    setName                 : (value: string) => void
+    setIsModified           : (value: boolean) => void
+    defaultExpandedTabIndex : number
+    
+    
+    
+    // components:
+    zoneNameEditor          : React.ReactElement<SelectDropdownEditorProps>|undefined
+}
+const NameEditorWithHandler = (props: NameEditorWithHandlerProps): JSX.Element|null => {
+    // props:
+    const {
+        // privileges:
+        whenAdd,
+        whenUpdate,
+        
+        
+        
+        // refs:
+        firstEditorRef,
+        
+        
+        
+        // states:
+        name,
+        setName,
+        setIsModified,
+        defaultExpandedTabIndex,
+        
+        
+        
+        // components:
+        zoneNameEditor,
+    } = props;
+    
+    
+    
+    // handlers:
+    const handleChangeInternal = useEvent<EditorChangeEventHandler<string>>((value) => {
+        setName(value);
+        setIsModified(true);
+    });
+    const handleChange         = useMergeEvents(
+        // preserves the original `onChange` from `zoneNameEditor`:
+        zoneNameEditor?.props.onChange,
+        
+        
+        
+        // actions:
+        handleChangeInternal,
+    );
+    
+    
+    
+    // effects:
+    // informs the __initial_value__ of the zone name to <Parent>:
+    useIsomorphicLayoutEffect(() => {
+        zoneNameEditor?.props.onChange?.(name);
+    }, []);
+    
+    
+    
+    // default props:
+    const {
+        // refs:
+        elmRef    = (defaultExpandedTabIndex === 0) ? firstEditorRef : undefined,
+        
+        
+        
+        // variants:
+        theme     = 'primary',
+        
+        
+        
+        // classes:
+        className = 'name editor',
+        
+        
+        
+        // accessibilities:
+        enabled   = whenUpdate.description || whenAdd,
+        
+        
+        
+        // validations:
+        required  = true,
+        
+        
+        
+        // values:
+        value     = name,
+    } = (zoneNameEditor?.props ?? {}) as (SelectDropdownEditorProps & NameEditorProps);
+    
+    
+    
+    // jsx:
+    return React.cloneElement<SelectDropdownEditorProps|NameEditorProps>(zoneNameEditor ?? <NameEditor />,
+        // props:
+        {
+            // refs:
+            elmRef    : elmRef,
+            
+            
+            
+            // variants:
+            theme     : theme,
+            
+            
+            
+            // classes:
+            className : className,
+            
+            
+            
+            // accessibilities:
+            enabled   : enabled,
+            
+            
+            
+            // validations:
+            required  : required,
+            
+            
+            
+            // values:
+            value     : value,
+            onChange  : handleChange,
+        },
+    );
+};
