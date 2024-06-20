@@ -7,9 +7,9 @@ import {
 // internal components:
 import {
     // react components:
-    CurrencyEditorProps,
-    CurrencyEditor,
-}                           from '@/components/editors/CurrencyEditor'
+    FundEditorProps,
+    FundEditor,
+}                           from '@/components/editors/FundEditor'
 
 // configs:
 import {
@@ -22,7 +22,7 @@ import {
 export interface PriceEditorProps<TElement extends Element = HTMLDivElement>
     extends
         // bases:
-        CurrencyEditorProps<TElement>
+        FundEditorProps<TElement>
 {
 }
 const PriceEditor = <TElement extends Element = HTMLDivElement>(props: PriceEditorProps<TElement>): JSX.Element|null => {
@@ -51,7 +51,7 @@ const PriceEditor = <TElement extends Element = HTMLDivElement>(props: PriceEdit
     
     // jsx:
     return (
-        <CurrencyEditor<TElement>
+        <FundEditor<TElement>
             // other props:
             {...restPriceEditorProps}
             
