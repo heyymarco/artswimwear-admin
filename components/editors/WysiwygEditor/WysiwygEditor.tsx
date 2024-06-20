@@ -83,9 +83,8 @@ import type {
 }                           from './types'
 import {
     // states:
-    CustomValidatorHandler,
     useWysiwygValidator,
-}                           from './states/wysiwygValidator'
+}                           from './states/WysiwygValidator'
 import {
     // react components:
     WysiwygEditorStateProvider,
@@ -153,11 +152,6 @@ export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
             |'children'     // not supported
         >
 {
-    // validations:
-    customValidator ?: CustomValidatorHandler
-    
-    
-    
     // plugins:
     children ?: React.ReactNode
 }
@@ -191,7 +185,6 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
         isValid           : isValid,            // use
         inheritValidation : inheritValidation,  // use
         onValidation      : onValidation,       // use
-        customValidator   : customValidator,    // use
         
         required          : required,           // use
         
@@ -205,8 +198,8 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
     
     // states:
     const wysiwygValidator = useWysiwygValidator({
-        customValidator : customValidator,
-        required        : required,
+        // validations:
+        required : required,
     });
     const handleValidation = useMergeEvents(
         // preserves the original `onValidation`:

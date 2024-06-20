@@ -49,31 +49,35 @@ import type {
 
 // states:
 
-//#region wysiwygValidator
-export type CustomValidatorHandler = (isValid: ValResult) => ValResult
-
-const isWysiwygValid = (value: WysiwygEditorState|null, required: boolean): ValResult => {
+//#region WysiwygValidator
+const isWysiwygValid = (props: WysiwygValidatorProps, value: WysiwygEditorState|null): ValResult => {
+    // props:
+    const {
+        // validations:
+        required = false,
+    } = props;
+    
+    
+    
+    // conditions:
     if (!required) return true;
+    
+    
+    
+    // validations:
     return (value !== null);
 };
 
+export interface WysiwygValidatorProps {
+    // validations:
+    required ?: boolean
+}
 export interface WysiwygValidatorApi {
     handleValidation : EventHandler<ValidityChangeEvent>
     handleInit       : EditorChangeEventHandler<WysiwygEditorState|null>
     handleChange     : EditorChangeEventHandler<WysiwygEditorState|null>
 }
-export interface WysiwygValidatorProps {
-    required        ?: boolean
-    customValidator ?: CustomValidatorHandler
-}
-export const useWysiwygValidator      = (props: WysiwygValidatorProps): WysiwygValidatorApi => {
-    const {
-        required = false,
-        customValidator,
-    } = props;
-    
-    
-    
+export const useWysiwygValidator = (props: WysiwygValidatorProps): WysiwygValidatorApi => {
     // states:
     // we stores the `isValid` in `useRef` instead of `useState` because we need to *real-time export* of its value:
     const isValid = useRef<ValResult>(null); // initially unchecked (neither valid nor invalid)
@@ -97,8 +101,7 @@ export const useWysiwygValidator      = (props: WysiwygValidatorProps): WysiwygV
     const validate = (newValue: WysiwygEditorState|null, immediately = false) => {
         const performUpdate = () => {
             // remember the validation result:
-            const currentIsValid = isWysiwygValid(newValue, required);
-            const newIsValid : ValResult = (customValidator ? customValidator(currentIsValid) : currentIsValid);
+            const newIsValid = isWysiwygValid(props, newValue);
             if (isValid.current !== newIsValid) {
                 isValid.current = newIsValid;
                 
@@ -122,10 +125,10 @@ export const useWysiwygValidator      = (props: WysiwygValidatorProps): WysiwygV
             
             
             // delaying the validation, to avoid unpleasant splash effect during editing
-            const currentIsValid = isWysiwygValid(newValue, required);
+            const newIsValid = isWysiwygValid(props, newValue);
             asyncPerformUpdate.current = setTimeout(
                 performUpdate,
-                (currentIsValid !== false) ? 300 : 600
+                (newIsValid !== false) ? 300 : 600
             );
         } // if
     };
@@ -162,4 +165,4 @@ export const useWysiwygValidator      = (props: WysiwygValidatorProps): WysiwygV
         handleChange,
     };
 };
-//#endregion wysiwygValidator
+//#endregion WysiwygValidator
