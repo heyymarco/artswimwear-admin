@@ -64,17 +64,20 @@ export const isSelectionValid = <TValue extends unknown>(props: SelectValidatorP
         freeTextInput           = true,
     } = props;
     
+    
+    
+    // conditions:
     if (!finalValueOptions) return null; // no finalValueOptions => cannot perform check => *uncheck*
     
     if ((value === undefined) || (value === null) || (value === '')) { // blank value
         return !required; // blank value & required => *invalid*
     } // if
     
-    
     if (freeTextInput) return true; // *valid* for any value
     
     
     
+    // validations:
     try {
         if (!finalValueOptions.some((finalValueOption) => equalityValueComparison(finalValueOption, value))) return false; // match option is not found => *invalid*
     }
