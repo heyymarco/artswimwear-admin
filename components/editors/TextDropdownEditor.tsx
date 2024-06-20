@@ -158,6 +158,7 @@ export interface TextDropdownEditorProps<TElement extends Element = HTMLDivEleme
 {
     // behaviors:
     autoShowDropdownOnFocus ?: boolean
+    preferFocusOnTextEditor ?: boolean
 }
 const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: TextDropdownEditorProps<TElement>): JSX.Element|null => {
     // props:
@@ -217,6 +218,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         
         // behaviors:
         autoShowDropdownOnFocus = true,
+        preferFocusOnTextEditor = true,
         
         
         
@@ -484,21 +486,23 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
             
             
             // restore focus to <Input>:
-            const performRestoreFocus = () => {
-                const inputElm = inputRefInternal.current;
-                if (inputElm) {
-                    const textLength = inputElm.value.length; // get the latest text replacement
-                    inputElm.setSelectionRange(textLength, textLength);
-                    noAutoShowDropdown.current = true;
-                    inputElm.focus?.({ preventScroll: true });
+            if (preferFocusOnTextEditor) {
+                const performRestoreFocus = () => {
+                    const inputElm = inputRefInternal.current;
+                    if (inputElm) {
+                        const textLength = inputElm.value.length; // get the latest text replacement
+                        inputElm.setSelectionRange(textLength, textLength);
+                        noAutoShowDropdown.current = true;
+                        inputElm.focus?.({ preventScroll: true });
+                    } // if
+                };
+                if (isHideBySelect) {
+                    // wait until <Input>'s text is fully replaced:
+                    setTimeout(performRestoreFocus, 0);
+                } else {
+                    // nothing was replaced => restore immediately:
+                    performRestoreFocus();
                 } // if
-            };
-            if (isHideBySelect) {
-                // wait until <Input>'s text is fully replaced:
-                setTimeout(performRestoreFocus, 0);
-            } else {
-                // nothing was replaced => restore immediately:
-                performRestoreFocus();
             } // if
         } // if
     });
@@ -569,12 +573,17 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
     
     const {
         // classes:
-        className : textEditorClassName = 'fluid',
+        className          : textEditorClassName          = 'fluid',
+        
+        
+        
+        // accessibilities:
+        assertiveFocusable : textEditorAssertiveFocusable = (!preferFocusOnTextEditor ? false : undefined),
         
         
         
         // values:
-        value     : textEditorValue     = value,
+        value              : textEditorValue              = value,
         
         
         
@@ -614,7 +623,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         
         
         // auto focusable:
-        autoFocus               : selectDropdownonAutoFocus                = (showDropdown === ShowDropdown.SHOW_BY_TEXT_FOCUS) ? false : true, // do NOT autoFocus when autoDropdown, otherwise do autoFocus}
+        autoFocus               : selectDropdownonAutoFocus                = (showDropdown === ShowDropdown.SHOW_BY_TEXT_FOCUS) ? !preferFocusOnTextEditor : true, // do NOT autoFocus when (autoDropdown -AND- preferFocusOnTextEditor), otherwise do autoFocus}
         restoreFocus            : selectDropdownonRestoreFocus             = false, // use hard coded restore focus
         
         
@@ -694,6 +703,11 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                     
                     // classes:
                     className          : textEditorClassName,
+                    
+                    
+                    
+                    // accessibilities:
+                    assertiveFocusable : textEditorAssertiveFocusable,
                     
                     
                     
