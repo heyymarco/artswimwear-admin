@@ -443,7 +443,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         handleValidationInternal,
     );
     
-    const handleTextFocusInternal      = useEvent<React.FocusEventHandler<TElement>>((event) => {
+    const handleTextFocusInternal      = useEvent<React.FocusEventHandler<TElement>>(() => {
         // conditions:
         if (!autoShowDropdownOnFocus) return; // the autoDropdown is not active => ignore
         if (noAutoShowDropdown.current) {
@@ -469,6 +469,31 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         
         // actions:
         handleTextFocusInternal,
+    );
+    
+    const handleTextClickInternal      = useEvent<React.MouseEventHandler<TElement>>(() => {
+        console.log('click');
+        // conditions:
+        if (preferFocusOnTextEditor) return; // prefer focus on textEditor => no need to autoDropdown => ignore
+        
+        
+        
+        // actions:
+        if ((showDropdown === ShowDropdown.HIDE_BY_BLUR) || (showDropdown === ShowDropdown.HIDE_BY_SELECT) || (showDropdown === ShowDropdown.HIDE_BY_TOGGLE)) setShowDropdown(ShowDropdown.SHOW_BY_TOGGLE);;
+    });
+    const handleTextClick              = useMergeEvents(
+        // preserves the original `onClick` from `textEditorComponent`:
+        textEditorComponent.props.onClick,
+        
+        
+        
+        // preserves the original `onClick` from `props`:
+        props.onClick,
+        
+        
+        
+        // actions:
+        handleTextClickInternal,
     );
     
     const handleExpandedChangeInternal = useEvent<EventHandler<DropdownListExpandedChangeEvent<string>>>(({expanded, actionType}) => {
@@ -724,6 +749,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                     
                     // handlers:
                     onFocus            : handleTextFocus,
+                    onClick            : handleTextClick,
                 },
             )}
             
