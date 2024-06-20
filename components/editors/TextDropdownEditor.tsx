@@ -33,9 +33,6 @@ import {
 
 // reusable-ui components:
 import {
-    type CustomValidatorHandler,
-}                           from '@reusable-ui/editable-control'        // a base editable UI (with validation indicator) of Reusable-UI components
-import {
     type DropdownListExpandedChangeEvent,
 }                           from '@reusable-ui/dropdown-list'           // overlays a list element (menu)
 import {
@@ -64,6 +61,11 @@ import {
     type TextEditorComponentProps,
 }                           from '@/components/editors/TextEditor'
 import {
+    // validations:
+    isSelectionValid,
+    
+    
+    
     // react components:
     type SelectDropdownEditorProps,
     SelectDropdownEditor,
@@ -210,7 +212,6 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         onValidation,                        // take, moved to <TextEditor>
         freeTextInput           = true,      // take, to be handled by internal customValidator
         equalityValueComparison = Object.is, // take, to be handled by internal customValidator
-        customValidator,                     // take, to be handled by internal customValidator
         
         
         
@@ -296,6 +297,45 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
     
     const noAutoShowDropdown              = useRef<boolean>(false);
     
+    const [finalValueOptions, setFinalValueOptions] = useState<string[]|undefined>(undefined);
+    const isMounted = useMountedFlag();
+    useEffect(() => {
+        // setups:
+        (async (): Promise<void> => {
+            const [resolvedValueOptions, resolvedExcludedValueOptions] = await Promise.all([
+                (
+                    ((typeof(valueOptions) === 'object') && ('current' in valueOptions))
+                    ? (valueOptions.current ?? [])
+                    : valueOptions
+                ),
+                (
+                    ((typeof(excludedValueOptions) === 'object') && ('current' in excludedValueOptions))
+                    ? (excludedValueOptions.current ?? [])
+                    : excludedValueOptions
+                ),
+            ]);
+            if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
+            
+            
+            
+            const finalValueOptions = (
+                !resolvedExcludedValueOptions?.length
+                ? resolvedValueOptions
+                : resolvedValueOptions.filter((item) =>
+                    !resolvedExcludedValueOptions.includes(item)
+                )
+            );
+            setFinalValueOptions(finalValueOptions);
+        })();
+        
+        
+        
+        // cleanups:
+        return () => {
+            setFinalValueOptions(undefined);
+        };
+    }, [valueOptions, excludedValueOptions]);
+    
     
     
     // refs:
@@ -336,11 +376,6 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
     
     
     
-    // effects:
-    const isMounted = useMountedFlag();
-    
-    
-    
     // handlers:
     const handleTextChange             = useEvent<EditorChangeEventHandler<string>>((newValue) => {
         triggerValueChange(newValue, { triggerAt: 'immediately' });
@@ -371,16 +406,25 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         handleDropdownChangeInternal,
     );
     
-    const handleValidationInternal     = useEvent<EventHandler<ValidityChangeEvent>>(({isValid}) => {
-        Promise.resolve().then(() => {
+    const handleValidationInternal     = useEvent<EventHandler<ValidityChangeEvent>>((event) => {
+        const textIsValid = (() => {
             // conditions:
-            if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
+            if (event.isValid !== true) return event.isValid; // ignore if was *invalid*|*uncheck* (only perform a further_validation if was *valid*)
+            if (freeTextInput)          return event.isValid; // if freeTextInput => no further validations needed
             
             
             
-            // actions:
-            setIsValid(isValid);
-        });
+            // further validations:
+            const newIsValid = isSelectionValid(props, finalValueOptions, value);
+            event.isValid = newIsValid;
+            return newIsValid;
+        })();
+        
+        
+        
+        // updates:
+        if (isValid === textIsValid) return; // already in sync => ignore
+        setIsValid(textIsValid); // sync
     });
     const handleValidation             = useMergeEvents(
         // preserves the original `onValidation` from `textEditorComponent`:
@@ -396,47 +440,6 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         // states:
         handleValidationInternal,
     );
-    
-    const handleCustomValidator        = useEvent<CustomValidatorHandler>(async (validityState, value) => {
-        if (validityState.valid) { // if valid => perform further validations
-            if (!freeTextInput) { // if no freeTextInput => no further validations
-                try {
-                    const resolvedValueOptions = (
-                        ((typeof(valueOptions) === 'object') && ('current' in valueOptions))
-                        ? await (valueOptions.current ?? [])
-                        : await valueOptions
-                    );
-                    const resolvedExcludedValueOptions = (
-                        ((typeof(excludedValueOptions) === 'object') && ('current' in excludedValueOptions))
-                        ? await (excludedValueOptions.current ?? [])
-                        : await excludedValueOptions
-                    );
-                    const finalValueOptions = (
-                        !resolvedExcludedValueOptions?.length
-                        ? resolvedValueOptions
-                        : resolvedValueOptions.filter((item) =>
-                            !resolvedExcludedValueOptions.includes(item)
-                        )
-                    );
-                    if (!finalValueOptions.some((finalValueOption) => equalityValueComparison(finalValueOption, value))) return false; // match option is not found => invalid
-                }
-                catch {
-                    return false; // unknown error
-                } // try
-            } // if
-        } // if
-        
-        
-        
-        // above validation passes => perform custom validation from `textEditorComponent`:
-        const textCustomValidator = textEditorComponent.props.customValidator;
-        if (textCustomValidator && !(await textCustomValidator(validityState, value))) return false;
-        
-        
-        
-        // above validation passes => perform custom validation from `props`:
-        return (customValidator ? (await customValidator(validityState, value)) : validityState.valid);
-    });
     
     const handleTextFocusInternal      = useEvent<React.FocusEventHandler<TElement>>((event) => {
         // conditions:
@@ -594,13 +597,9 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         isValid                 : selectDropdownIsValid                    = isValid,                 // controllable
         inheritValidation       : selectDropdownInheritValidation          = props.inheritValidation, // follows <Editor>
         
-        // // a "validation_event" callback (only called when [isValid === undefined]):
         // onValidation         : selectDropdownOnValidation               = undefined,
         
         equalityValueComparison : selectDropdownEqualityValueComparison    = equalityValueComparison,
-        
-        // // a "validation_override" function:
-        // customValidator      : selectDropdownCustomValidator            = undefined,
         
         
         
@@ -705,10 +704,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                     
                     
                     // validations:
-                    // a "validation_event" callback (only called when [isValid === undefined]):
-                    onValidation       : handleValidation,      // if [isValid === undefined] => uncontrollable => `useInvalidable()` => calls onValidation() => calls `useInputValidator()::handleValidation()` => mutates ValidityChangeEvent::isValid
-                    // a "validation_override" function:
-                    customValidator    : handleCustomValidator, // called by `useInputValidator()` when `handleInit()`|`handleChange()` => calls `validate()` => calls `customValidator()`
+                    onValidation       : handleValidation,
                     
                     
                     
@@ -746,13 +742,9 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
                     isValid                 : selectDropdownIsValid,           // controllable
                     inheritValidation       : selectDropdownInheritValidation, // follows <Editor>
                     
-                    // // a "validation_event" callback (only called when [isValid === undefined]):
                     // onValidation         : selectDropdownOnValidation,
                     
                     equalityValueComparison : selectDropdownEqualityValueComparison,
-                    
-                    // // a "validation_override" function:
-                    // customValidator      : selectDropdownCustomValidator,
                     
                     
                     
