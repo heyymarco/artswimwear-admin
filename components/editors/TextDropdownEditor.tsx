@@ -210,8 +210,8 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         
         // validations:
         onValidation,                        // take, moved to <TextEditor>
-        freeTextInput           = true,      // take, to be handled by internal customValidator
-        equalityValueComparison = Object.is, // take, to be handled by internal customValidator
+        freeTextInput           = true,      // take, to be handled by internal controllableValidator
+        equalityValueComparison = Object.is, // take, to be handled by internal controllableValidator
         
         
         
@@ -282,7 +282,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
     
     
     // states:
-    const [isValid     , setIsValid     ] = useState<boolean|null>(null);
+    const [isDropdownValid  , setIsDropdownValid  ] = useState<boolean|null>(null);
     
     const enum ShowDropdown {
         SHOW_BY_TOGGLE     = 2,  // absolute set
@@ -293,9 +293,9 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         HIDE_BY_TOGGLE     = -3, // condition:      if NOT HIDE_BY_BLUR
         HIDE_BY_BLUR       = -4, // absolute reset
     }
-    const [showDropdown, setShowDropdown] = useState<ShowDropdown>(ShowDropdown.HIDE_BY_BLUR);
+    const [showDropdown     , setShowDropdown     ] = useState<ShowDropdown>(ShowDropdown.HIDE_BY_BLUR);
     
-    const noAutoShowDropdown              = useRef<boolean>(false);
+    const noAutoShowDropdown                        = useRef<boolean>(false);
     
     const [finalValueOptions, setFinalValueOptions] = useState<string[]|undefined>(undefined);
     const isMounted = useMountedFlag();
@@ -423,8 +423,8 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         
         
         // updates:
-        if (isValid === textIsValid) return; // already in sync => ignore
-        setIsValid(textIsValid); // sync
+        if (isDropdownValid === textIsValid) return; // already in sync => ignore
+        setIsDropdownValid(textIsValid); // sync
     });
     const handleValidation             = useMergeEvents(
         // preserves the original `onValidation` from `textEditorComponent`:
@@ -594,7 +594,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement>(props: Te
         
         // validations:
         enableValidation        : selectDropdownEnableValidation           = props.enableValidation,  // follows <Editor>
-        isValid                 : selectDropdownIsValid                    = isValid,                 // controllable
+        isValid                 : selectDropdownIsValid                    = isDropdownValid,         // controllable
         inheritValidation       : selectDropdownInheritValidation          = props.inheritValidation, // follows <Editor>
         
         // onValidation         : selectDropdownOnValidation               = undefined,
