@@ -88,7 +88,7 @@ import {
 import {
     // react components:
     WysiwygEditorStateProvider,
-}                           from './states/wysiwygEditorState'
+}                           from './states/WysiwygEditorState'
 
 // theme:
 import {
