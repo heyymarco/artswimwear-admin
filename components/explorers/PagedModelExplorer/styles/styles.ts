@@ -147,6 +147,11 @@ export default () => [
         display: 'grid',
         gridAutoFlow: 'row',
         ...children('article', {
+            // positions:
+            justifySelf: 'center', // centering for `maxInlineSize`
+            
+            
+            
             // layouts:
             display      : 'grid',
             gridTemplate : [[
