@@ -47,6 +47,17 @@ import {
     TabPanel,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
+// heymarco components:
+import {
+    // utilities:
+    getCountryByCode,
+    
+    
+    
+    // react components:
+    SelectCountryEditor,
+}                           from '@heymarco/select-country-editor'
+
 // internal components:
 import {
     TextEditor,
@@ -70,11 +81,6 @@ import {
     // react components:
     ShippingStateProvider,
 }                           from '@/components/editors/CoverageZoneEditor/states/shippingState'
-import {
-    SelectCountryEditor,
-    getCountryByCode,
-    countryList,
-}                           from '@/components/editors/SelectCountryEditor'
 import {
     SelectStateEditor,
 }                           from '@/components/editors/SelectStateEditor'
@@ -590,7 +596,6 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                         zoneNameEditor={
                             <SelectCountryEditor
                                 // values:
-                                valueOptions={countryList}
                                 onChange={setCountry}
                             />
                         }
