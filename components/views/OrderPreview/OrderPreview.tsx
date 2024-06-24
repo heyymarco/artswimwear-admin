@@ -60,6 +60,9 @@ import {
 import {
     Image,
 }                           from '@heymarco/image'
+import {
+    EmailEditor,
+}                           from '@heymarco/email-editor'
 
 // internal components:
 import {
@@ -71,9 +74,6 @@ import {
 import {
     NameEditor,
 }                           from '@/components/editors/NameEditor'
-import {
-    EmailEditor,
-}                           from '@/components/editors/EmailEditor'
 import {
     CompoundWithBadge,
 }                           from '@/components/CompoundWithBadge'
