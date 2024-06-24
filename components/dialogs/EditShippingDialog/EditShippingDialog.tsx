@@ -60,6 +60,9 @@ import {
 import {
     SelectStateEditor,
 }                           from '@heymarco/select-state-editor'
+import {
+    SelectCityEditor,
+}                           from '@heymarco/select-city-editor'
 
 // internal components:
 import {
@@ -84,9 +87,6 @@ import {
     // react components:
     ShippingStateProvider,
 }                           from '@/components/editors/CoverageZoneEditor/states/shippingState'
-import {
-    SelectCityEditor,
-}                           from '@/components/editors/SelectCityEditor'
 import {
     // types:
     UpdateHandler,
