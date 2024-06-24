@@ -57,6 +57,9 @@ import {
     // react components:
     SelectCountryEditor,
 }                           from '@heymarco/select-country-editor'
+import {
+    SelectStateEditor,
+}                           from '@heymarco/select-state-editor'
 
 // internal components:
 import {
@@ -81,9 +84,6 @@ import {
     // react components:
     ShippingStateProvider,
 }                           from '@/components/editors/CoverageZoneEditor/states/shippingState'
-import {
-    SelectStateEditor,
-}                           from '@/components/editors/SelectStateEditor'
 import {
     SelectCityEditor,
 }                           from '@/components/editors/SelectCityEditor'

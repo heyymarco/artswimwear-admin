@@ -25,6 +25,7 @@
     "@heymarco/quantity-input": "^6.5.0",
     "@heymarco/section": "^6.5.0",
     "@heymarco/select-country-editor": "^6.9.1",
+    "@heymarco/select-state-editor": "^6.9.1",
     "@lexical/headless": "^0.12.4",
     "@lexical/react": "^0.12.4",
     "@prisma/client": "^5.15.0",
