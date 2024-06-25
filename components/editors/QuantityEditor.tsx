@@ -17,11 +17,11 @@ import {
     QuantityInput,
 }                           from '@heymarco/quantity-input'
 
-// internals:
-import type {
+// heymarco components:
+import {
     // react components:
-    NumberEditorProps,
-}                           from '@/components/editors/NumberEditor'
+    type NumberEditorProps,
+}                           from '@heymarco/number-editor'
 
 
 
@@ -63,9 +63,9 @@ const QuantityEditor = <TElement extends Element = HTMLSpanElement>(props: Quant
     
     
     // handlers:
-    const handleValueChange = useEvent<React.ChangeEventHandler<HTMLInputElement>>(({target:{value, valueAsNumber}}) => {
-        onChangeAsText?.(value);
-        onChange?.(value ? valueAsNumber : null);
+    const handleValueChange = useEvent<React.ChangeEventHandler<HTMLInputElement>>((event) => {
+        onChangeAsText?.(event.target.value, event);
+        onChange?.(event.target.value ? event.target.valueAsNumber : null, event);
     });
     
     

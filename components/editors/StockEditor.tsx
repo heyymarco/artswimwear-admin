@@ -35,6 +35,11 @@ import {
     useControllableAndUncontrollable,
 }                           from '@heymarco/events'
 
+// heymarco components:
+import {
+    type EditorChangeEventHandler,
+}                           from '@heymarco/editor'
+
 // reusable-ui components:
 import {
     // simple-components:
@@ -58,10 +63,6 @@ import {
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internals:
-import type {
-    // types:
-    EditorChangeEventHandler,
-}                           from '@/components/editors/Editor'
 import {
     // react components:
     QuantityEditorProps,
@@ -190,9 +191,9 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
     
     
     // states:
-    const handleControllableValueChangeInternal = useEvent<EditorChangeEventHandler<number|null>>((newValue) => {
+    const handleControllableValueChangeInternal = useEvent<EditorChangeEventHandler<React.ChangeEvent<HTMLInputElement>, number|null>>((newValue, event) => {
         // normalize: null => empty string, TValue => toString:
-        onControllableTextChange?.((newValue !== null) ? `${newValue}` /* any TValue => toString */ : '' /* null => empty string */);
+        onControllableTextChange?.((newValue !== null) ? `${newValue}` /* any TValue => toString */ : '' /* null => empty string */, event);
     });
     const handleControllableValueChange         = useMergeEvents(
         // preserves the original `onCollapseEnd` from `props`:
@@ -206,7 +207,7 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
     const {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllableAndUncontrollable<number|null>({
+    } = useControllableAndUncontrollable<number|null, React.ChangeEvent<HTMLInputElement>>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
         onValueChange      : handleControllableValueChange,
@@ -235,12 +236,12 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
             (tabIndex === 0)
             ? null
             : (!!numberEditorRefInternal.current?.value ? numberEditorRefInternal.current?.valueAsNumber : null)
-        , { triggerAt: 'immediately' });
+        , { triggerAt: 'immediately', event: undefined as any /* TODO: fix this */ });
     });
-    const handleInputChange    = useEvent<EditorChangeEventHandler<number|null>>((newValue) => {
+    const handleInputChange    = useEvent<EditorChangeEventHandler<React.ChangeEvent<HTMLInputElement>, number|null>>((newValue, event) => {
         triggerValueChange(
             newValue
-        , { triggerAt: 'immediately' });
+        , { triggerAt: 'immediately', event: event });
     });
     
     
