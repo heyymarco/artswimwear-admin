@@ -63,6 +63,9 @@ import {
 import {
     Image,
 }                           from '@heymarco/image'
+import {
+    NameEditor,
+}                           from '@heymarco/name-editor'
 
 // internal components:
 import {
@@ -74,9 +77,6 @@ import {
 import {
     EditButton,
 }                           from '@/components/EditButton'
-import {
-    NameEditor,
-}                           from '@/components/editors/NameEditor'
 import {
     PriceEditor,
 }                           from '@/components/editors/PriceEditor'
@@ -234,7 +234,10 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                         
                         
                         // components:
-                        editorComponent={<NameEditor />}
+                        editorComponent={<NameEditor
+                            // validations:
+                            required={true}
+                        />}
                     />
                 );
                 case 'price'      : return (

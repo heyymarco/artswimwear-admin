@@ -45,6 +45,11 @@ import {
     Check,
 }                           from '@reusable-ui/components'  // a set of official Reusable-UI components
 
+// heymarco components:
+import {
+    NameEditor,
+}                           from '@heymarco/name-editor'
+
 // internals components:
 import type {
     // types:
@@ -55,9 +60,6 @@ import type {
     // react components:
     EditorProps,
 }                           from '@/components/editors/Editor'
-import {
-    NameEditor,
-}                           from '@/components/editors/NameEditor'
 import {
     TextEditorProps,
     TextEditor,

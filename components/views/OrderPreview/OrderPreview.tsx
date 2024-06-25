@@ -63,6 +63,9 @@ import {
 import {
     EmailEditor,
 }                           from '@heymarco/email-editor'
+import {
+    NameEditor,
+}                           from '@heymarco/name-editor'
 
 // internal components:
 import {
@@ -71,9 +74,6 @@ import {
 import {
     EditButton,
 }                           from '@/components/EditButton'
-import {
-    NameEditor,
-}                           from '@/components/editors/NameEditor'
 import {
     CompoundWithBadge,
 }                           from '@/components/CompoundWithBadge'
@@ -357,7 +357,10 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                     
                     
                     // components:
-                    editorComponent={<NameEditor />}
+                    editorComponent={<NameEditor
+                        // validations:
+                        required={true}
+                    />}
                 />
                 <SimpleEditCustomerDialog
                     // data:
@@ -379,7 +382,10 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                     
                     
                     // components:
-                    editorComponent={<EmailEditor />}
+                    editorComponent={<EmailEditor
+                        // validations:
+                        required={true}
+                    />}
                 />
                 
                 <EditOrderDialog

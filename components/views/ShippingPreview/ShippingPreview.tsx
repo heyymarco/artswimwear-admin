@@ -49,6 +49,11 @@ import {
     useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
+// heymarco components:
+import {
+    NameEditor,
+}                           from '@heymarco/name-editor'
+
 // internal components:
 import {
     ModelPreviewProps,
@@ -56,9 +61,6 @@ import {
 import {
     EditButton,
 }                           from '@/components/EditButton'
-import {
-    NameEditor,
-}                           from '@/components/editors/NameEditor'
 import {
     VisibilityEditor,
 }                           from '@/components/editors/VisibilityEditor'
@@ -177,7 +179,10 @@ const ShippingPreview = (props: ShippingPreviewProps): JSX.Element|null => {
                         
                         
                         // components:
-                        editorComponent={<NameEditor />}
+                        editorComponent={<NameEditor
+                            // validations:
+                            required={true}
+                        />}
                     />
                 );
                 case 'visibility' : return (

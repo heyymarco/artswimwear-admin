@@ -63,14 +63,14 @@ import {
 import {
     SelectCityEditor,
 }                           from '@heymarco/select-city-editor'
+import {
+    NameEditor,
+}                           from '@heymarco/name-editor'
 
 // internal components:
 import {
     TextEditor,
 }                           from '@/components/editors/TextEditor'
-import {
-    NameEditor,
-}                           from '@/components/editors/NameEditor'
 import {
     VisibilityEditor,
 }                           from '@/components/editors/VisibilityEditor'
@@ -430,6 +430,11 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                             setName(value);
                             setIsModified(true);
                         }}
+                        
+                        
+                        
+                        // validations:
+                        required={true}
                     />
                     
                     <span className='visibility label'>Visibility:</span>

@@ -49,11 +49,11 @@ import {
 import {
     LoadingBar,
 }                           from '@heymarco/loading-bar'
-
-// internal components:
 import {
     NameEditor,
-}                           from '@/components/editors/NameEditor'
+}                           from '@heymarco/name-editor'
+
+// internal components:
 import {
     UniqueUsernameEditor,
 }                           from '@/components/editors/UniqueUsernameEditor'
@@ -398,6 +398,11 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
                             setName(value);
                             setIsModified(true);
                         }}
+                        
+                        
+                        
+                        // validations:
+                        required={true}
                     />
                     
                     <span className='username label'>Username:</span>

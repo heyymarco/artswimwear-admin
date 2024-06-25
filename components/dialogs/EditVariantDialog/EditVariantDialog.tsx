@@ -39,11 +39,11 @@ import {
 import {
     Image,
 }                           from '@heymarco/image'
-
-// internal components:
 import {
     NameEditor,
-}                           from '@/components/editors/NameEditor'
+}                           from '@heymarco/name-editor'
+
+// internal components:
 import {
     PriceEditor,
 }                           from '@/components/editors/PriceEditor'
@@ -363,6 +363,11 @@ const EditVariantDialog = (props: EditVariantDialogProps): JSX.Element|null => {
                             setName(value);
                             setIsModified(true);
                         }}
+                        
+                        
+                        
+                        // validations:
+                        required={true}
                     />
                     
                     <span className='price label'>Additional Price:</span>

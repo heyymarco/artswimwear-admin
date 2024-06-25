@@ -45,11 +45,11 @@ import {
 import {
     Image,
 }                           from '@heymarco/image'
-
-// internal components:
 import {
     NameEditor,
-}                           from '@/components/editors/NameEditor'
+}                           from '@heymarco/name-editor'
+
+// internal components:
 import {
     UniquePathEditor,
 }                           from '@/components/editors/UniquePathEditor'
@@ -523,6 +523,11 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                             setIsModified(true);
                             handleNameChange(value);
                         }}
+                        
+                        
+                        
+                        // validations:
+                        required={true}
                     />
                     
                     <span className='path label'>Path:</span>

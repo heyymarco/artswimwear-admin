@@ -63,6 +63,11 @@ import {
     ModalExpandedChangeEvent,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
+// heymarco components:
+import {
+    NameEditor,
+}                           from '@heymarco/name-editor'
+
 // internal components:
 import {
     ModelPreviewProps,
@@ -70,9 +75,6 @@ import {
 import {
     EditButton,
 }                           from '@/components/EditButton'
-import {
-    NameEditor,
-}                           from '@/components/editors/NameEditor'
 import {
     UniqueUsernameEditor,
 }                           from '@/components/editors/UniqueUsernameEditor'
@@ -308,7 +310,10 @@ const AdminPreview = (props: AdminPreviewProps): JSX.Element|null => {
                     
                     
                     // components:
-                    editorComponent={<NameEditor />}
+                    editorComponent={<NameEditor
+                        // validations:
+                        required={true}
+                    />}
                 />
                 <SimpleEditModelDialog<AdminDetail>
                     // data:

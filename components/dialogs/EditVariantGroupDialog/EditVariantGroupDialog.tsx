@@ -40,10 +40,12 @@ import {
     TabPanel,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
-// internal components:
+// heymarco components:
 import {
     NameEditor,
-}                           from '@/components/editors/NameEditor'
+}                           from '@heymarco/name-editor'
+
+// internal components:
 import {
     // react components:
     EditVariantDialog,
@@ -326,6 +328,11 @@ const EditVariantGroupDialog = (props: EditVariantGroupDialogProps): JSX.Element
                             setName(value);
                             setIsModified(true);
                         }}
+                        
+                        
+                        
+                        // validations:
+                        required={true}
                     />
                     
                     <span className='hasStock label'>Dedicated Stocks:</span>

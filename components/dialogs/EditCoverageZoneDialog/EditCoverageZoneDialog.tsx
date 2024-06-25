@@ -46,6 +46,12 @@ import {
     TabPanel,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
+// heymarco components:
+import {
+    type NameEditorProps,
+    NameEditor,
+}                           from '@heymarco/name-editor'
+
 // internal components:
 import {
     type EditorChangeEventHandler,
@@ -53,10 +59,6 @@ import {
 import {
     TextEditor,
 }                           from '@/components/editors/TextEditor'
-import {
-    type NameEditorProps,
-    NameEditor,
-}                           from '@/components/editors/NameEditor'
 import {
     type SelectDropdownEditorProps,
 }                           from '@/components/editors/SelectDropdownEditor'
