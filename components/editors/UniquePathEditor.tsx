@@ -16,13 +16,15 @@ import {
     Label,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
+// heymarco components:
+import {
+    TextEditor,
+}                           from '@heymarco/text-editor'
+
 // internal components:
 import {
     EditorWithLabel,
 }                           from '@/components/EditorWithLabel'
-import {
-    TextEditor,
-}                           from '@/components/editors/TextEditor'
 import {
     // react components:
     ImplementedUniqueEditorProps,

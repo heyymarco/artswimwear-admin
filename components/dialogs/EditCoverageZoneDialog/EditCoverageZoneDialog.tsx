@@ -51,14 +51,14 @@ import {
     type NameEditorProps,
     NameEditor,
 }                           from '@heymarco/name-editor'
+import {
+    TextEditor,
+}                           from '@heymarco/text-editor'
 
 // internal components:
 import {
     type EditorChangeEventHandler,
 }                           from '@/components/editors/Editor'
-import {
-    TextEditor,
-}                           from '@/components/editors/TextEditor'
 import {
     type SelectDropdownEditorProps,
 }                           from '@/components/editors/SelectDropdownEditor'

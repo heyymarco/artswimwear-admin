@@ -49,6 +49,10 @@ import {
 import {
     NameEditor,
 }                           from '@heymarco/name-editor'
+import {
+    TextEditorProps,
+    TextEditor,
+}                           from '@heymarco/text-editor'
 
 // internals components:
 import type {
@@ -60,10 +64,6 @@ import type {
     // react components:
     EditorProps,
 }                           from '@/components/editors/Editor'
-import {
-    TextEditorProps,
-    TextEditor,
-}                           from '@/components/editors/TextEditor'
 
 
 

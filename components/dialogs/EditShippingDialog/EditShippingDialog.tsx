@@ -66,11 +66,11 @@ import {
 import {
     NameEditor,
 }                           from '@heymarco/name-editor'
-
-// internal components:
 import {
     TextEditor,
-}                           from '@/components/editors/TextEditor'
+}                           from '@heymarco/text-editor'
+
+// internal components:
 import {
     VisibilityEditor,
 }                           from '@/components/editors/VisibilityEditor'
