@@ -40,6 +40,11 @@ import {
     useControllableAndUncontrollable,
 }                           from '@heymarco/events'
 
+// heymarco components:
+import {
+    SelectDropdownEditor,
+}                           from '@heymarco/select-dropdown-editor'
+
 // reusable-ui components:
 import {
     // base-components:
@@ -94,9 +99,6 @@ import type {
 import {
     PriceEditor,
 }                           from '@/components/editors/PriceEditor'
-import {
-    SelectDropdownEditor,
-}                           from '@/components/editors/SelectDropdownEditor'
 
 // internals:
 import {

@@ -47,15 +47,15 @@ import {
     
     OrderableList,
 }                           from '@heymarco/orderable-list'
+import {
+    type TextDropdownEditorProps,
+}                           from '@heymarco/text-dropdown-editor'
 
 // internal components:
 import type {
     // react components:
     EditorProps,
 }                           from '@/components/editors/Editor'
-import {
-    type SelectDropdownEditorProps,
-}                           from '@/components/editors/SelectDropdownEditor'
 import type {
     // types:
     UpdatedHandler,
@@ -426,7 +426,7 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
                                 // components:
                                 zoneNameEditor={
                                     (!!zoneNameEditor && !!zoneNameEditor.props.valueOptions)
-                                    ? React.cloneElement<SelectDropdownEditorProps>(zoneNameEditor,
+                                    ? React.cloneElement<TextDropdownEditorProps>(zoneNameEditor,
                                         // props:
                                         {
                                             // values:

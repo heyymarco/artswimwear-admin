@@ -48,20 +48,20 @@ import {
 
 // heymarco components:
 import {
+    type EditorChangeEventHandler,
+}                           from '@heymarco/editor'
+import {
     type NameEditorProps,
     NameEditor,
 }                           from '@heymarco/name-editor'
 import {
     TextEditor,
 }                           from '@heymarco/text-editor'
+import {
+    type TextDropdownEditorProps,
+}                           from '@heymarco/text-dropdown-editor'
 
 // internal components:
-import {
-    type EditorChangeEventHandler,
-}                           from '@/components/editors/Editor'
-import {
-    type SelectDropdownEditorProps,
-}                           from '@/components/editors/SelectDropdownEditor'
 import {
     ShippingRateEditor,
 }                           from '@/components/editors/ShippingRateEditor'
@@ -146,7 +146,7 @@ export interface EditCoverageZoneDialogProps<TCoverageZoneWithId extends Coverag
     
     
     // components:
-    zoneNameEditor   ?: React.ReactElement<SelectDropdownEditorProps>
+    zoneNameEditor   ?: React.ReactElement<TextDropdownEditorProps>
     zoneNameOverride ?: (zoneName: string|null|undefined) => string|null|undefined
 }
 const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone>(props: EditCoverageZoneDialogProps<TCoverageZoneWithId, TCoverageSubzone>): JSX.Element|null => {
@@ -482,7 +482,7 @@ interface NameEditorWithHandlerProps {
     
     
     // components:
-    zoneNameEditor          : React.ReactElement<SelectDropdownEditorProps>|undefined
+    zoneNameEditor          : React.ReactElement<TextDropdownEditorProps>|undefined
 }
 const NameEditorWithHandler = (props: NameEditorWithHandlerProps): JSX.Element|null => {
     // props:
@@ -513,7 +513,7 @@ const NameEditorWithHandler = (props: NameEditorWithHandlerProps): JSX.Element|n
     
     
     // handlers:
-    const handleChangeInternal = useEvent<EditorChangeEventHandler<string>>((value) => {
+    const handleChangeInternal = useEvent<EditorChangeEventHandler<React.ChangeEvent<HTMLInputElement>, string>>((value) => {
         setName(value);
         setIsModified(true);
     });
@@ -532,7 +532,7 @@ const NameEditorWithHandler = (props: NameEditorWithHandlerProps): JSX.Element|n
     // effects:
     // informs the __initial_value__ of the zone name to <Parent>:
     useIsomorphicLayoutEffect(() => {
-        zoneNameEditor?.props.onChange?.(name);
+        zoneNameEditor?.props.onChange?.(name, undefined as any /* TODO: fix this */);
     }, []);
     
     
@@ -566,12 +566,12 @@ const NameEditorWithHandler = (props: NameEditorWithHandlerProps): JSX.Element|n
         
         // values:
         value     = name,
-    } = (zoneNameEditor?.props ?? {}) as (SelectDropdownEditorProps & NameEditorProps);
+    } = (zoneNameEditor?.props ?? {}) as (TextDropdownEditorProps & NameEditorProps);
     
     
     
     // jsx:
-    return React.cloneElement<SelectDropdownEditorProps|NameEditorProps>(zoneNameEditor ?? <NameEditor />,
+    return React.cloneElement<TextDropdownEditorProps|NameEditorProps>(zoneNameEditor ?? <NameEditor />,
         // props:
         {
             // refs:
