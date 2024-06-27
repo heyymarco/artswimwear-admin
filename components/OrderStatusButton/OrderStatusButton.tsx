@@ -48,6 +48,11 @@ import {
     useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
+// heymarco components:
+import {
+    RadioDecorator,
+}                           from '@heymarco/radio-decorator'
+
 // internal components:
 import {
     orderStatusValues,
@@ -55,9 +60,6 @@ import {
     orderStatusIcon,
     orderStatusNext,
 }                           from '@/components/OrderStatusBadge'
-import {
-    RadioDecorator,
-}                           from '@/components/RadioDecorator'
 
 // models:
 import type {

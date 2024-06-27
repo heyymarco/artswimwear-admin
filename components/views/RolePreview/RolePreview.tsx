@@ -40,6 +40,11 @@ import {
     useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
+// heymarco components:
+import {
+    RadioDecorator,
+}                           from '@heymarco/radio-decorator'
+
 // internal components:
 import {
     EditButton,
@@ -51,9 +56,6 @@ import type {
     // react components:
     ModelPreviewProps,
 }                           from '@/components/explorers/PagedModelExplorer'
-import {
-    RadioDecorator,
-}                           from '@/components/RadioDecorator'
 import type {
     // types:
     ComplexEditModelDialogResult,

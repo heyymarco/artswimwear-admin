@@ -50,7 +50,7 @@ import {
 // heymarco components:
 import {
     // utilities:
-    getCountryByCode,
+    getCountryNameByCode,
     
     
     
@@ -604,7 +604,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                                 onChange={setCountry}
                             />
                         }
-                        zoneNameOverride={getCountryByCode}
+                        zoneNameOverride={getCountryNameByCode}
                         subzoneEditor={
                             <CoverageZoneEditor<CoverageStateWithId, CoverageCityWithId>
                                 // data:
