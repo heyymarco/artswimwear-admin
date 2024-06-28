@@ -126,7 +126,6 @@ const AddressEditor = <TElement extends Element = HTMLFormElement>(props: Addres
         // other props:
         ...restBaseAddressEditorProps
     } = restAddressEditorProps;
-    console.log(restBaseAddressEditorProps.value);
     
     
     
