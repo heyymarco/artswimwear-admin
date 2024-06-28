@@ -24,6 +24,15 @@ import {
     SelectCityEditor,
 }                           from '@heymarco/select-city-editor'
 import {
+    TextEditor,
+}                           from '@heymarco/text-editor'
+import {
+    NameEditor,
+}                           from '@heymarco/name-editor'
+import {
+    PhoneEditor,
+}                           from '@heymarco/phone-editor'
+import {
     // react components:
     AddressEditorProps as BaseAddressEditorProps,
     AddressEditor      as BaseAddressEditor,
@@ -96,6 +105,21 @@ const AddressEditor = <TElement extends Element = HTMLFormElement>(props: Addres
         cityEditorComponent=(
             <SelectCityEditor theme='primary' valueOptions={cityOptionsPromise} autoComplete='nope' />
         ),
+        zipEditorComponent=(
+            <TextEditor aria-label='Zip (Postal) Code' autoComplete='nope' />
+        ),
+        addressEditorComponent=(
+            <TextEditor aria-label='Street Address' autoComplete='nope' />
+        ),
+        firstNameEditorComponent=(
+            <NameEditor aria-label='First Name' autoComplete='nope' />
+        ),
+        lastNameEditorComponent=(
+            <NameEditor aria-label='Last Name' autoComplete='nope' />
+        ),
+        phoneEditorComponent=(
+            <PhoneEditor autoComplete='nope' />
+        ),
         
         
         
@@ -123,6 +147,11 @@ const AddressEditor = <TElement extends Element = HTMLFormElement>(props: Addres
             countryEditorComponent={countryEditorComponent}
             stateEditorComponent={stateEditorComponent}
             cityEditorComponent={cityEditorComponent}
+            zipEditorComponent={zipEditorComponent}
+            addressEditorComponent={addressEditorComponent}
+            firstNameEditorComponent={firstNameEditorComponent}
+            lastNameEditorComponent={lastNameEditorComponent}
+            phoneEditorComponent={phoneEditorComponent}
         />
     );
 };
