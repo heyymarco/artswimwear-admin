@@ -19,13 +19,10 @@ import {
     ImplementedSimpleEditModelDialogProps,
     SimpleEditModelDialog,
 }                           from '@/components/dialogs/SimpleEditModelDialog'
-import {
-    Address,
-    emptyAddress,
-}                           from '@/components/editors/AddressEditor'
 
 // models:
 import type {
+    Address,
     OrderDetail,
 }                           from '@/models'
 
@@ -34,6 +31,21 @@ import {
     // hooks:
     useUpdateOrder,
 }                           from '@/store/features/api/apiSlice'
+
+
+
+// utilities:
+export const emptyAddress : Address = {
+    country   : '',
+    state     : '',
+    city      : '',
+    zip       : null,
+    address   : '',
+    
+    firstName : '',
+    lastName  : '',
+    phone     : '',
+}
 
 
 
@@ -53,25 +65,20 @@ export const SimpleEditAddressDialog = (props: SimpleEditAddressDialogProps) => 
     }
     const handleInitialValue   = useEvent<InitialValueHandler<AddressModel>>((edit, model) => {
         if (edit === 'billingAddress') {
-            const modelRaw = (model as unknown as OrderDetail).payment.billingAddress ?? emptyAddress;
-            return {
-                ...modelRaw,
-                zip : modelRaw.zip ?? '',
-            };
+            return (model as unknown as OrderDetail).payment.billingAddress ?? emptyAddress;
         }
         else {
-            const modelRaw = model[edit] ?? emptyAddress;
-            return {
-                ...modelRaw,
-                zip : modelRaw.zip ?? '',
-            };
+            return model[edit] ?? emptyAddress;
         } // if
     });
     const handleTransformValue = useEvent<TransformValueHandler<AddressModel>>((value, edit, model) => {
         return {
             id     : model.id,
             
-            [edit] : value,
+            [edit] : {
+                ...value,
+                zip : value?.zip?.trim() || null, // null if empty_string
+            },
         };
     });
     

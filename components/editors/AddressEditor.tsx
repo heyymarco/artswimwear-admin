@@ -2,17 +2,17 @@
 import {
     // react:
     default as React,
+    
+    
+    
+    // hooks:
+    useState,
+    useMemo,
 }                           from 'react'
-
-// reusable-ui components:
-import {
-    type DropdownListExpandedChangeEvent
-}                           from '@reusable-ui/components'
 
 // heymarco components:
 import {
     // react components:
-    type SelectCountryEditorProps,
     SelectCountryEditor,
 }                           from '@heymarco/select-country-editor'
 import {
@@ -24,31 +24,17 @@ import {
     SelectCityEditor,
 }                           from '@heymarco/select-city-editor'
 import {
-    // types:
-    type Address,
-    
-    
-    
     // react components:
     AddressEditorProps as BaseAddressEditorProps,
     AddressEditor      as BaseAddressEditor,
 }                           from '@heymarco/address-editor'
-export *                    from '@heymarco/address-editor'
 
-
-
-// utilities:
-export const emptyAddress : Address = {
-    country   : '',
-    state     : '',
-    city      : '',
-    zip       : '',
-    address   : '',
-    
-    firstName : '',
-    lastName  : '',
-    phone     : '',
-}
+// stores:
+import {
+    useGetCountryList,
+    useGetStateList,
+    useGetCityList,
+}                           from '@/store/features/api/apiSlice'
 
 
 
@@ -58,20 +44,38 @@ export interface AddressEditorProps<out TElement extends Element = HTMLFormEleme
         // bases:
         BaseAddressEditorProps<TElement>
 {
-    // values:
-    countryOptions ?: SelectCountryEditorProps['valueOptions']
 }
 const AddressEditor = <TElement extends Element = HTMLFormElement>(props: AddressEditorProps<TElement>): JSX.Element|null => {
     // props:
     const {
-        // values:
-        countryOptions,
-        
-        
-        
         // other props:
         ...restAddressEditorProps
     } = props;
+    
+    
+    // states:
+    const [country, setCountry] = useState<string>(props.value?.country ?? '');
+    const [state  , setState  ] = useState<string>(props.value?.state   ?? '');
+    
+    
+    
+    // stores:
+    const [getCountryList] = useGetCountryList();
+    const [getStateList  ] = useGetStateList();
+    const [getCityList   ] = useGetCityList();
+    
+    const countryOptionsPromise = useMemo(() => {
+        return getCountryList().unwrap();
+    }, []);
+    const stateOptionsPromise = useMemo(() => {
+        if (!country) return [];
+        return getStateList({ countryCode: country }).unwrap();
+    }, [country]);
+    const cityOptionsPromise = useMemo(() => {
+        if (!country) return [];
+        if (!state) return [];
+        return getCityList({ countryCode: country, state: state }).unwrap();
+    }, [country, state]);
     
     
     
@@ -84,13 +88,13 @@ const AddressEditor = <TElement extends Element = HTMLFormElement>(props: Addres
         
         // components:
         countryEditorComponent=(
-            <SelectCountryEditor />
+            <SelectCountryEditor theme='primary' onChange={setCountry} valueOptions={countryOptionsPromise} autoComplete='nope' />
         ),
         stateEditorComponent=(
-            <SelectStateEditor />
+            <SelectStateEditor theme='primary' onChange={setState} valueOptions={stateOptionsPromise} autoComplete='nope' />
         ),
         cityEditorComponent=(
-            <SelectCityEditor />
+            <SelectCityEditor theme='primary' valueOptions={cityOptionsPromise} autoComplete='nope' />
         ),
         
         
@@ -98,6 +102,7 @@ const AddressEditor = <TElement extends Element = HTMLFormElement>(props: Addres
         // other props:
         ...restBaseAddressEditorProps
     } = restAddressEditorProps;
+    console.log(restBaseAddressEditorProps.value);
     
     
     
@@ -115,12 +120,7 @@ const AddressEditor = <TElement extends Element = HTMLFormElement>(props: Addres
             
             
             // components:
-            countryEditorComponent={!countryEditorComponent ? undefined : (React.cloneElement<SelectCountryEditorProps<Element, React.SyntheticEvent<unknown, Event>, DropdownListExpandedChangeEvent<string>>>(countryEditorComponent,
-                // props:
-                {
-                    valueOptions : countryOptions,
-                },
-            ) as typeof countryEditorComponent)}
+            countryEditorComponent={countryEditorComponent}
             stateEditorComponent={stateEditorComponent}
             cityEditorComponent={cityEditorComponent}
         />

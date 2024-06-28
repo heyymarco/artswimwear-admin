@@ -339,14 +339,6 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     const hasPaymentConfirmation = !!paymentConfirmation?.reportedAt;
     const isPaymentRejected      = hasPaymentConfirmation && !!paymentConfirmation.rejectionReason;
     
-    const countryOptions = useMemo(() => {
-        return (
-            Object.values(countryList.entities)
-            .filter((country): country is Exclude<typeof country, undefined> => (country !== undefined))
-            .map((country) => country.name)
-        )
-    }, [countryList]);
-    
     
     
     // dialogs:
@@ -368,9 +360,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                 
                 // components:
                 editorComponent={
-                    <AddressEditor
-                        countryOptions={countryOptions}
-                    />
+                    <AddressEditor />
                 }
             />
         );

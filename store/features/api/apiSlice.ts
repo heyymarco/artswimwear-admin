@@ -364,6 +364,12 @@ export const apiSlice = createApi({
                 }]) as Array<{ type: 'Shippings', id: string }>),
             ],
         }),
+        getCountryList              : builder.query<string[], void>({
+            query : () => ({
+                url    : `shippings/countries`,
+                method : 'GET',
+            }),
+        }),
         getStateList                : builder.query<string[], { countryCode: string }>({
             query : ({countryCode}) => ({
                 url    : `shippings/states?countryCode=${encodeURIComponent(countryCode)}`,
@@ -715,6 +721,7 @@ export const {
     useGetShippingPageQuery               : useGetShippingPage,
     useUpdateShippingMutation             : useUpdateShipping,
     useDeleteShippingMutation             : useDeleteShipping,
+    useLazyGetCountryListQuery            : useGetCountryList,
     useLazyGetStateListQuery              : useGetStateList,
     useLazyGetCityListQuery               : useGetCityList,
     
