@@ -312,14 +312,15 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     const isForeignCurrency = (currencyOptions.length > 1);
     
     const {
+        country        : shippingCountry,
+        state          : shippingState,
+        city           : shippingCity,
+        zip            : shippingZip,
+        address        : shippingAddress,
+        
         firstName      : shippingFirstName,
         lastName       : shippingLastName,
         phone          : shippingPhone,
-        address        : shippingAddress,
-        city           : shippingCity,
-        zone           : shippingZone,
-        zip            : shippingZip,
-        country        : shippingCountry,
     } = shippingAddressDetail ?? {};
     
     const [preferredTimezone, setPreferredTimezone] = useState<number>(() => customerOrGuestPreferredTimezone ?? checkoutConfigShared.intl.defaultTimezone);
@@ -337,6 +338,14 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     const isManualPaid           = !isCanceledOrExpired && (paymentType === 'MANUAL_PAID') && !paymentBrand /* assumes 'MANUAL_PAID' with 'indomaret'|'alfamart' as auto_payment */;
     const hasPaymentConfirmation = !!paymentConfirmation?.reportedAt;
     const isPaymentRejected      = hasPaymentConfirmation && !!paymentConfirmation.rejectionReason;
+    
+    const countryOptions = useMemo(() => {
+        return (
+            Object.values(countryList.entities)
+            .filter((country): country is Exclude<typeof country, undefined> => (country !== undefined))
+            .map((country) => country.name)
+        )
+    }, [countryList]);
     
     
     
@@ -360,7 +369,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                 // components:
                 editorComponent={
                     <AddressEditor
-                        countryList={countryList}
+                        countryOptions={countryOptions}
                     />
                 }
             />
@@ -736,7 +745,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             <p>
                                 {shippingAddress}
                                 <br />
-                                {`${shippingCity}, ${shippingZone} (${shippingZip}), ${countryList?.entities?.[shippingCountry ?? '']?.name}`}
+                                {`${shippingCity}, ${shippingState} (${shippingZip}), ${countryList?.entities?.[shippingCountry ?? '']?.name}`}
                             </p>
                             <p>
                                 Phone: {shippingPhone}

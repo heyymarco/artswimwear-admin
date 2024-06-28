@@ -20,9 +20,9 @@ import {
     SimpleEditModelDialog,
 }                           from '@/components/dialogs/SimpleEditModelDialog'
 import {
-    AddressValue,
-    emptyAddressValue,
-}                           from '@/components/editors/AddressEditor/AddressEditor'
+    Address,
+    emptyAddress,
+}                           from '@/components/editors/AddressEditor'
 
 // models:
 import type {
@@ -48,15 +48,23 @@ export const SimpleEditAddressDialog = (props: SimpleEditAddressDialogProps) => 
     // handlers:
     interface AddressModel {
         id               : OrderDetail['id']
-        shippingAddress ?: AddressValue|null
-        billingAddress  ?: AddressValue|null
+        shippingAddress ?: Address|null
+        billingAddress  ?: Address|null
     }
     const handleInitialValue   = useEvent<InitialValueHandler<AddressModel>>((edit, model) => {
         if (edit === 'billingAddress') {
-            return (model as unknown as OrderDetail).payment.billingAddress ?? emptyAddressValue;
+            const modelRaw = (model as unknown as OrderDetail).payment.billingAddress ?? emptyAddress;
+            return {
+                ...modelRaw,
+                zip : modelRaw.zip ?? '',
+            };
         }
         else {
-            return model[edit] ?? emptyAddressValue;
+            const modelRaw = model[edit] ?? emptyAddress;
+            return {
+                ...modelRaw,
+                zip : modelRaw.zip ?? '',
+            };
         } // if
     });
     const handleTransformValue = useEvent<TransformValueHandler<AddressModel>>((value, edit, model) => {

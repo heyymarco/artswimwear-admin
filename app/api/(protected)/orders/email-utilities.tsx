@@ -133,7 +133,7 @@ const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof p
         })),
         shippingProvider : (
             (shippingAddressData && shippingProviderData)
-            ? getMatchingShipping(shippingProviderData, { city: shippingAddressData.city, zone: shippingAddressData.zone, country: shippingAddressData.country })
+            ? getMatchingShipping(shippingProviderData, { city: shippingAddressData.city, state: shippingAddressData.state, country: shippingAddressData.country })
             : null
         ),
         customerOrGuest : (
