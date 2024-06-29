@@ -311,18 +311,6 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     }, [preferredCurrency?.currency]);
     const isForeignCurrency = (currencyOptions.length > 1);
     
-    const {
-        country        : shippingCountry,
-        state          : shippingState,
-        city           : shippingCity,
-        zip            : shippingZip,
-        address        : shippingAddress,
-        
-        firstName      : shippingFirstName,
-        lastName       : shippingLastName,
-        phone          : shippingPhone,
-    } = shippingAddressDetail ?? {};
-    
     const [preferredTimezone, setPreferredTimezone] = useState<number>(() => customerOrGuestPreferredTimezone ?? checkoutConfigShared.intl.defaultTimezone);
     
     const shippingProvider       = shippingList?.entities?.[shippingProviderId ?? ''];
@@ -730,15 +718,15 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         <div className={styleSheet.shippingAddress}>
                             {!printMode && !!role?.order_usa && <EditButton className={styleSheet.editShippingAddress} onClick={handleEditShippingAddress} />}
                             <p>
-                                <strong>{shippingFirstName} {shippingLastName}</strong>
+                                <strong>{shippingAddressDetail.firstName} {shippingAddressDetail.lastName}</strong>
                             </p>
                             <p>
-                                {shippingAddress}
+                                {shippingAddressDetail.address}
                                 <br />
-                                {`${shippingCity}, ${shippingState} (${shippingZip}), ${countryList?.entities?.[shippingCountry ?? '']?.name}`}
+                                {`${shippingAddressDetail.city}, ${shippingAddressDetail.state} (${shippingAddressDetail.zip}), ${countryList?.entities?.[shippingAddressDetail.country ?? '']?.name}`}
                             </p>
                             <p>
-                                Phone: {shippingPhone}
+                                Phone: {shippingAddressDetail.phone}
                             </p>
                         </div>
                     </Section>
