@@ -187,20 +187,20 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     
     
     // states:
-    const [isModified    , setIsModified   ] = useState<boolean>(false);
+    const [isModified, setIsModified] = useState<boolean>(false);
     
-    const [visibility    , setVisibility   ] = useState<ShippingVisibility>(model?.visibility ?? 'DRAFT');
-    const [name          , setName         ] = useState<string            >(model?.name       ?? ''     );
+    const [visibility, setVisibility] = useState<ShippingVisibility>(model?.visibility ?? 'DRAFT');
+    const [name      , setName      ] = useState<string            >(model?.name       ?? ''     );
     
-    const [weightStep    , setWeightStep   ] = useState<number            >(model?.weightStep ?? 1      );
-    const [eta           , setEta          ] = useState<ShippingEta|null  >(model?.eta        ?? null   );
-    const [shippingRates , setShippingRates] = useState<ShippingRate[]    >(() => {
-        const shippingRates = model?.shippingRates;
-        if (!shippingRates) return [];
+    const [weightStep, setWeightStep] = useState<number            >(model?.weightStep ?? 1      );
+    const [eta       , setEta       ] = useState<ShippingEta|null  >(model?.eta        ?? null   );
+    const [rates     , setRates     ] = useState<ShippingRate[]    >(() => {
+        const rates = model?.rates;
+        if (!rates) return [];
         return (
-            shippingRates
-            .map((shippingRate) => ({
-                ...shippingRate, // clone => immutable => mutable
+            rates
+            .map((rate) => ({
+                ...rate, // clone => immutable => mutable
             }))
         );
     });
@@ -297,17 +297,17 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     // handlers:
     const handleUpdate         = useEvent<UpdateHandler<ShippingDetail>>(async ({id, whenAdd, whenUpdate}) => {
         return await updateShipping({
-            id            : id ?? '',
+            id         : id ?? '',
             
-            visibility    : (whenUpdate.visibility  || whenAdd) ? visibility    : undefined,
-            name          : (whenUpdate.description || whenAdd) ? name          : undefined,
+            visibility : (whenUpdate.visibility  || whenAdd) ? visibility    : undefined,
+            name       : (whenUpdate.description || whenAdd) ? name          : undefined,
             
-            weightStep    : (whenUpdate.price       || whenAdd) ? weightStep    : undefined,
-            eta           : (whenUpdate.description || whenAdd) ? (eta || null) : undefined,
-            shippingRates : (whenUpdate.price       || whenAdd) ? shippingRates : undefined,
+            weightStep : (whenUpdate.price       || whenAdd) ? weightStep    : undefined,
+            eta        : (whenUpdate.description || whenAdd) ? (eta || null) : undefined,
+            rates      : (whenUpdate.price       || whenAdd) ? rates         : undefined,
             
-            useZones      : (whenUpdate.price       || whenAdd) ? useZones      : undefined,
-            zones         : (whenUpdate.price       || whenAdd) ? ((): CoverageCountry[] =>
+            useZones   : (whenUpdate.price       || whenAdd) ? useZones      : undefined,
+            zones      : (whenUpdate.price       || whenAdd) ? ((): CoverageCountry[] =>
                 // remove id(s) from nested zone(s):
                 countries
                 .map(({id : _id, ...coverageCountry}: CoverageCountryWithId) => ({
@@ -590,9 +590,9 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                         
                         
                         // values:
-                        value={shippingRates}
+                        value={rates}
                         onChange={(value) => {
-                            setShippingRates(value);
+                            setRates(value);
                             setIsModified(true);
                         }}
                     />

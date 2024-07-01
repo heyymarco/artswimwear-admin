@@ -264,21 +264,21 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
             <List>
                 {!mirrorValueWithId.length && <ModelEmpty />}
                 
-                {mirrorValueWithId.map((shippingRate) =>
+                {mirrorValueWithId.map((rate) =>
                     /* <ModelPreview> */
                     <ShippingRatePreview
                         // identifiers:
-                        key={shippingRate.id}
+                        key={rate.id}
                         
                         
                         
                         // data:
-                        model={shippingRate}
+                        model={rate}
                         
                         
                         
                         // values:
-                        shippingRates={mirrorValueWithId}
+                        rates={mirrorValueWithId}
                         
                         
                         

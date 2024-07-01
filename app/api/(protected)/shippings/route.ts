@@ -180,7 +180,7 @@ You do not have the privilege to view the shippings.`
         
         weightStep,
         eta,
-        shippingRates,
+        rates,
         
         useZones,
         zones,
@@ -191,31 +191,31 @@ You do not have the privilege to view the shippings.`
     
     //#region validating request
     if (
-        (typeof(id)       !== 'string' )
+        (typeof(id)  !== 'string' )
         
         ||
         
-        ((visibility      !== undefined)                   && ((typeof(visibility)           !== 'string') || !['PUBLISHED', 'DRAFT'].includes(visibility)))
+        ((visibility !== undefined)                   && ((typeof(visibility)   !== 'string') || !['PUBLISHED', 'DRAFT'].includes(visibility)))
         ||
-        ((name            !== undefined)                   && ((typeof(name)                 !== 'string') || (name.length     < 1)))
+        ((name       !== undefined)                   && ((typeof(name)         !== 'string') || (name.length < 1)))
         ||
-        ((weightStep      !== undefined)                   && ((typeof(weightStep)           !== 'number') || !isFinite(weightStep) || (weightStep < 0)))
+        ((weightStep !== undefined)                   && ((typeof(weightStep)   !== 'number') || !isFinite(weightStep) || (weightStep < 0)))
         ||
-        ((eta             !== undefined) && (eta !== null) && ((typeof(eta)                  !== 'string') || (eta.length < 1)))
+        ((eta        !== undefined) && (eta !== null) && ((typeof(eta)          !== 'string') || (eta.length < 1)))
         ||
-        ((shippingRates   !== undefined)                   && ((Array.isArray(shippingRates) !== true    ) || (shippingRates.length && shippingRates.some((shippingRate) =>
-            (typeof(shippingRate) !== 'object')
+        ((rates      !== undefined)                   && ((Array.isArray(rates) !== true    ) || (rates.length && rates.some((rate) =>
+            (typeof(rate) !== 'object')
             ||
-            (Object.keys(shippingRate).length !== 2)
+            (Object.keys(rate).length !== 2)
             ||
-            ((typeof(shippingRate.startingWeight) !== 'number') || !isFinite(shippingRate.startingWeight) || (shippingRate.startingWeight < 0))
+            ((typeof(rate.startingWeight) !== 'number') || !isFinite(rate.startingWeight) || (rate.startingWeight < 0))
             ||
-            ((typeof(shippingRate.rate)           !== 'number') || !isFinite(shippingRate.rate)           || (shippingRate.rate           < 0))
+            ((typeof(rate.rate)           !== 'number') || !isFinite(rate.rate)           || (rate.rate           < 0))
         ))))
         ||
-        ((useZones        !== undefined)                   && (typeof(useZones)        !== 'boolean'))
+        ((useZones   !== undefined)                   && (typeof(useZones)      !== 'boolean'))
         ||
-        ((zones           !== undefined)                   && ((Array.isArray(zones)   !== true    ) || (zones.length && zones.some((zone) =>
+        ((zones      !== undefined)                   && ((Array.isArray(zones) !== true    ) || (zones.length && zones.some((zone) =>
             (typeof(zone) !== 'object')
             ||
             (Object.keys(zone).length !== 5)
@@ -252,10 +252,10 @@ You do not have the privilege to add new shipping.`
 You do not have the privilege to modify the shipping name.`
                 }, { status: 403 }); // handled with error: forbidden
                 
-                if (!session.role?.shipping_up && ((weightStep !== undefined) || (eta !== undefined) || (shippingRates !== undefined) || (useZones !== undefined) || (zones !== undefined))) return Response.json({ error:
+                if (!session.role?.shipping_up && ((weightStep !== undefined) || (eta !== undefined) || (rates !== undefined) || (useZones !== undefined) || (zones !== undefined))) return Response.json({ error:
 `Access denied.
 
-You do not have the privilege to modify the shipping weightStep, eta, shippingRates, and/or areas.`
+You do not have the privilege to modify the shipping weightStep, eta, rates, and/or areas.`
                 }, { status: 403 }); // handled with error: forbidden
                 
                 if (!session.role?.shipping_uv && (visibility !== undefined)) return Response.json({ error:
@@ -276,7 +276,7 @@ You do not have the privilege to modify the shipping visibility.`
                 
                 weightStep,
                 eta,
-                shippingRates,
+                rates,
                 
                 useZones,
                 zones,

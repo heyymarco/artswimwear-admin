@@ -195,16 +195,16 @@ const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<T
     // states:
     const [isModified, setIsModified] = useState<boolean>(false);
     
-    const [name      , setName      ] = useState<string            >(model?.name ?? '');
+    const [name      , setName      ] = useState<string            >(model?.name       ?? ''     );
     
-    const [eta       , setEta       ] = useState<ShippingEta|null  >(model?.eta  ?? null);
-    const [shippingRates , setShippingRates] = useState<ShippingRate[]    >(() => {
-        const shippingRates = model?.shippingRates;
-        if (!shippingRates) return [];
+    const [eta       , setEta       ] = useState<ShippingEta|null  >(model?.eta        ?? null   );
+    const [rates     , setRates     ] = useState<ShippingRate[]    >(() => {
+        const rates = model?.rates;
+        if (!rates) return [];
         return (
-            shippingRates
-            .map((shippingRate) => ({
-                ...shippingRate, // clone => immutable => mutable
+            rates
+            .map((rate) => ({
+                ...rate, // clone => immutable => mutable
             }))
         );
     });
@@ -232,18 +232,18 @@ const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<T
     // handlers:
     const handleUpdate         = useEvent<UpdateHandler<TCoverageZoneWithId>>(({id, whenAdd, whenUpdate}) => {
         return {
-            id            : id ?? (() => {
+            id       : id ?? (() => {
                 const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
                 return ` ${nanoid()}`; // starts with space{random-temporary-id}
             })(),
             
-            name          :                 (whenUpdate.description || whenAdd)  ? name          : undefined,
+            name     :                 (whenUpdate.description || whenAdd)  ? name          : undefined,
             
-            eta           :                 (whenUpdate.description || whenAdd)  ? (eta || null) : undefined,
-            shippingRates :                 (whenUpdate.price       || whenAdd)  ? shippingRates : undefined,
+            eta      :                 (whenUpdate.description || whenAdd)  ? (eta || null) : undefined,
+            rates    :                 (whenUpdate.price       || whenAdd)  ? rates         : undefined,
             
-            useZones      : (hasSubzones && (whenUpdate.price       || whenAdd)) ? useZones      : undefined,
-            zones         : (hasSubzones && (whenUpdate.price       || whenAdd)) ? zones         : undefined,
+            useZones : (hasSubzones && (whenUpdate.price       || whenAdd)) ? useZones      : undefined,
+            zones    : (hasSubzones && (whenUpdate.price       || whenAdd)) ? zones         : undefined,
         } as PartialModel<TCoverageZoneWithId>;
     });
     
@@ -442,9 +442,9 @@ const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<T
                         
                         
                         // values:
-                        value={shippingRates}
+                        value={rates}
                         onChange={(value) => {
-                            setShippingRates(value);
+                            setRates(value);
                             setIsModified(true);
                         }}
                     />
