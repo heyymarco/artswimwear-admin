@@ -18,7 +18,7 @@ const usesShippingRatePreviewLayout = () => { // the <ListItem> of shipping list
         display            : 'grid',
         alignContent       : 'start',
         gridTemplate       : [[
-            '"startingWeight rate delete"', 'auto',
+            '"sWeight rate delete"', 'auto',
             '/',
             '1fr 1fr max-content'
         ]],
@@ -31,9 +31,9 @@ const usesShippingRatePreviewLayout = () => { // the <ListItem> of shipping list
         
         
         // children:
-        ...children('.startingWeight', { gridArea: 'startingWeight' }),
-        ...children('.rate'          , { gridArea: 'rate'           }),
-        ...children('.delete'        , { gridArea: 'delete'         }),
+        ...children('.sWeight', { gridArea: 'sWeight' }),
+        ...children('.rate'   , { gridArea: 'rate'    }),
+        ...children('.delete' , { gridArea: 'delete'  }),
     });
 };
 

@@ -151,7 +151,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
     const isValueValid = useMemo((): boolean => {
         const uniqueStartingWiths = new Set(
             value
-            .map(({startingWeight}) => startingWeight)
+            .map(({start}) => start)
         );
         return (value.length === uniqueStartingWiths.size);
     }, [value]);
@@ -168,10 +168,10 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
     // handlers:
     const handleModelCreate  = useEvent((): ShippingRateWithId => {
         return {
-            id             : '', // will be removed
+            id    : '', // will be removed
             
-            startingWeight : (lastValue === undefined) ? 0 : ((lastValue.startingWeight) + 0.01),
-            rate           : (lastValue === undefined) ? 0 :   lastValue.rate,
+            start : (lastValue === undefined) ? 0 : ((lastValue.start) + 0.01),
+            rate  : (lastValue === undefined) ? 0 :   lastValue.rate,
         };
     });
     const handleModelCreated = useEvent<CreateHandler<ShippingRateWithId>>((createdModelWithId) => {
@@ -196,13 +196,13 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
             mutatedValue.unshift(mutatedModel as ShippingRateWithId);
         }
         else {
-            const currentModel          = mutatedValue[modelIndex];
-            currentModel.startingWeight = mutatedModel.startingWeight ?? 0;
-            currentModel.rate           = mutatedModel.rate ?? 0;
+            const currentModel = mutatedValue[modelIndex];
+            currentModel.start = mutatedModel.start ?? 0;
+            currentModel.rate  = mutatedModel.rate  ?? 0;
             
             mutatedValue[modelIndex] = currentModel;
         } // if
-        mutatedValue.sort((a, b) => (a.startingWeight - b.startingWeight));
+        mutatedValue.sort((a, b) => (a.start - b.start));
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
     const handleModelDeleted = useEvent<DeleteHandler<ShippingRateWithId>>(({id}) => {
@@ -302,7 +302,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
                     
                     // components:
                     modelCreateComponent={
-                        (isDisabledOrReadOnly || ((lastValue !== undefined) && (lastValue.startingWeight >= 1000))) // reaches the limit => disable adding
+                        (isDisabledOrReadOnly || ((lastValue !== undefined) && (lastValue.start >= 1000))) // reaches the limit => disable adding
                         ? false
                         : handleModelCreate
                     }

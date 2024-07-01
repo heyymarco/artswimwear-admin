@@ -208,9 +208,9 @@ You do not have the privilege to view the shippings.`
             ||
             (Object.keys(rate).length !== 2)
             ||
-            ((typeof(rate.startingWeight) !== 'number') || !isFinite(rate.startingWeight) || (rate.startingWeight < 0))
+            ((typeof(rate.start) !== 'number') || !isFinite(rate.start) || (rate.start < 0))
             ||
-            ((typeof(rate.rate)           !== 'number') || !isFinite(rate.rate)           || (rate.rate           < 0))
+            ((typeof(rate.rate)  !== 'number') || !isFinite(rate.rate)  || (rate.rate  < 0))
         ))))
         ||
         ((useZones   !== undefined)                   && (typeof(useZones)      !== 'boolean'))

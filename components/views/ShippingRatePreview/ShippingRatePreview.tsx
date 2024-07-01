@@ -104,7 +104,7 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
     ...restListItemProps} = props;
     const {
         id,
-        startingWeight,
+        start,
         rate,
     } = model;
     
@@ -122,17 +122,17 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
         // conditions:
         if (!onUpdated) return;
         
-        let newStartingWeight = newValue ?? 0;
-        if (rates.some(({id: otherId, startingWeight: otherStartingWeight}) => (otherId !== id) && (otherStartingWeight === newStartingWeight))) { // a duplicate found
+        let newStart = newValue ?? 0;
+        if (rates.some(({id: otherId, start: otherStart}) => (otherId !== id) && (otherStart === newStart))) { // a duplicate found
             // try to de-duplicate:
-            newStartingWeight += (newStartingWeight >= startingWeight) ? 0.01 : -0.01; // jump more
-            if (rates.some(({id: otherId, startingWeight: otherStartingWeight}) => (otherId !== id) && (otherStartingWeight === newStartingWeight))) return; // failed to recover
+            newStart += (newStart >= start) ? 0.01 : -0.01; // jump more
+            if (rates.some(({id: otherId, start: otherStart}) => (otherId !== id) && (otherStart === newStart))) return; // failed to recover
         } // if
         
         
         
         // actions:
-        model.startingWeight = newStartingWeight;
+        model.start = newStart;
         onUpdated(model);
     });
     const handleRateChange           = useEvent<EditorChangeEventHandler<number|null>>((newValue) => {
@@ -164,7 +164,7 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
         >
             <ShippingWeightEditor
                 // classes:
-                className='startingWeight'
+                className='sWeight'
                 
                 
                 
@@ -179,19 +179,19 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
                 // validations:
                 required={true}
                 isValid={
-                    (startingWeight >= 0)
+                    (start >= 0)
                     &&
-                    (startingWeight <= 1000)
+                    (start <= 1000)
                     &&
-                    (((startingWeight % 0.01) < 0.0000001) || ((0.01 - (startingWeight % 0.01)) < 0.0000001))
+                    (((start % 0.01) < 0.0000001) || ((0.01 - (start % 0.01)) < 0.0000001))
                     &&
-                    !rates.some(({id: otherId, startingWeight: otherStartingWeight}) => (otherId !== id) && (otherStartingWeight === startingWeight))
+                    !rates.some(({id: otherId, start: otherStart}) => (otherId !== id) && (otherStart === start))
                 }
                 
                 
                 
                 // values:
-                value={startingWeight}
+                value={start}
                 onChange={handleStartingWeightChange}
             />
             
