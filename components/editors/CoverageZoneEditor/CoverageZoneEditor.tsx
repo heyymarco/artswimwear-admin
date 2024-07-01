@@ -267,7 +267,7 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
         else {
             const currentModel         = mutatedValue[modelIndex];
             currentModel.name          = mutatedModel.name          ?? '';
-            currentModel.estimate      = mutatedModel.estimate      || null;
+            currentModel.eta           = mutatedModel.eta           || null;
             currentModel.shippingRates = mutatedModel.shippingRates ?? [];
             if (!!subzoneEditor) {
                 currentModel.useZones  = mutatedModel.useZones      ?? (true as any);

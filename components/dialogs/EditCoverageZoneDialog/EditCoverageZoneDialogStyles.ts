@@ -88,11 +88,11 @@ export const usesDefaultRatesTabLayout = () => {
             display            : 'grid',
             alignContent       : 'start',
             gridTemplate       : [[
-                '"estimate-label   "', 'auto',
-                '"estimate-editor  "', 'auto',
-                '"................."', spacers.sm,
-                '"rate-label       "', 'auto',
-                '"rate-editor      "', 'auto',
+                '"eta-label  "', 'auto',
+                '"eta-editor "', 'auto',
+                '"..........."', spacers.sm,
+                '"rate-label "', 'auto',
+                '"rate-editor"', 'auto',
                 '/',
                 '1fr'
             ]],
@@ -106,11 +106,11 @@ export const usesDefaultRatesTabLayout = () => {
             
             
             // children:
-            ...children('.estimate.label'   , { gridArea: 'estimate-label'    }),
-            ...children('.estimate.editor'  , { gridArea: 'estimate-editor'   }),
+            ...children('.eta.label'   , { gridArea: 'eta-label'   }),
+            ...children('.eta.editor'  , { gridArea: 'eta-editor'  }),
             
-            ...children('.rate.label'       , { gridArea: 'rate-label'        }),
-            ...children('.rate.editor'      , { gridArea: 'rate-editor'       }),
+            ...children('.rate.label'  , { gridArea: 'rate-label'  }),
+            ...children('.rate.editor' , { gridArea: 'rate-editor' }),
         }),
     });
 };

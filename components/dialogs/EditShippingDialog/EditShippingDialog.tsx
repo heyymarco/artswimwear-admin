@@ -39,11 +39,13 @@ import {
     
     
     // simple-components:
+    Label,
     Check,
     
     
     
     // composite-components:
+    Group,
     TabPanel,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
@@ -67,8 +69,8 @@ import {
     NameEditor,
 }                           from '@heymarco/name-editor'
 import {
-    TextEditor,
-}                           from '@heymarco/text-editor'
+    NumberEditor,
+}                           from '@heymarco/number-editor'
 
 // internal components:
 import {
@@ -117,6 +119,7 @@ import {
     type CoverageStateWithId,
     type CoverageCity,
     type CoverageCityWithId,
+    type ShippingEta,
 }                           from '@/models'
 
 // stores:
@@ -186,12 +189,12 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     // states:
     const [isModified    , setIsModified   ] = useState<boolean>(false);
     
-    const [visibility    , setVisibility   ] = useState<ShippingVisibility     >(model?.visibility ?? 'DRAFT');
-    const [name          , setName         ] = useState<string                 >(model?.name       ?? ''     );
+    const [visibility    , setVisibility   ] = useState<ShippingVisibility>(model?.visibility ?? 'DRAFT');
+    const [name          , setName         ] = useState<string            >(model?.name       ?? ''     );
     
-    const [weightStep    , setWeightStep   ] = useState<number                 >(model?.weightStep ?? 1      );
-    const [estimate      , setEstimate     ] = useState<string                 >(model?.estimate   ?? ''     );
-    const [shippingRates , setShippingRates] = useState<ShippingRate[]         >(() => {
+    const [weightStep    , setWeightStep   ] = useState<number            >(model?.weightStep ?? 1      );
+    const [eta           , setEta          ] = useState<ShippingEta|null  >(model?.eta        ?? null   );
+    const [shippingRates , setShippingRates] = useState<ShippingRate[]    >(() => {
         const shippingRates = model?.shippingRates;
         if (!shippingRates) return [];
         return (
@@ -296,14 +299,14 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
         return await updateShipping({
             id            : id ?? '',
             
-            visibility    : (whenUpdate.visibility  || whenAdd) ? visibility         : undefined,
-            name          : (whenUpdate.description || whenAdd) ? name               : undefined,
+            visibility    : (whenUpdate.visibility  || whenAdd) ? visibility    : undefined,
+            name          : (whenUpdate.description || whenAdd) ? name          : undefined,
             
-            weightStep    : (whenUpdate.price       || whenAdd) ? weightStep         : undefined,
-            estimate      : (whenUpdate.description || whenAdd) ? (estimate || null) : undefined,
-            shippingRates : (whenUpdate.price       || whenAdd) ? shippingRates      : undefined,
+            weightStep    : (whenUpdate.price       || whenAdd) ? weightStep    : undefined,
+            eta           : (whenUpdate.description || whenAdd) ? (eta || null) : undefined,
+            shippingRates : (whenUpdate.price       || whenAdd) ? shippingRates : undefined,
             
-            useZones      : (whenUpdate.price       || whenAdd) ? useZones           : undefined,
+            useZones      : (whenUpdate.price       || whenAdd) ? useZones      : undefined,
             zones         : (whenUpdate.price       || whenAdd) ? ((): CoverageCountry[] =>
                 // remove id(s) from nested zone(s):
                 countries
@@ -495,31 +498,84 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                         }}
                     />
                     
-                    <span className='estimate label'>Estimated Delivery Time:</span>
-                    <TextEditor
+                    <span className='eta label'>Estimated Delivery Time:</span>
+                    <Group
                         // classes:
-                        className='estimate editor'
-                        
-                        
-                        
-                        // accessibilities:
-                        aria-label='Estimated Delivery Time'
-                        enabled={whenUpdate.description || whenAdd}
-                        
-                        
-                        
-                        // validations:
-                        required={false}
-                        
-                        
-                        
-                        // values:
-                        value={estimate}
-                        onChange={(value) => {
-                            setEstimate(value);
-                            setIsModified(true);
-                        }}
-                    />
+                        className='eta editor'
+                    >
+                        <Group>
+                            <Label>
+                                Min:
+                            </Label>
+                            <NumberEditor
+                                // accessibilities:
+                                aria-label='Estimated Delivery Time (Min)'
+                                enabled={whenUpdate.description || whenAdd}
+                                
+                                
+                                
+                                // validations:
+                                required={false}
+                                min={0}
+                                max={999}
+                                
+                                
+                                
+                                // values:
+                                value={eta?.min ?? null}
+                                onChange={(newMin) => {
+                                    setEta((current) => {
+                                        if (newMin === null) return null;
+                                        return {
+                                            min : newMin,
+                                            max : ((current === null) || (current.max < newMin)) ? newMin : current.max,
+                                        };
+                                    });
+                                    setIsModified(true);
+                                }}
+                            />
+                        </Group>
+                        <Label>
+                            -
+                        </Label>
+                        <Group>
+                            <Label>
+                                Max:
+                            </Label>
+                            <NumberEditor
+                                // classes:
+                                className='eta editor'
+                                
+                                
+                                
+                                // accessibilities:
+                                aria-label='Estimated Delivery Time (Max)'
+                                enabled={whenUpdate.description || whenAdd}
+                                
+                                
+                                
+                                // validations:
+                                required={eta?.min !== undefined}
+                                min={eta?.min ?? 0}
+                                max={999}
+                                
+                                
+                                
+                                // values:
+                                value={eta?.max ?? eta?.min ?? null}
+                                onChange={(newMax) => {
+                                    setEta((current) => {
+                                        if (current === null) return null;
+                                        return {
+                                            min : current.min,
+                                            max : ((newMax === null) || (current.min > newMax)) ? current.min : newMax,
+                                        };
+                                    });
+                                    setIsModified(true);
+                                }}
+                            />
+                        </Group>
+                    </Group>
                     
                     <span className='rate label'>Rate:</span>
                     <ShippingRateEditor
