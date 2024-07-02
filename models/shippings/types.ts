@@ -40,7 +40,7 @@ export interface CoverageZone<TSubzone extends CoverageSubzone>
     extends
         Omit<CoverageCountry, 'useZones'|'zones'>,
         Omit<CoverageState  , 'useZones'|'zones'>,
-        Omit<CoverageCity   , 'useZones'|'zones'>
+        Omit<CoverageCity   , 'useZones'|'zones'|'updatedAt'>
 {
     useZones : TSubzone extends never ? never : boolean
     zones    : TSubzone extends never ? never : TSubzone[]
@@ -49,7 +49,7 @@ export interface CoverageZoneWithId<TSubzone extends CoverageSubzone> extends Co
     id       : string
 }
 
-export type CoverageSubzone = CoverageState|CoverageCity|never
+export type CoverageSubzone = CoverageState|Omit<CoverageCity, 'updatedAt'>|never
 
 
 

@@ -38,7 +38,7 @@
     "@heymarco/text-editor": "^6.10.0",
     "@lexical/headless": "^0.12.4",
     "@lexical/react": "^0.12.4",
-    "@prisma/client": "^5.15.0",
+    "@prisma/client": "^5.16.1",
     "@reduxjs/toolkit": "^1.9.3",
     "@reusable-ui/components": "^6.13.1",
     "@reusable-ui/core": "^6.11.0",
@@ -71,6 +71,6 @@
   "devDependencies": {
     "@types/bun": "^1.0.8",
     "@types/mime-types": "^2.1.4",
-    "prisma": "^5.15.0"
+    "prisma": "^5.16.1"
   }
 }
