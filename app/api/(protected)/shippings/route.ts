@@ -201,7 +201,7 @@ You do not have the privilege to view the shippings.`
         ||
         ((weightStep !== undefined)                   && ((typeof(weightStep)   !== 'number') || !isFinite(weightStep) || (weightStep < 0)))
         ||
-        ((eta        !== undefined) && (eta !== null) && ((typeof(eta)          !== 'string') || (eta.length < 1)))
+        ((eta        !== undefined) && (eta !== null) && ((typeof(eta)          !== 'object') || (Object.keys(eta).length !== 2)))
         ||
         ((rates      !== undefined)                   && ((Array.isArray(rates) !== true    ) || (rates.length && rates.some((rate) =>
             (typeof(rate) !== 'object')
@@ -222,7 +222,7 @@ You do not have the privilege to view the shippings.`
             ||
             ((typeof(zone.name)  !== 'string') || (zone.name.length < 1))
             ||
-            ((zone.eta !== null) && (typeof(zone.eta) !== 'string') || (zone.eta.length < 1))
+            ((zone.eta !== null) && ((typeof(zone.eta) !== 'object') || (Object.keys(zone.eta.length).length !== 2)))
         ))))
         /* TODO: too complicated - validate use ZOD */
     ) {
