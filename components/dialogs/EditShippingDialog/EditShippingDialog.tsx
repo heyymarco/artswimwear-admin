@@ -113,11 +113,11 @@ import {
     // types:
     type ShippingDetail,
     type ShippingRate,
-    type CoverageCountry,
+    type CoverageCountryDetail,
     type CoverageCountryWithId,
-    type CoverageState,
+    type CoverageStateDetail,
     type CoverageStateWithId,
-    type CoverageCity,
+    type CoverageCityDetail,
     type CoverageCityWithId,
     type ShippingEta,
 }                           from '@/models'
@@ -215,13 +215,13 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
         const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
         return (
             countries
-            .map((coverageCountry: CoverageCountry) => ({
+            .map((coverageCountry: CoverageCountryDetail) => ({
                 ...coverageCountry,       // clone => immutable => mutable
                 id    : nanoid(),         // add a temporary id
-                zones : coverageCountry.zones.map((coverageState: CoverageState) => ({
+                zones : coverageCountry.zones.map((coverageState: CoverageStateDetail) => ({
                     ...coverageState,     // clone => immutable => mutable
                     id    : nanoid(),     // add a temporary id
-                    zones : coverageState.zones.map((coverageCity: CoverageCity) => ({
+                    zones : coverageState.zones.map((coverageCity: CoverageCityDetail) => ({
                         ...coverageCity,  // clone => immutable => mutable
                         id    : nanoid(), // add a temporary id
                     } satisfies CoverageCityWithId)),
@@ -307,7 +307,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             rates      : (whenUpdate.price       || whenAdd) ? rates         : undefined,
             
             useZones   : (whenUpdate.price       || whenAdd) ? useZones      : undefined,
-            zones      : (whenUpdate.price       || whenAdd) ? ((): CoverageCountry[] =>
+            zones      : (whenUpdate.price       || whenAdd) ? ((): CoverageCountryDetail[] =>
                 // remove id(s) from nested zone(s):
                 countries
                 .map(({id : _id, ...coverageCountry}: CoverageCountryWithId) => ({
@@ -316,9 +316,9 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                         ...coverageState,
                         zones : coverageState.zones.map(({id : _id, ...coverageCity}: CoverageCityWithId) => ({
                             ...coverageCity,
-                        } satisfies CoverageCity)),
-                    } satisfies CoverageState)),
-                } satisfies CoverageCountry))
+                        } satisfies CoverageCityDetail)),
+                    } satisfies CoverageStateDetail)),
+                } satisfies CoverageCountryDetail))
             )() : undefined,
         }).unwrap();
     });
