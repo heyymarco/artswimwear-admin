@@ -1,8 +1,7 @@
 // cssfn:
 import {
     // writes css in javascript:
-    rule,
-    fallback,
+    descendants,
     children,
     style,
     scope,
@@ -134,6 +133,12 @@ export const usesDefaultRatesTabLayout = () => {
             
             ...children('.rate.label'       , { gridArea: 'rate-label'        }),
             ...children('.rate.editor'      , { gridArea: 'rate-editor'       }),
+            
+            ...children('.eta.editor', {
+                ...descendants('.editor', {
+                    textAlign : 'end',
+                }),
+            }),
         }),
     });
 };

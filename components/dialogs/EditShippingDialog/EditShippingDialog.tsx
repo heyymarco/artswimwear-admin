@@ -617,7 +617,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                             </Label>
                             <NumberEditor
                                 // classes:
-                                className='fluid'
+                                className='editor fluid'
                                 
                                 
                                 
@@ -657,7 +657,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                         <Group className='fluid'>
                             <NumberEditor
                                 // classes:
-                                className='fluid'
+                                className='editor fluid'
                                 
                                 
                                 
