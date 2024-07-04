@@ -29,12 +29,23 @@ import {
 import {
     // react helper hooks:
     useEvent,
+    
+    
+    
+    // an accessibility management system:
+    AccessibilityProvider,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
 import {
     // base-components:
     Generic,
+    Indicator,
+    
+    
+    
+    // base-content-components:
+    Content,
     
     
     
@@ -71,6 +82,9 @@ import {
 import {
     NumberEditor,
 }                           from '@heymarco/number-editor'
+import {
+    type Address,
+}                           from '@heymarco/address-editor'
 
 // internal components:
 import {
@@ -85,6 +99,9 @@ import {
 import {
     CoverageZoneEditor,
 }                           from '@/components/editors/CoverageZoneEditor'
+import {
+    AddressEditor,
+}                           from '@/components/editors/AddressEditor'
 import {
     // react components:
     ShippingStateProvider,
@@ -112,6 +129,7 @@ import type {
 import {
     // types:
     type ShippingDetail,
+    type ShippingOrigin,
     type ShippingRate,
     type CoverageCountryDetail,
     type CoverageCountryWithId,
@@ -189,12 +207,26 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     // states:
     const [isModified, setIsModified] = useState<boolean>(false);
     
-    const [visibility, setVisibility] = useState<ShippingVisibility>(model?.visibility ?? 'DRAFT');
-    const [name      , setName      ] = useState<string            >(model?.name       ?? ''     );
+    const [visibility, setVisibility] = useState<ShippingVisibility >(model?.visibility ?? 'DRAFT');
+    const [name      , setName      ] = useState<string             >(model?.name       ?? ''     );
     
-    const [weightStep, setWeightStep] = useState<number            >(model?.weightStep ?? 1      );
-    const [eta       , setEta       ] = useState<ShippingEta|null  >(model?.eta        ?? null   );
-    const [rates     , setRates     ] = useState<ShippingRate[]    >(() => {
+    const [autoUpdate, setAutoUpdate] = useState<boolean            >(model?.autoUpdate ?? false  );
+    const [origin    , setOrigin    ] = useState<ShippingOrigin|null>(model?.origin     ?? null   );
+    const originAsAddress = useMemo((): Address|null => {
+        if (!origin) return null;
+        return {
+            ...origin,
+            zip       : '',
+            address   : '',
+            firstName : '',
+            lastName  : '',
+            phone     : '',
+        } satisfies Address;
+    }, [origin]);
+    
+    const [weightStep, setWeightStep] = useState<number             >(model?.weightStep ?? 1      );
+    const [eta       , setEta       ] = useState<ShippingEta|null   >(model?.eta        ?? null   );
+    const [rates     , setRates     ] = useState<ShippingRate[]     >(() => {
         const rates = model?.rates;
         if (!rates) return [];
         return (
@@ -205,8 +237,8 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
         );
     });
     
-    const [useZones      , setUseZones     ] = useState<boolean                >(model?.useZones   ?? true   );
-    const [countries     , setCountries    ] = useState<CoverageCountryWithId[]>((): CoverageCountryWithId[] => {
+    const [useZones      , setUseZones     ] = useState<boolean                 >(model?.useZones   ?? true   );
+    const [countries     , setCountries    ] = useState<CoverageCountryWithId[] >((): CoverageCountryWithId[] => {
         const countries = model?.zones;
         if (!countries) return [];
         
@@ -301,6 +333,9 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             
             visibility : (whenUpdate.visibility  || whenAdd) ? visibility    : undefined,
             name       : (whenUpdate.description || whenAdd) ? name          : undefined,
+            
+            autoUpdate : (whenUpdate.price       || whenAdd) ? autoUpdate    : undefined,
+            origin     : (whenUpdate.price       || whenAdd) ? origin        : undefined,
             
             weightStep : (whenUpdate.price       || whenAdd) ? weightStep    : undefined,
             eta        : (whenUpdate.description || whenAdd) ? (eta || null) : undefined,
@@ -466,6 +501,79 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                             setIsModified(true);
                         }}
                     />
+                    
+                    <Check
+                        // classes:
+                        className='autoUpdate label'
+                        
+                        
+                        
+                        // variants:
+                        theme='primary'
+                        
+                        
+                        
+                        // accessibilities:
+                        enabled={whenUpdate.price || whenAdd}
+                        
+                        
+                        
+                        // states:
+                        active={autoUpdate}
+                        onActiveChange={({active}) => {
+                            setAutoUpdate(active);
+                            setIsModified(true);
+                        }}
+                    >
+                        Enable auto update:
+                    </Check>
+                    <Content className='autoUpdate editor' theme='primaryAlt' mild={false}>
+                        <AccessibilityProvider
+                            // accessibilities:
+                            enabled={autoUpdate && (whenUpdate.price || whenAdd)}
+                        >
+                            <Indicator tag='p' nude={true}>
+                                Please specify the delivery departure location <span className='txt-sec'>(usually your shop location)</span>:
+                            </Indicator>
+                            <AddressEditor
+                                // values:
+                                value={originAsAddress}
+                                onChange={(newValue) => {
+                                    if (!newValue) {
+                                        setOrigin(null);
+                                    }
+                                    else {
+                                        const {
+                                            zip       : _zip,
+                                            address   : _address,
+                                            firstName : _firstName,
+                                            lastName  : _lastName,
+                                            phone     : _phone,
+                                            
+                                            ...newOrigin
+                                        } = newValue;
+                                        setOrigin(newOrigin);
+                                    } // if
+                                    
+                                    setIsModified(true);
+                                }}
+                                
+                                
+                                
+                                // validations:
+                                required={true}
+                                
+                                
+                                
+                                // components:
+                                zipEditorComponent={null}
+                                addressEditorComponent={null}
+                                firstNameEditorComponent={null}
+                                lastNameEditorComponent={null}
+                                phoneEditorComponent={null}
+                            />
+                        </AccessibilityProvider>
+                    </Content>
                 </form>
             </TabPanel>
             <TabPanel label={PAGE_SHIPPING_TAB_DEFAULT_RATES} panelComponent={<Generic className={styleSheet.defaultRatesTab} />}>

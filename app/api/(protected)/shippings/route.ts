@@ -198,19 +198,19 @@ You do not have the privilege to view the shippings.`
         
         ||
         
-        ((visibility !== undefined)                   && ((typeof(visibility)   !== 'string') || !['PUBLISHED', 'DRAFT'].includes(visibility)))
+        ((visibility !== undefined)                      && ((typeof(visibility)   !== 'string') || !['PUBLISHED', 'DRAFT'].includes(visibility)))
         ||
-        ((autoUpdate !== undefined)                   && (typeof(autoUpdate)    !== 'boolean'))
+        ((autoUpdate !== undefined)                      && (typeof(autoUpdate)    !== 'boolean'))
         ||
-        ((origin     !== undefined)                   && ((typeof(origin)       !== 'object') || (Object.keys(origin).length !== 2)))
+        ((origin     !== undefined) && (origin !== null) && ((typeof(origin)       !== 'object') || (Object.keys(origin).length !== 3)))
         ||
-        ((name       !== undefined)                   && ((typeof(name)         !== 'string') || (name.length < 1)))
+        ((name       !== undefined)                      && ((typeof(name)         !== 'string') || (name.length < 1)))
         ||
-        ((weightStep !== undefined)                   && ((typeof(weightStep)   !== 'number') || !isFinite(weightStep) || (weightStep < 0)))
+        ((weightStep !== undefined)                      && ((typeof(weightStep)   !== 'number') || !isFinite(weightStep) || (weightStep < 0)))
         ||
-        ((eta        !== undefined) && (eta !== null) && ((typeof(eta)          !== 'object') || (Object.keys(eta).length !== 2)))
+        ((eta        !== undefined) && (eta !== null)    && ((typeof(eta)          !== 'object') || (Object.keys(eta).length !== 2)))
         ||
-        ((rates      !== undefined)                   && ((Array.isArray(rates) !== true    ) || (rates.length && rates.some((rate) =>
+        ((rates      !== undefined)                      && ((Array.isArray(rates) !== true    ) || (rates.length && rates.some((rate) =>
             (typeof(rate) !== 'object')
             ||
             (Object.keys(rate).length !== 2)
@@ -220,9 +220,9 @@ You do not have the privilege to view the shippings.`
             ((typeof(rate.rate)  !== 'number') || !isFinite(rate.rate)  || (rate.rate  < 0))
         ))))
         ||
-        ((useZones   !== undefined)                   && (typeof(useZones)      !== 'boolean'))
+        ((useZones   !== undefined)                      && (typeof(useZones)      !== 'boolean'))
         ||
-        ((zones      !== undefined)                   && ((Array.isArray(zones) !== true    ) || (zones.length && zones.some((zone) =>
+        ((zones      !== undefined)                      && ((Array.isArray(zones) !== true    ) || (zones.length && zones.some((zone) =>
             (typeof(zone) !== 'object')
             ||
             (Object.keys(zone).length !== 5)

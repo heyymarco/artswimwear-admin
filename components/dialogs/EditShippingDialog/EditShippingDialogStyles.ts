@@ -54,6 +54,9 @@ export const usesInfoTabLayout = () => {
                 '"................."', spacers.sm,
                 '"visibility-label "', 'auto',
                 '"visibility-editor"', 'auto',
+                '"................."', spacers.sm,
+                '"autoUpdate-label "', 'auto',
+                '"autoUpdate-editor"', 'auto',
                 '/',
                 '1fr'
             ]],
@@ -72,6 +75,9 @@ export const usesInfoTabLayout = () => {
             
             ...children('.visibility.label' , { gridArea: 'visibility-label'  }),
             ...children('.visibility.editor', { gridArea: 'visibility-editor' }),
+            
+            ...children('.autoUpdate.label' , { gridArea: 'autoUpdate-label'  }),
+            ...children('.autoUpdate.editor', { gridArea: 'autoUpdate-editor' }),
         }),
     });
 };
