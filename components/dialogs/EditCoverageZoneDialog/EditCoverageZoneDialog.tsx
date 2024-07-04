@@ -355,13 +355,18 @@ const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<T
                         // classes:
                         className='eta editor'
                     >
-                        <Group>
-                            <Label>
-                                Min:
+                        <Group className='fluid'>
+                            <Label className='solid'>
+                                Min
                             </Label>
                             <NumberEditor
+                                // classes:
+                                className='editor fluid'
+                                
+                                
+                                
                                 // accessibilities:
-                                aria-label='Estimated Delivery Time (Min)'
+                                aria-label='Min'
                                 enabled={whenUpdate.description || whenAdd}
                                 
                                 
@@ -386,22 +391,22 @@ const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<T
                                     setIsModified(true);
                                 }}
                             />
+                            <Label className='solid'>
+                                Days
+                            </Label>
                         </Group>
-                        <Label>
+                        <Label className='solid'>
                             -
                         </Label>
-                        <Group>
-                            <Label>
-                                Max:
-                            </Label>
+                        <Group className='fluid'>
                             <NumberEditor
                                 // classes:
-                                className='eta editor'
+                                className='editor fluid'
                                 
                                 
                                 
                                 // accessibilities:
-                                aria-label='Estimated Delivery Time (Max)'
+                                aria-label='Max'
                                 enabled={whenUpdate.description || whenAdd}
                                 
                                 
@@ -426,6 +431,12 @@ const EditCoverageZoneDialog = <TCoverageZoneWithId extends CoverageZoneWithId<T
                                     setIsModified(true);
                                 }}
                             />
+                            <Label className='solid'>
+                                Days
+                            </Label>
+                            <Label className='solid'>
+                                Max
+                            </Label>
                         </Group>
                     </Group>
                     
