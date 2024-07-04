@@ -226,7 +226,7 @@ You do not have the privilege to view the shippings.`
             ||
             ((typeof(zone.name)  !== 'string') || (zone.name.length < 1))
             ||
-            ((zone.eta !== null) && ((typeof(zone.eta) !== 'object') || (Object.keys(zone.eta.length).length !== 2)))
+            ((zone.eta !== null) && ((typeof(zone.eta) !== 'object') || (Object.keys(zone.eta).length !== 2)))
         ))))
         /* TODO: too complicated - validate use ZOD */
     ) {
