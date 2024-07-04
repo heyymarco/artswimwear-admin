@@ -177,6 +177,7 @@ You do not have the privilege to view the shippings.`
         visibility,
         
         autoUpdate,
+        origin,
         
         name,
         
@@ -200,6 +201,8 @@ You do not have the privilege to view the shippings.`
         ((visibility !== undefined)                   && ((typeof(visibility)   !== 'string') || !['PUBLISHED', 'DRAFT'].includes(visibility)))
         ||
         ((autoUpdate !== undefined)                   && (typeof(autoUpdate)    !== 'boolean'))
+        ||
+        ((origin     !== undefined)                   && ((typeof(origin)       !== 'object') || (Object.keys(origin).length !== 2)))
         ||
         ((name       !== undefined)                   && ((typeof(name)         !== 'string') || (name.length < 1)))
         ||
@@ -256,10 +259,10 @@ You do not have the privilege to add new shipping.`
 You do not have the privilege to modify the shipping name.`
                 }, { status: 403 }); // handled with error: forbidden
                 
-                if (!session.role?.shipping_up && ((autoUpdate !== undefined) || (weightStep !== undefined) || (eta !== undefined) || (rates !== undefined) || (useZones !== undefined) || (zones !== undefined))) return Response.json({ error:
+                if (!session.role?.shipping_up && ((autoUpdate !== undefined) || (origin !== undefined) || (weightStep !== undefined) || (eta !== undefined) || (rates !== undefined) || (useZones !== undefined) || (zones !== undefined))) return Response.json({ error:
 `Access denied.
 
-You do not have the privilege to modify the shipping autoUpdate, weightStep, eta, rates, and/or areas.`
+You do not have the privilege to modify the shipping autoUpdate, origin, weightStep, eta, rates, and/or areas.`
                 }, { status: 403 }); // handled with error: forbidden
                 
                 if (!session.role?.shipping_uv && (visibility !== undefined)) return Response.json({ error:
@@ -277,6 +280,7 @@ You do not have the privilege to modify the shipping visibility.`
                 visibility,
                 
                 autoUpdate,
+                origin,
                 
                 name,
                 
