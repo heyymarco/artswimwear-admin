@@ -611,13 +611,18 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                         // classes:
                         className='eta editor'
                     >
-                        <Group>
-                            <Label>
-                                Min:
+                        <Group className='fluid'>
+                            <Label className='solid'>
+                                Min
                             </Label>
                             <NumberEditor
+                                // classes:
+                                className='fluid'
+                                
+                                
+                                
                                 // accessibilities:
-                                aria-label='Estimated Delivery Time (Min)'
+                                aria-label='Min'
                                 enabled={whenUpdate.description || whenAdd}
                                 
                                 
@@ -642,22 +647,22 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                                     setIsModified(true);
                                 }}
                             />
+                            <Label className='solid'>
+                                Days
+                            </Label>
                         </Group>
-                        <Label>
+                        <Label className='solid'>
                             -
                         </Label>
-                        <Group>
-                            <Label>
-                                Max:
-                            </Label>
+                        <Group className='fluid'>
                             <NumberEditor
                                 // classes:
-                                className='eta editor'
+                                className='fluid'
                                 
                                 
                                 
                                 // accessibilities:
-                                aria-label='Estimated Delivery Time (Max)'
+                                aria-label='Max'
                                 enabled={whenUpdate.description || whenAdd}
                                 
                                 
@@ -682,6 +687,12 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                                     setIsModified(true);
                                 }}
                             />
+                            <Label className='solid'>
+                                Days
+                            </Label>
+                            <Label className='solid'>
+                                Max
+                            </Label>
                         </Group>
                     </Group>
                     

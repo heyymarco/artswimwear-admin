@@ -78,6 +78,11 @@ export const usesInfoTabLayout = () => {
             
             ...children('.autoUpdate.label' , { gridArea: 'autoUpdate-label'  }),
             ...children('.autoUpdate.editor', { gridArea: 'autoUpdate-editor' }),
+            
+            ...children('.autoUpdate.editor', {
+                // layouts:
+                display : 'grid',
+            }),
         }),
     });
 };
