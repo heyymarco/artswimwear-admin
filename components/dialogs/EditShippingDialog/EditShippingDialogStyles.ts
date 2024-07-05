@@ -48,14 +48,13 @@ export const usesInfoTabLayout = () => {
             display            : 'grid',
             alignContent       : 'start',
             gridTemplate       : [[
-                '"name-label       "', 'auto',
-                '"name-editor      "', 'auto',
-                '"................."', spacers.sm,
-                '"visibility-label "', 'auto',
-                '"visibility-editor"', 'auto',
-                '"................."', spacers.sm,
-                '"autoUpdate-label "', 'auto',
-                '"autoUpdate-editor"', 'auto',
+                '"name-label        "', 'auto',
+                '"name-editor       "', 'auto',
+                '"................. "', spacers.sm,
+                '"visibility-label  "', 'auto',
+                '"visibility-editor "', 'auto',
+                '".................."', spacers.sm,
+                '"autoUpdate-section"', 'auto',
                 '/',
                 '1fr'
             ]],
@@ -69,18 +68,41 @@ export const usesInfoTabLayout = () => {
             
             
             // children:
-            ...children('.name.label'       , { gridArea: 'name-label'        }),
-            ...children('.name.editor'      , { gridArea: 'name-editor'       }),
+            ...children('.name.label'        , { gridArea: 'name-label'         }),
+            ...children('.name.editor'       , { gridArea: 'name-editor'        }),
             
-            ...children('.visibility.label' , { gridArea: 'visibility-label'  }),
-            ...children('.visibility.editor', { gridArea: 'visibility-editor' }),
+            ...children('.visibility.label'  , { gridArea: 'visibility-label'   }),
+            ...children('.visibility.editor' , { gridArea: 'visibility-editor'  }),
             
-            ...children('.autoUpdate.label' , { gridArea: 'autoUpdate-label'  }),
-            ...children('.autoUpdate.editor', { gridArea: 'autoUpdate-editor' }),
+            ...children('.autoUpdate.section', { gridArea: 'autoUpdate-section' }),
             
-            ...children('.autoUpdate.editor', {
+            ...children('.autoUpdate.section', {
                 // layouts:
-                display : 'grid',
+                display            : 'grid',
+                alignContent       : 'start',
+                gridTemplate       : [[
+                    '"autoUpdate-label  "', 'auto',
+                    '"autoUpdate-editor "', 'auto',
+                    '/',
+                    '1fr'
+                ]],
+                
+                
+                
+                // spacings:
+                gapInline          : 'inherit',
+                gapBlock           : 'inherit',
+                
+                
+                
+                // children:
+                ...children('.autoUpdate.label'  , { gridArea: 'autoUpdate-label'   }),
+                ...children('.autoUpdate.editor' , { gridArea: 'autoUpdate-editor'  }),
+                
+                ...children('.autoUpdate.editor' , {
+                    // layouts:
+                    display : 'grid',
+                }),
             }),
         }),
     });

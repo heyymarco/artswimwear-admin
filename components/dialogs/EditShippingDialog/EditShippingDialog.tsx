@@ -55,6 +55,11 @@ import {
     
     
     
+    // menu-components:
+    Collapse,
+    
+    
+    
     // composite-components:
     Group,
     TabPanel,
@@ -175,6 +180,11 @@ import './EditShippingDialogStyles';
 
 // utilities:
 const emptyStringPromise = Promise.resolve<string[]>([]);
+const systemShippings : string[] = [
+    'jne reguler',
+    'jne yes',
+    'jne oke',
+];
 
 
 
@@ -261,6 +271,8 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             } satisfies CoverageCountryWithId))
         );
     });
+    
+    const isSystemShipping = systemShippings.includes(name.trim().toLowerCase());
     
     
     
@@ -502,78 +514,88 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                         }}
                     />
                     
-                    <Check
-                        // classes:
-                        className='autoUpdate label'
-                        
-                        
-                        
+                    <Collapse
                         // variants:
-                        theme='primary'
-                        
-                        
-                        
-                        // accessibilities:
-                        enabled={whenUpdate.price || whenAdd}
+                        className='autoUpdate section'
                         
                         
                         
                         // states:
-                        active={autoUpdate}
-                        onActiveChange={({active}) => {
-                            setAutoUpdate(active);
-                            setIsModified(true);
-                        }}
+                        expanded={isSystemShipping}
                     >
-                        Enable auto update:
-                    </Check>
-                    <Content className='autoUpdate editor' theme='primaryAlt' mild={false}>
-                        <AccessibilityProvider
+                        <Check
+                            // classes:
+                            className='autoUpdate label'
+                            
+                            
+                            
+                            // variants:
+                            theme='primary'
+                            
+                            
+                            
                             // accessibilities:
-                            enabled={autoUpdate && (whenUpdate.price || whenAdd)}
+                            enabled={whenUpdate.price || whenAdd}
+                            
+                            
+                            
+                            // states:
+                            active={autoUpdate}
+                            onActiveChange={({active}) => {
+                                setAutoUpdate(active);
+                                setIsModified(true);
+                            }}
                         >
-                            <Indicator tag='p' nude={true}>
-                                Please specify the delivery departure location <span className='txt-sec'>(usually your shop location)</span>:
-                            </Indicator>
-                            <AddressEditor
-                                // values:
-                                value={originAsAddress}
-                                onChange={(newValue) => {
-                                    if (!newValue) {
-                                        setOrigin(null);
-                                    }
-                                    else {
-                                        const {
-                                            zip       : _zip,
-                                            address   : _address,
-                                            firstName : _firstName,
-                                            lastName  : _lastName,
-                                            phone     : _phone,
-                                            
-                                            ...newOrigin
-                                        } = newValue;
-                                        setOrigin(newOrigin);
-                                    } // if
+                            Enable auto update:
+                        </Check>
+                        <Content className='autoUpdate editor' theme='primaryAlt' mild={false}>
+                            <AccessibilityProvider
+                                // accessibilities:
+                                enabled={isSystemShipping && autoUpdate && (whenUpdate.price || whenAdd)}
+                            >
+                                <Indicator tag='p' nude={true}>
+                                    Please specify the delivery departure location <span className='txt-sec'>(usually your shop location)</span>:
+                                </Indicator>
+                                <AddressEditor
+                                    // values:
+                                    value={originAsAddress}
+                                    onChange={(newValue) => {
+                                        if (!newValue) {
+                                            setOrigin(null);
+                                        }
+                                        else {
+                                            const {
+                                                zip       : _zip,
+                                                address   : _address,
+                                                firstName : _firstName,
+                                                lastName  : _lastName,
+                                                phone     : _phone,
+                                                
+                                                ...newOrigin
+                                            } = newValue;
+                                            setOrigin(newOrigin);
+                                        } // if
+                                        
+                                        setIsModified(true);
+                                    }}
                                     
-                                    setIsModified(true);
-                                }}
-                                
-                                
-                                
-                                // validations:
-                                required={true}
-                                
-                                
-                                
-                                // components:
-                                zipEditorComponent={null}
-                                addressEditorComponent={null}
-                                firstNameEditorComponent={null}
-                                lastNameEditorComponent={null}
-                                phoneEditorComponent={null}
-                            />
-                        </AccessibilityProvider>
-                    </Content>
+                                    
+                                    
+                                    // validations:
+                                    required={true}
+                                    
+                                    
+                                    
+                                    // components:
+                                    zipEditorComponent={null}
+                                    addressEditorComponent={null}
+                                    firstNameEditorComponent={null}
+                                    lastNameEditorComponent={null}
+                                    phoneEditorComponent={null}
+                                />
+                            </AccessibilityProvider>
+                        </Content>
+                    </Collapse>
                 </form>
             </TabPanel>
             <TabPanel label={PAGE_SHIPPING_TAB_DEFAULT_RATES} panelComponent={<Generic className={styleSheet.defaultRatesTab} />}>
