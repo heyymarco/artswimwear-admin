@@ -43,6 +43,11 @@ import {
     createStockMap,
 }                           from '@/models'
 import {
+    type Prisma,
+}                           from '@prisma/client'
+
+// ORMs:
+import {
     prisma,
 }                           from '@/libs/prisma.server'
 
@@ -794,7 +799,7 @@ You do not have the privilege to modify the product stock(s).`
                         variantIds : [],   // no related variants
                     }
                 } : undefined,
-            };
+            } satisfies Prisma.ProductUpdateInput;
             const select = {
                 id             : true,
                 
@@ -855,7 +860,7 @@ You do not have the privilege to modify the product stock(s).`
                         variantIds : true,
                     },
                 },
-            };
+            } satisfies Prisma.ProductSelect;
             const productDetail : ProductDetail = (
                 !id
                 ? await prismaTransaction.product.create({
