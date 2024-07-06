@@ -28,41 +28,45 @@ export interface ShippingDetail
             // records:
             |'createdAt'
             |'updatedAt'
-            
-            // data:
-            |'zones' // we redefined the zones with less detail
         >
 {
-    // data:
-    zones : CoverageCountryDetail[] // we redefined the zones with less detail
+    // relations:
+    zones : CoverageCountryDetail[]
 }
 
 export interface CoverageCountryDetail
     extends
         Omit<CoverageCountry,
-            // data:
-            'zones' // we redefined the zones with less detail
+            // relations:
+            |'parentId'
         >
 {
-    // data:
-    zones : CoverageStateDetail[] // we redefined the zones with less detail
+    // relations:
+    zones : CoverageStateDetail[]
 }
 export interface CoverageStateDetail
     extends
         Omit<CoverageState,
-            // data:
-            'zones' // we redefined the zones with less detail
+            // relations:
+            |'parentId'
         >
 {
-    // data:
-    zones : CoverageCityDetail[] // we redefined the zones with less detail
+    // relations:
+    zones : CoverageCityDetail[] 
 }
 export interface CoverageCityDetail
     extends
         Omit<CoverageCity,
             // data:
-            |'updatedAt' // less detailed of `updatedAt` because we don't need it (and won't update it) for the `EditCoverageZoneDialog`
-        >
+            |'updatedAt' // changed to optional for the `EditCoverageZoneDialog`
+            
+            // relations:
+            |'parentId'
+        >,
+        Partial<Pick<CoverageCity,
+            // data:
+            |'updatedAt' // changed to optional for the `EditCoverageZoneDialog`
+        >>
 {
 }
 
@@ -106,48 +110,3 @@ export interface CoverageZoneWithId<TSubzone extends CoverageSubzone>
 }
 
 export type CoverageSubzone = CoverageStateDetail|CoverageCityDetail|never
-
-
-
-export interface CoverageCountryWithId
-    extends Omit<CoverageCountryDetail,
-        // data:
-        |'zones' // id-ify the sub-zones
-    >
-{
-    // records:
-    id    : string
-    
-    
-    
-    // data:
-    zones : CoverageStateWithId[] // id-ify the sub-zones
-}
-export interface CoverageStateWithId
-    extends Omit<CoverageStateDetail,
-        // data:
-        |'zones' // id-ify the sub-zones
-    >
-{
-    // records:
-    id    : string
-    
-    
-    
-    // data:
-    zones : CoverageCityWithId[] // id-ify the sub-zones
-}
-export interface CoverageCityWithId
-    extends Omit<CoverageCityDetail,
-        // data:
-        |'zones' // id-ify the sub-zones
-    >
-{
-    // records:
-    id    : string
-    
-    
-    
-    // data:
-    // zones : CoverageVillageWithId[] // reserved for the future
-}

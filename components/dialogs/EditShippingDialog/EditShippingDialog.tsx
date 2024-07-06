@@ -133,15 +133,13 @@ import type {
 }                           from '@prisma/client'
 import {
     // types:
+    type ShippingProvider,
     type ShippingDetail,
     type ShippingOrigin,
     type ShippingRate,
     type CoverageCountryDetail,
-    type CoverageCountryWithId,
     type CoverageStateDetail,
-    type CoverageStateWithId,
     type CoverageCityDetail,
-    type CoverageCityWithId,
     type ShippingEta,
 }                           from '@/models'
 
@@ -248,27 +246,23 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     });
     
     const [useZones      , setUseZones     ] = useState<boolean                 >(model?.useZones   ?? true   );
-    const [countries     , setCountries    ] = useState<CoverageCountryWithId[] >((): CoverageCountryWithId[] => {
+    const [countries     , setCountries    ] = useState<CoverageCountryDetail[] >((): CoverageCountryDetail[] => {
         const countries = model?.zones;
         if (!countries) return [];
         
         
         
-        const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
         return (
             countries
             .map((coverageCountry: CoverageCountryDetail) => ({
                 ...coverageCountry,       // clone => immutable => mutable
-                id    : nanoid(),         // add a temporary id
                 zones : coverageCountry.zones.map((coverageState: CoverageStateDetail) => ({
                     ...coverageState,     // clone => immutable => mutable
-                    id    : nanoid(),     // add a temporary id
                     zones : coverageState.zones.map((coverageCity: CoverageCityDetail) => ({
                         ...coverageCity,  // clone => immutable => mutable
-                        id    : nanoid(), // add a temporary id
-                    } satisfies CoverageCityWithId)),
-                } satisfies CoverageStateWithId)),
-            } satisfies CoverageCountryWithId))
+                    } satisfies CoverageCityDetail)),
+                } satisfies CoverageStateDetail)),
+            } satisfies CoverageCountryDetail))
         );
     });
     
@@ -341,7 +335,10 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     // handlers:
     const handleUpdate         = useEvent<UpdateHandler<ShippingDetail>>(async ({id, whenAdd, whenUpdate}) => {
         return await updateShipping({
-            id         : id ?? '',
+            id         : id ?? (() => {
+                const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
+                return ` ${nanoid()}`; // starts with space{random-temporary-id}
+            })(),
             
             visibility : (whenUpdate.visibility  || whenAdd) ? visibility    : undefined,
             name       : (whenUpdate.description || whenAdd) ? name          : undefined,
@@ -354,19 +351,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             rates      : (whenUpdate.price       || whenAdd) ? rates         : undefined,
             
             useZones   : (whenUpdate.price       || whenAdd) ? useZones      : undefined,
-            zones      : (whenUpdate.price       || whenAdd) ? ((): CoverageCountryDetail[] =>
-                // remove id(s) from nested zone(s):
-                countries
-                .map(({id : _id, ...coverageCountry}: CoverageCountryWithId) => ({
-                    ...coverageCountry,
-                    zones : coverageCountry.zones.map(({id : _id, ...coverageState}: CoverageStateWithId) => ({
-                        ...coverageState,
-                        zones : coverageState.zones.map(({id : _id, ...coverageCity}: CoverageCityWithId) => ({
-                            ...coverageCity,
-                        } satisfies CoverageCityDetail)),
-                    } satisfies CoverageStateDetail)),
-                } satisfies CoverageCountryDetail))
-            )() : undefined,
+            zones      : (whenUpdate.price       || whenAdd) ? countries     : undefined,
         }).unwrap();
     });
     
@@ -766,7 +751,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                         privilegeUpdate = {privilegeUpdate}
                         privilegeDelete = {privilegeDelete}
                 >
-                    <CoverageZoneEditor<CoverageCountryWithId, CoverageStateWithId>
+                    <CoverageZoneEditor<CoverageCountryDetail, CoverageStateDetail>
                         // data:
                         modelName='Country'
                         modelNamePlural='Countries'
@@ -803,7 +788,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                         }
                         zoneNameOverride={getCountryNameByCode}
                         subzoneEditor={
-                            <CoverageZoneEditor<CoverageStateWithId, CoverageCityWithId>
+                            <CoverageZoneEditor<CoverageStateDetail, CoverageCityDetail>
                                 // data:
                                 modelName='State'
                                 modelNamePlural='States'
@@ -819,7 +804,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                                     />
                                 }
                                 subzoneEditor={
-                                    <CoverageZoneEditor<CoverageCityWithId & { useZones: never, zones: never }, never>
+                                    <CoverageZoneEditor<CoverageCityDetail & { useZones: never, zones: never }, never>
                                         // data:
                                         modelName='City'
                                         modelNamePlural='Cities'
