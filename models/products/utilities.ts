@@ -12,16 +12,16 @@ import type {
 
 
 // utilities:
-export interface VariantDiff {
-    variantDels      : string[]
-    variantAdds      : Omit<VariantDetail, 'id'>[]
-    variantMods      : VariantDetail[]
-}
 export interface VariantGroupDiff {
     variantGroupOris : VariantGroupDetail[]
     variantGroupDels : string[]
     variantGroupAdds : (Omit<VariantGroupDetail, 'id'|'variants'> & Pick<VariantDiff, 'variantAdds'>)[]
     variantGroupMods : (Omit<VariantGroupDetail,      'variants'> & VariantDiff)[]
+}
+export interface VariantDiff {
+    variantDels      : string[]
+    variantAdds      : Omit<VariantDetail, 'id'>[]
+    variantMods      : VariantDetail[]
 }
 export const createVariantGroupDiff = (variantGroups: VariantGroupDetail[], variantGroupOris : VariantGroupDetail[]): VariantGroupDiff => {
     const variantGroupDels : VariantGroupDiff['variantGroupDels'] = (() => {
