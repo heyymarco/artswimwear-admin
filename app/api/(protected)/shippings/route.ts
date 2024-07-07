@@ -350,7 +350,7 @@ You do not have the privilege to modify the shipping visibility.`
                     
                     
                     if (
-                        !session.role?.shipping_up
+                        !session.role?.shipping_c
                         &&
                         (
                             !!coverageCountryAdds.length
@@ -366,13 +366,13 @@ You do not have the privilege to modify the shipping visibility.`
                     ) return Response.json({ error:
 `Access denied.
 
-You do not have the privilege to add new shippingProvider area.`
+You do not have the privilege to add new shipping area.`
                     }, { status: 403 }); // handled with error: forbidden
                     
                     
                     
                     if (
-                        !session.role?.shipping_up
+                        !session.role?.shipping_d
                         &&
                         (
                             !!coverageCountryDels.length
@@ -388,7 +388,47 @@ You do not have the privilege to add new shippingProvider area.`
                     ) return Response.json({ error:
 `Access denied.
 
-You do not have the privilege to delete the shippingProvider area.`
+You do not have the privilege to delete the shipping area.`
+                    }, { status: 403 }); // handled with error: forbidden
+                    
+                    
+                    
+                    if (
+                        !session.role?.shipping_ud
+                        &&
+                        coverageCountryMods
+                        .some(({id, name, eta, coverageStateMods}) => {
+                            const coverageCountryOri = coverageCountryOris.find(({id: idOri}) => (idOri === id));
+                            return (
+                                (name !== coverageCountryOri?.name)
+                                ||
+                                ((!!eta !== !!coverageCountryOri.eta) || (eta?.min !== coverageCountryOri.eta?.min) || (eta?.max !== coverageCountryOri.eta?.max))
+                                ||
+                                coverageStateMods
+                                .some(({id, name, eta, coverageCityMods}) => {
+                                    const coverageStateOri = coverageCountryOri.zones.find(({id: idOri}) => (idOri === id));
+                                    return (
+                                        (name !== coverageStateOri?.name)
+                                        ||
+                                        ((!!eta !== !!coverageStateOri.eta) || (eta?.min !== coverageStateOri.eta?.min) || (eta?.max !== coverageStateOri.eta?.max))
+                                        ||
+                                        coverageCityMods
+                                        .some(({id, name, eta}) => {
+                                            const coverageCityOri = coverageStateOri.zones.find(({id: idOri}) => (idOri === id));
+                                            return (
+                                                (name !== coverageCityOri?.name)
+                                                ||
+                                                ((!!eta !== !!coverageCityOri.eta) || (eta?.min !== coverageCityOri.eta?.min) || (eta?.max !== coverageCityOri.eta?.max))
+                                            );
+                                        })
+                                    );
+                                })
+                            );
+                        })
+                    ) return Response.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the shipping name and/or shipping eta.`
                     }, { status: 403 }); // handled with error: forbidden
                     
                     
@@ -396,19 +436,64 @@ You do not have the privilege to delete the shippingProvider area.`
                     if (
                         !session.role?.shipping_up
                         &&
-                        (
-                            !!coverageCountryMods.length
-                        )
+                        coverageCountryMods
+                        .some(({id, useZones, rates, coverageStateMods}) => {
+                            const coverageCountryOri = coverageCountryOris.find(({id: idOri}) => (idOri === id));
+                            return (
+                                (useZones !== coverageCountryOri?.useZones)
+                                ||
+                                ((rates?.length !== coverageCountryOri?.rates.length) || !((): boolean => {
+                                    const compareRates = coverageCountryOri.rates;
+                                    for (let rateIndex = 0; rateIndex < rates.length; rateIndex++) {
+                                        if (rates[rateIndex].start !== compareRates[rateIndex].start) return false; // not_equal
+                                        if (rates[rateIndex].rate  !== compareRates[rateIndex].rate ) return false; // not_equal
+                                    } // for
+                                    return true; // deep_equal
+                                })())
+                                ||
+                                coverageStateMods
+                                .some(({id, useZones, rates, coverageCityMods}) => {
+                                    const coverageStateOri = coverageCountryOri.zones.find(({id: idOri}) => (idOri === id));
+                                    return (
+                                        (useZones !== coverageStateOri?.useZones)
+                                        ||
+                                        ((rates?.length !== coverageStateOri?.rates.length) || !((): boolean => {
+                                            const compareRates = coverageStateOri.rates;
+                                            for (let rateIndex = 0; rateIndex < rates.length; rateIndex++) {
+                                                if (rates[rateIndex].start !== compareRates[rateIndex].start) return false; // not_equal
+                                                if (rates[rateIndex].rate  !== compareRates[rateIndex].rate ) return false; // not_equal
+                                            } // for
+                                            return true; // deep_equal
+                                        })())
+                                        ||
+                                        coverageCityMods
+                                        .some(({id, rates}) => {
+                                            const coverageCityOri = coverageStateOri.zones.find(({id: idOri}) => (idOri === id));
+                                            return (
+                                                ((rates?.length !== coverageCityOri?.rates.length) || !((): boolean => {
+                                                    const compareRates = coverageCityOri.rates;
+                                                    for (let rateIndex = 0; rateIndex < rates.length; rateIndex++) {
+                                                        if (rates[rateIndex].start !== compareRates[rateIndex].start) return false; // not_equal
+                                                        if (rates[rateIndex].rate  !== compareRates[rateIndex].rate ) return false; // not_equal
+                                                    } // for
+                                                    return true; // deep_equal
+                                                })())
+                                            );
+                                        })
+                                    );
+                                })
+                            );
+                        })
                     ) return Response.json({ error:
 `Access denied.
 
-You do not have the privilege to modify the shippingProvider area.`
+You do not have the privilege to modify the shipping rates and/or shipping zones.`
                     }, { status: 403 }); // handled with error: forbidden
                     
                     
                     
                     if (
-                        !session.role?.shipping_up
+                        !session.role?.shipping_ud
                         &&
                         !((): boolean => {
                             // compare the order of coverageCountries|coverageStates:
@@ -450,7 +535,7 @@ You do not have the privilege to modify the shippingProvider area.`
                     ) return Response.json({ error:
 `Access denied.
 
-You do not have the privilege to modify the shippingProvider order.`
+You do not have the privilege to modify the shipping order.`
                     }, { status: 403 }); // handled with error: forbidden
                 } // if
             } // if
