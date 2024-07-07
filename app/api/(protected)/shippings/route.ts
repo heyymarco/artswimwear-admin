@@ -459,6 +459,7 @@ You do not have the privilege to modify the shippingProvider order.`
             
             
             //#region save changes
+            const now = new Date();
             const data = {
                 visibility,
                 
@@ -490,7 +491,10 @@ You do not have the privilege to modify the shippingProvider order.`
                                 
                                 // relations:
                                 zones : {
-                                    create : coverageCityAdds,
+                                    create : !coverageCityAdds.length ? undefined : coverageCityAdds.map((coverageCity) => ({
+                                        ...coverageCity,
+                                        updatedAt : now,
+                                    })),
                                 },
                             })),
                         },
@@ -518,7 +522,10 @@ You do not have the privilege to modify the shippingProvider order.`
                                     
                                     // relations:
                                     zones : {
-                                        create : coverageCityAdds,
+                                        create : !coverageCityAdds.length ? undefined : coverageCityAdds.map((coverageCity) => ({
+                                            ...coverageCity,
+                                            updatedAt : now,
+                                        })),
                                     },
                                 })),
                                 
@@ -538,7 +545,10 @@ You do not have the privilege to modify the shippingProvider order.`
                                                 id : id,
                                             })),
                                             
-                                            create : !coverageCityAdds.length ? undefined : coverageCityAdds,
+                                            create : !coverageCityAdds.length ? undefined : coverageCityAdds.map((coverageCity) => ({
+                                                ...coverageCity,
+                                                updatedAt : now,
+                                            })),
                                             
                                             update : !coverageCityMods.length ? undefined : coverageCityMods.map(({id, ...restCoverageCity}) => ({
                                                 where : {
