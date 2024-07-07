@@ -524,6 +524,7 @@ You do not have the privilege to modify the shippingProvider order.`
                                     // relations:
                                     zones /* coverageCities */ : {
                                         create : !coverageCityAdds.length ? undefined : coverageCityAdds.map((coverageCity) => ({
+                                            // data:
                                             ...coverageCity,
                                             updatedAt : now,
                                         })),
