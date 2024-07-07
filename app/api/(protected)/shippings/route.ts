@@ -472,7 +472,88 @@ You do not have the privilege to modify the shippingProvider order.`
                 rates,
                 
                 useZones,
-                zones : zonesRaw, // TODO: replace
+                zones : (coverageCountryDiff === undefined) ? undefined : {
+                    delete : !coverageCountryDiff.coverageCountryDels.length ? undefined : coverageCountryDiff.coverageCountryDels.map((id) => ({
+                        // conditions:
+                        id : id,
+                    })),
+                    
+                    create : !coverageCountryDiff.coverageCountryAdds.length ? undefined : coverageCountryDiff.coverageCountryAdds.map(({coverageStateAdds, ...restCoverageCountry}) => ({
+                        // data:
+                        ...restCoverageCountry,
+                        
+                        // relations:
+                        zones : {
+                            create : !coverageStateAdds.length ? undefined : coverageStateAdds.map(({coverageCityAdds, ...restCoverageState}) => ({
+                                // data:
+                                ...restCoverageState,
+                                
+                                // relations:
+                                zones : {
+                                    create : coverageCityAdds,
+                                },
+                            })),
+                        },
+                    })),
+                    
+                    update : !coverageCountryDiff.coverageCountryMods.length ? undefined : coverageCountryDiff.coverageCountryMods.map(({id, coverageStateDels, coverageStateAdds, coverageStateMods, ...restCoverageCountry}) => ({
+                        where : {
+                            // conditions:
+                            id : id,
+                        },
+                        data  : {
+                            // data:
+                            ...restCoverageCountry,
+                            
+                            // relations:
+                            zones : {
+                                delete : !coverageStateDels.length ? undefined : coverageStateDels.map((id) => ({
+                                    // conditions:
+                                    id : id,
+                                })),
+                                
+                                create : !coverageStateAdds.length ? undefined : coverageStateAdds.map(({coverageCityAdds, ...restCoverageState}) => ({
+                                    // data:
+                                    ...restCoverageState,
+                                    
+                                    // relations:
+                                    zones : {
+                                        create : coverageCityAdds,
+                                    },
+                                })),
+                                
+                                update : !coverageStateMods.length ? undefined : coverageStateMods.map(({id, coverageCityDels, coverageCityAdds, coverageCityMods, ...restCoverageState}) => ({
+                                    where : {
+                                        // conditions:
+                                        id: id,
+                                    },
+                                    data  : {
+                                        // data:
+                                        ...restCoverageState,
+                                        
+                                        // relations:
+                                        zones : {
+                                            delete : !coverageCityDels.length ? undefined : coverageCityDels.map((id) => ({
+                                                // conditions:
+                                                id : id,
+                                            })),
+                                            
+                                            create : !coverageCityAdds.length ? undefined : coverageCityAdds,
+                                            
+                                            update : !coverageCityMods.length ? undefined : coverageCityMods.map(({id, ...restCoverageCity}) => ({
+                                                where : {
+                                                    // conditions:
+                                                    id: id,
+                                                },
+                                                data  : restCoverageCity,
+                                            })),
+                                        },
+                                    },
+                                })),
+                            },
+                        },
+                    })),
+                },
             } satisfies Prisma.ShippingProviderUpdateInput;
             const shippingDetail : ShippingDetail = (
                 !id
