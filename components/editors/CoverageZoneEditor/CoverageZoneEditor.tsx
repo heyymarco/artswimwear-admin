@@ -247,15 +247,24 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
         restChildren.splice(-1, 1); // remove the <ModelCreate> component
         triggerValueChange(
             restChildren
-            .map((modelPreviewComponent) => {
+            .map((modelPreviewComponent, index) => {
                 const model = (modelPreviewComponent.props as any).model as TCoverageZoneWithId;
-                return model;
+                return {
+                    ...model,
+                    sort: index,
+                } satisfies TCoverageZoneWithId;
             })
         , { triggerAt: 'immediately' });
     });
     const handleModelCreated   = useEvent<CreateHandler<TCoverageZoneWithId>>((createdModel) => {
         const mutatedValue = value.slice(0); // copy
         mutatedValue.push(createdModel as TCoverageZoneWithId);
+        for (let index = 0; index < mutatedValue.length; index++) {
+            mutatedValue[index] = {
+                ...mutatedValue[index],
+                sort: index,
+            };
+        } // for
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
     const handleModelUpdated   = useEvent<UpdatedHandler<TCoverageZoneWithId>>((mutatedModel) => {
@@ -283,6 +292,12 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
         const modelIndex = value.findIndex((model) => model.id === id);
         if (modelIndex < 0) return;
         mutatedValue.splice(modelIndex, 1);
+        for (let index = 0; index < mutatedValue.length; index++) {
+            mutatedValue[index] = {
+                ...mutatedValue[index],
+                sort: index,
+            };
+        } // for
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
     
