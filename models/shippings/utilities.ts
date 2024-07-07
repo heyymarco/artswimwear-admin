@@ -82,9 +82,18 @@ export const shippingDetailSelect = {
                             eta       : true,
                             rates     : true,
                         },
+                        orderBy : {
+                            sort: 'asc',
+                        },
                     },
                 },
+                orderBy : {
+                    sort: 'asc',
+                },
             },
+        },
+        orderBy : {
+            sort: 'asc',
         },
     },
 } satisfies Prisma.ShippingProviderSelect;
