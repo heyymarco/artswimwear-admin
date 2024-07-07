@@ -590,7 +590,8 @@ You do not have the privilege to modify the product_variant name.`
                                 
                                 
                                 
-                                const variantModIds = currentVariantGroupMod.variantMods.map(({id}) => id);
+                                const variantMods   = currentVariantGroupMod.variantMods;
+                                const variantModIds = variantMods.map(({id}) => id);
                                 const variantOriIds = variantGroupOris.find(({id}) => (id === currentVariantGroupMod.id))?.variants.map(({id}) => id) ?? [];
                                 if (variantModIds.length !== variantOriIds.length) return false; // not_deep_equal
                                 for (let variantIndex = 0; variantIndex < variantModIds.length; variantIndex++) {
