@@ -581,20 +581,20 @@ You do not have the privilege to modify the product_variant name.`
                         &&
                         !((): boolean => {
                             // compare the modified order items, ignore added|deleted items:
-                            const variantGroupModSortIds = variantGroupMods.map(({id}) => id);
-                            const variantGroupOriSortIds = variantGroupOris.map(({id}) => id);
-                            if (variantGroupModSortIds.length !== variantGroupOriSortIds.length) return false; // not_equal
-                            for (let index = 0; index < variantGroupModSortIds.length; index++) {
-                                if (variantGroupModSortIds[index] !== variantGroupOriSortIds[index]) return false; // not_equal
+                            const variantGroupModIds = variantGroupMods.map(({id}) => id);
+                            const variantGroupOriIds = variantGroupOris.map(({id}) => id);
+                            if (variantGroupModIds.length !== variantGroupOriIds.length) return false; // not_equal
+                            for (let variantGroupIndex = 0; variantGroupIndex < variantGroupModIds.length; variantGroupIndex++) {
+                                if (variantGroupModIds[variantGroupIndex] !== variantGroupOriIds[variantGroupIndex]) return false; // not_equal
+                                const currentVariantGroupMod = variantGroupMods[variantGroupIndex];
                                 
                                 
                                 
-                                const variantModSortIds = variantGroupMods[index].variantMods.map(({id}) => id);
-                                const variantDeletedIds = variantGroupMods[index].variantDels;
-                                const variantOriSortIds = variantGroupOris[index].variants.map(({id}) => id).filter((id) => !variantDeletedIds.includes(id));
-                                if (variantModSortIds.length !== variantOriSortIds.length) return false; // not_deep_equal
-                                for (let index = 0; index < variantModSortIds.length; index++) {
-                                    if (variantModSortIds[index] !== variantOriSortIds[index]) return false; // not_deep_equal
+                                const variantModIds = currentVariantGroupMod.variantMods.map(({id}) => id);
+                                const variantOriIds = variantGroupOris.find(({id}) => (id === currentVariantGroupMod.id))?.variants.map(({id}) => id) ?? [];
+                                if (variantModIds.length !== variantOriIds.length) return false; // not_deep_equal
+                                for (let variantIndex = 0; variantIndex < variantModIds.length; variantIndex++) {
+                                    if (variantModIds[variantIndex] !== variantOriIds[variantIndex]) return false; // not_deep_equal
                                 } // for
                             } // for
                             
