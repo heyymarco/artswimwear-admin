@@ -473,7 +473,7 @@ You do not have the privilege to modify the shippingProvider order.`
                 rates,
                 
                 useZones,
-                zones : (coverageCountryDiff === undefined) ? undefined : {
+                zones /* coverageCountries */ : (coverageCountryDiff === undefined) ? undefined : {
                     delete : !coverageCountryDiff.coverageCountryDels.length ? undefined : coverageCountryDiff.coverageCountryDels.map((id) => ({
                         // conditions:
                         id : id,
@@ -484,13 +484,13 @@ You do not have the privilege to modify the shippingProvider order.`
                         ...restCoverageCountry,
                         
                         // relations:
-                        zones : {
+                        zones /* coverageStates */ : {
                             create : !coverageStateAdds.length ? undefined : coverageStateAdds.map(({coverageCityAdds, ...restCoverageState}) => ({
                                 // data:
                                 ...restCoverageState,
                                 
                                 // relations:
-                                zones : {
+                                zones /* coverageCities */ : {
                                     create : !coverageCityAdds.length ? undefined : coverageCityAdds.map((coverageCity) => ({
                                         ...coverageCity,
                                         updatedAt : now,
@@ -510,7 +510,7 @@ You do not have the privilege to modify the shippingProvider order.`
                             ...restCoverageCountry,
                             
                             // relations:
-                            zones : {
+                            zones /* coverageStates */ : {
                                 delete : !coverageStateDels.length ? undefined : coverageStateDels.map((id) => ({
                                     // conditions:
                                     id : id,
@@ -521,7 +521,7 @@ You do not have the privilege to modify the shippingProvider order.`
                                     ...restCoverageState,
                                     
                                     // relations:
-                                    zones : {
+                                    zones /* coverageCities */ : {
                                         create : !coverageCityAdds.length ? undefined : coverageCityAdds.map((coverageCity) => ({
                                             ...coverageCity,
                                             updatedAt : now,
@@ -539,7 +539,7 @@ You do not have the privilege to modify the shippingProvider order.`
                                         ...restCoverageState,
                                         
                                         // relations:
-                                        zones : {
+                                        zones /* coverageCities */ : {
                                             delete : !coverageCityDels.length ? undefined : coverageCityDels.map((id) => ({
                                                 // conditions:
                                                 id : id,
