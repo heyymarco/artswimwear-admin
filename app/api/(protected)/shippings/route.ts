@@ -228,8 +228,6 @@ You do not have the privilege to view the shippings.`
         ((zonesRaw   !== undefined)                      && ((Array.isArray(zonesRaw) !== true    ) || (zonesRaw.length && zonesRaw.some((zone) =>
             (typeof(zone) !== 'object')
             ||
-            (Object.keys(zone).length !== 5)
-            ||
             ((typeof(zone.name)  !== 'string') || (zone.name.length < 1))
             ||
             ((zone.eta !== null) && ((typeof(zone.eta) !== 'object') || (Object.keys(zone.eta).length !== 2)))
