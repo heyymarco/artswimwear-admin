@@ -282,6 +282,7 @@ const CoverageZoneEditor = <TCoverageZoneDetail extends CoverageZoneDetail<TCove
                 currentModel.useZones = mutatedModel.useZones      ?? (true as any);
                 currentModel.zones    = mutatedModel.zones         ?? ([]   as any);
             } // if
+            currentModel.updatedAt    = new Date();
             
             mutatedValue[modelIndex]  = currentModel;
         } // if
