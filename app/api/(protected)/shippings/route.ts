@@ -558,7 +558,11 @@ You do not have the privilege to modify the shippingProvider order.`
                                                     // conditions:
                                                     id: id,
                                                 },
-                                                data  : restCoverageCity,
+                                                data  : {
+                                                    // data:
+                                                    ...restCoverageCity,
+                                                    updatedAt : !restCoverageCity.updatedAt ? undefined : now, // if has any_updatedAt_date => overwrite to `now`, otherwise undefined
+                                                },
                                             })),
                                         },
                                     },
