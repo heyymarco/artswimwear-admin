@@ -22,11 +22,14 @@ import type {
 import {
     type ShippingPreview,
     type ShippingDetail,
+    type CoverageCountryDetail,
     
     
     
     shippingPreviewSelect,
     shippingDetailSelect,
+    type CoverageCountryDiff,
+    createCoverageCountryDiff,
 }                           from '@/models'
 import {
     type Prisma,
@@ -186,7 +189,7 @@ You do not have the privilege to view the shippings.`
         rates,
         
         useZones,
-        zones,
+        zones : zonesRaw,
     } = await req.json();
     //#endregion parsing request
     
@@ -198,19 +201,19 @@ You do not have the privilege to view the shippings.`
         
         ||
         
-        ((visibility !== undefined)                      && ((typeof(visibility)   !== 'string') || !['PUBLISHED', 'DRAFT'].includes(visibility)))
+        ((visibility !== undefined)                      && ((typeof(visibility)      !== 'string') || !['PUBLISHED', 'DRAFT'].includes(visibility)))
         ||
-        ((autoUpdate !== undefined)                      && (typeof(autoUpdate)    !== 'boolean'))
+        ((autoUpdate !== undefined)                      && (typeof(autoUpdate)       !== 'boolean'))
         ||
-        ((origin     !== undefined) && (origin !== null) && ((typeof(origin)       !== 'object') || (Object.keys(origin).length !== 3)))
+        ((origin     !== undefined) && (origin !== null) && ((typeof(origin)          !== 'object') || (Object.keys(origin).length !== 3)))
         ||
-        ((name       !== undefined)                      && ((typeof(name)         !== 'string') || (name.length < 1)))
+        ((name       !== undefined)                      && ((typeof(name)            !== 'string') || (name.length < 1)))
         ||
-        ((weightStep !== undefined)                      && ((typeof(weightStep)   !== 'number') || !isFinite(weightStep) || (weightStep < 0)))
+        ((weightStep !== undefined)                      && ((typeof(weightStep)      !== 'number') || !isFinite(weightStep) || (weightStep < 0)))
         ||
-        ((eta        !== undefined) && (eta !== null)    && ((typeof(eta)          !== 'object') || (Object.keys(eta).length !== 2)))
+        ((eta        !== undefined) && (eta !== null)    && ((typeof(eta)             !== 'object') || (Object.keys(eta).length !== 2)))
         ||
-        ((rates      !== undefined)                      && ((Array.isArray(rates) !== true    ) || (rates.length && rates.some((rate) =>
+        ((rates      !== undefined)                      && ((Array.isArray(rates)    !== true    ) || (rates.length && rates.some((rate) =>
             (typeof(rate) !== 'object')
             ||
             (Object.keys(rate).length !== 2)
@@ -220,9 +223,9 @@ You do not have the privilege to view the shippings.`
             ((typeof(rate.rate)  !== 'number') || !isFinite(rate.rate)  || (rate.rate  < 0))
         ))))
         ||
-        ((useZones   !== undefined)                      && (typeof(useZones)      !== 'boolean'))
+        ((useZones   !== undefined)                      && (typeof(useZones)         !== 'boolean'))
         ||
-        ((zones      !== undefined)                      && ((Array.isArray(zones) !== true    ) || (zones.length && zones.some((zone) =>
+        ((zonesRaw   !== undefined)                      && ((Array.isArray(zonesRaw) !== true    ) || (zonesRaw.length && zonesRaw.some((zone) =>
             (typeof(zone) !== 'object')
             ||
             (Object.keys(zone).length !== 5)
@@ -243,6 +246,70 @@ You do not have the privilege to view the shippings.`
     
     try {
         return await prisma.$transaction(async (prismaTransaction): Promise<Response> => {
+            //#region normalize coverageCountry
+            const coverageCountries : CoverageCountryDetail[]|undefined = zonesRaw;
+            
+            const coverageCountryDiff = (coverageCountries === undefined) ? undefined : await (async (): Promise<CoverageCountryDiff> => {
+                const coverageCountryOris : CoverageCountryDetail[] = !id ? [] : await prismaTransaction.coverageCountry.findMany({
+                    where  : {
+                        parentId : id,
+                    },
+                    select : {
+                        id        : true,
+                        
+                        sort      : true,
+                        
+                        name      : true,
+                        
+                        eta       : true,
+                        rates     : true,
+                        
+                        useZones  : true,
+                        zones     : {
+                            select : {
+                                id        : true,
+                                
+                                sort      : true,
+                                
+                                name      : true,
+                                
+                                eta       : true,
+                                rates     : true,
+                                
+                                useZones  : true,
+                                zones     : {
+                                    select : {
+                                        id        : true,
+                                        
+                                        sort      : true,
+                                        
+                                        name      : true,
+                                        
+                                        eta       : true,
+                                        rates     : true,
+                                        
+                                        // updatedAt : true, // not shown to <EditShippingDialog>
+                                    },
+                                    orderBy : {
+                                        sort: 'asc',
+                                    },
+                                },
+                            },
+                            orderBy : {
+                                sort: 'asc',
+                            },
+                        },
+                    },
+                    orderBy : {
+                        sort: 'asc',
+                    },
+                });
+                return createCoverageCountryDiff(coverageCountries, coverageCountryOris);
+            })();
+            //#endregion normalize coverageCountry
+            
+            
+            
             //#region validating privileges
             const session = (req as any).session as Session;
             if (!id) {
@@ -259,7 +326,7 @@ You do not have the privilege to add new shipping.`
 You do not have the privilege to modify the shipping name.`
                 }, { status: 403 }); // handled with error: forbidden
                 
-                if (!session.role?.shipping_up && ((autoUpdate !== undefined) || (origin !== undefined) || (weightStep !== undefined) || (eta !== undefined) || (rates !== undefined) || (useZones !== undefined) || (zones !== undefined))) return Response.json({ error:
+                if (!session.role?.shipping_up && ((autoUpdate !== undefined) || (origin !== undefined) || (weightStep !== undefined) || (eta !== undefined) || (rates !== undefined) || (useZones !== undefined))) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the shipping autoUpdate, origin, weightStep, eta, rates, and/or areas.`
@@ -270,6 +337,122 @@ You do not have the privilege to modify the shipping autoUpdate, origin, weightS
 
 You do not have the privilege to modify the shipping visibility.`
                 }, { status: 403 }); // handled with error: forbidden
+                
+                if (coverageCountryDiff !== undefined) {
+                    const {
+                        coverageCountryOris,
+                        
+                        coverageCountryDels,
+                        coverageCountryAdds,
+                        coverageCountryMods,
+                    } = coverageCountryDiff;
+                    
+                    
+                    
+                    if (
+                        !session.role?.shipping_up
+                        &&
+                        (
+                            !!coverageCountryAdds.length
+                            ||
+                            coverageCountryMods.some(({coverageStateAdds, coverageStateMods}) =>
+                                !!coverageStateAdds.length
+                                ||
+                                coverageStateMods.some(({coverageCityAdds}) =>
+                                    !!coverageCityAdds.length
+                                )
+                            )
+                        )
+                    ) return Response.json({ error:
+`Access denied.
+
+You do not have the privilege to add new shippingProvider area.`
+                    }, { status: 403 }); // handled with error: forbidden
+                    
+                    
+                    
+                    if (
+                        !session.role?.shipping_up
+                        &&
+                        (
+                            !!coverageCountryDels.length
+                            ||
+                            coverageCountryMods.some(({coverageStateDels, coverageStateMods}) =>
+                                !!coverageStateDels.length
+                                ||
+                                coverageStateMods.some(({coverageCityDels}) =>
+                                    !!coverageCityDels.length
+                                )
+                            )
+                        )
+                    ) return Response.json({ error:
+`Access denied.
+
+You do not have the privilege to delete the shippingProvider area.`
+                    }, { status: 403 }); // handled with error: forbidden
+                    
+                    
+                    
+                    if (
+                        !session.role?.shipping_up
+                        &&
+                        (
+                            !!coverageCountryMods.length
+                        )
+                    ) return Response.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the shippingProvider area.`
+                    }, { status: 403 }); // handled with error: forbidden
+                    
+                    
+                    
+                    if (
+                        !session.role?.shipping_up
+                        &&
+                        !((): boolean => {
+                            // compare the order of coverageCountries|coverageStates:
+                            const coverageCountryModIds = coverageCountryMods.map(({id}) => id);
+                            const coverageCountryOriIds = coverageCountryOris.map(({id}) => id);
+                            if (coverageCountryModIds.length !== coverageCountryOriIds.length) return false; // not_equal
+                            for (let coverageCountryIndex = 0; coverageCountryIndex < coverageCountryModIds.length; coverageCountryIndex++) {
+                                if (coverageCountryModIds[coverageCountryIndex] !== coverageCountryOriIds[coverageCountryIndex]) return false; // not_equal
+                                const currentCoverageCountryMod = coverageCountryMods[coverageCountryIndex];
+                                
+                                
+                                
+                                const coverageStateMods   = currentCoverageCountryMod.coverageStateMods;
+                                const coverageStateOris   = coverageCountryOris.find(({id}) => (id === currentCoverageCountryMod.id))?.zones ?? [];
+                                const coverageStateModIds = coverageStateMods.map(({id}) => id);
+                                const coverageStateOriIds = coverageStateOris.map(({id}) => id);
+                                if (coverageStateModIds.length !== coverageStateOriIds.length) return false; // not_deep_equal
+                                for (let coverageStateIndex = 0; coverageStateIndex < coverageStateModIds.length; coverageStateIndex++) {
+                                    if (coverageStateModIds[coverageStateIndex] !== coverageStateOriIds[coverageStateIndex]) return false; // not_deep_equal
+                                    const currentCoverageStateMod = coverageStateMods[coverageStateIndex];
+                                    
+                                    
+                                    
+                                    const coverageCityMods   = currentCoverageStateMod.coverageCityMods;
+                                    const coverageCityOris   = coverageStateOris.find(({id}) => (id === currentCoverageStateMod.id))?.zones ?? [];
+                                    const coverageCityModIds = coverageCityMods.map(({id}) => id);
+                                    const coverageCityOriIds = coverageCityOris.map(({id}) => id);
+                                    if (coverageCityModIds.length !== coverageCityOriIds.length) return false; // not_deep_equal
+                                    for (let coverageCityIndex = 0; coverageCityIndex < coverageCityModIds.length; coverageCityIndex++) {
+                                        if (coverageCityModIds[coverageCityIndex] !== coverageCityOriIds[coverageCityIndex]) return false; // not_deep_equal
+                                    } // for
+                                } // for
+                            } // for
+                            
+                            
+                            
+                            return true; // deep_equal
+                        })()
+                    ) return Response.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the shippingProvider order.`
+                    }, { status: 403 }); // handled with error: forbidden
+                } // if
             } // if
             //#endregion validating privileges
             
@@ -289,7 +472,7 @@ You do not have the privilege to modify the shipping visibility.`
                 rates,
                 
                 useZones,
-                zones,
+                zones : zonesRaw, // TODO: replace
             } satisfies Prisma.ShippingProviderUpdateInput;
             const shippingDetail : ShippingDetail = (
                 !id
