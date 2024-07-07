@@ -274,15 +274,17 @@ const CoverageZoneEditor = <TCoverageZoneDetail extends CoverageZoneDetail<TCove
             mutatedValue.unshift(mutatedModel as TCoverageZoneDetail);
         }
         else {
-            const currentModel        = mutatedValue[modelIndex];
-            currentModel.name         = mutatedModel.name          ?? '';
-            currentModel.eta          = mutatedModel.eta           || null;
-            currentModel.rates        = mutatedModel.rates         ?? [];
+            const currentModel         = mutatedValue[modelIndex];
+            currentModel.name          = mutatedModel.name          ?? '';
+            currentModel.eta           = mutatedModel.eta           || null;
+            currentModel.rates         = mutatedModel.rates         ?? [];
             if (!!subzoneEditor) {
-                currentModel.useZones = mutatedModel.useZones      ?? (true as any);
-                currentModel.zones    = mutatedModel.zones         ?? ([]   as any);
+                currentModel.useZones  = mutatedModel.useZones      ?? (true as any);
+                currentModel.zones     = mutatedModel.zones         ?? ([]   as any);
+            }
+            else {
+                currentModel.updatedAt = new Date();
             } // if
-            currentModel.updatedAt    = new Date();
             
             mutatedValue[modelIndex]  = currentModel;
         } // if
