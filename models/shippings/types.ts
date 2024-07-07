@@ -79,7 +79,7 @@ export interface ShippingRateWithId extends ShippingRate {
 
 
 
-export interface CoverageZone<TSubzone extends CoverageSubzone>
+export interface CoverageZoneDetail<TSubzone extends CoverageSubzoneDetail>
     extends
         Omit<CoverageCountryDetail,
             // data:
@@ -101,12 +101,5 @@ export interface CoverageZone<TSubzone extends CoverageSubzone>
     useZones : TSubzone extends never ? never : boolean    // generic-ify the sub-zones
     zones    : TSubzone extends never ? never : TSubzone[] // generic-ify the sub-zones
 }
-export interface CoverageZoneWithId<TSubzone extends CoverageSubzone>
-    extends
-        CoverageZone<TSubzone>
-{
-    // records:
-    id       : string
-}
 
-export type CoverageSubzone = CoverageStateDetail|CoverageCityDetail|never
+export type CoverageSubzoneDetail = CoverageStateDetail|CoverageCityDetail|never

@@ -91,8 +91,8 @@ import {
 // models:
 import {
     // types:
-    type CoverageZoneWithId,
-    type CoverageSubzone,
+    type CoverageZoneDetail,
+    type CoverageSubzoneDetail,
 }                           from '@/models'
 
 // styles:
@@ -105,12 +105,12 @@ import {
 // react components:
 export interface SubzoneCoverageZoneEditorProps {
     // components:
-    subzoneEditor ?: React.ReactElement<CoverageZoneEditorProps<CoverageZoneWithId<CoverageSubzone>, CoverageSubzone>>
+    subzoneEditor ?: React.ReactElement<CoverageZoneEditorProps<CoverageZoneDetail<CoverageSubzoneDetail>, CoverageSubzoneDetail>>
 }
-export interface CoverageZoneEditorProps<TCoverageZoneWithId extends CoverageZoneWithId<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone, TElement extends Element = HTMLElement>
+export interface CoverageZoneEditorProps<TCoverageZoneDetail extends CoverageZoneDetail<TCoverageSubzoneDetail>, TCoverageSubzoneDetail extends CoverageSubzoneDetail, TElement extends Element = HTMLElement>
     extends
         // bases:
-        Pick<EditorProps<TElement, TCoverageZoneWithId[]>,
+        Pick<EditorProps<TElement, TCoverageZoneDetail[]>,
             // values:
             |'defaultValue' // not supported, controllable only
             |'value'
@@ -130,7 +130,7 @@ export interface CoverageZoneEditorProps<TCoverageZoneWithId extends CoverageZon
         
         // components:
         SubzoneCoverageZoneEditorProps,
-        Pick<EditCoverageZoneDialogProps<TCoverageZoneWithId, TCoverageSubzone>,
+        Pick<EditCoverageZoneDialogProps<TCoverageZoneDetail, TCoverageSubzoneDetail>,
             |'zoneNameEditor'
             |'zoneNameOverride'
         >
@@ -140,7 +140,7 @@ export interface CoverageZoneEditorProps<TCoverageZoneWithId extends CoverageZon
     modelNamePlural  : string
     parentModelId   ?: string
 }
-const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCoverageSubzone>, TCoverageSubzone extends CoverageSubzone, TElement extends Element = HTMLElement>(props: CoverageZoneEditorProps<TCoverageZoneWithId, TCoverageSubzone, TElement>): JSX.Element|null => {
+const CoverageZoneEditor = <TCoverageZoneDetail extends CoverageZoneDetail<TCoverageSubzoneDetail>, TCoverageSubzoneDetail extends CoverageSubzoneDetail, TElement extends Element = HTMLElement>(props: CoverageZoneEditorProps<TCoverageZoneDetail, TCoverageSubzoneDetail, TElement>): JSX.Element|null => {
     // rest props:
     const {
         // data:
@@ -179,7 +179,7 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
     const {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllableAndUncontrollable<TCoverageZoneWithId[]>({
+    } = useControllableAndUncontrollable<TCoverageZoneDetail[]>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
         onValueChange      : onControllableValueChange,
@@ -233,8 +233,8 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
             * the deleting capability follows the `privilegeProductDelete`
         
         when create_mode (add):
-            * ALWAYS be ABLE to edit   the TCoverageZoneWithId of Shipping (because the data is *not_yet_exsist* on the database)
-            * ALWAYS be ABLE to delete the TCoverageZoneWithId of Shipping (because the data is *not_yet_exsist* on the database)
+            * ALWAYS be ABLE to edit   the TCoverageZoneDetail of Shipping (because the data is *not_yet_exsist* on the database)
+            * ALWAYS be ABLE to delete the TCoverageZoneDetail of Shipping (because the data is *not_yet_exsist* on the database)
     */
     const privilegeUpdate = whenDraft ? privilegeShippingUpdateFullAccess : privilegeUpdateRaw;
     const privilegeDelete = whenDraft ?               true                : privilegeDeleteRaw;
@@ -248,17 +248,17 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
         triggerValueChange(
             restChildren
             .map((modelPreviewComponent, index) => {
-                const model = (modelPreviewComponent.props as any).model as TCoverageZoneWithId;
+                const model = (modelPreviewComponent.props as any).model as TCoverageZoneDetail;
                 return {
                     ...model,
                     sort: index,
-                } satisfies TCoverageZoneWithId;
+                } satisfies TCoverageZoneDetail;
             })
         , { triggerAt: 'immediately' });
     });
-    const handleModelCreated   = useEvent<CreateHandler<TCoverageZoneWithId>>((createdModel) => {
+    const handleModelCreated   = useEvent<CreateHandler<TCoverageZoneDetail>>((createdModel) => {
         const mutatedValue = value.slice(0); // copy
-        mutatedValue.push(createdModel as TCoverageZoneWithId);
+        mutatedValue.push(createdModel as TCoverageZoneDetail);
         for (let index = 0; index < mutatedValue.length; index++) {
             mutatedValue[index] = {
                 ...mutatedValue[index],
@@ -267,11 +267,11 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
         } // for
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
-    const handleModelUpdated   = useEvent<UpdatedHandler<TCoverageZoneWithId>>((mutatedModel) => {
+    const handleModelUpdated   = useEvent<UpdatedHandler<TCoverageZoneDetail>>((mutatedModel) => {
         const mutatedValue = value.slice(0); // copy
         const modelIndex = value.findIndex((model) => model.id === mutatedModel.id);
         if (modelIndex < 0) {
-            mutatedValue.unshift(mutatedModel as TCoverageZoneWithId);
+            mutatedValue.unshift(mutatedModel as TCoverageZoneDetail);
         }
         else {
             const currentModel        = mutatedValue[modelIndex];
@@ -287,7 +287,7 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
         } // if
         triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
     });
-    const handleModelDeleted   = useEvent<DeleteHandler<TCoverageZoneWithId>>(({id}) => {
+    const handleModelDeleted   = useEvent<DeleteHandler<TCoverageZoneDetail>>(({id}) => {
         const mutatedValue = value.slice(0); // copy
         const modelIndex = value.findIndex((model) => model.id === id);
         if (modelIndex < 0) return;
@@ -373,7 +373,7 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
                     
                     {value.map((coverageZone) =>
                         /* <ModelPreview> */
-                        <CoverageZonePreview<TCoverageZoneWithId, TCoverageSubzone>
+                        <CoverageZonePreview<TCoverageZoneDetail, TCoverageSubzoneDetail>
                             // identifiers:
                             key={coverageZone.id}
                             
@@ -404,7 +404,7 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
                     )}
                     
                     {/* <ModelCreate> */}
-                    <ModelCreateOuter<TCoverageZoneWithId>
+                    <ModelCreateOuter<TCoverageZoneDetail>
                         // classes:
                         className='solid'
                         
@@ -419,7 +419,7 @@ const CoverageZoneEditor = <TCoverageZoneWithId extends CoverageZoneWithId<TCove
                         modelCreateComponent={
                             isDisabledOrReadOnly
                             ? false
-                            : <EditCoverageZoneDialog<TCoverageZoneWithId, TCoverageSubzone>
+                            : <EditCoverageZoneDialog<TCoverageZoneDetail, TCoverageSubzoneDetail>
                                 // data:
                                 model={null} // create a new model
                                 modelName={modelName}
