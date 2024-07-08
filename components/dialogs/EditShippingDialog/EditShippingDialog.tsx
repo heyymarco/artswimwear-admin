@@ -180,6 +180,10 @@ const systemShippings : string[] = [
     
     'pos reguler',
     'pos nextday',
+    
+    'tiki reguler',
+    'tiki ons',
+    'tiki economy',
 ];
 
 
