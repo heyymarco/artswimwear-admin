@@ -153,11 +153,6 @@ import {
     useGetCityList,
 }                           from '@/store/features/api/apiSlice'
 
-// others:
-import {
-    customAlphabet,
-}                           from 'nanoid'
-
 // configs:
 import {
     PAGE_SHIPPING_TAB_INFORMATIONS,
@@ -335,10 +330,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     // handlers:
     const handleUpdate         = useEvent<UpdateHandler<ShippingDetail>>(async ({id, whenAdd, whenUpdate}) => {
         return await updateShipping({
-            id         : id ?? (() => {
-                const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
-                return ` ${nanoid()}`; // starts with space{random-temporary-id}
-            })(),
+            id         : id ?? '',
             
             visibility : (whenUpdate.visibility  || whenAdd) ? visibility    : undefined,
             name       : (whenUpdate.description || whenAdd) ? name          : undefined,
