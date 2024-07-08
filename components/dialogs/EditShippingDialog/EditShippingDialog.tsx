@@ -177,6 +177,9 @@ const systemShippings : string[] = [
     'jne reguler',
     'jne yes',
     'jne oke',
+    
+    'pos reguler',
+    'pos nextday',
 ];
 
 
