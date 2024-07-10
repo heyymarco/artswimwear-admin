@@ -259,7 +259,13 @@ You do not have the privilege to view the shippings.`
                         
                         name      : true,
                         
-                        eta       : true,
+                        eta       : {
+                            select : {
+                                // data:
+                                min : true,
+                                max : true,
+                            },
+                        },
                         rates     : true,
                         
                         useZones  : true,
@@ -271,7 +277,13 @@ You do not have the privilege to view the shippings.`
                                 
                                 name      : true,
                                 
-                                eta       : true,
+                                eta       : {
+                                    select : {
+                                        // data:
+                                        min : true,
+                                        max : true,
+                                    },
+                                },
                                 rates     : true,
                                 
                                 useZones  : true,
@@ -283,7 +295,13 @@ You do not have the privilege to view the shippings.`
                                         
                                         name      : true,
                                         
-                                        eta       : true,
+                                        eta       : {
+                                            select : {
+                                                // data:
+                                                min : true,
+                                                max : true,
+                                            },
+                                        },
                                         rates     : true,
                                         
                                         // updatedAt : true, // not shown to <EditShippingDialog>
@@ -548,9 +566,18 @@ You do not have the privilege to modify the shipping order.`
                 visibility,
                 
                 autoUpdate,
-                origin : !origin ? undefined : { // one to one relation. The id of related `ShippingOrigin` is unknown => no problem, the id is guaranteed to be unique
-                    create : !isCreate /* do nested `create`(always)                    if `create` ShippingProvider */ ? undefined : origin,
-                    upsert :  isCreate /* do nested `update`(prefer)|`create`(fallback) if `update` ShippingProvider */ ? undefined : {
+                origin : (origin === undefined) ? undefined /* do NOT modify if undefined */ : { // one to one relation
+                    // nested_delete if set to null:
+                    delete :  (origin !== null) ? undefined /* do NOT delete if NOT null */ : {
+                        // do DELETE
+                        // no condition needed because one to one relation
+                    },
+                    
+                    // one_stage nested_update for create (isCreate === true):
+                    create : ((origin === null) /* do NOT update if null */ || !isCreate /* do nested `create`(always)                    if `create` ShippingProvider */) ? undefined : origin,
+                    
+                    // two_stage nested_update for update (isCreate === false):
+                    upsert : ((origin === null) /* do NOT update if null */ ||  isCreate /* do nested `update`(prefer)|`create`(fallback) if `update` ShippingProvider */) ? undefined : {
                         update : origin, // prefer   to `update` if already exist
                         create : origin, // fallback to `create` if not     exist
                     },
