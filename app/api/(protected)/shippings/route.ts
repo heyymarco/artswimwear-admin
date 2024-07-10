@@ -586,7 +586,22 @@ You do not have the privilege to modify the shipping order.`
                 name,
                 
                 weightStep,
-                eta,
+                eta : (eta === undefined) ? undefined /* do NOT modify if undefined */ : { // one to one relation
+                    // nested_delete if set to null:
+                    delete : (eta !== null) ? undefined /* do NOT delete if NOT null */ : {
+                        // do DELETE
+                        // no condition needed because one to one relation
+                    },
+                    
+                    // one_stage nested_update for create (isCreate === true):
+                    create : ((eta === null) /* do NOT update if null */ || !isCreate /* do nested `create`(always)                    if `create` ShippingProvider */) ? undefined : eta,
+                    
+                    // two_stage nested_update for update (isCreate === false):
+                    upsert : ((eta === null) /* do NOT update if null */ ||  isCreate /* do nested `update`(prefer)|`create`(fallback) if `update` ShippingProvider */) ? undefined : {
+                        update : eta, // prefer   to `update` if already exist
+                        create : eta, // fallback to `create` if not     exist
+                    },
+                },
                 rates,
                 
                 useZones,
