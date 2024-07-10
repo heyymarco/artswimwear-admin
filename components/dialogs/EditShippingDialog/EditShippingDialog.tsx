@@ -133,9 +133,8 @@ import type {
 }                           from '@prisma/client'
 import {
     // types:
-    type ShippingProvider,
     type ShippingDetail,
-    type ShippingOrigin,
+    type ShippingOriginDetail,
     type ShippingRate,
     type CoverageCountryDetail,
     type CoverageStateDetail,
@@ -217,11 +216,11 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     // states:
     const [isModified, setIsModified] = useState<boolean>(false);
     
-    const [visibility, setVisibility] = useState<ShippingVisibility >(model?.visibility ?? 'DRAFT');
-    const [name      , setName      ] = useState<string             >(model?.name       ?? ''     );
+    const [visibility, setVisibility] = useState<ShippingVisibility       >(model?.visibility ?? 'DRAFT');
+    const [name      , setName      ] = useState<string                   >(model?.name       ?? ''     );
     
-    const [autoUpdate, setAutoUpdate] = useState<boolean            >(model?.autoUpdate ?? false  );
-    const [origin    , setOrigin    ] = useState<ShippingOrigin|null>(model?.origin     ?? null   );
+    const [autoUpdate, setAutoUpdate] = useState<boolean                  >(model?.autoUpdate ?? false  );
+    const [origin    , setOrigin    ] = useState<ShippingOriginDetail|null>(model?.origin     ?? null   );
     const originAsAddress = useMemo((): Address|null => {
         if (!origin) return null;
         return {
@@ -234,9 +233,9 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
         } satisfies Address;
     }, [origin]);
     
-    const [weightStep, setWeightStep] = useState<number             >(model?.weightStep ?? 1      );
-    const [eta       , setEta       ] = useState<ShippingEta|null   >(model?.eta        ?? null   );
-    const [rates     , setRates     ] = useState<ShippingRate[]     >(() => {
+    const [weightStep, setWeightStep] = useState<number                   >(model?.weightStep ?? 1      );
+    const [eta       , setEta       ] = useState<ShippingEta|null         >(model?.eta        ?? null   );
+    const [rates     , setRates     ] = useState<ShippingRate[]           >(() => {
         const rates = model?.rates;
         if (!rates) return [];
         return (

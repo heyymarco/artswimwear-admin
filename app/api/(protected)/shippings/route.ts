@@ -543,11 +543,10 @@ You do not have the privilege to modify the shipping order.`
             
             //#region save changes
             const now = new Date();
-            const data = {
+            const shippingProviderData = {
                 visibility,
                 
                 autoUpdate,
-                origin,
                 
                 name,
                 
@@ -654,21 +653,28 @@ You do not have the privilege to modify the shipping order.`
                         },
                     })),
                 },
-            } satisfies Prisma.ShippingProviderUpdateInput;
-            const shippingDetail : ShippingDetail = (
-                !id
-                ? await prismaTransaction.shippingProvider.create({
-                    data   : data,
-                    select : shippingDetailSelect,
-                })
-                : await prismaTransaction.shippingProvider.update({
-                    where  : {
-                        id : id,
+            } satisfies Omit<Prisma.ShippingProviderUpsertArgs['create'] & Prisma.ShippingProviderUpsertArgs['update'], 'origin'>;
+            const shippingDetail : ShippingDetail = await prismaTransaction.shippingProvider.upsert({
+                where  : {
+                    id : id,
+                },
+                create : {
+                    ...shippingProviderData,
+                    origin : {
+                        create : origin,
                     },
-                    data   : data,
-                    select : shippingDetailSelect,
-                })
-            );
+                },
+                update : {
+                    ...shippingProviderData,
+                    origin : {
+                        upsert : {
+                            create : origin,
+                            update : origin,
+                        },
+                    },
+                },
+                select : shippingDetailSelect,
+            });
             
             
             
