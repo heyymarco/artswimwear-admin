@@ -658,9 +658,9 @@ You do not have the privilege to modify the shipping order.`
                             // data:
                             ...restCoverageCountry,
                             
-                            eta : (eta === null) ? undefined /* do NOT modify if null */ : { // one to one relation
+                            eta : { // one to one relation
                                 // two_conditional nested_update for update:
-                                upsert : {
+                                upsert : (eta === null) /* do NOT update if null */ ? undefined : {
                                     update : eta, // prefer   to `update` if already exist
                                     create : eta, // fallback to `create` if not     exist
                                 },
@@ -707,9 +707,9 @@ You do not have the privilege to modify the shipping order.`
                                         // data:
                                         ...restCoverageState,
                                         
-                                        eta : (eta === null) ? undefined /* do NOT modify if null */ : { // one to one relation
+                                        eta : { // one to one relation
                                             // two_conditional nested_update for update:
-                                            upsert : {
+                                            upsert : (eta === null) /* do NOT update if null */ ? undefined : {
                                                 update : eta, // prefer   to `update` if already exist
                                                 create : eta, // fallback to `create` if not     exist
                                             },
@@ -745,9 +745,9 @@ You do not have the privilege to modify the shipping order.`
                                                     
                                                     updatedAt : !restCoverageCity.updatedAt ? undefined : now, // if has any_updatedAt_date => overwrite to `now`, otherwise undefined
                                                     
-                                                    eta : (eta === null) ? undefined /* do NOT modify if null */ : { // one to one relation
+                                                    eta : { // one to one relation
                                                         // two_conditional nested_update for update:
-                                                        upsert : {
+                                                        upsert : (eta === null) /* do NOT update if null */ ? undefined : {
                                                             update : eta, // prefer   to `update` if already exist
                                                             create : eta, // fallback to `create` if not     exist
                                                         },
