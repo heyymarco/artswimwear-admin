@@ -548,11 +548,11 @@ You do not have the privilege to modify the shipping order.`
                 visibility,
                 
                 autoUpdate,
-                origin : { // one to one relation. The id of related `ShippingOrigin` is unknown => no problem, the id is guaranteed to be unique
-                    create : !isCreate /* do nested create             if `create` ShippingProvider */ ? undefined : origin,
-                    upsert :  isCreate /* do nested update (or create) if `update` ShippingProvider */ ? undefined : {
-                        update : origin, // prefer   to update if already exist
-                        create : origin, // fallback to create if not     exist
+                origin : !origin ? undefined : { // one to one relation. The id of related `ShippingOrigin` is unknown => no problem, the id is guaranteed to be unique
+                    create : !isCreate /* do nested `create`(always)                    if `create` ShippingProvider */ ? undefined : origin,
+                    upsert :  isCreate /* do nested `update`(prefer)|`create`(fallback) if `update` ShippingProvider */ ? undefined : {
+                        update : origin, // prefer   to `update` if already exist
+                        create : origin, // fallback to `create` if not     exist
                     },
                 },
                 
@@ -564,12 +564,12 @@ You do not have the privilege to modify the shipping order.`
                 
                 useZones,
                 zones /* coverageCountries */ : (coverageCountryDiff === undefined) ? undefined : {
-                    delete : (isCreate /* never  have `delete` if `create`          ShippingProvider */ ||  !coverageCountryDiff.coverageCountryDels.length) ? undefined : coverageCountryDiff.coverageCountryDels.map((id) => ({
+                    delete : !coverageCountryDiff.coverageCountryDels.length ? undefined : coverageCountryDiff.coverageCountryDels.map((id) => ({
                         // conditions:
                         id : id,
                     })),
                     
-                    create : (         /* always have `create` if `create`|`update` ShippingProvider */     !coverageCountryDiff.coverageCountryAdds.length) ? undefined : coverageCountryDiff.coverageCountryAdds.map(({coverageStateAdds, ...restCoverageCountry}) => ({
+                    create : !coverageCountryDiff.coverageCountryAdds.length ? undefined : coverageCountryDiff.coverageCountryAdds.map(({coverageStateAdds, ...restCoverageCountry}) => ({
                         // data:
                         ...restCoverageCountry,
                         
@@ -591,7 +591,7 @@ You do not have the privilege to modify the shipping order.`
                         },
                     })),
                     
-                    update : (isCreate /* never  have `update` if `create`          ShippingProvider */ ||  !coverageCountryDiff.coverageCountryMods.length) ? undefined : coverageCountryDiff.coverageCountryMods.map(({id, coverageStateDels, coverageStateAdds, coverageStateMods, ...restCoverageCountry}) => ({
+                    update : !coverageCountryDiff.coverageCountryMods.length ? undefined : coverageCountryDiff.coverageCountryMods.map(({id, coverageStateDels, coverageStateAdds, coverageStateMods, ...restCoverageCountry}) => ({
                         where : {
                             // conditions:
                             id : id,
@@ -662,21 +662,20 @@ You do not have the privilege to modify the shipping order.`
                     })),
                 },
             } satisfies Prisma.ShippingProviderUpsertArgs['create'] & Prisma.ShippingProviderUpsertArgs['update'];
-            const shippingDetail : ShippingDetail = await prismaTransaction.shippingProvider.upsert({
-                where  : {
-                    id : id,
-                },
-                create : shippingProviderData,
-                // update : shippingProviderData,
-                update : {
-                    origin : {
-                        create : undefined,
-                        update : undefined, // id is unknown
-                        upsert : undefined, // unknown id is not a problem since 1-1 relation
-                    }
-                },
-                select : shippingDetailSelect,
-            });
+            const shippingDetail : ShippingDetail = (
+                isCreate
+                ? await prismaTransaction.shippingProvider.create({
+                    data   : shippingProviderData,
+                    select : shippingDetailSelect,
+                })
+                : await prismaTransaction.shippingProvider.update({
+                    where  : {
+                        id : id,
+                    },
+                    data   : shippingProviderData,
+                    select : shippingDetailSelect,
+                })
+            );
             
             
             
