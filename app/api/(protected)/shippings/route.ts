@@ -611,29 +611,45 @@ You do not have the privilege to modify the shipping order.`
                         id : id,
                     })),
                     
-                    create : !coverageCountryDiff.coverageCountryAdds.length ? undefined : coverageCountryDiff.coverageCountryAdds.map(({coverageStateAdds, ...restCoverageCountry}) => ({
+                    create : !coverageCountryDiff.coverageCountryAdds.length ? undefined : coverageCountryDiff.coverageCountryAdds.map(({coverageStateAdds, eta, ...restCoverageCountry}) => ({
                         // data:
                         ...restCoverageCountry,
                         
+                        eta : (eta === null) ? undefined /* do NOT create if null */ : { // one to one relation
+                            // one_stage nested_update for create:
+                            create : eta, // do nested `create`
+                        },
+                        
                         // relations:
                         zones /* coverageStates */ : {
-                            create : !coverageStateAdds.length ? undefined : coverageStateAdds.map(({coverageCityAdds, ...restCoverageState}) => ({
+                            create : !coverageStateAdds.length ? undefined : coverageStateAdds.map(({coverageCityAdds, eta, ...restCoverageState}) => ({
                                 // data:
                                 ...restCoverageState,
                                 
+                                eta : (eta === null) ? undefined /* do NOT create if null */ : { // one to one relation
+                                    // one_stage nested_update for create:
+                                    create : eta, // do nested `create`
+                                },
+                                
                                 // relations:
                                 zones /* coverageCities */ : {
-                                    create : !coverageCityAdds.length ? undefined : coverageCityAdds.map((coverageCity) => ({
+                                    create : !coverageCityAdds.length ? undefined : coverageCityAdds.map(({eta, ...restcoverageCity}) => ({
                                         // data:
-                                        ...coverageCity,
+                                        ...restcoverageCity,
+                                        
                                         updatedAt : now,
+                                        
+                                        eta : (eta === null) ? undefined /* do NOT create if null */ : { // one to one relation
+                                            // one_stage nested_update for create:
+                                            create : eta, // do nested `create`
+                                        },
                                     })),
                                 },
                             })),
                         },
                     })),
                     
-                    update : !coverageCountryDiff.coverageCountryMods.length ? undefined : coverageCountryDiff.coverageCountryMods.map(({id, coverageStateDels, coverageStateAdds, coverageStateMods, ...restCoverageCountry}) => ({
+                    update : !coverageCountryDiff.coverageCountryMods.length ? undefined : coverageCountryDiff.coverageCountryMods.map(({id, coverageStateDels, coverageStateAdds, coverageStateMods, eta, ...restCoverageCountry}) => ({
                         where : {
                             // conditions:
                             id : id,
@@ -642,6 +658,14 @@ You do not have the privilege to modify the shipping order.`
                             // data:
                             ...restCoverageCountry,
                             
+                            eta : (eta === null) ? undefined /* do NOT modify if null */ : { // one to one relation
+                                // two_stage nested_update for update:
+                                upsert : {
+                                    update : eta, // prefer   to `update` if already exist
+                                    create : eta, // fallback to `create` if not     exist
+                                },
+                            },
+                            
                             // relations:
                             zones /* coverageStates */ : {
                                 delete : !coverageStateDels.length ? undefined : coverageStateDels.map((id) => ({
@@ -649,21 +673,32 @@ You do not have the privilege to modify the shipping order.`
                                     id : id,
                                 })),
                                 
-                                create : !coverageStateAdds.length ? undefined : coverageStateAdds.map(({coverageCityAdds, ...restCoverageState}) => ({
+                                create : !coverageStateAdds.length ? undefined : coverageStateAdds.map(({coverageCityAdds, eta, ...restCoverageState}) => ({
                                     // data:
                                     ...restCoverageState,
                                     
+                                    eta : (eta === null) ? undefined /* do NOT create if null */ : { // one to one relation
+                                        // one_stage nested_update for create:
+                                        create : eta, // do nested `create`
+                                    },
+                                    
                                     // relations:
                                     zones /* coverageCities */ : {
-                                        create : !coverageCityAdds.length ? undefined : coverageCityAdds.map((coverageCity) => ({
+                                        create : !coverageCityAdds.length ? undefined : coverageCityAdds.map(({eta, ...restcoverageCity}) => ({
                                             // data:
-                                            ...coverageCity,
+                                            ...restcoverageCity,
+                                            
                                             updatedAt : now,
+                                            
+                                            eta : (eta === null) ? undefined /* do NOT create if null */ : { // one to one relation
+                                                // one_stage nested_update for create:
+                                                create : eta, // do nested `create`
+                                            },
                                         })),
                                     },
                                 })),
                                 
-                                update : !coverageStateMods.length ? undefined : coverageStateMods.map(({id, coverageCityDels, coverageCityAdds, coverageCityMods, ...restCoverageState}) => ({
+                                update : !coverageStateMods.length ? undefined : coverageStateMods.map(({id, coverageCityDels, coverageCityAdds, coverageCityMods, eta, ...restCoverageState}) => ({
                                     where : {
                                         // conditions:
                                         id: id,
@@ -672,6 +707,14 @@ You do not have the privilege to modify the shipping order.`
                                         // data:
                                         ...restCoverageState,
                                         
+                                        eta : (eta === null) ? undefined /* do NOT modify if null */ : { // one to one relation
+                                            // two_stage nested_update for update:
+                                            upsert : {
+                                                update : eta, // prefer   to `update` if already exist
+                                                create : eta, // fallback to `create` if not     exist
+                                            },
+                                        },
+                                        
                                         // relations:
                                         zones /* coverageCities */ : {
                                             delete : !coverageCityDels.length ? undefined : coverageCityDels.map((id) => ({
@@ -679,13 +722,19 @@ You do not have the privilege to modify the shipping order.`
                                                 id : id,
                                             })),
                                             
-                                            create : !coverageCityAdds.length ? undefined : coverageCityAdds.map((coverageCity) => ({
+                                            create : !coverageCityAdds.length ? undefined : coverageCityAdds.map(({eta, ...restcoverageCity}) => ({
                                                 // data:
-                                                ...coverageCity,
+                                                ...restcoverageCity,
+                                                
                                                 updatedAt : now,
+                                                
+                                                eta : (eta === null) ? undefined /* do NOT create if null */ : { // one to one relation
+                                                    // one_stage nested_update for create:
+                                                    create : eta, // do nested `create`
+                                                },
                                             })),
                                             
-                                            update : !coverageCityMods.length ? undefined : coverageCityMods.map(({id, ...restCoverageCity}) => ({
+                                            update : !coverageCityMods.length ? undefined : coverageCityMods.map(({id, eta, ...restCoverageCity}) => ({
                                                 where : {
                                                     // conditions:
                                                     id: id,
@@ -693,7 +742,16 @@ You do not have the privilege to modify the shipping order.`
                                                 data  : {
                                                     // data:
                                                     ...restCoverageCity,
+                                                    
                                                     updatedAt : !restCoverageCity.updatedAt ? undefined : now, // if has any_updatedAt_date => overwrite to `now`, otherwise undefined
+                                                    
+                                                    eta : (eta === null) ? undefined /* do NOT modify if null */ : { // one to one relation
+                                                        // two_stage nested_update for update:
+                                                        upsert : {
+                                                            update : eta, // prefer   to `update` if already exist
+                                                            create : eta, // fallback to `create` if not     exist
+                                                        },
+                                                    },
                                                 },
                                             })),
                                         },
