@@ -543,10 +543,18 @@ You do not have the privilege to modify the shipping order.`
             
             //#region save changes
             const now = new Date();
+            const isCreate = !id;
             const shippingProviderData = {
                 visibility,
                 
                 autoUpdate,
+                origin : {
+                    create : !isCreate ? undefined : origin, //        createNew ShippingOrigin if createNew ShippingProvider
+                    upsert :  isCreate ? undefined : {       // update|createNew ShippingOrigin if update    ShippingProvider
+                        create : origin,
+                        update : origin,
+                    },
+                },
                 
                 name,
                 
@@ -556,12 +564,12 @@ You do not have the privilege to modify the shipping order.`
                 
                 useZones,
                 zones /* coverageCountries */ : (coverageCountryDiff === undefined) ? undefined : {
-                    delete : !coverageCountryDiff.coverageCountryDels.length ? undefined : coverageCountryDiff.coverageCountryDels.map((id) => ({
+                    delete : (isCreate /* never  have `delete` if `create`          ShippingProvider */ ||  !coverageCountryDiff.coverageCountryDels.length) ? undefined : coverageCountryDiff.coverageCountryDels.map((id) => ({
                         // conditions:
                         id : id,
                     })),
                     
-                    create : !coverageCountryDiff.coverageCountryAdds.length ? undefined : coverageCountryDiff.coverageCountryAdds.map(({coverageStateAdds, ...restCoverageCountry}) => ({
+                    create : (         /* always have `create` if `create`|`update` ShippingProvider */     !coverageCountryDiff.coverageCountryAdds.length) ? undefined : coverageCountryDiff.coverageCountryAdds.map(({coverageStateAdds, ...restCoverageCountry}) => ({
                         // data:
                         ...restCoverageCountry,
                         
@@ -583,7 +591,7 @@ You do not have the privilege to modify the shipping order.`
                         },
                     })),
                     
-                    update : !coverageCountryDiff.coverageCountryMods.length ? undefined : coverageCountryDiff.coverageCountryMods.map(({id, coverageStateDels, coverageStateAdds, coverageStateMods, ...restCoverageCountry}) => ({
+                    update : (isCreate /* never  have `update` if `create`          ShippingProvider */ ||  !coverageCountryDiff.coverageCountryMods.length) ? undefined : coverageCountryDiff.coverageCountryMods.map(({id, coverageStateDels, coverageStateAdds, coverageStateMods, ...restCoverageCountry}) => ({
                         where : {
                             // conditions:
                             id : id,
@@ -653,26 +661,13 @@ You do not have the privilege to modify the shipping order.`
                         },
                     })),
                 },
-            } satisfies Omit<Prisma.ShippingProviderUpsertArgs['create'] & Prisma.ShippingProviderUpsertArgs['update'], 'origin'>;
+            } satisfies Prisma.ShippingProviderUpsertArgs['create'] & Prisma.ShippingProviderUpsertArgs['update'];
             const shippingDetail : ShippingDetail = await prismaTransaction.shippingProvider.upsert({
                 where  : {
                     id : id,
                 },
-                create : {
-                    ...shippingProviderData,
-                    origin : {
-                        create : origin,
-                    },
-                },
-                update : {
-                    ...shippingProviderData,
-                    origin : {
-                        upsert : {
-                            create : origin,
-                            update : origin,
-                        },
-                    },
-                },
+                create : shippingProviderData,
+                update : shippingProviderData,
                 select : shippingDetailSelect,
             });
             
