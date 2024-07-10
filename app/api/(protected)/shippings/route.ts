@@ -548,11 +548,11 @@ You do not have the privilege to modify the shipping order.`
                 visibility,
                 
                 autoUpdate,
-                origin : {
-                    create : !isCreate ? undefined : origin, //        createNew ShippingOrigin if createNew ShippingProvider
-                    upsert :  isCreate ? undefined : {       // update|createNew ShippingOrigin if update    ShippingProvider
-                        create : origin,
-                        update : origin,
+                origin : { // one to one relation. The id of related `ShippingOrigin` is unknown => no problem, the id is guaranteed to be unique
+                    create : !isCreate /* do nested create             if `create` ShippingProvider */ ? undefined : origin,
+                    upsert :  isCreate /* do nested update (or create) if `update` ShippingProvider */ ? undefined : {
+                        update : origin, // prefer   to update if already exist
+                        create : origin, // fallback to create if not     exist
                     },
                 },
                 
@@ -667,7 +667,14 @@ You do not have the privilege to modify the shipping order.`
                     id : id,
                 },
                 create : shippingProviderData,
-                update : shippingProviderData,
+                // update : shippingProviderData,
+                update : {
+                    origin : {
+                        create : undefined,
+                        update : undefined, // id is unknown
+                        upsert : undefined, // unknown id is not a problem since 1-1 relation
+                    }
+                },
                 select : shippingDetailSelect,
             });
             
