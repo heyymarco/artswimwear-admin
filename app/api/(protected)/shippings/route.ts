@@ -568,16 +568,16 @@ You do not have the privilege to modify the shipping order.`
                 autoUpdate,
                 origin : (origin === undefined) ? undefined /* do NOT modify if undefined */ : { // one to one relation
                     // nested_delete if set to null:
-                    delete :  (origin !== null) ? undefined /* do NOT delete if NOT null */ : {
+                    delete : ((origin !== null) /* do NOT delete if NOT null */ || isCreate /* do NOT delete if `create` ShippingProvider */) ? undefined : {
                         // do DELETE
                         // no condition needed because one to one relation
                     },
                     
-                    // one_stage nested_update for create (isCreate === true):
-                    create : ((origin === null) /* do NOT update if null */ || !isCreate /* do nested `create`(always)                    if `create` ShippingProvider */) ? undefined : origin,
+                    // one_conditional nested_update for create (isCreate === true):
+                    create : ((origin === null) /* do NOT update if null */ || !isCreate /* do NOT one_conditional if `update` ShippingProvider */) ? undefined : origin,
                     
-                    // two_stage nested_update for update (isCreate === false):
-                    upsert : ((origin === null) /* do NOT update if null */ ||  isCreate /* do nested `update`(prefer)|`create`(fallback) if `update` ShippingProvider */) ? undefined : {
+                    // two_conditional nested_update for update (isCreate === false):
+                    upsert : ((origin === null) /* do NOT update if null */ ||  isCreate /* do NOT two_conditional if `create` ShippingProvider */) ? undefined : {
                         update : origin, // prefer   to `update` if already exist
                         create : origin, // fallback to `create` if not     exist
                     },
@@ -588,16 +588,16 @@ You do not have the privilege to modify the shipping order.`
                 weightStep,
                 eta : (eta === undefined) ? undefined /* do NOT modify if undefined */ : { // one to one relation
                     // nested_delete if set to null:
-                    delete : (eta !== null) ? undefined /* do NOT delete if NOT null */ : {
+                    delete : ((eta !== null) /* do NOT delete if NOT null */ || isCreate /* do NOT delete if `create` ShippingProvider */) ? undefined : {
                         // do DELETE
                         // no condition needed because one to one relation
                     },
                     
-                    // one_stage nested_update for create (isCreate === true):
-                    create : ((eta === null) /* do NOT update if null */ || !isCreate /* do nested `create`(always)                    if `create` ShippingProvider */) ? undefined : eta,
+                    // one_conditional nested_update for create (isCreate === true):
+                    create : ((eta === null) /* do NOT update if null */ || !isCreate /* do NOT one_conditional if `update` ShippingProvider */) ? undefined : eta,
                     
-                    // two_stage nested_update for update (isCreate === false):
-                    upsert : ((eta === null) /* do NOT update if null */ ||  isCreate /* do nested `update`(prefer)|`create`(fallback) if `update` ShippingProvider */) ? undefined : {
+                    // two_conditional nested_update for update (isCreate === false):
+                    upsert : ((eta === null) /* do NOT update if null */ ||  isCreate /* do NOT two_conditional if `create` ShippingProvider */) ? undefined : {
                         update : eta, // prefer   to `update` if already exist
                         create : eta, // fallback to `create` if not     exist
                     },
@@ -616,7 +616,7 @@ You do not have the privilege to modify the shipping order.`
                         ...restCoverageCountry,
                         
                         eta : (eta === null) ? undefined /* do NOT create if null */ : { // one to one relation
-                            // one_stage nested_update for create:
+                            // one_conditional nested_update for create:
                             create : eta, // do nested `create`
                         },
                         
@@ -627,7 +627,7 @@ You do not have the privilege to modify the shipping order.`
                                 ...restCoverageState,
                                 
                                 eta : (eta === null) ? undefined /* do NOT create if null */ : { // one to one relation
-                                    // one_stage nested_update for create:
+                                    // one_conditional nested_update for create:
                                     create : eta, // do nested `create`
                                 },
                                 
@@ -640,7 +640,7 @@ You do not have the privilege to modify the shipping order.`
                                         updatedAt : now,
                                         
                                         eta : (eta === null) ? undefined /* do NOT create if null */ : { // one to one relation
-                                            // one_stage nested_update for create:
+                                            // one_conditional nested_update for create:
                                             create : eta, // do nested `create`
                                         },
                                     })),
@@ -659,7 +659,7 @@ You do not have the privilege to modify the shipping order.`
                             ...restCoverageCountry,
                             
                             eta : (eta === null) ? undefined /* do NOT modify if null */ : { // one to one relation
-                                // two_stage nested_update for update:
+                                // two_conditional nested_update for update:
                                 upsert : {
                                     update : eta, // prefer   to `update` if already exist
                                     create : eta, // fallback to `create` if not     exist
@@ -678,7 +678,7 @@ You do not have the privilege to modify the shipping order.`
                                     ...restCoverageState,
                                     
                                     eta : (eta === null) ? undefined /* do NOT create if null */ : { // one to one relation
-                                        // one_stage nested_update for create:
+                                        // one_conditional nested_update for create:
                                         create : eta, // do nested `create`
                                     },
                                     
@@ -691,7 +691,7 @@ You do not have the privilege to modify the shipping order.`
                                             updatedAt : now,
                                             
                                             eta : (eta === null) ? undefined /* do NOT create if null */ : { // one to one relation
-                                                // one_stage nested_update for create:
+                                                // one_conditional nested_update for create:
                                                 create : eta, // do nested `create`
                                             },
                                         })),
@@ -708,7 +708,7 @@ You do not have the privilege to modify the shipping order.`
                                         ...restCoverageState,
                                         
                                         eta : (eta === null) ? undefined /* do NOT modify if null */ : { // one to one relation
-                                            // two_stage nested_update for update:
+                                            // two_conditional nested_update for update:
                                             upsert : {
                                                 update : eta, // prefer   to `update` if already exist
                                                 create : eta, // fallback to `create` if not     exist
@@ -729,7 +729,7 @@ You do not have the privilege to modify the shipping order.`
                                                 updatedAt : now,
                                                 
                                                 eta : (eta === null) ? undefined /* do NOT create if null */ : { // one to one relation
-                                                    // one_stage nested_update for create:
+                                                    // one_conditional nested_update for create:
                                                     create : eta, // do nested `create`
                                                 },
                                             })),
@@ -746,7 +746,7 @@ You do not have the privilege to modify the shipping order.`
                                                     updatedAt : !restCoverageCity.updatedAt ? undefined : now, // if has any_updatedAt_date => overwrite to `now`, otherwise undefined
                                                     
                                                     eta : (eta === null) ? undefined /* do NOT modify if null */ : { // one to one relation
-                                                        // two_stage nested_update for update:
+                                                        // two_conditional nested_update for update:
                                                         upsert : {
                                                             update : eta, // prefer   to `update` if already exist
                                                             create : eta, // fallback to `create` if not     exist
