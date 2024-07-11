@@ -22,6 +22,7 @@ import type {
 import {
     // types:
     type VariantGroupDetail,
+    type VariantGroupDiff,
     
     type ProductPreview,
     type ProductDetail,
@@ -30,22 +31,6 @@ import {
     
     // utilities:
     selectId,
-}                           from '@/models'
-export {
-    // types:
-    type VariantPreview,
-    type VariantDetail,
-    type VariantGroupDetail,
-    
-    type ProductPreview,
-    type ProductDetail,
-    
-    type ProductPricePart,
-    
-    type StockDetail,
-}                           from '@/models'
-import {
-    VariantGroupDiff,
     createVariantGroupDiff,
     createStockMap,
 }                           from '@/models'

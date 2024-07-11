@@ -24,11 +24,12 @@ import {
     // types:
     type TemplateVariantDetail,
     type TemplateVariantGroupDetail,
+    type TemplateVariantDiff,
     
     
     
     // utilities:
-    TemplateVariantDiff,
+    selectId,
     createTemplateVariantDiff,
 }                           from '@/models'
 
@@ -301,13 +302,13 @@ You do not have the privilege to modify the template_variant name.`
             !session.role?.product_ud
             &&
             !((): boolean => {
-                // compare the modified order items, ignore added|deleted items:
-                const templateVariantModSortIds = templateVariantMods.map(({id}) => id);
-                const templateVariantDeletedIds = templateVariantDels;
-                const templateVariantOriSortIds = templateVariantOris.map(({id}) => id).filter((id) => !templateVariantDeletedIds.includes(id));
-                if (templateVariantModSortIds.length !== templateVariantOriSortIds.length) return false; // not_deep_equal
-                for (let index = 0; index < templateVariantModSortIds.length; index++) {
-                    if (templateVariantModSortIds[index] !== templateVariantOriSortIds[index]) return false; // not_deep_equal
+                // compare the order of templateVariants, ignore added|deleted items:
+                const templateVariantModIds = templateVariantMods.map(selectId);
+                const templateVariantDelIds = templateVariantDels;
+                const templateVariantOriIds = templateVariantOris.map(selectId).filter((id) => !templateVariantDelIds.includes(id));
+                if (templateVariantModIds.length !== templateVariantOriIds.length) return false; // not_deep_equal
+                for (let templateVariantIndex = 0; templateVariantIndex < templateVariantModIds.length; templateVariantIndex++) {
+                    if (templateVariantModIds[templateVariantIndex] !== templateVariantOriIds[templateVariantIndex]) return false; // not_deep_equal
                 } // for
                 
                 
