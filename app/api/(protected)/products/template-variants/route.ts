@@ -20,10 +20,17 @@ import {
 }                           from 'next-connect'
 
 // models:
-import type {
-    TemplateVariant,
-    TemplateVariantGroup,
-}                           from '@prisma/client'
+import {
+    // types:
+    type TemplateVariantDetail,
+    type TemplateVariantGroupDetail,
+    
+    
+    
+    // utilities:
+    TemplateVariantDiff,
+    createTemplateVariantDiff,
+}                           from '@/models'
 
 // ORMs:
 import {
@@ -34,29 +41,6 @@ import {
 import {
     authOptions,
 }                           from '@/app/api/auth/[...nextauth]/route'
-
-
-
-// types:
-export interface TemplateVariantDetail
-    extends
-        Omit<TemplateVariant,
-            |'createdAt'
-            |'updatedAt'
-            
-            |'templateVariantGroupId'
-        >
-{
-}
-export interface TemplateVariantGroupDetail
-    extends
-        Omit<TemplateVariantGroup,
-            |'createdAt'
-            |'updatedAt'
-        >
-{
-    templateVariants : TemplateVariantDetail[]
-}
 
 
 
@@ -230,13 +214,6 @@ You do not have the privilege to view the template_variant.`
         hasDedicatedStocks,
     } = templateVariantGroup;
     
-    interface TemplateVariantDiff {
-        templateVariantOris      : TemplateVariantDetail[]
-        
-        templateVariantDels      : string[]
-        templateVariantAdds      : Omit<TemplateVariantDetail, 'id'>[]
-        templateVariantMods      : TemplateVariantDetail[]
-    }
     const templateVariantDiff = await (async (): Promise<TemplateVariantDiff> => {
         const {
             templateVariants,
@@ -263,43 +240,7 @@ You do not have the privilege to view the template_variant.`
                 sort: 'asc',
             },
         });
-        
-        
-        
-        const templateVariantDels : TemplateVariantDiff['templateVariantDels'] = (() => {
-            const postedIds  : string[] = templateVariants.map(({id}) => id);
-            const currentIds : string[] = templateVariantOris.map(({id}) => id) ?? [];
-            return currentIds.filter((currentId) => !postedIds.includes(currentId));
-        })();
-        const templateVariantAdds : TemplateVariantDiff['templateVariantAdds'] = [];
-        const templateVariantMods : TemplateVariantDiff['templateVariantMods'] = [];
-        let templateVariantSortCounter = 0;
-        for (const {id, sort, ...restTemplateVariant} of templateVariants) {
-            if (!id || (id[0] === ' ')) {
-                templateVariantAdds.push({
-                    // data:
-                    sort: templateVariantSortCounter++, // normalize sort, zero based
-                    ...restTemplateVariant,
-                });
-                continue;
-            } // if
-            
-            
-            
-            templateVariantMods.push({
-                // data:
-                id,
-                sort: templateVariantSortCounter++, // normalize sort, zero based
-                ...restTemplateVariant,
-            });
-        } // for
-        return {
-            templateVariantOris,
-            
-            templateVariantDels,
-            templateVariantAdds,
-            templateVariantMods,
-        };
+        return createTemplateVariantDiff(templateVariants, templateVariantOris);
     })();
     //#endregion normalize templateVariant
     

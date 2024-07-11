@@ -4,9 +4,11 @@ import type {
 }                           from '@prisma/client'
 
 // internals:
-import type {
-    VariantDetail,
-    VariantGroupDetail,
+import {
+    type VariantDetail,
+    type VariantGroupDetail,
+    
+    type TemplateVariantDetail,
 }                           from './types'
 
 
@@ -117,6 +119,52 @@ export const createVariantGroupDiff = (variantGroups: VariantGroupDetail[], vari
         variantGroupDels,
         variantGroupAdds,
         variantGroupMods,
+    };
+}
+
+
+
+export interface TemplateVariantDiff {
+    templateVariantOris : TemplateVariantDetail[]
+    
+    templateVariantDels : string[]
+    templateVariantAdds : Omit<TemplateVariantDetail, 'id'>[]
+    templateVariantMods : TemplateVariantDetail[]
+}
+export const createTemplateVariantDiff = (templateVariants: TemplateVariantDetail[], templateVariantOris : TemplateVariantDetail[]): TemplateVariantDiff => {
+    const templateVariantDels : TemplateVariantDiff['templateVariantDels'] = (() => {
+        const postedIds  : string[] = templateVariants.map(({id}) => id);
+        const currentIds : string[] = templateVariantOris.map(({id}) => id) ?? [];
+        return currentIds.filter((currentId) => !postedIds.includes(currentId));
+    })();
+    const templateVariantAdds : TemplateVariantDiff['templateVariantAdds'] = [];
+    const templateVariantMods : TemplateVariantDiff['templateVariantMods'] = [];
+    let templateVariantSortCounter = 0;
+    for (const {id: templateVariantId, sort, ...restTemplateVariant} of templateVariants) {
+        if (!templateVariantId || (templateVariantId[0] === ' ')) {
+            templateVariantAdds.push({
+                // data:
+                sort: templateVariantSortCounter++, // normalize sort, zero based
+                ...restTemplateVariant,
+            });
+            continue;
+        } // if
+        
+        
+        
+        templateVariantMods.push({
+            // data:
+            id   : templateVariantId,
+            sort : templateVariantSortCounter++, // normalize sort, zero based
+            ...restTemplateVariant,
+        });
+    } // for
+    return {
+        templateVariantOris,
+        
+        templateVariantDels,
+        templateVariantAdds,
+        templateVariantMods,
     };
 }
 

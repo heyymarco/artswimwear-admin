@@ -1,9 +1,14 @@
 // models:
-import type {
-    Variant,
-    VariantGroup,
-    Product,
-    Stock,
+import {
+    type Variant,
+    type VariantGroup,
+    
+    type TemplateVariant,
+    type TemplateVariantGroup,
+    
+    type Product,
+    
+    type Stock,
 }                           from '@prisma/client'
 
 
@@ -41,13 +46,30 @@ export interface VariantGroupDetail
 {
     variants : VariantDetail[]
 }
-export interface StockDetail
+
+
+
+export interface TemplateVariantDetail
     extends
-        Omit<Stock,
-            |'productId'
+        Omit<TemplateVariant,
+            |'createdAt'
+            |'updatedAt'
+            
+            |'templateVariantGroupId'
         >
 {
 }
+export interface TemplateVariantGroupDetail
+    extends
+        Omit<TemplateVariantGroup,
+            |'createdAt'
+            |'updatedAt'
+        >
+{
+    templateVariants : TemplateVariantDetail[]
+}
+
+
 
 export interface ProductPreview
     extends
@@ -71,6 +93,16 @@ export interface ProductDetail
 {
     variantGroups : VariantGroupDetail[]
     stocks        : StockDetail[]
+}
+
+
+
+export interface StockDetail
+    extends
+        Omit<Stock,
+            |'productId'
+        >
+{
 }
 
 
