@@ -3,10 +3,15 @@ import {
     type Prisma,
 }                           from '@prisma/client'
 import {
+    // types:
     type CoverageCountryDetail,
     type CoverageStateDetail,
     type CoverageCityDetail,
 }                           from '@/models'
+import {
+    // utilities:
+    selectId,
+}                           from '../utilities'
 
 
 
@@ -154,8 +159,8 @@ export interface CoverageCityDiff {
 }
 export const createCoverageCountryDiff = (coverageCountries: CoverageCountryDetail[], coverageCountryOris : CoverageCountryDetail[]): CoverageCountryDiff => {
     const coverageCountryDels : CoverageCountryDiff['coverageCountryDels'] = (() => {
-        const postedIds  : string[] = coverageCountries.map(({id}) => id);
-        const currentIds : string[] = coverageCountryOris.map(({id}) => id);
+        const postedIds  : string[] = coverageCountries.map(selectId);
+        const currentIds : string[] = coverageCountryOris.map(selectId);
         return currentIds.filter((currentId) => !postedIds.includes(currentId));
     })();
     const coverageCountryAdds : CoverageCountryDiff['coverageCountryAdds'] = [];
@@ -172,8 +177,8 @@ export const createCoverageCountryDiff = (coverageCountries: CoverageCountryDeta
             const coverageStateOris : CoverageStateDiff['coverageStateOris'] = coverageCountryOris.find(({id: parentId}) => (parentId === countryId))?.zones ?? [];
             
             const coverageStateDels : CoverageStateDiff['coverageStateDels'] = (() => {
-                const postedIds  : string[] = coverageStates.map(({id}) => id);
-                const currentIds : string[] = coverageStateOris.map(({id}) => id) ?? [];
+                const postedIds  : string[] = coverageStates.map(selectId);
+                const currentIds : string[] = coverageStateOris.map(selectId) ?? [];
                 return currentIds.filter((currentId) => !postedIds.includes(currentId));
             })();
             const coverageStateAdds : CoverageStateDiff['coverageStateAdds'] = [];
@@ -190,8 +195,8 @@ export const createCoverageCountryDiff = (coverageCountries: CoverageCountryDeta
                     const coverageCityOris : CoverageCityDiff['coverageCityOris'] = coverageStateOris.find(({id: parentId}) => (parentId === stateId))?.zones ?? [];
                     
                     const coverageCityDels : CoverageCityDiff['coverageCityDels'] = (() => {
-                        const postedIds  : string[] = coverageCities.map(({id}) => id);
-                        const currentIds : string[] = coverageCityOris.map(({id}) => id) ?? [];
+                        const postedIds  : string[] = coverageCities.map(selectId);
+                        const currentIds : string[] = coverageCityOris.map(selectId) ?? [];
                         return currentIds.filter((currentId) => !postedIds.includes(currentId));
                     })();
                     const coverageCityAdds : CoverageCityDiff['coverageCityAdds'] = [];

@@ -1,15 +1,20 @@
 // models:
-import type {
-    Stock,
+import {
+    type Stock,
 }                           from '@prisma/client'
 
 // internals:
 import {
+    // types:
     type VariantDetail,
     type VariantGroupDetail,
     
     type TemplateVariantDetail,
 }                           from './types'
+import {
+    // utilities:
+    selectId,
+}                           from '../utilities'
 
 
 
@@ -30,8 +35,8 @@ export interface VariantDiff {
 }
 export const createVariantGroupDiff = (variantGroups: VariantGroupDetail[], variantGroupOris : VariantGroupDetail[]): VariantGroupDiff => {
     const variantGroupDels : VariantGroupDiff['variantGroupDels'] = (() => {
-        const postedIds  : string[] = variantGroups.map(({id}) => id);
-        const currentIds : string[] = variantGroupOris.map(({id}) => id);
+        const postedIds  : string[] = variantGroups.map(selectId);
+        const currentIds : string[] = variantGroupOris.map(selectId);
         return currentIds.filter((currentId) => !postedIds.includes(currentId));
     })();
     const variantGroupAdds : VariantGroupDiff['variantGroupAdds'] = [];
@@ -48,8 +53,8 @@ export const createVariantGroupDiff = (variantGroups: VariantGroupDetail[], vari
             const variantOris : VariantDiff['variantOris'] = variantGroupOris.find(({id: parentId}) => (parentId === groupId))?.variants ?? [];
             
             const variantDels : VariantDiff['variantDels'] = (() => {
-                const postedIds  : string[] = variants.map(({id}) => id);
-                const currentIds : string[] = variantOris.map(({id}) => id) ?? [];
+                const postedIds  : string[] = variants.map(selectId);
+                const currentIds : string[] = variantOris.map(selectId) ?? [];
                 return currentIds.filter((currentId) => !postedIds.includes(currentId));
             })();
             const variantAdds : VariantDiff['variantAdds'] = [];
@@ -133,8 +138,8 @@ export interface TemplateVariantDiff {
 }
 export const createTemplateVariantDiff = (templateVariants: TemplateVariantDetail[], templateVariantOris : TemplateVariantDetail[]): TemplateVariantDiff => {
     const templateVariantDels : TemplateVariantDiff['templateVariantDels'] = (() => {
-        const postedIds  : string[] = templateVariants.map(({id}) => id);
-        const currentIds : string[] = templateVariantOris.map(({id}) => id) ?? [];
+        const postedIds  : string[] = templateVariants.map(selectId);
+        const currentIds : string[] = templateVariantOris.map(selectId) ?? [];
         return currentIds.filter((currentId) => !postedIds.includes(currentId));
     })();
     const templateVariantAdds : TemplateVariantDiff['templateVariantAdds'] = [];
@@ -188,7 +193,7 @@ export const createStockMap = (variantGroupDiff: Pick<VariantGroupDiff, 'variant
         variantGroupAdds,
         variantGroupMods,
     } = ((): VariantGroupUpdated => {
-        const variantGroupModIds = variantGroupDiff.variantGroupMods.map(({id}) => id);
+        const variantGroupModIds = variantGroupDiff.variantGroupMods.map(selectId);
         const variantGroupAdds   : VariantGroupUpdated['variantGroupAdds'] = [];
         const variantGroupMods   : VariantGroupUpdated['variantGroupMods'] = [];
         for (const {id: groupId, sort, hasDedicatedStocks, variants} of updatedVariantGroups) {
@@ -202,7 +207,7 @@ export const createStockMap = (variantGroupDiff: Pick<VariantGroupDiff, 'variant
                 variantMods,
             } = ((): VariantUpdated => {
                 const variantGroupMod = variantGroupDiff.variantGroupMods.find(({id: parentId}) => (parentId === groupId));
-                const variantModIds   = variantGroupMod?.variantMods.map(({id}) => id);
+                const variantModIds   = variantGroupMod?.variantMods.map(selectId);
                 const variantAdds     : VariantUpdated['variantAdds'] = [];
                 for (const {id: variantId} of variants) {
                     if (!variantModIds?.includes(variantId)) {
@@ -310,7 +315,7 @@ export const createStockMap = (variantGroupDiff: Pick<VariantGroupDiff, 'variant
                         id        : variantMod.id,
                     },
                 ];
-                const requiredVariantIds = currentVariants.map(({id}) => id);
+                const requiredVariantIds = currentVariants.map(selectId);
                 
                 
                 
@@ -391,6 +396,6 @@ export const createStockMap = (variantGroupDiff: Pick<VariantGroupDiff, 'variant
     
     return expandedStockInfos.map(({variants, ...restStockInfo}) => ({
         ...restStockInfo,
-        variantIds : variants.map(({id}) => id),
+        variantIds : variants.map(selectId),
     }));
 }
