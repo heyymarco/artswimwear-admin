@@ -14,11 +14,14 @@ import type {
 // utilities:
 export interface VariantGroupDiff {
     variantGroupOris : VariantGroupDetail[]
+    
     variantGroupDels : string[]
     variantGroupAdds : (Omit<VariantGroupDetail, 'id'|'variants'> & Pick<VariantDiff, 'variantAdds'>)[]
     variantGroupMods : (Omit<VariantGroupDetail,      'variants'> & VariantDiff)[]
 }
 export interface VariantDiff {
+    variantOris      : VariantDetail[]
+    
     variantDels      : string[]
     variantAdds      : Omit<VariantDetail, 'id'>[]
     variantMods      : VariantDetail[]
@@ -32,22 +35,26 @@ export const createVariantGroupDiff = (variantGroups: VariantGroupDetail[], vari
     const variantGroupAdds : VariantGroupDiff['variantGroupAdds'] = [];
     const variantGroupMods : VariantGroupDiff['variantGroupMods'] = [];
     let variantGroupSortCounter = 0;
-    for (const {id, sort, variants, ...restVariantGroup} of variantGroups) {
+    for (const {id: groupId, sort, variants, ...restVariantGroup} of variantGroups) {
         const {
+            variantOris,
+            
             variantDels,
             variantAdds,
             variantMods,
         } = ((): VariantDiff => {
+            const variantOris : VariantDiff['variantOris'] = variantGroupOris.find(({id: parentId}) => (parentId === groupId))?.variants ?? [];
+            
             const variantDels : VariantDiff['variantDels'] = (() => {
                 const postedIds  : string[] = variants.map(({id}) => id);
-                const currentIds : string[] = variantGroupOris.find(({id: groupId}) => (groupId === id))?.variants.map(({id}) => id) ?? [];
+                const currentIds : string[] = variantOris.map(({id}) => id) ?? [];
                 return currentIds.filter((currentId) => !postedIds.includes(currentId));
             })();
             const variantAdds : VariantDiff['variantAdds'] = [];
             const variantMods : VariantDiff['variantMods'] = [];
             let variantSortCounter = 0;
-            for (const {id, sort, ...restVariant} of variants) {
-                if (!id || (id[0] === ' ')) {
+            for (const {id: variantId, sort, ...restVariant} of variants) {
+                if (!variantId || (variantId[0] === ' ')) {
                     variantAdds.push({
                         // data:
                         sort: variantSortCounter++, // normalize sort, zero based
@@ -60,12 +67,14 @@ export const createVariantGroupDiff = (variantGroups: VariantGroupDetail[], vari
                 
                 variantMods.push({
                     // data:
-                    id,
-                    sort: variantSortCounter++, // normalize sort, zero based
+                    id   : variantId,
+                    sort : variantSortCounter++, // normalize sort, zero based
                     ...restVariant,
                 });
             } // for
             return {
+                variantOris,
+                
                 variantDels,
                 variantAdds,
                 variantMods,
@@ -74,7 +83,7 @@ export const createVariantGroupDiff = (variantGroups: VariantGroupDetail[], vari
         
         
         
-        if (!id || (id[0] === ' ')) {
+        if (!groupId || (groupId[0] === ' ')) {
             variantGroupAdds.push({
                 // data:
                 sort: variantGroupSortCounter++, // normalize sort, zero based
@@ -90,11 +99,13 @@ export const createVariantGroupDiff = (variantGroups: VariantGroupDetail[], vari
         
         variantGroupMods.push({
             // data:
-            id,
-            sort: variantGroupSortCounter++, // normalize sort, zero based
+            id   : groupId,
+            sort : variantGroupSortCounter++, // normalize sort, zero based
             ...restVariantGroup,
             
             // relations:
+            variantOris,
+            
             variantDels,
             variantAdds,
             variantMods,
@@ -132,7 +143,7 @@ export const createStockMap = (variantGroupDiff: Pick<VariantGroupDiff, 'variant
         const variantGroupModIds = variantGroupDiff.variantGroupMods.map(({id}) => id);
         const variantGroupAdds   : VariantGroupUpdated['variantGroupAdds'] = [];
         const variantGroupMods   : VariantGroupUpdated['variantGroupMods'] = [];
-        for (const {id, sort, hasDedicatedStocks, variants} of updatedVariantGroups) {
+        for (const {id: groupId, sort, hasDedicatedStocks, variants} of updatedVariantGroups) {
             // conditions:
             if (!hasDedicatedStocks) continue;
             
@@ -142,14 +153,14 @@ export const createStockMap = (variantGroupDiff: Pick<VariantGroupDiff, 'variant
                 variantAdds,
                 variantMods,
             } = ((): VariantUpdated => {
-                const variantGroupMod = variantGroupDiff.variantGroupMods.find(({id: groupId}) => (groupId === id));
+                const variantGroupMod = variantGroupDiff.variantGroupMods.find(({id: parentId}) => (parentId === groupId));
                 const variantModIds   = variantGroupMod?.variantMods.map(({id}) => id);
                 const variantAdds     : VariantUpdated['variantAdds'] = [];
-                for (const {id} of variants) {
-                    if (!variantModIds?.includes(id)) {
+                for (const {id: variantId} of variants) {
+                    if (!variantModIds?.includes(variantId)) {
                         variantAdds.push({
                             // data:
-                            id,
+                            id: variantId,
                         });
                         continue;
                     } // if
@@ -162,7 +173,7 @@ export const createStockMap = (variantGroupDiff: Pick<VariantGroupDiff, 'variant
             
             
             
-            if (!variantGroupModIds.includes(id)) {
+            if (!variantGroupModIds.includes(groupId)) {
                 variantGroupAdds.push({
                     // data:
                     sort,
@@ -179,7 +190,7 @@ export const createStockMap = (variantGroupDiff: Pick<VariantGroupDiff, 'variant
             
             // changed from not_exists => exists:
             // if the group was previously `hasDedicatedStocks === false` => treat `variantMods` as `variantAdds`:
-            if (!variantGroupDiff.variantGroupOris.find(({id: groupId}) => (groupId === id))?.hasDedicatedStocks) {
+            if (!variantGroupDiff.variantGroupOris.find(({id: parentId}) => (parentId === groupId))?.hasDedicatedStocks) {
                 variantGroupAdds.push({
                     // data:
                     sort,
