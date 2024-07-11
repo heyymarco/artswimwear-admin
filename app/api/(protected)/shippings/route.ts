@@ -695,9 +695,9 @@ You do not have the privilege to modify the shipping order.`
                             
                             // relations:
                             zones /* coverageStates */ : {
-                                delete : !coverageStateDels.length ? undefined : coverageStateDels.map((id) => ({
+                                delete : !coverageStateDels.length ? undefined : coverageStateDels.map((stateId) => ({
                                     // conditions:
-                                    id : id,
+                                    id : stateId,
                                 })),
                                 
                                 create : !coverageStateAdds.length ? undefined : coverageStateAdds.map(({coverageCityAdds, eta, ...restCoverageState}) => ({
@@ -750,9 +750,9 @@ You do not have the privilege to modify the shipping order.`
                                         
                                         // relations:
                                         zones /* coverageCities */ : {
-                                            delete : !coverageCityDels.length ? undefined : coverageCityDels.map((id) => ({
+                                            delete : !coverageCityDels.length ? undefined : coverageCityDels.map((cityId) => ({
                                                 // conditions:
-                                                id : id,
+                                                id : cityId,
                                             })),
                                             
                                             create : !coverageCityAdds.length ? undefined : coverageCityAdds.map(({eta, ...restcoverageCity}) => ({
