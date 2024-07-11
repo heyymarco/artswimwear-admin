@@ -6,6 +6,7 @@
 [high prior] verify breaking change <UpdateStatePlugin> .__first
 [high prior] removed paymentConfirmation.currency
 
+[med  prior] replace \(\s*\{\s*id\s*\}\s*\)\s*=>\s*id   with selectId
 [med  prior] fix PrintDialog split multiple pages on FireFox
 
 [low  prior] prefer to use Request|Response instead of NextRequest|NextResponse
