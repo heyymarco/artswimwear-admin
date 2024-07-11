@@ -587,7 +587,7 @@ You do not have the privilege to modify the shipping order.`
                 visibility,
                 
                 autoUpdate,
-                origin : (origin === undefined) ? undefined /* do NOT modify if undefined */ : { // one to one relation
+                origin : (origin === undefined) /* do NOT modify if undefined */ ? undefined : { // one to one relation
                     // nested_delete if set to null:
                     delete : ((origin !== null) /* do NOT delete if NOT null */ || isCreate /* do NOT delete if `create` ShippingProvider */ || !hasOrigin /* do NOT delete if NOTHING to delete */) ? undefined : {
                         // do DELETE
@@ -607,7 +607,7 @@ You do not have the privilege to modify the shipping order.`
                 name,
                 
                 weightStep,
-                eta : (eta === undefined) ? undefined /* do NOT modify if undefined */ : { // one to one relation
+                eta : (eta === undefined) /* do NOT modify if undefined */ ? undefined : { // one to one relation
                     // nested_delete if set to null:
                     delete : ((eta !== null) /* do NOT delete if NOT null */ || isCreate /* do NOT delete if `create` ShippingProvider */ || !hasEta /* do NOT delete if NOTHING to delete */) ? undefined : {
                         // do DELETE
@@ -626,7 +626,7 @@ You do not have the privilege to modify the shipping order.`
                 rates,
                 
                 useZones,
-                zones /* coverageCountries */ : (coverageCountryDiff === undefined) ? undefined : {
+                zones /* coverageCountries */ : (coverageCountryDiff === undefined) /* do NOT modify if undefined */ ? undefined : {
                     delete : !coverageCountryDiff.coverageCountryDels.length ? undefined : coverageCountryDiff.coverageCountryDels.map((id) => ({
                         // conditions:
                         id : id,
