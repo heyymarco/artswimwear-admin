@@ -681,7 +681,7 @@ You do not have the privilege to modify the shipping order.`
                             
                             eta : { // one to one relation
                                 // nested_delete if set to null:
-                                delete : ((eta !== null) /* do NOT delete if NOT null */ || ((coverageCountryDiff.coverageCountryOris.find(({id: findId}) => (findId === countryId))?.eta ?? undefined) !== undefined) /* do NOT delete if NOTHING to delete */) ? undefined : {
+                                delete : ((eta !== null) /* do NOT delete if NOT null */ || ((coverageCountryDiff.coverageCountryOris.find(({id: findId}) => (findId === countryId))?.eta ?? undefined) === undefined) /* do NOT delete if NOTHING to delete */) ? undefined : {
                                     // do DELETE
                                     // no condition needed because one to one relation
                                 },
@@ -736,7 +736,7 @@ You do not have the privilege to modify the shipping order.`
                                         
                                         eta : { // one to one relation
                                             // nested_delete if set to null:
-                                            delete : ((eta !== null) /* do NOT delete if NOT null */ || ((coverageStateOris.find(({id: findId}) => (findId === stateId))?.eta ?? undefined) !== undefined) /* do NOT delete if NOTHING to delete */) ? undefined : {
+                                            delete : ((eta !== null) /* do NOT delete if NOT null */ || ((coverageStateOris.find(({id: findId}) => (findId === stateId))?.eta ?? undefined) === undefined) /* do NOT delete if NOTHING to delete */) ? undefined : {
                                                 // do DELETE
                                                 // no condition needed because one to one relation
                                             },
@@ -780,7 +780,7 @@ You do not have the privilege to modify the shipping order.`
                                                     
                                                     eta : { // one to one relation
                                                         // nested_delete if set to null:
-                                                        delete : ((eta !== null) /* do NOT delete if NOT null */ || ((coverageCityOris.find(({id: findId}) => (findId === cityId))?.eta ?? undefined) !== undefined) /* do NOT delete if NOTHING to delete */) ? undefined : {
+                                                        delete : ((eta !== null) /* do NOT delete if NOT null */ || ((coverageCityOris.find(({id: findId}) => (findId === cityId))?.eta ?? undefined) === undefined) /* do NOT delete if NOTHING to delete */) ? undefined : {
                                                             // do DELETE
                                                             // no condition needed because one to one relation
                                                         },
