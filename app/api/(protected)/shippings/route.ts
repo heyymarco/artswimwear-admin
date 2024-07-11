@@ -627,18 +627,18 @@ You do not have the privilege to modify the shipping order.`
                 
                 useZones,
                 zones /* coverageCountries */ : (coverageCountryDiff === undefined) /* do NOT modify if undefined */ ? undefined : {
-                    delete : !coverageCountryDiff.coverageCountryDels.length ? undefined : coverageCountryDiff.coverageCountryDels.map((id) => ({
+                    delete : !coverageCountryDiff.coverageCountryDels.length ? undefined : coverageCountryDiff.coverageCountryDels.map((countryId) => ({
                         // conditions:
-                        id : id,
+                        id : countryId,
                     })),
                     
                     create : !coverageCountryDiff.coverageCountryAdds.length ? undefined : coverageCountryDiff.coverageCountryAdds.map(({coverageStateAdds, eta, ...restCoverageCountry}) => ({
                         // data:
                         ...restCoverageCountry,
                         
-                        eta : (eta === null) ? undefined /* do NOT create if null */ : { // one to one relation
+                        eta : (eta === null) /* do NOT create if null */ ? undefined : { // one to one relation
                             // one_conditional nested_update if create:
-                            create : eta, // do nested `create`
+                            create : eta,
                         },
                         
                         // relations:
@@ -647,9 +647,9 @@ You do not have the privilege to modify the shipping order.`
                                 // data:
                                 ...restCoverageState,
                                 
-                                eta : (eta === null) ? undefined /* do NOT create if null */ : { // one to one relation
+                                eta : (eta === null) /* do NOT create if null */ ? undefined : { // one to one relation
                                     // one_conditional nested_update if create:
-                                    create : eta, // do nested `create`
+                                    create : eta,
                                 },
                                 
                                 // relations:
@@ -658,11 +658,11 @@ You do not have the privilege to modify the shipping order.`
                                         // data:
                                         ...restcoverageCity,
                                         
-                                        updatedAt : now,
+                                        updatedAt : now, // if has any_updatedAt_date => overwrite to `now`
                                         
-                                        eta : (eta === null) ? undefined /* do NOT create if null */ : { // one to one relation
+                                        eta : (eta === null) /* do NOT create if null */ ? undefined : { // one to one relation
                                             // one_conditional nested_update if create:
-                                            create : eta, // do nested `create`
+                                            create : eta,
                                         },
                                     })),
                                 },
@@ -704,9 +704,9 @@ You do not have the privilege to modify the shipping order.`
                                     // data:
                                     ...restCoverageState,
                                     
-                                    eta : (eta === null) ? undefined /* do NOT create if null */ : { // one to one relation
+                                    eta : (eta === null) /* do NOT create if null */ ? undefined : { // one to one relation
                                         // one_conditional nested_update if create:
-                                        create : eta, // do nested `create`
+                                        create : eta,
                                     },
                                     
                                     // relations:
@@ -715,11 +715,11 @@ You do not have the privilege to modify the shipping order.`
                                             // data:
                                             ...restcoverageCity,
                                             
-                                            updatedAt : now,
+                                            updatedAt : now, // if has any_updatedAt_date => overwrite to `now`
                                             
-                                            eta : (eta === null) ? undefined /* do NOT create if null */ : { // one to one relation
+                                            eta : (eta === null) /* do NOT create if null */ ? undefined : { // one to one relation
                                                 // one_conditional nested_update if create:
-                                                create : eta, // do nested `create`
+                                                create : eta,
                                             },
                                         })),
                                     },
@@ -759,11 +759,11 @@ You do not have the privilege to modify the shipping order.`
                                                 // data:
                                                 ...restcoverageCity,
                                                 
-                                                updatedAt : now,
+                                                updatedAt : now, // if has any_updatedAt_date => overwrite to `now`
                                                 
-                                                eta : (eta === null) ? undefined /* do NOT create if null */ : { // one to one relation
+                                                eta : (eta === null) /* do NOT create if null */ ? undefined : { // one to one relation
                                                     // one_conditional nested_update if create:
-                                                    create : eta, // do nested `create`
+                                                    create : eta,
                                                 },
                                             })),
                                             
