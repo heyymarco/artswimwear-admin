@@ -35,7 +35,7 @@ import {
 import type {
     // types:
     ProductPreview,
-}                           from '@/store/features/api/apiSlice'
+}                           from '@/models'
 
 // utilities:
 import {
