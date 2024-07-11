@@ -30,6 +30,11 @@ import {
     shippingDetailSelect,
     type CoverageCountryDiff,
     createCoverageCountryDiff,
+    
+    
+    
+    // utilities:
+    selectId,
 }                           from '@/models'
 import {
     type Prisma,
@@ -513,30 +518,32 @@ You do not have the privilege to modify the shipping rates and/or shipping zones
                         &&
                         !((): boolean => {
                             // compare the order of coverageCountries|coverageStates:
-                            const coverageCountryModIds = coverageCountryMods.map(({id}) => id);
-                            const coverageCountryOriIds = coverageCountryOris.map(({id}) => id);
+                            const coverageCountryModIds = coverageCountryMods.map(selectId);
+                            const coverageCountryOriIds = coverageCountryOris.map(selectId);
                             if (coverageCountryModIds.length !== coverageCountryOriIds.length) return false; // not_equal
                             for (let coverageCountryIndex = 0; coverageCountryIndex < coverageCountryModIds.length; coverageCountryIndex++) {
                                 if (coverageCountryModIds[coverageCountryIndex] !== coverageCountryOriIds[coverageCountryIndex]) return false; // not_equal
-                                const currentCoverageCountryMod = coverageCountryMods[coverageCountryIndex];
+                                const {
+                                    coverageStateOris,
+                                    coverageStateMods,
+                                } = coverageCountryMods[coverageCountryIndex];
                                 
                                 
                                 
-                                const coverageStateMods   = currentCoverageCountryMod.coverageStateMods;
-                                const coverageStateOris   = coverageCountryOris.find(({id}) => (id === currentCoverageCountryMod.id))?.zones ?? [];
-                                const coverageStateModIds = coverageStateMods.map(({id}) => id);
-                                const coverageStateOriIds = coverageStateOris.map(({id}) => id);
+                                const coverageStateModIds = coverageStateMods.map(selectId);
+                                const coverageStateOriIds = coverageStateOris.map(selectId);
                                 if (coverageStateModIds.length !== coverageStateOriIds.length) return false; // not_deep_equal
                                 for (let coverageStateIndex = 0; coverageStateIndex < coverageStateModIds.length; coverageStateIndex++) {
                                     if (coverageStateModIds[coverageStateIndex] !== coverageStateOriIds[coverageStateIndex]) return false; // not_deep_equal
-                                    const currentCoverageStateMod = coverageStateMods[coverageStateIndex];
+                                    const {
+                                        coverageCityOris,
+                                        coverageCityMods,
+                                    } = coverageStateMods[coverageStateIndex];
                                     
                                     
                                     
-                                    const coverageCityMods   = currentCoverageStateMod.coverageCityMods;
-                                    const coverageCityOris   = coverageStateOris.find(({id}) => (id === currentCoverageStateMod.id))?.zones ?? [];
-                                    const coverageCityModIds = coverageCityMods.map(({id}) => id);
-                                    const coverageCityOriIds = coverageCityOris.map(({id}) => id);
+                                    const coverageCityModIds = coverageCityMods.map(selectId);
+                                    const coverageCityOriIds = coverageCityOris.map(selectId);
                                     if (coverageCityModIds.length !== coverageCityOriIds.length) return false; // not_deep_equal
                                     for (let coverageCityIndex = 0; coverageCityIndex < coverageCityModIds.length; coverageCityIndex++) {
                                         if (coverageCityModIds[coverageCityIndex] !== coverageCityOriIds[coverageCityIndex]) return false; // not_deep_equal

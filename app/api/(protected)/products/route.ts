@@ -19,23 +19,30 @@ import type {
 }                           from '@/libs/types'
 
 // models:
-import type {
-    VariantGroupDetail,
+import {
+    // types:
+    type VariantGroupDetail,
     
-    ProductPreview,
-    ProductDetail,
+    type ProductPreview,
+    type ProductDetail,
+    
+    
+    
+    // utilities:
+    selectId,
 }                           from '@/models'
-export type {
-    VariantPreview,
-    VariantDetail,
-    VariantGroupDetail,
+export {
+    // types:
+    type VariantPreview,
+    type VariantDetail,
+    type VariantGroupDetail,
     
-    ProductPreview,
-    ProductDetail,
+    type ProductPreview,
+    type ProductDetail,
     
-    ProductPricePart,
+    type ProductPricePart,
     
-    StockDetail,
+    type StockDetail,
 }                           from '@/models'
 import {
     VariantGroupDiff,
@@ -581,19 +588,20 @@ You do not have the privilege to modify the product_variant name.`
                         &&
                         !((): boolean => {
                             // compare the order of variantGroups|variants:
-                            const variantGroupModIds = variantGroupMods.map(({id}) => id);
-                            const variantGroupOriIds = variantGroupOris.map(({id}) => id);
+                            const variantGroupModIds = variantGroupMods.map(selectId);
+                            const variantGroupOriIds = variantGroupOris.map(selectId);
                             if (variantGroupModIds.length !== variantGroupOriIds.length) return false; // not_equal
                             for (let variantGroupIndex = 0; variantGroupIndex < variantGroupModIds.length; variantGroupIndex++) {
                                 if (variantGroupModIds[variantGroupIndex] !== variantGroupOriIds[variantGroupIndex]) return false; // not_equal
-                                const currentVariantGroupMod = variantGroupMods[variantGroupIndex];
+                                const {
+                                    variantOris,
+                                    variantMods,
+                                } = variantGroupMods[variantGroupIndex];
                                 
                                 
                                 
-                                const variantMods   = currentVariantGroupMod.variantMods;
-                                const variantOris   = variantGroupOris.find(({id}) => (id === currentVariantGroupMod.id))?.variants ?? [];
-                                const variantModIds = variantMods.map(({id}) => id);
-                                const variantOriIds = variantOris.map(({id}) => id);
+                                const variantModIds = variantMods.map(selectId);
+                                const variantOriIds = variantOris.map(selectId);
                                 if (variantModIds.length !== variantOriIds.length) return false; // not_deep_equal
                                 for (let variantIndex = 0; variantIndex < variantModIds.length; variantIndex++) {
                                     if (variantModIds[variantIndex] !== variantOriIds[variantIndex]) return false; // not_deep_equal
