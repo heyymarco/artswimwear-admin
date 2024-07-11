@@ -560,6 +560,27 @@ You do not have the privilege to modify the shipping order.`
             
             
             //#region save changes
+            // a workaround for conditional nested_delete:
+            const oldData = await prismaTransaction.shippingProvider.findFirst({
+                where  : {
+                    id : id,
+                },
+                select : {
+                    origin : {
+                        select : {
+                            id : true,
+                        },
+                    },
+                    eta    : {
+                        select : {
+                            id : true,
+                        },
+                    },
+                },
+            });
+            const hasOrigin = oldData?.origin?.id !== undefined;
+            const hasEta    = oldData?.eta?.id    !== undefined;
+            
             const now = new Date();
             const isCreate = !id;
             const shippingProviderData = {
@@ -568,7 +589,7 @@ You do not have the privilege to modify the shipping order.`
                 autoUpdate,
                 origin : (origin === undefined) ? undefined /* do NOT modify if undefined */ : { // one to one relation
                     // nested_delete if set to null:
-                    delete : ((origin !== null) /* do NOT delete if NOT null */ || isCreate /* do NOT delete if `create` ShippingProvider */) ? undefined : {
+                    delete : ((origin !== null) /* do NOT delete if NOT null */ || isCreate /* do NOT delete if `create` ShippingProvider */ || !hasOrigin /* do NOT delete if NOTHING to delete */) ? undefined : {
                         // do DELETE
                         // no condition needed because one to one relation
                     },
@@ -588,7 +609,7 @@ You do not have the privilege to modify the shipping order.`
                 weightStep,
                 eta : (eta === undefined) ? undefined /* do NOT modify if undefined */ : { // one to one relation
                     // nested_delete if set to null:
-                    delete : ((eta !== null) /* do NOT delete if NOT null */ || isCreate /* do NOT delete if `create` ShippingProvider */) ? undefined : {
+                    delete : ((eta !== null) /* do NOT delete if NOT null */ || isCreate /* do NOT delete if `create` ShippingProvider */ || !hasEta /* do NOT delete if NOTHING to delete */) ? undefined : {
                         // do DELETE
                         // no condition needed because one to one relation
                     },
@@ -649,16 +670,22 @@ You do not have the privilege to modify the shipping order.`
                         },
                     })),
                     
-                    update : !coverageCountryDiff.coverageCountryMods.length ? undefined : coverageCountryDiff.coverageCountryMods.map(({id, coverageStateDels, coverageStateAdds, coverageStateMods, eta, ...restCoverageCountry}) => ({
+                    update : !coverageCountryDiff.coverageCountryMods.length ? undefined : coverageCountryDiff.coverageCountryMods.map(({id: countryId, coverageStateOris, coverageStateDels, coverageStateAdds, coverageStateMods, eta, ...restCoverageCountry}) => ({
                         where : {
                             // conditions:
-                            id : id,
+                            id : countryId,
                         },
                         data  : {
                             // data:
                             ...restCoverageCountry,
                             
                             eta : { // one to one relation
+                                // nested_delete if set to null:
+                                delete : ((eta !== null) /* do NOT delete if NOT null */ || ((coverageCountryDiff.coverageCountryOris.find(({id: findId}) => (findId === countryId))?.eta ?? undefined) !== undefined) /* do NOT delete if NOTHING to delete */) ? undefined : {
+                                    // do DELETE
+                                    // no condition needed because one to one relation
+                                },
+                                
                                 // two_conditional nested_update for update:
                                 upsert : (eta === null) /* do NOT update if null */ ? undefined : {
                                     update : eta, // prefer   to `update` if already exist
@@ -698,16 +725,22 @@ You do not have the privilege to modify the shipping order.`
                                     },
                                 })),
                                 
-                                update : !coverageStateMods.length ? undefined : coverageStateMods.map(({id, coverageCityDels, coverageCityAdds, coverageCityMods, eta, ...restCoverageState}) => ({
+                                update : !coverageStateMods.length ? undefined : coverageStateMods.map(({id: stateId, coverageCityOris, coverageCityDels, coverageCityAdds, coverageCityMods, eta, ...restCoverageState}) => ({
                                     where : {
                                         // conditions:
-                                        id: id,
+                                        id: stateId,
                                     },
                                     data  : {
                                         // data:
                                         ...restCoverageState,
                                         
                                         eta : { // one to one relation
+                                            // nested_delete if set to null:
+                                            delete : ((eta !== null) /* do NOT delete if NOT null */ || ((coverageStateOris.find(({id: findId}) => (findId === stateId))?.eta ?? undefined) !== undefined) /* do NOT delete if NOTHING to delete */) ? undefined : {
+                                                // do DELETE
+                                                // no condition needed because one to one relation
+                                            },
+                                            
                                             // two_conditional nested_update for update:
                                             upsert : (eta === null) /* do NOT update if null */ ? undefined : {
                                                 update : eta, // prefer   to `update` if already exist
@@ -734,10 +767,10 @@ You do not have the privilege to modify the shipping order.`
                                                 },
                                             })),
                                             
-                                            update : !coverageCityMods.length ? undefined : coverageCityMods.map(({id, eta, ...restCoverageCity}) => ({
+                                            update : !coverageCityMods.length ? undefined : coverageCityMods.map(({id: cityId, eta, ...restCoverageCity}) => ({
                                                 where : {
                                                     // conditions:
-                                                    id: id,
+                                                    id: cityId,
                                                 },
                                                 data  : {
                                                     // data:
@@ -746,6 +779,12 @@ You do not have the privilege to modify the shipping order.`
                                                     updatedAt : !restCoverageCity.updatedAt ? undefined : now, // if has any_updatedAt_date => overwrite to `now`, otherwise undefined
                                                     
                                                     eta : { // one to one relation
+                                                        // nested_delete if set to null:
+                                                        delete : ((eta !== null) /* do NOT delete if NOT null */ || ((coverageCityOris.find(({id: findId}) => (findId === cityId))?.eta ?? undefined) !== undefined) /* do NOT delete if NOTHING to delete */) ? undefined : {
+                                                            // do DELETE
+                                                            // no condition needed because one to one relation
+                                                        },
+                                                        
                                                         // two_conditional nested_update for update:
                                                         upsert : (eta === null) /* do NOT update if null */ ? undefined : {
                                                             update : eta, // prefer   to `update` if already exist
