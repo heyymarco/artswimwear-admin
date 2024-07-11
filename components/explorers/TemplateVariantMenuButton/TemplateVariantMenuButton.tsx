@@ -72,15 +72,16 @@ import {
     customAlphabet,
 }                           from 'nanoid/async'
 
-// stores:
+// models:
 import {
     // types:
-    VariantGroupDetail,
-    TemplateVariantGroupDetail,
-    TemplateVariantDetail,
-    
-    
-    
+    type VariantGroupDetail,
+    type TemplateVariantGroupDetail,
+    type TemplateVariantDetail,
+}                           from '@/models'
+
+// stores:
+import {
     // hooks:
     useGetTemplateVariantGroupList,
 }                           from '@/store/features/api/apiSlice'

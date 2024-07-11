@@ -92,13 +92,14 @@ import type {
     VariantVisibility,
 }                           from '@prisma/client'
 
-// stores:
+// models:
 import {
     // types:
-    VariantDetail,
-    
-    
-    
+    type VariantDetail,
+}                           from '@/models'
+
+// stores:
+import {
     // hooks:
     usePostImage,
     useDeleteImage,

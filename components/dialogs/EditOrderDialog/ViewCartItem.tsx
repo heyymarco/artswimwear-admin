@@ -31,10 +31,10 @@ import {
     VariantIndicator,
 }                           from '@/components/VariantIndicator'
 
-// stores:
-import type {
+// models:
+import {
     // types:
-    ProductPreview,
+    type ProductPreview,
 }                           from '@/models'
 
 // utilities:

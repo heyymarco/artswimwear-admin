@@ -85,12 +85,12 @@ import {
     customAlphabet,
 }                           from 'nanoid/async'
 
-// stores:
-import type {
+// models:
+import {
     // types:
-    VariantDetail,
-    VariantGroupDetail,
-}                           from '@/store/features/api/apiSlice'
+    type VariantDetail,
+    type VariantGroupDetail,
+}                           from '@/models'
 
 // configs:
 import {

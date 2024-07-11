@@ -10,10 +10,11 @@ import {
     useOrderDataContext,
 }                           from './orderDataContext'
 
-// stores:
-import type {
-    ProductPricePart,
-}                           from '@/store/features/api/apiSlice'
+// models:
+import {
+    // types:
+    type ProductPricePart,
+}                           from '@/models'
 
 // utilities:
 import {

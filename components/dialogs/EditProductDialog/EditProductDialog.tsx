@@ -122,15 +122,15 @@ import {
     createStockMap,
 }                           from '@/models'
 
+// models:
+import {
+    type ProductDetail,
+    type VariantGroupDetail,
+    type StockDetail,
+}                           from '@/models'
+
 // stores:
 import {
-    // types:
-    ProductDetail,
-    VariantGroupDetail,
-    StockDetail,
-    
-    
-    
     // hooks:
     useUpdateProduct,
     useDeleteProduct,

@@ -60,11 +60,11 @@ import {
     useVariantState,
 }                           from './states/variantState'
 
-// stores:
-import type {
+// models:
+import {
     // types:
-    VariantDetail,
-}                           from '@/store/features/api/apiSlice'
+    type VariantDetail,
+}                           from '@/models'
 
 
 

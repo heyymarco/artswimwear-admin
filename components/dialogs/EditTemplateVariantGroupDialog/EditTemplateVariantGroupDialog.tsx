@@ -42,14 +42,15 @@ import type {
     PartialModel,
 }                           from '@/libs/types'
 
-// stores:
+// models:
 import {
     // types:
-    VariantGroupDetail,
-    TemplateVariantGroupDetail,
-    
-    
-    
+    type VariantGroupDetail,
+    type TemplateVariantGroupDetail,
+}                           from '@/models'
+
+// stores:
+import {
     // hooks:
     useUpdateTemplateVariantGroup,
     useDeleteTemplateVariantGroup,

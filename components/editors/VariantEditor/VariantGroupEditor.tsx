@@ -69,11 +69,11 @@ import {
     VariantStateProvider,
 }                           from './states/variantState'
 
-// stores:
-import type {
+// models:
+import {
     // types:
-    VariantGroupDetail,
-}                           from '@/store/features/api/apiSlice'
+    type VariantGroupDetail,
+}                           from '@/models'
 
 
 

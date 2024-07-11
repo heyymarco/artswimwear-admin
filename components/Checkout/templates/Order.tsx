@@ -46,11 +46,10 @@ import {
     CurrencyDisplay,
 }                           from './CurrencyDisplay'
 
-// stores:
+// models:
 import {
-    // types:
-    ProductPricePart,
-}                           from '@/store/features/api/apiSlice'
+    type ProductPricePart,
+}                           from '@/models'
 
 // configs:
 import {

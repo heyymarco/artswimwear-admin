@@ -13,11 +13,11 @@ import {
     Indicator,
 }                           from '@reusable-ui/indicator'       // a base component
 
-// stores:
-import type {
+// models:
+import {
     // types:
-    VariantPreview,
-}                           from '@/store/features/api/apiSlice'
+    type VariantPreview,
+}                           from '@/models'
 
 // styles:
 import {

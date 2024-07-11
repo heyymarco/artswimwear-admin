@@ -79,11 +79,11 @@ import {
     useVariantState,
 }                           from '@/components/editors/VariantEditor/states/variantState'
 
-// stores:
-import type {
+// models:
+import {
     // types:
-    VariantGroupDetail,
-}                           from '@/store/features/api/apiSlice'
+    type VariantGroupDetail,
+}                           from '@/models'
 
 
 

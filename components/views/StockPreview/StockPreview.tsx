@@ -50,12 +50,12 @@ import type {
     UpdatedHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 
-// stores:
-import type {
+// models:
+import {
     // types:
-    VariantDetail,
-    StockDetail,
-}                           from '@/store/features/api/apiSlice'
+    type VariantDetail,
+    type StockDetail,
+}                           from '@/models'
 
 
 

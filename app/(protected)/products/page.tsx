@@ -49,13 +49,14 @@ import {
     ProductPreview,
 }                           from '@/components/views/ProductPreview'
 
-// stores:
+// models:
 import {
     // types:
-    ProductDetail,
-    
-    
-    
+    type ProductDetail,
+}                           from '@/models'
+
+// stores:
+import {
     // hooks:
     useGetProductPage,
 }                           from '@/store/features/api/apiSlice'

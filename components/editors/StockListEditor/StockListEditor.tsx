@@ -36,12 +36,12 @@ import type {
     StockPreviewProps,
 }                           from '@/components/views/StockPreview'
 
-// stores:
-import type {
+// models:
+import {
     // types:
-    VariantGroupDetail,
-    StockDetail,
-}                           from '@/store/features/api/apiSlice'
+    type VariantGroupDetail,
+    type StockDetail,
+}                           from '@/models'
 
 
 
