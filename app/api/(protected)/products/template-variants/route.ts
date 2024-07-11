@@ -430,17 +430,17 @@ You do not have the privilege to modify the template_variant visibility.`
             
             // relations:
             templateVariants : {
-                delete : !templateVariantDiff.templateVariantDels.length ? undefined : templateVariantDiff.templateVariantDels.map((id) => ({
+                delete : !templateVariantDiff.templateVariantDels.length ? undefined : templateVariantDiff.templateVariantDels.map((templateId) => ({
                     // conditions:
-                    id : id,
+                    id : templateId,
                 })),
                 
                 create : !templateVariantDiff.templateVariantAdds.length ? undefined : templateVariantDiff.templateVariantAdds,
                 
-                update : !templateVariantDiff.templateVariantMods.length ? undefined : templateVariantDiff.templateVariantMods.map(({id, ...restTemplateVariant}) => ({
+                update : !templateVariantDiff.templateVariantMods.length ? undefined : templateVariantDiff.templateVariantMods.map(({id: templateId, ...restTemplateVariant}) => ({
                     where : {
                         // conditions:
-                        id : id,
+                        id : templateId,
                     },
                     data  : restTemplateVariant,
                 })),

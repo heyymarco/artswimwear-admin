@@ -748,9 +748,9 @@ You do not have the privilege to modify the product stock(s).`
                 
                 // relations:
                 variantGroups : (variantGroupDiff === undefined) ? undefined : {
-                    delete : !variantGroupDiff.variantGroupDels.length ? undefined : variantGroupDiff.variantGroupDels.map((id) => ({
+                    delete : !variantGroupDiff.variantGroupDels.length ? undefined : variantGroupDiff.variantGroupDels.map((groupId) => ({
                         // conditions:
-                        id : id,
+                        id : groupId,
                     })),
                     
                     create : !variantGroupDiff.variantGroupAdds.length ? undefined : variantGroupDiff.variantGroupAdds.map(({variantAdds, ...restVariantGroup}) => ({
@@ -763,10 +763,10 @@ You do not have the privilege to modify the product stock(s).`
                         },
                     })),
                     
-                    update : !variantGroupDiff.variantGroupMods.length ? undefined : variantGroupDiff.variantGroupMods.map(({id, variantDels, variantAdds, variantMods, ...restVariantGroup}) => ({
+                    update : !variantGroupDiff.variantGroupMods.length ? undefined : variantGroupDiff.variantGroupMods.map(({id: groupId, variantDels, variantAdds, variantMods, ...restVariantGroup}) => ({
                         where : {
                             // conditions:
-                            id : id,
+                            id : groupId,
                         },
                         data  : {
                             // data:
@@ -774,17 +774,17 @@ You do not have the privilege to modify the product stock(s).`
                             
                             // relations:
                             variants : {
-                                delete : !variantDels.length ? undefined : variantDels.map((id) => ({
+                                delete : !variantDels.length ? undefined : variantDels.map((variantId) => ({
                                     // conditions:
-                                    id : id,
+                                    id : variantId,
                                 })),
                                 
                                 create : !variantAdds.length ? undefined : variantAdds,
                                 
-                                update : !variantMods.length ? undefined : variantMods.map(({id, ...restVariant}) => ({
+                                update : !variantMods.length ? undefined : variantMods.map(({id: variantId, ...restVariant}) => ({
                                     where : {
                                         // conditions:
-                                        id: id,
+                                        id: variantId,
                                     },
                                     data  : restVariant,
                                 })),
