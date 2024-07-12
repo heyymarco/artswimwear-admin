@@ -151,12 +151,11 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
         
         items,
         
-        payment : {
-            type : paymentType,
-        },
+        payment,
         
         paymentConfirmation,
     } = model;
+    const paymentType = payment?.type;
     const {
         name  : customerName,
         email : customerEmail,

@@ -32,7 +32,20 @@ export const orderAndDataSelectAndExtra = {
     shippingAddress   : true,
     shippingCost      : true,
     
-    payment           : true,
+    payment           : {
+        select : {
+            // data:
+            type           : true,
+            brand          : true,
+            identifier     : true,
+            expiresAt      : true,
+            
+            amount         : true,
+            fee            : true,
+            
+            billingAddress : true,
+        },
+    },
     
     // relations:
     items : {
@@ -164,6 +177,7 @@ export const orderAndDataSelectAndExtra = {
 
 export const orderDetailSelect = {
     id                        : true,
+    createdAt                 : true,
     
     orderId                   : true,
     orderStatus               : true,
@@ -220,7 +234,20 @@ export const orderDetailSelect = {
     shippingCost              : true,
     shippingProviderId        : true,
     
-    payment                   : true,
+    payment           : {
+        select : {
+            // data:
+            type           : true,
+            brand          : true,
+            identifier     : true,
+            expiresAt      : true,
+            
+            amount         : true,
+            fee            : true,
+            
+            billingAddress : true,
+        },
+    },
     
     paymentConfirmation       : {
         select : {

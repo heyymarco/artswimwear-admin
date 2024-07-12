@@ -65,7 +65,7 @@ export const SimpleEditAddressDialog = (props: SimpleEditAddressDialogProps) => 
     }
     const handleInitialValue   = useEvent<InitialValueHandler<AddressModel>>((edit, model) => {
         if (edit === 'billingAddress') {
-            return (model as unknown as OrderDetail).payment.billingAddress ?? emptyAddress;
+            return (model as unknown as OrderDetail).payment?.billingAddress ?? emptyAddress;
         }
         else {
             return model[edit] ?? emptyAddress;

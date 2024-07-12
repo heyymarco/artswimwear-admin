@@ -275,19 +275,20 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         shippingProviderId : shippingProviderId,
         shippingCost       : totalShippingCosts,
         
-        payment            : {
-            type           : paymentType,
-            brand          : paymentBrand,
-            identifier     : paymentIdentifier,
-            expiresAt      : paymentExpiresAt,
-            
-            amount         : paymentAmount,
-            fee            : paymentFee,
-        },
+        payment,
         
         paymentConfirmation,
         shippingTracking,
-    } = model ?? { payment: {} };
+    } = model ?? {};
+    const {
+        type           : paymentType,
+        brand          : paymentBrand,
+        identifier     : paymentIdentifier,
+        expiresAt      : paymentExpiresAt,
+        
+        amount         : paymentAmount,
+        fee            : paymentFee,
+    } = payment ?? {};
     
     const {
         preference : customerOrGuestPreference,

@@ -108,8 +108,8 @@ import {
 
 // models:
 import type {
-    Payment,
-}                           from '@prisma/client'
+    PaymentDetail,
+}                           from '@/models'
 
 
 
@@ -140,7 +140,7 @@ Object.freeze(emptyPaymentValue);
 
 // react components:
 export type PaymentValue =
-    Pick<Payment,
+    Pick<PaymentDetail,
         // data:
         |'type'
         |'brand'

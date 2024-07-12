@@ -42,7 +42,9 @@ import {
 }                           from '@/components/Checkout/templates/businessDataContext'
 import {
     // types:
-    OrderAndData,
+    type ProductData,
+    type OrderItemsAndData,
+    type OrderAndData,
     
     
     
@@ -121,7 +123,7 @@ const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof p
         ...restOrderData,
         items: items.map((item) => ({
             ...item,
-            product : !!item.product ? {
+            product : !!item.product ? ({
                 name          : item.product.name,
                 image         : item.product.images?.[0] ?? null,
                 imageBase64   : undefined,
@@ -129,8 +131,8 @@ const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof p
                 
                 // relations:
                 variantGroups : item.product.variantGroups.map(({variants}) => variants),
-            } : null,
-        })),
+            } satisfies ProductData) : null,
+        } satisfies OrderItemsAndData)),
         shippingProvider : (
             (shippingAddressData && shippingProviderData)
             ? await getMatchingShipping(prismaTransaction, shippingProviderData, shippingAddressData)
@@ -218,7 +220,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
     const isCanceled          = (orderAndData.orderStatus === 'CANCELED');
     const isExpired           = (orderAndData.orderStatus === 'EXPIRED');
     const isCanceledOrExpired = isCanceled || isExpired;
-    const isPaid              = !isCanceledOrExpired && (orderAndData.payment.type !== 'MANUAL');
+    const isPaid              = !isCanceledOrExpired && (!!orderAndData.payment && (orderAndData.payment.type !== 'MANUAL'));
     
     
     

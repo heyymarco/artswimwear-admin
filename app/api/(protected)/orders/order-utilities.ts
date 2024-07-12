@@ -126,7 +126,7 @@ export const cancelOrder = async <TSelect extends Prisma.OrderSelect>(prismaTran
                 &&
                 
                 // only manual payment is cancelable:
-                (order.payment.type === 'MANUAL')
+                (!!order.payment && order.payment.type === 'MANUAL')
             )
             ? (order.items.map(({productId, variantIds, quantity}) =>
                 !productId

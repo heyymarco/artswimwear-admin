@@ -74,7 +74,7 @@ export async function POST(req: Request, res: Response): Promise<Response> {
     const isCanceled          = (orderData.orderStatus === 'CANCELED');
     const isExpired           = (orderData.orderStatus === 'EXPIRED');
     const isCanceledOrExpired = isCanceled || isExpired;
-    const isPaid              = !isCanceledOrExpired && (orderData.payment.type !== 'MANUAL');
+    const isPaid              = !isCanceledOrExpired && (!!orderData.payment && orderData.payment.type !== 'MANUAL');
     
     
     

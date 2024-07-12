@@ -355,16 +355,21 @@ You do not have the privilege to modify the order's shippingAddress.`
         }, { status: 403 }); // handled with error: forbidden
         
         if ((payment !== undefined) || (rejectionReason !== undefined)) {
-            const {payment: {type: currentPaymentType}} = await prisma.order.findUnique({
+            // const {payment: {type: currentPaymentType}} = await prisma.order.findUnique({
+            const foundOrder = await prisma.order.findUnique({
                 where  : {
                     id : id,
                 },
                 select : {
                     payment : true,
                 },
-            }) ?? {payment:{}};
+            });
+            const currentPaymentType = foundOrder?.payment?.type;
+            
+            
             
             if (currentPaymentType) {
+                
                 if (!session.role?.order_upmu && (currentPaymentType === 'MANUAL')) return NextResponse.json({ error:
 `Access denied.
 
@@ -395,7 +400,7 @@ You do not have the privilege to modify the payment of the order.`
                     });
                     if (!order) return null; // the order is not found => ignore
                     if (['CANCELED', 'EXPIRED'].includes(order.orderStatus)) return null; // already 'CANCELED'|'EXPIRED' => ignore
-                    if (order.payment.type !== 'MANUAL') return null; // not 'MANUAL' payment => ignore
+                    if (!order.payment || order.payment.type !== 'MANUAL') return null; // not 'MANUAL' payment => ignore
                     
                     
                     

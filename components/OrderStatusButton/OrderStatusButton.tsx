@@ -139,12 +139,12 @@ const OrderStatusButton = (props: OrderStatusButtonProps): JSX.Element|null => {
         children,
     ...restButtonIconProps} = props;
     const orderStatus = model?.orderStatus ?? 'NEW_ORDER';
-    const paymentType = model?.payment.type;
+    const payment     = model?.payment;
     
     const isCanceled          = (orderStatus === 'CANCELED');
     const isExpired           = (orderStatus === 'EXPIRED');
     const isCanceledOrExpired = isCanceled || isExpired;
-    const isPaid              = !isCanceledOrExpired && (paymentType !== 'MANUAL');
+    const isPaid              = !isCanceledOrExpired && (!!payment && (payment.type !== 'MANUAL'));
     
     
     

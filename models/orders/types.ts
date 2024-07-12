@@ -23,38 +23,25 @@ import type {
 
 
 // types:
-export type CustomerOrGuest =
-    &Pick<Customer, keyof Customer & keyof Guest>
-    &Pick<Guest   , keyof Customer & keyof Guest>
-export type CustomerOrGuestPreference =
-    &Pick<CustomerPreference, keyof CustomerPreference & keyof GuestPreference>
-    &Pick<GuestPreference   , keyof CustomerPreference & keyof GuestPreference>
-export type CustomerOrGuestPreferenceData = Omit<CustomerOrGuestPreference,
-    // records:
-    |'id'
-    
-    // data:
-    |'marketingOpt'
-    
-    // relations:
-    |'customerId'
-    |'guestId'
->
-
-
-
 export interface OrderDetail
     extends
         Omit<Order,
-            |'createdAt'
+            // records:
             |'updatedAt'
             
+            // data:
             |'paymentId'
             
+            // relations:
             |'customerId'
             |'guestId'
         >
 {
+    // data:
+    payment  : PaymentDetail|null
+    
+    
+    
     // relations:
     items    : Omit<OrdersOnProducts,
         |'id'
@@ -90,6 +77,26 @@ export interface OrderDetail
         |'orderId'
     >>
 }
+
+
+
+export type CustomerOrGuest =
+    &Pick<Customer, keyof Customer & keyof Guest>
+    &Pick<Guest   , keyof Customer & keyof Guest>
+export type CustomerOrGuestPreference =
+    &Pick<CustomerPreference, keyof CustomerPreference & keyof GuestPreference>
+    &Pick<GuestPreference   , keyof CustomerPreference & keyof GuestPreference>
+export type CustomerOrGuestPreferenceData = Omit<CustomerOrGuestPreference,
+    // records:
+    |'id'
+    
+    // data:
+    |'marketingOpt'
+    
+    // relations:
+    |'customerId'
+    |'guestId'
+>
 
 
 
@@ -132,9 +139,9 @@ export type CancelOrder = Pick<Order,
     
     |'orderStatus'
 > & {
-    payment : Pick<Payment,
+    payment : Pick<PaymentDetail,
         |'type'
-    >
+    >|null
     items : Pick<OrdersOnProducts,
         |'productId'
         |'variantIds'
@@ -150,4 +157,27 @@ export interface CancelOrderData<TSelect extends Prisma.OrderSelect> {
     cancelationReason ?: WysiwygEditorState|null
     
     orderSelect        : TSelect
+}
+
+
+
+export interface PaymentDetail
+    extends
+        Omit<Payment,
+            // records:
+            |'id'
+            
+            // data:
+            |'expiresAt'      // converted to optional
+            |'billingAddress' // converted to optional
+            
+            // relations:
+            |'parentId'
+        >
+{
+    // data:
+    expiresAt      ?: Payment['expiresAt']      // converted to optional
+    billingAddress ?: Payment['billingAddress'] // converted to optional
+    
+    paymentId      ?: string // an optional token for make manual_payment
 }
