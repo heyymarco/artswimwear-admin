@@ -54,7 +54,16 @@ export const shippingDetailSelect = {
             max : true,
         },
     },
-    rates       : true,
+    rates       : {
+        select : {
+            // data:
+            start : true,
+            rate  : true,
+        },
+        orderBy : {
+            sort  : 'asc',
+        },
+    },
     
     // relations:
     useZones    : true,
@@ -75,7 +84,16 @@ export const shippingDetailSelect = {
                     max : true,
                 },
             },
-            rates       : true,
+            rates       : {
+                select : {
+                    // data:
+                    start : true,
+                    rate  : true,
+                },
+                orderBy : {
+                    sort  : 'asc',
+                },
+            },
             
             useZones    : true,
             zones       : {
@@ -95,7 +113,16 @@ export const shippingDetailSelect = {
                             max : true,
                         },
                     },
-                    rates       : true,
+                    rates       : {
+                        select : {
+                            // data:
+                            start : true,
+                            rate  : true,
+                        },
+                        orderBy : {
+                            sort  : 'asc',
+                        },
+                    },
                     
                     useZones    : true,
                     zones       : {
@@ -116,7 +143,16 @@ export const shippingDetailSelect = {
                                     max : true,
                                 },
                             },
-                            rates       : true,
+                            rates       : {
+                                select : {
+                                    // data:
+                                    start : true,
+                                    rate  : true,
+                                },
+                                orderBy : {
+                                    sort  : 'asc',
+                                },
+                            },
                         },
                         orderBy : {
                             sort: 'asc',

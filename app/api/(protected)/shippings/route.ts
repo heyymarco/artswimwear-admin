@@ -32,6 +32,7 @@ import {
     shippingDetailSelect,
     
     selectId,
+    selectWithSort,
     createCoverageCountryDiff,
 }                           from '@/models'
 import {
@@ -628,7 +629,16 @@ You do not have the privilege to modify the shipping order.`
                         create : eta, // fallback to `create` if not     exist
                     },
                 },
-                rates,
+                rates      : (rates === undefined) /* do NOT modify if undefined */ ? undefined : { // array_like relation
+                    // clear the existing item(s), if any:
+                    deleteMany : {
+                        // do DELETE ALL related item(s)
+                        // no condition is needed because we want to delete all related item(s)
+                    },
+                    
+                    // create all item(s) with sequential order:
+                    create : !rates.length ? undefined /* do NOT update if empty */ : rates.map(selectWithSort),
+                },
                 
                 useZones,
                 zones /* coverageCountries */ : (coverageCountryDiff === undefined) /* do NOT modify if undefined */ ? undefined : {
@@ -637,37 +647,49 @@ You do not have the privilege to modify the shipping order.`
                         id : countryId,
                     })),
                     
-                    create : !coverageCountryDiff.coverageCountryAdds.length ? undefined : coverageCountryDiff.coverageCountryAdds.map(({coverageStateAdds, eta, ...restCoverageCountry}) => ({
+                    create : !coverageCountryDiff.coverageCountryAdds.length ? undefined : coverageCountryDiff.coverageCountryAdds.map(({coverageStateAdds, eta, rates, ...restCoverageCountry}) => ({
                         // data:
                         ...restCoverageCountry,
                         
-                        eta : (eta === null) /* do NOT create if null */ ? undefined : { // one to one relation
+                        eta   : (eta === null) /* do NOT create if null */ ? undefined : { // one to one relation
                             // one_conditional nested_update if create:
                             create : eta,
+                        },
+                        rates : !rates.length /* do NOT create if empty */ ? undefined : { // array_like relation
+                            // create all item(s) with sequential order:
+                            create : rates.map(selectWithSort),
                         },
                         
                         // relations:
                         zones /* coverageStates */ : {
-                            create : !coverageStateAdds.length ? undefined : coverageStateAdds.map(({coverageCityAdds, eta, ...restCoverageState}) => ({
+                            create : !coverageStateAdds.length ? undefined : coverageStateAdds.map(({coverageCityAdds, eta, rates, ...restCoverageState}) => ({
                                 // data:
                                 ...restCoverageState,
                                 
-                                eta : (eta === null) /* do NOT create if null */ ? undefined : { // one to one relation
+                                eta   : (eta === null) /* do NOT create if null */ ? undefined : { // one to one relation
                                     // one_conditional nested_update if create:
                                     create : eta,
+                                },
+                                rates : !rates.length /* do NOT create if empty */ ? undefined : { // array_like relation
+                                    // create all item(s) with sequential order:
+                                    create : rates.map(selectWithSort),
                                 },
                                 
                                 // relations:
                                 zones /* coverageCities */ : {
-                                    create : !coverageCityAdds.length ? undefined : coverageCityAdds.map(({eta, ...restcoverageCity}) => ({
+                                    create : !coverageCityAdds.length ? undefined : coverageCityAdds.map(({eta, rates, ...restcoverageCity}) => ({
                                         // data:
                                         ...restcoverageCity,
                                         
                                         updatedAt : now, // if has any_updatedAt_date => overwrite to `now`
                                         
-                                        eta : (eta === null) /* do NOT create if null */ ? undefined : { // one to one relation
+                                        eta   : (eta === null) /* do NOT create if null */ ? undefined : { // one to one relation
                                             // one_conditional nested_update if create:
                                             create : eta,
+                                        },
+                                        rates : !rates.length /* do NOT create if empty */ ? undefined : { // array_like relation
+                                            // create all item(s) with sequential order:
+                                            create : rates.map(selectWithSort),
                                         },
                                     })),
                                 },
@@ -675,7 +697,7 @@ You do not have the privilege to modify the shipping order.`
                         },
                     })),
                     
-                    update : !coverageCountryDiff.coverageCountryMods.length ? undefined : coverageCountryDiff.coverageCountryMods.map(({id: countryId, coverageStateOris, coverageStateDels, coverageStateAdds, coverageStateMods, eta, ...restCoverageCountry}) => ({
+                    update : !coverageCountryDiff.coverageCountryMods.length ? undefined : coverageCountryDiff.coverageCountryMods.map(({id: countryId, coverageStateOris, coverageStateDels, coverageStateAdds, coverageStateMods, eta, rates, ...restCoverageCountry}) => ({
                         where : {
                             // conditions:
                             id : countryId,
@@ -684,7 +706,7 @@ You do not have the privilege to modify the shipping order.`
                             // data:
                             ...restCoverageCountry,
                             
-                            eta : { // one to one relation
+                            eta   : { // one to one relation
                                 // nested_delete if set to null:
                                 delete : ((eta !== null) /* do NOT delete if NOT null */ || ((coverageCountryDiff.coverageCountryOris.find(({id: findId}) => (findId === countryId))?.eta ?? undefined) === undefined) /* do NOT delete if NOTHING to delete */) ? undefined : {
                                     // do DELETE
@@ -697,6 +719,16 @@ You do not have the privilege to modify the shipping order.`
                                     create : eta, // fallback to `create` if not     exist
                                 },
                             },
+                            rates : { // array_like relation
+                                // clear the existing item(s), if any:
+                                deleteMany : {
+                                    // do DELETE ALL related item(s)
+                                    // no condition is needed because we want to delete all related item(s)
+                                },
+                                
+                                // create all item(s) with sequential order:
+                                create : !rates.length ? undefined /* do NOT update if empty */ : rates.map(selectWithSort),
+                            },
                             
                             // relations:
                             zones /* coverageStates */ : {
@@ -705,32 +737,40 @@ You do not have the privilege to modify the shipping order.`
                                     id : stateId,
                                 })),
                                 
-                                create : !coverageStateAdds.length ? undefined : coverageStateAdds.map(({coverageCityAdds, eta, ...restCoverageState}) => ({
+                                create : !coverageStateAdds.length ? undefined : coverageStateAdds.map(({coverageCityAdds, eta, rates, ...restCoverageState}) => ({
                                     // data:
                                     ...restCoverageState,
                                     
-                                    eta : (eta === null) /* do NOT create if null */ ? undefined : { // one to one relation
+                                    eta   : (eta === null) /* do NOT create if null */ ? undefined : { // one to one relation
                                         // one_conditional nested_update if create:
                                         create : eta,
+                                    },
+                                    rates : !rates.length /* do NOT create if empty */ ? undefined : { // array_like relation
+                                        // create all item(s) with sequential order:
+                                        create : rates.map(selectWithSort),
                                     },
                                     
                                     // relations:
                                     zones /* coverageCities */ : {
-                                        create : !coverageCityAdds.length ? undefined : coverageCityAdds.map(({eta, ...restcoverageCity}) => ({
+                                        create : !coverageCityAdds.length ? undefined : coverageCityAdds.map(({eta, rates, ...restcoverageCity}) => ({
                                             // data:
                                             ...restcoverageCity,
                                             
                                             updatedAt : now, // if has any_updatedAt_date => overwrite to `now`
                                             
-                                            eta : (eta === null) /* do NOT create if null */ ? undefined : { // one to one relation
+                                            eta   : (eta === null) /* do NOT create if null */ ? undefined : { // one to one relation
                                                 // one_conditional nested_update if create:
                                                 create : eta,
+                                            },
+                                            rates : !rates.length /* do NOT create if empty */ ? undefined : { // array_like relation
+                                                // create all item(s) with sequential order:
+                                                create : rates.map(selectWithSort),
                                             },
                                         })),
                                     },
                                 })),
                                 
-                                update : !coverageStateMods.length ? undefined : coverageStateMods.map(({id: stateId, coverageCityOris, coverageCityDels, coverageCityAdds, coverageCityMods, eta, ...restCoverageState}) => ({
+                                update : !coverageStateMods.length ? undefined : coverageStateMods.map(({id: stateId, coverageCityOris, coverageCityDels, coverageCityAdds, coverageCityMods, eta, rates, ...restCoverageState}) => ({
                                     where : {
                                         // conditions:
                                         id: stateId,
@@ -739,7 +779,7 @@ You do not have the privilege to modify the shipping order.`
                                         // data:
                                         ...restCoverageState,
                                         
-                                        eta : { // one to one relation
+                                        eta   : { // one to one relation
                                             // nested_delete if set to null:
                                             delete : ((eta !== null) /* do NOT delete if NOT null */ || ((coverageStateOris.find(({id: findId}) => (findId === stateId))?.eta ?? undefined) === undefined) /* do NOT delete if NOTHING to delete */) ? undefined : {
                                                 // do DELETE
@@ -752,6 +792,16 @@ You do not have the privilege to modify the shipping order.`
                                                 create : eta, // fallback to `create` if not     exist
                                             },
                                         },
+                                        rates : { // array_like relation
+                                            // clear the existing item(s), if any:
+                                            deleteMany : {
+                                                // do DELETE ALL related item(s)
+                                                // no condition is needed because we want to delete all related item(s)
+                                            },
+                                            
+                                            // create all item(s) with sequential order:
+                                            create : !rates.length ? undefined /* do NOT update if empty */ : rates.map(selectWithSort),
+                                        },
                                         
                                         // relations:
                                         zones /* coverageCities */ : {
@@ -760,19 +810,23 @@ You do not have the privilege to modify the shipping order.`
                                                 id : cityId,
                                             })),
                                             
-                                            create : !coverageCityAdds.length ? undefined : coverageCityAdds.map(({eta, ...restcoverageCity}) => ({
+                                            create : !coverageCityAdds.length ? undefined : coverageCityAdds.map(({eta, rates, ...restcoverageCity}) => ({
                                                 // data:
                                                 ...restcoverageCity,
                                                 
                                                 updatedAt : now, // if has any_updatedAt_date => overwrite to `now`
                                                 
-                                                eta : (eta === null) /* do NOT create if null */ ? undefined : { // one to one relation
+                                                eta   : (eta === null) /* do NOT create if null */ ? undefined : { // one to one relation
                                                     // one_conditional nested_update if create:
                                                     create : eta,
                                                 },
+                                                rates : !rates.length /* do NOT create if empty */ ? undefined : { // array_like relation
+                                                    // create all item(s) with sequential order:
+                                                    create : rates.map(selectWithSort),
+                                                },
                                             })),
                                             
-                                            update : !coverageCityMods.length ? undefined : coverageCityMods.map(({id: cityId, eta, ...restCoverageCity}) => ({
+                                            update : !coverageCityMods.length ? undefined : coverageCityMods.map(({id: cityId, eta, rates, ...restCoverageCity}) => ({
                                                 where : {
                                                     // conditions:
                                                     id: cityId,
@@ -783,7 +837,7 @@ You do not have the privilege to modify the shipping order.`
                                                     
                                                     updatedAt : !restCoverageCity.updatedAt ? undefined : now, // if has any_updatedAt_date => overwrite to `now`, otherwise undefined
                                                     
-                                                    eta : { // one to one relation
+                                                    eta   : { // one to one relation
                                                         // nested_delete if set to null:
                                                         delete : ((eta !== null) /* do NOT delete if NOT null */ || ((coverageCityOris.find(({id: findId}) => (findId === cityId))?.eta ?? undefined) === undefined) /* do NOT delete if NOTHING to delete */) ? undefined : {
                                                             // do DELETE
@@ -795,6 +849,16 @@ You do not have the privilege to modify the shipping order.`
                                                             update : eta, // prefer   to `update` if already exist
                                                             create : eta, // fallback to `create` if not     exist
                                                         },
+                                                    },
+                                                    rates : { // array_like relation
+                                                        // clear the existing item(s), if any:
+                                                        deleteMany : {
+                                                            // do DELETE ALL related item(s)
+                                                            // no condition is needed because we want to delete all related item(s)
+                                                        },
+                                                        
+                                                        // create all item(s) with sequential order:
+                                                        create : !rates.length ? undefined /* do NOT update if empty */ : rates.map(selectWithSort),
                                                     },
                                                 },
                                             })),
