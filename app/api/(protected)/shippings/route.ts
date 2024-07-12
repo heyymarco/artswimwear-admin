@@ -637,7 +637,7 @@ You do not have the privilege to modify the shipping order.`
                     },
                     
                     // create all item(s) with sequential order:
-                    create : !rates.length ? undefined /* do NOT update if empty */ : rates.map(selectWithSort),
+                    create : !rates.length /* do NOT update if empty */ ? undefined : rates.map(selectWithSort),
                 },
                 
                 useZones,
@@ -727,7 +727,7 @@ You do not have the privilege to modify the shipping order.`
                                 },
                                 
                                 // create all item(s) with sequential order:
-                                create : !rates.length ? undefined /* do NOT update if empty */ : rates.map(selectWithSort),
+                                create : !rates.length /* do NOT update if empty */ ? undefined : rates.map(selectWithSort),
                             },
                             
                             // relations:
@@ -800,7 +800,7 @@ You do not have the privilege to modify the shipping order.`
                                             },
                                             
                                             // create all item(s) with sequential order:
-                                            create : !rates.length ? undefined /* do NOT update if empty */ : rates.map(selectWithSort),
+                                            create : !rates.length /* do NOT update if empty */ ? undefined : rates.map(selectWithSort),
                                         },
                                         
                                         // relations:
@@ -858,7 +858,7 @@ You do not have the privilege to modify the shipping order.`
                                                         },
                                                         
                                                         // create all item(s) with sequential order:
-                                                        create : !rates.length ? undefined /* do NOT update if empty */ : rates.map(selectWithSort),
+                                                        create : !rates.length /* do NOT update if empty */ ? undefined : rates.map(selectWithSort),
                                                     },
                                                 },
                                             })),
