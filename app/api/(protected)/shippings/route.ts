@@ -593,7 +593,7 @@ You do not have the privilege to modify the shipping order.`
                 visibility,
                 
                 autoUpdate,
-                origin : (origin === undefined) /* do NOT modify if undefined */ ? undefined : { // one to one relation
+                origin : (origin === undefined) /* do NOT modify if undefined */ ? undefined : { // compound_like relation
                     // nested_delete if set to null:
                     delete : ((origin !== null) /* do NOT delete if NOT null */ || isCreate /* do NOT delete if `create` ShippingProvider */ || !hasOrigin /* do NOT delete if NOTHING to delete */) ? undefined : {
                         // do DELETE
@@ -613,7 +613,7 @@ You do not have the privilege to modify the shipping order.`
                 name,
                 
                 weightStep,
-                eta : (eta === undefined) /* do NOT modify if undefined */ ? undefined : { // one to one relation
+                eta : (eta === undefined) /* do NOT modify if undefined */ ? undefined : { // compound_like relation
                     // nested_delete if set to null:
                     delete : ((eta !== null) /* do NOT delete if NOT null */ || isCreate /* do NOT delete if `create` ShippingProvider */ || !hasEta /* do NOT delete if NOTHING to delete */) ? undefined : {
                         // do DELETE
@@ -651,7 +651,7 @@ You do not have the privilege to modify the shipping order.`
                         // data:
                         ...restCoverageCountry,
                         
-                        eta   : (eta === null) /* do NOT create if null */ ? undefined : { // one to one relation
+                        eta   : (eta === null) /* do NOT create if null */ ? undefined : { // compound_like relation
                             // one_conditional nested_update if create:
                             create : eta,
                         },
@@ -666,7 +666,7 @@ You do not have the privilege to modify the shipping order.`
                                 // data:
                                 ...restCoverageState,
                                 
-                                eta   : (eta === null) /* do NOT create if null */ ? undefined : { // one to one relation
+                                eta   : (eta === null) /* do NOT create if null */ ? undefined : { // compound_like relation
                                     // one_conditional nested_update if create:
                                     create : eta,
                                 },
@@ -683,7 +683,7 @@ You do not have the privilege to modify the shipping order.`
                                         
                                         updatedAt : now, // if has any_updatedAt_date => overwrite to `now`
                                         
-                                        eta   : (eta === null) /* do NOT create if null */ ? undefined : { // one to one relation
+                                        eta   : (eta === null) /* do NOT create if null */ ? undefined : { // compound_like relation
                                             // one_conditional nested_update if create:
                                             create : eta,
                                         },
@@ -706,7 +706,7 @@ You do not have the privilege to modify the shipping order.`
                             // data:
                             ...restCoverageCountry,
                             
-                            eta   : { // one to one relation
+                            eta   : { // compound_like relation
                                 // nested_delete if set to null:
                                 delete : ((eta !== null) /* do NOT delete if NOT null */ || ((coverageCountryDiff.coverageCountryOris.find(({id: findId}) => (findId === countryId))?.eta ?? undefined) === undefined) /* do NOT delete if NOTHING to delete */) ? undefined : {
                                     // do DELETE
@@ -741,7 +741,7 @@ You do not have the privilege to modify the shipping order.`
                                     // data:
                                     ...restCoverageState,
                                     
-                                    eta   : (eta === null) /* do NOT create if null */ ? undefined : { // one to one relation
+                                    eta   : (eta === null) /* do NOT create if null */ ? undefined : { // compound_like relation
                                         // one_conditional nested_update if create:
                                         create : eta,
                                     },
@@ -758,7 +758,7 @@ You do not have the privilege to modify the shipping order.`
                                             
                                             updatedAt : now, // if has any_updatedAt_date => overwrite to `now`
                                             
-                                            eta   : (eta === null) /* do NOT create if null */ ? undefined : { // one to one relation
+                                            eta   : (eta === null) /* do NOT create if null */ ? undefined : { // compound_like relation
                                                 // one_conditional nested_update if create:
                                                 create : eta,
                                             },
@@ -779,7 +779,7 @@ You do not have the privilege to modify the shipping order.`
                                         // data:
                                         ...restCoverageState,
                                         
-                                        eta   : { // one to one relation
+                                        eta   : { // compound_like relation
                                             // nested_delete if set to null:
                                             delete : ((eta !== null) /* do NOT delete if NOT null */ || ((coverageStateOris.find(({id: findId}) => (findId === stateId))?.eta ?? undefined) === undefined) /* do NOT delete if NOTHING to delete */) ? undefined : {
                                                 // do DELETE
@@ -816,7 +816,7 @@ You do not have the privilege to modify the shipping order.`
                                                 
                                                 updatedAt : now, // if has any_updatedAt_date => overwrite to `now`
                                                 
-                                                eta   : (eta === null) /* do NOT create if null */ ? undefined : { // one to one relation
+                                                eta   : (eta === null) /* do NOT create if null */ ? undefined : { // compound_like relation
                                                     // one_conditional nested_update if create:
                                                     create : eta,
                                                 },
@@ -837,7 +837,7 @@ You do not have the privilege to modify the shipping order.`
                                                     
                                                     updatedAt : !restCoverageCity.updatedAt ? undefined : now, // if has any_updatedAt_date => overwrite to `now`, otherwise undefined
                                                     
-                                                    eta   : { // one to one relation
+                                                    eta   : { // compound_like relation
                                                         // nested_delete if set to null:
                                                         delete : ((eta !== null) /* do NOT delete if NOT null */ || ((coverageCityOris.find(({id: findId}) => (findId === cityId))?.eta ?? undefined) === undefined) /* do NOT delete if NOTHING to delete */) ? undefined : {
                                                             // do DELETE
