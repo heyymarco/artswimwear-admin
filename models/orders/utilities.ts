@@ -145,7 +145,6 @@ export const orderAndDataSelectAndExtra = {
             },
             
             useZones   : true, // required for matching_shipping algorithm
-            zones      : true, // required for matching_shipping algorithm
         },
     },
     
