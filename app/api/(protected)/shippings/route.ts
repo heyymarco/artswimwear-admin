@@ -270,7 +270,13 @@ You do not have the privilege to view the shippings.`
                                 max : true,
                             },
                         },
-                        rates     : true,
+                        rates     : {
+                            select : {
+                                // data:
+                                start : true,
+                                rate  : true,
+                            },
+                        },
                         
                         useZones  : true,
                         zones     : {
@@ -288,7 +294,13 @@ You do not have the privilege to view the shippings.`
                                         max : true,
                                     },
                                 },
-                                rates     : true,
+                                rates     : {
+                                    select : {
+                                        // data:
+                                        start : true,
+                                        rate  : true,
+                                    },
+                                },
                                 
                                 useZones  : true,
                                 zones     : {
@@ -306,7 +318,13 @@ You do not have the privilege to view the shippings.`
                                                 max : true,
                                             },
                                         },
-                                        rates     : true,
+                                        rates     : {
+                                            select : {
+                                                // data:
+                                                start : true,
+                                                rate  : true,
+                                            },
+                                        },
                                         
                                         // updatedAt : true, // not shown to <EditShippingDialog>
                                     },
