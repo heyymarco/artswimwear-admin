@@ -48,6 +48,7 @@ import {
 
 // models:
 import {
+    // types:
     type ProductPricePart,
 }                           from '@/models'
 
@@ -222,7 +223,7 @@ const OrderTotalValue = (props: OrderTotalProps): React.ReactNode => {
     const {
         // data:
         order : {
-            preferredCurrency,
+            currency,
             shippingCost,
             items,
         },
@@ -258,7 +259,7 @@ const OrderTotalValue = (props: OrderTotalProps): React.ReactNode => {
             }}
         >
             <CurrencyDisplay amount={[...getProductPriceParts(items), shippingCost]} />
-            <span>{preferredCurrency ? preferredCurrency.currency : checkoutConfigShared.intl.defaultCurrency}</span>
+            <span>{currency ? currency.currency : checkoutConfigShared.intl.defaultCurrency}</span>
         </span>
     );
 };

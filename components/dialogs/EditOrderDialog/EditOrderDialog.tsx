@@ -264,7 +264,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         orderTrouble,
         cancelationReason,
         
-        preferredCurrency,
+        currency : preferredCurrency,
         
         items,
         

@@ -27,7 +27,7 @@ export const orderAndDataSelectAndExtra = {
     orderTrouble      : true,
     cancelationReason : true,
     
-    preferredCurrency : true,
+    currency          : true,
     
     shippingAddress   : true,
     shippingCost      : true,
@@ -233,7 +233,7 @@ export const orderDetailSelect = {
         },
     },
     
-    preferredCurrency         : true,
+    currency                  : true,
     
     shippingAddress           : true,
     shippingCost              : true,
