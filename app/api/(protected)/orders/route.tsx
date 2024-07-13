@@ -361,7 +361,11 @@ You do not have the privilege to modify the order's shippingAddress.`
                     id : id,
                 },
                 select : {
-                    payment : true,
+                    payment : {
+                        select : {
+                            type : true,
+                        },
+                    },
                 },
             });
             const currentPaymentType = foundOrder?.payment?.type;
