@@ -13,9 +13,10 @@ import type {
     GuestPreference,
     Payment,
     PaymentConfirmation,
-    Order,
-    OrdersOnProducts,
     DraftOrder,
+    Order,
+    OrderCurrency,
+    OrdersOnProducts,
     DraftOrdersOnProducts,
     ShippingTracking,
 }                           from '@prisma/client'
@@ -23,6 +24,26 @@ import type {
 
 
 // types:
+export interface DraftOrderDetail
+    extends
+        Omit<DraftOrder,
+            // records:
+            |'expiresAt'
+            
+            // data:
+            // |'paymentId'  // required for `commitDraftOrder()`, do NOT omit
+            
+            // relations:
+            // |'customerId' // required for `commitDraftOrder()`, do NOT omit
+            // |'guestId'    // required for `commitDraftOrder()`, do NOT omit
+        >
+{
+    // data:
+    currency : OrderCurrencyDetail|null
+}
+
+
+
 export interface OrderDetail
     extends
         Omit<Order,
@@ -38,6 +59,7 @@ export interface OrderDetail
         >
 {
     // data:
+    currency : OrderCurrencyDetail|null
     payment  : PaymentDetail|null
     
     
@@ -80,6 +102,43 @@ export interface OrderDetail
 
 
 
+export interface OrderCurrencyDetail
+    extends
+        Omit<OrderCurrency,
+            // records:
+            |'id'
+            
+            // relations:
+            |'parentId'
+        >
+{
+}
+
+
+
+export interface PaymentDetail
+    extends
+        Omit<Payment,
+            // records:
+            |'id'
+            
+            // data:
+            |'expiresAt'      // converted to optional
+            |'billingAddress' // converted to optional
+            
+            // relations:
+            |'parentId'
+        >
+{
+    // data:
+    expiresAt      ?: Payment['expiresAt']      // converted to optional
+    billingAddress ?: Payment['billingAddress'] // converted to optional
+    
+    paymentId      ?: string // an optional token for make manual_payment
+}
+
+
+
 export type CustomerOrGuest =
     &Pick<Customer, keyof Customer & keyof Guest>
     &Pick<Guest   , keyof Customer & keyof Guest>
@@ -100,7 +159,7 @@ export type CustomerOrGuestPreferenceData = Omit<CustomerOrGuestPreference,
 
 
 
-export type RevertDraftOrder = Pick<DraftOrder,
+export type RevertDraftOrder = Pick<DraftOrderDetail,
     // records:
     |'id'
     
@@ -132,7 +191,7 @@ export interface FindOrderByIdData<TSelect extends Prisma.OrderSelect> {
 
 
 
-export type CancelOrder = Pick<Order,
+export type CancelOrder = Pick<OrderDetail,
     |'id'
     
     |'orderId'
@@ -157,27 +216,4 @@ export interface CancelOrderData<TSelect extends Prisma.OrderSelect> {
     cancelationReason ?: WysiwygEditorState|null
     
     orderSelect        : TSelect
-}
-
-
-
-export interface PaymentDetail
-    extends
-        Omit<Payment,
-            // records:
-            |'id'
-            
-            // data:
-            |'expiresAt'      // converted to optional
-            |'billingAddress' // converted to optional
-            
-            // relations:
-            |'parentId'
-        >
-{
-    // data:
-    expiresAt      ?: Payment['expiresAt']      // converted to optional
-    billingAddress ?: Payment['billingAddress'] // converted to optional
-    
-    paymentId      ?: string // an optional token for make manual_payment
 }

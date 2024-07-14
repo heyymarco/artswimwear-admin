@@ -27,7 +27,12 @@ export const orderAndDataSelectAndExtra = {
     orderTrouble      : true,
     cancelationReason : true,
     
-    currency          : true,
+    currency          : {
+        select : {
+            currency  : true,
+            rate      : true,
+        },
+    },
     
     shippingAddress   : true,
     shippingCost      : true,
@@ -233,13 +238,18 @@ export const orderDetailSelect = {
         },
     },
     
-    currency                  : true,
+    currency                  : {
+        select : {
+            currency          : true,
+            rate              : true,
+        },
+    },
     
     shippingAddress           : true,
     shippingCost              : true,
     shippingProviderId        : true,
     
-    payment           : {
+    payment                   : {
         select : {
             // data:
             type           : true,
@@ -341,7 +351,7 @@ export const cancelOrderSelect = {
     
     orderStatus            : true,
     
-    payment : {
+    payment                : {
         select : {
             type           : true,
         },
