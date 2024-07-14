@@ -34,7 +34,19 @@ export const orderAndDataSelectAndExtra = {
         },
     },
     
-    shippingAddress   : true,
+    shippingAddress   : {
+        select : {
+            country   : true,
+            state     : true,
+            city      : true,
+            zip       : true,
+            address   : true,
+            
+            firstName : true,
+            lastName  : true,
+            phone     : true,
+        },
+    },
     shippingCost      : true,
     
     payment           : {
@@ -48,7 +60,19 @@ export const orderAndDataSelectAndExtra = {
             amount         : true,
             fee            : true,
             
-            billingAddress : true,
+            billingAddress : {
+                select : {
+                    country   : true,
+                    state     : true,
+                    city      : true,
+                    zip       : true,
+                    address   : true,
+                    
+                    firstName : true,
+                    lastName  : true,
+                    phone     : true,
+                },
+            },
         },
     },
     
@@ -245,7 +269,19 @@ export const orderDetailSelect = {
         },
     },
     
-    shippingAddress           : true,
+    shippingAddress           : {
+        select : {
+            country   : true,
+            state     : true,
+            city      : true,
+            zip       : true,
+            address   : true,
+            
+            firstName : true,
+            lastName  : true,
+            phone     : true,
+        },
+    },
     shippingCost              : true,
     shippingProviderId        : true,
     
@@ -260,7 +296,19 @@ export const orderDetailSelect = {
             amount         : true,
             fee            : true,
             
-            billingAddress : true,
+            billingAddress : {
+                select : {
+                    country   : true,
+                    state     : true,
+                    city      : true,
+                    zip       : true,
+                    address   : true,
+                    
+                    firstName : true,
+                    lastName  : true,
+                    phone     : true,
+                },
+            },
         },
     },
     

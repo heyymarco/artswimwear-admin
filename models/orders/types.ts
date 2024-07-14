@@ -16,6 +16,8 @@ import type {
     DraftOrder,
     Order,
     OrderCurrency,
+    ShippingAddress,
+    BillingAddress,
     OrdersOnProducts,
     DraftOrdersOnProducts,
     ShippingTracking,
@@ -39,7 +41,8 @@ export interface DraftOrderDetail
         >
 {
     // data:
-    currency : OrderCurrencyDetail|null
+    currency        : OrderCurrencyDetail|null
+    shippingAddress : ShippingAddressDetail|null
 }
 
 
@@ -59,8 +62,9 @@ export interface OrderDetail
         >
 {
     // data:
-    currency : OrderCurrencyDetail|null
-    payment  : PaymentDetail|null
+    currency        : OrderCurrencyDetail|null
+    shippingAddress : ShippingAddressDetail|null
+    payment         : PaymentDetail|null
     
     
     
@@ -116,6 +120,32 @@ export interface OrderCurrencyDetail
 
 
 
+export interface ShippingAddressDetail
+    extends
+        Omit<ShippingAddress,
+            // records:
+            |'id'
+            
+            // relations:
+            |'parentId'
+        >
+{
+}
+
+export interface BillingAddressDetail
+    extends
+        Omit<BillingAddress,
+            // records:
+            |'id'
+            
+            // relations:
+            |'parentId'
+        >
+{
+}
+
+
+
 export interface PaymentDetail
     extends
         Omit<Payment,
@@ -123,16 +153,15 @@ export interface PaymentDetail
             |'id'
             
             // data:
-            |'expiresAt'      // converted to optional
-            |'billingAddress' // converted to optional
+            |'expiresAt' // converted to optional
             
             // relations:
             |'parentId'
         >
 {
     // data:
-    expiresAt      ?: Payment['expiresAt']      // converted to optional
-    billingAddress ?: Payment['billingAddress'] // converted to optional
+    expiresAt      ?: Payment['expiresAt'] // converted to optional
+    billingAddress ?: BillingAddressDetail|null
     
     paymentId      ?: string // an optional token for make manual_payment
 }

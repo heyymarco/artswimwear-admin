@@ -21,9 +21,10 @@ import {
 }                           from '@/components/dialogs/SimpleEditModelDialog'
 
 // models:
-import type {
-    Address,
-    OrderDetail,
+import {
+    type OrderDetail,
+    type ShippingAddressDetail as Address,
+    // type BillingAddressDetail  as Address, // the same thing
 }                           from '@/models'
 
 // stores:
