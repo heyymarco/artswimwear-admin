@@ -49,13 +49,14 @@ import {
     AdminPreview,
 }                           from '@/components/views/AdminPreview'
 
-// stores:
+// models:
 import {
     // types:
-    AdminDetail,
-    
-    
-    
+    type AdminDetail,
+}                           from '@/models'
+
+// stores:
+import {
     // hooks:
     useGetAdminPage,
     

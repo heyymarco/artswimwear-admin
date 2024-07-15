@@ -69,13 +69,13 @@ import {
     SimpleEditAdminImageDialog,
 }                           from '@/components/dialogs/SimpleEditAdminImageDialog'
 
+// models:
+import {
+    type AdminDetail,
+}                           from '@/models'
+
 // stores:
 import {
-    // types:
-    AdminDetail,
-    
-    
-    
     // hooks:
     useUpdateAdmin,
 }                           from '@/store/features/api/apiSlice'

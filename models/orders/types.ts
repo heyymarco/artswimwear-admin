@@ -11,6 +11,7 @@ import type {
     CustomerPreference,
     Guest,
     GuestPreference,
+    Admin,
     Payment,
     PaymentConfirmation,
     DraftOrder,
@@ -74,18 +75,8 @@ export interface OrderDetail
         |'orderId'
     >[]
     
-    customer : null|(Omit<Customer,
-        |'createdAt'
-        |'updatedAt'
-    > & {
-        preference : CustomerOrGuestPreferenceData|null
-    })
-    guest    : null|(Omit<Guest,
-        |'createdAt'
-        |'updatedAt'
-    > & {
-        preference : CustomerOrGuestPreferenceData|null
-    })
+    customer : CustomerDetail|null
+    guest    : GuestDetail|null
     
     paymentConfirmation : null|Partial<Omit<PaymentConfirmation,
         |'id'
@@ -169,12 +160,12 @@ export interface PaymentDetail
 
 
 export type CustomerOrGuest =
-    &Pick<Customer, keyof Customer & keyof Guest>
-    &Pick<Guest   , keyof Customer & keyof Guest>
+    &Pick<CustomerDetail, keyof CustomerDetail & keyof GuestDetail>
+    &Pick<GuestDetail   , keyof CustomerDetail & keyof GuestDetail>
 export type CustomerOrGuestPreference =
     &Pick<CustomerPreference, keyof CustomerPreference & keyof GuestPreference>
     &Pick<GuestPreference   , keyof CustomerPreference & keyof GuestPreference>
-export type CustomerOrGuestPreferenceData = Omit<CustomerOrGuestPreference,
+export type CustomerOrGuestPreferenceDetail = Omit<CustomerOrGuestPreference,
     // records:
     |'id'
     
@@ -185,6 +176,60 @@ export type CustomerOrGuestPreferenceData = Omit<CustomerOrGuestPreference,
     |'customerId'
     |'guestId'
 >
+
+
+
+export interface CustomerDetail
+    extends
+        Omit<Customer,
+            |'createdAt'
+            |'updatedAt'
+            
+            |'emailVerified'
+            |'image'
+        >
+{
+    // data:
+    // username : string|null
+    
+    
+    
+    // relations:
+    preference : CustomerOrGuestPreferenceDetail|null
+}
+
+export interface GuestDetail
+    extends
+        Omit<Guest,
+            |'createdAt'
+            |'updatedAt'
+            
+            |'emailVerified'
+            |'image'
+        >
+{
+    // data:
+    // username : string|null
+    
+    
+    
+    // relations:
+    preference : CustomerOrGuestPreferenceDetail|null
+}
+
+
+
+export interface AdminDetail
+    extends
+        Omit<Admin,
+            |'createdAt'
+            |'updatedAt'
+            
+            |'emailVerified'
+        >
+{
+    username : string|null
+}
 
 
 

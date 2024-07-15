@@ -25,9 +25,9 @@ import type {
 }                           from '@/libs/types'
 
 // models:
-import type {
-    Admin,
-}                           from '@prisma/client'
+import {
+    type AdminDetail,
+}                           from '@/models'
 
 // ORMs:
 import {
@@ -38,21 +38,6 @@ import {
 import {
     authOptions,
 }                           from '@/app/api/auth/[...nextauth]/route'
-
-
-
-// types:
-export interface AdminDetail
-    extends
-        Omit<Admin,
-            |'createdAt'
-            |'updatedAt'
-            
-            |'emailVerified'
-        >
-{
-    username : string|null
-}
 
 
 

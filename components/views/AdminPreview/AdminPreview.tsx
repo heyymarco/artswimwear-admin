@@ -94,13 +94,14 @@ import {
     EditAdminDialog,
 }                           from '@/components/dialogs/EditAdminDialog'
 
-// stores:
+// models:
 import {
     // types:
-    AdminDetail,
-    
-    
-    
+    type AdminDetail,
+}                           from '@/models'
+
+// stores:
+import {
     // hooks:
     useUpdateAdmin,
     

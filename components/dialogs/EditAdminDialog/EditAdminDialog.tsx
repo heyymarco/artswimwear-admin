@@ -97,16 +97,13 @@ import {
 
 // models:
 import {
+    // types:
+    type AdminDetail,
     type RoleDetail,
 }                           from '@/models'
 
 // stores:
 import {
-    // types:
-    AdminDetail,
-    
-    
-    
     // hooks:
     useUpdateAdmin,
     useDeleteAdmin,

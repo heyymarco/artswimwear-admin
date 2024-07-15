@@ -123,7 +123,7 @@ export const orderAndDataSelectAndExtra = {
         select : {
             name  : true,
             email : true,
-            customerPreference : {
+            preference : {
                 select : {
                     marketingOpt : true,
                     timezone     : true,
@@ -137,7 +137,7 @@ export const orderAndDataSelectAndExtra = {
         select : {
             name  : true,
             email : true,
-            guestPreference : {
+            preference : {
                 select : {
                     marketingOpt : true,
                     timezone     : true,
@@ -238,7 +238,7 @@ export const orderDetailSelect = {
             
             
             
-            customerPreference : {
+            preference : {
                 select : {
                     timezone : true,
                 },
@@ -254,7 +254,7 @@ export const orderDetailSelect = {
             
             
             
-            guestPreference : {
+            preference : {
                 select : {
                     timezone : true,
                 },
@@ -345,26 +345,8 @@ export const convertOrderDetailDataToOrderDetail = (orderDetailData: Awaited<Ret
         ...restOrderDetail
     } = orderDetailData;
     return {
-        customer : !customerData ? null : ((): OrderDetail['customer'] => {
-            const {
-                customerPreference,
-                ...restCustomer
-            } = customerData;
-            return {
-                ...restCustomer,
-                preference : customerPreference,
-            };
-        })(),
-        guest : !guestData ? null : ((): OrderDetail['guest'] => {
-            const {
-                guestPreference,
-                ...restCustomer
-            } = guestData;
-            return {
-                ...restCustomer,
-                preference : guestPreference,
-            };
-        })(),
+        customer : customerData,
+        guest    : guestData,
         ...restOrderDetail,
     } satisfies OrderDetail;
 };

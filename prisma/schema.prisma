@@ -650,7 +650,7 @@ model Guest {
     // relations:
     orders                          Order[]                         @relation("OrdersOnGuest")      // one Guest may have some related Order(s)        // one  to many
     draftOrders                     DraftOrder[]                    @relation("DraftOrdersOnGuest") // one Guest may have some related DraftOrder(s)   // one  to many
-    guestPreference                 GuestPreference?                                                // one Guest may have one  related GuestPreference // one  to one
+    preference                      GuestPreference?                                                // one Guest may have one  related GuestPreference // one  to one
 }
 model Customer {
     // records:
@@ -662,10 +662,19 @@ model Customer {
     name                            String                                  // minLength: 2, maxLength: 30
     email                           String                          @unique // minLength: 5, maxLength: 50
     
+    emailVerified                   DateTime?
+    image                           String?
+    
     // relations:
     orders                          Order[]                         @relation("OrdersOnCustomer")      // one Customer may have some related Order(s)       // one  to many
     draftOrders                     DraftOrder[]                    @relation("DraftOrdersOnCustomer") // one Customer may have some related DraftOrder(s)  // one  to many
-    customerPreference              CustomerPreference?             // a Customer may have one related CustomerPreference                                   // one  to one
+    preference                      CustomerPreference?             // a Customer may have one related CustomerPreference                                   // one  to one
+    
+    customerAccounts                CustomerAccount[]               // a Customer may have some related CustomerAccount(s)                                  // one  to many
+    customerSessions                CustomerSession[]               // a Customer may have some related CustomerSession(s)                                  // one  to many
+    customerCredentials             CustomerCredentials?            // a Customer may have one  related CustomerCredentials                                 // one  to one
+    customerPasswordResetToken      CustomerPasswordResetToken?     // a Customer may have one  related CustomerPasswordResetToken                          // one  to one
+    customerEmailConfirmationToken  CustomerEmailConfirmationToken? // a Customer may have one  related CustomerEmailConfirmationToken                      // one  to one
 }
 model GuestPreference {
     // records:
@@ -690,6 +699,92 @@ model CustomerPreference {
     // relations:
     customerId                      String                          @unique
     customer                        Customer                        @relation(fields: [customerId], references: [id], onDelete: Cascade) // delete the related CustomerPreference if the Customer deleted
+}
+
+
+
+// customer-auth models -----------------------------------------------------------------------
+
+
+
+model CustomerAccount {
+    // records:
+    id                              String                          @id @default(cuid()) @map("_id")
+    
+    // provider types:
+    type                            String
+    provider                        String
+    providerAccountId               String
+    @@unique([provider, providerAccountId])
+    
+    // jwt sessions:
+    refresh_token                   String?
+    access_token                    String?
+    expires_at                      Int?
+    
+    // jwt meta:
+    token_type                      String?
+    scope                           String?
+    id_token                        String?
+    session_state                   String?
+    
+    // relations:
+    customerId                      String
+    customer                        Customer                        @relation(fields: [customerId], references: [id], onDelete: Cascade) // delete the related CustomerAccount(s) if the Customer deleted
+}
+
+model CustomerSession {
+    // records:
+    id                              String                          @id @default(cuid()) @map("_id")
+    expires                         DateTime
+    
+    // data:
+    sessionToken                    String                          @unique
+    
+    // relations:
+    customerId                      String
+    customer                        Customer                        @relation(fields: [customerId], references: [id], onDelete: Cascade) // delete the related CustomerSession(s) if the Customer deleted
+}
+
+model CustomerCredentials {
+    // records:
+    id                              String                          @id @default(cuid()) @map("_id")
+    
+    // data:
+    failureAttempts                 Int?
+    lockedAt                        DateTime?
+    username                        String?                         @unique
+    password                        String?
+    
+    // relations:
+    customerId                      String                          @unique
+    customer                        Customer                        @relation(fields: [customerId], references: [id], onDelete: Cascade) // delete the related CustomerCredentials if the Customer deleted
+}
+
+model CustomerPasswordResetToken {
+    // records:
+    id                              String                          @id @default(cuid()) @map("_id")
+    updatedAt                       DateTime                        @updatedAt
+    expiresAt                       DateTime
+    
+    // data:
+    token                           String                          @unique
+    
+    // relations:
+    customerId                      String                          @unique
+    customer                        Customer                        @relation(fields: [customerId], references: [id], onDelete: Cascade) // delete the related CustomerPasswordResetToken if the Customer deleted
+}
+
+model CustomerEmailConfirmationToken {
+    // records:
+    id                              String                          @id @default(cuid()) @map("_id")
+    
+    // data:
+    token                           String                          @unique
+    
+    // relations:
+    customerId                      String                          @unique
+    customer                        Customer                        @relation(fields: [customerId], references: [id], onDelete: Cascade) // delete the related CustomerEmailConfirmationToken if the Customer deleted
 }
 
 

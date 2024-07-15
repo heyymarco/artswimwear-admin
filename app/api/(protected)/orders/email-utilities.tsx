@@ -135,25 +135,9 @@ const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof p
             : null
         ),
         customerOrGuest : (
-            !!customer
-            ? (() => {
-                const {customerPreference: preference, ...customerData} = customer;
-                return {
-                    ...customerData,
-                    preference,
-                };
-            })()
-            : (
-                !!guest
-                ? (() => {
-                    const {guestPreference: preference, ...guestData} = guest;
-                    return {
-                        ...guestData,
-                        preference,
-                    };
-                })()
-                : null
-            )
+            customer
+            ??
+            guest
         ),
     } satisfies OrderAndDataAndExtra;
 };

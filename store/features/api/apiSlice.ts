@@ -22,12 +22,11 @@ import {
     type ProductPreview,
     type ProductDetail,
     type TemplateVariantGroupDetail,
+    type AdminDetail,
 }                                               from '@/models'
 
 // apis:
 export type { CountryPreview }                  from '@/app/api/(protected)/countries/route'
-import type { AdminDetail }                     from '@/app/api/(protected)/admins/route'
-export type { AdminDetail }                     from '@/app/api/(protected)/admins/route'
 import type {
     PreferenceData,
     PreferenceDetail,

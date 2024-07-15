@@ -45,13 +45,14 @@ import {
     SimpleEditModelDialog,
 }                           from '@/components/dialogs/SimpleEditModelDialog'
 
-// stores:
+// models:
 import {
     // types:
-    AdminDetail,
-    
-    
-    
+    type AdminDetail,
+}                           from '@/models'
+
+// stores:
+import {
     // hooks:
     usePostImage,
     useDeleteImage,
