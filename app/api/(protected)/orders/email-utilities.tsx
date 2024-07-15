@@ -18,20 +18,16 @@ import {
     orderAndDataSelectAndExtra,
     defaultPreferenceDetail,
 }                           from '@/models'
-import type {
-    Prisma,
+import {
+    type PaymentConfirmation,
+    type ShippingTracking,
     
-    Customer,
-    Guest,
-    PaymentConfirmation,
-    ShippingTracking,
-    
-    AdminPreference,
+    type AdminPreference,
 }                           from '@prisma/client'
 
 // apis:
-import type {
-    CountryPreview,
+import {
+    type CountryPreview,
 }                           from '@/app/api/(protected)/countries/route'
 
 // templates:
@@ -90,8 +86,8 @@ import {
 }                           from '@/libs/images'
 
 // configs:
-import type {
-    EmailConfig,
+import {
+    type EmailConfig,
 }                           from '@/components/Checkout/types'
 import {
     checkoutConfigServer,
