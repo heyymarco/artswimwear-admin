@@ -4,7 +4,7 @@ import {
     type FindOrderByIdData,
     type CancelOrderData,
 }                           from '@/models'
-import type {
+import {
     Prisma,
 }                           from '@prisma/client'
 
@@ -110,7 +110,7 @@ export const cancelOrder = async <TSelect extends Prisma.OrderSelect>(prismaTran
             },
             data   : {
                 orderStatus       : (isExpired ? 'EXPIRED' : 'CANCELED'),
-                cancelationReason : cancelationReason,
+                cancelationReason : (cancelationReason === null) ? Prisma.DbNull : cancelationReason,
             },
             select : orderSelect,
         }),

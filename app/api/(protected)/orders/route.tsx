@@ -34,6 +34,9 @@ import {
     convertOrderDetailDataToOrderDetail,
     cancelOrderSelect,
 }                           from '@/models'
+import {
+    Prisma,
+}                           from '@prisma/client'
 
 // ORMs:
 import {
@@ -428,35 +431,31 @@ You do not have the privilege to modify the payment of the order.`
                     (payment?.type === 'MANUAL_PAID')
                     ? prisma.paymentConfirmation.updateMany({
                         where  : {
-                            orderId : id,
+                            orderId               : id,
                             OR : [
-                                { reviewedAt      : { equals : null  } }, // never approved or rejected
-                                { reviewedAt      : { isSet  : false } }, // never approved or rejected
+                                { reviewedAt      : { equals : null          } }, // never approved or rejected
                                 
                                 /* -or- */
                                 
-                                { rejectionReason : { not    : null  } }, // has reviewed as rejected (prevents to approve the *already_approved_payment_confirmation*)
+                                { rejectionReason : { not    : Prisma.DbNull } }, // has reviewed as rejected (prevents to approve the *already_approved_payment_confirmation*)
                             ],
                         },
                         data: {
-                            reviewedAt      : new Date(), // the approval date
-                            rejectionReason : null,       // unset the rejection reason, because it's approved now
+                            reviewedAt            : new Date(),    // the approval date
+                            rejectionReason       : Prisma.DbNull, // unset the rejection reason, because it's approved now
                         },
                     })
                     : (
                         rejectionReason
                         ? prisma.paymentConfirmation.updateMany({
                             where  : {
-                                orderId : id,
+                                orderId           : id,
                                 
-                                OR : [
-                                    { reviewedAt      : { equals : null  } }, // never approved or rejected (prevents to reject the *already_rejected/approved_payment_confirmation*)
-                                    { reviewedAt      : { isSet  : false } }, // never approved or rejected (prevents to reject the *already_rejected/approved_payment_confirmation*)
-                                ],
+                                reviewedAt        : { equals : null          }, // never approved or rejected (prevents to reject the *already_rejected/approved_payment_confirmation*)
                             },
                             data: {
-                                reviewedAt      : new Date(),      // the rejection date
-                                rejectionReason : rejectionReason, // set the rejection reason
+                                reviewedAt        : new Date(),      // the rejection date
+                                rejectionReason   : rejectionReason, // set the rejection reason
                             },
                         })
                         : prisma.paymentConfirmation.updateMany({

@@ -447,6 +447,8 @@ CREATE TABLE "Customer" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
+    "emailVerified" TIMESTAMP(3),
+    "image" TEXT,
 
     CONSTRAINT "Customer_pkey" PRIMARY KEY ("id")
 );
@@ -469,6 +471,66 @@ CREATE TABLE "CustomerPreference" (
     "customerId" TEXT NOT NULL,
 
     CONSTRAINT "CustomerPreference_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "CustomerAccount" (
+    "id" TEXT NOT NULL,
+    "type" TEXT NOT NULL,
+    "provider" TEXT NOT NULL,
+    "providerAccountId" TEXT NOT NULL,
+    "refresh_token" TEXT,
+    "access_token" TEXT,
+    "expires_at" INTEGER,
+    "token_type" TEXT,
+    "scope" TEXT,
+    "id_token" TEXT,
+    "session_state" TEXT,
+    "customerId" TEXT NOT NULL,
+
+    CONSTRAINT "CustomerAccount_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "CustomerSession" (
+    "id" TEXT NOT NULL,
+    "expires" TIMESTAMP(3) NOT NULL,
+    "sessionToken" TEXT NOT NULL,
+    "customerId" TEXT NOT NULL,
+
+    CONSTRAINT "CustomerSession_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "CustomerCredentials" (
+    "id" TEXT NOT NULL,
+    "failureAttempts" INTEGER,
+    "lockedAt" TIMESTAMP(3),
+    "username" TEXT,
+    "password" TEXT,
+    "customerId" TEXT NOT NULL,
+
+    CONSTRAINT "CustomerCredentials_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "CustomerPasswordResetToken" (
+    "id" TEXT NOT NULL,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
+    "token" TEXT NOT NULL,
+    "customerId" TEXT NOT NULL,
+
+    CONSTRAINT "CustomerPasswordResetToken_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "CustomerEmailConfirmationToken" (
+    "id" TEXT NOT NULL,
+    "token" TEXT NOT NULL,
+    "customerId" TEXT NOT NULL,
+
+    CONSTRAINT "CustomerEmailConfirmationToken_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -671,6 +733,30 @@ CREATE UNIQUE INDEX "GuestPreference_guestId_key" ON "GuestPreference"("guestId"
 CREATE UNIQUE INDEX "CustomerPreference_customerId_key" ON "CustomerPreference"("customerId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "CustomerAccount_provider_providerAccountId_key" ON "CustomerAccount"("provider", "providerAccountId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "CustomerSession_sessionToken_key" ON "CustomerSession"("sessionToken");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "CustomerCredentials_username_key" ON "CustomerCredentials"("username");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "CustomerCredentials_customerId_key" ON "CustomerCredentials"("customerId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "CustomerPasswordResetToken_token_key" ON "CustomerPasswordResetToken"("token");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "CustomerPasswordResetToken_customerId_key" ON "CustomerPasswordResetToken"("customerId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "CustomerEmailConfirmationToken_token_key" ON "CustomerEmailConfirmationToken"("token");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "CustomerEmailConfirmationToken_customerId_key" ON "CustomerEmailConfirmationToken"("customerId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Admin_email_key" ON "Admin"("email");
 
 -- CreateIndex
@@ -813,6 +899,21 @@ ALTER TABLE "GuestPreference" ADD CONSTRAINT "GuestPreference_guestId_fkey" FORE
 
 -- AddForeignKey
 ALTER TABLE "CustomerPreference" ADD CONSTRAINT "CustomerPreference_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "Customer"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CustomerAccount" ADD CONSTRAINT "CustomerAccount_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "Customer"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CustomerSession" ADD CONSTRAINT "CustomerSession_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "Customer"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CustomerCredentials" ADD CONSTRAINT "CustomerCredentials_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "Customer"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CustomerPasswordResetToken" ADD CONSTRAINT "CustomerPasswordResetToken_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "Customer"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CustomerEmailConfirmationToken" ADD CONSTRAINT "CustomerEmailConfirmationToken_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "Customer"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Admin" ADD CONSTRAINT "Admin_adminRoleId_fkey" FOREIGN KEY ("adminRoleId") REFERENCES "AdminRole"("id") ON DELETE SET NULL ON UPDATE CASCADE;

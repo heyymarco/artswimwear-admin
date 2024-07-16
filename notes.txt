@@ -4,3 +4,26 @@ Unique  PathEditor      -
 Unique  RolenameEditor  -
 Unique  UsernameEditor  no_prohibited_words
         PasswordEditor  no_common_words
+
+
+
+restore sequences:
+    AdminRole
+    Admin
+    AdminCredentials
+    
+    
+    Product
+    VariantGroup
+    Variant
+    Stock
+    
+    TemplateVariantGroup
+    TemplateVariant
+    
+    
+    ShippingProvider
+    ShippingOrigin
+    
+    
+    Country
