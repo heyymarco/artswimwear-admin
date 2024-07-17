@@ -179,7 +179,7 @@ export const apiSlice = createApi({
                 }]) as Array<{ type: 'Products', id: string }>),
             ],
         }),
-        availablePath               : builder.mutation<boolean, string>({
+        availablePath               : builder.query<boolean, string>({
             query: (path) => ({
                 url    : `products/check-path?path=${encodeURIComponent(path)}`,
                 method : 'GET',
@@ -422,19 +422,19 @@ export const apiSlice = createApi({
                 }]) as Array<{ type: 'Admins', id: string }>),
             ],
         }),
-        availableUsername           : builder.mutation<boolean, string>({
+        availableUsername           : builder.query<boolean, string>({
             query: (username) => ({
                 url    : `admins/check-username?username=${encodeURIComponent(username)}`, // cloned from @heymarco/next-auth, because this api was disabled in auth.config.shared
                 method : 'GET',
             }),
         }),
-        notProhibitedUsername       : builder.mutation<boolean, string>({
+        notProhibitedUsername       : builder.query<boolean, string>({
             query: (username) => ({
                 url    : `admins/check-username?username=${encodeURIComponent(username)}`, // cloned from @heymarco/next-auth, because this api was disabled in auth.config.shared
                 method : 'PUT',
             }),
         }),
-        availableEmail              : builder.mutation<boolean, string>({
+        availableEmail              : builder.query<boolean, string>({
             query: (email) => ({
                 url    : `admins/check-email?email=${encodeURIComponent(email)}`, // cloned from @heymarco/next-auth, because this api was disabled in auth.config.shared
                 method : 'GET',
@@ -495,7 +495,7 @@ export const apiSlice = createApi({
                 }]) as Array<{ type: 'Roles', id: string }>),
             ],
         }),
-        availableRolename           : builder.mutation<boolean, string>({
+        availableRolename           : builder.query<boolean, string>({
             query: (name) => ({
                 url    : `roles/check-name?name=${encodeURIComponent(name)}`,
                 method : 'GET',
@@ -691,7 +691,7 @@ export const {
     useGetProductPageQuery                : useGetProductPage,
     useUpdateProductMutation              : useUpdateProduct,
     useDeleteProductMutation              : useDeleteProduct,
-    useAvailablePathMutation              : useAvailablePath,
+    useLazyAvailablePathQuery             : useAvailablePath,
     
     useGetTemplateVariantGroupListQuery   : useGetTemplateVariantGroupList,
     useUpdateTemplateVariantGroupMutation : useUpdateTemplateVariantGroup,
@@ -711,14 +711,14 @@ export const {
     useGetAdminPageQuery                  : useGetAdminPage,
     useUpdateAdminMutation                : useUpdateAdmin,
     useDeleteAdminMutation                : useDeleteAdmin,
-    useAvailableUsernameMutation          : useAvailableUsername,
-    useNotProhibitedUsernameMutation      : useNotProhibitedUsername,
-    useAvailableEmailMutation             : useAvailableEmail,
+    useLazyAvailableUsernameQuery         : useAvailableUsername,
+    useLazyNotProhibitedUsernameQuery     : useNotProhibitedUsername,
+    useLazyAvailableEmailQuery            : useAvailableEmail,
     
     useGetRoleListQuery                   : useGetRoleList,
     useUpdateRoleMutation                 : useUpdateRole,
     useDeleteRoleMutation                 : useDeleteRole,
-    useAvailableRolenameMutation          : useAvailableRolename,
+    useLazyAvailableRolenameQuery         : useAvailableRolename,
     
     useGetPreferenceQuery                 : useGetPreference,
     useUpdatePreferenceMutation           : useUpdatePreference,
