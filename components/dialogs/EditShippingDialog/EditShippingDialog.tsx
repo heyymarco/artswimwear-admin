@@ -148,9 +148,19 @@ import {
     useUpdateShipping,
     useDeleteShipping,
     
-    useGetStateList,
-    useGetCityList,
+    // useGetStateList,
+    // useGetCityList,
+    
+    
+    
+    // apis:
+    getStateList,
+    getCityList,
 }                           from '@/store/features/api/apiSlice'
+import {
+    // hooks:
+    useAppDispatch,
+}                           from '@/store/hooks'
 
 // configs:
 import {
@@ -272,11 +282,11 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     
     
     // stores:
+    const dispatch = useAppDispatch();
+    
     const [country, setCountry] = useState<string>('');
     const [state  , setState  ] = useState<string>('');
     
-    const [getStateList] = useGetStateList();
-    const [getCityList ] = useGetCityList();
     const stateListRef   = useRef<Promise<string[]>>(emptyStringPromise);
     const cityListRef    = useRef<Promise<string[]>>(emptyStringPromise);
     useEffect(() => {
@@ -284,7 +294,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             stateListRef.current = emptyStringPromise; // clear
         }
         else {
-            stateListRef.current = getStateList({ countryCode: country }).unwrap();
+            stateListRef.current = dispatch(getStateList({ countryCode: country })).unwrap();
         } // if
     }, [country]);
     useEffect(() => {
@@ -292,7 +302,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             cityListRef.current = emptyStringPromise; // clear
         }
         else {
-            cityListRef.current = getCityList({ countryCode: country, state: state }).unwrap();
+            cityListRef.current = dispatch(getCityList({ countryCode: country, state: state })).unwrap();
         } // if
     }, [country, state]);
     

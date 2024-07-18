@@ -704,9 +704,9 @@ export const {
     useGetShippingPageQuery               : useGetShippingPage,
     useUpdateShippingMutation             : useUpdateShipping,
     useDeleteShippingMutation             : useDeleteShipping,
-    useLazyGetCountryListQuery            : useGetCountryList,
-    useLazyGetStateListQuery              : useGetStateList,
-    useLazyGetCityListQuery               : useGetCityList,
+    // useLazyGetCountryListQuery            : useGetCountryList,
+    // useLazyGetStateListQuery              : useGetStateList,
+    // useLazyGetCityListQuery               : useGetCityList,
     
     useGetAdminPageQuery                  : useGetAdminPage,
     useUpdateAdminMutation                : useUpdateAdmin,
@@ -727,3 +727,9 @@ export const {
     useDeleteImageMutation                : useDeleteImage,
     useMoveImageMutation                  : useMoveImage,
 } = apiSlice;
+
+export const {
+    getCountryList : { initiate : getCountryList },
+    getStateList   : { initiate : getStateList   },
+    getCityList    : { initiate : getCityList    },
+} = apiSlice.endpoints;
