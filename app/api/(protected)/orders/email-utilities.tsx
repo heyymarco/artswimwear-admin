@@ -12,6 +12,7 @@ import {
 // models:
 import {
     type SendEmailData,
+    type CountryPreview,
     
     
     
@@ -24,11 +25,6 @@ import {
     
     type AdminPreference,
 }                           from '@prisma/client'
-
-// apis:
-import {
-    type CountryPreview,
-}                           from '@/app/api/(protected)/countries/route'
 
 // templates:
 import {

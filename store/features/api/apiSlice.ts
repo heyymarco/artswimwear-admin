@@ -26,7 +26,6 @@ import {
 }                                               from '@/models'
 
 // apis:
-export type { CountryPreview }                  from '@/app/api/(protected)/countries/route'
 import type {
     PreferenceData,
     PreferenceDetail,
