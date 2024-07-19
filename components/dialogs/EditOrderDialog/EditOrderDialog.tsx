@@ -724,7 +724,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             <p>
                                 {shippingAddressDetail.address}
                                 <br />
-                                {`${shippingAddressDetail.city}, ${shippingAddressDetail.state} (${shippingAddressDetail.zip}), ${countryList?.entities?.[shippingAddressDetail.country ?? '']?.name}`}
+                                {`${shippingAddressDetail.city}, ${shippingAddressDetail.state} (${shippingAddressDetail.zip}), ${countryList?.entities?.[shippingAddressDetail.country]?.name ?? shippingAddressDetail.country}`}
                             </p>
                             <p>
                                 Phone: {shippingAddressDetail.phone}
