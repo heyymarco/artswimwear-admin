@@ -19,19 +19,44 @@ export interface MessageErrorProps {
     
     
     
+    // accessibilities:
+    title          ?: React.ReactNode
+    message        ?: React.ReactNode
+    
+    
+    
     // handlers:
     onRetry        ?: () => void
 }
-export const MessageError = ({ buttonRetryRef, onRetry }: MessageErrorProps): JSX.Element|null => {
+export const MessageError = (props: MessageErrorProps): JSX.Element|null => {
+    // props:
+    const {
+        // refs:
+        buttonRetryRef,
+        
+        
+        
+        // accessibilities:
+        title   = <h3>
+            Oops, an error occured!
+        </h3>,
+        message = <p>
+            We were unable to retrieve data from the server.
+        </p>,
+        
+        
+        
+        // handlers:
+        onRetry,
+    } = props;
+    
+    
+    
     // jsx:
     return (
         <>
-            <h3>
-                Oops, an error occured!
-            </h3>
-            <p>
-                We were unable to retrieve data from the server.
-            </p>
+            {title}
+            {message}
             {!!onRetry && <ButtonIcon elmRef={buttonRetryRef} icon='refresh' theme='success' onClick={onRetry}>
                 Retry
             </ButtonIcon>}
