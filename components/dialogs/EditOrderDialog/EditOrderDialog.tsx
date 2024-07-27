@@ -1049,7 +1049,18 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     }
                                 >
                                     {
-                                        (!!paymentBrand && ['amex', 'discover', 'jcb', 'maestro', 'mastercard', 'paypal', 'visa', 'gopay', 'shopeepay', 'dana', 'ovo', 'tcash', 'linkaja', 'indomaret', 'alfamart'].includes(paymentBrand.toLowerCase()))
+                                        (!!paymentBrand && [
+                                            // cards:
+                                            'visa', 'mastercard', 'amex', 'discover', 'jcb', 'maestro',
+                                            
+                                            // wallets:
+                                            'paypal',
+                                            'googlepay', 'applepay', 'amazonpay', 'link',
+                                            'gopay', 'shopeepay', 'dana', 'ovo', 'tcash', 'linkaja',
+                                            
+                                            // counters:
+                                            'indomaret', 'alfamart',
+                                        ].includes(paymentBrand.toLowerCase()))
                                         ? <img
                                             // appearances:
                                             alt={paymentBrand}
