@@ -126,6 +126,7 @@ export async function POST(req: Request, res: Response): Promise<Response> {
     
     
     // Return OK:
+    console.log('heartbeat');
     return Response.json({
         ok: true,
     });
