@@ -273,7 +273,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
         
         
         
-        await fetch(`${process.env.APP_URL ?? ''}/api/send-email`, {
+        await fetch(`${process.env.NEXT_PUBLIC_APP_URL ?? ''}/api/send-email`, {
             method  : 'POST',
             headers : {
                 'X-Secret' : process.env.APP_SECRET ?? '',
