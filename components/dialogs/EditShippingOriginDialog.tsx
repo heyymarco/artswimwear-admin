@@ -28,11 +28,6 @@ import {
 import {
     // base-components:
     Indicator,
-    
-    
-    
-    // composite-components:
-    TabPanel,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // internal components:
@@ -174,60 +169,58 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
             
             onConfirmUnsaved={handleConfirmUnsaved}
         >
-            <TabPanel label='Test' >
-                <form>
-                    <ValidationProvider
+            <form>
+                <ValidationProvider
+                    // validations:
+                    /* disable validation for all <Check> */
+                    enableValidation={false}
+                    inheritValidation={false}
+                >
+                    <Indicator tag='p' nude={true}>
+                        Please specify the delivery departure location <span className='txt-sec'>(usually your shop location)</span>:
+                    </Indicator>
+                    <AddressEditor
+                        // values:
+                        value={model as Address|null}
+                        onChange={(newValue) => {
+                            if (!newValue) {
+                                setModel(null);
+                            }
+                            else {
+                                const {
+                                    zip       : _zip,
+                                    address   : _address,
+                                    firstName : _firstName,
+                                    lastName  : _lastName,
+                                    phone     : _phone,
+                                    
+                                    ...newOrigin
+                                } = newValue;
+                                setModel({
+                                    id : model?.id ?? '',
+                                    ...newOrigin,
+                                });
+                            } // if
+                            
+                            setIsModified(true);
+                        }}
+                        
+                        
+                        
                         // validations:
-                        /* disable validation for all <Check> */
-                        enableValidation={false}
-                        inheritValidation={false}
-                    >
-                        <Indicator tag='p' nude={true}>
-                            Please specify the delivery departure location <span className='txt-sec'>(usually your shop location)</span>:
-                        </Indicator>
-                        <AddressEditor
-                            // values:
-                            value={model as Address|null}
-                            onChange={(newValue) => {
-                                if (!newValue) {
-                                    setModel(null);
-                                }
-                                else {
-                                    const {
-                                        zip       : _zip,
-                                        address   : _address,
-                                        firstName : _firstName,
-                                        lastName  : _lastName,
-                                        phone     : _phone,
-                                        
-                                        ...newOrigin
-                                    } = newValue;
-                                    setModel({
-                                        id : model?.id ?? '',
-                                        ...newOrigin,
-                                    });
-                                } // if
-                                
-                                setIsModified(true);
-                            }}
-                            
-                            
-                            
-                            // validations:
-                            required={true}
-                            
-                            
-                            
-                            // components:
-                            zipEditorComponent={null}
-                            addressEditorComponent={null}
-                            firstNameEditorComponent={null}
-                            lastNameEditorComponent={null}
-                            phoneEditorComponent={null}
-                        />
-                    </ValidationProvider>
-                </form>
-            </TabPanel>
+                        required={true}
+                        
+                        
+                        
+                        // components:
+                        zipEditorComponent={null}
+                        addressEditorComponent={null}
+                        firstNameEditorComponent={null}
+                        lastNameEditorComponent={null}
+                        phoneEditorComponent={null}
+                    />
+                </ValidationProvider>
+            </form>
         </ComplexEditModelDialog>
     );
 };

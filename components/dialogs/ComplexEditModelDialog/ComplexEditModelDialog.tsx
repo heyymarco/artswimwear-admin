@@ -20,6 +20,11 @@ import {
 
 // reusable-ui core:
 import {
+    // a set of React node utility functions:
+    flattenChildren,
+    
+    
+    
     // react helper hooks:
     useEvent,
     EventHandler,
@@ -53,6 +58,7 @@ import {
     List,
     CardHeader,
     CardFooter,
+    CardBody,
     
     
     
@@ -64,6 +70,7 @@ import {
     
     
     // composite-components:
+    type TabPanelProps,
     TabPanel,
     TabProps,
     Tab,
@@ -504,6 +511,19 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
     
     
     // jsx:
+    const children = flattenChildren(
+        (typeof(childrenFn) === 'function')
+        ? childrenFn?.({
+            whenAdd,
+            whenUpdate,
+        })
+        : childrenFn
+    );
+    const isMultiTabs = whenDelete || ((children.length) > 1) || (() => {
+        const child = children[0]
+        if (!React.isValidElement<TabPanelProps>(child)) return false;
+        return !!child.props.label; // has <TabPanel>'s label
+    })();
     return (
         <AccessibilityProvider enabled={!isLoading}>
             <ModalCard
@@ -555,7 +575,10 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
                     enableValidation={enableValidation}
                     inheritValidation={false}
                 >
-                    <Tab
+                    {!isMultiTabs && <CardBody>
+                        {children}
+                    </CardBody>}
+                    {isMultiTabs && <Tab
                         // variants:
                         mild='inherit'
                         
@@ -590,10 +613,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
                             />
                         }
                     >
-                        {(typeof(childrenFn) === 'function') ? childrenFn?.({
-                            whenAdd,
-                            whenUpdate,
-                        }) : childrenFn}
+                        {children}
                         {whenDelete && <TabPanel label={tabDelete} panelComponent={<Content theme='warning' className={styleSheet.tabDelete} />}>
                             <ButtonIcon icon={isDeleting ? 'busy' : 'delete'} theme='danger' onClick={handleDelete}>
                                 Delete {!modelEntryName ? 'this ' : ''}<strong>{
@@ -605,7 +625,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
                                 }</strong>
                             </ButtonIcon>
                         </TabPanel>}
-                    </Tab>
+                    </Tab>}
                 </ValidationProvider>}
                 
                 <CardFooter>
