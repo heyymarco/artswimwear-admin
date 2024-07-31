@@ -133,7 +133,7 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
     const {data: modelData,   isLoading : isLoadingAndNoData, isError: isErrorModel, refetch: refetchModel} = useGetPreference();
     const isErrorAndNoData = isErrorModel && !modelData;
     
-    const [UpdatePreference, {isLoading : isLoadingUpdate}] = useUpdatePreference();
+    const [updatePreference, {isLoading : isLoadingUpdate}] = useUpdatePreference();
     
     
     
@@ -162,7 +162,7 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
     
     // handlers:
     const handleUpdate         = useEvent<UpdateHandler<PreferenceDetail>>(async ({id}) => {
-        return await UpdatePreference({
+        return await updatePreference({
             id : id ?? '',
             
             emailOrderNewPending,
