@@ -27,6 +27,23 @@ import {
     dynamicStyleSheet,
 }                           from '@cssfn/cssfn-react'               // writes css in react hook
 
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useEvent,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
+// reusable-ui components:
+import {
+    // simple-components:
+    ButtonIcon,
+    
+    
+    
+    // utility-components:
+    useDialogMessage,
+}                           from '@reusable-ui/components'          // a set of official Reusable-UI components
+
 // heymarco components:
 import {
     Main,
@@ -48,6 +65,9 @@ import {
 import {
     ShippingPreview,
 }                           from '@/components/views/ShippingPreview'
+import {
+    EditShippingOriginDialog,
+}                           from '@/components/dialogs/EditShippingOriginDialog'
 
 // models:
 import {
@@ -103,6 +123,22 @@ export default function ShippingPage(): JSX.Element|null {
     
     
     
+    // dialogs:
+    const {
+        showDialog,
+    } = useDialogMessage();
+    
+    
+    
+    // handlers:
+    const handleChangeNotificationSettings = useEvent(() => {
+        showDialog(
+            <EditShippingOriginDialog />
+        );
+    });
+    
+    
+    
     // jsx:
     if (isLoadingAndNoData || (sessionStatus === 'loading'        )) return <PageLoading />;
     if (isErrorAndNoData   || (sessionStatus === 'unauthenticated')) return <PageError onRetry={refetch} />;
@@ -138,6 +174,13 @@ export default function ShippingPage(): JSX.Element|null {
                     />
                     : undefined
                 }
+                
+                
+                
+                // children:
+                menusBefore={<>
+                    <ButtonIcon size='sm' mild={true} icon='home' title='Notification settings' onClick={handleChangeNotificationSettings} />
+                </>}
             />
         </Main>
     );

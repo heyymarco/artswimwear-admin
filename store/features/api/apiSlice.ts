@@ -16,6 +16,7 @@ export type OrderDetailWithOptions = OrderDetail & { sendConfirmationEmail?: boo
 // models:
 import {
     type OrderDetail,
+    type DefaultShippingOriginDetail,
     type ShippingPreview,
     type ShippingDetail,
     type RoleDetail,
@@ -111,7 +112,7 @@ export const apiSlice = createApi({
     baseQuery : axiosBaseQuery({
         baseUrl: `${process.env.NEXT_PUBLIC_APP_URL ?? ''}/api`
     }),
-    tagTypes: ['Products', 'TemplateVariantGroups', 'Orders', 'Shippings', 'States', 'Admins', 'Preferences', 'Roles'],
+    tagTypes: ['Products', 'TemplateVariantGroups', 'Orders', 'DefaultShippingOrigins', 'Shippings', 'States', 'Admins', 'Preferences', 'Roles'],
     endpoints : (builder) => ({
         getProductList              : builder.query<EntityState<ProductPreview>, void>({
             query : () => ({
@@ -279,6 +280,34 @@ export const apiSlice = createApi({
             onCacheEntryAdded: async (arg, api) => {
                 await handleCumulativeUpdateCacheEntry('getOrderPage', (arg.id !== ''), api);
             },
+        }),
+        
+        getDefaultShippingOrigin               : builder.query<DefaultShippingOriginDetail|null, void>({
+            query : () => ({
+                url    : 'shippings/origin',
+                method : 'GET',
+            }),
+            providesTags: (result, error, page)  => {
+                return [
+                    {
+                        type : 'DefaultShippingOrigins',
+                        id   : 'DEFAULT_SHIPPING_ORIGIN',
+                    },
+                ];
+            },
+        }),
+        updateDefaultShippingOrigin            : builder.mutation<DefaultShippingOriginDetail, MutationArgs<DefaultShippingOriginDetail>|null>({
+            query: (patch) => ({
+                url    : 'shippings/origin',
+                method : 'PATCH',
+                body   : patch ?? {}
+            }),
+            invalidatesTags: (defaultShippingOrigin, error, arg) => [
+                {
+                    type : 'DefaultShippingOrigins',
+                    id   : 'DEFAULT_SHIPPING_ORIGIN',
+                },
+            ],
         }),
         
         getShippingList             : builder.query<EntityState<ShippingPreview>, void>({
@@ -686,45 +715,47 @@ const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, Q
 
 
 export const {
-    useGetProductListQuery                : useGetProductList,
-    useGetProductPageQuery                : useGetProductPage,
-    useUpdateProductMutation              : useUpdateProduct,
-    useDeleteProductMutation              : useDeleteProduct,
-    useLazyAvailablePathQuery             : useAvailablePath,
+    useGetProductListQuery                 : useGetProductList,
+    useGetProductPageQuery                 : useGetProductPage,
+    useUpdateProductMutation               : useUpdateProduct,
+    useDeleteProductMutation               : useDeleteProduct,
+    useLazyAvailablePathQuery              : useAvailablePath,
     
-    useGetTemplateVariantGroupListQuery   : useGetTemplateVariantGroupList,
-    useUpdateTemplateVariantGroupMutation : useUpdateTemplateVariantGroup,
-    useDeleteTemplateVariantGroupMutation : useDeleteTemplateVariantGroup,
+    useGetTemplateVariantGroupListQuery    : useGetTemplateVariantGroupList,
+    useUpdateTemplateVariantGroupMutation  : useUpdateTemplateVariantGroup,
+    useDeleteTemplateVariantGroupMutation  : useDeleteTemplateVariantGroup,
     
-    useGetOrderPageQuery                  : useGetOrderPage,
-    useUpdateOrderMutation                : useUpdateOrder,
+    useGetOrderPageQuery                   : useGetOrderPage,
+    useUpdateOrderMutation                 : useUpdateOrder,
     
-    useGetShippingListQuery               : useGetShippingList,
-    useGetShippingPageQuery               : useGetShippingPage,
-    useUpdateShippingMutation             : useUpdateShipping,
-    useDeleteShippingMutation             : useDeleteShipping,
-    // useLazyGetCountryListQuery            : useGetCountryList,
-    // useLazyGetStateListQuery              : useGetStateList,
-    // useLazyGetCityListQuery               : useGetCityList,
+    useGetDefaultShippingOriginQuery       : useGetDefaultShippingOrigin,
+    useUpdateDefaultShippingOriginMutation : useUpdateDefaultShippingOrigin,
+    useGetShippingListQuery                : useGetShippingList,
+    useGetShippingPageQuery                : useGetShippingPage,
+    useUpdateShippingMutation              : useUpdateShipping,
+    useDeleteShippingMutation              : useDeleteShipping,
+    // useLazyGetCountryListQuery             : useGetCountryList,
+    // useLazyGetStateListQuery               : useGetStateList,
+    // useLazyGetCityListQuery                : useGetCityList,
     
-    useGetAdminPageQuery                  : useGetAdminPage,
-    useUpdateAdminMutation                : useUpdateAdmin,
-    useDeleteAdminMutation                : useDeleteAdmin,
-    useLazyAvailableUsernameQuery         : useAvailableUsername,
-    useLazyNotProhibitedUsernameQuery     : useNotProhibitedUsername,
-    useLazyAvailableEmailQuery            : useAvailableEmail,
+    useGetAdminPageQuery                   : useGetAdminPage,
+    useUpdateAdminMutation                 : useUpdateAdmin,
+    useDeleteAdminMutation                 : useDeleteAdmin,
+    useLazyAvailableUsernameQuery          : useAvailableUsername,
+    useLazyNotProhibitedUsernameQuery      : useNotProhibitedUsername,
+    useLazyAvailableEmailQuery             : useAvailableEmail,
     
-    useGetRoleListQuery                   : useGetRoleList,
-    useUpdateRoleMutation                 : useUpdateRole,
-    useDeleteRoleMutation                 : useDeleteRole,
-    useLazyAvailableRolenameQuery         : useAvailableRolename,
+    useGetRoleListQuery                    : useGetRoleList,
+    useUpdateRoleMutation                  : useUpdateRole,
+    useDeleteRoleMutation                  : useDeleteRole,
+    useLazyAvailableRolenameQuery          : useAvailableRolename,
     
-    useGetPreferenceQuery                 : useGetPreference,
-    useUpdatePreferenceMutation           : useUpdatePreference,
+    useGetPreferenceQuery                  : useGetPreference,
+    useUpdatePreferenceMutation            : useUpdatePreference,
     
-    usePostImageMutation                  : usePostImage,
-    useDeleteImageMutation                : useDeleteImage,
-    useMoveImageMutation                  : useMoveImage,
+    usePostImageMutation                   : usePostImage,
+    useDeleteImageMutation                 : useDeleteImage,
+    useMoveImageMutation                   : useMoveImage,
 } = apiSlice;
 
 export const {
