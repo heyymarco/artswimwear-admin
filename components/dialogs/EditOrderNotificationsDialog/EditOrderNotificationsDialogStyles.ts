@@ -1,7 +1,6 @@
 // cssfn:
 import {
     // writes css in javascript:
-    children,
     style,
     scope,
 }                           from '@cssfn/core'          // writes css in javascript
@@ -13,29 +12,21 @@ import {
 
 
 // styles:
-export const usesNotificationsTabLayout = () => {
+export const usesNotificationsLayout = () => {
     return style({
-        // layout:
-        display: 'grid',
+        // layouts:
+        display      : 'grid',
+        alignContent : 'start',
         
         
         
-        // children:
-        ...children('form', {
-            // layouts:
-            display      : 'grid',
-            alignContent : 'start',
-            
-            
-            
-            // spacings:
-            gap : spacers.sm,
-        }),
+        // spacings:
+        gap : spacers.sm,
     });
 };
 
 export default () => [
-    scope('notificationsTab', {
-        ...usesNotificationsTabLayout(),
+    scope('notifications', {
+        ...usesNotificationsLayout(),
     }),
 ];
