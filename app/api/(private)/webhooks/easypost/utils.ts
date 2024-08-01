@@ -14,7 +14,7 @@ export const validateWebhook = async (body: Uint8Array, signature: string|null|u
     const expectedSignature = (
         crypto
         .createHmac('sha256', encodedSecret)
-        .update(body)
+        .update(await (new Response(body)).text(), 'utf-8')
         .digest('hex')
     );
     
