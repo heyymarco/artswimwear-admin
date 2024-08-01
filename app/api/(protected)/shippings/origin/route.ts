@@ -10,7 +10,7 @@ import {
 
 // models:
 import {
-    type ShippingOriginDetail,
+    type DefaultShippingOriginDetail,
     
     
     
@@ -69,7 +69,7 @@ router
     
     
     
-    const shippingOrigin : ShippingOriginDetail|null = (
+    const shippingOrigin : DefaultShippingOriginDetail|null = (
         await prisma.defaultShippingOrigin.findFirst({
             select: defaultShippingOriginSelect,
         }) // get all shippings including the disabled ones
@@ -131,7 +131,7 @@ router
             return Response.json(null); // handled with success
         }
         else {
-            const shippingOrigin : ShippingOriginDetail =  await prisma.defaultShippingOrigin.upsert({
+            const shippingOrigin : DefaultShippingOriginDetail =  await prisma.defaultShippingOrigin.upsert({
                 where  : {
                     id : id,
                     OR : [
