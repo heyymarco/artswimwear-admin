@@ -3,7 +3,7 @@ import { type Event } from '@easypost/api'
 
 
 
-export const validateWebhook = async (body: Uint8Array, signature: string|null|undefined, webhookSecret: string|null|undefined): Promise<Event|false> => {
+export const validateWebhook = async (body: Buffer, signature: string|null|undefined, webhookSecret: string|null|undefined): Promise<Event|false> => {
     if (!signature)     return false;
     if (!webhookSecret) return false;
     
@@ -14,7 +14,7 @@ export const validateWebhook = async (body: Uint8Array, signature: string|null|u
     const expectedSignature = (
         crypto
         .createHmac('sha256', encodedSecret)
-        .update(await (new Response(body)).text(), 'utf-8')
+        .update(body)
         .digest('hex')
     );
     
