@@ -349,7 +349,10 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                 
                 // components:
                 editorComponent={
-                    <AddressEditor />
+                    <AddressEditor
+                        // components:
+                        companyEditorComponent={null}
+                    />
                 }
             />
         );

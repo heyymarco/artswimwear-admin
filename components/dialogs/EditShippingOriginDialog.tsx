@@ -190,6 +190,7 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
                                 const {
                                     zip       : _zip,
                                     address   : _address,
+                                    company   : _company,
                                     firstName : _firstName,
                                     lastName  : _lastName,
                                     phone     : _phone,
