@@ -350,6 +350,16 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                 // components:
                 editorComponent={
                     <AddressEditor
+                        // accessibilities:
+                        autoComplete={false}
+                        
+                        
+                        
+                        // types:
+                        addressType='shipping'
+                        
+                        
+                        
                         // components:
                         companyEditorComponent={null}
                     />

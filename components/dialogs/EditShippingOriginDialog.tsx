@@ -24,12 +24,6 @@ import {
     ValidationProvider,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
-// reusable-ui components:
-import {
-    // base-components:
-    Indicator,
-}                           from '@reusable-ui/components'          // a set of official Reusable-UI components
-
 // internal components:
 import {
     type Address,
@@ -71,6 +65,13 @@ export const emptyShippingOrigin : DefaultShippingOriginDetail = {
     country   : '',
     state     : '',
     city      : '',
+    zip       : '',
+    address   : '',
+    
+    company   : '',
+    firstName : '',
+    lastName  : '',
+    phone     : '',
 }
 
 
@@ -176,10 +177,23 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
                     enableValidation={false}
                     inheritValidation={false}
                 >
-                    <Indicator tag='p' nude={true}>
-                        Please specify the delivery departure location <span className='txt-sec'>(usually your shop location)</span>:
-                    </Indicator>
+                    <p>
+                        Please specify the delivery departure location <span className='txt-sec'>(usually your shop location)</span>.
+                    </p>
+                    <p>
+                        The data will also be the sender&apos;s address for the shipments.
+                    </p>
                     <AddressEditor
+                        // accessibilities:
+                        autoComplete={true}
+                        
+                        
+                        
+                        // types:
+                        addressType='shipping'
+                        
+                        
+                        
                         // values:
                         value={model as Address|null}
                         onChange={(newValue) => {
@@ -187,19 +201,9 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
                                 setModel(null);
                             }
                             else {
-                                const {
-                                    zip       : _zip,
-                                    address   : _address,
-                                    company   : _company,
-                                    firstName : _firstName,
-                                    lastName  : _lastName,
-                                    phone     : _phone,
-                                    
-                                    ...newOrigin
-                                } = newValue;
                                 setModel({
                                     id : model?.id ?? '',
-                                    ...newOrigin,
+                                    ...newValue,
                                 });
                             } // if
                             
@@ -210,15 +214,6 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
                         
                         // validations:
                         required={true}
-                        
-                        
-                        
-                        // components:
-                        zipEditorComponent={null}
-                        addressEditorComponent={null}
-                        firstNameEditorComponent={null}
-                        lastNameEditorComponent={null}
-                        phoneEditorComponent={null}
                     />
                 </ValidationProvider>
             </form>

@@ -67,10 +67,17 @@ export interface AddressEditorProps<out TElement extends Element = HTMLFormEleme
         // bases:
         BaseAddressEditorProps<TElement>
 {
+    // accessibilities:
+    autoComplete ?: boolean
 }
 const AddressEditor = <TElement extends Element = HTMLFormElement>(props: AddressEditorProps<TElement>): JSX.Element|null => {
     // props:
     const {
+        // accessibilities:
+        autoComplete = false,
+        
+        
+        
         // other props:
         ...restAddressEditorProps
     } = props;
@@ -153,28 +160,31 @@ const AddressEditor = <TElement extends Element = HTMLFormElement>(props: Addres
         
         // components:
         countryEditorComponent=(
-            <SelectCountryEditor theme='primary' onChange={setCountry} valueOptions={countryOptionsPromise} autoComplete='nope' />
+            <SelectCountryEditor theme='primary' onChange={setCountry} valueOptions={countryOptionsPromise} autoComplete={!autoComplete ? 'nope' : undefined} />
         ),
         stateEditorComponent=(
-            <SelectStateEditor theme='primary' onChange={setState} valueOptions={stateOptionsPromise} autoComplete='nope' minLength={3} maxLength={50} />
+            <SelectStateEditor theme='primary' onChange={setState} valueOptions={stateOptionsPromise} autoComplete={!autoComplete ? 'nope' : undefined} minLength={3} maxLength={50} />
         ),
         cityEditorComponent=(
-            <SelectCityEditor theme='primary' valueOptions={cityOptionsPromise} autoComplete='nope' minLength={3} maxLength={50} />
+            <SelectCityEditor theme='primary' valueOptions={cityOptionsPromise} autoComplete={!autoComplete ? 'nope' : undefined} minLength={3} maxLength={50} />
         ),
         zipEditorComponent=(
-            <TextEditor aria-label='Zip (Postal) Code' autoComplete='nope' minLength={2} maxLength={11} />
+            <TextEditor aria-label='Zip (Postal) Code' autoComplete={!autoComplete ? 'nope' : undefined} minLength={2} maxLength={11} />
         ),
         addressEditorComponent=(
-            <TextEditor aria-label='Street Address' autoComplete='nope' minLength={5} maxLength={90} />
+            <TextEditor aria-label='Street Address' autoComplete={!autoComplete ? 'nope' : undefined} minLength={5} maxLength={90} />
+        ),
+        companyEditorComponent=(
+            <NameEditor aria-label='Company' autoComplete={!autoComplete ? 'nope' : undefined} minLength={2} maxLength={30} />
         ),
         firstNameEditorComponent=(
-            <NameEditor aria-label='First Name' autoComplete='nope' minLength={2} maxLength={30} />
+            <NameEditor aria-label='First Name' autoComplete={!autoComplete ? 'nope' : undefined} minLength={2} maxLength={30} />
         ),
         lastNameEditorComponent=(
-            <NameEditor aria-label='Last Name' autoComplete='nope' minLength={1} maxLength={30} />
+            <NameEditor aria-label='Last Name' autoComplete={!autoComplete ? 'nope' : undefined} minLength={1} maxLength={30} />
         ),
         phoneEditorComponent=(
-            <PhoneEditor autoComplete='nope' minLength={5} maxLength={15} />
+            <PhoneEditor autoComplete={!autoComplete ? 'nope' : undefined} minLength={5} maxLength={15} />
         ),
         
         
@@ -204,7 +214,7 @@ const AddressEditor = <TElement extends Element = HTMLFormElement>(props: Addres
             cityEditorComponent={cityEditorComponent}
             zipEditorComponent={zipEditorComponent}
             addressEditorComponent={addressEditorComponent}
-            companyEditorComponent={null}
+            companyEditorComponent={companyEditorComponent}
             firstNameEditorComponent={firstNameEditorComponent}
             lastNameEditorComponent={lastNameEditorComponent}
             phoneEditorComponent={phoneEditorComponent}

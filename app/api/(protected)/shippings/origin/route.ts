@@ -98,6 +98,13 @@ router
         country,
         state,
         city,
+        zip,
+        address,
+        
+        company,
+        firstName,
+        lastName,
+        phone,
     } = await req.json();
     const setToNull = (!country && !state && !city);
     //#endregion parsing request
@@ -114,6 +121,13 @@ router
             !country   || (typeof(country) !== 'string') // todo validate country id
             || !state     || (typeof(state) !== 'string')
             || !city      || (typeof(city) !== 'string')
+            || !zip       || (typeof(zip) !== 'string')
+            || !address   || (typeof(address) !== 'string')
+            
+            || !company || (typeof(company) !== 'string')
+            || !firstName || (typeof(firstName) !== 'string')
+            || !lastName  || (typeof(lastName) !== 'string')
+            || !phone     || (typeof(phone) !== 'string')
             /* TODO: too complicated - validate use ZOD */
         ) {
             return Response.json({
@@ -149,6 +163,13 @@ router
                     country,
                     state,
                     city,
+                    zip,
+                    address,
+                    
+                    company,
+                    firstName,
+                    lastName,
+                    phone,
                 },
                 select : defaultShippingOriginSelect,
             });
