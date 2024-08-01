@@ -42,15 +42,7 @@ export async function POST(req: Request, res: Response): Promise<Response> {
     const signature = req.headers.get('X-Hmac-Signature') ?? req.headers.get('x-hmac-signature');
     const bodyArrayBuffer : ArrayBuffer = await (new Response(req.body)).arrayBuffer();
     const bodyBuffer      : Buffer      = Buffer.from(bodyArrayBuffer);
-    const base64 = bodyBuffer.toString('base64');
-    console.log('request: ', {
-        signature,
-        bodyLength: base64.length,
-    });
-    for (let index = 0; index < base64.length; index+=1000) {
-        console.log(base64.slice(index, index + 1000));
-    } // for
-    const event = await validateWebhook(bodyBuffer, signature, process.env.EASYPOST_SECRET);
+    const event = await validateWebhook(bodyBuffer, signature, process.env.EASYPOST_WEBHOOK_SECRET);
     if (!event) {
         return Response.json({
             error: 'Unauthorized.',
