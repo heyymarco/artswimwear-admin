@@ -45,8 +45,12 @@ export async function POST(req: Request, res: Response): Promise<Response> {
     const base64 = bodyBuffer.toString('base64');
     console.log('request: ', {
         signature,
-        body: base64,
+        bodyLength: base64.length,
     });
+    for (let index = 0; index < base64.length; index++) {
+        console.log(base64.slice(index, index + 1000));
+        index += 1000;
+    } // for
     const event = await validateWebhook(bodyBuffer, signature, process.env.EASYPOST_SECRET);
     if (!event) {
         return Response.json({
