@@ -40,8 +40,9 @@ export const maxDuration = 7; // You must respond within 7 seconds. If no respon
 
 export async function POST(req: Request, res: Response): Promise<Response> {
     const signature = req.headers.get('X-Hmac-Signature');
-    const bodyString = await (new Response(req.body)).text();
-    const event = validateWebhook(bodyString, signature, process.env.EASYPOST_SECRET);
+    const bodyBuffer : ArrayBuffer = await (new Response(req.body)).arrayBuffer();
+    const bodyArray  : Uint8Array  = new Uint8Array(bodyBuffer);
+    const event = validateWebhook(bodyArray, signature, process.env.EASYPOST_SECRET);
     if (!event) {
         return Response.json({
             error: 'Unauthorized.',
