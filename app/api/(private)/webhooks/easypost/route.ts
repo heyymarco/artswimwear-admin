@@ -20,6 +20,11 @@ import {
     broadcastNotificationEmail,
 }                           from '../../../(protected)/orders/email-utilities'
 
+// utilities:
+import {
+    validateWebhook,
+}                           from './utils'
+
 // configs:
 import {
     checkoutConfigServer,
@@ -34,17 +39,16 @@ export const maxDuration = 7; // You must respond within 7 seconds. If no respon
 
 
 export async function POST(req: Request, res: Response): Promise<Response> {
-    // const secretHeader = req.headers.get('X-Secret');
-    // if (!secretHeader || (secretHeader !== process.env.APP_SECRET)) {
-    //     return Response.json({
-    //         error: 'Unauthorized.',
-    //     }, { status: 401 }); // handled with error: unauthorized
-    // } // if
+    const signature = req.headers.get('X-Hmac-Signature');
+    const bodyString = await (new Response(req.body)).text();
+    const event = validateWebhook(bodyString, signature, process.env.EASYPOST_SECRET);
+    if (!event) {
+        return Response.json({
+            error: 'Unauthorized.',
+        }, { status: 401 }); // handled with error: unauthorized
+    } // if
     
-    console.log('easypost webhook: ', {
-        headers : Array.from(req.headers).map(([key, value]) => ({ key, value })),
-        body : await req.json(),
-    });
+    console.log('easypost webhook: ', event);
     
     // Return OK:
     return Response.json({
