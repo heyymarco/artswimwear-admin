@@ -76,7 +76,7 @@ import {
 }                           from '@/libs/mediaStorage.client'
 import {
     getMatchingShipping,
-}                           from '@/libs/shippings'
+}                           from '@/libs/shippings/shippings'
 import {
     downloadImageAsBase64,
 }                           from '@/libs/images'
