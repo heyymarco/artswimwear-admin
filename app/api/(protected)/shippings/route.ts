@@ -624,7 +624,7 @@ You do not have the privilege to modify the shipping order.`
                 },
                 rates      : (rates === undefined) /* do NOT modify if undefined */ ? undefined : { // array_like relation
                     // clear the existing item(s), if any:
-                    deleteMany : {
+                    deleteMany : isCreate ? undefined /* nothing to delete if `create` */ : {
                         // do DELETE ALL related item(s)
                         // no condition is needed because we want to delete all related item(s)
                     },
