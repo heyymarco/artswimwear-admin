@@ -628,9 +628,20 @@ const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, Q
         const restPaginationQueryCaches = (
             paginationQueryCaches
             .filter((paginationQueryCache) =>
-                /*not having the new id: */ !paginationQueryCache.data?.entities.some((searchEntry) => (searchEntry.id === mutatedId))
+                /*
+                    currentPagination : the pagination having entry.id === mutatedId
+                    => do not select
+                    
+                    restPaginations   : the paginations not having entry.id ==== mutatedId
+                    => select them all
+                */
+                !paginationQueryCache.data?.entities.some((searchEntry) => (searchEntry.id === mutatedId))
             )
         );
+        
+        
+        
+        // reconstructuring the restPagination(s), so the invalidatesTag can be avoided:
         if (restPaginationQueryCaches.length) {
             const accumDataMap : TEntry[] = [mutatedEntry];
             for (const paginationQueryCache of paginationQueryCaches) {
@@ -649,7 +660,7 @@ const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, Q
             
             
             
-            let lastPaginationEntriesCount : number|undefined = undefined;
+            let overflowingPaginationEntriesCount : number|undefined = undefined;
             for (const restPaginationQueryCache of restPaginationQueryCaches) {
                 const {
                     page    = 1,
@@ -668,35 +679,37 @@ const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, Q
                             
                             if (restPaginationQueryCacheData.entities.length > perPage) { // the rest pagination is overflowing => a new pagination needs to be added
                                 restPaginationQueryCacheData.total++;
-                                lastPaginationEntriesCount = restPaginationQueryCacheData.total;
+                                overflowingPaginationEntriesCount = restPaginationQueryCacheData.total;
                                 
                                 restPaginationQueryCacheData.entities.pop();  // remove the last entry to avoid overflowing
                             }
                             else {
-                                lastPaginationEntriesCount = undefined;
+                                // the rest pagination is not overlowing => no need to add a more pagination:
+                                overflowingPaginationEntriesCount = undefined;
                             } // if
                         })
                     );
                 }
                 else {
-                    lastPaginationEntriesCount = undefined;
+                    overflowingPaginationEntriesCount = undefined;
                 } // if
             } // for
             
             
             
-            if (lastPaginationEntriesCount && accumDataMap.length) {
+            // if the last pagination is overflowing => a new pagination needs to be added:
+            if (overflowingPaginationEntriesCount && accumDataMap.length) {
                 const lastPagination : Pagination<TEntry> = {
-                    total    : lastPaginationEntriesCount,
+                    total    : overflowingPaginationEntriesCount,
                     entities : [
-                        accumDataMap[accumDataMap.length - 1] // take the last
+                        accumDataMap[accumDataMap.length - 1] // take the last (the overflowing entry)
                     ],
                 };
                 const perPage = (paginationQueryCaches?.[paginationQueryCaches.length - 1]?.originalArgs as (PaginationArgs|undefined))?.perPage ?? 1;
                 // append new cache:
                 api.dispatch(
                     apiSlice.util.upsertQueryData(endpointName, /* args: */ {
-                        page    : Math.ceil(lastPaginationEntriesCount / perPage),
+                        page    : Math.ceil(overflowingPaginationEntriesCount / perPage),
                         perPage : perPage
                     }, /* value: */ (lastPagination as Pagination<any>))
                 );
@@ -704,20 +717,31 @@ const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, Q
         } // if
     }
     else { // update existing data:
-        const obsoletePaginationQueryCaches = (
+        const currentPaginationQueryCaches = (
             paginationQueryCaches
             .filter((paginationQueryCache) =>
-                /*found id: */ !!paginationQueryCache.data?.entities.some((searchEntry) => (searchEntry.id === mutatedId))
+                /*
+                    currentPagination : the pagination having entry.id === mutatedId
+                    => select it
+                    
+                    restPaginations   : the paginations not having entry.id ==== mutatedId
+                    => do not select them
+                */
+                !!paginationQueryCache.data?.entities.some((searchEntry) => (searchEntry.id === mutatedId))
             )
         );
-        if (obsoletePaginationQueryCaches.length) {
-            for (const obsoletePaginationQueryCache of obsoletePaginationQueryCaches) {
+        
+        
+        
+        // reconstructuring the mutated pagination, so the invalidatesTag can be avoided:
+        if (currentPaginationQueryCaches.length) {
+            for (const currentPaginationQueryCache of currentPaginationQueryCaches) {
                 // update cache:
                 api.dispatch(
-                    apiSlice.util.updateQueryData(endpointName, obsoletePaginationQueryCache.originalArgs as any, (obsoletePaginationQueryCacheData) => {
-                        const obsoleteEntryIndex = obsoletePaginationQueryCacheData.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
-                        if (obsoleteEntryIndex < 0) return;
-                        obsoletePaginationQueryCacheData.entities[obsoleteEntryIndex] = (mutatedEntry as any); // replace oldEntry with mutatedEntry
+                    apiSlice.util.updateQueryData(endpointName, currentPaginationQueryCache.originalArgs as any, (currentPaginationQueryCacheData) => {
+                        const currentEntryIndex = currentPaginationQueryCacheData.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
+                        if (currentEntryIndex < 0) return;
+                        currentPaginationQueryCacheData.entities[currentEntryIndex] = (mutatedEntry as any); // replace oldEntry with mutatedEntry
                     })
                 );
             } // for
