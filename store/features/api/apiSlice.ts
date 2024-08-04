@@ -620,13 +620,18 @@ const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, Q
         )
     );
     if (!isUpdating) { // add new data:
-        const missingPaginationQueryCaches = (
+        /*
+            Adding a_new_entry causing the restPagination(s) shifted their entries to neighboringPagination(s).
+            [876] [543] [210] + 9 => [987] [654] [321] [0]
+            page1 page2 page3        page1 page2 page3 pageTail
+        */
+        const restPaginationQueryCaches = (
             paginationQueryCaches
             .filter((paginationQueryCache) =>
-                /*missing id: */ !paginationQueryCache.data?.entities.some((searchEntry) => (searchEntry.id === mutatedId))
+                /*not having the new id: */ !paginationQueryCache.data?.entities.some((searchEntry) => (searchEntry.id === mutatedId))
             )
         );
-        if (missingPaginationQueryCaches.length) {
+        if (restPaginationQueryCaches.length) {
             const accumDataMap : TEntry[] = [mutatedEntry];
             for (const paginationQueryCache of paginationQueryCaches) {
                 const {
@@ -644,37 +649,45 @@ const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, Q
             
             
             
-            let tailPaginationTotal : number = 0;
-            for (const missingPaginationQueryCache of missingPaginationQueryCaches) {
+            let lastPaginationEntriesCount : number|undefined = undefined;
+            for (const restPaginationQueryCache of restPaginationQueryCaches) {
                 const {
                     page    = 1,
                     perPage = 1,
-                } = missingPaginationQueryCache.originalArgs as PaginationArgs;
+                } = restPaginationQueryCache.originalArgs as PaginationArgs;
                 const baseIndex  = (page - 1) * perPage;
                 
                 
                 
-                const insertedEntry : TEntry|undefined = accumDataMap?.[baseIndex];
-                if (insertedEntry) {
+                const theFirstEntryOnCurrentPagination : TEntry|undefined = accumDataMap?.[baseIndex];
+                if (theFirstEntryOnCurrentPagination) {
                     // update cache:
                     api.dispatch(
-                        apiSlice.util.updateQueryData(endpointName, missingPaginationQueryCache.originalArgs as any, (paginationCache) => {
-                            paginationCache.entities.unshift((insertedEntry as any)); // append at first index
-                            tailPaginationTotal = (paginationCache.entities.length > perPage) ? (++paginationCache.total) : 0;
-                            if (tailPaginationTotal) paginationCache.entities.pop(); // remove at last index
+                        apiSlice.util.updateQueryData(endpointName, restPaginationQueryCache.originalArgs as any, (restPaginationQueryCacheData) => {
+                            restPaginationQueryCacheData.entities.unshift((theFirstEntryOnCurrentPagination as any)); // append the shiftingEntry at first index
+                            
+                            if (restPaginationQueryCacheData.entities.length > perPage) { // the rest pagination is overflowing => a new pagination needs to be added
+                                restPaginationQueryCacheData.total++;
+                                lastPaginationEntriesCount = restPaginationQueryCacheData.total;
+                                
+                                restPaginationQueryCacheData.entities.pop();  // remove the last entry to avoid overflowing
+                            }
+                            else {
+                                lastPaginationEntriesCount = undefined;
+                            } // if
                         })
                     );
                 }
                 else {
-                    tailPaginationTotal = 0;
+                    lastPaginationEntriesCount = undefined;
                 } // if
             } // for
             
             
             
-            if (tailPaginationTotal && accumDataMap.length) {
+            if (lastPaginationEntriesCount && accumDataMap.length) {
                 const lastPagination : Pagination<TEntry> = {
-                    total    : tailPaginationTotal,
+                    total    : lastPaginationEntriesCount,
                     entities : [
                         accumDataMap[accumDataMap.length - 1] // take the last
                     ],
@@ -683,7 +696,7 @@ const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, Q
                 // append new cache:
                 api.dispatch(
                     apiSlice.util.upsertQueryData(endpointName, /* args: */ {
-                        page    : Math.ceil(tailPaginationTotal / perPage),
+                        page    : Math.ceil(lastPaginationEntriesCount / perPage),
                         perPage : perPage
                     }, /* value: */ (lastPagination as Pagination<any>))
                 );
@@ -701,10 +714,10 @@ const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, Q
             for (const obsoletePaginationQueryCache of obsoletePaginationQueryCaches) {
                 // update cache:
                 api.dispatch(
-                    apiSlice.util.updateQueryData(endpointName, obsoletePaginationQueryCache.originalArgs as any, (paginationCache) => {
-                        const obsoleteEntryIndex = paginationCache.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
+                    apiSlice.util.updateQueryData(endpointName, obsoletePaginationQueryCache.originalArgs as any, (obsoletePaginationQueryCacheData) => {
+                        const obsoleteEntryIndex = obsoletePaginationQueryCacheData.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
                         if (obsoleteEntryIndex < 0) return;
-                        paginationCache.entities[obsoleteEntryIndex] = (mutatedEntry as any); // replace oldEntry with mutatedEntry
+                        obsoletePaginationQueryCacheData.entities[obsoleteEntryIndex] = (mutatedEntry as any); // replace oldEntry with mutatedEntry
                     })
                 );
             } // for
