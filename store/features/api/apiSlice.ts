@@ -603,8 +603,8 @@ export const apiSlice = createApi({
 
 const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, QueryArg, BaseQuery extends BaseQueryFn>(endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, isUpdating: boolean, api: MutationCacheLifecycleApi<QueryArg, BaseQuery, TEntry, 'api'>) => {
     // updated TEntry data:
-    const { data: entry } = await api.cacheDataLoaded;
-    const { id } = entry;
+    const { data: mutatedEntry } = await api.cacheDataLoaded;
+    const { id: mutatedId } = mutatedEntry;
     
     
     
@@ -623,11 +623,11 @@ const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, Q
         const missingPaginationQueryCaches = (
             paginationQueryCaches
             .filter((paginationQueryCache) =>
-                /*missing id: */ !paginationQueryCache.data?.entities.some((searchEntry) => (searchEntry.id === id))
+                /*missing id: */ !paginationQueryCache.data?.entities.some((searchEntry) => (searchEntry.id === mutatedId))
             )
         );
         if (missingPaginationQueryCaches.length) {
-            const shiftedDataMap : TEntry[] = [entry];
+            const accumDataMap : TEntry[] = [mutatedEntry];
             for (const paginationQueryCache of paginationQueryCaches) {
                 const {
                     page    = 1,
@@ -638,7 +638,7 @@ const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, Q
                 let   subIndex   = 0;
                 const shiftCount = 1;
                 for (const entry of (paginationQueryCache.data as Pagination<TEntry>).entities) {
-                    shiftedDataMap[baseIndex + (subIndex++) + shiftCount] = entry;
+                    accumDataMap[baseIndex + (subIndex++) + shiftCount] = entry;
                 } // for
             } // for
             
@@ -654,7 +654,7 @@ const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, Q
                 
                 
                 
-                const insertedEntry : TEntry|undefined = shiftedDataMap?.[baseIndex];
+                const insertedEntry : TEntry|undefined = accumDataMap?.[baseIndex];
                 if (insertedEntry) {
                     // update cache:
                     api.dispatch(
@@ -672,20 +672,20 @@ const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, Q
             
             
             
-            if (tailPaginationTotal && shiftedDataMap.length) {
+            if (tailPaginationTotal && accumDataMap.length) {
                 const lastPagination : Pagination<TEntry> = {
                     total    : tailPaginationTotal,
                     entities : [
-                        shiftedDataMap[shiftedDataMap.length - 1] // take the last
+                        accumDataMap[accumDataMap.length - 1] // take the last
                     ],
                 };
                 const perPage = (paginationQueryCaches?.[paginationQueryCaches.length - 1]?.originalArgs as (PaginationArgs|undefined))?.perPage ?? 1;
-                // append cache:
+                // append new cache:
                 api.dispatch(
-                    apiSlice.util.upsertQueryData(endpointName, {
+                    apiSlice.util.upsertQueryData(endpointName, /* args: */ {
                         page    : Math.ceil(tailPaginationTotal / perPage),
                         perPage : perPage
-                    }, (lastPagination as Pagination<any>))
+                    }, /* value: */ (lastPagination as Pagination<any>))
                 );
             } // if
         } // if
@@ -694,7 +694,7 @@ const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, Q
         const obsoletePaginationQueryCaches = (
             paginationQueryCaches
             .filter((paginationQueryCache) =>
-                /*found id: */ !!paginationQueryCache.data?.entities.some((searchEntry) => (searchEntry.id === id))
+                /*found id: */ !!paginationQueryCache.data?.entities.some((searchEntry) => (searchEntry.id === mutatedId))
             )
         );
         if (obsoletePaginationQueryCaches.length) {
@@ -702,9 +702,9 @@ const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, Q
                 // update cache:
                 api.dispatch(
                     apiSlice.util.updateQueryData(endpointName, obsoletePaginationQueryCache.originalArgs as any, (paginationCache) => {
-                        const obsoleteEntryIndex = paginationCache.entities.findIndex((searchEntry) => (searchEntry.id === id));
+                        const obsoleteEntryIndex = paginationCache.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
                         if (obsoleteEntryIndex < 0) return;
-                        paginationCache.entities[obsoleteEntryIndex] = (entry as any); // update existing data
+                        paginationCache.entities[obsoleteEntryIndex] = (mutatedEntry as any); // replace oldEntry with mutatedEntry
                     })
                 );
             } // for
