@@ -601,7 +601,7 @@ export const apiSlice = createApi({
 
 
 
-const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, QueryArg, BaseQuery extends BaseQueryFn>(endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, isUpdating: boolean, api: MutationCacheLifecycleApi<QueryArg, BaseQuery, TEntry, 'api'>) => {
+const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, TQueryArg, TBaseQuery extends BaseQueryFn>(endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, isUpdating: boolean, api: MutationCacheLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>) => {
     // updated TEntry data:
     const { data: mutatedEntry } = await api.cacheDataLoaded;
     const { id: mutatedId } = mutatedEntry;
@@ -613,7 +613,7 @@ const handleCumulativeUpdateCacheEntry = async <TEntry extends { id: string }, Q
     const allQueryCaches        = state.api.queries;
     const paginationQueryCaches = (
         Object.values(allQueryCaches)
-        .filter((allQueryCache): allQueryCache is QuerySubState<BaseEndpointDefinition<QueryArg, BaseQuery, Pagination<TEntry>>> =>
+        .filter((allQueryCache): allQueryCache is QuerySubState<BaseEndpointDefinition<TQueryArg, TBaseQuery, Pagination<TEntry>>> =>
             !!allQueryCache
             &&
             (allQueryCache.endpointName === endpointName)
