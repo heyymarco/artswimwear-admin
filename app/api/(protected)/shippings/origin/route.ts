@@ -10,6 +10,7 @@ import {
 
 // models:
 import {
+    type Prisma,
     type DefaultShippingOriginDetail,
     
     
@@ -106,7 +107,27 @@ router
         lastName,
         phone,
     } = await req.json();
-    const setToNull = (!country && !state && !city);
+    const setToNull = (
+        ((country   === undefined) || (country   === ''))
+        &&
+        ((state     === undefined) || (state     === ''))
+        &&
+        ((city      === undefined) || (city      === ''))
+        &&
+        ((zip       === undefined) || (zip       === ''))
+        &&
+        ((address   === undefined) || (address   === ''))
+        
+        &&
+        
+        ((company   === undefined) || (company   === ''))
+        &&
+        ((firstName === undefined) || (firstName === ''))
+        &&
+        ((lastName  === undefined) || (lastName  === ''))
+        &&
+        ((phone     === undefined) || (phone     === ''))
+    );
     //#endregion parsing request
     
     
@@ -118,16 +139,16 @@ router
             
             ||
             
-            !country   || (typeof(country) !== 'string') // todo validate country id
-            || !state     || (typeof(state) !== 'string')
-            || !city      || (typeof(city) !== 'string')
-            || !zip       || (typeof(zip) !== 'string')
-            || !address   || (typeof(address) !== 'string')
+               !country               || (typeof(country) !== 'string') // todo validate country id
+            || !state                 || (typeof(state) !== 'string')
+            || !city                  || (typeof(city) !== 'string')
+            || (!zip && (zip !== '')) || (typeof(zip) !== 'string')
+            || !address               || (typeof(address) !== 'string')
             
-            || !company || (typeof(company) !== 'string')
-            || !firstName || (typeof(firstName) !== 'string')
-            || !lastName  || (typeof(lastName) !== 'string')
-            || !phone     || (typeof(phone) !== 'string')
+            || !company               || (typeof(company) !== 'string')
+            || !firstName             || (typeof(firstName) !== 'string')
+            || !lastName              || (typeof(lastName) !== 'string')
+            || !phone                 || (typeof(phone) !== 'string')
             /* TODO: too complicated - validate use ZOD */
         ) {
             return Response.json({
@@ -145,20 +166,7 @@ router
             return Response.json(null); // handled with success
         }
         else {
-            const shippingOrigin : DefaultShippingOriginDetail =  await prisma.defaultShippingOrigin.upsert({
-                where  : {
-                    id : id,
-                    OR : [
-                        { id: { not: '' } }, // a hack: always match
-                    ],
-                },
-                update : {
-                    // data:
-                    country,
-                    state,
-                    city,
-                },
-                create : {
+            const shippingData = {
                     // data:
                     country,
                     state,
@@ -170,7 +178,16 @@ router
                     firstName,
                     lastName,
                     phone,
+            } satisfies Prisma.DefaultShippingOriginUpdateInput;
+            const shippingOrigin : DefaultShippingOriginDetail =  await prisma.defaultShippingOrigin.upsert({
+                where  : {
+                    id : id,
+                    OR : [
+                        { id: { not: '' } }, // a hack: always match
+                    ],
                 },
+                update : shippingData,
+                create : shippingData,
                 select : defaultShippingOriginSelect,
             });
             return Response.json(shippingOrigin); // handled with success
