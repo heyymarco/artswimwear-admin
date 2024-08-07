@@ -75,7 +75,7 @@ import {
     resolveMediaUrl,
 }                           from '@/libs/mediaStorage.client'
 import {
-    getMatchingShipping,
+    testMatchingShipping,
 }                           from '@/libs/shippings/shippings'
 import {
     downloadImageAsBase64,
@@ -127,7 +127,7 @@ const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof p
         } satisfies OrderItemsAndData)),
         shippingProvider : (
             (shippingAddressData && shippingProviderData)
-            ? await getMatchingShipping(prismaTransaction, shippingProviderData, shippingAddressData)
+            ? await testMatchingShipping(prismaTransaction, shippingProviderData, shippingAddressData)
             : null
         ),
         customerOrGuest : (
