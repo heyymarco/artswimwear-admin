@@ -290,7 +290,7 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
     const whenDelete : boolean                 =  !!model && privilegeDelete;
     const whenWrite  : boolean                 = (
         whenAdd
-        || !!Object.keys(whenUpdate).length
+        || !!Object.values(whenUpdate).filter((u) => !!u).length // at least having one update privilege
         /* || whenDelete */ // except for delete
     );
     const isLoading = isCommiting || isReverting || isDeleting;
