@@ -179,7 +179,7 @@ export default function ShippingPage(): JSX.Element|null {
                 
                 // children:
                 menusBefore={<>
-                    <ButtonIcon size='sm' mild={true} icon='home' title='Notification settings' onClick={handleChangeNotificationSettings} />
+                    <ButtonIcon size='sm' mild={true} icon='home' title='Change shipping origin' onClick={handleChangeNotificationSettings} />
                 </>}
             />
         </Main>

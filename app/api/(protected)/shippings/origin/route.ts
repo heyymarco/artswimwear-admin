@@ -3,6 +3,11 @@ import {
     getServerSession,
 }                           from 'next-auth'
 
+// heymarco:
+import type {
+    Session,
+}                           from '@heymarco/next-auth/server'
+
 // next-connect:
 import {
     createEdgeRouter,
@@ -65,8 +70,15 @@ router
     // authorized => next:
     return await next();
 })
-.get(async () => {
-    /* required for displaying related_shippings in orders page */
+.get(async (req) => {
+    //#region validating privileges
+    const session = (req as any).session as Session;
+    if (!session.role?.shipping_r) return Response.json({ error:
+`Access denied.
+
+You do not have the privilege to view the shippings.`
+    }, { status: 403 }); // handled with error: forbidden
+    //#endregion validating privileges
     
     
     
@@ -129,6 +141,17 @@ router
         ((phone     === undefined) || (phone     === ''))
     );
     //#endregion parsing request
+    
+    
+    
+    //#region validating privileges
+    const session = (req as any).session as Session;
+    if (!session.role?.shipping_up) return Response.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the shipping origin.`
+    }, { status: 403 }); // handled with error: forbidden
+    //#endregion validating privileges
     
     
     

@@ -13,6 +13,11 @@ import {
     useMemo,
 }                           from 'react'
 
+// next-auth:
+import {
+    useSession,
+}                           from 'next-auth/react'
+
 // reusable-ui core:
 import {
     // react helper hooks:
@@ -20,8 +25,8 @@ import {
     
     
     
-    // a validation management system:
-    ValidationProvider,
+    // an accessibility management system:
+    AccessibilityProvider,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
 // internal components:
@@ -102,6 +107,20 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
     
     
     
+    // sessions:
+    const { data: session } = useSession();
+    const role = session?.role;
+    
+    
+    
+    // privileges:
+    // const privilegeAdd    = !!role?.shipping_up;
+    const privilegeUpdate = useMemo(() => ({
+        price       : !!role?.shipping_up,
+    }), [role]);
+    
+    
+    
     // effects:
     useEffect(() => {
         // conditions:
@@ -148,10 +167,9 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
             
             
             // privileges:
-            privilegeAdd    = {true}
-            privilegeUpdate = {useMemo(() => ({
-                any : true,
-            }), [])}
+            // privilegeAdd    = {privilegeAdd}
+            privilegeAdd    = {false}
+            privilegeUpdate = {privilegeUpdate}
             
             
             
@@ -169,13 +187,12 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
             onUpdate={handleUpdate}
             
             onConfirmUnsaved={handleConfirmUnsaved}
-        >
+        >{({whenAdd, whenUpdate}) => <>
             <form>
-                <ValidationProvider
-                    // validations:
-                    /* disable validation for all <Check> */
-                    enableValidation={false}
-                    inheritValidation={false}
+                <AccessibilityProvider
+                    // accessibilities:
+                    enabled={whenUpdate.price || whenAdd}
+                    inheritEnabled={true} // allows the `<ComplexEditModelDialog>` to disable when updating/loading
                 >
                     <p>
                         Please specify the delivery departure location <span className='txt-sec'>(usually your shop location)</span>.
@@ -215,8 +232,8 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
                         // validations:
                         required={true}
                     />
-                </ValidationProvider>
+                </AccessibilityProvider>
             </form>
-        </ComplexEditModelDialog>
+        </>}</ComplexEditModelDialog>
     );
 };
