@@ -198,52 +198,50 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
             
             onConfirmUnsaved={handleConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
-            <form>
-                <AccessibilityProvider
+            <AccessibilityProvider
+                // accessibilities:
+                enabled={whenUpdate.price || whenAdd}
+                inheritEnabled={true} // allows the `<ComplexEditModelDialog>` to disable when updating/loading
+            >
+                <p>
+                    Please specify the delivery departure location <span className='txt-sec'>(usually your shop location)</span>.
+                </p>
+                <p>
+                    The data will also be the sender&apos;s address for the shipments.
+                </p>
+                <AddressEditor
                     // accessibilities:
-                    enabled={whenUpdate.price || whenAdd}
-                    inheritEnabled={true} // allows the `<ComplexEditModelDialog>` to disable when updating/loading
-                >
-                    <p>
-                        Please specify the delivery departure location <span className='txt-sec'>(usually your shop location)</span>.
-                    </p>
-                    <p>
-                        The data will also be the sender&apos;s address for the shipments.
-                    </p>
-                    <AddressEditor
-                        // accessibilities:
-                        autoComplete={true}
+                    autoComplete={true}
+                    
+                    
+                    
+                    // types:
+                    addressType='shipping'
+                    
+                    
+                    
+                    // values:
+                    value={model as Address|null}
+                    onChange={(newValue) => {
+                        if (!newValue) {
+                            setModel(emptyShippingOrigin);
+                        }
+                        else {
+                            setModel({
+                                id : model?.id ?? '',
+                                ...newValue,
+                            });
+                        } // if
                         
-                        
-                        
-                        // types:
-                        addressType='shipping'
-                        
-                        
-                        
-                        // values:
-                        value={model as Address|null}
-                        onChange={(newValue) => {
-                            if (!newValue) {
-                                setModel(emptyShippingOrigin);
-                            }
-                            else {
-                                setModel({
-                                    id : model?.id ?? '',
-                                    ...newValue,
-                                });
-                            } // if
-                            
-                            setIsModified(true);
-                        }}
-                        
-                        
-                        
-                        // validations:
-                        required={!isModelEmpty}
-                    />
-                </AccessibilityProvider>
-            </form>
+                        setIsModified(true);
+                    }}
+                    
+                    
+                    
+                    // validations:
+                    required={!isModelEmpty}
+                />
+            </AccessibilityProvider>
         </>}</ComplexEditModelDialog>
     );
 };
