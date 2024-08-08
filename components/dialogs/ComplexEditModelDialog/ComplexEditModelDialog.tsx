@@ -335,7 +335,8 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
                 }, 0);
             }, 0);
         });
-        const fieldErrors = editorRef?.current?.querySelectorAll?.(':is(.invalidating, .invalidated):not([aria-invalid="false"])');
+        const editorElm = editorRef.current;
+        const fieldErrors = editorElm?.querySelectorAll?.(':is(.invalidating, .invalidated):not([aria-invalid="false"])');
         if (fieldErrors?.length) { // there is an/some invalid field
             showMessageFieldError(fieldErrors);
             return;
@@ -575,7 +576,10 @@ const ComplexEditModelDialog = <TModel extends Model>(props: ComplexEditModelDia
                     enableValidation={enableValidation}
                     inheritValidation={false}
                 >
-                    {!isMultiTabs && <CardBody>
+                    {!isMultiTabs && <CardBody
+                        // refs:
+                        elmRef={editorRef} // use elmRef, to validate all input(s) inside <CardBody>
+                    >
                         {children}
                     </CardBody>}
                     {isMultiTabs && <Tab
