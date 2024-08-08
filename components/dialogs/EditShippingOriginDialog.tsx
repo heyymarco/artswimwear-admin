@@ -93,7 +93,7 @@ export interface EditShippingOriginDialogProps
 }
 export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) => {
     // states:
-    const [model, setModel] = useState<DefaultShippingOriginDetail|null>(null);
+    const [model, setModel] = useState<DefaultShippingOriginDetail>(emptyShippingOrigin);
     
     const [isModified, setIsModified] = useState<boolean>(false);
     
@@ -123,13 +123,8 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
     
     // effects:
     useEffect(() => {
-        // conditions:
-        if (!modelData) return;
-        
-        
-        
         // actions:
-        setModel(modelData);
+        setModel(modelData ?? emptyShippingOrigin);
         console.log('loaded');
     }, [modelData]);
     
@@ -215,7 +210,7 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
                         value={model as Address|null}
                         onChange={(newValue) => {
                             if (!newValue) {
-                                setModel(null);
+                                setModel(emptyShippingOrigin);
                             }
                             else {
                                 setModel({
