@@ -97,6 +97,21 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
     
     const [isModified, setIsModified] = useState<boolean>(false);
     
+    const isModelEmpty = useMemo(() => {
+        return (
+               (model.country   === '')
+            && (model.state     === '')
+            && (model.city      === '')
+            && (model.zip       === '')
+            && (model.address   === '')
+            
+            && (model.company   === '')
+            && (model.firstName === '')
+            && (model.lastName  === '')
+            && (model.phone     === '')
+        )
+    }, [model]);
+    
     
     
     // stores:
@@ -225,7 +240,7 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
                         
                         
                         // validations:
-                        required={true}
+                        required={!isModelEmpty}
                     />
                 </AccessibilityProvider>
             </form>
