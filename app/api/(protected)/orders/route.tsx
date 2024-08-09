@@ -401,7 +401,7 @@ You do not have the privilege to modify the payment of the order.`
     
     
     //#region register shippingTracker
-    const shippingTrackerId = (
+    const shippingTracker = (
         (orderStatus === 'ON_THE_WAY') && shippingCarrier && shippingNumber
         ? await registerShippingTracker({ shippingCarrier, shippingNumber })
         : undefined
@@ -535,20 +535,37 @@ You do not have the privilege to modify the payment of the order.`
                         shippingTracking : {
                             upsert : {
                                 update : {
-                                    trackerId       : shippingTrackerId,
+                                    shippingCarrier      : shippingCarrier || null, // null if empty_string
+                                    shippingNumber       : shippingNumber  || null, // null if empty_string
                                     
-                                    shippingCarrier : shippingCarrier || null, // null if empty_string
-                                    shippingNumber  : shippingNumber  || null, // null if empty_string
+                                    trackerId            : shippingTracker?.id,
+                                    shippingTrackingLogs : !shippingTracker?.tracking_details?.length ? undefined : {
+                                        deleteMany : {
+                                            // do DELETE ALL related log(s)
+                                            // no condition is needed because we want to delete all related log(s)
+                                        },
+                                        create : shippingTracker.tracking_details.map((shippingDetail) => ({
+                                            reportedAt : shippingDetail.datetime,
+                                            log        : shippingDetail.message || shippingDetail.status,
+                                        })),
+                                    },
                                 },
                                 create : {
-                                    token           : await (async (): Promise<string> => {
+                                    token                : await (async (): Promise<string> => {
                                         const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
                                         return await nanoid();
                                     })(),
-                                    trackerId       : shippingTrackerId,
                                     
-                                    shippingCarrier : shippingCarrier || null, // null if empty_string
-                                    shippingNumber  : shippingNumber  || null, // null if empty_string
+                                    shippingCarrier      : shippingCarrier || null, // null if empty_string
+                                    shippingNumber       : shippingNumber  || null, // null if empty_string
+                                    
+                                    trackerId            : shippingTracker?.id,
+                                    shippingTrackingLogs : !shippingTracker?.tracking_details?.length ? undefined : {
+                                        create : shippingTracker.tracking_details.map((shippingDetail) => ({
+                                            reportedAt : shippingDetail.datetime,
+                                            log        : shippingDetail.message || shippingDetail.status,
+                                        })),
+                                    },
                                 },
                             },
                         },

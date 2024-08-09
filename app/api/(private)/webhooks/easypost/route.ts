@@ -48,7 +48,7 @@ export async function POST(req: Request, res: Response): Promise<Response> {
                     ...detail,
                     datetime : new Date(detail.datetime),
                 }))
-                .sort((a, b) => (a.datetime.valueOf() - b.datetime.valueOf()))
+                .toSorted((a, b) => (a.datetime.valueOf() - b.datetime.valueOf()))
             );
             if (!shippingDetails.length) break; // ignore empty shippingDetails
             

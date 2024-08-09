@@ -6,6 +6,9 @@ import {
 
 // easypost:
 import {
+    type Tracker as EasyPostTracker,
+}                           from '@easypost/api'
+import {
     getEasyPostInstance,
 }                           from './instance'
 
@@ -15,7 +18,12 @@ export interface RegisterShippingTrackerOptions {
     shippingCarrier ?: string
     shippingNumber   : ShippingCarrier
 }
-export const registerShippingTracker = async (options: RegisterShippingTrackerOptions): Promise<string|undefined> => {
+export interface Tracker extends Omit<EasyPostTracker, 'tracking_details'> {
+    tracking_details : (Omit<EasyPostTracker['tracking_details'][number], 'datetime'> & {
+        datetime : Date
+    })[]
+}
+export const registerShippingTracker = async (options: RegisterShippingTrackerOptions): Promise<Tracker|undefined> => {
     const easyPost = getEasyPostInstance();
     if (!easyPost) return undefined;
     
@@ -33,7 +41,17 @@ export const registerShippingTracker = async (options: RegisterShippingTrackerOp
             tracking_code : shippingNumber,
             carrier       : shippingCarrier,
         });
-        return shippingTracker.id;
+        return {
+            ...shippingTracker,
+            tracking_details : (
+                shippingTracker.tracking_details
+                .map((detail) => ({
+                    ...detail,
+                    datetime : new Date(detail.datetime),
+                }))
+                .toSorted((a, b) => (a.datetime.valueOf() - b.datetime.valueOf()))
+            ),
+        } satisfies Tracker;
     }
     catch (error: any) {
         console.log('Error: ', error);
