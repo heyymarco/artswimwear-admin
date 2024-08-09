@@ -2,6 +2,11 @@
 import {
     // react:
     default as React,
+    
+    
+    
+    // hooks:
+    useMemo,
 }                           from 'react'
 
 // cssfn:
@@ -47,8 +52,8 @@ import {
 
 // heymarco components:
 import {
-    NameEditor,
-}                           from '@heymarco/name-editor'
+    TextDropdownEditor,
+}                           from '@heymarco/text-dropdown-editor'
 import {
     TextEditorProps,
     TextEditor,
@@ -64,6 +69,12 @@ import type {
     // react components:
     EditorProps,
 }                           from '@/components/editors/Editor'
+
+// models:
+import {
+    // types:
+    shippingCarrierList,
+}                           from '@/models'
 
 
 
@@ -117,13 +128,18 @@ export interface OrderOnTheWayEditorProps
         >
 {
     // refs:
-    elmRef               ?: TextEditorProps['elmRef']
+    elmRef                  ?: TextEditorProps['elmRef']
     
     
     
     // accessibilities:
-    shippingCarrierLabel ?: string
-    shippingNumberLabel  ?: string
+    shippingCarrierLabel    ?: string
+    shippingNumberLabel     ?: string
+    
+    
+    
+    // values:
+    defaultShippingProvider ?: string
 }
 const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null => {
     // styles:
@@ -148,6 +164,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
         defaultValue : defaultUncontrollableValue = emptyOrderOnTheWayValue,
         value        : controllableValue,
         onChange     : onControllableValueChange,
+        defaultShippingProvider,
     ...restIndicatorProps} = props;
     
     const {
@@ -166,7 +183,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
     
     // states:
     const {
-        value              : value,
+        value              : valueInitial,
         triggerValueChange : triggerValueChange,
     } = useControllableAndUncontrollable<OrderOnTheWayValue>({
         defaultValue       : defaultUncontrollableValue,
@@ -174,6 +191,29 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
         onValueChange      : onControllableValueChange,
     });
     
+    const value = useMemo(() => {
+        return {
+            ...valueInitial,
+            shippingCarrier: (
+                valueInitial.shippingCarrier
+                ||
+                (
+                    !defaultShippingProvider
+                    ? null
+                    : (
+                        shippingCarrierList.find((shippingCarrierItem) => defaultShippingProvider.startsWith(shippingCarrierItem))
+                        ??
+                        (() => {
+                            const defaultShippingProviderLowercase = defaultShippingProvider.trim().toLowerCase();
+                            return shippingCarrierList.find((shippingCarrierItem) => defaultShippingProviderLowercase.startsWith(shippingCarrierItem.trim().toLowerCase()))
+                        })()
+                        ??
+                        null
+                    )
+                )
+            ),
+        };
+    }, [valueInitial, defaultShippingProvider]);
     const {
         shippingCarrier,
         shippingNumber,
@@ -243,7 +283,12 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                 readOnly        = {readOnly       }
                 inheritReadOnly = {inheritReadOnly}
             >
-                <NameEditor
+                <TextDropdownEditor
+                    // variants:
+                    theme='primary'
+                    
+                    
+                    
                     // classes:
                     className='shippingCarrier'
                     
@@ -255,6 +300,8 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                     
                     
                     // values:
+                    valueOptions={shippingCarrierList}
+                    freeTextInput={true}
                     value={shippingCarrier || ''}
                     onChange={handleShippingCarrierChange}
                     

@@ -410,7 +410,10 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                 
                 // components:
                 editorComponent={
-                    <OrderOnTheWayEditor />
+                    <OrderOnTheWayEditor
+                        // values:
+                        defaultShippingProvider={shippingProvider?.name ?? undefined}
+                    />
                 }
             />
         );
