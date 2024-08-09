@@ -1,34 +1,17 @@
-// models:
-import {
-    revertDraftOrderSelect,
-    cancelOrderSelect,
-}                           from '@/models'
-
 // ORMs:
 import {
     prisma,
 }                           from '@/libs/prisma.server'
-
-// internals:
-import {
-    // utilities:
-    revertDraftOrder,
-    cancelOrder,
-}                           from '../../../(protected)/orders/order-utilities'
-import {
-    sendConfirmationEmail,
-    broadcastNotificationEmail,
-}                           from '../../../(protected)/orders/email-utilities'
 
 // utilities:
 import {
     validateWebhook,
 }                           from './utils'
 
-// configs:
+// easypost:
 import {
-    checkoutConfigServer,
-}                           from '@/checkout.config.server'
+    type Tracker,
+}                           from '@easypost/api'
 
 
 
@@ -49,7 +32,53 @@ export async function POST(req: Request, res: Response): Promise<Response> {
         }, { status: 401 }); // handled with error: unauthorized
     } // if
     
-    console.log('easypost webhook: ', event);
+    
+    
+    switch (event.description) {
+        case 'tracker.created':
+        case 'tracker.updated': {
+            const shippingTracker = event.result as Tracker;
+            if (shippingTracker?.object !== 'Tracker') {
+                console.log('Error: invalid tracker object: ',  shippingTracker);
+                break;
+            } // if
+            const shippingDetails = (
+                shippingTracker.tracking_details
+                .map((detail) => ({
+                    ...detail,
+                    datetime : new Date(detail.datetime),
+                }))
+                .sort((a, b) => (a.datetime.valueOf() - b.datetime.valueOf()))
+            );
+            if (!shippingDetails.length) break; // ignore empty shippingDetails
+            
+            
+            
+            await prisma.shippingTracking.update({
+                where  : {
+                    trackerId : shippingTracker.id,
+                },
+                data   : {
+                    shippingTrackingLogs : {
+                        deleteMany : {
+                            // do DELETE ALL related log(s)
+                            // no condition is needed because we want to delete all related log(s)
+                        },
+                        create     : shippingDetails.map((shippingDetail) => ({
+                            reportedAt : shippingDetail.datetime,
+                            log        : shippingDetail.message || shippingDetail.status,
+                        })),
+                    },
+                },
+            });
+            
+            
+            
+            break;
+        }
+    } // switch
+    
+    
     
     // Return OK:
     return Response.json({

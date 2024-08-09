@@ -15,9 +15,9 @@ export interface RegisterShippingTrackerOptions {
     shippingCarrier ?: string
     shippingNumber   : ShippingCarrier
 }
-export const registerShippingTracker = async (options: RegisterShippingTrackerOptions): Promise<boolean> => {
+export const registerShippingTracker = async (options: RegisterShippingTrackerOptions): Promise<string|undefined> => {
     const easyPost = getEasyPostInstance();
-    if (!easyPost) return false;
+    if (!easyPost) return undefined;
     
     
     
@@ -33,10 +33,10 @@ export const registerShippingTracker = async (options: RegisterShippingTrackerOp
             tracking_code : shippingNumber,
             carrier       : shippingCarrier,
         });
-        return !shippingTracker?.id;
+        return shippingTracker.id;
     }
     catch (error: any) {
         console.log('Error: ', error);
-        return false;
+        return undefined;
     } // try
 }

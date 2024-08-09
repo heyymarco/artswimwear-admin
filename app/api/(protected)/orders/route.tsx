@@ -400,6 +400,16 @@ You do not have the privilege to modify the payment of the order.`
     
     
     
+    //#region register shippingTracker
+    const shippingTrackerId = (
+        (orderStatus === 'ON_THE_WAY') && shippingCarrier && shippingNumber
+        ? await registerShippingTracker({ shippingCarrier, shippingNumber })
+        : undefined
+    );
+    //#endregion register shippingTracker
+    
+    
+    
     //#region save changes
     try {
         const orderDetail : OrderDetail|null = await (async (): Promise<OrderDetail|null> => {
@@ -525,6 +535,8 @@ You do not have the privilege to modify the payment of the order.`
                         shippingTracking : {
                             upsert : {
                                 update : {
+                                    trackerId       : shippingTrackerId,
+                                    
                                     shippingCarrier : shippingCarrier || null, // null if empty_string
                                     shippingNumber  : shippingNumber  || null, // null if empty_string
                                 },
@@ -533,6 +545,8 @@ You do not have the privilege to modify the payment of the order.`
                                         const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
                                         return await nanoid();
                                     })(),
+                                    trackerId       : shippingTrackerId,
+                                    
                                     shippingCarrier : shippingCarrier || null, // null if empty_string
                                     shippingNumber  : shippingNumber  || null, // null if empty_string
                                 },
@@ -547,7 +561,7 @@ You do not have the privilege to modify the payment of the order.`
         
         
         
-        //#region send email confirmation and register shippingTracker
+        //#region send email confirmation
         if (orderDetail) {
             let customerEmailConfig : EmailConfig|undefined = undefined;
             let adminEmailConfig    : EmailConfig|undefined = undefined;
@@ -596,11 +610,9 @@ You do not have the privilege to modify the payment of the order.`
                 notificationType            && adminEmailConfig     && broadcastNotificationEmail(orderDetail.orderId, adminEmailConfig, {
                     notificationType : notificationType,
                 }),
-                
-                (orderStatus === 'ON_THE_WAY') && shippingCarrier && shippingNumber && registerShippingTracker({ shippingCarrier, shippingNumber }),
             ]);
         } // if
-        //#endregion send email confirmation and register shippingTracker
+        //#endregion send email confirmation
         
         
         
