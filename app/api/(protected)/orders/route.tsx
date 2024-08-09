@@ -60,6 +60,11 @@ import {
     broadcastNotificationEmail,
 }                           from './email-utilities'
 
+// easypost:
+import {
+    registerShippingTracker,
+}                           from '@/libs/shippings/processors/easypost'
+
 // others:
 import {
     customAlphabet,
@@ -542,7 +547,7 @@ You do not have the privilege to modify the payment of the order.`
         
         
         
-        //#region send email confirmation
+        //#region send email confirmation and register shippingTracker
         if (orderDetail) {
             let customerEmailConfig : EmailConfig|undefined = undefined;
             let adminEmailConfig    : EmailConfig|undefined = undefined;
@@ -591,9 +596,11 @@ You do not have the privilege to modify the payment of the order.`
                 notificationType            && adminEmailConfig     && broadcastNotificationEmail(orderDetail.orderId, adminEmailConfig, {
                     notificationType : notificationType,
                 }),
+                
+                (orderStatus === 'ON_THE_WAY') && shippingCarrier && shippingNumber && registerShippingTracker({ shippingCarrier, shippingNumber }),
             ]);
         } // if
-        //#endregion send email confirmation
+        //#endregion send email confirmation and register shippingTracker
         
         
         
