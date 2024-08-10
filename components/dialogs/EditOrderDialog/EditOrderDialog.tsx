@@ -750,7 +750,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     : (shippingProvider?.name ?? 'DELETED SHIPPING PROVIDER')
                             }
                             
-                            {!printMode && <ButtonIcon
+                            {!printMode && !!shippingTracking && <ButtonIcon
                                 // appearances:
                                 icon='my_location'
                                 
@@ -774,7 +774,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                 
                                 // handlers:
                                 onClick={handleViewShippingTracking}
-                            >track</ButtonIcon>}
+                            >Track</ButtonIcon>}
                         </Basic>
                         <div className={styleSheet.shippingAddress}>
                             {!printMode && !!role?.order_usa && <EditButton className={styleSheet.editShippingAddress} onClick={handleEditShippingAddress} />}
