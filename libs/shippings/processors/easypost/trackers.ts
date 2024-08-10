@@ -44,7 +44,7 @@ export const registerShippingTracker = async (options: RegisterShippingTrackerOp
         return {
             ...shippingTracker,
             tracking_details : (
-                shippingTracker.tracking_details
+                (shippingTracker.tracking_details ?? [])
                 .map((detail) => ({
                     ...detail,
                     datetime : new Date(detail.datetime),

@@ -43,7 +43,7 @@ export async function POST(req: Request, res: Response): Promise<Response> {
                 break;
             } // if
             const shippingDetails = (
-                shippingTracker.tracking_details
+                (shippingTracker.tracking_details ?? [])
                 .map((detail) => ({
                     ...detail,
                     datetime : new Date(detail.datetime),
