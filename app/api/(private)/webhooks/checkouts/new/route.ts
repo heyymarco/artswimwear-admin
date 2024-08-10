@@ -6,7 +6,7 @@ import {
 // internals:
 import {
     broadcastNotificationEmail,
-}                           from '../../../../(protected)/orders/email-utilities'
+}                           from '@/libs/email-utilities'
 
 // configs:
 import {

@@ -3,6 +3,13 @@ import {
     prisma,
 }                           from '@/libs/prisma.server'
 
+// internals:
+import {
+    sendConfirmationEmail,
+    NotificationType,
+    broadcastNotificationEmail,
+}                           from '@/libs/email-utilities'
+
 // utilities:
 import {
     validateWebhook,
@@ -12,6 +19,11 @@ import {
 import {
     type Tracker,
 }                           from '@easypost/api'
+
+// configs:
+import {
+    checkoutConfigServer,
+}                           from '@/checkout.config.server'
 
 
 
@@ -54,7 +66,7 @@ export async function POST(req: Request, res: Response): Promise<Response> {
             
             
             
-            await prisma.shippingTracking.update({
+            const relatedOrder = await prisma.shippingTracking.update({
                 where  : {
                     trackerId : shippingTracker.id,
                 },
@@ -70,7 +82,41 @@ export async function POST(req: Request, res: Response): Promise<Response> {
                         })),
                     },
                 },
+                select : {
+                    order : {
+                        select : {
+                            id          : true,
+                            orderStatus : true,
+                        },
+                    },
+                },
             });
+            
+            
+            
+            const isDelivered = shippingTracker?.status === 'delivered';
+            if (isDelivered && (relatedOrder?.order?.orderStatus === 'ON_THE_WAY')) {
+                await Promise.all([
+                    prisma.order.update({
+                        where  : {
+                            id : relatedOrder.order.id,
+                        },
+                        data   : {
+                            orderStatus : 'COMPLETED',
+                        },
+                        select : {
+                            id : true,
+                        },
+                    }),
+                    
+                    
+                    
+                    sendConfirmationEmail(relatedOrder.order.id, checkoutConfigServer.customerEmails.completed),
+                    broadcastNotificationEmail(relatedOrder.order.id, checkoutConfigServer.adminEmails.completed, {
+                        notificationType : 'emailOrderCompleted',
+                    }),
+                ]);
+            } // if
             
             
             

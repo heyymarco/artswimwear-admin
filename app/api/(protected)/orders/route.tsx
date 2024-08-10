@@ -58,7 +58,7 @@ import {
     sendConfirmationEmail,
     NotificationType,
     broadcastNotificationEmail,
-}                           from './email-utilities'
+}                           from '@/libs/email-utilities'
 
 // easypost:
 import {
@@ -634,8 +634,8 @@ You do not have the privilege to modify the payment of the order.`
                 
                 
                 // a rare case: the shipment is already delivered:
-                isDelivered && customerEmailConfig && sendConfirmationEmail(orderDetail.orderId, customerEmails.completed),
-                isDelivered && adminEmailConfig    && broadcastNotificationEmail(orderDetail.orderId, adminEmails.completed, {
+                isDelivered && sendConfirmationEmail(orderDetail.orderId, customerEmails.completed),
+                isDelivered && broadcastNotificationEmail(orderDetail.orderId, adminEmails.completed, {
                     notificationType : 'emailOrderCompleted',
                 }),
             ]);

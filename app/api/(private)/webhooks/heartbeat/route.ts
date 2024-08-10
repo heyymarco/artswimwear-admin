@@ -18,7 +18,7 @@ import {
 import {
     sendConfirmationEmail,
     broadcastNotificationEmail,
-}                           from '../../../(protected)/orders/email-utilities'
+}                           from '@/libs/email-utilities'
 
 // configs:
 import {
