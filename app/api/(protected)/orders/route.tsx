@@ -200,7 +200,6 @@ You do not have the privilege to view the orders.`
     const {
         id,
         
-        orderStatus,
         orderTrouble,
         cancelationReason,
         
@@ -217,6 +216,9 @@ You do not have the privilege to view the orders.`
         
         paymentConfirmation,
         shippingTracking,
+    } = body;
+    let {
+        orderStatus,
     } = body;
     const mergedPayment = {
         ...body.payment,
@@ -406,6 +408,9 @@ You do not have the privilege to modify the payment of the order.`
         ? await registerShippingTracker({ shippingCarrier, shippingNumber })
         : undefined
     );
+    
+    // a rare case: the shipment is already delivered, upgrade the orderStatus from 'ON_THE_WAY' to 'COMPLETED':
+    if (shippingTracker?.status === 'delivered') orderStatus = 'COMPLETED';
     //#endregion register shippingTracker
     
     
