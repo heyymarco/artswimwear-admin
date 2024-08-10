@@ -408,7 +408,7 @@ You do not have the privilege to modify the payment of the order.`
     );
     
     // a rare case: the shipment is already delivered:
-    const isDeliveredImmediately = shippingTracker?.status === 'delivered';
+    const isDelivered = shippingTracker?.status === 'delivered';
     //#endregion register shippingTracker
     
     
@@ -494,7 +494,7 @@ You do not have the privilege to modify the payment of the order.`
                         id : id,
                     },
                     data   : {
-                        orderStatus : isDeliveredImmediately ? 'COMPLETED' : orderStatus,
+                        orderStatus : isDelivered ? 'COMPLETED' : orderStatus,
                         orderTrouble,
                         
                         customer : (
@@ -634,8 +634,8 @@ You do not have the privilege to modify the payment of the order.`
                 
                 
                 // a rare case: the shipment is already delivered:
-                isDeliveredImmediately && customerEmailConfig && sendConfirmationEmail(orderDetail.orderId, customerEmails.completed),
-                isDeliveredImmediately && adminEmailConfig    && broadcastNotificationEmail(orderDetail.orderId, adminEmails.completed, {
+                isDelivered && customerEmailConfig && sendConfirmationEmail(orderDetail.orderId, customerEmails.completed),
+                isDelivered && adminEmailConfig    && broadcastNotificationEmail(orderDetail.orderId, adminEmails.completed, {
                     notificationType : 'emailOrderCompleted',
                 }),
             ]);
