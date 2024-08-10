@@ -14,7 +14,7 @@ import {
     // utilities:
     revertDraftOrder,
     cancelOrder,
-}                           from '../../../(protected)/orders/order-utilities'
+}                           from '@/libs/order-utilities'
 import {
     sendConfirmationEmail,
     broadcastNotificationEmail,

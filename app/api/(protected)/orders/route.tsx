@@ -53,7 +53,7 @@ import {
     // utilities:
     findOrderById,
     cancelOrder,
-}                           from './order-utilities'
+}                           from '@/libs/order-utilities'
 import {
     sendConfirmationEmail,
     NotificationType,
