@@ -24,6 +24,8 @@ import {
     type ProductDetail,
     type TemplateVariantGroupDetail,
     type AdminDetail,
+    
+    type ShippingTrackingDetail,
 }                                               from '@/models'
 
 // apis:
@@ -281,8 +283,14 @@ export const apiSlice = createApi({
                 await handleCumulativeUpdateCacheEntry('getOrderPage', (arg.id !== ''), api);
             },
         }),
+        getShippingTracking         : builder.query<ShippingTrackingDetail, string>({
+            query : (orderId) => ({
+                url    : `orders/shipping-tracking?orderId=${encodeURIComponent(orderId)}`,
+                method : 'GET',
+            }),
+        }),
         
-        getDefaultShippingOrigin               : builder.query<DefaultShippingOriginDetail|null, void>({
+        getDefaultShippingOrigin    : builder.query<DefaultShippingOriginDetail|null, void>({
             query : () => ({
                 url    : 'shippings/origin',
                 method : 'GET',
@@ -296,7 +304,7 @@ export const apiSlice = createApi({
                 ];
             },
         }),
-        updateDefaultShippingOrigin            : builder.mutation<DefaultShippingOriginDetail, MutationArgs<DefaultShippingOriginDetail>|null>({
+        updateDefaultShippingOrigin : builder.mutation<DefaultShippingOriginDetail, MutationArgs<DefaultShippingOriginDetail>|null>({
             query: (patch) => ({
                 url    : 'shippings/origin',
                 method : 'PATCH',
@@ -764,6 +772,7 @@ export const {
     
     useGetOrderPageQuery                   : useGetOrderPage,
     useUpdateOrderMutation                 : useUpdateOrder,
+    useGetShippingTrackingQuery            : useGetShippingTracking,
     
     useGetDefaultShippingOriginQuery       : useGetDefaultShippingOrigin,
     useUpdateDefaultShippingOriginMutation : useUpdateDefaultShippingOrigin,

@@ -165,6 +165,9 @@ import {
     PrintDialog,
 }                           from '@/components/dialogs/PrintDialog'
 import {
+    ViewShippingTrackingDialog,
+}                           from '@/components/dialogs/ViewShippingTrackingDialog'
+import {
     DateTimeDisplay,
 }                           from '@/components/DateTimeDisplay'
 import {
@@ -397,6 +400,19 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
             id          : model.id,
             orderStatus : newOrderStatus,
         }).unwrap();
+    });
+    const handleViewShippingTracking = useEvent(() => {
+        // conditions:
+        if (!model) return; // the model is not exist => nothing to update
+        
+        
+        
+        showDialog(
+            <ViewShippingTrackingDialog
+                // data:
+                orderId={model.id}
+            />
+        );
     });
     
     const handleEditShippingTracking = useEvent(() => {
@@ -937,6 +953,27 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         onClick={handlePrint}
                     >
                         Print
+                    </ButtonIcon>
+                    <ButtonIcon
+                        // variants:
+                        theme='secondary'
+                        
+                        
+                        
+                        // classes:
+                        className='btnPrint'
+                        
+                        
+                        
+                        // components:
+                        iconComponent={<Icon icon='location_on' theme='primary' mild={true} />}
+                        
+                        
+                        
+                        // handlers:
+                        onClick={handleViewShippingTracking}
+                    >
+                        View Shipping Tracking
                     </ButtonIcon>
                 </Section>
             </TabPanel>
