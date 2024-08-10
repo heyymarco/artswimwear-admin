@@ -41,16 +41,17 @@ export const registerShippingTracker = async (options: RegisterShippingTrackerOp
             tracking_code : shippingNumber,
             carrier       : shippingCarrier,
         });
+        const shippingDetails = (
+            (shippingTracker.tracking_details ?? [])
+            .map((detail) => ({
+                ...detail,
+                datetime : new Date(detail.datetime),
+            }))
+        );
+        shippingDetails.sort((a, b) => (a.datetime.valueOf() - b.datetime.valueOf()))
         return {
             ...shippingTracker,
-            tracking_details : (
-                (shippingTracker.tracking_details ?? [])
-                .map((detail) => ({
-                    ...detail,
-                    datetime : new Date(detail.datetime),
-                }))
-                .toSorted((a, b) => (a.datetime.valueOf() - b.datetime.valueOf()))
-            ),
+            tracking_details : shippingDetails,
         } satisfies Tracker;
     }
     catch (error: any) {
