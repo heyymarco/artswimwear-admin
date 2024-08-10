@@ -538,8 +538,8 @@ You do not have the privilege to modify the payment of the order.`
                         shippingTracking : {
                             upsert : {
                                 update : {
-                                    shippingCarrier      : shippingCarrier || null, // null if empty_string
-                                    shippingNumber       : shippingNumber  || null, // null if empty_string
+                                    shippingCarrier      : (shippingCarrier === '') ? null /* delete if empty_string */ : shippingCarrier,
+                                    shippingNumber       : (shippingNumber  === '') ? null /* delete if empty_string */ : shippingNumber,
                                     
                                     trackerId            : shippingTracker?.id,
                                     shippingTrackingLogs : !shippingTracker?.tracking_details?.length ? undefined : {
@@ -559,8 +559,8 @@ You do not have the privilege to modify the payment of the order.`
                                         return await nanoid();
                                     })(),
                                     
-                                    shippingCarrier      : shippingCarrier || null, // null if empty_string
-                                    shippingNumber       : shippingNumber  || null, // null if empty_string
+                                    shippingCarrier      : (shippingCarrier === '') ? null /* delete if empty_string */ : shippingCarrier,
+                                    shippingNumber       : (shippingNumber  === '') ? null /* delete if empty_string */ : shippingNumber,
                                     
                                     trackerId            : shippingTracker?.id,
                                     shippingTrackingLogs : !shippingTracker?.tracking_details?.length ? undefined : {
