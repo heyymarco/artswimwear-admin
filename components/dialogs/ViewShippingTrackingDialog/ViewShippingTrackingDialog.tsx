@@ -11,6 +11,10 @@ import {
     useState,
 }                           from 'react'
 
+import {
+    useViewShippingTrackingDialogStyleSheet,
+}                           from './styles/loader'
+
 // reusable-ui components:
 import {
     // base-components:
@@ -89,6 +93,11 @@ export const ViewShippingTrackingDialog = (props: ViewShippingTrackingDialogProp
     
     
     
+    // styles:
+    const styleSheet = useViewShippingTrackingDialogStyleSheet();
+    
+    
+    
     // stores:
     const {data: model, isLoading : isLoadingAndNoData, isError: isErrorModel, refetch: refetchModel} = useGetShippingTracking(orderId);
     const isErrorAndNoData = isErrorModel && !model;
@@ -125,8 +134,8 @@ export const ViewShippingTrackingDialog = (props: ViewShippingTrackingDialogProp
             isModelError   = {isErrorAndNoData}
             onModelRetry   = {refetchModel}
         >
-            <div>
-                <DataTable breakpoint='sm'>
+            <div className={styleSheet.page}>
+                <DataTable breakpoint='sm' className={styleSheet.tableInfo}>
                     <DataTableBody>
                         <DataTableItem
                             // accessibilities:
@@ -143,7 +152,7 @@ export const ViewShippingTrackingDialog = (props: ViewShippingTrackingDialogProp
                     </DataTableBody>
                 </DataTable>
                 
-                {!model?.shippingTrackingLogs?.length && <Content theme='warning' mild={true}>
+                {!model?.shippingTrackingLogs?.length && <Content className={styleSheet.logsEmpty} theme='warning' mild={true}>
                     <p>
                         <Icon icon='timer' theme='primary' size='xl' />
                     </p>
@@ -156,7 +165,7 @@ export const ViewShippingTrackingDialog = (props: ViewShippingTrackingDialogProp
                 </Content>}
                 
                 {!!model?.shippingTrackingLogs?.length && <>
-                    <DataTable breakpoint='sm'>
+                    <DataTable breakpoint='sm' className={styleSheet.tableLogs}>
                         <DataTableBody>
                             <DataTableItem
                                 // accessibilities:
@@ -165,7 +174,7 @@ export const ViewShippingTrackingDialog = (props: ViewShippingTrackingDialogProp
                                 
                                 
                                 // components:
-                                tableDataComponent={<Generic />}
+                                tableDataComponent={<Generic className={styleSheet.editTimezone} />}
                             >
                                 <TimezoneEditor
                                     // variants:
@@ -188,7 +197,7 @@ export const ViewShippingTrackingDialog = (props: ViewShippingTrackingDialogProp
                                     
                                     // accessibilities:
                                     label={
-                                        !!reportedAt && <span>
+                                        !!reportedAt && <span className={styleSheet.dateTime}>
                                             <DateTimeDisplay dateTime={reportedAt} timezone={preferredTimezone} showTimezone={false} />
                                         </span>
                                     }
