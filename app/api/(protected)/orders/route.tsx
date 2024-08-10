@@ -200,6 +200,7 @@ You do not have the privilege to view the orders.`
     const {
         id,
         
+        orderStatus,
         orderTrouble,
         cancelationReason,
         
@@ -216,9 +217,6 @@ You do not have the privilege to view the orders.`
         
         paymentConfirmation,
         shippingTracking,
-    } = body;
-    let {
-        orderStatus,
     } = body;
     const mergedPayment = {
         ...body.payment,
@@ -409,8 +407,8 @@ You do not have the privilege to modify the payment of the order.`
         : undefined
     );
     
-    // a rare case: the shipment is already delivered, upgrade the orderStatus from 'ON_THE_WAY' to 'COMPLETED':
-    if (shippingTracker?.status === 'delivered') orderStatus = 'COMPLETED';
+    // a rare case: the shipment is already delivered:
+    const isDeliveredImmediately = shippingTracker?.status === 'delivered';
     //#endregion register shippingTracker
     
     
@@ -496,7 +494,7 @@ You do not have the privilege to modify the payment of the order.`
                         id : id,
                     },
                     data   : {
-                        orderStatus,
+                        orderStatus : isDeliveredImmediately ? 'COMPLETED' : orderStatus,
                         orderTrouble,
                         
                         customer : (
@@ -629,8 +627,16 @@ You do not have the privilege to modify the payment of the order.`
             await Promise.all([
                 performSendConfirmationEmail && customerEmailConfig && sendConfirmationEmail(orderDetail.orderId, customerEmailConfig),
                 
-                notificationType            && adminEmailConfig     && broadcastNotificationEmail(orderDetail.orderId, adminEmailConfig, {
+                notificationType             && adminEmailConfig    && broadcastNotificationEmail(orderDetail.orderId, adminEmailConfig, {
                     notificationType : notificationType,
+                }),
+                
+                
+                
+                // a rare case: the shipment is already delivered:
+                isDeliveredImmediately && customerEmailConfig && sendConfirmationEmail(orderDetail.orderId, customerEmails.completed),
+                isDeliveredImmediately && adminEmailConfig    && broadcastNotificationEmail(orderDetail.orderId, adminEmails.completed, {
+                    notificationType : 'emailOrderCompleted',
                 }),
             ]);
         } // if
