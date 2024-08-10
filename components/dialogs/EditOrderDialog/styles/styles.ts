@@ -606,6 +606,18 @@ const usesSelectCurrencyBadgeLayout = () => {
         borderRadius : 0,
     });
 };
+const usesShippingBadgeLayout = () => {
+    return style({
+        // layouts:
+        display: 'grid',
+        gridAutoFlow: 'column',
+        
+        
+        
+        // spacings:
+        columnGap : spacers.md,
+    });
+};
 const usesProgressBadgeLayout = () => {
     return style({
         // positions:
@@ -816,6 +828,9 @@ export default () => [
     }, { specificityWeight: 2 }),
     scope('selectCurrencyBadge', {
         ...usesSelectCurrencyBadgeLayout(),
+    }, { specificityWeight: 2 }),
+    scope('shippingBadge', {
+        ...usesShippingBadgeLayout(),
     }, { specificityWeight: 2 }),
     scope('progressBadge', {
         ...usesProgressBadgeLayout(),

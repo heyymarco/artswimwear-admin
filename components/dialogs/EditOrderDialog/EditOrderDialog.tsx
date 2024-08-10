@@ -741,13 +741,41 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                     </Content>}
                     
                     <Section title='Deliver To' theme={printMode ? 'light' : 'secondary'} className={styleSheet.orderDeliverySection}>
-                        <Basic tag='strong' className={styleSheet.badge}>{
-                            isLoadingShipping
-                            ? <Busy />
-                            : isErrorShipping
-                                ? 'Error getting shipping data'
-                                : (shippingProvider?.name ?? 'DELETED SHIPPING PROVIDER')
-                        }</Basic>
+                        <Basic tag='strong' className={`${styleSheet.badge} ${styleSheet.shippingBadge}`}>
+                            {
+                                isLoadingShipping
+                                ? <Busy />
+                                : isErrorShipping
+                                    ? 'Error getting shipping data'
+                                    : (shippingProvider?.name ?? 'DELETED SHIPPING PROVIDER')
+                            }
+                            
+                            {!printMode && <ButtonIcon
+                                // appearances:
+                                icon='my_location'
+                                
+                                
+                                
+                                // variants:
+                                theme='primary'
+                                buttonStyle='link'
+                                
+                                
+                                
+                                // classes:
+                                className='btnPrint'
+                                
+                                
+                                
+                                // accessibilities:
+                                title='View Shipping Tracking'
+                                
+                                
+                                
+                                // handlers:
+                                onClick={handleViewShippingTracking}
+                            >track</ButtonIcon>}
+                        </Basic>
                         <div className={styleSheet.shippingAddress}>
                             {!printMode && !!role?.order_usa && <EditButton className={styleSheet.editShippingAddress} onClick={handleEditShippingAddress} />}
                             <p>
@@ -953,27 +981,6 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         onClick={handlePrint}
                     >
                         Print
-                    </ButtonIcon>
-                    <ButtonIcon
-                        // variants:
-                        theme='secondary'
-                        
-                        
-                        
-                        // classes:
-                        className='btnPrint'
-                        
-                        
-                        
-                        // components:
-                        iconComponent={<Icon icon='location_on' theme='primary' mild={true} />}
-                        
-                        
-                        
-                        // handlers:
-                        onClick={handleViewShippingTracking}
-                    >
-                        View Shipping Tracking
                     </ButtonIcon>
                 </Section>
             </TabPanel>
