@@ -201,8 +201,9 @@ export const orderAndDataSelectAndExtra = {
     },
     shippingTracking : {
         select : {
-            token          : true,
-            shippingNumber : true,
+            token           : true,
+            shippingCarrier : true,
+            shippingNumber  : true,
         },
     },
 } satisfies Prisma.OrderSelect;

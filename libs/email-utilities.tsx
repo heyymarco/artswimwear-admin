@@ -90,7 +90,7 @@ import {
 
 export interface OrderAndDataAndExtra extends OrderAndData {
     paymentConfirmation : Omit<PaymentConfirmation, 'id'|'orderId'>|null
-    shippingTracking    : Pick<ShippingTracking, 'token'|'shippingNumber'>|null
+    shippingTracking    : Pick<ShippingTracking, 'token'|'shippingCarrier'|'shippingNumber'>|null
 }
 const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof prisma.$transaction>[0]>[0], orderId : string): Promise<OrderAndDataAndExtra|null> => {
     const order = await prismaTransaction.order.findUnique({
@@ -139,6 +139,10 @@ const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof p
 
 export interface SendConfirmationEmailOptions {
     admin ?: AdminData
+    
+    // shipping carrier changes:
+    prevShippingCarrier : string|undefined
+    prevShippingNumber  : string|undefined
 }
 export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailConfig, options?: SendConfirmationEmailOptions): Promise<boolean|null> => {
     // options:
@@ -385,6 +389,10 @@ export const broadcastNotificationEmail = async (orderId: string, emailConfig: E
             .map((subscribedAdmin) =>
                 sendConfirmationEmail(orderId, emailConfig, {
                     admin : subscribedAdmin,
+                    
+                    // shipping carrier changes:
+                    prevShippingCarrier : undefined,
+                    prevShippingNumber  : undefined,
                 })
             )
         ))
