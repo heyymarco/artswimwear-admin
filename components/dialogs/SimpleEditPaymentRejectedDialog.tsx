@@ -23,6 +23,11 @@ import type {
     WysiwygEditorState,
 }                           from '@/components/editors/WysiwygEditor'
 
+// types:
+import type {
+    MutationArgs,
+}                           from '@/libs/types'
+
 // models:
 import type {
     OrderDetail,
@@ -54,7 +59,7 @@ export const SimpleEditPaymentRejectedDialog = (props: SimpleEditPaymentRejected
         paymentConfirmation : WysiwygEditorState|null
     }
     const handleInitialValue   = useEvent<InitialValueHandler<PaymentRejectedModel>>((edit, model) => {
-        return ((model as unknown as OrderDetailWithOptions)[edit]?.rejectionReason as Prisma.JsonValue as WysiwygEditorState|null) ?? null;
+        return ((model as unknown as OrderDetail)[edit]?.rejectionReason as Prisma.JsonValue as WysiwygEditorState|null) ?? null;
     });
     const handleTransformValue = useEvent<TransformValueHandler<PaymentRejectedModel>>((value, edit, model) => {
         return {
@@ -66,7 +71,7 @@ export const SimpleEditPaymentRejectedDialog = (props: SimpleEditPaymentRejected
             
             // @ts-ignore
             sendConfirmationEmail : true,
-        };
+        } satisfies MutationArgs<OrderDetailWithOptions>;
     });
     
     
