@@ -25,7 +25,7 @@ import {
     type TemplateVariantGroupDetail,
     type AdminDetail,
     
-    type ShippingTrackingDetail,
+    type ShipmentDetail,
 }                                               from '@/models'
 
 // apis:
@@ -283,9 +283,9 @@ export const apiSlice = createApi({
                 await handleCumulativeUpdateCacheEntry('getOrderPage', (arg.id !== ''), api);
             },
         }),
-        getShippingTracking         : builder.query<ShippingTrackingDetail, string>({
+        getShipment                 : builder.query<ShipmentDetail, string>({
             query : (orderId) => ({
-                url    : `orders/shipping-tracking?orderId=${encodeURIComponent(orderId)}`,
+                url    : `orders/shipment?orderId=${encodeURIComponent(orderId)}`,
                 method : 'GET',
             }),
         }),
@@ -772,7 +772,7 @@ export const {
     
     useGetOrderPageQuery                   : useGetOrderPage,
     useUpdateOrderMutation                 : useUpdateOrder,
-    useGetShippingTrackingQuery            : useGetShippingTracking,
+    useGetShipmentQuery                    : useGetShipment,
     
     useGetDefaultShippingOriginQuery       : useGetDefaultShippingOrigin,
     useUpdateDefaultShippingOriginMutation : useUpdateDefaultShippingOrigin,

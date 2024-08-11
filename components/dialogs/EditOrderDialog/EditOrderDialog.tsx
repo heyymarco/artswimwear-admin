@@ -165,8 +165,8 @@ import {
     PrintDialog,
 }                           from '@/components/dialogs/PrintDialog'
 import {
-    ViewShippingTrackingDialog,
-}                           from '@/components/dialogs/ViewShippingTrackingDialog'
+    ViewShipmentDialog,
+}                           from '@/components/dialogs/ViewShipmentDialog'
 import {
     DateTimeDisplay,
 }                           from '@/components/DateTimeDisplay'
@@ -281,7 +281,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         payment,
         
         paymentConfirmation,
-        shippingTracking,
+        shipment,
     } = model ?? {};
     const {
         type           : paymentType,
@@ -406,21 +406,21 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
             orderStatus : newOrderStatus,
         }).unwrap();
     });
-    const handleViewShippingTracking = useEvent(() => {
+    const handleViewShipment         = useEvent(() => {
         // conditions:
         if (!model) return; // the model is not exist => nothing to update
         
         
         
         showDialog(
-            <ViewShippingTrackingDialog
+            <ViewShipmentDialog
                 // data:
                 orderId={model.id}
             />
         );
     });
     
-    const handleEditShippingTracking = useEvent(() => {
+    const handleEditShipment         = useEvent(() => {
         // conditions:
         if (!model) return; // the model is not exist => nothing to update
         
@@ -430,7 +430,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
             <SimpleEditOrderOnTheWayDialog
                 // data:
                 model={model}
-                edit='shippingTracking'
+                edit='shipment'
                 
                 
                 
@@ -785,7 +785,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     : (shippingProvider?.name ?? 'DELETED SHIPPING PROVIDER')
                             }
                             
-                            {!printMode && !!shippingTracking?.shippingNumber && <ButtonIcon
+                            {!printMode && !!shipment?.number && <ButtonIcon
                                 // appearances:
                                 icon='my_location'
                                 
@@ -808,7 +808,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                 
                                 
                                 // handlers:
-                                onClick={handleViewShippingTracking}
+                                onClick={handleViewShipment}
                             >Track</ButtonIcon>}
                         </Basic>
                         <div className={styleSheet.shippingAddress}>
@@ -911,7 +911,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                 // classes:
                                 className={styleSheet.noteBody}
                             >
-                                {!shippingTracking?.shippingCarrier && !shippingTracking?.shippingNumber && <span
+                                {!shipment?.carrier && !shipment?.number && <span
                                     // classes:
                                     className={`${styleSheet.noteEmpty} txt-sec`}
                                 >
@@ -921,12 +921,12 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     // classes:
                                     className={styleSheet.noteContentCenter}
                                 >
-                                    {!!shippingTracking?.shippingCarrier && <>
-                                        ({shippingTracking.shippingCarrier})&nbsp;
+                                    {!!shipment?.carrier && <>
+                                        ({shipment.carrier})&nbsp;
                                     </>}
-                                    {shippingTracking?.shippingNumber}
+                                    {shipment?.number}
                                 </span>
-                                {!!role?.order_us && <EditButton className={styleSheet.editTrouble} onClick={handleEditShippingTracking} />}
+                                {!!role?.order_us && <EditButton className={styleSheet.editTrouble} onClick={handleEditShipment} />}
                             </Content>
                         </Group>
                     </Collapse>
@@ -992,7 +992,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         // handlers:
                         onPrint={handlePrint}
                         
-                        onChangeOnTheWay={handleEditShippingTracking}
+                        onChangeOnTheWay={handleEditShipment}
                         onChangeCompleted={handleOrderCompleted}
                         onChangeNext={handleChangeOrderStatus}
                     />}

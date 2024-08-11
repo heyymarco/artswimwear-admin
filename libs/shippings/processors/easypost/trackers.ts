@@ -15,8 +15,8 @@ import {
 
 
 export interface RegisterShippingTrackerOptions {
-    shippingCarrier ?: string
-    shippingNumber   : ShippingCarrier
+    carrier ?: ShippingCarrier
+    number   : string
 }
 export interface Tracker extends Omit<EasyPostTracker, 'tracking_details'> {
     tracking_details : (Omit<EasyPostTracker['tracking_details'][number], 'datetime'> & {
@@ -30,16 +30,16 @@ export const registerShippingTracker = async (options: RegisterShippingTrackerOp
     
     
     const {
-        shippingCarrier,
-        shippingNumber,
+        carrier,
+        number,
     } = options;
     
     
     
     try {
         const shippingTracker = await easyPost.Tracker.create({
-            tracking_code : shippingNumber,
-            carrier       : shippingCarrier,
+            tracking_code : number,
+            carrier       : carrier,
         });
         const shippingDetails = (
             (shippingTracker.tracking_details ?? [])

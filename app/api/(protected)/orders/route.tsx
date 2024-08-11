@@ -27,7 +27,7 @@ import type {
 // models:
 import {
     type OrderDetail,
-    type ShippingTrackingPreview,
+    type ShipmentPreview,
     
     
     
@@ -217,7 +217,7 @@ You do not have the privilege to view the orders.`
         sendConfirmationEmail : performSendConfirmationEmail = false,
         
         paymentConfirmation,
-        shippingTracking,
+        shipment,
     } = body;
     const mergedPayment = {
         ...body.payment,
@@ -230,9 +230,9 @@ You do not have the privilege to view the orders.`
     const payment = Object.keys(mergedPayment).length ? mergedPayment : undefined;
     const rejectionReason = paymentConfirmation?.rejectionReason;
     const {
-        shippingCarrier,
-        shippingNumber,
-    } = shippingTracking ?? {};
+        carrier : shippingCarrier,
+        number  : shippingNumber,
+    } = shipment ?? {};
     //#endregion parsing request
     
     
@@ -404,7 +404,7 @@ You do not have the privilege to modify the payment of the order.`
     //#region register shippingTracker
     const shippingTracker = (
         (orderStatus === 'ON_THE_WAY') && shippingCarrier && shippingNumber
-        ? await registerShippingTracker({ shippingCarrier, shippingNumber })
+        ? await registerShippingTracker({ carrier: shippingCarrier, number: shippingNumber })
         : undefined
     );
     
@@ -416,7 +416,7 @@ You do not have the privilege to modify the payment of the order.`
     
     //#region save changes
     try {
-        const [prevShippingTracking, orderDetail] = await (async (): Promise<readonly [ShippingTrackingPreview|undefined, OrderDetail|null]> => {
+        const [prevShipment, orderDetail] = await (async (): Promise<readonly [ShipmentPreview|undefined, OrderDetail|null]> => {
             if (orderStatus === 'CANCELED') {
                 const orderDetail : OrderDetail|null = await prisma.$transaction(async (prismaTransaction): Promise<OrderDetail|null> => {
                     const order = await findOrderById(prismaTransaction, {
@@ -445,7 +445,7 @@ You do not have the privilege to modify the payment of the order.`
             
             
             
-            const [, prevShippingTracking, orderDetailData] = await prisma.$transaction([
+            const [, prevShipment, orderDetailData] = await prisma.$transaction([
                 // update PaymentConfirmation (if any):
                 (
                     (payment?.type === 'MANUAL_PAID')
@@ -501,14 +501,14 @@ You do not have the privilege to modify the payment of the order.`
                             ],
                         },
                         select : {
-                            shippingTracking : {
+                            shipment : {
                                 select : {
-                                    shippingCarrier : true,
-                                    shippingNumber  : true,
-                                    shippingEta     : {
+                                    carrier     : true,
+                                    number      : true,
+                                    eta         : {
                                         select : {
-                                            min     : true,
-                                            max     : true,
+                                            min : true,
+                                            max : true,
                                         },
                                     },
                                 },
@@ -520,14 +520,14 @@ You do not have the privilege to modify the payment of the order.`
                             id : id,
                         },
                         select : {
-                            shippingTracking : {
+                            shipment : {
                                 select : {
-                                    shippingCarrier : true,
-                                    shippingNumber  : true,
-                                    shippingEta     : {
+                                    carrier     : true,
+                                    number      : true,
+                                    eta         : {
                                         select : {
-                                            min     : true,
-                                            max     : true,
+                                            min : true,
+                                            max : true,
                                         },
                                     },
                                 },
@@ -583,14 +583,14 @@ You do not have the privilege to modify the payment of the order.`
                             }),
                         },
                         
-                        shippingTracking : {
+                        shipment : {
                             upsert : {
                                 update : {
-                                    shippingCarrier      : (shippingCarrier === '') ? null /* delete if empty_string */ : shippingCarrier,
-                                    shippingNumber       : (shippingNumber  === '') ? null /* delete if empty_string */ : shippingNumber,
+                                    carrier   : (shippingCarrier === '') ? null /* delete if empty_string */ : shippingCarrier,
+                                    number    : (shippingNumber  === '') ? null /* delete if empty_string */ : shippingNumber,
                                     
-                                    trackerId            : shippingTracker?.id,
-                                    shippingTrackingLogs : !shippingTracker?.tracking_details?.length ? undefined : {
+                                    trackerId : shippingTracker?.id,
+                                    logs      : !shippingTracker?.tracking_details?.length ? undefined : {
                                         deleteMany : {
                                             // do DELETE ALL related log(s)
                                             // no condition is needed because we want to delete all related log(s)
@@ -602,16 +602,16 @@ You do not have the privilege to modify the payment of the order.`
                                     },
                                 },
                                 create : {
-                                    token                : await (async (): Promise<string> => {
+                                    token     : await (async (): Promise<string> => {
                                         const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 16);
                                         return await nanoid();
                                     })(),
                                     
-                                    shippingCarrier      : (shippingCarrier === '') ? null /* delete if empty_string */ : shippingCarrier,
-                                    shippingNumber       : (shippingNumber  === '') ? null /* delete if empty_string */ : shippingNumber,
+                                    carrier   : (shippingCarrier === '') ? null /* delete if empty_string */ : shippingCarrier,
+                                    number    : (shippingNumber  === '') ? null /* delete if empty_string */ : shippingNumber,
                                     
-                                    trackerId            : shippingTracker?.id,
-                                    shippingTrackingLogs : !shippingTracker?.tracking_details?.length ? undefined : {
+                                    trackerId : shippingTracker?.id,
+                                    logs      : !shippingTracker?.tracking_details?.length ? undefined : {
                                         create : shippingTracker.tracking_details.map((shippingDetail) => ({
                                             reportedAt : shippingDetail.datetime,
                                             log        : shippingDetail.message || shippingDetail.status,
@@ -625,7 +625,7 @@ You do not have the privilege to modify the payment of the order.`
                 }),
             ]);
             const orderDetail = convertOrderDetailDataToOrderDetail(orderDetailData);
-            return [prevShippingTracking?.shippingTracking ?? undefined, orderDetail];
+            return [prevShipment?.shipment ?? undefined, orderDetail];
         })();
         
         
@@ -676,14 +676,14 @@ You do not have the privilege to modify the payment of the order.`
             await Promise.all([
                 performSendConfirmationEmail && customerEmailConfig && sendConfirmationEmail(orderDetail.orderId, customerEmailConfig, {
                     // shipping carrier changes:
-                    prevShippingTracking,
+                    prevShipment,
                 }),
                 
                 notificationType             && adminEmailConfig    && broadcastNotificationEmail(orderDetail.orderId, adminEmailConfig, {
                     notificationType : notificationType,
                     
                     // shipping carrier changes:
-                    prevShippingTracking,
+                    prevShipment,
                 }),
                 
                 

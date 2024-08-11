@@ -8,6 +8,6 @@ import {
 
 // styles:
 import './styles';
-export const useViewShippingTrackingDialogStyleSheet = dynamicStyleSheets(
+export const useViewShipmentDialogStyleSheet = dynamicStyleSheets(
     () => import(/* webpackPrefetch: true */'./styles')
 , { id: 'd5zjlctvc0' });

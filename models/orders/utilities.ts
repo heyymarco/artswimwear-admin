@@ -199,15 +199,15 @@ export const orderAndDataSelectAndExtra = {
             rejectionReason : true,
         },
     },
-    shippingTracking : {
+    shipment            : {
         select : {
-            token           : true,
-            shippingCarrier : true,
-            shippingNumber  : true,
-            shippingEta     : {
+            token       : true,
+            carrier     : true,
+            number      : true,
+            eta         : {
                 select : {
-                    min     : true,
-                    max     : true,
+                    min : true,
+                    max : true,
                 },
             },
         },
@@ -337,10 +337,10 @@ export const orderDetailSelect = {
         },
     },
     
-    shippingTracking          : {
+    shipment                  : {
         select : {
-            shippingCarrier   : true,
-            shippingNumber    : true,
+            carrier     : true,
+            number      : true,
         },
     },
 } satisfies Prisma.OrderSelect;

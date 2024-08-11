@@ -88,8 +88,8 @@ export const useOrderOnTheWayEditorStyleSheet = dynamicStyleSheet(
 
 // utilities:
 const emptyOrderOnTheWayValue : Required<OrderOnTheWayValue> = {
-    shippingCarrier       : null,
-    shippingNumber        : null,
+    carrier               : null,
+    number                : null,
     sendConfirmationEmail : true,
 };
 Object.freeze(emptyOrderOnTheWayValue);
@@ -98,8 +98,8 @@ Object.freeze(emptyOrderOnTheWayValue);
 
 // react components:
 export type OrderOnTheWayValue = {
-    shippingCarrier        : string|null
-    shippingNumber         : string|null
+    carrier                : string|null
+    number                 : string|null
     sendConfirmationEmail ?: boolean
 }
 export interface OrderOnTheWayEditorProps
@@ -197,8 +197,8 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
     const value = useMemo(() => {
         return {
             ...valueRaw,
-            shippingCarrier: (
-                valueRaw.shippingCarrier
+            carrier: (
+                valueRaw.carrier
                 ||
                 (
                     !defaultShippingProvider
@@ -218,8 +218,8 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
         };
     }, [valueRaw, defaultShippingProvider]);
     const {
-        shippingCarrier,
-        shippingNumber,
+        carrier,
+        number,
         sendConfirmationEmail,
     } = value;
     
@@ -234,13 +234,13 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
         
         const {
             sendConfirmationEmail = (
-                !initialValue.shippingCarrier // default to send_notification if the shipping tracking CARRIER is NOT YET provided
+                !initialValue.carrier // default to send_notification if the shipping tracking CARRIER is NOT YET provided
                 ||
-                !initialValue.shippingNumber  // default to send_notification if the shipping tracking NUMBER is NOT YET provided
+                !initialValue.number  // default to send_notification if the shipping tracking NUMBER is NOT YET provided
                 ||
-                (initialValue.shippingCarrier !== combinedNewValue.shippingCarrier) // default to send_notification if the shipping tracking CARRIER is CHANGED
+                (initialValue.carrier !== combinedNewValue.carrier) // default to send_notification if the shipping tracking CARRIER is CHANGED
                 ||
-                (initialValue.shippingNumber  !== combinedNewValue.shippingNumber)  // default to send_notification if the shipping tracking NUMBER is CHANGED
+                (initialValue.number  !== combinedNewValue.number ) // default to send_notification if the shipping tracking NUMBER is CHANGED
             ),
         } = newValue;
         
@@ -260,12 +260,12 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
     // handlers:
     const handleShippingCarrierChange   = useEvent<EditorChangeEventHandler<string|null>>((newShippingCarrier) => {
         setValue({
-            shippingCarrier       : newShippingCarrier?.trim() || null, // normalize to null if empty_string or only_spaces
+            carrier               : newShippingCarrier?.trim() || null, // normalize to null if empty_string or only_spaces
         });
     });
     const handleShippingNumberChange    = useEvent<EditorChangeEventHandler<string|null>>((newShippingNumber) => {
         setValue({
-            shippingNumber        : newShippingNumber?.trim() || null, // normalize to null if empty_string or only_spaces
+            number                : newShippingNumber?.trim() || null, // normalize to null if empty_string or only_spaces
         });
     });
     const handleNotificationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active: newNotification}) => {
@@ -310,7 +310,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                     
                     
                     // classes:
-                    className='shippingCarrier'
+                    className='carrier'
                     
                     
                     
@@ -322,7 +322,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                     // values:
                     valueOptions={shippingCarrierList}
                     freeTextInput={true}
-                    value={shippingCarrier || ''}
+                    value={carrier || ''}
                     onChange={handleShippingCarrierChange}
                     
                     
@@ -342,7 +342,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                     
                     
                     // classes:
-                    className='shippingNumber'
+                    className='number'
                     
                     
                     
@@ -352,7 +352,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                     
                     
                     // values:
-                    value={shippingNumber || ''}
+                    value={number || ''}
                     onChange={handleShippingNumberChange}
                     
                     

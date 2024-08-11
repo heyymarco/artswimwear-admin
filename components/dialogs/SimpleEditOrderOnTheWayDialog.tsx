@@ -63,27 +63,27 @@ import {
 export interface SimpleEditOrderOnTheWayDialogProps
     extends
         // bases:
-        ImplementedSimpleEditModelDialogProps<OrderDetail, 'shippingTracking'>
+        ImplementedSimpleEditModelDialogProps<OrderDetail, 'shipment'>
 {
 }
 export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDialogProps) => {
     // handlers:
     interface OrderOnTheWayModel {
-        id               : OrderDetail['id']
-        shippingTracking : OrderOnTheWayValue|null
+        id       : OrderDetail['id']
+        shipment : OrderOnTheWayValue|null
     }
     const handleInitialValue   = useEvent<InitialValueHandler<OrderOnTheWayModel>>((edit, model) => {
         const initialValue : OrderOnTheWayValue = model[edit] ?? {
-            shippingCarrier       : null,
-            shippingNumber        : null,
+            carrier               : null,
+            number                : null,
             sendConfirmationEmail : undefined,
         } satisfies OrderOnTheWayValue;
         
         const {
             sendConfirmationEmail = (
-                !initialValue.shippingCarrier // default to send_notification if the shipping tracking CARRIER is NOT YET provided
+                !initialValue.carrier // default to send_notification if the shipping tracking CARRIER is NOT YET provided
                 ||
-                !initialValue.shippingNumber  // default to send_notification if the shipping tracking NUMBER is NOT YET provided
+                !initialValue.number  // default to send_notification if the shipping tracking NUMBER is NOT YET provided
             ),
             ...restInitialValue
         } = initialValue;
@@ -93,34 +93,34 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
         return {
             ...restInitialValue,
             
-            shippingCarrier       : initialValue.shippingCarrier?.trim() || null, // normalize to null if empty_string or only_spaces
-            shippingNumber        : initialValue.shippingNumber?.trim()  || null, // normalize to null if empty_string or only_spaces
+            carrier               : initialValue.carrier?.trim() || null, // normalize to null if empty_string or only_spaces
+            number                : initialValue.number?.trim()  || null, // normalize to null if empty_string or only_spaces
             
             sendConfirmationEmail,
         } satisfies OrderOnTheWayValue;
     });
     const handleTransformValue = useEvent<TransformValueHandler<OrderOnTheWayModel>>((editedValue, edit, model) => {
         const initialValue : OrderOnTheWayValue = model[edit] ?? {
-            shippingCarrier       : null,
-            shippingNumber        : null,
+            carrier               : null,
+            number                : null,
             sendConfirmationEmail : undefined,
         } satisfies OrderOnTheWayValue;
         
         editedValue ??= {
-            shippingCarrier       : null,
-            shippingNumber        : null,
+            carrier               : null,
+            number                : null,
             sendConfirmationEmail : undefined,
         } satisfies OrderOnTheWayValue;
         
         const {
             sendConfirmationEmail = (
-                !initialValue.shippingCarrier // default to send_notification if the shipping tracking CARRIER is NOT YET provided
+                !initialValue.carrier // default to send_notification if the shipping tracking CARRIER is NOT YET provided
                 ||
-                !initialValue.shippingNumber  // default to send_notification if the shipping tracking NUMBER is NOT YET provided
+                !initialValue.number  // default to send_notification if the shipping tracking NUMBER is NOT YET provided
                 ||
-                (initialValue.shippingCarrier !== editedValue.shippingCarrier) // default to send_notification if the shipping tracking CARRIER is CHANGED
+                (initialValue.carrier !== editedValue.carrier) // default to send_notification if the shipping tracking CARRIER is CHANGED
                 ||
-                (initialValue.shippingNumber  !== editedValue.shippingNumber)  // default to send_notification if the shipping tracking NUMBER is CHANGED
+                (initialValue.number  !== editedValue.number ) // default to send_notification if the shipping tracking NUMBER is CHANGED
             ),
             ...restEditedValue
         } = editedValue;
@@ -134,8 +134,8 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
             [edit]      : {
                 ...restEditedValue,
                 
-                shippingCarrier : restEditedValue.shippingCarrier?.trim() || null, // normalize to null if empty_string or only_spaces
-                shippingNumber  : restEditedValue.shippingNumber?.trim()  || null, // normalize to null if empty_string or only_spaces
+                carrier : restEditedValue.carrier?.trim() || null, // normalize to null if empty_string or only_spaces
+                number  : restEditedValue.number?.trim()  || null, // normalize to null if empty_string or only_spaces
             },
             
             sendConfirmationEmail,

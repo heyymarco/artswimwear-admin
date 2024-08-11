@@ -20,9 +20,6 @@ import {
     defaultPreferenceDetail,
 }                           from '@/models'
 import {
-    type PaymentConfirmation,
-    type ShippingTracking,
-    
     type AdminPreference,
 }                           from '@prisma/client'
 
@@ -93,7 +90,7 @@ export interface OrderAndDataAndExtra
         OrderAndData,
         Pick<OrderDataContextProviderProps,
             |'paymentConfirmation'
-            |'shippingTracking'
+            |'shipment'
         >
 {
 }
@@ -146,7 +143,7 @@ export interface SendConfirmationEmailOptions
     extends
         Pick<ShippingContextProviderProps,
             // shipping carrier changes:
-            |'prevShippingTracking'
+            |'prevShipment'
         >
 {
     admin ?: AdminData
@@ -157,7 +154,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
         admin,
         
         // shipping carrier changes:
-        prevShippingTracking,
+        prevShipment,
     } = options ?? {};
     
     
@@ -189,7 +186,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
     const {
         // extra data:
         paymentConfirmation,
-        shippingTracking,
+        shipment,
         
         
         
@@ -266,7 +263,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
             customerOrGuest      : orderAndData.customerOrGuest,
             paymentConfirmation  : paymentConfirmation,
             isPaid               : isPaid,
-            shippingTracking     : shippingTracking,
+            shipment             : shipment,
             
             
             
@@ -282,7 +279,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
             model : shipping,
             
             // shipping carrier changes:
-            prevShippingTracking,
+            prevShipment,
         };
         
         

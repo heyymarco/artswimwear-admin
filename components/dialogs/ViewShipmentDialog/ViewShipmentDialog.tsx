@@ -12,7 +12,7 @@ import {
 }                           from 'react'
 
 import {
-    useViewShippingTrackingDialogStyleSheet,
+    useViewShipmentDialogStyleSheet,
 }                           from './styles/loader'
 
 // reusable-ui components:
@@ -53,13 +53,13 @@ import {
 
 // models:
 import {
-    type ShippingTrackingDetail,
+    type ShipmentDetail,
 }                           from '@/models'
 
 // stores:
 import {
     // hooks:
-    useGetShippingTracking,
+    useGetShipment,
 }                           from '@/store/features/api/apiSlice'
 
 // configs:
@@ -70,17 +70,17 @@ import {
 
 
 // react components:
-export interface ViewShippingTrackingDialogProps
+export interface ViewShipmentDialogProps
     extends
         // bases:
-        Omit<ImplementedComplexEditModelDialogProps<ShippingTrackingDetail & { id: never }>,
+        Omit<ImplementedComplexEditModelDialogProps<ShipmentDetail & { id: never }>,
             // data:
             |'model'
         >
 {
     orderId : string
 }
-export const ViewShippingTrackingDialog = (props: ViewShippingTrackingDialogProps) => {
+export const ViewShipmentDialog = (props: ViewShipmentDialogProps) => {
     // props:
     const {
         orderId,
@@ -94,12 +94,12 @@ export const ViewShippingTrackingDialog = (props: ViewShippingTrackingDialogProp
     
     
     // styles:
-    const styleSheet = useViewShippingTrackingDialogStyleSheet();
+    const styleSheet = useViewShipmentDialogStyleSheet();
     
     
     
     // stores:
-    const {data: model, isLoading : isLoadingAndNoData, isError: isErrorModel, refetch: refetchModel} = useGetShippingTracking(orderId);
+    const {data: model, isLoading : isLoadingAndNoData, isError: isErrorModel, refetch: refetchModel} = useGetShipment(orderId);
     const isErrorAndNoData = isErrorModel && !model;
     
     
@@ -111,7 +111,7 @@ export const ViewShippingTrackingDialog = (props: ViewShippingTrackingDialogProp
     
     // jsx:
     return (
-        <ComplexEditModelDialog<ShippingTrackingDetail & { id: never }>
+        <ComplexEditModelDialog<ShipmentDetail & { id: never }>
             // other props:
             {...restComplexEditModelDialogProps}
             
@@ -120,7 +120,7 @@ export const ViewShippingTrackingDialog = (props: ViewShippingTrackingDialogProp
             // data:
             modelName='Delivery Tracking'
             modelEntryName='Delivery Tracking'
-            model={model as (ShippingTrackingDetail & { id: never })}
+            model={model as (ShipmentDetail & { id: never })}
             
             
             
@@ -141,18 +141,18 @@ export const ViewShippingTrackingDialog = (props: ViewShippingTrackingDialogProp
                             // accessibilities:
                             label='Ship By'
                         >
-                            {model?.shippingCarrier}
+                            {model?.carrier}
                         </DataTableItem>
                         <DataTableItem
                             // accessibilities:
                             label='Shipping Tracking Number'
                         >
-                            {model?.shippingNumber}
+                            {model?.number}
                         </DataTableItem>
                     </DataTableBody>
                 </DataTable>
                 
-                {!model?.shippingTrackingLogs?.length && <Content className={styleSheet.logsEmpty} theme='warning' mild={true}>
+                {!model?.logs?.length && <Content className={styleSheet.logsEmpty} theme='warning' mild={true}>
                     <p>
                         <Icon icon='timer' theme='primary' size='xl' />
                     </p>
@@ -164,7 +164,7 @@ export const ViewShippingTrackingDialog = (props: ViewShippingTrackingDialogProp
                     </p>
                 </Content>}
                 
-                {!!model?.shippingTrackingLogs?.length && <>
+                {!!model?.logs?.length && <>
                     <DataTable breakpoint='sm' className={styleSheet.tableLogs}>
                         <DataTableBody>
                             <DataTableItem
@@ -188,7 +188,7 @@ export const ViewShippingTrackingDialog = (props: ViewShippingTrackingDialogProp
                                     onChange={setPreferredTimezone}
                                 />
                             </DataTableItem>
-                            {model?.shippingTrackingLogs.map(({reportedAt, log}, index) =>
+                            {model?.logs.map(({reportedAt, log}, index) =>
                                 <DataTableItem
                                     // identifiers:
                                     key={index}

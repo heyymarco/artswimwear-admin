@@ -21,7 +21,7 @@ import type {
     BillingAddress,
     OrdersOnProducts,
     DraftOrdersOnProducts,
-    ShippingTracking,
+    Shipment,
 }                           from '@prisma/client'
 
 
@@ -86,7 +86,7 @@ export interface OrderDetail
         |'orderId'
     >>
     
-    shippingTracking : null|Partial<Omit<ShippingTracking,
+    shipment : null|Partial<Omit<Shipment,
         |'id'
         
         |'token'

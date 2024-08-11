@@ -66,12 +66,12 @@ export async function POST(req: Request, res: Response): Promise<Response> {
             
             
             
-            const relatedOrder = await prisma.shippingTracking.update({
+            const relatedOrder = await prisma.shipment.update({
                 where  : {
                     trackerId : shippingTracker.id,
                 },
                 data   : {
-                    shippingTrackingLogs : {
+                    logs : {
                         deleteMany : {
                             // do DELETE ALL related log(s)
                             // no condition is needed because we want to delete all related log(s)
@@ -83,7 +83,7 @@ export async function POST(req: Request, res: Response): Promise<Response> {
                     },
                 },
                 select : {
-                    order : {
+                    parent : {
                         select : {
                             id          : true,
                             orderStatus : true,
@@ -95,11 +95,11 @@ export async function POST(req: Request, res: Response): Promise<Response> {
             
             
             const isDelivered = shippingTracker?.status === 'delivered';
-            if (isDelivered && (relatedOrder?.order?.orderStatus === 'ON_THE_WAY')) {
+            if (isDelivered && (relatedOrder?.parent?.orderStatus === 'ON_THE_WAY')) {
                 await Promise.all([
                     prisma.order.update({
                         where  : {
-                            id : relatedOrder.order.id,
+                            id : relatedOrder.parent.id,
                         },
                         data   : {
                             orderStatus : 'COMPLETED',
@@ -111,8 +111,8 @@ export async function POST(req: Request, res: Response): Promise<Response> {
                     
                     
                     
-                    sendConfirmationEmail(relatedOrder.order.id, checkoutConfigServer.customerEmails.completed),
-                    broadcastNotificationEmail(relatedOrder.order.id, checkoutConfigServer.adminEmails.completed, {
+                    sendConfirmationEmail(relatedOrder.parent.id, checkoutConfigServer.customerEmails.completed),
+                    broadcastNotificationEmail(relatedOrder.parent.id, checkoutConfigServer.adminEmails.completed, {
                         notificationType : 'emailOrderCompleted',
                     }),
                 ]);

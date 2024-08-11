@@ -15,11 +15,11 @@ import {
 
 // models:
 import {
-    type ShippingTrackingDetail,
+    type ShipmentDetail,
     
     
     
-    shippingTrackingDetailSelect,
+    shipmentDetailSelect,
 }                           from '@/models'
 
 // ORMs:
@@ -104,13 +104,13 @@ You do not have the privilege to view the orders.`
     
     
     
-    const shippingTrackingDetailData = await prisma.shippingTracking.findUnique({
+    const shipmentDetailData = await prisma.shipment.findUnique({
         where  : {
-            orderId : orderId,
+            parentId : orderId,
         },
-        select : shippingTrackingDetailSelect,
+        select : shipmentDetailSelect,
     });
-    if (!shippingTrackingDetailData) {
+    if (!shipmentDetailData) {
         return Response.json({
             error: 'Invalid shipping tracking token.',
         }, { status: 400 }); // handled with error
@@ -119,21 +119,21 @@ You do not have the privilege to view the orders.`
     // sort the log by reported date:
     const {
         // relations:
-        order : orderData,
+        parent : orderData,
         
         
         
         // data:
-        ...restshippingTrackingDetail
-    } = shippingTrackingDetailData;
-    const shippingTrackingDetail : ShippingTrackingDetail = {
-        ...restshippingTrackingDetail,
+        ...restShipmentDetail
+    } = shipmentDetailData;
+    const shipmentDetail : ShipmentDetail = {
+        ...restShipmentDetail,
         preferredTimezone : orderData.customer?.preference?.timezone ?? orderData.guest?.preference?.timezone ?? checkoutConfigServer.intl.defaultTimezone,
     };
-    shippingTrackingDetail.shippingTrackingLogs.sort(({reportedAt: a}, {reportedAt: b}) => {
+    shipmentDetail.logs.sort(({reportedAt: a}, {reportedAt: b}) => {
         if ((a === null) || (b === null)) return 0;
         return a.valueOf() - b.valueOf();
     });
     
-    return Response.json(shippingTrackingDetail); // handled with success
+    return Response.json(shipmentDetail); // handled with success
 });
