@@ -27,6 +27,7 @@ import type {
 // models:
 import {
     type OrderDetail,
+    type ShippingTracking,
     
     
     
@@ -415,7 +416,7 @@ You do not have the privilege to modify the payment of the order.`
     
     //#region save changes
     try {
-        const orderDetail : OrderDetail|null = await (async (): Promise<OrderDetail|null> => {
+        const [prevShippingTracking, orderDetail] = await (async (): Promise<readonly [Pick<ShippingTracking, 'shippingCarrier'|'shippingNumber'>|undefined, OrderDetail|null]> => {
             if (orderStatus === 'CANCELED') {
                 const orderDetail : OrderDetail|null = await prisma.$transaction(async (prismaTransaction): Promise<OrderDetail|null> => {
                     const order = await findOrderById(prismaTransaction, {
@@ -436,14 +437,15 @@ You do not have the privilege to modify the payment of the order.`
                         
                         orderSelect       : orderDetailSelect,
                     });
-                    return convertOrderDetailDataToOrderDetail(orderDetailData);
+                    const orderDetail = convertOrderDetailDataToOrderDetail(orderDetailData);
+                    return orderDetail;
                 }, { timeout: 50000 }); // give a longer timeout for `cancelOrder`
-                return orderDetail;
+                return [undefined, orderDetail];
             } // if
             
             
             
-            const [, orderDetailData] = await prisma.$transaction([
+            const [, prevShippingTracking, orderDetailData] = await prisma.$transaction([
                 // update PaymentConfirmation (if any):
                 (
                     (payment?.type === 'MANUAL_PAID')
@@ -479,13 +481,47 @@ You do not have the privilege to modify the payment of the order.`
                         : prisma.paymentConfirmation.updateMany({
                             where : {
                                 AND : [
-                                    { orderId : { equals : id } }, // never match, just for dummy transaction
-                                    { orderId : { not    : id } }, // never match, just for dummy transaction
+                                    { orderId : { equals : id } }, // never match, just for dummy transaction without change the size of the array
+                                    { orderId : { not    : id } }, // never match, just for dummy transaction without change the size of the array
                                 ],
                             },
                             data : {},
                         })
                     )
+                ),
+                
+                // detect shipping tracking number changes:
+                (
+                    (orderStatus !== 'ON_THE_WAY')
+                    ? prisma.order.findFirst({
+                        where  : {
+                            AND : [
+                                { id : { equals : id } }, // never match, just for dummy transaction without change the size of the array
+                                { id : { not    : id } }, // never match, just for dummy transaction without change the size of the array
+                            ],
+                        },
+                        select : {
+                            shippingTracking : {
+                                select : {
+                                    shippingCarrier : true,
+                                    shippingNumber  : true,
+                                },
+                            },
+                        },
+                    })
+                    : prisma.order.findFirst({
+                        where  : {
+                            id : id,
+                        },
+                        select : {
+                            shippingTracking : {
+                                select : {
+                                    shippingCarrier : true,
+                                    shippingNumber  : true,
+                                },
+                            },
+                        },
+                    })
                 ),
                 
                 // update Order:
@@ -576,7 +612,8 @@ You do not have the privilege to modify the payment of the order.`
                     select : orderDetailSelect,
                 }),
             ]);
-            return convertOrderDetailDataToOrderDetail(orderDetailData);
+            const orderDetail = convertOrderDetailDataToOrderDetail(orderDetailData);
+            return [prevShippingTracking?.shippingTracking ?? undefined, orderDetail];
         })();
         
         
@@ -627,16 +664,16 @@ You do not have the privilege to modify the payment of the order.`
             await Promise.all([
                 performSendConfirmationEmail && customerEmailConfig && sendConfirmationEmail(orderDetail.orderId, customerEmailConfig, {
                     // shipping carrier changes:
-                    prevShippingCarrier : undefined,
-                    prevShippingNumber  : undefined,
+                    prevShippingCarrier : prevShippingTracking?.shippingCarrier ?? undefined,
+                    prevShippingNumber  : prevShippingTracking?.shippingNumber  ?? undefined,
                 }),
                 
                 notificationType             && adminEmailConfig    && broadcastNotificationEmail(orderDetail.orderId, adminEmailConfig, {
                     notificationType : notificationType,
                     
                     // shipping carrier changes:
-                    prevShippingCarrier : undefined,
-                    prevShippingNumber  : undefined,
+                    prevShippingCarrier : prevShippingTracking?.shippingCarrier ?? undefined,
+                    prevShippingNumber  : prevShippingTracking?.shippingNumber  ?? undefined,
                 }),
                 
                 
