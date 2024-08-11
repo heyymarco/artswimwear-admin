@@ -263,7 +263,7 @@ export const apiSlice = createApi({
                 ];
             },
         }),
-        updateOrder                 : builder.mutation<OrderDetailWithOptions, MutationArgs<OrderDetail>>({
+        updateOrder                 : builder.mutation<OrderDetail, MutationArgs<OrderDetailWithOptions>>({
             query: (patch) => ({
                 url    : 'orders',
                 method : 'PATCH',
