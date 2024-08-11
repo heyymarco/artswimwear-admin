@@ -50,32 +50,58 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
         shippingTracking : OrderOnTheWayValue
     }
     const handleInitialValue   = useEvent<InitialValueHandler<OrderOnTheWayModel>>((edit, model) => {
-        const value = model[edit];
+        const initialValue = model[edit];
+        const {
+            sendConfirmationEmail = (
+                !initialValue.shippingCarrier // default to send_notification if the shipping tracking CARRIER is NOT YET provided
+                ||
+                !initialValue.shippingNumber  // default to send_notification if the shipping tracking NUMBER is NOT YET provided
+                ||
+                (initialValue.shippingCarrier !== model.shippingTracking.shippingCarrier) // default to send_notification if the shipping tracking CARRIER is CHANGED
+                ||
+                (initialValue.shippingNumber !== model.shippingTracking.shippingNumber)   // default to send_notification if the shipping tracking NUMBER is CHANGED
+            ),
+            ...restInitialValue
+        } = initialValue;
+        
+        
+        
         return {
-            ...value,
+            ...restInitialValue,
             
-            shippingCarrier       : value?.shippingCarrier?.trim() || null, // normalize to null if empty_string or only_spaces
-            shippingNumber        : value?.shippingNumber?.trim()  || null, // normalize to null if empty_string or only_spaces
-            sendConfirmationEmail : true,
+            shippingCarrier       : initialValue.shippingCarrier?.trim() || null, // normalize to null if empty_string or only_spaces
+            shippingNumber        : initialValue.shippingNumber?.trim()  || null, // normalize to null if empty_string or only_spaces
+            
+            sendConfirmationEmail,
         };
     });
-    const handleTransformValue = useEvent<TransformValueHandler<OrderOnTheWayModel>>((value, edit, model) => {
+    const handleTransformValue = useEvent<TransformValueHandler<OrderOnTheWayModel>>((editedValue, edit, model) => {
         const {
-            sendConfirmationEmail = true,
-        ...restValue} = value;
+            sendConfirmationEmail = (
+                !editedValue.shippingCarrier // default to send_notification if the shipping tracking CARRIER is NOT YET provided
+                ||
+                !editedValue.shippingNumber  // default to send_notification if the shipping tracking NUMBER is NOT YET provided
+                ||
+                (editedValue.shippingCarrier !== model.shippingTracking.shippingCarrier) // default to send_notification if the shipping tracking CARRIER is CHANGED
+                ||
+                (editedValue.shippingNumber !== model.shippingTracking.shippingNumber)   // default to send_notification if the shipping tracking NUMBER is CHANGED
+            ),
+            ...restEditedValue
+        } = editedValue;
+        
+        
         
         return {
             id          : model.id,
             
             orderStatus : 'ON_THE_WAY',
             [edit]      : {
-                // original:
-                ...restValue,
-                shippingCarrier : restValue.shippingCarrier?.trim() || null, // normalize to null if empty_string or only_spaces
-                shippingNumber  : restValue.shippingNumber?.trim()  || null, // normalize to null if empty_string or only_spaces
+                ...restEditedValue,
+                
+                shippingCarrier : restEditedValue.shippingCarrier?.trim() || null, // normalize to null if empty_string or only_spaces
+                shippingNumber  : restEditedValue.shippingNumber?.trim()  || null, // normalize to null if empty_string or only_spaces
             },
             
-            //@ts-ignore
             sendConfirmationEmail,
         };
     });
