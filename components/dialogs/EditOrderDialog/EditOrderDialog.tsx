@@ -342,10 +342,15 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     // handlers:
     const handleEditShippingAddress  = useEvent(() => {
+        // conditions:
+        if (!model) return; // the model is not exist => nothing to update
+        
+        
+        
         showDialog(
             <SimpleEditAddressDialog
                 // data:
-                model={model!}
+                model={model}
                 edit='shippingAddress'
                 
                 
@@ -416,10 +421,15 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     });
     
     const handleEditShippingTracking = useEvent(() => {
+        // conditions:
+        if (!model) return; // the model is not exist => nothing to update
+        
+        
+        
         showDialog(
             <SimpleEditOrderOnTheWayDialog
                 // data:
-                model={model!}
+                model={model}
                 edit='shippingTracking'
                 
                 
@@ -436,10 +446,15 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     });
     
     const handleOrderCompleted       = useEvent(() => {
+        // conditions:
+        if (!model) return; // the model is not exist => nothing to update
+        
+        
+        
         showDialog(
             <SimpleEditOrderCompletedDialog
                 // data:
-                model={model!}
+                model={model}
                 edit='orderStatus'
                 
                 
@@ -453,10 +468,15 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     });
     
     const handleEditTrouble          = useEvent(() => {
+        // conditions:
+        if (!model) return; // the model is not exist => nothing to update
+        
+        
+        
         showDialog(
             <SimpleEditOrderTroubleDialog
                 // data:
-                model={model!}
+                model={model}
                 edit='orderTrouble'
                 
                 
@@ -476,10 +496,15 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     });
     
     const handleRejectPayment        = useEvent(() => {
+        // conditions:
+        if (!model) return; // the model is not exist => nothing to update
+        
+        
+        
         showDialog(
             <SimpleEditPaymentRejectedDialog
                 // data:
-                model={model!}
+                model={model}
                 edit='paymentConfirmation'
                 
                 
@@ -503,10 +528,15 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         );
     });
     const handleEditPayment          = useEvent(() => {
+        // conditions:
+        if (!model) return; // the model is not exist => nothing to update
+        
+        
+        
         showDialog(
             <SimpleEditPaymentDialog
                 // data:
-                model={model!}
+                model={model}
                 edit='payment'
                 
                 
@@ -538,10 +568,15 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     });
     
     const handleCancelOrder          = useEvent(() => {
+        // conditions:
+        if (!model) return; // the model is not exist => nothing to update
+        
+        
+        
         showDialog(
             <SimpleEditOrderCanceledDialog
                 // data:
-                model={model!}
+                model={model}
                 edit='cancelationReason'
                 
                 
