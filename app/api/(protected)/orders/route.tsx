@@ -27,7 +27,7 @@ import type {
 // models:
 import {
     type OrderDetail,
-    type ShippingTracking,
+    type ShippingTrackingPreview,
     
     
     
@@ -416,7 +416,7 @@ You do not have the privilege to modify the payment of the order.`
     
     //#region save changes
     try {
-        const [prevShippingTracking, orderDetail] = await (async (): Promise<readonly [Pick<ShippingTracking, 'shippingCarrier'|'shippingNumber'>|undefined, OrderDetail|null]> => {
+        const [prevShippingTracking, orderDetail] = await (async (): Promise<readonly [ShippingTrackingPreview|undefined, OrderDetail|null]> => {
             if (orderStatus === 'CANCELED') {
                 const orderDetail : OrderDetail|null = await prisma.$transaction(async (prismaTransaction): Promise<OrderDetail|null> => {
                     const order = await findOrderById(prismaTransaction, {
@@ -505,6 +505,12 @@ You do not have the privilege to modify the payment of the order.`
                                 select : {
                                     shippingCarrier : true,
                                     shippingNumber  : true,
+                                    shippingEta     : {
+                                        select : {
+                                            min     : true,
+                                            max     : true,
+                                        },
+                                    },
                                 },
                             },
                         },
@@ -518,6 +524,12 @@ You do not have the privilege to modify the payment of the order.`
                                 select : {
                                     shippingCarrier : true,
                                     shippingNumber  : true,
+                                    shippingEta     : {
+                                        select : {
+                                            min     : true,
+                                            max     : true,
+                                        },
+                                    },
                                 },
                             },
                         },
@@ -664,16 +676,14 @@ You do not have the privilege to modify the payment of the order.`
             await Promise.all([
                 performSendConfirmationEmail && customerEmailConfig && sendConfirmationEmail(orderDetail.orderId, customerEmailConfig, {
                     // shipping carrier changes:
-                    prevShippingCarrier : prevShippingTracking?.shippingCarrier ?? undefined,
-                    prevShippingNumber  : prevShippingTracking?.shippingNumber  ?? undefined,
+                    prevShippingTracking,
                 }),
                 
                 notificationType             && adminEmailConfig    && broadcastNotificationEmail(orderDetail.orderId, adminEmailConfig, {
                     notificationType : notificationType,
                     
                     // shipping carrier changes:
-                    prevShippingCarrier : prevShippingTracking?.shippingCarrier ?? undefined,
-                    prevShippingNumber  : prevShippingTracking?.shippingNumber  ?? undefined,
+                    prevShippingTracking,
                 }),
                 
                 

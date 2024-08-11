@@ -204,6 +204,12 @@ export const orderAndDataSelectAndExtra = {
             token           : true,
             shippingCarrier : true,
             shippingNumber  : true,
+            shippingEta     : {
+                select : {
+                    min     : true,
+                    max     : true,
+                },
+            },
         },
     },
 } satisfies Prisma.OrderSelect;
