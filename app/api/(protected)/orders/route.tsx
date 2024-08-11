@@ -632,11 +632,11 @@ You do not have the privilege to modify the payment of the order.`
                 }),
                 
                 notificationType             && adminEmailConfig    && broadcastNotificationEmail(orderDetail.orderId, adminEmailConfig, {
+                    notificationType : notificationType,
+                    
                     // shipping carrier changes:
                     prevShippingCarrier : undefined,
                     prevShippingNumber  : undefined,
-                    
-                    notificationType : notificationType,
                 }),
                 
                 

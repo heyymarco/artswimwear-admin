@@ -137,17 +137,24 @@ const getOrderAndData = async (prismaTransaction: Parameters<Parameters<typeof p
 
 
 
-export interface SendConfirmationEmailOptions {
+export interface SendConfirmationEmailOptions
+    extends
+        Pick<ShippingContextProviderProps,
+            // shipping carrier changes:
+            |'prevShippingCarrier'
+            |'prevShippingNumber'
+        >
+{
     admin ?: AdminData
-    
-    // shipping carrier changes:
-    prevShippingCarrier ?: string
-    prevShippingNumber  ?: string
 }
 export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailConfig, options?: SendConfirmationEmailOptions): Promise<boolean|null> => {
     // options:
     const {
         admin,
+        
+        // shipping carrier changes:
+        prevShippingCarrier,
+        prevShippingNumber,
     } = options ?? {};
     
     
@@ -270,6 +277,10 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
         const shippingContextProviderProps  : ShippingContextProviderProps = {
             // data:
             model : shipping,
+            
+            // shipping carrier changes:
+            prevShippingCarrier,
+            prevShippingNumber,
         };
         
         
