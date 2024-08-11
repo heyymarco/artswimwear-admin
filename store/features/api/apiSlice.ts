@@ -11,11 +11,11 @@ import type {
     
     MutationArgs,
 }                           from '@/libs/types'
-export type OrderDetailWithOptions = OrderDetail & { sendConfirmationEmail?: boolean }
 
 // models:
 import {
     type OrderDetail,
+    type OrderDetailWithOptions,
     type DefaultShippingOriginDetail,
     type ShippingPreview,
     type ShippingDetail,

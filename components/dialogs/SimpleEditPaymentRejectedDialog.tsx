@@ -26,6 +26,7 @@ import type {
 // models:
 import type {
     OrderDetail,
+    OrderDetailWithOptions,
 }                           from '@/models'
 import type {
     Prisma,
@@ -33,11 +34,6 @@ import type {
 
 // stores:
 import {
-    // types:
-    OrderDetailWithOptions,
-    
-    
-    
     // hooks:
     useUpdateOrder,
 }                           from '@/store/features/api/apiSlice'

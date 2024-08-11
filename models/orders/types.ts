@@ -95,6 +95,8 @@ export interface OrderDetail
     >>
 }
 
+export type OrderDetailWithOptions = OrderDetail & { sendConfirmationEmail?: boolean }
+
 
 
 export interface OrderCurrencyDetail
