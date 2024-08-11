@@ -625,9 +625,17 @@ You do not have the privilege to modify the payment of the order.`
             
             
             await Promise.all([
-                performSendConfirmationEmail && customerEmailConfig && sendConfirmationEmail(orderDetail.orderId, customerEmailConfig),
+                performSendConfirmationEmail && customerEmailConfig && sendConfirmationEmail(orderDetail.orderId, customerEmailConfig, {
+                    // shipping carrier changes:
+                    prevShippingCarrier : undefined,
+                    prevShippingNumber  : undefined,
+                }),
                 
                 notificationType             && adminEmailConfig    && broadcastNotificationEmail(orderDetail.orderId, adminEmailConfig, {
+                    // shipping carrier changes:
+                    prevShippingCarrier : undefined,
+                    prevShippingNumber  : undefined,
+                    
                     notificationType : notificationType,
                 }),
                 

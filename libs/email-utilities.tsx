@@ -141,8 +141,8 @@ export interface SendConfirmationEmailOptions {
     admin ?: AdminData
     
     // shipping carrier changes:
-    prevShippingCarrier : string|undefined
-    prevShippingNumber  : string|undefined
+    prevShippingCarrier ?: string
+    prevShippingNumber  ?: string
 }
 export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailConfig, options?: SendConfirmationEmailOptions): Promise<boolean|null> => {
     // options:
@@ -351,13 +351,14 @@ export type NotificationType = keyof Pick<AdminPreference,
     |'emailOrderShipping'
     |'emailOrderCompleted'
 >
-export interface BroadcastNotificationEmailOptions {
+export interface BroadcastNotificationEmailOptions extends Omit<SendConfirmationEmailOptions, 'admin'> {
     notificationType : NotificationType
 }
 export const broadcastNotificationEmail = async (orderId: string, emailConfig: EmailConfig, options: BroadcastNotificationEmailOptions): Promise<number|false|null> => {
     // options:
     const {
-        notificationType
+        notificationType,
+        ...restOptions
     } = options;
     
     
@@ -388,11 +389,8 @@ export const broadcastNotificationEmail = async (orderId: string, emailConfig: E
             subscribedAdmins
             .map((subscribedAdmin) =>
                 sendConfirmationEmail(orderId, emailConfig, {
+                    ...restOptions,
                     admin : subscribedAdmin,
-                    
-                    // shipping carrier changes:
-                    prevShippingCarrier : undefined,
-                    prevShippingNumber  : undefined,
                 })
             )
         ))
