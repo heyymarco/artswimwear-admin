@@ -7,6 +7,7 @@ import {
     
     // hooks:
     useMemo,
+    useState,
 }                           from 'react'
 
 // cssfn:
@@ -183,7 +184,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
     
     // states:
     const {
-        value              : valueInitial,
+        value              : valueRaw,
         triggerValueChange : triggerValueChange,
     } = useControllableAndUncontrollable<OrderOnTheWayValue>({
         defaultValue       : defaultUncontrollableValue,
@@ -191,11 +192,13 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
         onValueChange      : onControllableValueChange,
     });
     
+    const [initialValue] = useState<OrderOnTheWayValue>(valueRaw);
+    
     const value = useMemo(() => {
         return {
-            ...valueInitial,
+            ...valueRaw,
             shippingCarrier: (
-                valueInitial.shippingCarrier
+                valueRaw.shippingCarrier
                 ||
                 (
                     !defaultShippingProvider
@@ -213,7 +216,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                 )
             ),
         };
-    }, [valueInitial, defaultShippingProvider]);
+    }, [valueRaw, defaultShippingProvider]);
     const {
         shippingCarrier,
         shippingNumber,
@@ -224,15 +227,32 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
     
     // utilities:
     const setValue = useEvent((newValue: Partial<OrderOnTheWayValue>) => {
-        const combinedValue : OrderOnTheWayValue = {
+        const combinedNewValue : OrderOnTheWayValue = {
             ...value,
             ...newValue,
+        };
+        
+        const {
+            sendConfirmationEmail = (
+                !initialValue.shippingCarrier // default to send_notification if the shipping tracking CARRIER is NOT YET provided
+                ||
+                !initialValue.shippingNumber  // default to send_notification if the shipping tracking NUMBER is NOT YET provided
+                ||
+                (initialValue.shippingCarrier !== combinedNewValue.shippingCarrier) // default to send_notification if the shipping tracking CARRIER is CHANGED
+                ||
+                (initialValue.shippingNumber  !== combinedNewValue.shippingNumber)  // default to send_notification if the shipping tracking NUMBER is CHANGED
+            ),
+        } = newValue;
+        
+        const finalValue = {
+            ...combinedNewValue,
+            sendConfirmationEmail,
         };
         
         
         
         // update:
-        triggerValueChange(combinedValue, { triggerAt: 'immediately' });
+        triggerValueChange(finalValue, { triggerAt: 'immediately' });
     });
     
     
@@ -240,17 +260,17 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
     // handlers:
     const handleShippingCarrierChange   = useEvent<EditorChangeEventHandler<string|null>>((newShippingCarrier) => {
         setValue({
-            shippingCarrier       : newShippingCarrier,
+            shippingCarrier       : newShippingCarrier?.trim() || null, // normalize to null if empty_string or only_spaces
         });
     });
     const handleShippingNumberChange    = useEvent<EditorChangeEventHandler<string|null>>((newShippingNumber) => {
         setValue({
-            shippingNumber        : newShippingNumber,
+            shippingNumber        : newShippingNumber?.trim() || null, // normalize to null if empty_string or only_spaces
         });
     });
-    const handleConfirmationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active: newConfirmation}) => {
+    const handleNotificationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active: newNotification}) => {
         setValue({
-            sendConfirmationEmail : newConfirmation,
+            sendConfirmationEmail : newNotification,
         });
     });
     
@@ -349,14 +369,14 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                 <Check
                     // values:
                     active={sendConfirmationEmail}
-                    onActiveChange={handleConfirmationEmailChange}
+                    onActiveChange={handleNotificationEmailChange}
                     
                     
                     
                     // validations:
                     enableValidation={false}
                 >
-                    Send confirmation email to customer
+                    Send notification email to customer
                 </Check>
             </AccessibilityProvider>
         </Form>
