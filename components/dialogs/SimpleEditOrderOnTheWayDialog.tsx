@@ -166,7 +166,7 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
                                 We detected that the shipment has been <strong>delivered</strong>.
                             </p>
                             <p>
-                                So we, changed the order status to <strong>completed</strong>.
+                                So, we changed the order status to <strong>completed</strong>.
                             </p>
                         </>,
                     });
