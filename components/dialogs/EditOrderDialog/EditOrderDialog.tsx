@@ -785,7 +785,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     : (shippingProvider?.name ?? 'DELETED SHIPPING PROVIDER')
                             }
                             
-                            {!printMode && !!shippingTracking && <ButtonIcon
+                            {!printMode && !!shippingTracking?.shippingNumber && <ButtonIcon
                                 // appearances:
                                 icon='my_location'
                                 
