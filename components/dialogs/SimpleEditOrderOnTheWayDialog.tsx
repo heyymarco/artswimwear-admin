@@ -56,10 +56,6 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
                 !initialValue.shippingCarrier // default to send_notification if the shipping tracking CARRIER is NOT YET provided
                 ||
                 !initialValue.shippingNumber  // default to send_notification if the shipping tracking NUMBER is NOT YET provided
-                ||
-                (initialValue.shippingCarrier !== model.shippingTracking.shippingCarrier) // default to send_notification if the shipping tracking CARRIER is CHANGED
-                ||
-                (initialValue.shippingNumber !== model.shippingTracking.shippingNumber)   // default to send_notification if the shipping tracking NUMBER is CHANGED
             ),
             ...restInitialValue
         } = initialValue;
@@ -76,15 +72,16 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
         };
     });
     const handleTransformValue = useEvent<TransformValueHandler<OrderOnTheWayModel>>((editedValue, edit, model) => {
+        const initialValue = model[edit];
         const {
             sendConfirmationEmail = (
-                !editedValue.shippingCarrier // default to send_notification if the shipping tracking CARRIER is NOT YET provided
+                !initialValue.shippingCarrier // default to send_notification if the shipping tracking CARRIER is NOT YET provided
                 ||
-                !editedValue.shippingNumber  // default to send_notification if the shipping tracking NUMBER is NOT YET provided
+                !initialValue.shippingNumber  // default to send_notification if the shipping tracking NUMBER is NOT YET provided
                 ||
-                (editedValue.shippingCarrier !== model.shippingTracking.shippingCarrier) // default to send_notification if the shipping tracking CARRIER is CHANGED
+                (initialValue.shippingCarrier !== editedValue.shippingCarrier) // default to send_notification if the shipping tracking CARRIER is CHANGED
                 ||
-                (editedValue.shippingNumber !== model.shippingTracking.shippingNumber)   // default to send_notification if the shipping tracking NUMBER is CHANGED
+                (initialValue.shippingNumber  !== editedValue.shippingNumber)  // default to send_notification if the shipping tracking NUMBER is CHANGED
             ),
             ...restEditedValue
         } = editedValue;
