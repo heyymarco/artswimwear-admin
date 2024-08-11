@@ -1,10 +1,27 @@
 'use client'
 
+// react:
+import {
+    // react:
+    default as React,
+    
+    
+    
+    // hooks:
+    useMemo,
+}                           from 'react'
+
 // reusable-ui core:
 import {
     // react helper hooks:
     useEvent,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
+
+// reusable-ui components:
+import {
+    // utility-components:
+    useDialogMessage,
+}                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // internal components:
 import {
@@ -127,6 +144,45 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
     
     
     
+    // dialogs:
+    const {
+        showMessageSuccess,
+    } = useDialogMessage();
+    
+    
+    
+    // stores:
+    const [updateOrder, updateOrderState] = useUpdateOrder();
+    const updateOrderProxy : typeof updateOrder = useEvent((mutationArg) => {
+        const updatedPromise = updateOrder(mutationArg);
+        
+        if (mutationArg.orderStatus === 'ON_THE_WAY') {
+            updatedPromise.unwrap().then((result) => {
+                if (result.orderStatus === 'COMPLETED') {
+                    showMessageSuccess({
+                        title   : <h1>Order Status Updated</h1>,
+                        success : <>
+                            <p>
+                                We detected that the shipment has been <strong>delivered</strong>.
+                            </p>
+                            <p>
+                                So we, changed the order status to <strong>completed</strong>.
+                            </p>
+                        </>,
+                    });
+                } // if
+            });
+        } // if
+        
+        return updatedPromise;
+    });
+    const updateOrderApi = useMemo<readonly [typeof updateOrder, typeof updateOrderState]>(() => [
+        updateOrderProxy,
+        updateOrderState,
+    ], [updateOrderState]);
+    
+    
+    
     // jsx:
     return (
         <SimpleEditModelDialog<OrderOnTheWayModel>
@@ -142,7 +198,7 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
             
             
             // stores:
-            updateModelApi={useUpdateOrder as () => UpdateModelApi<OrderOnTheWayModel>}
+            updateModelApi={updateOrderApi as UpdateModelApi<OrderOnTheWayModel>}
         />
     );
 };
