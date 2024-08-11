@@ -23,9 +23,15 @@ import type {
     OrderOnTheWayValue,
 }                           from '@/components/editors/OrderOnTheWayEditor'
 
+// types:
+import type {
+    MutationArgs,
+}                           from '@/libs/types'
+
 // models:
 import type {
     OrderDetail,
+    OrderDetailWithOptions,
 }                           from '@/models'
 
 // stores:
@@ -47,10 +53,15 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
     // handlers:
     interface OrderOnTheWayModel {
         id               : OrderDetail['id']
-        shippingTracking : OrderOnTheWayValue
+        shippingTracking : OrderOnTheWayValue|null
     }
     const handleInitialValue   = useEvent<InitialValueHandler<OrderOnTheWayModel>>((edit, model) => {
-        const initialValue = model[edit];
+        const initialValue : OrderOnTheWayValue = model[edit] ?? {
+            shippingCarrier       : null,
+            shippingNumber        : null,
+            sendConfirmationEmail : undefined,
+        } satisfies OrderOnTheWayValue;
+        
         const {
             sendConfirmationEmail = (
                 !initialValue.shippingCarrier // default to send_notification if the shipping tracking CARRIER is NOT YET provided
@@ -69,10 +80,21 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
             shippingNumber        : initialValue.shippingNumber?.trim()  || null, // normalize to null if empty_string or only_spaces
             
             sendConfirmationEmail,
-        };
+        } satisfies OrderOnTheWayValue;
     });
     const handleTransformValue = useEvent<TransformValueHandler<OrderOnTheWayModel>>((editedValue, edit, model) => {
-        const initialValue = model[edit];
+        const initialValue : OrderOnTheWayValue = model[edit] ?? {
+            shippingCarrier       : null,
+            shippingNumber        : null,
+            sendConfirmationEmail : undefined,
+        } satisfies OrderOnTheWayValue;
+        
+        editedValue ??= {
+            shippingCarrier       : null,
+            shippingNumber        : null,
+            sendConfirmationEmail : undefined,
+        } satisfies OrderOnTheWayValue;
+        
         const {
             sendConfirmationEmail = (
                 !initialValue.shippingCarrier // default to send_notification if the shipping tracking CARRIER is NOT YET provided
@@ -100,7 +122,7 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
             },
             
             sendConfirmationEmail,
-        };
+        } satisfies MutationArgs<OrderDetailWithOptions>;
     });
     
     
