@@ -55,7 +55,7 @@ export interface TemplateVariantDetail
             |'createdAt'
             |'updatedAt'
             
-            |'templateVariantGroupId'
+            |'parentId'
         >
 {
 }

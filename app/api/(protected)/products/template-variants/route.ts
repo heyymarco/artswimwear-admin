@@ -224,7 +224,7 @@ You do not have the privilege to view the template_variant.`
         
         const templateVariantOris : TemplateVariantDetail[] = !id ? [] : await prisma.templateVariant.findMany({
             where : {
-                templateVariantGroupId : id,
+                parentId       : id,
             },
             select: {
                 id             : true,
