@@ -247,7 +247,8 @@ export const orderDetailSelect = {
             
             preference : {
                 select : {
-                    timezone : true,
+                    marketingOpt : true,
+                    timezone     : true,
                 },
             },
         },
@@ -263,7 +264,8 @@ export const orderDetailSelect = {
             
             preference : {
                 select : {
-                    timezone : true,
+                    marketingOpt : true,
+                    timezone     : true,
                 },
             },
         },

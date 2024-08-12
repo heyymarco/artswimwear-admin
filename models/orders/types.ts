@@ -176,12 +176,8 @@ export type CustomerOrGuestPreferenceDetail = Omit<CustomerOrGuestPreference,
     // records:
     |'id'
     
-    // data:
-    |'marketingOpt'
-    
     // relations:
-    |'customerId'
-    |'guestId'
+    |'parentId'
 >
 
 
