@@ -56,7 +56,7 @@ export async function POST(req: Request, res: Response): Promise<Response> {
             token : token,
         },
         select : {
-            order : {
+            parent : {
                 select : {
                     orderId : true,
                 },
@@ -73,10 +73,10 @@ export async function POST(req: Request, res: Response): Promise<Response> {
     
     await Promise.allSettled([
         // notify to the customer that the paymentConfirmation has been received:
-        sendConfirmationEmail(paymentConfirmationData.order.orderId, checkoutConfigServer.customerEmails.confirmed),
+        sendConfirmationEmail(paymentConfirmationData.parent.orderId, checkoutConfigServer.customerEmails.confirmed),
         
         // notify to admins that the paymentConfirmation has been received:
-        broadcastNotificationEmail(paymentConfirmationData.order.orderId, checkoutConfigServer.adminEmails.confirmed, { notificationType: 'emailOrderConfirmed' }),
+        broadcastNotificationEmail(paymentConfirmationData.parent.orderId, checkoutConfigServer.adminEmails.confirmed, { notificationType: 'emailOrderConfirmed' }),
     ]);
     
     

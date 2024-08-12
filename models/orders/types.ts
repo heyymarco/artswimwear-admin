@@ -83,7 +83,7 @@ export interface OrderDetail
         
         |'token'
         
-        |'orderId'
+        |'parentId'
     >>
     
     shipment : null|Partial<Omit<Shipment,

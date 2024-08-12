@@ -451,7 +451,7 @@ You do not have the privilege to modify the payment of the order.`
                     (payment?.type === 'MANUAL_PAID')
                     ? prisma.paymentConfirmation.updateMany({
                         where  : {
-                            orderId               : id,
+                            parentId              : id,
                             OR : [
                                 { reviewedAt      : { equals : null          } }, // never approved or rejected
                                 
@@ -469,7 +469,7 @@ You do not have the privilege to modify the payment of the order.`
                         rejectionReason
                         ? prisma.paymentConfirmation.updateMany({
                             where  : {
-                                orderId           : id,
+                                parentId          : id,
                                 
                                 reviewedAt        : { equals : null          }, // never approved or rejected (prevents to reject the *already_rejected/approved_payment_confirmation*)
                             },
@@ -481,8 +481,8 @@ You do not have the privilege to modify the payment of the order.`
                         : prisma.paymentConfirmation.updateMany({
                             where : {
                                 AND : [
-                                    { orderId : { equals : id } }, // never match, just for dummy transaction without change the size of the array
-                                    { orderId : { not    : id } }, // never match, just for dummy transaction without change the size of the array
+                                    { parentId : { equals : id } }, // never match, just for dummy transaction without change the size of the array
+                                    { parentId : { not    : id } }, // never match, just for dummy transaction without change the size of the array
                                 ],
                             },
                             data : {},
