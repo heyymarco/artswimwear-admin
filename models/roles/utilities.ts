@@ -1,11 +1,7 @@
 // models:
-import type {
-    Stock,
-}                           from '@prisma/client'
-
 import {
     type Prisma,
-}                           from '@prisma/client'
+}                           from '@/models'
 
 
 
