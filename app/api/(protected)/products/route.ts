@@ -756,7 +756,7 @@ You do not have the privilege to modify the product stock(s).`
                         },
                     })),
                     
-                    update : !variantGroupDiff.variantGroupMods.length ? undefined : variantGroupDiff.variantGroupMods.map(({id: groupId, variantDels, variantAdds, variantMods, ...restVariantGroup}) => ({
+                    update : !variantGroupDiff.variantGroupMods.length ? undefined : variantGroupDiff.variantGroupMods.map(({variantOris: _variantOris, id: groupId, variantDels, variantAdds, variantMods, ...restVariantGroup}) => ({
                         where : {
                             // conditions:
                             id : groupId,
