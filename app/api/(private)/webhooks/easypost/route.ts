@@ -68,9 +68,11 @@ export async function POST(req: Request, res: Response): Promise<Response> {
             
             const relatedOrder = await prisma.shipment.update({
                 where  : {
+                    // data:
                     trackerId : shippingTracker.id,
                 },
                 data   : {
+                    // data:
                     logs : {
                         deleteMany : {
                             // do DELETE ALL related log(s)
@@ -83,9 +85,13 @@ export async function POST(req: Request, res: Response): Promise<Response> {
                     },
                 },
                 select : {
+                    // relations:
                     parent : {
                         select : {
+                            // records:
                             id          : true,
+                            
+                            // data:
                             orderStatus : true,
                         },
                     },
@@ -99,12 +105,15 @@ export async function POST(req: Request, res: Response): Promise<Response> {
                 await Promise.all([
                     prisma.order.update({
                         where  : {
+                            // records:
                             id : relatedOrder.parent.id,
                         },
                         data   : {
+                            // data:
                             orderStatus : 'COMPLETED',
                         },
                         select : {
+                            // records:
                             id : true,
                         },
                     }),
