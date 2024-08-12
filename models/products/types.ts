@@ -100,7 +100,7 @@ export interface ProductDetail
 export interface StockDetail
     extends
         Omit<Stock,
-            |'productId'
+            |'parentId'
         >
 {
 }

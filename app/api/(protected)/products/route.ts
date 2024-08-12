@@ -883,7 +883,7 @@ You do not have the privilege to modify the product stock(s).`
             if (variantGroupDiff) {
                 const currentStocks = await prismaTransaction.stock.findMany({
                     where  : {
-                        productId : productDetail.id,
+                        parentId   : productDetail.id,
                     },
                     select : {
                         value      : true,
@@ -920,7 +920,7 @@ You do not have the privilege to modify the product stock(s).`
                         stocks : {
                             deleteMany : {
                                 // delete all within current `productId`
-                                productId : productDetail.id,
+                                parentId : productDetail.id,
                             },
                             create : stockMap,
                         },
@@ -970,7 +970,7 @@ You do not have the privilege to modify the product stock(s).`
                         stocks : {
                             deleteMany : {
                                 // delete all within current `productId`
-                                productId : productDetail.id,
+                                parentId : productDetail.id,
                             },
                             create : stockMap,
                         },
