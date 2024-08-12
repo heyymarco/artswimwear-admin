@@ -41,7 +41,7 @@ export interface VariantGroupDetail
             |'createdAt'
             |'updatedAt'
             
-            |'productId'
+            |'parentId'
         >
 {
     variants : VariantDetail[]

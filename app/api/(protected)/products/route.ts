@@ -420,7 +420,7 @@ You do not have the privilege to view the products.`
             const variantGroupDiff = (variantGroups === undefined) ? undefined : await (async (): Promise<VariantGroupDiff> => {
                 const variantGroupOris : VariantGroupDetail[] = !id ? [] : await prismaTransaction.variantGroup.findMany({
                     where : {
-                        productId : id,
+                        parentId : id,
                     },
                     select: {
                         id                 : true,
