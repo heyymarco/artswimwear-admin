@@ -112,8 +112,8 @@ You do not have the privilege to view the orders.`
     });
     if (!shipmentDetailData) {
         return Response.json({
-            error: 'Invalid shipping tracking token.',
-        }, { status: 400 }); // handled with error
+            error: 'No shipment found of this order.',
+        }, { status: 404 }); // handled with error
     } // if
     
     // sort the log by reported date:
