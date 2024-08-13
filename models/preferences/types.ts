@@ -6,12 +6,15 @@ import type {
 
 
 // types:
-export interface PreferenceData
+export interface AdminPreferenceData
     extends
+        // the id is mandatory:
         Pick<AdminPreference,
             // records:
             |'id'
         >,
+        
+        // other than id & parentId are optional:
         Partial<Omit<AdminPreference,
             // records:
             |'id'
@@ -19,21 +22,24 @@ export interface PreferenceData
             
             
             // relations:
-            |'adminId'
+            |'parentId'
         >>
 {
 }
-export interface PreferenceDetail
+
+
+
+export interface AdminPreferenceDetail
     extends
         Omit<AdminPreference,
             // relations:
-            |'adminId'
+            |'parentId'
         >
 {
 }
 
 type NoUndefinedField<T> = { [P in keyof T]-?: NoUndefinedField<NonNullable<T[P]>> }
-export const defaultPreferenceDetail : NoUndefinedField<Omit<PreferenceDetail, 'id'>> = {
+export const defaultAdminPreferenceDetail : NoUndefinedField<Omit<AdminPreferenceDetail, 'id'>> = {
     // data:
     // emailOrderNewPending : true, // TODO: restore this line
     // emailOrderNewPaid    : true, // TODO: restore this line

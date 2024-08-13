@@ -52,8 +52,8 @@ import {
 
 // models:
 import {
-    type PreferenceDetail,
-    defaultPreferenceDetail,
+    type AdminPreferenceDetail,
+    defaultAdminPreferenceDetail,
 }                           from '@/models'
 
 // stores:
@@ -77,7 +77,7 @@ import './EditOrderNotificationsDialogStyles';
 export interface EditOrderNotificationsDialogProps
     extends
         // bases:
-        Omit<ImplementedComplexEditModelDialogProps<PreferenceDetail>,
+        Omit<ImplementedComplexEditModelDialogProps<AdminPreferenceDetail>,
             // data:
             |'model'
         >
@@ -98,7 +98,7 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
     
     
     // states:
-    const [model, setModel] = useState<PreferenceDetail|null>(null);
+    const [model, setModel] = useState<AdminPreferenceDetail|null>(null);
     
     const [isModified, setIsModified] = useState<boolean>(false);
     
@@ -131,22 +131,22 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
         
         // actions:
         setModel(modelData);
-        setEmailOrderNewPending(modelData.emailOrderNewPending ?? defaultPreferenceDetail.emailOrderNewPending);
-        setEmailOrderNewPaid(   modelData.emailOrderNewPaid    ?? defaultPreferenceDetail.emailOrderNewPaid   );
-        setEmailOrderCanceled(  modelData.emailOrderCanceled   ?? defaultPreferenceDetail.emailOrderCanceled  );
-        setEmailOrderExpired(   modelData.emailOrderExpired    ?? defaultPreferenceDetail.emailOrderExpired   );
-        setEmailOrderConfirmed( modelData.emailOrderConfirmed  ?? defaultPreferenceDetail.emailOrderConfirmed );
-        setEmailOrderRejected(  modelData.emailOrderRejected   ?? defaultPreferenceDetail.emailOrderRejected  );
-        setEmailOrderProcessing(modelData.emailOrderProcessing ?? defaultPreferenceDetail.emailOrderProcessing)
-        setEmailOrderShipping(  modelData.emailOrderShipping   ?? defaultPreferenceDetail.emailOrderShipping  );
-        setEmailOrderCompleted( modelData.emailOrderCompleted  ?? defaultPreferenceDetail.emailOrderCompleted );
+        setEmailOrderNewPending(modelData.emailOrderNewPending ?? defaultAdminPreferenceDetail.emailOrderNewPending);
+        setEmailOrderNewPaid(   modelData.emailOrderNewPaid    ?? defaultAdminPreferenceDetail.emailOrderNewPaid   );
+        setEmailOrderCanceled(  modelData.emailOrderCanceled   ?? defaultAdminPreferenceDetail.emailOrderCanceled  );
+        setEmailOrderExpired(   modelData.emailOrderExpired    ?? defaultAdminPreferenceDetail.emailOrderExpired   );
+        setEmailOrderConfirmed( modelData.emailOrderConfirmed  ?? defaultAdminPreferenceDetail.emailOrderConfirmed );
+        setEmailOrderRejected(  modelData.emailOrderRejected   ?? defaultAdminPreferenceDetail.emailOrderRejected  );
+        setEmailOrderProcessing(modelData.emailOrderProcessing ?? defaultAdminPreferenceDetail.emailOrderProcessing)
+        setEmailOrderShipping(  modelData.emailOrderShipping   ?? defaultAdminPreferenceDetail.emailOrderShipping  );
+        setEmailOrderCompleted( modelData.emailOrderCompleted  ?? defaultAdminPreferenceDetail.emailOrderCompleted );
         console.log('loaded');
     }, [modelData]);
     
     
     
     // handlers:
-    const handleUpdate         = useEvent<UpdateHandler<PreferenceDetail>>(async ({id}) => {
+    const handleUpdate         = useEvent<UpdateHandler<AdminPreferenceDetail>>(async ({id}) => {
         return await updatePreference({
             id : id ?? '',
             
@@ -162,7 +162,7 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
         }).unwrap();
     });
     
-    const handleConfirmUnsaved = useEvent<ConfirmUnsavedHandler<PreferenceDetail>>(() => {
+    const handleConfirmUnsaved = useEvent<ConfirmUnsavedHandler<AdminPreferenceDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>
@@ -175,7 +175,7 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
     
     // jsx:
     return (
-        <ComplexEditModelDialog<PreferenceDetail>
+        <ComplexEditModelDialog<AdminPreferenceDetail>
             // other props:
             {...restComplexEditModelDialogProps}
             

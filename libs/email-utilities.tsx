@@ -17,7 +17,7 @@ import {
     
     
     orderAndDataSelectAndExtra,
-    defaultPreferenceDetail,
+    defaultAdminPreferenceDetail,
 }                           from '@/models'
 import {
     type AdminPreference,
@@ -383,15 +383,15 @@ export const broadcastNotificationEmail = async (orderId: string, emailConfig: E
                 
                 
                 // relations:
-                adminPreference : {
+                preference : {
                     select : {
                         [notificationType] : true,
                     },
                 },
             },
         }))
-        .filter(({adminPreference}) =>
-            (adminPreference?.[notificationType] ?? defaultPreferenceDetail[notificationType]) === true
+        .filter(({preference}) =>
+            (preference?.[notificationType] ?? defaultAdminPreferenceDetail[notificationType]) === true
         )
     );
     const sentResults = (

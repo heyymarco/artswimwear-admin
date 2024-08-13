@@ -20,13 +20,9 @@ import {
 
 // models:
 import {
-    defaultPreferenceDetail,
+    defaultAdminPreferenceDetail,
     preferenceDetailSelect,
     convertPreferenceDetailDataToPreferenceDetail,
-}                           from '@/models'
-export {
-    type PreferenceData,
-    type PreferenceDetail,
 }                           from '@/models'
 import {
     prisma,
@@ -89,15 +85,15 @@ router
     const preferenceDetailData = (
         (await prisma.adminPreference.findUnique({
             where  : {
-                adminId : adminId,
+                parentId : adminId,
             },
             select : preferenceDetailSelect,
         }))
         ??
         (await prisma.adminPreference.create({
             data   : {
-                adminId : adminId,
-                ...defaultPreferenceDetail,
+                parentId : adminId,
+                ...defaultAdminPreferenceDetail,
             },
             select : preferenceDetailSelect,
         }))
@@ -173,7 +169,7 @@ router
     try {
         const preferenceDetailData = await prisma.adminPreference.update({
             where  : {
-                adminId : adminId,
+                parentId : adminId,
             },
             data   : {
                 // data:

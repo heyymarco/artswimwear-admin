@@ -1,6 +1,6 @@
 // models:
 import {
-    type PreferenceDetail,
+    type AdminPreferenceDetail,
 }                           from './types'
 import {
     type Prisma,
@@ -28,15 +28,15 @@ export const preferenceDetailSelect = {
     
     
     // relations:
-    adminId              : true,
+    parentId             : true,
 } satisfies Prisma.AdminPreferenceSelect;
-export const convertPreferenceDetailDataToPreferenceDetail = (preferenceDetailData: Awaited<ReturnType<typeof prisma.adminPreference.findFirstOrThrow<{ select: typeof preferenceDetailSelect }>>>): PreferenceDetail => {
+export const convertPreferenceDetailDataToPreferenceDetail = (preferenceDetailData: Awaited<ReturnType<typeof prisma.adminPreference.findFirstOrThrow<{ select: typeof preferenceDetailSelect }>>>): AdminPreferenceDetail => {
     const {
-        adminId,
+        parentId,
         ...restPreferenceDetail
     } = preferenceDetailData;
     return {
-        id : adminId, // use adminId as the id of PreferenceDetail model
+        id : parentId, // use parentId (adminId) as the id of AdminPreferenceDetail model
         ...restPreferenceDetail,
-    } satisfies PreferenceDetail;
+    } satisfies AdminPreferenceDetail;
 };

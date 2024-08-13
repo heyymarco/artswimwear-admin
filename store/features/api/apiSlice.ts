@@ -24,19 +24,13 @@ import {
     type ProductDetail,
     type TemplateVariantGroupDetail,
     type AdminDetail,
+    type AdminPreferenceData,
+    type AdminPreferenceDetail,
     
     type ShipmentDetail,
 }                                               from '@/models'
 
 // apis:
-import type {
-    PreferenceData,
-    PreferenceDetail,
-}                                               from '@/app/api/(protected)/preferences/route'
-export type {
-    PreferenceData,
-    PreferenceDetail,
-}                                               from '@/app/api/(protected)/preferences/route'
 import type { ImageId }                         from '@/app/api/(protected)/uploads/route'
 export type { ImageId }                         from '@/app/api/(protected)/uploads/route'
 
@@ -538,7 +532,7 @@ export const apiSlice = createApi({
             }),
         }),
         
-        getPreference               : builder.query<PreferenceDetail, void>({
+        getPreference               : builder.query<AdminPreferenceDetail, void>({
             query : () => ({
                 url    : 'preferences',
                 method : 'GET',
@@ -552,7 +546,7 @@ export const apiSlice = createApi({
                 ];
             },
         }),
-        updatePreference            : builder.mutation<PreferenceDetail, MutationArgs<PreferenceData>>({
+        updatePreference            : builder.mutation<AdminPreferenceDetail, MutationArgs<AdminPreferenceData>>({
             query: (patch) => ({
                 url    : 'preferences',
                 method : 'PATCH',
