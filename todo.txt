@@ -1,3 +1,22 @@
+rename props:
+
+adminAccounts
+adminSessions
+adminCredentials
+adminPasswordResetToken
+adminEmailConfirmationToken
+
+customerAccounts
+customerSessions
+customerCredentials
+customerPasswordResetToken
+customerEmailConfirmationToken
+
+moved items after shippingCost, both for DraftOrder and Order
+change to parentId both for DraftOrdersOnProducts and OrdersOnProducts
+
+
+
 [high prior] add shippings setting
 [high prior] add shipping tracking
 [high prior] add push notifications & refresh page
