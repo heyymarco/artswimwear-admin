@@ -26,6 +26,7 @@ import type {
 
 // models:
 import {
+    type Prisma,
     type AdminDetail,
 }                           from '@/models'
 
@@ -124,15 +125,15 @@ You do not have the privilege to view the admins.`
         prisma.admin.count(),
         prisma.admin.findMany({
             select: {
-                id               : true,
+                id          : true,
                 
-                name             : true,
-                email            : true,
-                image            : true,
+                name        : true,
+                email       : true,
+                image       : true,
                 
-                adminRoleId      : true,
+                adminRoleId : true,
                 
-                adminCredentials : {
+                credentials : {
                     select : {
                         username : true,
                     },
@@ -149,12 +150,12 @@ You do not have the privilege to view the admins.`
         total    : total,
         entities : paged.map((admin) => {
             const {
-                adminCredentials,
+                credentials,
             ...restAdmin} = admin;
             
             return {
                 ...restAdmin,
-                username : adminCredentials?.username ?? null,
+                username : credentials?.username ?? null,
             };
         }),
     };
@@ -299,26 +300,26 @@ You do not have the privilege to modify the admin's role.`
             adminRoleId,
         };
         const select = {
-            id               : true,
+            id          : true,
             
-            name             : true,
-            email            : true,
-            image            : true,
+            name        : true,
+            email       : true,
+            image       : true,
             
-            adminRoleId      : true,
+            adminRoleId : true,
             
-            adminCredentials : {
+            credentials : {
                 select : {
                     username : true,
                 },
             },
-        };
-        const {adminCredentials, ...restAdmin} = (
+        } satisfies Prisma.AdminSelect;
+        const {credentials, ...restAdmin} = (
             !id
             ? await prisma.admin.create({
                 data   : {
                     ...data,
-                    adminCredentials : (username !== undefined) ? {
+                    credentials : (username !== undefined) ? {
                         create : {
                             username,
                         },
@@ -332,7 +333,7 @@ You do not have the privilege to modify the admin's role.`
                 },
                 data   : {
                     ...data,
-                    adminCredentials : (username !== undefined) ? {
+                    credentials : (username !== undefined) ? {
                         upsert : {
                             update : {
                                 username,
@@ -348,7 +349,7 @@ You do not have the privilege to modify the admin's role.`
         );
         const adminDetail : AdminDetail = {
             ...restAdmin,
-            username : adminCredentials?.username ?? null,
+            username : credentials?.username ?? null,
         };
         return NextResponse.json(adminDetail); // handled with success
     }

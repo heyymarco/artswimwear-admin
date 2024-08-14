@@ -1,17 +1,3 @@
-rename props:
-
-adminAccounts
-adminSessions
-adminCredentials
-adminPasswordResetToken
-adminEmailConfirmationToken
-
-customerAccounts
-customerSessions
-customerCredentials
-customerPasswordResetToken
-customerEmailConfirmationToken
-
 moved items after shippingCost, both for DraftOrder and Order
 change to parentId both for DraftOrdersOnProducts and OrdersOnProducts
 
