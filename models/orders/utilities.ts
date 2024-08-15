@@ -202,6 +202,7 @@ export const orderAndDataSelectAndExtra = {
     shipment            : {
         select : {
             token       : true,
+            
             carrier     : true,
             number      : true,
             eta         : {

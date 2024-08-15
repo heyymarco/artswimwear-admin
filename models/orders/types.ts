@@ -71,8 +71,11 @@ export interface OrderDetail
     
     // relations:
     items    : Omit<OrdersOnProducts,
+        // records:
         |'id'
-        |'orderId'
+        
+        // relations:
+        |'parentId'
     >[]
     
     customer : CustomerDetail|null
@@ -87,11 +90,15 @@ export interface OrderDetail
     >>
     
     shipment : null|Partial<Omit<Shipment,
+        // records:
         |'id'
         
+        // data:
         |'token'
+        |'trackerId'
         
-        |'orderId'
+        // relations:
+        |'parentId'
     >>
 }
 
@@ -279,10 +286,12 @@ export type CancelOrder = Pick<OrderDetail,
         |'type'
     >|null
     items : Pick<OrdersOnProducts,
+        // data:
+        |'quantity'
+        
+        // relations:
         |'productId'
         |'variantIds'
-        
-        |'quantity'
     >[]
 }
 
