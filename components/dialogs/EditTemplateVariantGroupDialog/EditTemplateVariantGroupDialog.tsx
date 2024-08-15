@@ -95,7 +95,7 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
     
     const model : VariantGroupDetail|null = !templateVariantGroupDetail ? null : ((): VariantGroupDetail => {
         const {
-            templateVariants : variants,
+            variants,
             ...restVariantGroupDetail
         } = templateVariantGroupDetail;
         
@@ -119,16 +119,14 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
         const {
             id,
             sort : _sort, // remove
-            // @ts-ignore
-            templateVariants : templateVariantsExist,
-            variants         : templateVariants = templateVariantsExist,
+            variants,
             ...restVariantGroupDetail
         } = variantGroupDetail;
         
         const templateVariantGroupDetail : TemplateVariantGroupDetail = {
             ...restVariantGroupDetail,
             id : (!id || (id[0] === ' ')) ? '' : id,
-            templateVariants,
+            variants,
         };
         
         return await updateTemplateVariantGroup(templateVariantGroupDetail).unwrap();
@@ -151,15 +149,13 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
         if (onExpandedChange) {
             const {
                 sort : _sort, // remove
-                // @ts-ignore
-                templateVariants : templateVariantsExist,
-                variants         : templateVariants = templateVariantsExist,
+                variants,
                 ...restVariantGroupDetail
             } = data;
             
             const templateVariantGroupDetail : PartialModel<TemplateVariantGroupDetail> = {
                 ...restVariantGroupDetail,
-                templateVariants,
+                variants,
             };
             onExpandedChange({...event, data: templateVariantGroupDetail});
         } // if

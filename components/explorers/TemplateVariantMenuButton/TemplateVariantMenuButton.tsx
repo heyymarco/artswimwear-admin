@@ -263,9 +263,7 @@ const TemplateVariantMenuItems = (props: TemplateVariantMenuItemsProps): JSX.Ele
         
         
         const {
-            // @ts-ignore
-            variants         : variantsExist,
-            templateVariants : variants = variantsExist,
+            variants,
             ...restTemplateVariantGroupDetail
         } = templateVariantGroupDetail;
         

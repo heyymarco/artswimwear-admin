@@ -129,7 +129,7 @@ const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): J
     const {
         id,
         name,
-        templateVariants,
+        variants,
     } = model;
     
     
@@ -239,10 +239,10 @@ const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): J
             
             <p className='preview'>
                 {
-                    !templateVariants.length
+                    !variants.length
                     ? <span className='noValue'>No Variant</span>
                     : <span className='values'>
-                        {templateVariants.map((variant, variantIndex) =>
+                        {variants.map((variant, variantIndex) =>
                             <VariantIndicator key={variantIndex} model={variant} />
                         )}
                     </span>

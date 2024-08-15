@@ -66,7 +66,7 @@ export interface TemplateVariantGroupDetail
             |'updatedAt'
         >
 {
-    templateVariants : TemplateVariantDetail[]
+    variants : TemplateVariantDetail[]
 }
 
 

@@ -3,6 +3,12 @@ import {
     type Stock,
 }                           from '@prisma/client'
 
+// models:
+import {
+    // types:
+    type Prisma,
+}                           from '@/models'
+
 // internals:
 import {
     // types:
@@ -19,6 +25,33 @@ import {
 
 
 // utilities:
+export const templateVariantGroupDetailSelect = {
+    id                 : true,
+    
+    name               : true,
+    hasDedicatedStocks : true,
+    
+    variants   : {
+        select: {
+            id             : true,
+            
+            visibility     : true,
+            sort           : true,
+            
+            name           : true,
+            price          : true,
+            shippingWeight : true,
+            images         : true,
+        },
+        // doesn't work:
+        // orderBy : {
+        //     sort: 'asc',
+        // },
+    },
+} satisfies Prisma.TemplateVariantGroupSelect;
+
+
+
 export interface VariantGroupDiff {
     variantGroupOris : VariantGroupDetail[]
     
@@ -130,46 +163,46 @@ export const createVariantGroupDiff = (variantGroups: VariantGroupDetail[], vari
 
 
 export interface TemplateVariantDiff {
-    templateVariantOris : TemplateVariantDetail[]
+    variantOris : TemplateVariantDetail[]
     
-    templateVariantDels : string[]
-    templateVariantAdds : Omit<TemplateVariantDetail, 'id'>[]
-    templateVariantMods : TemplateVariantDetail[]
+    variantDels : string[]
+    variantAdds : Omit<TemplateVariantDetail, 'id'>[]
+    variantMods : TemplateVariantDetail[]
 }
-export const createTemplateVariantDiff = (templateVariants: TemplateVariantDetail[], templateVariantOris : TemplateVariantDetail[]): TemplateVariantDiff => {
-    const templateVariantDels : TemplateVariantDiff['templateVariantDels'] = (() => {
-        const postedIds  : string[] = templateVariants.map(selectId);
-        const currentIds : string[] = templateVariantOris.map(selectId) ?? [];
+export const createTemplateVariantDiff = (variants: TemplateVariantDetail[], variantOris : TemplateVariantDetail[]): TemplateVariantDiff => {
+    const variantDels : TemplateVariantDiff['variantDels'] = (() => {
+        const postedIds  : string[] = variants.map(selectId);
+        const currentIds : string[] = variantOris.map(selectId) ?? [];
         return currentIds.filter((currentId) => !postedIds.includes(currentId));
     })();
-    const templateVariantAdds : TemplateVariantDiff['templateVariantAdds'] = [];
-    const templateVariantMods : TemplateVariantDiff['templateVariantMods'] = [];
-    let templateVariantSortCounter = 0;
-    for (const {id: templateVariantId, sort, ...restTemplateVariant} of templateVariants) {
-        if (!templateVariantId || (templateVariantId[0] === ' ')) {
-            templateVariantAdds.push({
+    const variantAdds : TemplateVariantDiff['variantAdds'] = [];
+    const variantMods : TemplateVariantDiff['variantMods'] = [];
+    let variantSortCounter = 0;
+    for (const {id: variantId, sort, ...restVariant} of variants) {
+        if (!variantId || (variantId[0] === ' ')) {
+            variantAdds.push({
                 // data:
-                sort: templateVariantSortCounter++, // normalize sort, zero based
-                ...restTemplateVariant,
+                sort: variantSortCounter++, // normalize sort, zero based
+                ...restVariant,
             });
             continue;
         } // if
         
         
         
-        templateVariantMods.push({
+        variantMods.push({
             // data:
-            id   : templateVariantId,
-            sort : templateVariantSortCounter++, // normalize sort, zero based
-            ...restTemplateVariant,
+            id   : variantId,
+            sort : variantSortCounter++, // normalize sort, zero based
+            ...restVariant,
         });
     } // for
     return {
-        templateVariantOris,
+        variantOris,
         
-        templateVariantDels,
-        templateVariantAdds,
-        templateVariantMods,
+        variantDels,
+        variantAdds,
+        variantMods,
     };
 }
 

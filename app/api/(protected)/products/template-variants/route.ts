@@ -22,6 +22,7 @@ import {
 // models:
 import {
     // types:
+    type Prisma,
     type TemplateVariantDetail,
     type TemplateVariantGroupDetail,
     type TemplateVariantDiff,
@@ -29,6 +30,8 @@ import {
     
     
     // utilities:
+    templateVariantGroupDetailSelect,
+    
     selectId,
     createTemplateVariantDiff,
 }                           from '@/models'
@@ -110,7 +113,7 @@ You do not have the privilege to view the template_variant.`
                 name               : true,
                 hasDedicatedStocks : true,
                 
-                templateVariants   : {
+                variants           : {
                     select: {
                         id             : true,
                         
@@ -148,45 +151,45 @@ You do not have the privilege to view the template_variant.`
     // return NextResponse.json({ message: 'server error' }, { status: 500 }); // handled with error
     
     //#region parsing request
-    const templateVariantGroupRaw = await req.json();
+    const variantGroupRaw = await req.json();
     //#endregion parsing request
     
     
     
     //#region validating request
     if (!(
-        (typeof(templateVariantGroupRaw) === 'object')
+        (typeof(variantGroupRaw) === 'object')
         &&
-        (Object.keys(templateVariantGroupRaw).length === 4)
+        (Object.keys(variantGroupRaw).length === 4)
         &&
-        /* 1: */ ((typeof(templateVariantGroupRaw.id) === 'string') && (!templateVariantGroupRaw.id || (templateVariantGroupRaw.id.length <= 40)))
+        /* 1: */ ((typeof(variantGroupRaw.id) === 'string') && (!variantGroupRaw.id || (variantGroupRaw.id.length <= 40)))
         &&
-        /* 2: */ ((typeof(templateVariantGroupRaw.name) === 'string') && !!templateVariantGroupRaw.name)
+        /* 2: */ ((typeof(variantGroupRaw.name) === 'string') && !!variantGroupRaw.name)
         &&
-        /* 3: */ (typeof(templateVariantGroupRaw.hasDedicatedStocks) === 'boolean')
+        /* 3: */ (typeof(variantGroupRaw.hasDedicatedStocks) === 'boolean')
         &&
         /* 4: */ ((): boolean => {
-            const {templateVariants: templateVariantsRaw} = templateVariantGroupRaw;
+            const {variants: variantsRaw} = variantGroupRaw;
             return (
-                Array.isArray(templateVariantsRaw)
+                Array.isArray(variantsRaw)
                 &&
-                templateVariantsRaw.every((templateVariantRaw) =>
-                    (Object.keys(templateVariantRaw).length === 7)
+                variantsRaw.every((variantRaw) =>
+                    (Object.keys(variantRaw).length === 7)
                     &&
-                    /* 1: */ ((typeof(templateVariantRaw.id) === 'string') && ((!templateVariantRaw.id || (templateVariantRaw.id[0] === ' ')) || (!!templateVariantGroupRaw.id && (templateVariantRaw.id.length <= 40))))
+                    /* 1: */ ((typeof(variantRaw.id) === 'string') && ((!variantRaw.id || (variantRaw.id[0] === ' ')) || (!!variantGroupRaw.id && (variantRaw.id.length <= 40))))
                     &&
-                    /* 2: */ ((typeof(templateVariantRaw.visibility) === 'string') && ['PUBLISHED', 'DRAFT'].includes(templateVariantRaw.visibility))
+                    /* 2: */ ((typeof(variantRaw.visibility) === 'string') && ['PUBLISHED', 'DRAFT'].includes(variantRaw.visibility))
                     &&
-                    /* 3: */ ((typeof(templateVariantRaw.sort) === 'number') && (templateVariantRaw.sort >= Number.MIN_SAFE_INTEGER) && (templateVariantRaw.sort <= Number.MAX_SAFE_INTEGER))
+                    /* 3: */ ((typeof(variantRaw.sort) === 'number') && (variantRaw.sort >= Number.MIN_SAFE_INTEGER) && (variantRaw.sort <= Number.MAX_SAFE_INTEGER))
                     &&
-                    /* 4: */ ((typeof(templateVariantGroupRaw.name) === 'string') && !!templateVariantGroupRaw.name)
+                    /* 4: */ ((typeof(variantGroupRaw.name) === 'string') && !!variantGroupRaw.name)
                     &&
-                    /* 5: */ ((templateVariantRaw.price === null) || ((typeof(templateVariantRaw.price) === 'number') && (templateVariantRaw.price >= 0) && (templateVariantRaw.price <= Number.MAX_SAFE_INTEGER)))
+                    /* 5: */ ((variantRaw.price === null) || ((typeof(variantRaw.price) === 'number') && (variantRaw.price >= 0) && (variantRaw.price <= Number.MAX_SAFE_INTEGER)))
                     &&
-                    /* 6: */ ((templateVariantRaw.shippingWeight === null) || ((typeof(templateVariantRaw.shippingWeight) === 'number') && (templateVariantRaw.shippingWeight >= 0) && (templateVariantRaw.shippingWeight <= Number.MAX_SAFE_INTEGER)))
+                    /* 6: */ ((variantRaw.shippingWeight === null) || ((typeof(variantRaw.shippingWeight) === 'number') && (variantRaw.shippingWeight >= 0) && (variantRaw.shippingWeight <= Number.MAX_SAFE_INTEGER)))
                     &&
                     /* 7: */ ((): boolean => {
-                        const {images: imagesRaw} = templateVariantRaw;
+                        const {images: imagesRaw} = variantRaw;
                         return (
                             Array.isArray(imagesRaw)
                             &&
@@ -208,21 +211,21 @@ You do not have the privilege to view the template_variant.`
     
     
     //#region normalize templateVariant
-    const templateVariantGroup : TemplateVariantGroupDetail = templateVariantGroupRaw;
+    const variantGroup : TemplateVariantGroupDetail = variantGroupRaw;
     const {
         id,
         name,
         hasDedicatedStocks,
-    } = templateVariantGroup;
+    } = variantGroup;
     
     const templateVariantDiff = await (async (): Promise<TemplateVariantDiff> => {
         const {
-            templateVariants,
-        } = templateVariantGroup;
+            variants,
+        } = variantGroup;
         
         
         
-        const templateVariantOris : TemplateVariantDetail[] = !id ? [] : await prisma.templateVariant.findMany({
+        const variantOris : TemplateVariantDetail[] = !id ? [] : await prisma.templateVariant.findMany({
             where : {
                 parentId       : id,
             },
@@ -241,7 +244,7 @@ You do not have the privilege to view the template_variant.`
                 sort: 'asc',
             },
         });
-        return createTemplateVariantDiff(templateVariants, templateVariantOris);
+        return createTemplateVariantDiff(variants, variantOris);
     })();
     //#endregion normalize templateVariant
     
@@ -250,17 +253,17 @@ You do not have the privilege to view the template_variant.`
     //#region validating privileges
     const session = (req as any).session as Session;
     const {
-        templateVariantOris,
+        variantOris,
         
-        templateVariantDels,
-        templateVariantAdds,
-        templateVariantMods,
+        variantDels,
+        variantAdds,
+        variantMods,
     } = templateVariantDiff;
     if (!id) {
         if (
             !session.role?.product_c
             &&
-            !!templateVariantAdds.length
+            !!variantAdds.length
         ) return NextResponse.json({ error:
 `Access denied.
 
@@ -271,7 +274,7 @@ You do not have the privilege to add new template_variant.`
         if (
             !session.role?.product_d
             &&
-            !!templateVariantDels.length
+            !!variantDels.length
         ) return NextResponse.json({ error:
 `Access denied.
 
@@ -283,11 +286,11 @@ You do not have the privilege to delete the template_variant.`
         if (
             !session.role?.product_ud
             &&
-            templateVariantMods
+            variantMods
             .some(({id, name}) => {
-                const templateVariantOri = templateVariantOris.find(({id: idOri}) => (idOri === id));
+                const variantOri = variantOris.find(({id: idOri}) => (idOri === id));
                 return (
-                    (name !== templateVariantOri?.name)
+                    (name !== variantOri?.name)
                 );
             })
         ) return NextResponse.json({ error:
@@ -302,13 +305,13 @@ You do not have the privilege to modify the template_variant name.`
             !session.role?.product_ud
             &&
             !((): boolean => {
-                // compare the order of templateVariants, ignore added|deleted items:
-                const templateVariantModIds = templateVariantMods.map(selectId);
-                const templateVariantDelIds = templateVariantDels;
-                const templateVariantOriIds = templateVariantOris.map(selectId).filter((id) => !templateVariantDelIds.includes(id));
-                if (templateVariantModIds.length !== templateVariantOriIds.length) return false; // not_deep_equal
-                for (let templateVariantIndex = 0; templateVariantIndex < templateVariantModIds.length; templateVariantIndex++) {
-                    if (templateVariantModIds[templateVariantIndex] !== templateVariantOriIds[templateVariantIndex]) return false; // not_deep_equal
+                // compare the order of variants, ignore added|deleted items:
+                const variantModIds = variantMods.map(selectId);
+                const variantDelIds = variantDels;
+                const variantOriIds = variantOris.map(selectId).filter((id) => !variantDelIds.includes(id));
+                if (variantModIds.length !== variantOriIds.length) return false; // not_deep_equal
+                for (let variantIndex = 0; variantIndex < variantModIds.length; variantIndex++) {
+                    if (variantModIds[variantIndex] !== variantOriIds[variantIndex]) return false; // not_deep_equal
                 } // for
                 
                 
@@ -326,13 +329,13 @@ You do not have the privilege to modify the template_variant order.`
         if (
             !session.role?.product_up
             &&
-            templateVariantMods
+            variantMods
             .some(({id, price, shippingWeight}) => {
-                const templateVariantOri = templateVariantOris.find(({id: idOri}) => (idOri === id));
+                const variantOri = variantOris.find(({id: idOri}) => (idOri === id));
                 return (
-                    (price !== templateVariantOri?.price)
+                    (price !== variantOri?.price)
                     ||
-                    (shippingWeight !== templateVariantOri.shippingWeight)
+                    (shippingWeight !== variantOri.shippingWeight)
                 );
             })
         ) return NextResponse.json({ error:
@@ -346,11 +349,11 @@ You do not have the privilege to modify the template_variant price and/or shippi
         if (
             !session.role?.product_uv
             &&
-            templateVariantMods
+            variantMods
             .some(({id, visibility}) => {
-                const templateVariantOri = templateVariantOris.find(({id: idOri}) => (idOri === id));
+                const variantOri = variantOris.find(({id: idOri}) => (idOri === id));
                 return (
-                    (visibility !== templateVariantOri?.visibility)
+                    (visibility !== variantOri?.visibility)
                 );
             })
         ) return NextResponse.json({ error:
@@ -371,15 +374,15 @@ You do not have the privilege to modify the template_variant visibility.`
             hasDedicatedStocks,
             
             // relations:
-            templateVariants : {
-                delete : !templateVariantDiff.templateVariantDels.length ? undefined : templateVariantDiff.templateVariantDels.map((templateId) => ({
+            variants : {
+                delete : !templateVariantDiff.variantDels.length ? undefined : templateVariantDiff.variantDels.map((templateId) => ({
                     // conditions:
                     id : templateId,
                 })),
                 
-                create : !templateVariantDiff.templateVariantAdds.length ? undefined : templateVariantDiff.templateVariantAdds,
+                create : !templateVariantDiff.variantAdds.length ? undefined : templateVariantDiff.variantAdds,
                 
-                update : !templateVariantDiff.templateVariantMods.length ? undefined : templateVariantDiff.templateVariantMods.map(({id: templateId, ...restTemplateVariant}) => ({
+                update : !templateVariantDiff.variantMods.length ? undefined : templateVariantDiff.variantMods.map(({id: templateId, ...restTemplateVariant}) => ({
                     where : {
                         // conditions:
                         id : templateId,
@@ -387,48 +390,24 @@ You do not have the privilege to modify the template_variant visibility.`
                     data  : restTemplateVariant,
                 })),
             },
-        };
-        const select = {
-            id                 : true,
-            
-            name               : true,
-            hasDedicatedStocks : true,
-            
-            templateVariants   : {
-                select: {
-                    id             : true,
-                    
-                    visibility     : true,
-                    sort           : true,
-                    
-                    name           : true,
-                    price          : true,
-                    shippingWeight : true,
-                    images         : true,
-                },
-                // doesn't work:
-                // orderBy : {
-                //     sort: 'asc',
-                // },
-            },
-        };
+        } satisfies Prisma.TemplateVariantGroupUpdateInput;
         const templateVariantGroupDetail : TemplateVariantGroupDetail = (
             !id
             ? await prisma.templateVariantGroup.create({
                 data   : data,
-                select : select,
+                select : templateVariantGroupDetailSelect,
             })
             : await prisma.templateVariantGroup.update({
                 where  : {
                     id : id,
                 },
                 data   : data,
-                select : select,
+                select : templateVariantGroupDetailSelect,
             })
         );
         
         // a workaround of non_working_orderBy of template.create() & template.update():
-        templateVariantGroupDetail.templateVariants.sort(({sort: sortA}, {sort: sortB}) => sortA - sortB); // mutate
+        templateVariantGroupDetail.variants.sort(({sort: sortA}, {sort: sortB}) => sortA - sortB); // mutate
         
         return NextResponse.json(templateVariantGroupDetail); // handled with success
     }
