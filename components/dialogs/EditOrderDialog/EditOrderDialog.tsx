@@ -136,6 +136,9 @@ import {
     SelectCurrencyEditor,
 }                           from '@/components/editors/SelectCurrencyEditor'
 import {
+    CollapsibleSuspense,
+}                           from '@/components/CollapsibleSuspense'
+import {
     SimpleEditAddressDialog,
 }                           from '@/components/dialogs/SimpleEditAddressDialog'
 import {
@@ -232,7 +235,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     // rest props:
     const {
         // data:
-        model = null,
+        model : modelRaw,
         
         
         
@@ -244,6 +247,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         // states:
         defaultExpandedTabIndex = (autoFocusOn === 'ConfirmPaymentButton') ? 1 : undefined,
     ...restComplexEditModelDialogProps} = props;
+    const model = modelRaw!;
     
     
     
@@ -338,15 +342,13 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         showDialog,
     } = useDialogMessage();
     
+    type EditMode = Exclude<keyof OrderDetail, 'id'>
+    const [editMode, setEditMode] = useState<EditMode|null>(null);
+    
     
     
     // handlers:
     const handleEditShippingAddress  = useEvent(() => {
-        // conditions:
-        if (!model) return; // the model is not exist => nothing to update
-        
-        
-        
         showDialog(
             <SimpleEditAddressDialog
                 // data:
@@ -395,11 +397,6 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         );
     });
     const handleChangeOrderStatus    = useEvent(async (newOrderStatus: OrderStatus) => {
-        // conditions:
-        if (!model) return; // the model is not exist => nothing to update
-        
-        
-        
         // actions:
         await updateOrder({
             id          : model.id,
@@ -407,11 +404,6 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         }).unwrap();
     });
     const handleViewShipment         = useEvent(() => {
-        // conditions:
-        if (!model) return; // the model is not exist => nothing to update
-        
-        
-        
         showDialog(
             <ViewShipmentDialog
                 // data:
@@ -421,48 +413,10 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     });
     
     const handleEditShipment         = useEvent(() => {
-        // conditions:
-        if (!model) return; // the model is not exist => nothing to update
-        
-        
-        
-        showDialog(
-            <SimpleEditOrderOnTheWayDialog
-                // data:
-                model={model}
-                edit='shipment'
-                defaultCarrier={shippingProvider?.name ?? undefined}
-                
-                
-                
-                // components:
-                editorComponent={
-                    <OrderOnTheWayEditor
-                        // data:
-                        currencyOptions={currencyOptions}
-                        currency={currency}
-                        onCurrencyChange={setCurrency}
-                        
-                        currencyRate={currencyRate}
-                        
-                        
-                        
-                        // accessibilities:
-                        predictedCost={(totalShippingCosts === undefined) ? undefined : (totalShippingCosts ?? 0)}
-                        costMinThreshold={20 /* percent */}
-                        costMaxThreshold={20 /* percent */}
-                    />
-                }
-            />
-        );
+        setEditMode('shipment');
     });
     
     const handleOrderCompleted       = useEvent(() => {
-        // conditions:
-        if (!model) return; // the model is not exist => nothing to update
-        
-        
-        
         showDialog(
             <SimpleEditOrderCompletedDialog
                 // data:
@@ -480,11 +434,6 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     });
     
     const handleEditTrouble          = useEvent(() => {
-        // conditions:
-        if (!model) return; // the model is not exist => nothing to update
-        
-        
-        
         showDialog(
             <SimpleEditOrderTroubleDialog
                 // data:
@@ -508,11 +457,6 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     });
     
     const handleRejectPayment        = useEvent(() => {
-        // conditions:
-        if (!model) return; // the model is not exist => nothing to update
-        
-        
-        
         showDialog(
             <SimpleEditPaymentRejectedDialog
                 // data:
@@ -540,51 +484,10 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         );
     });
     const handleEditPayment          = useEvent(() => {
-        // conditions:
-        if (!model) return; // the model is not exist => nothing to update
-        
-        
-        
-        showDialog(
-            <SimpleEditPaymentDialog
-                // data:
-                model={model}
-                edit='payment'
-                
-                
-                
-                // components:
-                editorComponent={
-                    <PaymentEditor
-                        // data:
-                        currencyOptions={currencyOptions}
-                        currency={currency}
-                        onCurrencyChange={setCurrency}
-                        
-                        currencyRate={currencyRate}
-                        
-                        
-                        
-                        // accessibilities:
-                        expectedAmount={
-                            totalProductPrice + (totalShippingCosts ?? 0)
-                        }
-                        amountMinThreshold={20 /* percent */}
-                        amountMaxThreshold={20 /* percent */}
-                        
-                        confirmedAmount={paymentConfirmation?.amount ?? undefined}
-                    />
-                }
-            />
-        );
+        setEditMode('payment');
     });
     
     const handleCancelOrder          = useEvent(() => {
-        // conditions:
-        if (!model) return; // the model is not exist => nothing to update
-        
-        
-        
         showDialog(
             <SimpleEditOrderCanceledDialog
                 // data:
@@ -601,6 +504,15 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         );
     });
     
+    const handleExpandedChange       = useEvent<EventHandler<ModalExpandedChangeEvent>>(({expanded}): void => {
+        // conditions:
+        if (expanded) return; // ignore if expanded
+        
+        
+        
+        // actions:
+        setEditMode(null);
+    });
     const handleExpandedEnd          = useEvent(() => {
         setShouldTriggerAutoFocus(true);
     });
@@ -847,7 +759,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
             </>
         );
     };
-    return (
+    return (<>
         <ComplexEditModelDialog<OrderDetail>
             // other props:
             {...restComplexEditModelDialogProps}
@@ -1578,7 +1490,78 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                 </Section>
             </TabPanel>
         </ComplexEditModelDialog>
-    );
+        <CollapsibleSuspense>
+            <SimpleEditPaymentDialog
+                // data:
+                model={model}
+                edit='payment'
+                
+                
+                
+                // states:
+                expanded={editMode === 'payment'}
+                onExpandedChange={handleExpandedChange}
+                
+                
+                
+                // components:
+                editorComponent={
+                    <PaymentEditor
+                        // data:
+                        currencyOptions={currencyOptions}
+                        currency={currency}
+                        onCurrencyChange={setCurrency}
+                        
+                        currencyRate={currencyRate}
+                        
+                        
+                        
+                        // accessibilities:
+                        expectedAmount={
+                            totalProductPrice + (totalShippingCosts ?? 0)
+                        }
+                        amountMinThreshold={20 /* percent */}
+                        amountMaxThreshold={20 /* percent */}
+                        
+                        confirmedAmount={paymentConfirmation?.amount ?? undefined}
+                    />
+                }
+            />
+            <SimpleEditOrderOnTheWayDialog
+                // data:
+                model={model}
+                edit='shipment'
+                defaultCarrier={shippingProvider?.name ?? undefined}
+                
+                
+                
+                // states:
+                expanded={editMode === 'shipment'}
+                onExpandedChange={handleExpandedChange}
+                
+                
+                
+                // components:
+                editorComponent={
+                    <OrderOnTheWayEditor
+                        // data:
+                        currencyOptions={currencyOptions}
+                        currency={currency}
+                        onCurrencyChange={setCurrency}
+                        
+                        currencyRate={currencyRate}
+                        
+                        
+                        
+                        // accessibilities:
+                        predictedCost={(totalShippingCosts === undefined) ? undefined : (totalShippingCosts ?? 0)}
+                        costMinThreshold={20 /* percent */}
+                        costMaxThreshold={20 /* percent */}
+                    />
+                }
+            />
+        </CollapsibleSuspense>
+    </>);
 };
 export {
     EditOrderDialog,
