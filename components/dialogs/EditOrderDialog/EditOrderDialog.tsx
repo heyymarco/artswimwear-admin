@@ -1491,6 +1491,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
             </TabPanel>
         </ComplexEditModelDialog>
         <CollapsibleSuspense>
+            {/* workaround for `onCurrencyChange` issue, the dialog must be React's declarative way */}
             <SimpleEditPaymentDialog
                 // data:
                 model={model}
@@ -1527,6 +1528,8 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                     />
                 }
             />
+            
+            {/* workaround for `onCurrencyChange` issue, the dialog must be React's declarative way */}
             <SimpleEditOrderOnTheWayDialog
                 // data:
                 model={model}
