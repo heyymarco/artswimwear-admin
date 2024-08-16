@@ -126,7 +126,7 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
                             return shippingCarrierList.find((shippingCarrierItem) => defaultCarrierLowercase.startsWith(shippingCarrierItem.trim().toLowerCase()))
                         })()
                         ??
-                        null
+                        defaultCarrier
                     );
                 })()
             ) || null, // normalize to null if empty_string or only_spaces
