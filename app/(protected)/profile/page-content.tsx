@@ -71,7 +71,7 @@ import {
 
 // models:
 import {
-    type AdminDetail,
+    type AdminPreview,
 }                           from '@/models'
 
 // stores:
@@ -104,7 +104,7 @@ export function ProfilePageContent() {
     const { data: session, update: updateSession } = useSession();
     const admin = session?.user;
     const adminUsername = session?.credentials?.username ?? null;
-    const adminModel = useMemo<Omit<AdminDetail, 'adminRoleId'>|null>(() => {
+    const adminModel = useMemo<AdminPreview|null>(() => {
         if (!admin) return null;
         
         
@@ -115,7 +115,7 @@ export function ProfilePageContent() {
             email    : admin.email,
             image    : admin.image,
             username : adminUsername,
-        } satisfies Omit<AdminDetail, 'adminRoleId'>;
+        } satisfies AdminPreview;
     }, [admin, adminUsername]);
     const { name: adminName, email: adminEmail, image: adminImage } = adminModel ?? {};
     
@@ -130,7 +130,7 @@ export function ProfilePageContent() {
     
     // handlers:
     const handleEdit = useEvent(async (edit: 'image'|'name'|'username') => {
-        const updatedAdminModel = await showDialog<SimpleEditModelDialogResult<Omit<AdminDetail, 'adminRoleId'>>>(
+        const updatedAdminModel = await showDialog<SimpleEditModelDialogResult<AdminPreview>>(
             (edit === 'image')
             ? <SimpleEditAdminImageDialog
                 // data:
@@ -142,7 +142,7 @@ export function ProfilePageContent() {
                 // stores:
                 updateModelApi={useUpdateAdmin as any}
             />
-            : <SimpleEditModelDialog<Omit<AdminDetail, 'adminRoleId'>>
+            : <SimpleEditModelDialog<AdminPreview>
                 // data:
                 model={adminModel!}
                 edit={edit}

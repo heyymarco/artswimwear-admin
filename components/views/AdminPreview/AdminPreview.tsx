@@ -149,7 +149,7 @@ const AdminPreview = (props: AdminPreviewProps): JSX.Element|null => {
         email,
         image,
         
-        adminRoleId,
+        roleId,
         
         username,
     } = model;
@@ -277,8 +277,8 @@ const AdminPreview = (props: AdminPreviewProps): JSX.Element|null => {
             </p>
             <p className='role'>
                 { isRoleLoadingAndNoData && <Busy />}
-                {!isRoleLoadingAndNoData && !!roles && !!adminRoleId && roles?.entities?.[adminRoleId]?.name || <span className='noValue'>No Access</span>}
-                {privilegeUpdateRole     && <EditButton onClick={() => setEditMode('adminRoleId')} />}
+                {!isRoleLoadingAndNoData && !!roles && !!roleId && roles?.entities?.[roleId]?.name || <span className='noValue'>No Access</span>}
+                {privilegeUpdateRole     && <EditButton onClick={() => setEditMode('roleId')} />}
             </p>
             <p className='fullEditor'>
                 {privilegeWrite          && <EditButton buttonStyle='regular' onClick={() => setEditMode('full')}>
@@ -376,14 +376,14 @@ const AdminPreview = (props: AdminPreviewProps): JSX.Element|null => {
                     
                     
                     // states:
-                    expanded={(editMode === 'image') || (editMode === 'adminRoleId') || (editMode === 'full')}
+                    expanded={(editMode === 'image') || (editMode === 'roleId') || (editMode === 'full')}
                     onExpandedChange={handleExpandedChange}
                     defaultExpandedTabIndex={((): number|undefined => {
-                        // switch (editMode === 'adminRoleId') ? 2 : undefined
+                        // switch (editMode === 'roleId') ? 2 : undefined
                         switch (editMode) {
-                            case 'image'      : return 1;
-                            case 'adminRoleId': return 2;
-                            default           : return undefined;
+                            case 'image'  : return 1;
+                            case 'roleId' : return 2;
+                            default       : return undefined;
                         } // switch
                     })()}
                 />

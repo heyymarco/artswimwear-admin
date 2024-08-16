@@ -169,14 +169,14 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
     // states:
     const [isModified    , setIsModified    ] = useState<boolean>(false);
     
-    const [name          , setName          ] = useState<string     >(model?.name        ?? ''  );
-    const [email         , setEmail         ] = useState<string     >(model?.email       ?? ''  );
-    const [image         , setImage         ] = useState<string|null>(model?.image       ?? null); // optional field
-    const [adminRoleId   , setAdminRoleId   ] = useState<string|null>(model?.adminRoleId ?? null); // optional field
-    const [username      , setUsername      ] = useState<string|null>(model?.username    ?? null); // optional field
+    const [name          , setName          ] = useState<string     >(model?.name     ?? ''  );
+    const [email         , setEmail         ] = useState<string     >(model?.email    ?? ''  );
+    const [image         , setImage         ] = useState<string|null>(model?.image    ?? null); // optional field
+    const [roleId        , setRoleId        ] = useState<string|null>(model?.roleId   ?? null); // optional field
+    const [username      , setUsername      ] = useState<string|null>(model?.username ?? null); // optional field
     
-    const initialEmailRef                     = useRef  <string     >(model?.email       ?? ''  );
-    const initialImageRef                     = useRef  <string|null>(model?.image       ?? null); // optional field
+    const initialEmailRef                     = useRef  <string     >(model?.email    ?? ''  );
+    const initialImageRef                     = useRef  <string|null>(model?.image    ?? null); // optional field
     
     const draftDifferentialImages             = useDraftDifferentialImages();
     
@@ -209,13 +209,13 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
     // handlers:
     const handleUpdate               = useEvent<UpdateHandler<AdminDetail>>(async ({id, whenAdd, whenUpdate}) => {
         return await updateAdmin({
-            id          : id ?? '',
+            id       : id ?? '',
             
-            name        : (whenUpdate.name     || whenAdd) ? name               : undefined,
-            email       : (whenUpdate.email    || whenAdd) ? email              : undefined,
-            image       : (whenUpdate.image    || whenAdd) ? image              : undefined,
-            adminRoleId : (whenUpdate.role               ) ? adminRoleId        : ((!id && whenAdd) ? null : undefined),
-            username    : (whenUpdate.username || whenAdd) ? (username || null) : undefined, // convert empty string to null
+            name     : (whenUpdate.name     || whenAdd) ? name               : undefined,
+            email    : (whenUpdate.email    || whenAdd) ? email              : undefined,
+            image    : (whenUpdate.image    || whenAdd) ? image              : undefined,
+            roleId   : (whenUpdate.role               ) ? roleId             : ((!id && whenAdd) ? null : undefined),
+            username : (whenUpdate.username || whenAdd) ? (username || null) : undefined, // convert empty string to null
         }).unwrap();
     });
     const handleAfterUpdate          = useEvent<AfterUpdateHandler>(async () => {
@@ -230,18 +230,18 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
     });
     
     const handleRoleCreated          = useEvent<CreateHandler<RoleDetail>>(async ({id}) => {
-        setAdminRoleId(id); // select the last created role
+        setRoleId(id); // select the last created role
         setIsModified(true);
     });
     const handleRoleDeleted          = useEvent<DeleteHandler<RoleDetail>>(async ({id}) => {
-        if (id && (id === adminRoleId)) { // if currently selected
+        if (id && (id === roleId)) { // if currently selected
             // the related role was deleted => set to null (no selection):
-            setAdminRoleId(null);
+            setRoleId(null);
             setIsModified(true);
             console.log('related role deleted'); // TODO: refresh the Admin model
         }
         else {
-            // TODO: refresh the Admin models where (admin.adminRoleId === id)
+            // TODO: refresh the Admin models where (admin.roleId === id)
         } // if
     });
     
@@ -521,9 +521,9 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
                     : <RoleEditor
                         // values:
                         valueOptions={roleOptions}
-                        value={adminRoleId}
+                        value={roleId}
                         onChange={(value) => {
-                            setAdminRoleId(value);
+                            setRoleId(value);
                             setIsModified(true);
                         }}
                         

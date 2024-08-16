@@ -48,7 +48,7 @@ import {
 // models:
 import {
     // types:
-    type AdminDetail,
+    type AdminPreview,
 }                           from '@/models'
 
 // stores:
@@ -72,8 +72,8 @@ import {
 export interface SimpleEditAdminImageDialogProps
     extends
         // bases:
-        Omit<ImplementedSimpleEditModelDialogProps<Omit<AdminDetail, 'adminRoleId'>, 'image'>, 'editorComponent'>,
-        Partial<Pick<SimpleEditModelDialogProps<Omit<AdminDetail, 'adminRoleId'>, 'image'>, 'editorComponent'|'updateModelApi'>>
+        Omit<ImplementedSimpleEditModelDialogProps<AdminPreview, 'image'>, 'editorComponent'>,
+        Partial<Pick<SimpleEditModelDialogProps<AdminPreview, 'image'>, 'editorComponent'|'updateModelApi'>>
 {
 }
 export const SimpleEditAdminImageDialog = (props: SimpleEditAdminImageDialogProps) => {
@@ -129,7 +129,7 @@ export const SimpleEditAdminImageDialog = (props: SimpleEditAdminImageDialogProp
     
     // other props:
     interface AdminImageModel {
-        id    : AdminDetail['id']
+        id    : AdminPreview['id']
         image : string|null
     }
     const {

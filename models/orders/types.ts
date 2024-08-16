@@ -229,12 +229,30 @@ export interface GuestDetail
 
 
 
-export interface AdminDetail
+export interface AdminPreview
     extends
         Omit<Admin,
+            // records:
             |'createdAt'
             |'updatedAt'
             
+            // data:
+            |'emailVerified'
+            
+            // relations:
+            |'roleId'
+        >
+{
+    username : string|null
+}
+export interface AdminDetail
+    extends
+        Omit<Admin,
+            // records:
+            |'createdAt'
+            |'updatedAt'
+            
+            // data:
             |'emailVerified'
         >
 {

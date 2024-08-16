@@ -131,13 +131,13 @@ You do not have the privilege to view the admins.`
                 email       : true,
                 image       : true,
                 
-                adminRoleId : true,
-                
                 credentials : {
                     select : {
                         username : true,
                     },
                 },
+                
+                roleId      : true,
             },
             orderBy : {
                 createdAt: 'desc',
@@ -183,7 +183,7 @@ You do not have the privilege to view the admins.`
         password,
         image,
         
-        adminRoleId,
+        roleId,
         
         username,
     } = await req.json();
@@ -225,7 +225,7 @@ You do not have the privilege to view the admins.`
 You do not have the privilege to add new admin.`
         }, { status: 403 }); // handled with error: forbidden
         
-        if (!session.role?.admin_ur && (adminRoleId !== null) && (adminRoleId !== undefined)) return NextResponse.json({ error:
+        if (!session.role?.admin_ur && (roleId !== null) && (roleId !== undefined)) return NextResponse.json({ error:
 `Access denied.
 
 You do not have the privilege to add new admin with an admin role.`
@@ -262,7 +262,7 @@ You do not have the privilege to modify the admin's password.`
 You do not have the privilege to modify the admin's image.`
         }, { status: 403 }); // handled with error: forbidden
         
-        if (!session.role?.admin_ur && (adminRoleId !== undefined)) return NextResponse.json({ error:
+        if (!session.role?.admin_ur && (roleId !== undefined)) return NextResponse.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the admin's role.`
@@ -297,7 +297,7 @@ You do not have the privilege to modify the admin's role.`
             // password : TODO: hashed password,
             image,
             
-            adminRoleId,
+            roleId,
         };
         const select = {
             id          : true,
@@ -306,13 +306,13 @@ You do not have the privilege to modify the admin's role.`
             email       : true,
             image       : true,
             
-            adminRoleId : true,
-            
             credentials : {
                 select : {
                     username : true,
                 },
             },
+            
+            roleId      : true,
         } satisfies Prisma.AdminSelect;
         const {credentials, ...restAdmin} = (
             !id

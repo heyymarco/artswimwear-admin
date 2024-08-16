@@ -29,7 +29,7 @@ const authRouteHandler = createAuthRouteHandler({
         modelPasswordResetToken              : 'adminPasswordResetToken',
         modelEmailConfirmationToken          : 'adminEmailConfirmationToken',
         
-        modelUserRefRoleId                   : 'adminRoleId',
+        modelUserRefRoleId                   : 'roleId',
         modelAccountRefUserId                : 'parentId',
         modelSessionRefUserId                : 'parentId',
         modelCredentialsRefUserId            : 'parentId',
