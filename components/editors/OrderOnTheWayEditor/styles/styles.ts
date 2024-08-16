@@ -47,9 +47,7 @@ export const usesOrderOnTheWayEditorLayout = () => {
         ...usesIndicatorLayout(),
         ...style({
             // layouts:
-            display      : 'grid',
-            gridAutoRows : 'auto',
-            gridAutoFlow : 'row',
+            display : 'grid',
             
             
             

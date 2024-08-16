@@ -282,11 +282,6 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                     
                     
                     
-                    // classes:
-                    className='carrier'
-                    
-                    
-                    
                     // accessibilities:
                     aria-label={shippingCarrierLabel}
                     
@@ -311,11 +306,6 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                 <TextEditor
                     // refs:
                     elmRef={elmRef}
-                    
-                    
-                    
-                    // classes:
-                    className='number'
                     
                     
                     
