@@ -208,8 +208,6 @@ You do not have the privilege to view the orders.`
         guest,
         
         shippingAddress,
-        shippingCost,
-        shippingProviderId,
         
         billingAddress : optionalBillingAddress,
         
@@ -231,6 +229,7 @@ You do not have the privilege to view the orders.`
     const {
         carrier : shippingCarrier,
         number  : shippingNumber,
+        cost    : shippingCost,
     } = shipment ?? {};
     //#endregion parsing request
     
@@ -259,6 +258,11 @@ You do not have the privilege to view the orders.`
         }, { status: 400 }); // handled with error
     } // if
     if ((shippingNumber !== undefined) && (shippingNumber !== null) && ((typeof(shippingNumber) !== 'string') || (shippingNumber.length < 1) || (shippingNumber.length > 50))) {
+        return NextResponse.json({
+            error: 'Invalid data.',
+        }, { status: 400 }); // handled with error
+    } // if
+    if ((shippingCost !== undefined) && (shippingCost !== null) && ((typeof(shippingCost) !== 'number') || !isFinite(shippingCost) || (shippingCost < 0))) {
         return NextResponse.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
@@ -350,7 +354,7 @@ You do not have the privilege to view the orders.`
 //         }, { status: 403 }); // handled with error: forbidden
     }
     else {
-        if (!session.role?.order_us && ((orderStatus !== undefined) || (orderTrouble !== undefined) || (cancelationReason !== undefined) || (shippingCarrier !== undefined) || (shippingNumber !== undefined))) return NextResponse.json({ error:
+        if (!session.role?.order_us && ((orderStatus !== undefined) || (orderTrouble !== undefined) || (cancelationReason !== undefined) || (shippingCarrier !== undefined) || (shippingNumber !== undefined) || (shippingCost !== undefined))) return NextResponse.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the order's status.`
@@ -571,8 +575,6 @@ You do not have the privilege to modify the payment of the order.`
                         ),
                         
                         shippingAddress,
-                        shippingCost,
-                        shippingProviderId,
                         
                         payment : !payment ? undefined : {
                             ...payment,
@@ -586,6 +588,7 @@ You do not have the privilege to modify the payment of the order.`
                                 update : {
                                     carrier   : (shippingCarrier === '') ? null /* delete if empty_string */ : shippingCarrier,
                                     number    : (shippingNumber  === '') ? null /* delete if empty_string */ : shippingNumber,
+                                    cost      : shippingCost,
                                     
                                     trackerId : shippingTracker?.id,
                                     logs      : !shippingTracker?.tracking_details?.length ? undefined : {
@@ -607,6 +610,7 @@ You do not have the privilege to modify the payment of the order.`
                                     
                                     carrier   : (shippingCarrier === '') ? null /* delete if empty_string */ : shippingCarrier,
                                     number    : (shippingNumber  === '') ? null /* delete if empty_string */ : shippingNumber,
+                                    cost      : shippingCost,
                                     
                                     trackerId : shippingTracker?.id,
                                     logs      : !shippingTracker?.tracking_details?.length ? undefined : {

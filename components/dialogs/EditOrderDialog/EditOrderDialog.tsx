@@ -437,7 +437,21 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                 
                 // components:
                 editorComponent={
-                    <OrderOnTheWayEditor />
+                    <OrderOnTheWayEditor
+                        // data:
+                        currencyOptions={currencyOptions}
+                        currency={currency}
+                        onCurrencyChange={setCurrency}
+                        
+                        currencyRate={currencyRate}
+                        
+                        
+                        
+                        // accessibilities:
+                        predictedCost={(totalShippingCosts === undefined) ? undefined : (totalShippingCosts ?? 0)}
+                        costMinThreshold={20 /* percent */}
+                        costMaxThreshold={20 /* percent */}
+                    />
                 }
             />
         );

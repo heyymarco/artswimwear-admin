@@ -1,6 +1,7 @@
 // cssfn:
 import {
     // writes css in javascript:
+    children,
     style,
     
     
@@ -48,6 +49,13 @@ export const usesOrderOnTheWayEditorLayout = () => {
         ...style({
             // layouts:
             display : 'grid',
+            
+            
+            
+            // children:
+            ...children('hr', {
+                margin: 0,
+            }),
             
             
             

@@ -7,6 +7,8 @@ import {
     
     // hooks:
     useState,
+    useEffect,
+    useRef,
 }                           from 'react'
 
 // cssfn:
@@ -41,6 +43,7 @@ import {
 // reusable-ui components:
 import {
     // base-components:
+    Basic,
     IndicatorProps,
     
     
@@ -48,9 +51,17 @@ import {
     // simple-components:
     Form,
     Check,
+    
+    
+    
+    // notification-components:
+    Tooltip,
 }                           from '@reusable-ui/components'  // a set of official Reusable-UI components
 
 // heymarco components:
+import {
+    SelectDropdownEditor,
+}                           from '@heymarco/select-dropdown-editor'
 import {
     TextDropdownEditor,
 }                           from '@heymarco/text-dropdown-editor'
@@ -60,6 +71,9 @@ import {
 }                           from '@heymarco/text-editor'
 
 // internals components:
+import {
+    CurrencyDisplay,
+}                           from '@/components/CurrencyDisplay'
 import type {
     // types:
     EditorChangeEventHandler,
@@ -69,6 +83,15 @@ import type {
     // react components:
     EditorProps,
 }                           from '@/components/editors/Editor'
+import {
+    PriceEditor,
+}                           from '@/components/editors/PriceEditor'
+
+// internals:
+import {
+    convertSystemCurrencyIfRequired,
+    revertSystemCurrencyIfRequired,
+}                           from '@/libs/currencyExchanges'
 
 // models:
 import {
@@ -88,6 +111,7 @@ export const useOrderOnTheWayEditorStyleSheet = dynamicStyleSheet(
 const emptyOrderOnTheWayValue : Required<OrderOnTheWayValue> = {
     carrier               : null,
     number                : null,
+    cost                  : null,
     sendConfirmationEmail : true,
 };
 Object.freeze(emptyOrderOnTheWayValue);
@@ -98,6 +122,7 @@ Object.freeze(emptyOrderOnTheWayValue);
 export type OrderOnTheWayValue = {
     carrier                : string|null
     number                 : string|null
+    cost                   : number|null
     sendConfirmationEmail ?: boolean
 }
 export interface OrderOnTheWayEditorProps
@@ -131,9 +156,23 @@ export interface OrderOnTheWayEditorProps
     
     
     
+    // data:
+    currencyOptions      ?: string[]
+    currency             ?: string
+    onCurrencyChange     ?: EditorChangeEventHandler<string>
+    
+    currencyRate         ?: number
+    
+    
+    
     // accessibilities:
+    predictedCost        ?: number
+    costMinThreshold     ?: number
+    costMaxThreshold     ?: number
+    
     shippingCarrierLabel ?: string
     shippingNumberLabel  ?: string
+    shippingCostLabel    ?: string
 }
 const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null => {
     // styles:
@@ -143,14 +182,28 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
     
     // rest props:
     const {
+        // data:
+        currencyOptions,
+        currency,
+        onCurrencyChange,
+        
+        currencyRate = 1,
+        
+        
+        
         // refs:
         elmRef,
         
         
         
         // accessibilities:
+        predictedCost,
+        costMinThreshold,
+        costMaxThreshold,
+        
         shippingCarrierLabel = 'Ship By (if any)',
         shippingNumberLabel  = 'Shipping Tracking Number (if any)',
+        shippingCostLabel    = 'Shipping cost (if any)',
         
         
         
@@ -158,7 +211,12 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
         defaultValue : defaultUncontrollableValue = emptyOrderOnTheWayValue,
         value        : controllableValue,
         onChange     : onControllableValueChange,
-    ...restIndicatorProps} = props;
+        
+        
+        
+        // other props:
+        ...restIndicatorProps
+    } = props;
     
     const {
         // accessibilities:
@@ -170,7 +228,15 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
         
         readOnly,        // take
         inheritReadOnly, // take
-    ...restFormProps} = restIndicatorProps;
+        
+        
+        
+        // other props:
+        ...restFormProps
+    } = restIndicatorProps;
+    
+    const isForeignCurrency = !!currencyOptions && !!currency && (currencyOptions?.length > 1);
+    const customerCurrency  = currencyOptions?.[0] ?? undefined;
     
     
     
@@ -186,11 +252,31 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
     
     const [initialValue] = useState<OrderOnTheWayValue>(value);
     
+    const [costWarning, setCostWarning] = useState<React.ReactNode>(null);
+    const [costFocused, setCostFocused] = useState<boolean>(false);
+    
     const {
         carrier,
         number,
+        cost,
+        
         sendConfirmationEmail,
     } = value;
+    
+    const [editedCost, setEditedCost] = useState(() => convertSystemCurrencyIfRequired(cost, currencyRate));
+    
+    // auto convert the `cost` if the `currencyRate` changed:
+    const prevCurrencyRateRef = useRef(currencyRate);
+    useEffect(() => {
+        // conditions:
+        if (prevCurrencyRateRef.current === currencyRate) return; // still the same rate, nothing to convert
+        prevCurrencyRateRef.current = currencyRate;
+        
+        
+        
+        // actions:
+        setEditedCost(convertSystemCurrencyIfRequired(cost, currencyRate));
+    }, [currencyRate, cost]);
     
     
     
@@ -241,11 +327,69 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
             number                : newShippingNumber,
         });
     });
+    const handleShippingCostChange      = useEvent<EditorChangeEventHandler<number|null>>((newShippingCost) => {
+        setEditedCost(newShippingCost);
+        setValue({
+            cost                  : revertSystemCurrencyIfRequired(newShippingCost, currencyRate, customerCurrency),
+        });
+    });
     const handleNotificationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active: newNotification}) => {
         setValue({
             sendConfirmationEmail : newNotification,
         });
     });
+    
+    const handleCostFocus               = useEvent<React.FocusEventHandler<Element>>((event) => {
+        setCostFocused(true);
+    });
+    const handleCostBlur                = useEvent<React.FocusEventHandler<Element>>((event) => {
+        setCostFocused(false);
+    });
+    
+    
+    
+    // effects:
+    
+    // warns if the entered cost is much different than the predicted cost:
+    useEffect(() => {
+        // setups:
+        const cancelWarning = setTimeout(() => {
+            let costWarning : React.ReactNode = null;
+            
+            if ((cost !== null) && (predictedCost !== undefined)) {
+                const convertedCost          = convertSystemCurrencyIfRequired(cost         , currencyRate);
+                const convertedPredictedCost = convertSystemCurrencyIfRequired(predictedCost, currencyRate);
+                if (convertedCost < convertedPredictedCost) {
+                    if ((costMinThreshold !== undefined) && (((convertedPredictedCost - convertedCost) * 100 / convertedCost) > costMinThreshold)) {
+                        costWarning = <>
+                            The entered cost is <strong>much smaller</strong> than the expected cost. Are you sure?
+                        </>;
+                    } // if
+                }
+                else if (convertedCost > convertedPredictedCost) {
+                    if ((costMaxThreshold !== undefined) && (((convertedCost - convertedPredictedCost) * 100 / convertedCost) > costMaxThreshold)) {
+                        costWarning = <>
+                            The entered cost is <strong>much greater</strong> than the expected cost. Are you sure?
+                        </>;
+                    } // if
+                } // if
+            } // if
+            
+            setCostWarning(costWarning);
+        }, 500);
+        
+        
+        
+        // cleanups:
+        return () => {
+            clearTimeout(cancelWarning);
+        };
+    }, [cost, predictedCost]);
+    
+    
+    
+    // refs:
+    const costInputRef = useRef<HTMLInputElement|null>(null);
     
     
     
@@ -329,6 +473,93 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                     placeholder={shippingNumberLabel}
                 />
                 
+                <hr />
+                
+                {isForeignCurrency && <SelectDropdownEditor
+                    // variants:
+                    theme='primary'
+                    
+                    
+                    
+                    // values:
+                    valueOptions={currencyOptions}
+                    value={currency}
+                    onChange={onCurrencyChange}
+                />}
+                
+                {(predictedCost !== undefined) && <Basic
+                    // variants:
+                    theme='success'
+                    mild={true}
+                >
+                    <p>
+                        Predicted cost: <strong>
+                            <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={predictedCost} />
+                        </strong>
+                    </p>
+                </Basic>}
+                
+                <PriceEditor
+                    // refs:
+                    elmRef={costInputRef}
+                    
+                    
+                    
+                    // appearances:
+                    currency={currency}
+                    
+                    
+                    
+                    // accessibilities:
+                    aria-label={shippingCostLabel}
+                    
+                    
+                    
+                    // variants:
+                    theme={!!costWarning ? 'warning' : undefined}
+                    
+                    
+                    
+                    // values:
+                    value={editedCost}
+                    onChange={handleShippingCostChange}
+                    
+                    
+                    
+                    // validations:
+                    required={true}
+                    
+                    
+                    
+                    // formats:
+                    placeholder={shippingCostLabel}
+                    
+                    
+                    
+                    // handlers:
+                    onFocus={handleCostFocus}
+                    onBlur={handleCostBlur}
+                />
+                <Tooltip
+                    // variants:
+                    theme='warning'
+                    
+                    
+                    
+                    // states:
+                    expanded={costFocused && !!costWarning}
+                    
+                    
+                    
+                    // floatable:
+                    floatingOn={costInputRef}
+                    floatingPlacement='bottom'
+                >
+                    {costWarning}
+                </Tooltip>
+                
+                <hr />
+                
                 <Check
                     // values:
                     active={sendConfirmationEmail}
@@ -339,7 +570,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                     // validations:
                     enableValidation={false}
                 >
-                    Send notification email to customer
+                    Send <em>shipping tracking number</em> to customer
                 </Check>
             </AccessibilityProvider>
         </Form>

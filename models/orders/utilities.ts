@@ -336,6 +336,7 @@ export const orderDetailSelect = {
         select : {
             carrier     : true,
             number      : true,
+            cost        : true,
         },
     },
 } satisfies Prisma.OrderSelect;

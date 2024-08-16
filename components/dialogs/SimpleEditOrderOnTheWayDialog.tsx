@@ -95,6 +95,7 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
         const initialValue : OrderOnTheWayValue = model[edit] ?? {
             carrier               : null,
             number                : null,
+            cost                  : null,
             sendConfirmationEmail : undefined,
         } satisfies OrderOnTheWayValue;
         
@@ -139,12 +140,14 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
         const initialValue : OrderOnTheWayValue = model[edit] ?? {
             carrier               : null,
             number                : null,
+            cost                  : null,
             sendConfirmationEmail : undefined,
         } satisfies OrderOnTheWayValue;
         
         editedValue ??= {
             carrier               : null,
             number                : null,
+            cost                  : null,
             sendConfirmationEmail : undefined,
         } satisfies OrderOnTheWayValue;
         
