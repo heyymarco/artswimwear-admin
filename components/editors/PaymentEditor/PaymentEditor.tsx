@@ -278,16 +278,13 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     const [amountWarning, setAmountWarning] = useState<React.ReactNode>(null);
     const [amountFocused, setAmountFocused] = useState<boolean>(false);
     
-    
-    
     const {
         brand,
         amount,
         fee,
+        
         sendConfirmationEmail,
     } = value;
-    
-    
     
     const [editedAmount, setEditedAmount] = useState(() => convertSystemCurrencyIfRequired(amount, currencyRate));
     const [editedFee   , setEditedFee   ] = useState(() => convertSystemCurrencyIfRequired(fee   , currencyRate));
