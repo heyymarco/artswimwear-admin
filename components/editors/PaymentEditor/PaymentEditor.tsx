@@ -290,8 +290,10 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     
     
     const [editedAmount, setEditedAmount] = useState(() => convertSystemCurrencyIfRequired(amount, currencyRate));
-    const [editedFee   , setEditedFee   ] = useState(() => convertSystemCurrencyIfRequired(fee, currencyRate));
-    const prevCurrencyRateRef             = useRef(currencyRate);
+    const [editedFee   , setEditedFee   ] = useState(() => convertSystemCurrencyIfRequired(fee   , currencyRate));
+    
+    // auto convert the `amount` and `fee` if the `currencyRate` changed:
+    const prevCurrencyRateRef = useRef(currencyRate);
     useEffect(() => {
         // conditions:
         if (prevCurrencyRateRef.current === currencyRate) return; // still the same rate, nothing to convert
@@ -302,7 +304,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
         // actions:
         setEditedAmount(convertSystemCurrencyIfRequired(amount, currencyRate));
         setEditedFee(convertSystemCurrencyIfRequired(fee, currencyRate));
-    }, [currencyRate]);
+    }, [currencyRate, amount, fee]);
     
     
     
