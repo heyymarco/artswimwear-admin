@@ -577,10 +577,19 @@ You do not have the privilege to modify the payment of the order.`
                         shippingAddress,
                         
                         payment : !payment ? undefined : {
-                            ...payment,
-                            ...((payment?.type !== 'MANUAL_PAID') ? undefined : { // commitOrder:
-                                expiresAt : null, // paid, no more payment expiry date
-                            }),
+                            update : {
+                                data : {
+                                    ...payment,
+                                    ...((payment?.type !== 'MANUAL_PAID') ? undefined : { // commitOrder:
+                                        expiresAt : null, // paid, no more payment expiry date
+                                    }),
+                                    
+                                    billingAddress : (!payment.billingAddress) ? undefined : {
+                                        update : payment.billingAddress,
+                                        create : payment.billingAddress,
+                                    },
+                                },
+                            },
                         },
                         
                         shipment : {
