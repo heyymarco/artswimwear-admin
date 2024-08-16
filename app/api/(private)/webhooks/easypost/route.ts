@@ -97,6 +97,10 @@ export async function POST(req: Request, res: Response): Promise<Response> {
                     },
                 },
             });
+            console.log('updated shipment logs: ', shippingDetails.map((shippingDetail) => ({
+                reportedAt : shippingDetail.datetime,
+                log        : shippingDetail.message || shippingDetail.status,
+            })));
             
             
             
