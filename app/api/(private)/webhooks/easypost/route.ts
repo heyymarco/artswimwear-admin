@@ -130,9 +130,9 @@ export async function POST(req: Request, res: Response): Promise<Response> {
                 
                 console.log('now updated as DELIVERED: ', relatedOrder);
             } // if
-            if (isDelivered && (relatedOrder.parent.orderStatus === 'COMPLETED')) {
+            else if (isDelivered && (relatedOrder.parent.orderStatus === 'COMPLETED')) {
                 console.log('already DELIVERED: ', relatedOrder);
-            } // IF
+            } // if
             
             
             
