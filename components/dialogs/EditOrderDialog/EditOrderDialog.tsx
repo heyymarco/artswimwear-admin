@@ -431,15 +431,13 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                 // data:
                 model={model}
                 edit='shipment'
+                defaultCarrier={shippingProvider?.name ?? undefined}
                 
                 
                 
                 // components:
                 editorComponent={
-                    <OrderOnTheWayEditor
-                        // values:
-                        defaultShippingProvider={shippingProvider?.name ?? undefined}
-                    />
+                    <OrderOnTheWayEditor />
                 }
             />
         );
@@ -921,10 +919,14 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     // classes:
                                     className={styleSheet.noteContentCenter}
                                 >
-                                    {!!shipment?.carrier && <>
-                                        ({shipment.carrier})&nbsp;
+                                    {!!shipment?.carrier && <><span className='txt-sec'>
+                                            ({shipment.carrier})
+                                        </span>
+                                        &nbsp;
                                     </>}
-                                    {shipment?.number}
+                                    {!!shipment?.number && <strong>
+                                        {shipment.number}
+                                    </strong>}
                                 </span>
                                 {!!role?.order_us && <EditButton className={styleSheet.editTrouble} onClick={handleEditShipment} />}
                             </Content>

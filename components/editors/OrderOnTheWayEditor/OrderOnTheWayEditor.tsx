@@ -6,7 +6,6 @@ import {
     
     
     // hooks:
-    useMemo,
     useState,
 }                           from 'react'
 
@@ -73,7 +72,6 @@ import type {
 
 // models:
 import {
-    // types:
     shippingCarrierList,
 }                           from '@/models'
 
@@ -129,18 +127,13 @@ export interface OrderOnTheWayEditorProps
         >
 {
     // refs:
-    elmRef                  ?: TextEditorProps['elmRef']
+    elmRef               ?: TextEditorProps['elmRef']
     
     
     
     // accessibilities:
-    shippingCarrierLabel    ?: string
-    shippingNumberLabel     ?: string
-    
-    
-    
-    // values:
-    defaultShippingProvider ?: string
+    shippingCarrierLabel ?: string
+    shippingNumberLabel  ?: string
 }
 const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null => {
     // styles:
@@ -165,7 +158,6 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
         defaultValue : defaultUncontrollableValue = emptyOrderOnTheWayValue,
         value        : controllableValue,
         onChange     : onControllableValueChange,
-        defaultShippingProvider,
     ...restIndicatorProps} = props;
     
     const {
@@ -184,7 +176,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
     
     // states:
     const {
-        value              : valueRaw,
+        value              : value,
         triggerValueChange : triggerValueChange,
     } = useControllableAndUncontrollable<OrderOnTheWayValue>({
         defaultValue       : defaultUncontrollableValue,
@@ -192,31 +184,8 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
         onValueChange      : onControllableValueChange,
     });
     
-    const [initialValue] = useState<OrderOnTheWayValue>(valueRaw);
+    const [initialValue] = useState<OrderOnTheWayValue>(value);
     
-    const value = useMemo(() => {
-        return {
-            ...valueRaw,
-            carrier: (
-                valueRaw.carrier
-                ||
-                (
-                    !defaultShippingProvider
-                    ? null
-                    : (
-                        shippingCarrierList.find((shippingCarrierItem) => defaultShippingProvider.startsWith(shippingCarrierItem))
-                        ??
-                        (() => {
-                            const defaultShippingProviderLowercase = defaultShippingProvider.trim().toLowerCase();
-                            return shippingCarrierList.find((shippingCarrierItem) => defaultShippingProviderLowercase.startsWith(shippingCarrierItem.trim().toLowerCase()))
-                        })()
-                        ??
-                        null
-                    )
-                )
-            ),
-        };
-    }, [valueRaw, defaultShippingProvider]);
     const {
         carrier,
         number,
@@ -232,15 +201,19 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
             ...newValue,
         };
         
+        const normalizedInitialValueCarrier     = initialValue.carrier?.trim()     || null; // normalize to null if empty_string or only_spaces
+        const normalizedInitialValueNumber      = initialValue.number?.trim()      || null; // normalize to null if empty_string or only_spaces
+        const normalizedCombinedNewValueCarrier = combinedNewValue.carrier?.trim() || null; // normalize to null if empty_string or only_spaces
+        const normalizedCombinedNewValueNumber  = combinedNewValue.number?.trim()  || null; // normalize to null if empty_string or only_spaces
         const {
             sendConfirmationEmail = (
-                !initialValue.carrier // default to send_notification if the shipping tracking CARRIER is NOT YET provided
+                !normalizedInitialValueCarrier // default to send_notification if the shipping tracking CARRIER is NOT YET provided
                 ||
-                !initialValue.number  // default to send_notification if the shipping tracking NUMBER is NOT YET provided
+                !normalizedInitialValueNumber  // default to send_notification if the shipping tracking NUMBER is NOT YET provided
                 ||
-                (initialValue.carrier !== combinedNewValue.carrier) // default to send_notification if the shipping tracking CARRIER is CHANGED
+                (normalizedInitialValueCarrier !== normalizedCombinedNewValueCarrier) // default to send_notification if the shipping tracking CARRIER is CHANGED
                 ||
-                (initialValue.number  !== combinedNewValue.number ) // default to send_notification if the shipping tracking NUMBER is CHANGED
+                (normalizedInitialValueNumber  !== normalizedCombinedNewValueNumber ) // default to send_notification if the shipping tracking NUMBER is CHANGED
             ),
         } = newValue;
         
@@ -260,12 +233,12 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
     // handlers:
     const handleShippingCarrierChange   = useEvent<EditorChangeEventHandler<string|null>>((newShippingCarrier) => {
         setValue({
-            carrier               : newShippingCarrier?.trim() || null, // normalize to null if empty_string or only_spaces
+            carrier               : newShippingCarrier,
         });
     });
     const handleShippingNumberChange    = useEvent<EditorChangeEventHandler<string|null>>((newShippingNumber) => {
         setValue({
-            number                : newShippingNumber?.trim() || null, // normalize to null if empty_string or only_spaces
+            number                : newShippingNumber,
         });
     });
     const handleNotificationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active: newNotification}) => {

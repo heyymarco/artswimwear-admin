@@ -46,9 +46,13 @@ import type {
 }                           from '@/libs/types'
 
 // models:
-import type {
-    OrderDetail,
-    OrderDetailWithOptions,
+import {
+    type OrderDetail,
+    type OrderDetailWithOptions,
+    
+    
+    
+    shippingCarrierList,
 }                           from '@/models'
 
 // stores:
@@ -65,8 +69,23 @@ export interface SimpleEditOrderOnTheWayDialogProps
         // bases:
         ImplementedSimpleEditModelDialogProps<OrderDetail, 'shipment'>
 {
+    // data:
+    defaultCarrier ?: string
 }
 export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDialogProps) => {
+    // props:
+    const {
+        // data:
+        defaultCarrier,
+        
+        
+        
+        // other props:
+        ...restImplementedSimpleEditModelDialogProps
+    } = props;
+    
+    
+    
     // handlers:
     interface OrderOnTheWayModel {
         id       : OrderDetail['id']
@@ -93,7 +112,24 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
         return {
             ...restInitialValue,
             
-            carrier               : initialValue.carrier?.trim() || null, // normalize to null if empty_string or only_spaces
+            carrier               : (
+                initialValue.carrier?.trim()
+                ||
+                (() => {
+                    if (!defaultCarrier) return null;
+                    
+                    return (
+                        shippingCarrierList.find((shippingCarrierItem) => defaultCarrier.startsWith(shippingCarrierItem))
+                        ??
+                        (() => {
+                            const defaultCarrierLowercase = defaultCarrier.trim().toLowerCase();
+                            return shippingCarrierList.find((shippingCarrierItem) => defaultCarrierLowercase.startsWith(shippingCarrierItem.trim().toLowerCase()))
+                        })()
+                        ??
+                        null
+                    );
+                })()
+            ) || null, // normalize to null if empty_string or only_spaces
             number                : initialValue.number?.trim()  || null, // normalize to null if empty_string or only_spaces
             
             sendConfirmationEmail,
@@ -187,7 +223,7 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
     return (
         <SimpleEditModelDialog<OrderOnTheWayModel>
             // other props:
-            {...props as unknown as ImplementedSimpleEditModelDialogProps<OrderOnTheWayModel>}
+            {...restImplementedSimpleEditModelDialogProps as unknown as ImplementedSimpleEditModelDialogProps<OrderOnTheWayModel>}
             
             
             
