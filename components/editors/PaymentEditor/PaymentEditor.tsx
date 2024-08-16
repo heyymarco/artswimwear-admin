@@ -299,8 +299,8 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
         
         
         // actions:
-        setEditedAmount(convertSystemCurrencyIfRequired(amount, currencyRate));
-        setEditedFee(convertSystemCurrencyIfRequired(fee, currencyRate));
+        setEditedAmount( convertSystemCurrencyIfRequired(amount, currencyRate));
+        setEditedFee(    convertSystemCurrencyIfRequired(fee   , currencyRate));
     }, [currencyRate, amount, fee]);
     
     
