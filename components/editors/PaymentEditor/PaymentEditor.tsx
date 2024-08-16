@@ -40,11 +40,6 @@ import {
     useControllableAndUncontrollable,
 }                           from '@heymarco/events'
 
-// heymarco components:
-import {
-    SelectDropdownEditor,
-}                           from '@heymarco/select-dropdown-editor'
-
 // reusable-ui components:
 import {
     // base-components:
@@ -99,6 +94,9 @@ import type {
 import {
     PriceEditor,
 }                           from '@/components/editors/PriceEditor'
+import {
+    SelectCurrencyEditor,
+}                           from '@/components/editors/SelectCurrencyEditor'
 
 // internals:
 import {
@@ -425,7 +423,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                 readOnly        = {readOnly       }
                 inheritReadOnly = {inheritReadOnly}
             >
-                {isForeignCurrency && <SelectDropdownEditor
+                {isForeignCurrency && <SelectCurrencyEditor
                     // variants:
                     theme='primary'
                     

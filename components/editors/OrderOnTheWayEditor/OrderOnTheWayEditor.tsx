@@ -60,9 +60,6 @@ import {
 
 // heymarco components:
 import {
-    SelectDropdownEditor,
-}                           from '@heymarco/select-dropdown-editor'
-import {
     TextDropdownEditor,
 }                           from '@heymarco/text-dropdown-editor'
 import {
@@ -86,6 +83,9 @@ import type {
 import {
     PriceEditor,
 }                           from '@/components/editors/PriceEditor'
+import {
+    SelectCurrencyEditor,
+}                           from '@/components/editors/SelectCurrencyEditor'
 
 // internals:
 import {
@@ -475,7 +475,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                 
                 <hr />
                 
-                {isForeignCurrency && <SelectDropdownEditor
+                {isForeignCurrency && <SelectCurrencyEditor
                     // variants:
                     theme='primary'
                     
