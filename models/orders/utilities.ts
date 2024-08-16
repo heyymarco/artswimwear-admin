@@ -1,15 +1,7 @@
 // models:
 import {
-    type OrderDetail,
-}                           from './types'
-import {
     type Prisma,
 }                           from '@prisma/client'
-
-// ORMs:
-import {
-    type prisma,
-}                           from '@/libs/prisma.server'
 
 
 
@@ -347,19 +339,6 @@ export const orderDetailSelect = {
         },
     },
 } satisfies Prisma.OrderSelect;
-
-export const convertOrderDetailDataToOrderDetail = (orderDetailData: Awaited<ReturnType<typeof prisma.order.findFirstOrThrow<{ select: typeof orderDetailSelect }>>>): OrderDetail => {
-    const {
-        customer : customerData,
-        guest    : guestData,
-        ...restOrderDetail
-    } = orderDetailData;
-    return {
-        customer : customerData,
-        guest    : guestData,
-        ...restOrderDetail,
-    } satisfies OrderDetail;
-};
 
 
 

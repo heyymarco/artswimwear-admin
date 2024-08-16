@@ -32,7 +32,6 @@ import {
     
     
     orderDetailSelect,
-    convertOrderDetailDataToOrderDetail,
     cancelOrderSelect,
 }                           from '@/models'
 import {
@@ -179,7 +178,7 @@ You do not have the privilege to view the orders.`
     ]);
     const paginationOrderDetail : Pagination<OrderDetail> = {
         total    : total,
-        entities : paged.map(convertOrderDetailDataToOrderDetail),
+        entities : paged satisfies OrderDetail[],
     };
     return NextResponse.json(paginationOrderDetail); // handled with success
 })
@@ -431,13 +430,12 @@ You do not have the privilege to modify the payment of the order.`
                     
                     
                     // (Real)Order CANCELED => restore the `Product` stock and mark Order as 'CANCELED':
-                    const orderDetailData = await cancelOrder(prismaTransaction, {
+                    const orderDetail : OrderDetail = await cancelOrder(prismaTransaction, {
                         order             : order,
                         cancelationReason : cancelationReason,
                         
                         orderSelect       : orderDetailSelect,
                     });
-                    const orderDetail = convertOrderDetailDataToOrderDetail(orderDetailData);
                     return orderDetail;
                 }, { timeout: 50000 }); // give a longer timeout for `cancelOrder`
                 return [undefined, orderDetail];
@@ -445,7 +443,7 @@ You do not have the privilege to modify the payment of the order.`
             
             
             
-            const [, prevShipment, orderDetailData] = await prisma.$transaction([
+            const [, prevShipment, orderDetail] = await prisma.$transaction([
                 // update PaymentConfirmation (if any):
                 (
                     (payment?.type === 'MANUAL_PAID')
@@ -624,8 +622,7 @@ You do not have the privilege to modify the payment of the order.`
                     select : orderDetailSelect,
                 }),
             ]);
-            const orderDetail = convertOrderDetailDataToOrderDetail(orderDetailData);
-            return [prevShipment?.shipment ?? undefined, orderDetail];
+            return [prevShipment?.shipment ?? undefined, orderDetail satisfies OrderDetail];
         })();
         
         
