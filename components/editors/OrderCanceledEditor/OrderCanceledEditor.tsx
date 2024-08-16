@@ -178,7 +178,7 @@ const OrderCanceledEditor = (props: OrderCanceledEditorProps): JSX.Element|null 
     
     // utilities:
     const setValue = useEvent((newValue: Partial<OrderCanceledValue>) => {
-        const combinedValue : OrderCanceledValue = {
+        const combinedNewValue : OrderCanceledValue = {
             ...value,
             ...newValue,
         };
@@ -186,7 +186,7 @@ const OrderCanceledEditor = (props: OrderCanceledEditorProps): JSX.Element|null 
         
         
         // update:
-        triggerValueChange(combinedValue, { triggerAt: 'immediately' });
+        triggerValueChange(combinedNewValue, { triggerAt: 'immediately' });
     });
     
     

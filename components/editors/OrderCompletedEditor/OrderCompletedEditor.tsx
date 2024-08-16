@@ -136,7 +136,7 @@ const OrderCompletedEditor = (props: OrderCompletedEditorProps): JSX.Element|nul
     
     // utilities:
     const setValue = useEvent((newValue: Partial<OrderCompletedValue>) => {
-        const combinedValue : OrderCompletedValue = {
+        const combinedNewValue : OrderCompletedValue = {
             ...value,
             ...newValue,
         };
@@ -144,7 +144,7 @@ const OrderCompletedEditor = (props: OrderCompletedEditorProps): JSX.Element|nul
         
         
         // update:
-        triggerValueChange(combinedValue, { triggerAt: 'immediately' });
+        triggerValueChange(combinedNewValue, { triggerAt: 'immediately' });
     });
     
     

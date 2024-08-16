@@ -307,7 +307,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     
     // events:
     const setValue = useEvent((newValue: Partial<PaymentValue>) => {
-        const combinedValue : PaymentValue = {
+        const combinedNewValue : PaymentValue = {
             ...value,
             ...newValue,
         };
@@ -315,7 +315,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
         
         
         // update:
-        triggerValueChange(combinedValue, { triggerAt: 'immediately' });
+        triggerValueChange(combinedNewValue, { triggerAt: 'immediately' });
     });
     
     
