@@ -125,7 +125,14 @@ export async function POST(req: Request, res: Response): Promise<Response> {
                         notificationType : 'emailOrderCompleted',
                     }),
                 ]);
+                
+                
+                
+                console.log('now updated as DELIVERED: ', relatedOrder);
             } // if
+            if (isDelivered && (relatedOrder.parent.orderStatus === 'COMPLETED')) {
+                console.log('already DELIVERED: ', relatedOrder);
+            } // IF
             
             
             
