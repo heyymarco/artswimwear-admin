@@ -22,6 +22,7 @@ import {
     // react helper hooks:
     useEvent,
     EventHandler,
+    useMergeRefs,
     
     
     
@@ -252,8 +253,14 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
     
     const [initialValue] = useState<OrderOnTheWayValue>(value);
     
-    const [costWarning, setCostWarning] = useState<React.ReactNode>(null);
-    const [costFocused, setCostFocused] = useState<boolean>(false);
+    const [carrierWarning, setCarrierWarning ] = useState<React.ReactNode>(null);
+    const [carrierFocused, setCarrierFocused] = useState<boolean>(false);
+    
+    const [numberWarning , setNumberWarning ] = useState<React.ReactNode>(null);
+    const [numberFocused , setNumberFocused ] = useState<boolean>(false);
+    
+    const [costWarning   , setCostWarning   ] = useState<React.ReactNode>(null);
+    const [costFocused   , setCostFocused   ] = useState<boolean>(false);
     
     const {
         carrier,
@@ -339,6 +346,20 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
         });
     });
     
+    const handleCarrierFocus            = useEvent<React.FocusEventHandler<Element>>((event) => {
+        setCarrierFocused(true);
+    });
+    const handleCarrierBlur             = useEvent<React.FocusEventHandler<Element>>((event) => {
+        setCarrierFocused(false);
+    });
+    
+    const handleNumberFocus             = useEvent<React.FocusEventHandler<Element>>((event) => {
+        setNumberFocused(true);
+    });
+    const handleNumberBlur              = useEvent<React.FocusEventHandler<Element>>((event) => {
+        setNumberFocused(false);
+    });
+    
     const handleCostFocus               = useEvent<React.FocusEventHandler<Element>>((event) => {
         setCostFocused(true);
     });
@@ -361,16 +382,26 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                 const convertedEstimatedCost = convertSystemCurrencyIfRequired(estimatedCost, currencyRate);
                 if (convertedCost < convertedEstimatedCost) {
                     if ((costMinThreshold !== undefined) && (((convertedEstimatedCost - convertedCost) * 100 / convertedCost) > costMinThreshold)) {
-                        costWarning = <>
-                            The entered cost is <strong>much smaller</strong> than the estimated cost. Are you sure?
-                        </>;
+                        costWarning = <div>
+                            <p>
+                                The entered cost is <strong>much smaller</strong> than the estimated cost.
+                            </p>
+                            <p>
+                                Are you sure?
+                            </p>
+                        </div>;
                     } // if
                 }
                 else if (convertedCost > convertedEstimatedCost) {
                     if ((costMaxThreshold !== undefined) && (((convertedCost - convertedEstimatedCost) * 100 / convertedCost) > costMaxThreshold)) {
-                        costWarning = <>
-                            The entered cost is <strong>much greater</strong> than the estimated cost. Are you sure?
-                        </>;
+                        costWarning = <div>
+                            <p>
+                                The entered cost is <strong>much greater</strong> than the estimated cost.
+                            </p>
+                            <p>
+                                Are you sure?
+                            </p>
+                        </div>;
                     } // if
                 } // if
             } // if
@@ -386,10 +417,88 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
         };
     }, [cost, estimatedCost]);
     
+    // warns if the entered shipping carrier is changed from the old one:
+    
+    
+    useEffect(() => {
+        // setups:
+        const normalizedInitialValueCarrier     = initialValue.carrier?.trim() || null; // normalize to null if empty_string or only_spaces
+        const normalizedCombinedNewValueCarrier = value?.carrier?.trim()       || null; // normalize to null if empty_string or only_spaces
+        const cancelWarning = setTimeout(() => {
+            const isCarrierChanged = (
+                !normalizedInitialValueCarrier // default to send_notification if the shipping tracking CARRIER is NOT YET provided
+                ||
+                (normalizedInitialValueCarrier !== normalizedCombinedNewValueCarrier) // default to send_notification if the shipping tracking CARRIER is CHANGED
+            );
+            setCarrierWarning(
+                !isCarrierChanged
+                ? null
+                : <div>
+                    <p>
+                        The entered <strong>shipping carrier is changed</strong> from <em>{initialValue.carrier?.trim()}</em> to <em>{value?.carrier?.trim()}</em>.
+                    </p>
+                    <p>
+                        The changes will be informed to the customer (if the checkbox below is checked).
+                    </p>
+                </div>
+            );
+        }, 500);
+        
+        
+        
+        // cleanups:
+        return () => {
+            clearTimeout(cancelWarning);
+        };
+    }, [initialValue.carrier, value?.carrier]);
+    
+    useEffect(() => {
+        // setups:
+        const normalizedInitialValueNumber      = initialValue.number?.trim()  || null; // normalize to null if empty_string or only_spaces
+        const normalizedCombinedNewValueNumber  = value?.number?.trim()        || null; // normalize to null if empty_string or only_spaces
+        const cancelWarning = setTimeout(() => {
+            const isNumberChanged = (
+                !normalizedInitialValueNumber  // default to send_notification if the shipping tracking NUMBER is NOT YET provided
+                ||
+                (normalizedInitialValueNumber  !== normalizedCombinedNewValueNumber ) // default to send_notification if the shipping tracking NUMBER is CHANGED
+            );
+            setNumberWarning(
+                !isNumberChanged
+                ? null
+                : <div>
+                    <p>
+                        The entered <strong>shipping tracking number is changed</strong> from <em>{initialValue.number?.trim()}</em> to <em>{value?.number?.trim()}</em>.
+                    </p>
+                    <p>
+                        The changes will be informed to the customer (if the checkbox below is checked).
+                    </p>
+                </div>
+            );
+        }, 500);
+        
+        
+        
+        // cleanups:
+        return () => {
+            clearTimeout(cancelWarning);
+        };
+    }, [initialValue.number, value?.number]);
+    
     
     
     // refs:
-    const costInputRef = useRef<HTMLInputElement|null>(null);
+    const carrierInputRef      = useRef<HTMLInputElement|null>(null);
+    const numberInputRef       = useRef<HTMLInputElement|null>(null);
+    const costInputRef         = useRef<HTMLInputElement|null>(null);
+    
+    const mergedNumberInputRef = useMergeRefs(
+        // preserves the original `elmRef` from `props`:
+        elmRef,
+        
+        
+        
+        numberInputRef,
+    );
     
     
     
@@ -421,8 +530,13 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                 inheritReadOnly = {inheritReadOnly}
             >
                 <TextDropdownEditor
+                    // refs:
+                    elmRef={carrierInputRef}
+                    
+                    
+                    
                     // variants:
-                    theme='primary'
+                    theme={!!carrierWarning ? 'warning' : 'primary'}
                     
                     
                     
@@ -446,10 +560,39 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                     
                     // formats:
                     placeholder={shippingCarrierLabel}
+                    
+                    
+                    
+                    // handlers:
+                    onFocus={handleCarrierFocus}
+                    onBlur={handleCarrierBlur}
                 />
+                <Tooltip
+                    // variants:
+                    theme='warning'
+                    
+                    
+                    
+                    // states:
+                    expanded={carrierFocused && !!carrierWarning}
+                    
+                    
+                    
+                    // floatable:
+                    floatingOn={carrierInputRef}
+                    floatingPlacement='bottom'
+                >
+                    {carrierWarning}
+                </Tooltip>
+                
                 <TextEditor
                     // refs:
-                    elmRef={elmRef}
+                    elmRef={mergedNumberInputRef}
+                    
+                    
+                    
+                    // variants:
+                    theme={!!numberWarning ? 'warning' : undefined}
                     
                     
                     
@@ -471,7 +614,30 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                     
                     // formats:
                     placeholder={shippingNumberLabel}
+                    
+                    
+                    
+                    // handlers:
+                    onFocus={handleNumberFocus}
+                    onBlur={handleNumberBlur}
                 />
+                <Tooltip
+                    // variants:
+                    theme='warning'
+                    
+                    
+                    
+                    // states:
+                    expanded={numberFocused && !!numberWarning}
+                    
+                    
+                    
+                    // floatable:
+                    floatingOn={numberInputRef}
+                    floatingPlacement='bottom'
+                >
+                    {numberWarning}
+                </Tooltip>
                 
                 <hr />
                 
