@@ -346,25 +346,58 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
         });
     });
     
-    const handleCarrierFocus            = useEvent<React.FocusEventHandler<Element>>((event) => {
+    const handleCarrierFocus            = useEvent((): void => {
         setCarrierFocused(true);
     });
-    const handleCarrierBlur             = useEvent<React.FocusEventHandler<Element>>((event) => {
+    const handleCarrierBlur             = useEvent((): void => {
         setCarrierFocused(false);
     });
+    const handleCarrierKeyDown          = useEvent<React.KeyboardEventHandler<Element>>((event) => {
+        // conditions:
+        /* note: the `code` may `undefined` on autoComplete */
+        const keyCode = (event.code as string|undefined)?.toLowerCase();
+        if (!keyCode) return; // ignores [unidentified] key
+        if ((keyCode !== 'escape')) return; // only interested to [esc] key
+        
+        
+        
+        handleCarrierBlur();
+    });
     
-    const handleNumberFocus             = useEvent<React.FocusEventHandler<Element>>((event) => {
+    const handleNumberFocus             = useEvent((): void => {
         setNumberFocused(true);
     });
-    const handleNumberBlur              = useEvent<React.FocusEventHandler<Element>>((event) => {
+    const handleNumberBlur              = useEvent((): void => {
         setNumberFocused(false);
     });
+    const handleNumberKeyDown           = useEvent<React.KeyboardEventHandler<Element>>((event) => {
+        // conditions:
+        /* note: the `code` may `undefined` on autoComplete */
+        const keyCode = (event.code as string|undefined)?.toLowerCase();
+        if (!keyCode) return; // ignores [unidentified] key
+        if ((keyCode !== 'escape')) return; // only interested to [esc] key
+        
+        
+        
+        handleNumberBlur();
+    });
     
-    const handleCostFocus               = useEvent<React.FocusEventHandler<Element>>((event) => {
+    const handleCostFocus               = useEvent((): void => {
         setCostFocused(true);
     });
-    const handleCostBlur                = useEvent<React.FocusEventHandler<Element>>((event) => {
+    const handleCostBlur                = useEvent((): void => {
         setCostFocused(false);
+    });
+    const handleCostKeyDown             = useEvent<React.KeyboardEventHandler<Element>>((event) => {
+        // conditions:
+        /* note: the `code` may `undefined` on autoComplete */
+        const keyCode = (event.code as string|undefined)?.toLowerCase();
+        if (!keyCode) return; // ignores [unidentified] key
+        if ((keyCode !== 'escape')) return; // only interested to [esc] key
+        
+        
+        
+        handleCostBlur();
     });
     
     
@@ -566,6 +599,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                     // handlers:
                     onFocus={handleCarrierFocus}
                     onBlur={handleCarrierBlur}
+                    onKeyDown={handleCarrierKeyDown}
                 />
                 <Tooltip
                     // variants:
@@ -620,6 +654,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                     // handlers:
                     onFocus={handleNumberFocus}
                     onBlur={handleNumberBlur}
+                    onKeyDown={handleNumberKeyDown}
                 />
                 <Tooltip
                     // variants:
@@ -705,6 +740,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                     // handlers:
                     onFocus={handleCostFocus}
                     onBlur={handleCostBlur}
+                    onKeyDown={handleCostKeyDown}
                 />
                 <Tooltip
                     // variants:
