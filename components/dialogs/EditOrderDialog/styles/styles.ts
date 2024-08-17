@@ -31,6 +31,7 @@ import {
     // a typography management system:
     typos,
     horzRules,
+    secondaries,
     
     
     
@@ -130,7 +131,21 @@ const usesOrderShippingSectionLayout = () => {
                         fontSize: typos.fontSizeLg,
                         fontWeight: typos.fontWeightSemibold,
                     }),
-                })
+                }),
+                ...rule('[role="deletion"]', {
+                    position: 'relative',
+                    opacity: 0.25,
+                    ...children('::before', {
+                        position: 'absolute',
+                        alignSelf: 'center',
+                        content: '""',
+                        display: 'block',
+                        inlineSize: '100%',
+                        borderTop: [[
+                            'solid', '1px', 'currentColor'
+                        ]],
+                    }),
+                }),
             }),
             ...descendants('.currency', {
                 marginInlineStart: 'auto',

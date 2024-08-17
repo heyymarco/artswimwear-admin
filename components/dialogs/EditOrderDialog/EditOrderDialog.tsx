@@ -335,6 +335,16 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     const hasPaymentConfirmation = !!paymentConfirmation?.reportedAt;
     const isPaymentRejected      = hasPaymentConfirmation && !!paymentConfirmation.rejectionReason;
     
+    const isShippingCostDrifted  = (
+        (totalShippingCosts !== null)
+        &&
+        (shipment?.cost !== undefined)
+        &&
+        (shipment.cost !== null)
+        &&
+        (shipment.cost !== totalShippingCosts)
+    );
+    
     
     
     // dialogs:
@@ -680,11 +690,18 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={totalProductPrice} />
                         </span>
                     </p>
-                    {!!shippingAddressDetail && <p className='currencyBlock'>
-                        Shipping <span className='currency'>
-                            <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={totalShippingCosts} />
-                        </span>
-                    </p>}
+                    {!!shippingAddressDetail && <>
+                        <p className='currencyBlock' role={(isShippingCostDrifted && !printMode) ? 'deletion' : undefined}>
+                            Shipping{(isShippingCostDrifted && !printMode) ? <>&nbsp;<span>(estimated)</span></> : null} <span className='currency'>
+                                <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={totalShippingCosts} />
+                            </span>
+                        </p>
+                        {(isShippingCostDrifted && !printMode) && <p className='currencyBlock'>
+                            Shipping&nbsp;<span className='txt-sec'>(actual)</span> <span className='currency'>
+                                <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={shipment.cost} />
+                            </span>
+                        </p>}
+                    </>}
                     <hr />
                     <p className='currencyBlock totalCost'>
                         Total <span className='currency'>
@@ -1158,6 +1175,26 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                         <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={paymentFee} />
                                     </span>
                                 </DataTableItem>
+                                {isShippingCostDrifted && <DataTableItem
+                                    // accessibilities:
+                                    label='Shipping Drift'
+                                    
+                                    
+                                    
+                                    // components:
+                                    tableDataComponent={<Generic className={styleSheet.tableDataAmount} />}
+                                    
+                                    
+                                    
+                                    // children:
+                                    actionChildren={
+                                        isManualPaid && !!role?.order_upmp && <></>
+                                    }
+                                >
+                                    <span>
+                                        <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={(totalShippingCosts ?? 0) - (shipment?.cost ?? 0)} />
+                                    </span>
+                                </DataTableItem>}
                                 <DataTableItem
                                     // accessibilities:
                                     label='Net'
@@ -1175,7 +1212,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     }
                                 >
                                     <strong>
-                                        <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={(paymentAmount !== undefined) ? (paymentAmount - (paymentFee ?? 0)) : undefined} />
+                                        <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={(paymentAmount !== undefined) ? (paymentAmount - (paymentFee ?? 0) + ((totalShippingCosts ?? 0) - (shipment?.cost ?? 0))) : undefined} />
                                     </strong>
                                 </DataTableItem>
                             </DataTableBody>
@@ -1557,7 +1594,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                         
                         
                         // accessibilities:
-                        predictedCost={(totalShippingCosts === undefined) ? undefined : (totalShippingCosts ?? 0)}
+                        estimatedCost={(totalShippingCosts === undefined) ? undefined : (totalShippingCosts ?? 0)}
                         costMinThreshold={20 /* percent */}
                         costMaxThreshold={20 /* percent */}
                     />

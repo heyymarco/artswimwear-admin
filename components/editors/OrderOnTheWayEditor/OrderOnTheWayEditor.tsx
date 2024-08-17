@@ -166,7 +166,7 @@ export interface OrderOnTheWayEditorProps
     
     
     // accessibilities:
-    predictedCost        ?: number
+    estimatedCost        ?: number
     costMinThreshold     ?: number
     costMaxThreshold     ?: number
     
@@ -197,7 +197,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
         
         
         // accessibilities:
-        predictedCost,
+        estimatedCost,
         costMinThreshold,
         costMaxThreshold,
         
@@ -350,26 +350,26 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
     
     // effects:
     
-    // warns if the entered cost is much different than the predicted cost:
+    // warns if the entered cost is much different than the estimated cost:
     useEffect(() => {
         // setups:
         const cancelWarning = setTimeout(() => {
             let costWarning : React.ReactNode = null;
             
-            if ((cost !== null) && (predictedCost !== undefined)) {
+            if ((cost !== null) && (estimatedCost !== undefined)) {
                 const convertedCost          = convertSystemCurrencyIfRequired(cost         , currencyRate);
-                const convertedPredictedCost = convertSystemCurrencyIfRequired(predictedCost, currencyRate);
-                if (convertedCost < convertedPredictedCost) {
-                    if ((costMinThreshold !== undefined) && (((convertedPredictedCost - convertedCost) * 100 / convertedCost) > costMinThreshold)) {
+                const convertedEstimatedCost = convertSystemCurrencyIfRequired(estimatedCost, currencyRate);
+                if (convertedCost < convertedEstimatedCost) {
+                    if ((costMinThreshold !== undefined) && (((convertedEstimatedCost - convertedCost) * 100 / convertedCost) > costMinThreshold)) {
                         costWarning = <>
-                            The entered cost is <strong>much smaller</strong> than the expected cost. Are you sure?
+                            The entered cost is <strong>much smaller</strong> than the estimated cost. Are you sure?
                         </>;
                     } // if
                 }
-                else if (convertedCost > convertedPredictedCost) {
-                    if ((costMaxThreshold !== undefined) && (((convertedCost - convertedPredictedCost) * 100 / convertedCost) > costMaxThreshold)) {
+                else if (convertedCost > convertedEstimatedCost) {
+                    if ((costMaxThreshold !== undefined) && (((convertedCost - convertedEstimatedCost) * 100 / convertedCost) > costMaxThreshold)) {
                         costWarning = <>
-                            The entered cost is <strong>much greater</strong> than the expected cost. Are you sure?
+                            The entered cost is <strong>much greater</strong> than the estimated cost. Are you sure?
                         </>;
                     } // if
                 } // if
@@ -384,7 +384,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
         return () => {
             clearTimeout(cancelWarning);
         };
-    }, [cost, predictedCost]);
+    }, [cost, estimatedCost]);
     
     
     
@@ -487,14 +487,14 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                     onChange={onCurrencyChange}
                 />}
                 
-                {(predictedCost !== undefined) && <Basic
+                {(estimatedCost !== undefined) && <Basic
                     // variants:
                     theme='success'
                     mild={true}
                 >
                     <p>
-                        Predicted cost: <strong>
-                            <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={predictedCost} />
+                        Estimated cost: <strong>
+                            <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={estimatedCost} />
                         </strong>
                     </p>
                 </Basic>}
