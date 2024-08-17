@@ -342,11 +342,22 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
         });
     });
     
-    const handleAmountFocus             = useEvent<React.FocusEventHandler<Element>>((event) => {
+    const handleAmountFocus             = useEvent((): void => {
         setAmountFocused(true);
     });
-    const handleAmountBlur              = useEvent<React.FocusEventHandler<Element>>((event) => {
+    const handleAmountBlur              = useEvent((): void => {
         setAmountFocused(false);
+    });
+    const handleAmountKeyDown           = useEvent<React.KeyboardEventHandler<Element>>((event) => {
+        // conditions:
+        /* note: the `code` may `undefined` on autoComplete */
+        const keyCode = (event.code as string|undefined)?.toLowerCase();
+        if (!keyCode) return; // ignores [unidentified] key
+        if ((keyCode !== 'escape')) return; // only interested to [esc] key
+        
+        
+        
+        handleAmountBlur();
     });
     
     
@@ -591,6 +602,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                     // handlers:
                     onFocus={handleAmountFocus}
                     onBlur={handleAmountBlur}
+                    onKeyDown={handleAmountKeyDown}
                 />
                 <Tooltip
                     // variants:
