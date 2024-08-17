@@ -614,7 +614,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                     
                     // floatable:
                     floatingOn={carrierInputRef}
-                    floatingPlacement='bottom'
+                    floatingPlacement='top'
                 >
                     {carrierWarning}
                 </Tooltip>
@@ -669,7 +669,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                     
                     // floatable:
                     floatingOn={numberInputRef}
-                    floatingPlacement='bottom'
+                    floatingPlacement='top'
                 >
                     {numberWarning}
                 </Tooltip>
