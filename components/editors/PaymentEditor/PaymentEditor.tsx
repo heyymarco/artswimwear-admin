@@ -364,16 +364,26 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                 const convertedExpectedAmount = convertSystemCurrencyIfRequired(expectedAmount, currencyRate);
                 if (convertedAmount < convertedExpectedAmount) {
                     if ((amountMinThreshold !== undefined) && (((convertedExpectedAmount - convertedAmount) * 100 / convertedAmount) > amountMinThreshold)) {
-                        amountWarning = <>
-                            The entered amount is <strong>much smaller</strong> than the expected amount. Are you sure?
-                        </>;
+                        amountWarning = <div>
+                            <p>
+                                The entered amount is <strong>much smaller</strong> than the expected amount.
+                            </p>
+                            <p>
+                                Are you sure?
+                            </p>
+                        </div>;
                     } // if
                 }
                 else if (convertedAmount > convertedExpectedAmount) {
                     if ((amountMaxThreshold !== undefined) && (((convertedAmount - convertedExpectedAmount) * 100 / convertedAmount) > amountMaxThreshold)) {
-                        amountWarning = <>
-                            The entered amount is <strong>much greater</strong> than the expected amount. Are you sure?
-                        </>;
+                        amountWarning = <div>
+                            <p>
+                                The entered amount is <strong>much greater</strong> than the expected amount.
+                            </p>
+                            <p>
+                                Are you sure?
+                            </p>
+                        </div>;
                     } // if
                 } // if
             } // if
