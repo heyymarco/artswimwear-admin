@@ -64,6 +64,7 @@ import {
     
     // dialog-components:
     ModalExpandedChangeEvent,
+    Modal,
     ModalCardProps,
     ModalCard,
     
@@ -268,42 +269,13 @@ const BuyShippingLabelDialogInternal = (props: BuyShippingLabelDialogProps): JSX
                         </ExclusiveAccordion>
                     </Section>}
                 </div>
-                
-                <Section
-                    // semantics:
-                    tag='nav'
-                    
-                    
-                    
-                    // classes:
-                    className={styleSheet.navCheckout}
-                >
-                    <NavCheckout />
-                </Section>
             </CardBody>
             
-            <CardFooter>
-                <ButtonIcon
-                    // appearances:
-                    icon='cancel'
-                    
-                    
-                    
-                    // variants:
-                    theme='danger'
-                    
-                    
-                    
-                    // classes:
-                    className='btnCancel'
-                    
-                    
-                    
-                    // handlers:
-                    onClick={handleCloseDialog}
-                >
-                    Cancel
-                </ButtonIcon>
+            <CardFooter
+                // classes:
+                className={styleSheet.navFooter}
+            >
+                <NavCheckout />
             </CardFooter>
         </ModalCard>
     );

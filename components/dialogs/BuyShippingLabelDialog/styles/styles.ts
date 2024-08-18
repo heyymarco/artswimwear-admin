@@ -100,11 +100,26 @@ export default () => {
             maxInlineSize : `${breakpoints.md}px`,
         }, {specificityWeight: 4}),
         scope('layout', {
+            // layouts:
             display: 'grid',
+            gridTemplate: [[
+                '"progressCheckout" auto',
+                '"currentStep     " 1fr', // the biggest part
+                '/',
+                '1fr'
+            ]],
+            
+            
+            
+            // spacings:
             gapInline: `calc(${containers.paddingInline} / 2)`,
             gapBlock : containers.paddingBlockMd,
         }, {specificityWeight: 2}),
         scope('progressCheckout', {
+            gridArea: 'progressCheckout',
+            
+            
+            
             // remove <section>'s and <article>'s padding to follow <container>'s padding:
             ...children(['&', 'article'], {
                 [paddingVars.paddingInline] : '0px',
@@ -112,6 +127,10 @@ export default () => {
             }),
         }, {specificityWeight: 2}),
         scope('currentStepLayout', {
+            gridArea: 'currentStep',
+            
+            
+            
             display: 'grid',
             gapBlock: containers.paddingBlock,
             
@@ -138,26 +157,24 @@ export default () => {
         scope('noSize', {
             contain: 'inline-size',
         }),
-        scope('navCheckout', {
-            // remove <section>'s and <article>'s padding to follow <container>'s padding:
-            ...children(['&', 'article'], {
-                [paddingVars.paddingInline] : '0px',
-                [paddingVars.paddingBlock ] : '0px',
+        scope('navFooter', {
+            // layouts:
+            // back & next are stacked vertically, with back on the bottom:
+            display: 'flex',
+            flexDirection: 'column-reverse',
+            alignItems: 'stretch',
+            // back & next are stacked horizontally:
+            ...ifScreenWidthAtLeast('sm', {
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
             }),
+            flexWrap: 'nowrap',
             
-            ...children('article', {
-                // back & next are stacked vertically, with back on the bottom:
-                display: 'flex',
-                flexDirection: 'column-reverse',
-                alignItems: 'stretch',
-                gap: '1rem',
-                // back & next are stacked horizontally:
-                ...ifScreenWidthAtLeast('sm', {
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                }),
-            }),
-        }, {specificityWeight: 2}),
+            
+            
+            // spacings:
+            gap: '1rem',
+        }, {specificityWeight: 4}),
     ];
 };
