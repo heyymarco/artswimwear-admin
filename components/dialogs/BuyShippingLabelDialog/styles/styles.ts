@@ -20,7 +20,12 @@ import {
 
 // reusable-ui core:
 import {
-    // configs:
+    // a responsive management system:
+    breakpoints,
+    
+    
+    
+    // a typography management system:
     secondaries,
     
     
@@ -90,6 +95,10 @@ export default () => {
     
     
     return [
+        scope('dialog', {
+            boxSizing     : 'border-box',
+            maxInlineSize : `${breakpoints.md}px`,
+        }, {specificityWeight: 4}),
         scope('layout', {
             display: 'grid',
             gapInline: `calc(${containers.paddingInline} / 2)`,

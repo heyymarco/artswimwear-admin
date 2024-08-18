@@ -206,6 +206,13 @@ const BuyShippingLabelDialogInternal = (props: BuyShippingLabelDialogProps): JSX
             theme          = {props.theme          ?? 'primary'   }
             backdropStyle  = {props.backdropStyle  ?? 'static'    }
             modalCardStyle = {props.modalCardStyle ?? 'scrollable'}
+            horzAlign      = 'stretch'
+            vertAlign      = 'stretch'
+            
+            
+            
+            // classes:
+            className={styleSheet.dialog}
             
             
             
