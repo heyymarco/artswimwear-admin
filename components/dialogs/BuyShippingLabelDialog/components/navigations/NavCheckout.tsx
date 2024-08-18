@@ -75,6 +75,9 @@ const NavCheckout = (): JSX.Element|null => {
     return (
         <>
             {!isCheckoutFinished && <>
+                {/* a dummy element to push the next button to the right */}
+                {!prevAction && <span />}
+                
                 {!!prevAction && <ButtonIcon
                     // appearances:
                     icon='arrow_back'

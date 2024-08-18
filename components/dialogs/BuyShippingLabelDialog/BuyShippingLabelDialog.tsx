@@ -43,6 +43,7 @@ import {
 // reusable-ui components:
 import {
     // base-content-components:
+    Container,
     Content,
     
     
@@ -69,6 +70,9 @@ import {
     
     
     // composite-components:
+    Accordion,
+    AccordionItem,
+    ExclusiveAccordion,
     type TabPanelProps,
     TabPanel,
     TabProps,
@@ -79,6 +83,12 @@ import {
     // utility-components:
     useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
+
+// heymarco components:
+import {
+    Article,
+    Section,
+}                           from '@heymarco/section'
 
 // internal components:
 import {
@@ -94,6 +104,12 @@ import {
 import {
     NavCheckout,
 }                           from './components/navigations/NavCheckout'
+import {
+    EditOriginAddress,
+}                           from './components/checkouts/EditOriginAddress'
+import {
+    EditShippingAddress,
+}                           from './components/checkouts/EditShippingAddress'
 
 // internals:
 import type {
@@ -130,6 +146,18 @@ const BuyShippingLabelDialog = (props: BuyShippingLabelDialogProps): JSX.Element
 const BuyShippingLabelDialogInternal = (props: BuyShippingLabelDialogProps): JSX.Element|null => {
     // styles:
     const styleSheet = useBuyShippingLabelDialogStyleSheet();
+    
+    
+    
+    // contexts:
+    const {
+        // states:
+        checkoutStep,
+        
+        isCheckoutLoading,
+        isCheckoutError,
+        isCheckoutFinished,
+    } = useCheckoutState();
     
     
     
@@ -189,12 +217,62 @@ const BuyShippingLabelDialogInternal = (props: BuyShippingLabelDialogProps): JSX
                 <CloseButton onClick={handleCloseDialog} />
             </CardHeader>
             
-            <CardBody>
-                <ProgressCheckout />
-                <p>
-                    hello world
-                </p>
-                <NavCheckout />
+            <CardBody className={styleSheet.layout}>
+                <Section
+                    // semantics:
+                    tag='nav'
+                    
+                    
+                    
+                    // classes:
+                    className={styleSheet.progressCheckout}
+                >
+                    <ProgressCheckout />
+                </Section>
+                
+                <div
+                    // classes:
+                    className={styleSheet.currentStepLayout}
+                >
+                    {(checkoutStep === 'info') && <Section
+                        // refs:
+                        // elmRef={currentStepSectionRef}
+                        
+                        
+                        
+                        // classes:
+                        className={styleSheet.checkout}
+                    >
+                        <ExclusiveAccordion
+                            defaultExpandedListIndex={1}
+                        >
+                            <AccordionItem label='From' bodyComponent={<Article />}>
+                                <p className={styleSheet.noSize}>
+                                    Edit the shipping origin address. This is usually your store location.
+                                </p>
+                                <EditOriginAddress />
+                            </AccordionItem>
+                            <AccordionItem label='To' bodyComponent={<Article />}>
+                                <p className={styleSheet.noSize}>
+                                    Edit the customer&apos;s shipping address.
+                                </p>
+                                <EditShippingAddress />
+                            </AccordionItem>
+                        </ExclusiveAccordion>
+                    </Section>}
+                </div>
+                
+                <Section
+                    // semantics:
+                    tag='nav'
+                    
+                    
+                    
+                    // classes:
+                    className={styleSheet.navCheckout}
+                >
+                    <NavCheckout />
+                </Section>
             </CardBody>
             
             <CardFooter>

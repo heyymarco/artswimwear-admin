@@ -12,8 +12,9 @@ import {
     
     // hooks:
     useContext,
-    useState,
     useMemo,
+    useRef,
+    useState,
 }                           from 'react'
 
 // reusable-ui core:
@@ -31,6 +32,7 @@ import {
     // react helper hooks:
     useIsomorphicLayoutEffect,
     useEvent,
+    EventHandler,
     useMountedFlag,
     
     
@@ -38,6 +40,12 @@ import {
     // an accessibility management system:
     AccessibilityProvider,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
+// models:
+import {
+    type DefaultShippingOriginDetail,
+    type ShippingAddressDetail,
+}                           from '@/models'
 
 // internals:
 import {
@@ -71,12 +79,28 @@ export interface CheckoutState {
     
     
     
+    // address data:
+    addressValidation            : boolean
+    setAddressValidation         : EventHandler<boolean>
+    originAddress                : Omit<DefaultShippingOriginDetail, 'id'>|null
+    setOriginAddress             : EventHandler<Omit<DefaultShippingOriginDetail, 'id'>|null>
+    shippingAddress              : ShippingAddressDetail|null
+    setShippingAddress           : EventHandler<ShippingAddressDetail|null>
+    
+    
+    
+    // fields:
+    shippingAddressInputRef      : React.MutableRefObject<HTMLInputElement|null> | undefined
+    
+    
+    
     // actions:
     gotoStepInformation          : () => void
     gotoStepSelectCarrier        : () => Promise<boolean>
     gotoPayment                  : () => Promise<boolean>
 }
 
+const noopSetter   : EventHandler<unknown> = () => {};
 const noopCallback = () => {};
 const CheckoutStateContext = createContext<CheckoutState>({
     // states:
@@ -89,6 +113,21 @@ const CheckoutStateContext = createContext<CheckoutState>({
     isCheckoutError              : false,
     isCheckoutReady              : false,
     isCheckoutFinished           : false,
+    
+    
+    
+    // address data:
+    addressValidation            : false,
+    setAddressValidation         : noopSetter,
+    originAddress                : null,
+    setOriginAddress             : noopSetter,
+    shippingAddress              : null,
+    setShippingAddress           : noopSetter,
+    
+    
+    
+    // fields:
+    shippingAddressInputRef      : undefined,
     
     
     
@@ -156,7 +195,15 @@ const CheckoutStateProvider = (props: React.PropsWithChildren): JSX.Element|null
     
     
     
-    // handlers:
+    // address data:
+    const [addressValidation, setAddressValidation] = useState<boolean>(false);
+    const [originAddress    , setOriginAddress    ] = useState<Omit<DefaultShippingOriginDetail, 'id'>|null>(null);
+    const [shippingAddress  , setShippingAddress  ] = useState<ShippingAddressDetail|null>(null);
+    
+    
+    
+    // refs:
+    const shippingAddressInputRef = useRef<HTMLInputElement|null>(null);
     
     
     
@@ -198,6 +245,21 @@ const CheckoutStateProvider = (props: React.PropsWithChildren): JSX.Element|null
         
         
         
+        // address data:
+        addressValidation,
+        setAddressValidation,
+        originAddress,
+        setOriginAddress,
+        shippingAddress,
+        setShippingAddress,
+        
+        
+        
+        // fields:
+        shippingAddressInputRef,      // stable ref
+        
+        
+        
         // actions:
         gotoStepInformation,          // stable ref
         gotoStepSelectCarrier,        // stable ref
@@ -213,6 +275,21 @@ const CheckoutStateProvider = (props: React.PropsWithChildren): JSX.Element|null
         isCheckoutError,
         isCheckoutReady,
         isCheckoutFinished,
+        
+        
+        
+        // address data:
+        addressValidation,
+        setAddressValidation,
+        originAddress,
+        setOriginAddress,
+        shippingAddress,
+        setShippingAddress,
+        
+        
+        
+        // fields:
+        // shippingAddressInputRef,   // stable ref
         
         
         
