@@ -39,6 +39,9 @@ import {
     AddressEditorProps as BaseAddressEditorProps,
     AddressEditor      as BaseAddressEditor,
 }                           from '@heymarco/address-editor'
+export {
+    type Address,
+}                           from '@heymarco/address-editor'
 
 // stores:
 import {
@@ -67,12 +70,22 @@ export interface AddressEditorProps<out TElement extends Element = HTMLFormEleme
         // bases:
         BaseAddressEditorProps<TElement>
 {
+    // refs:
+    addressRef   ?: React.Ref<HTMLInputElement> // setter ref
+    
+    
+    
     // accessibilities:
     autoComplete ?: boolean
 }
 const AddressEditor = <TElement extends Element = HTMLFormElement>(props: AddressEditorProps<TElement>): JSX.Element|null => {
     // props:
     const {
+        // refs:
+        addressRef,
+        
+        
+        
         // accessibilities:
         autoComplete = false,
         
@@ -172,7 +185,7 @@ const AddressEditor = <TElement extends Element = HTMLFormElement>(props: Addres
             <TextEditor aria-label='Zip (Postal) Code' autoComplete={!autoComplete ? 'nope' : undefined} minLength={2} maxLength={11} />
         ),
         addressEditorComponent=(
-            <TextEditor aria-label='Street Address' autoComplete={!autoComplete ? 'nope' : undefined} minLength={5} maxLength={90} />
+            <TextEditor aria-label='Street Address' autoComplete={!autoComplete ? 'nope' : undefined} minLength={5} maxLength={90} elmRef={addressRef} />
         ),
         companyEditorComponent=(
             <NameEditor aria-label='Company' autoComplete={!autoComplete ? 'nope' : undefined} minLength={2} maxLength={30} />
