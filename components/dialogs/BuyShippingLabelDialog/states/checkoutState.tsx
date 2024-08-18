@@ -47,6 +47,12 @@ import {
     type ShippingAddressDetail,
 }                           from '@/models'
 
+// stores:
+import {
+    // hooks:
+    useGetDefaultShippingOrigin,
+}                           from '@/store/features/api/apiSlice'
+
 // internals:
 import {
     type CheckoutStep,
@@ -98,6 +104,8 @@ export interface CheckoutState {
     gotoStepInformation          : () => void
     gotoStepSelectCarrier        : () => Promise<boolean>
     gotoPayment                  : () => Promise<boolean>
+    
+    refetchCheckout              : () => void
 }
 
 const noopSetter   : EventHandler<unknown> = () => {};
@@ -135,6 +143,8 @@ const CheckoutStateContext = createContext<CheckoutState>({
     gotoStepInformation          : noopCallback,
     gotoStepSelectCarrier        : noopCallback as any,
     gotoPayment                  : noopCallback as any,
+    
+    refetchCheckout              : noopCallback,
 });
 CheckoutStateContext.displayName  = 'CheckoutState';
 
@@ -145,15 +155,18 @@ export const useCheckoutState = (): CheckoutState => {
 
 
 // react components:
-export interface CheckoutStateProps
-{
-    // states:
-    defaultExpandedListIndex ?: number
-    expandedListIndex        ?: number
+export interface CheckoutStateProps {
+    // data:
+    defaultShippingAddress ?: ShippingAddressDetail|null
 }
-const CheckoutStateProvider = (props: React.PropsWithChildren): JSX.Element|null => {
+const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps>): JSX.Element|null => {
     // props:
     const {
+        // data:
+        defaultShippingAddress = null,
+        
+        
+        
         // children:
         children,
     } = props;
@@ -165,12 +178,26 @@ const CheckoutStateProvider = (props: React.PropsWithChildren): JSX.Element|null
     const checkoutProgress = calculateCheckoutProgress(checkoutStep);
     const [isBusy , setIsBusyInternal] = useState<BusyState>(false);
     
+    
+    
+    // address data:
+    const [addressValidation, setAddressValidation] = useState<boolean>(false);
+    const [originAddress    , setOriginAddress    ] = useState<Omit<DefaultShippingOriginDetail, 'id'>|null>(null);
+    const [shippingAddress  , setShippingAddress  ] = useState<ShippingAddressDetail|null>(defaultShippingAddress);
+    
+    
+    
+    // apis:
+    const {data: originAddressInitial, isLoading : isShippingOriginLoading, isError: isShippingOriginError, refetch: refetchShippingOrigin} = useGetDefaultShippingOrigin();
+    
+    
+    
     const isLastCheckoutStep = (checkoutStep === 'paid');
     const isCheckoutLoading              = (
         (
             // have any loading(s):
             
-            false
+            isShippingOriginLoading
         )
     );
     const isCheckoutError                = (
@@ -179,7 +206,7 @@ const CheckoutStateProvider = (props: React.PropsWithChildren): JSX.Element|null
         (
             // have any error(s):
             
-            false
+            isShippingOriginError
         )
     );
     const isCheckoutReady                = (
@@ -195,15 +222,21 @@ const CheckoutStateProvider = (props: React.PropsWithChildren): JSX.Element|null
     
     
     
-    // address data:
-    const [addressValidation, setAddressValidation] = useState<boolean>(false);
-    const [originAddress    , setOriginAddress    ] = useState<Omit<DefaultShippingOriginDetail, 'id'>|null>(null);
-    const [shippingAddress  , setShippingAddress  ] = useState<ShippingAddressDetail|null>(null);
-    
-    
-    
     // refs:
     const shippingAddressInputRef = useRef<HTMLInputElement|null>(null);
+    
+    
+    
+    // effects:
+    useIsomorphicLayoutEffect(() => {
+        // conditions:
+        if (!originAddressInitial) return;
+        
+        
+        
+        // actions:
+        setOriginAddress(originAddressInitial);
+    }, [originAddressInitial]);
     
     
     
@@ -226,6 +259,10 @@ const CheckoutStateProvider = (props: React.PropsWithChildren): JSX.Element|null
         
         
         return true; // transaction completed
+    });
+    
+    const refetchCheckout      = useEvent((): void => {
+        refetchShippingOrigin();
     });
     
     
@@ -264,6 +301,8 @@ const CheckoutStateProvider = (props: React.PropsWithChildren): JSX.Element|null
         gotoStepInformation,          // stable ref
         gotoStepSelectCarrier,        // stable ref
         gotoPayment,                  // stable ref
+        
+        refetchCheckout,              // stable ref
     }), [
         // states:
         checkoutStep,
@@ -297,6 +336,8 @@ const CheckoutStateProvider = (props: React.PropsWithChildren): JSX.Element|null
         // gotoStepInformation,       // stable ref
         // gotoStepSelectCarrier,     // stable ref
         // gotoPayment,               // stable ref
+        
+        refetchCheckout,              // stable ref
     ]);
     
     
@@ -304,7 +345,12 @@ const CheckoutStateProvider = (props: React.PropsWithChildren): JSX.Element|null
     // jsx:
     return (
         <CheckoutStateContext.Provider value={checkoutState}>
-            {children}
+            <AccessibilityProvider
+                // accessibilities:
+                enabled={!isBusy} // disabled if busy
+            >
+                {children}
+            </AccessibilityProvider>
         </CheckoutStateContext.Provider>
     );
 };

@@ -98,7 +98,14 @@ export default () => {
         scope('dialog', {
             boxSizing     : 'border-box',
             maxInlineSize : `${breakpoints.md}px`,
+            maxBlockSize  : `${breakpoints.md}px`,
         }, {specificityWeight: 4}),
+        scope('layoutLoading', {
+            // layouts:
+            display: 'grid',
+            justifyContent: 'center',
+            alignContent: 'center',
+        }, {specificityWeight: 2}),
         scope('layout', {
             // layouts:
             display: 'grid',

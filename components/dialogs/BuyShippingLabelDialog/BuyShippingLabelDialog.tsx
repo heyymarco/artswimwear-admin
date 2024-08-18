@@ -96,7 +96,6 @@ import {
     MessageLoading,
 }                           from '@/components/MessageLoading'
 import {
-    MessageErrorProps,
     MessageError,
 }                           from '@/components/MessageError'
 import {
@@ -111,6 +110,11 @@ import {
 import {
     EditShippingAddress,
 }                           from './components/checkouts/EditShippingAddress'
+
+// models:
+import {
+    type ShippingAddressDetail,
+}                           from '@/models'
 
 // internals:
 import type {
@@ -135,16 +139,47 @@ export interface BuyShippingLabelDialogProps
             |'children'        // already taken over
         >
 {
+    // data:
+    defaultShippingAddress ?: ShippingAddressDetail|null
 }
 const BuyShippingLabelDialog = (props: BuyShippingLabelDialogProps): JSX.Element|null => {
+    // props:
+    const {
+        // data:
+        defaultShippingAddress,
+        
+        
+        
+        // other props:
+        ...restBuyShippingLabelDialogProps
+    } = props;
+    
+    
+    
     // jsx:
     return (
-        <CheckoutStateProvider>
-            <BuyShippingLabelDialogInternal {...props} />
+        <CheckoutStateProvider
+            // data:
+            defaultShippingAddress={defaultShippingAddress}
+        >
+            <BuyShippingLabelDialogInternal {...restBuyShippingLabelDialogProps} />
         </CheckoutStateProvider>
     );
 };
 const BuyShippingLabelDialogInternal = (props: BuyShippingLabelDialogProps): JSX.Element|null => {
+    // props:
+    const {
+        // handlers:
+        onExpandedChange,
+        
+        
+        
+        // other props:
+        ...restModalCardProps
+    } = props;
+    
+    
+    
     // styles:
     const styleSheet = useBuyShippingLabelDialogStyleSheet();
     
@@ -157,21 +192,14 @@ const BuyShippingLabelDialogInternal = (props: BuyShippingLabelDialogProps): JSX
         
         isCheckoutLoading,
         isCheckoutError,
+        isCheckoutReady,
         isCheckoutFinished,
+        
+        
+        
+        // actions:
+        refetchCheckout,
     } = useCheckoutState();
-    
-    
-    
-    // rest props:
-    const {
-        // handlers:
-        onExpandedChange,
-        
-        
-        
-        // other props:
-        ...restModalCardProps
-    } = props;
     
     
     
@@ -225,7 +253,16 @@ const BuyShippingLabelDialogInternal = (props: BuyShippingLabelDialogProps): JSX
                 <CloseButton onClick={handleCloseDialog} />
             </CardHeader>
             
-            <CardBody className={styleSheet.layout}>
+            {(isCheckoutLoading || isCheckoutError) && <CardBody className={styleSheet.layoutLoading}>
+                {isCheckoutLoading && <MessageLoading />}
+                
+                {isCheckoutError && <MessageError
+                    // handlers:
+                    onRetry={refetchCheckout}
+                />}
+            </CardBody>}
+            
+            {isCheckoutReady && <CardBody className={styleSheet.layout}>
                 <Section
                     // semantics:
                     tag='nav'
@@ -269,7 +306,7 @@ const BuyShippingLabelDialogInternal = (props: BuyShippingLabelDialogProps): JSX
                         </ExclusiveAccordion>
                     </Section>}
                 </div>
-            </CardBody>
+            </CardBody>}
             
             <CardFooter
                 // classes:

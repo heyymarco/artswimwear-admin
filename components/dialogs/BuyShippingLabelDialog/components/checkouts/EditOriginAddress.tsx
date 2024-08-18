@@ -60,7 +60,6 @@ const EditOriginAddress = (): JSX.Element|null => {
         if (!originAddress) return null;
         return {
             ...originAddress,
-            company : '',
             zip: originAddress.zip ?? '',
         };
     }, [originAddress]);

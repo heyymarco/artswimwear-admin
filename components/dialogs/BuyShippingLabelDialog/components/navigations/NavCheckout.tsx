@@ -11,6 +11,12 @@ import {
     useMemo,
 }                           from 'react'
 
+// reusable-ui core:
+import {
+    // an accessibility management system:
+    AccessibilityProvider,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
 // reusable-ui components:
 import {
     // simple-components:
@@ -41,6 +47,7 @@ const NavCheckout = (): JSX.Element|null => {
         // states:
         checkoutProgress,
         
+        isCheckoutReady,
         isCheckoutFinished,
         
         
@@ -73,7 +80,10 @@ const NavCheckout = (): JSX.Element|null => {
     
     // jsx:
     return (
-        <>
+        <AccessibilityProvider
+            // accessibilities:
+            enabled={isCheckoutReady} // disabled if not ready
+        >
             {!isCheckoutFinished && <>
                 {/* a dummy element to push the next button to the right */}
                 {!prevAction && <span />}
@@ -167,7 +177,7 @@ const NavCheckout = (): JSX.Element|null => {
                     </Link>
                 </ButtonIcon>
             </>}
-        </>
+        </AccessibilityProvider>
     );
 };
 export {
