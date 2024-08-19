@@ -34,12 +34,27 @@ import {
     useEvent,
     EventHandler,
     useMountedFlag,
+    type TimerPromise,
+    useSetTimeout,
     
     
     
     // an accessibility management system:
     AccessibilityProvider,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
+// reusable-ui components:
+import {
+    // simple-components:
+    ButtonIcon,
+    
+    
+    
+    // utility-components:
+    WindowResizeCallback,
+    useWindowResizeObserver,
+    useDialogMessage,
+}                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // models:
 import {
@@ -61,6 +76,11 @@ import {
 import {
     calculateCheckoutProgress,
 }                           from './utilities'
+
+
+
+// utilities:
+const invalidSelector = ':is(.invalidating, .invalidated):not([aria-invalid="false"])';
 
 
 
@@ -92,6 +112,11 @@ export interface CheckoutState {
     setOriginAddress             : EventHandler<Omit<DefaultShippingOriginDetail, 'id'>|null>
     shippingAddress              : ShippingAddressDetail|null
     setShippingAddress           : EventHandler<ShippingAddressDetail|null>
+    
+    
+    
+    // sections:
+    addressSectionRef            : React.MutableRefObject<HTMLElement|null>      | undefined
     
     
     
@@ -131,6 +156,11 @@ const CheckoutStateContext = createContext<CheckoutState>({
     setOriginAddress             : noopSetter,
     shippingAddress              : null,
     setShippingAddress           : noopSetter,
+    
+    
+    
+    // sections:
+    addressSectionRef            : undefined,
     
     
     
@@ -180,6 +210,11 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
     
     
     
+    // utilities:
+    const setTimeoutAsync = useSetTimeout();
+    
+    
+    
     // address data:
     const [addressValidation, setAddressValidation] = useState<boolean>(false);
     const [originAddress    , setOriginAddress    ] = useState<Omit<DefaultShippingOriginDetail, 'id'>|null>(null);
@@ -223,6 +258,8 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
     
     
     // refs:
+    const addressSectionRef       = useRef<HTMLElement|null>(null);
+    
     const shippingAddressInputRef = useRef<HTMLInputElement|null>(null);
     
     
@@ -240,13 +277,39 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
     
     
     
+    // dialogs:
+    const {
+        showMessageError,
+        showMessageFieldError,
+        showMessageFetchError,
+    } = useDialogMessage();
+    
+    
+    
     // stable callbacks:
     const gotoStepInformation   = useEvent((): void => {
         setCheckoutStep('info');
     });
     const gotoStepSelectCarrier = useEvent(async (): Promise<boolean> => {
         const goForward = (checkoutStep === 'info');
-        setCheckoutStep('selectCarrier');
+        if (goForward) { // go forward from 'info' => do check shipping rates
+            // validate:
+            // enable validation and *wait* until the next re-render of validation_enabled before we're going to `querySelectorAll()`:
+            setAddressValidation(true);
+            
+            // wait for a validation state applied:
+            if (!(await setTimeoutAsync(0))) return false; // the component was unloaded before the timer runs => do nothing
+            if (!(await setTimeoutAsync(0))) return false; // the component was unloaded before the timer runs => do nothing
+            const fieldErrors = addressSectionRef?.current?.querySelectorAll?.(invalidSelector);
+            if (fieldErrors?.length) { // there is an/some invalid field
+                showMessageFieldError(fieldErrors);
+                return false; // transaction aborted due to validation error
+            } // if
+            
+            
+            
+            setCheckoutStep('selectCarrier');
+        } // if
         
         
         
@@ -292,6 +355,11 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
         
         
         
+        // sections:
+        addressSectionRef,            // stable ref
+        
+        
+        
         // fields:
         shippingAddressInputRef,      // stable ref
         
@@ -324,6 +392,11 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
         setOriginAddress,
         shippingAddress,
         setShippingAddress,
+        
+        
+        
+        // sections:
+        addressSectionRef,            // stable ref
         
         
         

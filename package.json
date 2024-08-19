@@ -43,7 +43,9 @@
     "@reduxjs/toolkit": "^1.9.3",
     "@reusable-ui/components": "^6.13.1",
     "@reusable-ui/core": "^6.11.0",
+    "@reusable-ui/dialog-message": "^6.7.4",
     "@reusable-ui/editable-control": "^6.7.1",
+    "@reusable-ui/hooks": "^6.8.1",
     "@reusable-ui/input": "^6.6.0",
     "@reusable-ui/invalidable": "^6.6.0",
     "@reusable-ui/modal-card": "^6.6.1",
@@ -68,7 +70,7 @@
     "react-redux": "^8.0.5",
     "sass": "^1.60.0",
     "sharp": "0.32.6",
-    "typescript": "^5.0.3"
+    "typescript": "^5.5.4"
   },
   "devDependencies": {
     "@types/bun": "^1.0.8",

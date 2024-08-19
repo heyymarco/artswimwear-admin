@@ -197,6 +197,11 @@ const BuyShippingLabelDialogInternal = (props: BuyShippingLabelDialogProps): JSX
         
         
         
+        // sections:
+        addressSectionRef,
+        
+        
+        
         // actions:
         refetchCheckout,
     } = useCheckoutState();
@@ -282,6 +287,7 @@ const BuyShippingLabelDialogInternal = (props: BuyShippingLabelDialogProps): JSX
                     {(checkoutStep === 'info') && <Section
                         // refs:
                         // elmRef={currentStepSectionRef}
+                        elmRef={addressSectionRef}
                         
                         
                         
