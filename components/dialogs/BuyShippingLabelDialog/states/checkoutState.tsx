@@ -66,6 +66,7 @@ import {
 import {
     // hooks:
     useGetDefaultShippingOrigin,
+    useGetShippingLabelRates,
 }                           from '@/store/features/api/apiSlice'
 
 // internals:
@@ -199,12 +200,14 @@ export const useCheckoutState = (): CheckoutState => {
 export interface CheckoutStateProps {
     // data:
     defaultShippingAddress ?: ShippingAddressDetail|null
+    totalProductWeight      : number
 }
 const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps>): JSX.Element|null => {
     // props:
     const {
         // data:
         defaultShippingAddress = null,
+        totalProductWeight,
         
         
         
@@ -235,8 +238,8 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
     
     
     // apis:
-    const {data: originAddressInitial, isLoading : isShippingOriginLoading, isError: isShippingOriginError, refetch: refetchShippingOrigin} = useGetDefaultShippingOrigin();
-    
+    const {                    data: originAddressInitial, isLoading : isShippingOriginLoading, isError: isShippingOriginError, refetch: refetchShippingOrigin} = useGetDefaultShippingOrigin();
+    const [getShippingLabels, {data: shippingLabelList   , isLoading : isShippingLabelLoading , isError: isShippingLabelError}] = useGetShippingLabelRates();
     
     
     const isLastCheckoutStep = (checkoutStep === 'paid');
@@ -245,6 +248,12 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
             // have any loading(s):
             
             isShippingOriginLoading
+            ||
+            (
+                (isBusy !== 'checkCarriers')  // IGNORE shippingLabelLoading if the business is triggered by next_button (the busy indicator belong to the next_button's icon)
+                &&
+                isShippingLabelLoading
+            )
         )
     );
     const isCheckoutError                = (
@@ -254,6 +263,12 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
             // have any error(s):
             
             isShippingOriginError
+            ||
+            (
+                (checkoutStep !== 'info') // IGNORE shippingLabelError if on the info step (the `shippingLabelList` data is NOT YET required)
+                &&
+                isShippingLabelError
+            )
         )
     );
     const isCheckoutReady                = (
@@ -302,6 +317,11 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
     
     
     // stable callbacks:
+    const setIsBusy            = useEvent((isBusy: BusyState) => {
+        checkoutState.isBusy = isBusy; /* instant update without waiting for (slow|delayed) re-render */
+        setIsBusyInternal(isBusy);
+    });
+    
     const gotoStepInformation   = useEvent((): void => {
         setCheckoutStep('info');
         
@@ -365,6 +385,60 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
             
             
             
+            // check for available shippingLabel(s):
+            setIsBusy('checkCarriers');
+            try {
+                const shippingLabelList = (!originAddress || !shippingAddress) ? undefined : await getShippingLabels({ // fire and forget
+                    originAddress,
+                    shippingAddress,
+                    totalProductWeight,
+                }).unwrap();
+                
+                
+                
+                if (!shippingLabelList?.ids.length) {
+                    showMessageError({
+                        title : <h1>No Available Shipping Label</h1>,
+                        error : <>
+                            <p>
+                                We&apos;re sorry. There are <strong>no shipping label available</strong> for delivery from your origin to the customer&apos;s address.
+                            </p>
+                            <p>
+                                Please verify that the <strong>country</strong>, <strong>state</strong>, <strong>city</strong>, and <strong>zip code</strong> are typed correctly, and then try again.
+                            </p>
+                            <p>
+                                If the problem persists, please contact us for further assistance.
+                            </p>
+                        </>,
+                    });
+                    return false; // transaction failed due to no_shipping_carriers
+                } // if
+            }
+            catch (error: any) {
+                showMessageError({
+                    title : <h1>Failed to Retrieve Data From Server</h1>,
+                    error : <>
+                        <p>
+                            Oops, there was an error retrieving the shipping label list.
+                        </p>
+                        <p>
+                            There was a <strong>problem contacting our server</strong>.<br />
+                            Make sure your internet connection is available.
+                        </p>
+                        <p>
+                            Please try again in a few minutes.<br />
+                            If the problem still persists, please contact us manually.
+                        </p>
+                    </>,
+                });
+                return false; // transaction failed due to fetch_error
+            }
+            finally {
+                setIsBusy(false);
+            } // try
+            
+            
+            
             setCheckoutStep('selectCarrier');
         } // if
         
@@ -411,6 +485,14 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
     
     const refetchCheckout      = useEvent((): void => {
         refetchShippingOrigin();
+        
+        if (isShippingLabelError && !isShippingLabelLoading && originAddress && shippingAddress) {
+            getShippingLabels({ // fire and forget
+                originAddress,
+                shippingAddress,
+                totalProductWeight,
+            });
+        } // if
     });
     
     

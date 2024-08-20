@@ -163,6 +163,7 @@ const BuyShippingLabelDialog = (props: BuyShippingLabelDialogProps): JSX.Element
         <CheckoutStateProvider
             // data:
             defaultShippingAddress={defaultShippingAddress}
+            totalProductWeight={1}
         >
             <BuyShippingLabelDialogInternal {...restBuyShippingLabelDialogProps} />
         </CheckoutStateProvider>

@@ -28,6 +28,9 @@ import {
     type AdminPreferenceDetail,
     
     type ShipmentDetail,
+    
+    type ShippingLabelRequest,
+    type ShippingLabelDetail,
 }                                               from '@/models'
 
 // apis:
@@ -55,6 +58,9 @@ const templateVariantGroupListAdapter = createEntityAdapter<TemplateVariantGroup
 });
 const roleListAdapter                 = createEntityAdapter<RoleDetail>({
     selectId : (roleDetail) => roleDetail.id,
+});
+const shippingLabelListAdapter        = createEntityAdapter<ShippingLabelDetail>({
+    selectId : (shippingLabelDetail) => shippingLabelDetail.id,
 });
 
 
@@ -282,6 +288,16 @@ export const apiSlice = createApi({
                 url    : `orders/shipment?orderId=${encodeURIComponent(orderId)}`,
                 method : 'GET',
             }),
+        }),
+        getShippingLabelRates       : builder.query<EntityState<ShippingLabelDetail>, ShippingLabelRequest>({
+            query : (shippingLabelRequest) => ({
+                url    : 'orders/shipping-label',
+                method : 'POST',
+                body   : shippingLabelRequest,
+            }),
+            transformResponse(response: ShippingLabelDetail[]) {
+                return shippingLabelListAdapter.addMany(shippingLabelListAdapter.getInitialState(), response);
+            },
         }),
         
         getDefaultShippingOrigin    : builder.query<DefaultShippingOriginDetail|null, void>({
@@ -767,6 +783,7 @@ export const {
     useGetOrderPageQuery                   : useGetOrderPage,
     useUpdateOrderMutation                 : useUpdateOrder,
     useGetShipmentQuery                    : useGetShipment,
+    useLazyGetShippingLabelRatesQuery      : useGetShippingLabelRates,
     
     useGetDefaultShippingOriginQuery       : useGetDefaultShippingOrigin,
     useUpdateDefaultShippingOriginMutation : useUpdateDefaultShippingOrigin,
