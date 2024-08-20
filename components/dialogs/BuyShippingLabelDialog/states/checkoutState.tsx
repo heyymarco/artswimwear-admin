@@ -125,7 +125,7 @@ export interface CheckoutState {
     
     
     // fields:
-    shippingAddressInputRef      : React.MutableRefObject<HTMLInputElement|null> | undefined
+    carrierOptionRef             : React.MutableRefObject<HTMLInputElement|null> | undefined
     
     
     
@@ -172,7 +172,7 @@ const CheckoutStateContext = createContext<CheckoutState>({
     
     
     // fields:
-    shippingAddressInputRef      : undefined,
+    carrierOptionRef             : undefined,
     
     
     
@@ -269,7 +269,7 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
     const originAddressSectionRef   = useRef<HTMLElement|null>(null);
     const shippingAddressSectionRef = useRef<HTMLElement|null>(null);
     
-    const shippingAddressInputRef   = useRef<HTMLInputElement|null>(null);
+    const carrierOptionRef          = useRef<HTMLInputElement|null>(null);
     
     
     
@@ -336,6 +336,34 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
         
         
         
+        if (!goForward) { // go back from 'payment' => focus to select carrier control
+            // go backward to select carrier:
+            setCheckoutStep('selectCarrier');
+            
+            
+            
+            // focus to select carrier control:
+            setTimeoutAsync(200)
+            .then((isDone) => {
+                // conditions:
+                if (!isDone) return; // the component was unloaded before the timer runs => do nothing
+                
+                
+                
+                // actions:
+                const focusInputElm = carrierOptionRef.current;
+                if (focusInputElm) {
+                    focusInputElm.scrollIntoView({
+                        block    : 'start',
+                        behavior : 'smooth',
+                    });
+                    focusInputElm.focus({ preventScroll: true });
+                } // if
+            });
+        } // if
+        
+        
+        
         return true; // transaction completed
     });
     const gotoPayment           = useEvent(async (): Promise<boolean> => {
@@ -387,7 +415,7 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
         
         
         // fields:
-        shippingAddressInputRef,      // stable ref
+        carrierOptionRef,             // stable ref
         
         
         
@@ -430,7 +458,7 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
         
         
         // fields:
-        // shippingAddressInputRef,   // stable ref
+        // carrierOptionRef,          // stable ref
         
         
         
