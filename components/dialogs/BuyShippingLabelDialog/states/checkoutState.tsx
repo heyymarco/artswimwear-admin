@@ -125,6 +125,8 @@ export interface CheckoutState {
     
     
     // fields:
+    originAddressInputRef        : React.MutableRefObject<HTMLInputElement|null> | undefined
+    shippingAddressInputRef      : React.MutableRefObject<HTMLInputElement|null> | undefined
     carrierOptionRef             : React.MutableRefObject<HTMLInputElement|null> | undefined
     
     
@@ -172,6 +174,8 @@ const CheckoutStateContext = createContext<CheckoutState>({
     
     
     // fields:
+    originAddressInputRef        : undefined,
+    shippingAddressInputRef      : undefined,
     carrierOptionRef             : undefined,
     
     
@@ -269,6 +273,8 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
     const originAddressSectionRef   = useRef<HTMLElement|null>(null);
     const shippingAddressSectionRef = useRef<HTMLElement|null>(null);
     
+    const originAddressInputRef     = useRef<HTMLInputElement|null>(null);
+    const shippingAddressInputRef   = useRef<HTMLInputElement|null>(null);
     const carrierOptionRef          = useRef<HTMLInputElement|null>(null);
     
     
@@ -415,6 +421,8 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
         
         
         // fields:
+        originAddressInputRef,        // stable ref
+        shippingAddressInputRef,      // stable ref
         carrierOptionRef,             // stable ref
         
         
@@ -458,6 +466,8 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
         
         
         // fields:
+        // originAddressInputRef,     // stable ref
+        // shippingAddressInputRef,   // stable ref
         // carrierOptionRef,          // stable ref
         
         
