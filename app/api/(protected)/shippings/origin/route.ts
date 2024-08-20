@@ -162,16 +162,16 @@ You do not have the privilege to modify the shipping origin.`
             
             ||
             
-               !country               || (typeof(country) !== 'string') // todo validate country id
-            || !state                 || (typeof(state) !== 'string')
-            || !city                  || (typeof(city) !== 'string')
-            || (!zip && (zip !== '')) || (typeof(zip) !== 'string')
-            || !address               || (typeof(address) !== 'string')
+               !country                       || (typeof(country) !== 'string') // todo validate country id
+            || !state                         || (typeof(state) !== 'string')
+            || !city                          || (typeof(city) !== 'string')
+            || (!zip && ((zip ?? '') !== '')) || (typeof(zip ?? '') !== 'string')
+            || !address                       || (typeof(address) !== 'string')
             
-            || !company               || (typeof(company) !== 'string')
-            || !firstName             || (typeof(firstName) !== 'string')
-            || !lastName              || (typeof(lastName) !== 'string')
-            || !phone                 || (typeof(phone) !== 'string')
+            || !company                       || (typeof(company) !== 'string')
+            || !firstName                     || (typeof(firstName) !== 'string')
+            || !lastName                      || (typeof(lastName) !== 'string')
+            || !phone                         || (typeof(phone) !== 'string')
             /* TODO: too complicated - validate use ZOD */
         ) {
             return Response.json({
