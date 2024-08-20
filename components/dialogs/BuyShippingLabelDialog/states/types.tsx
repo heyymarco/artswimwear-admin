@@ -8,3 +8,7 @@ export type BusyState =
     | false // idle
     | 'checkCarriers'
     | 'transaction'
+
+export type ExpandedAddress =
+    |'originAddress'
+    |'shippingAddress'

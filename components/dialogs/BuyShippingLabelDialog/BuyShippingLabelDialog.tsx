@@ -56,6 +56,7 @@ import {
     
     // layout-components:
     List,
+    ListItem,
     CardHeader,
     CardFooter,
     CardBody,
@@ -73,6 +74,7 @@ import {
     // composite-components:
     Accordion,
     AccordionItem,
+    type ExclusiveExpandedChangeEvent,
     ExclusiveAccordion,
     type TabPanelProps,
     TabPanel,
@@ -197,8 +199,15 @@ const BuyShippingLabelDialogInternal = (props: BuyShippingLabelDialogProps): JSX
         
         
         
+        // address data:
+        expandedAddress,
+        setExpandedAddress,
+        
+        
+        
         // sections:
-        addressSectionRef,
+        originAddressSectionRef,
+        shippingAddressSectionRef,
         
         
         
@@ -209,14 +218,14 @@ const BuyShippingLabelDialogInternal = (props: BuyShippingLabelDialogProps): JSX
     
     
     // handlers:
-    const handleCloseDialog    = useEvent(async () => {
+    const handleCloseDialog           = useEvent(async () => {
         onExpandedChange?.({
             expanded   : false,
             actionType : 'ui',
             data       : 'booh',
         });
     });
-    const handleExpandedChange = useEvent<EventHandler<ModalExpandedChangeEvent<unknown>>>((event) => {
+    const handleExpandedChange        = useEvent<EventHandler<ModalExpandedChangeEvent<unknown>>>((event) => {
         // conditions:
         if (event.actionType === 'shortcut') return; // prevents closing modal by accidentally pressing [esc]
         
@@ -224,6 +233,22 @@ const BuyShippingLabelDialogInternal = (props: BuyShippingLabelDialogProps): JSX
         
         // actions:
         onExpandedChange?.(event);
+    });
+    const handleAddressExpandedChange = useEvent<EventHandler<ExclusiveExpandedChangeEvent>>((event) => {
+        if (!event.expanded) {
+            setExpandedAddress(null);
+            return;
+        } // if
+        
+        
+        
+        setExpandedAddress((() => {
+            switch (event.listIndex) {
+                case 0  : return 'originAddress';
+                case 1  : return 'shippingAddress';
+                default : return null;
+            } // switch
+        })());
     });
     
     
@@ -287,7 +312,6 @@ const BuyShippingLabelDialogInternal = (props: BuyShippingLabelDialogProps): JSX
                     {(checkoutStep === 'info') && <Section
                         // refs:
                         // elmRef={currentStepSectionRef}
-                        elmRef={addressSectionRef}
                         
                         
                         
@@ -295,15 +319,28 @@ const BuyShippingLabelDialogInternal = (props: BuyShippingLabelDialogProps): JSX
                         className={styleSheet.checkout}
                     >
                         <ExclusiveAccordion
-                            defaultExpandedListIndex={1}
+                            // variants:
+                            listStyle='content'
+                            
+                            
+                            
+                            // handlers:
+                            expandedListIndex={(() => {
+                                switch(expandedAddress) {
+                                    case 'originAddress'   : return 0;
+                                    case 'shippingAddress' : return 1;
+                                    default                : return -1;
+                                } // switch
+                            })()}
+                            onExpandedChange={handleAddressExpandedChange}
                         >
-                            <AccordionItem label='From' bodyComponent={<Article />}>
+                            <AccordionItem label='From' bodyComponent={<ListItem elmRef={originAddressSectionRef} />}>
                                 <p className={styleSheet.noSize}>
                                     Edit the shipping origin address. This is usually your store location.
                                 </p>
                                 <EditOriginAddress />
                             </AccordionItem>
-                            <AccordionItem label='To' bodyComponent={<Article />}>
+                            <AccordionItem label='To' bodyComponent={<ListItem elmRef={shippingAddressSectionRef} />}>
                                 <p className={styleSheet.noSize}>
                                     Edit the customer&apos;s shipping address.
                                 </p>

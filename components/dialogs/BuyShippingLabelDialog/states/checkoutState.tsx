@@ -72,6 +72,7 @@ import {
 import {
     type CheckoutStep,
     type BusyState,
+    type ExpandedAddress,
 }                           from './types'
 import {
     calculateCheckoutProgress,
@@ -112,11 +113,14 @@ export interface CheckoutState {
     setOriginAddress             : EventHandler<Omit<DefaultShippingOriginDetail, 'id'>|null>
     shippingAddress              : ShippingAddressDetail|null
     setShippingAddress           : EventHandler<ShippingAddressDetail|null>
+    expandedAddress              : ExpandedAddress|null
+    setExpandedAddress           : EventHandler<ExpandedAddress|null>
     
     
     
     // sections:
-    addressSectionRef            : React.MutableRefObject<HTMLElement|null>      | undefined
+    originAddressSectionRef      : React.MutableRefObject<HTMLElement|null>      | undefined
+    shippingAddressSectionRef    : React.MutableRefObject<HTMLElement|null>      | undefined
     
     
     
@@ -156,11 +160,14 @@ const CheckoutStateContext = createContext<CheckoutState>({
     setOriginAddress             : noopSetter,
     shippingAddress              : null,
     setShippingAddress           : noopSetter,
+    expandedAddress              : null,
+    setExpandedAddress           : noopSetter,
     
     
     
     // sections:
-    addressSectionRef            : undefined,
+    originAddressSectionRef      : undefined,
+    shippingAddressSectionRef    : undefined,
     
     
     
@@ -219,6 +226,7 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
     const [addressValidation, setAddressValidation] = useState<boolean>(false);
     const [originAddress    , setOriginAddress    ] = useState<Omit<DefaultShippingOriginDetail, 'id'>|null>(null);
     const [shippingAddress  , setShippingAddress  ] = useState<ShippingAddressDetail|null>(defaultShippingAddress);
+    const [expandedAddress  , setExpandedAddress  ] = useState<ExpandedAddress|null>('shippingAddress');
     
     
     
@@ -258,9 +266,10 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
     
     
     // refs:
-    const addressSectionRef       = useRef<HTMLElement|null>(null);
+    const originAddressSectionRef   = useRef<HTMLElement|null>(null);
+    const shippingAddressSectionRef = useRef<HTMLElement|null>(null);
     
-    const shippingAddressInputRef = useRef<HTMLInputElement|null>(null);
+    const shippingAddressInputRef   = useRef<HTMLInputElement|null>(null);
     
     
     
@@ -300,9 +309,23 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
             // wait for a validation state applied:
             if (!(await setTimeoutAsync(0))) return false; // the component was unloaded before the timer runs => do nothing
             if (!(await setTimeoutAsync(0))) return false; // the component was unloaded before the timer runs => do nothing
-            const fieldErrors = addressSectionRef?.current?.querySelectorAll?.(invalidSelector);
-            if (fieldErrors?.length) { // there is an/some invalid field
-                showMessageFieldError(fieldErrors);
+            const originAddressFieldErrors   = originAddressSectionRef?.current?.querySelectorAll?.(invalidSelector);
+            const shippingAddressFieldErrors = shippingAddressSectionRef?.current?.querySelectorAll?.(invalidSelector);
+            if (originAddressFieldErrors?.length || shippingAddressFieldErrors?.length) { // there is an/some invalid field
+                if (originAddressFieldErrors?.length) {
+                    setExpandedAddress('originAddress');
+                }
+                else if (shippingAddressFieldErrors?.length) {
+                    setExpandedAddress('shippingAddress');
+                } // if
+                
+                
+                
+                showMessageFieldError(
+                    originAddressFieldErrors?.length
+                    ? originAddressFieldErrors
+                    : shippingAddressFieldErrors
+                );
                 return false; // transaction aborted due to validation error
             } // if
             
@@ -352,11 +375,14 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
         setOriginAddress,
         shippingAddress,
         setShippingAddress,
+        expandedAddress,
+        setExpandedAddress,
         
         
         
         // sections:
-        addressSectionRef,            // stable ref
+        originAddressSectionRef,      // stable ref
+        shippingAddressSectionRef,    // stable ref
         
         
         
@@ -392,11 +418,14 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
         setOriginAddress,
         shippingAddress,
         setShippingAddress,
+        expandedAddress,
+        setExpandedAddress,
         
         
         
         // sections:
-        addressSectionRef,            // stable ref
+        originAddressSectionRef,      // stable ref
+        shippingAddressSectionRef,    // stable ref
         
         
         
