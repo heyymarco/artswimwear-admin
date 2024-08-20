@@ -102,18 +102,18 @@ const EditShippingAddress = (): JSX.Element|null => {
         >
             <AddressEditor
                 // refs:
-                addressRef  = {shippingAddressInputRef}
+                addressRef   = {shippingAddressInputRef}
                 
                 
                 
                 // types:
-                addressType = 'shipping'
+                addressType  = 'shipping'
                 
                 
                 
                 // values:
-                value       = {editorAddress}
-                onChange    = {handleChange}
+                value        = {editorAddress}
+                onChange     = {handleChange}
                 
                 
                 

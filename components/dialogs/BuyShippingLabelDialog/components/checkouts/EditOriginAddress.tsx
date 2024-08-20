@@ -54,6 +54,11 @@ const EditOriginAddress = (): JSX.Element|null => {
         
         originAddress,
         setOriginAddress,
+        
+        
+        
+        // fields:
+        originAddressInputRef,
     } = useCheckoutState();
     
     const editorAddress = useMemo((): EditorAddress|null => {
@@ -93,19 +98,24 @@ const EditOriginAddress = (): JSX.Element|null => {
             enableValidation={addressValidation}
         >
             <AddressEditor
+                // refs:
+                addressRef   = {originAddressInputRef}
+                
+                
+                
                 // accessibilities:
-                autoComplete={true}
+                autoComplete ={true}
                 
                 
                 
                 // types:
-                addressType = 'shipping'
+                addressType  = 'shipping'
                 
                 
                 
                 // values:
-                value       = {editorAddress}
-                onChange    = {handleChange}
+                value        = {editorAddress}
+                onChange     = {handleChange}
             />
         </ValidationProvider>
     );

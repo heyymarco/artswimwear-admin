@@ -304,6 +304,34 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
     // stable callbacks:
     const gotoStepInformation   = useEvent((): void => {
         setCheckoutStep('info');
+        
+        
+        
+        // focus to (origin|shipping) address input:
+        setTimeoutAsync(200)
+        .then((isDone) => {
+            // conditions:
+            if (!isDone) return; // the component was unloaded before the timer runs => do nothing
+            
+            
+            
+            // actions:
+            const focusInputElm = (() => {
+                switch (expandedAddress) {
+                    case 'originAddress':
+                        return originAddressInputRef.current;
+                    case 'shippingAddress':
+                        return shippingAddressInputRef.current;
+                } // switch
+            })();
+            if (focusInputElm) {
+                focusInputElm.scrollIntoView({
+                    block    : 'start',
+                    behavior : 'smooth',
+                });
+                focusInputElm.focus({ preventScroll: true });
+            } // if
+        });
     });
     const gotoStepSelectCarrier = useEvent(async (): Promise<boolean> => {
         const goForward = (checkoutStep === 'info');
