@@ -260,7 +260,7 @@ export default () => {
                     }),
                 }),
             }),
-        }, {specificityWeight: 2}),
+        }, {specificityWeight: 3}),
         scope('navFooter', {
             // layouts:
             // back & next are stacked vertically, with back on the bottom:
