@@ -204,7 +204,7 @@ export const getShippingLabels = async (options: GetShippingLabelsOptions): Prom
             })
         ))
         .filter((rate): rate is Exclude<typeof rate, undefined> => (rate !== undefined))
-        // .toSorted((a, b) => (!a.name || !b.name) ? 0 : (a.name < b.name) ? -1 : 1)
+        .toSorted((a, b) => (!a.name || !b.name) ? 0 : (a.name < b.name) ? -1 : 1)
         .toSorted((a, b) => (a.rate - b.rate))
     );
     return shippingLabelDetails;

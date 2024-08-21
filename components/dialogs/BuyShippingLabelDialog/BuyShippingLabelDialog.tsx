@@ -14,7 +14,7 @@ import {
 
 // styles:
 import {
-    useBuyShippingLabelDialogStyleSheet,
+    useCheckoutStyleSheet,
 }                           from './styles/loader'
 
 // reusable-ui core:
@@ -112,6 +112,9 @@ import {
 import {
     EditShippingAddress,
 }                           from './components/checkouts/EditShippingAddress'
+import {
+    EditShippingMethod,
+}                           from './components/shippings/EditShippingMethod'
 
 // models:
 import {
@@ -184,7 +187,7 @@ const BuyShippingLabelDialogInternal = (props: BuyShippingLabelDialogProps): JSX
     
     
     // styles:
-    const styleSheet = useBuyShippingLabelDialogStyleSheet();
+    const styleSheet = useCheckoutStyleSheet();
     
     
     
@@ -209,6 +212,7 @@ const BuyShippingLabelDialogInternal = (props: BuyShippingLabelDialogProps): JSX
         // sections:
         originAddressSectionRef,
         shippingAddressSectionRef,
+        currentStepSectionRef,
         
         
         
@@ -312,7 +316,7 @@ const BuyShippingLabelDialogInternal = (props: BuyShippingLabelDialogProps): JSX
                 >
                     {(checkoutStep === 'info') && <Section
                         // refs:
-                        // elmRef={currentStepSectionRef}
+                        elmRef={currentStepSectionRef}
                         
                         
                         
@@ -348,6 +352,18 @@ const BuyShippingLabelDialogInternal = (props: BuyShippingLabelDialogProps): JSX
                                 <EditShippingAddress />
                             </AccordionItem>
                         </ExclusiveAccordion>
+                    </Section>}
+                    
+                    {(checkoutStep === 'shipping') && <Section
+                        // refs:
+                        elmRef={currentStepSectionRef}
+                        
+                        
+                        
+                        // accessibilities:
+                        title='Select Carrier'
+                    >
+                        <EditShippingMethod />
                     </Section>}
                 </div>
             </CardBody>}

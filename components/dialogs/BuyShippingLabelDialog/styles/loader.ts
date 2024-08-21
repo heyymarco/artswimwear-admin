@@ -8,6 +8,6 @@ import {
 
 // styles:
 import './styles';
-export const useBuyShippingLabelDialogStyleSheet = dynamicStyleSheets(
+export const useCheckoutStyleSheet = dynamicStyleSheets(
     () => import(/* webpackPrefetch: true */'./styles')
 , { id: 'n7btlzde5s' });

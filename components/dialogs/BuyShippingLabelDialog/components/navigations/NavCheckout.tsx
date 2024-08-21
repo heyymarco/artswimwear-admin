@@ -54,7 +54,7 @@ const NavCheckout = (): JSX.Element|null => {
         
         // actions:
         gotoStepInformation,
-        gotoStepSelectCarrier,
+        gotoStepShipping,
         gotoPayment,
     } = useCheckoutState();
     
@@ -65,11 +65,11 @@ const NavCheckout = (): JSX.Element|null => {
         const prevAction = [
             null,
             { text: 'Return to Information'     , action: () => gotoStepInformation()    },
-            { text: 'Return to Select Carrier'  , action: gotoStepSelectCarrier          },
+            { text: 'Return to Select Carrier'  , action: gotoStepShipping               },
         ][Math.max(0, checkoutProgress)];
         
         const nextAction = [
-            { text: 'Continue to Select Carrier', action: gotoStepSelectCarrier          },
+            { text: 'Continue to Select Carrier', action: gotoStepShipping               },
             { text: 'Continue to Payment'       , action: gotoPayment                    },
         ][checkoutProgress];
         

@@ -164,6 +164,103 @@ export default () => {
         scope('noSize', {
             contain: 'inline-size',
         }),
+        scope('selectShipping', {
+            // layouts:
+            display                         : 'grid',
+            
+            // narrow screen: without eta:
+            gridTemplateColumns             : '[decor-start] max-content [decor-end label-start] 1fr [label-end currency-start] max-content [currency-end amount-start] max-content [amount-end]',
+            ...ifScreenWidthAtLeast('sm', {
+                // wide screen: with eta:
+                gridTemplateColumns         : '[decor-start] max-content [decor-end label-start] 1fr [label-end eta-start] max-content [eta-end currency-start] max-content [currency-end amount-start] max-content [amount-end]',
+            }),
+            
+            
+            
+            // children:
+            ...children('li', {
+                // children:
+                ...children('&', {
+                    gridRowEnd              : 'span 2',
+                }),
+                ...children(['&', ':first-child'], { // <li> & <ListItem>
+                    // positions:
+                    gridColumn              : '1 / -1',
+                    
+                    
+                    
+                    // layouts:
+                    display                 : 'grid',
+                    gridTemplateColumns     : 'subgrid',
+                }),
+                ...children([':first-child'], { // <ListItem>
+                    // layouts:
+                    gridTemplateRows        : '[row1-start] max-content [row1-end row2-start] max-content [row2-end]',
+                    
+                    
+                    
+                    // spacings:
+                    columnGap               : spacers.md,
+                    rowGap                  : spacers.xxs,
+                    padding                 : spacers.md,
+                }),
+                ...children(':first-child', { // <ListItem>
+                    // layouts:
+                    alignItems              : 'center', // center vertically
+                    
+                    
+                    
+                    // children:
+                    // ...children('*', {
+                    //     gridRow             : 'row1-start / row2-end',
+                    // }),
+                    ...children('[role="radio"]', {
+                        // positions:
+                        gridArea            : 'row1-start / decor-start / row2-end / decor-end',
+                    }),
+                    ...children('.label', {
+                        // positions:
+                        gridArea            : 'row1-start / label-start / row1-end / label-end',
+                        ...ifScreenWidthAtLeast('sm', {
+                            gridArea        : 'row1-start / label-start / row2-end / label-end',
+                        }),
+                    }),
+                    ...children('.eta', {
+                        // positions:
+                        gridArea            : 'row2-start / label-start / row2-end / label-end',
+                        ...ifScreenWidthAtLeast('sm', {
+                            gridArea        : 'row1-start / eta-start / row2-end / eta-end',
+                        }),
+                    }),
+                    ...children('.cost', {
+                        // positions:
+                        alignSelf: 'center',
+                        gridArea            : 'row1-start / currency-start / row2-end / amount-end',
+                        
+                        
+                        
+                        // layouts:
+                        display             : 'grid',
+                        gridTemplateColumns : 'subgrid',
+                        ...children('.currencySign', {
+                            // customize:
+                            ...usesCssProps(secondaries),
+                        }),
+                        
+                        
+                        
+                        // spacings:
+                        gap                 : 'inherit',
+                        
+                        
+                        
+                        // typos:
+                        whiteSpace          : 'nowrap',
+                        textAlign           : 'end',
+                    }),
+                }),
+            }),
+        }, {specificityWeight: 2}),
         scope('navFooter', {
             // layouts:
             // back & next are stacked vertically, with back on the bottom:

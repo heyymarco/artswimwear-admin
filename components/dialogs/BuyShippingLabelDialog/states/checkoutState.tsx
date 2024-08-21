@@ -17,6 +17,11 @@ import {
     useState,
 }                           from 'react'
 
+// redux:
+import type {
+    EntityState
+}                           from '@reduxjs/toolkit'
+
 // reusable-ui core:
 import {
     // a responsive management system:
@@ -60,6 +65,8 @@ import {
 import {
     type DefaultShippingOriginDetail,
     type ShippingAddressDetail,
+    
+    type ShippingLabelDetail,
 }                           from '@/models'
 
 // stores:
@@ -119,22 +126,34 @@ export interface CheckoutState {
     
     
     
+    // shipping data:
+    shippingProvider             : string | undefined
+    setShippingProvider          : (shippingProvider: string) => void
+    
+    
+    
+    // relation data:
+    shippingList                 : EntityState<ShippingLabelDetail> | undefined
+    
+    
+    
     // sections:
     originAddressSectionRef      : React.MutableRefObject<HTMLElement|null>      | undefined
     shippingAddressSectionRef    : React.MutableRefObject<HTMLElement|null>      | undefined
+    shippingMethodOptionRef      : React.MutableRefObject<HTMLElement|null>      | undefined
+    currentStepSectionRef        : React.MutableRefObject<HTMLElement|null>      | undefined
     
     
     
     // fields:
     originAddressInputRef        : React.MutableRefObject<HTMLInputElement|null> | undefined
     shippingAddressInputRef      : React.MutableRefObject<HTMLInputElement|null> | undefined
-    carrierOptionRef             : React.MutableRefObject<HTMLInputElement|null> | undefined
     
     
     
     // actions:
     gotoStepInformation          : () => void
-    gotoStepSelectCarrier        : () => Promise<boolean>
+    gotoStepShipping             : () => Promise<boolean>
     gotoPayment                  : () => Promise<boolean>
     
     refetchCheckout              : () => void
@@ -168,22 +187,34 @@ const CheckoutStateContext = createContext<CheckoutState>({
     
     
     
+    // shipping data:
+    shippingProvider             : undefined,
+    setShippingProvider          : noopSetter,
+    
+    
+    
+    // relation data:
+    shippingList                 : undefined,
+    
+    
+    
     // sections:
     originAddressSectionRef      : undefined,
     shippingAddressSectionRef    : undefined,
+    shippingMethodOptionRef      : undefined,
+    currentStepSectionRef        : undefined,
     
     
     
     // fields:
     originAddressInputRef        : undefined,
     shippingAddressInputRef      : undefined,
-    carrierOptionRef             : undefined,
     
     
     
     // actions:
     gotoStepInformation          : noopCallback,
-    gotoStepSelectCarrier        : noopCallback as any,
+    gotoStepShipping             : noopCallback as any,
     gotoPayment                  : noopCallback as any,
     
     refetchCheckout              : noopCallback,
@@ -237,9 +268,14 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
     
     
     
+    // shipping data:
+    const [shippingProvider, setShippingProvider] = useState<string|undefined>(undefined);
+    
+    
+    
     // apis:
     const {                    data: originAddressInitial, isLoading : isShippingOriginLoading, isError: isShippingOriginError, refetch: refetchShippingOrigin} = useGetDefaultShippingOrigin();
-    const [getShippingLabels, {data: shippingLabelList   , isLoading : isShippingLabelLoading , isError: isShippingLabelError}] = useGetShippingLabelRates();
+    const [getShippingLabels, {data: shippingList        , isLoading : isShippingLoading      , isError: isShippingError}] = useGetShippingLabelRates();
     
     
     const isLastCheckoutStep = (checkoutStep === 'paid');
@@ -250,9 +286,9 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
             isShippingOriginLoading
             ||
             (
-                (isBusy !== 'checkCarriers')  // IGNORE shippingLabelLoading if the business is triggered by next_button (the busy indicator belong to the next_button's icon)
+                (isBusy !== 'checkCarriers')  // IGNORE shippingLoading if the business is triggered by next_button (the busy indicator belong to the next_button's icon)
                 &&
-                isShippingLabelLoading
+                isShippingLoading
             )
         )
     );
@@ -265,9 +301,9 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
             isShippingOriginError
             ||
             (
-                (checkoutStep !== 'info') // IGNORE shippingLabelError if on the info step (the `shippingLabelList` data is NOT YET required)
+                (checkoutStep !== 'info') // IGNORE shippingError if on the info step (the `shippingList` data is NOT YET required)
                 &&
-                isShippingLabelError
+                isShippingError
             )
         )
     );
@@ -287,10 +323,11 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
     // refs:
     const originAddressSectionRef   = useRef<HTMLElement|null>(null);
     const shippingAddressSectionRef = useRef<HTMLElement|null>(null);
+    const shippingMethodOptionRef   = useRef<HTMLElement|null>(null);
     
     const originAddressInputRef     = useRef<HTMLInputElement|null>(null);
     const shippingAddressInputRef   = useRef<HTMLInputElement|null>(null);
-    const carrierOptionRef          = useRef<HTMLInputElement|null>(null);
+    const currentStepSectionRef     = useRef<HTMLElement|null>(null);
     
     
     
@@ -304,6 +341,29 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
         // actions:
         setOriginAddress(originAddressInitial);
     }, [originAddressInitial]);
+    
+    // auto scroll to top on checkoutStep changed:
+    const isSubsequentStep = useRef<boolean>(false);
+    useIsomorphicLayoutEffect(() => {
+        // conditions:
+        if (typeof(window) === 'undefined') return; // noop on server_side
+        
+        
+        
+        // actions:
+        if (isSubsequentStep.current) {
+            const currentStepSectionElm = currentStepSectionRef.current;
+            window.document.scrollingElement?.scrollTo({
+                top      : 0,
+                behavior : currentStepSectionElm ? 'auto' : 'smooth',
+            });
+            currentStepSectionElm?.scrollIntoView({
+                block    : 'start',
+                behavior : 'smooth',
+            });
+        } // if
+        isSubsequentStep.current = true;
+    }, [checkoutStep]);
     
     
     
@@ -353,7 +413,7 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
             } // if
         });
     });
-    const gotoStepSelectCarrier = useEvent(async (): Promise<boolean> => {
+    const gotoStepShipping      = useEvent(async (): Promise<boolean> => {
         const goForward = (checkoutStep === 'info');
         if (goForward) { // go forward from 'info' => do check shipping rates
             // validate:
@@ -439,18 +499,18 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
             
             
             
-            setCheckoutStep('selectCarrier');
+            setCheckoutStep('shipping');
         } // if
         
         
         
-        if (!goForward) { // go back from 'payment' => focus to select carrier control
-            // go backward to select carrier:
-            setCheckoutStep('selectCarrier');
+        if (!goForward) { // go back from 'payment' => focus to shipping method option control
+            // go backward to shipping method:
+            setCheckoutStep('shipping');
             
             
             
-            // focus to select carrier control:
+            // focus to shipping method:
             setTimeoutAsync(200)
             .then((isDone) => {
                 // conditions:
@@ -459,7 +519,7 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
                 
                 
                 // actions:
-                const focusInputElm = carrierOptionRef.current;
+                const focusInputElm = shippingMethodOptionRef.current;
                 if (focusInputElm) {
                     focusInputElm.scrollIntoView({
                         block    : 'start',
@@ -486,7 +546,7 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
     const refetchCheckout      = useEvent((): void => {
         refetchShippingOrigin();
         
-        if (isShippingLabelError && !isShippingLabelLoading && originAddress && shippingAddress) {
+        if (isShippingError && !isShippingLoading && originAddress && shippingAddress) {
             getShippingLabels({ // fire and forget
                 originAddress,
                 shippingAddress,
@@ -524,22 +584,34 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
         
         
         
+        // shipping data:
+        shippingProvider,
+        setShippingProvider,
+        
+        
+        
+        // relation data:
+        shippingList,
+        
+        
+        
         // sections:
         originAddressSectionRef,      // stable ref
         shippingAddressSectionRef,    // stable ref
+        shippingMethodOptionRef,      // stable ref
+        currentStepSectionRef,        // stable ref
         
         
         
         // fields:
         originAddressInputRef,        // stable ref
         shippingAddressInputRef,      // stable ref
-        carrierOptionRef,             // stable ref
         
         
         
         // actions:
         gotoStepInformation,          // stable ref
-        gotoStepSelectCarrier,        // stable ref
+        gotoStepShipping,             // stable ref
         gotoPayment,                  // stable ref
         
         refetchCheckout,              // stable ref
@@ -569,22 +641,34 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
         
         
         
+        // shipping data:
+        shippingProvider,
+        setShippingProvider,
+        
+        
+        
+        // relation data:
+        shippingList,
+        
+        
+        
         // sections:
-        originAddressSectionRef,      // stable ref
-        shippingAddressSectionRef,    // stable ref
+        // originAddressSectionRef,   // stable ref
+        // shippingAddressSectionRef, // stable ref
+        // shippingMethodOptionRef,   // stable ref
+        // currentStepSectionRef,     // stable ref
         
         
         
         // fields:
         // originAddressInputRef,     // stable ref
         // shippingAddressInputRef,   // stable ref
-        // carrierOptionRef,          // stable ref
         
         
         
         // actions:
         // gotoStepInformation,       // stable ref
-        // gotoStepSelectCarrier,     // stable ref
+        // gotoStepShipping,          // stable ref
         // gotoPayment,               // stable ref
         
         refetchCheckout,              // stable ref

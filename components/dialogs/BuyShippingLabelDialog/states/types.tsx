@@ -1,6 +1,6 @@
 export type CheckoutStep =
     |'info'
-    |'selectCarrier'
+    |'shipping'
     |'payment'
     |'paid'
 
