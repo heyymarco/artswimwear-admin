@@ -13,6 +13,11 @@ import {
 
 // reusable-ui components:
 import {
+    // simple-components:
+    Basic,
+    
+    
+    
     // layout-components:
     ListItem,
     List,
@@ -86,7 +91,7 @@ const EditShippingMethod = (): JSX.Element|null => {
                 Customer&apos;s selected carrier:
             </p>
             {!preferedShippingProvider && <span className='noValue'>none</span>}
-            {!!preferedShippingProvider && <DataTable>
+            {!!preferedShippingProvider && <DataTable theme='success' mild={false}>
                 <DataTableBody>
                     <DataTableItem label='Name'>
                         {preferedShippingProvider.name}
@@ -142,6 +147,13 @@ const EditShippingMethod = (): JSX.Element|null => {
                                 
                                 <span className='label'>
                                     {shippingLabelEntry.name}
+                                    
+                                    {(preferedShippingLabel === shippingLabelEntry) && <>
+                                        {' '}
+                                        <Basic theme='success' size='sm' className={styleSheet.selectionBadge}>
+                                            Customer&apos;s selection
+                                        </Basic>
+                                    </>}
                                 </span>
                                 
                                 {!!shippingLabelEntry.eta && <span className='eta txt-sec'>

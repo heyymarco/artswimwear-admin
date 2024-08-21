@@ -261,6 +261,9 @@ export default () => {
                 }),
             }),
         }, {specificityWeight: 3}),
+        scope('selectionBadge', {
+            display: 'inline-block',
+        }, {specificityWeight: 2}),
         scope('navFooter', {
             // layouts:
             // back & next are stacked vertically, with back on the bottom:
