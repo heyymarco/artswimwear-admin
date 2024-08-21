@@ -86,14 +86,11 @@ import {
     type CheckoutStep,
     type BusyState,
     type ExpandedAddress,
+    type FixedMatchingShipping,
 }                           from './types'
 import {
     calculateCheckoutProgress,
 }                           from './utilities'
-import {
-    // types:
-    type MatchingShipping,
-}                           from '@/libs/shippings/shippings'
 
 // configs:
 import {
@@ -141,15 +138,15 @@ export interface CheckoutState {
     
     
     // shipping data:
-    preferedShippingProvider     : MatchingShipping    | null
-    preferedShippingLabel        : ShippingLabelDetail | null
-    shippingLabel                : ShippingLabelDetail | undefined
+    preferedShippingProvider     : FixedMatchingShipping | null
+    preferedShippingLabel        : ShippingLabelDetail   | null
+    shippingLabel                : ShippingLabelDetail   | undefined
     setShippingLabel             : (shippingLabel: ShippingLabelDetail) => void
     
     
     
     // payment data:
-    preferedCurrency             : OrderCurrencyDetail | null
+    preferedCurrency             : OrderCurrencyDetail   | null
     
     
     
@@ -367,15 +364,15 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
     
     const shippingLabelListEntities = shippingLabelList?.entities;
     const shippingListEntities      = shippingList?.entities;
+    const shippingCost              = order.shippingCost ?? 0;
     const [
-        preferedShippingProviderRaw,
+        preferedShippingProvider,
         preferedShippingLabel,
-    ] = useMemo(() => {
+    ] = useMemo((): readonly [FixedMatchingShipping|null, ShippingLabelDetail|null] | null => {
         // conditions:
         if (!preferedShippingProviderId) return null; // no preference => ignore
         if (!shippingListEntities) return null; // the shippingList is not yet loaded => ignore
         if (!shippingLabelListEntities) return null;  // the shippingLabelList is not yet loaded => ignore
-        if (shippingLabel && shippingLabelListEntities[shippingLabel.id]) return null; // already selected => ignore
         
         
         
@@ -396,18 +393,13 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
         
         
         return [
-            preferedShippingProviderRaw,
+            (preferedShippingProviderRaw === null) ? null : {
+                ...preferedShippingProviderRaw,
+                rates : shippingCost,
+            } satisfies FixedMatchingShipping,
             preferedShippingLabel
         ];
-    }, [preferedShippingProviderId, shippingLabel, shippingListEntities, shippingLabelListEntities]) ?? [ null, null ];
-    const preferedShippingProvider = useMemo((): MatchingShipping|null => {
-        if (!preferedShippingProviderRaw) return null;
-        return {
-            ...preferedShippingProviderRaw,
-            rates      : order.shippingCost ?? 0,
-            weightStep : 0,
-        } satisfies MatchingShipping;
-    }, [preferedShippingProviderRaw, order.shippingCost]);
+    }, [preferedShippingProviderId, shippingListEntities, shippingLabelListEntities, shippingCost]) ?? [ null, null ];
     
     
     

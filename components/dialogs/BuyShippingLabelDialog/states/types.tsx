@@ -1,3 +1,11 @@
+// internals:
+import {
+    // types:
+    type MatchingShipping,
+}                           from '@/libs/shippings/shippings'
+
+
+
 export type CheckoutStep =
     |'info'
     |'shipping'
@@ -12,3 +20,13 @@ export type BusyState =
 export type ExpandedAddress =
     |'originAddress'
     |'shippingAddress'
+
+export interface FixedMatchingShipping
+    extends
+        Pick<MatchingShipping,
+        |'name'
+        |'rates'
+    >
+{
+    rates : number
+}

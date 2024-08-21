@@ -92,7 +92,7 @@ const EditShippingMethod = (): JSX.Element|null => {
                         {preferedShippingProvider.name}
                     </DataTableItem>
                     <DataTableItem label='Est. Cost'>
-                        <CurrencyDisplay amount={preferedShippingProvider.rates as number} currencyRate={systemCurrencyRate} />
+                        <CurrencyDisplay amount={preferedShippingProvider.rates} currencyRate={systemCurrencyRate} />
                     </DataTableItem>
                 </DataTableBody>
             </DataTable>}
