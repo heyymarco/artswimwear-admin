@@ -118,7 +118,7 @@ import {
 
 // models:
 import {
-    type ShippingAddressDetail,
+    type OrderDetail,
 }                           from '@/models'
 
 // internals:
@@ -145,13 +145,13 @@ export interface BuyShippingLabelDialogProps
         >
 {
     // data:
-    defaultShippingAddress ?: ShippingAddressDetail|null
+    order : OrderDetail
 }
 const BuyShippingLabelDialog = (props: BuyShippingLabelDialogProps): JSX.Element|null => {
     // props:
     const {
         // data:
-        defaultShippingAddress,
+        order,
         
         
         
@@ -165,14 +165,13 @@ const BuyShippingLabelDialog = (props: BuyShippingLabelDialogProps): JSX.Element
     return (
         <CheckoutStateProvider
             // data:
-            defaultShippingAddress={defaultShippingAddress}
-            totalProductWeight={1}
+            order={order}
         >
             <BuyShippingLabelDialogInternal {...restBuyShippingLabelDialogProps} />
         </CheckoutStateProvider>
     );
 };
-const BuyShippingLabelDialogInternal = (props: BuyShippingLabelDialogProps): JSX.Element|null => {
+const BuyShippingLabelDialogInternal = (props: Omit<BuyShippingLabelDialogProps, 'order'>): JSX.Element|null => {
     // props:
     const {
         // handlers:

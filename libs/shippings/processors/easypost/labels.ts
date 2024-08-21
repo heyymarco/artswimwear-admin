@@ -6,6 +6,11 @@ import {
     type ShippingLabelDetail,
 }                           from '@/models'
 
+// internals:
+import {
+    convertForeignToSystemCurrencyIfRequired,
+}                           from '@/libs/currencyExchanges'
+
 // easypost:
 import {
     getEasyPostInstance,
@@ -199,7 +204,7 @@ export const getShippingLabels = async (options: GetShippingLabelsOptions): Prom
                         min    : rate.delivery_days,
                         max    : rate.delivery_days,
                     },
-                    rate       : amount,
+                    rate       : await convertForeignToSystemCurrencyIfRequired(amount, rate.currency),
                 } satisfies ShippingLabelDetail;
             })
         ))

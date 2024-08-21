@@ -13,11 +13,6 @@ import {
 
 // reusable-ui components:
 import {
-    // status-components:
-    Busy,
-    
-    
-    
     // layout-components:
     ListItem,
     List,
@@ -27,6 +22,12 @@ import {
 import {
     RadioDecorator,
 }                           from '@heymarco/radio-decorator'
+import {
+    DataTableHeader,
+    DataTableBody,
+    DataTableItem,
+    DataTable,
+}                           from '@heymarco/data-table'
 
 // internal components:
 import {
@@ -37,11 +38,6 @@ import {
 import {
     useCheckoutState,
 }                           from '../../states/checkoutState'
-
-// utilities:
-import {
-    calculateShippingCost,
-}                           from '@/libs/shippings/shippings'
 
 
 
@@ -55,8 +51,15 @@ const EditShippingMethod = (): JSX.Element|null => {
     // contexts:
     const {
         // shipping data:
-        shippingProvider,
-        setShippingProvider,
+        preferedShippingProvider,
+        preferedShippingLabel,
+        shippingLabel,
+        setShippingLabel,
+        
+        
+        
+        // payment data:
+        preferedCurrency,
         
         
         
@@ -70,13 +73,32 @@ const EditShippingMethod = (): JSX.Element|null => {
         shippingMethodOptionRef,
     } = useCheckoutState();
     const filteredShippingLabelList = !shippingLabelList ? undefined : Object.values(shippingLabelList.entities).filter((shippingEntry): shippingEntry is Exclude<typeof shippingEntry, undefined> => !!shippingEntry);
-    const filteredShippingList      = !shippingList      ? undefined : Object.values(shippingList.entities).filter((shippingEntry): shippingEntry is Exclude<typeof shippingEntry, undefined> => !!shippingEntry);
+    
+    const foreignCurrencyRate = preferedCurrency?.rate;
+    const systemCurrencyRate  = (foreignCurrencyRate === undefined) ? undefined : (1 / foreignCurrencyRate);
     
     
     
     // jsx:
     return (
         <>
+            <p>
+                Customer&apos;s selected carrier:
+            </p>
+            {!preferedShippingProvider && <span className='noValue'>none</span>}
+            {!!preferedShippingProvider && <DataTable>
+                <DataTableBody>
+                    <DataTableItem label='Name'>
+                        {preferedShippingProvider.name}
+                    </DataTableItem>
+                    <DataTableItem label='Est. Cost'>
+                        <CurrencyDisplay amount={preferedShippingProvider.rates as number} currencyRate={systemCurrencyRate} />
+                    </DataTableItem>
+                </DataTableBody>
+            </DataTable>}
+            <p>
+                Current selected carrier:
+            </p>
             {!!filteredShippingLabelList && <List
                 // classes:
                 className={styleSheet.selectShipping}
@@ -90,8 +112,8 @@ const EditShippingMethod = (): JSX.Element|null => {
                     filteredShippingLabelList
                     // .sort(({rate: a}, {rate: b}) => (a - b))
                     .sort((a, b) => (!a.name || !b.name) ? 0 : (a.name < b.name) ? -1 : 1)
-                    .map((shippingEntry) => {
-                        const isActive = `${shippingEntry.id}` === shippingProvider;
+                    .map((shippingLabelEntry) => {
+                        const isActive = `${shippingLabelEntry.id}` === shippingLabel?.id;
                         
                         
                         
@@ -99,7 +121,7 @@ const EditShippingMethod = (): JSX.Element|null => {
                         return (
                             <ListItem
                                 // identifiers:
-                                key={`${shippingEntry.id}`}
+                                key={`${shippingLabelEntry.id}`}
                                 
                                 
                                 
@@ -114,20 +136,20 @@ const EditShippingMethod = (): JSX.Element|null => {
                                 
                                 
                                 // handlers:
-                                onClick={() => setShippingProvider(`${shippingEntry.id}`)}
+                                onClick={() => setShippingLabel(shippingLabelEntry)}
                             >
                                 <RadioDecorator />
                                 
                                 <span className='label'>
-                                    {shippingEntry.name}
+                                    {shippingLabelEntry.name}
                                 </span>
                                 
-                                {!!shippingEntry.eta && <span className='eta txt-sec'>
-                                    (estimate: {shippingEntry.eta.min}{(shippingEntry.eta.max > shippingEntry.eta.min) ? <>-{shippingEntry.eta.max}</> : null} day{(shippingEntry.eta.min > 1) ? 's' : ''})
+                                {!!shippingLabelEntry.eta && <span className='eta txt-sec'>
+                                    (estimate: {shippingLabelEntry.eta.min}{(shippingLabelEntry.eta.max > shippingLabelEntry.eta.min) ? <>-{shippingLabelEntry.eta.max}</> : null} day{(shippingLabelEntry.eta.min > 1) ? 's' : ''})
                                 </span>}
                                 
                                 <span className='cost'>
-                                    <CurrencyDisplay amount={shippingEntry.rate} />
+                                    <CurrencyDisplay amount={shippingLabelEntry.rate} />
                                 </span>
                             </ListItem>
                         );

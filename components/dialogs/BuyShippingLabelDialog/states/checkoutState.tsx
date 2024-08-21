@@ -63,6 +63,9 @@ import {
 
 // models:
 import {
+    type OrderDetail,
+    type OrderCurrencyDetail,
+    
     type DefaultShippingOriginDetail,
     type ShippingAddressDetail,
     type ShippingPreview,
@@ -87,6 +90,15 @@ import {
 import {
     calculateCheckoutProgress,
 }                           from './utilities'
+import {
+    // types:
+    type MatchingShipping,
+}                           from '@/libs/shippings/shippings'
+
+// configs:
+import {
+    checkoutConfigShared,
+}                           from '@/checkout.config.shared'
 
 
 
@@ -129,8 +141,15 @@ export interface CheckoutState {
     
     
     // shipping data:
-    shippingProvider             : string | undefined
-    setShippingProvider          : (shippingProvider: string) => void
+    preferedShippingProvider     : MatchingShipping    | null
+    preferedShippingLabel        : ShippingLabelDetail | null
+    shippingLabel                : ShippingLabelDetail | undefined
+    setShippingLabel             : (shippingLabel: ShippingLabelDetail) => void
+    
+    
+    
+    // payment data:
+    preferedCurrency             : OrderCurrencyDetail | null
     
     
     
@@ -191,8 +210,15 @@ const CheckoutStateContext = createContext<CheckoutState>({
     
     
     // shipping data:
-    shippingProvider             : undefined,
-    setShippingProvider          : noopSetter,
+    preferedShippingProvider     : null,
+    preferedShippingLabel        : null,
+    shippingLabel                : undefined,
+    setShippingLabel             : noopSetter,
+    
+    
+    
+    // payment data:
+    preferedCurrency             : null,
     
     
     
@@ -234,21 +260,30 @@ export const useCheckoutState = (): CheckoutState => {
 // react components:
 export interface CheckoutStateProps {
     // data:
-    defaultShippingAddress ?: ShippingAddressDetail|null
-    totalProductWeight      : number
+    order : OrderDetail
 }
 const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps>): JSX.Element|null => {
     // props:
     const {
         // data:
-        defaultShippingAddress = null,
-        totalProductWeight,
+        order,
         
         
         
         // children:
         children,
     } = props;
+    const totalProductWeight = useMemo((): number => {
+        return (
+            order.items
+            .reduce((accum, {shippingWeight, quantity}) => {
+                if (shippingWeight === null) return accum;
+                return accum + (shippingWeight * quantity);
+            }, 0)
+        );
+    }, [order]);
+    const preferedShippingProviderId = order.shippingProviderId;
+    const preferedCurrency = order.currency;
     
     
     
@@ -267,13 +302,13 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
     // address data:
     const [addressValidation, setAddressValidation] = useState<boolean>(false);
     const [originAddress    , setOriginAddress    ] = useState<Omit<DefaultShippingOriginDetail, 'id'>|null>(null);
-    const [shippingAddress  , setShippingAddress  ] = useState<ShippingAddressDetail|null>(defaultShippingAddress);
+    const [shippingAddress  , setShippingAddress  ] = useState<ShippingAddressDetail|null>(order.shippingAddress);
     const [expandedAddress  , setExpandedAddress  ] = useState<ExpandedAddress|null>('shippingAddress');
     
     
     
     // shipping data:
-    const [shippingProvider, setShippingProvider] = useState<string|undefined>(undefined);
+    const [shippingLabel, setShippingLabel] = useState<ShippingLabelDetail|undefined>(undefined);
     
     
     
@@ -330,6 +365,52 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
     
     
     
+    const shippingLabelListEntities = shippingLabelList?.entities;
+    const shippingListEntities      = shippingList?.entities;
+    const [
+        preferedShippingProviderRaw,
+        preferedShippingLabel,
+    ] = useMemo(() => {
+        // conditions:
+        if (!preferedShippingProviderId) return null; // no preference => ignore
+        if (!shippingListEntities) return null; // the shippingList is not yet loaded => ignore
+        if (!shippingLabelListEntities) return null;  // the shippingLabelList is not yet loaded => ignore
+        if (shippingLabel && shippingLabelListEntities[shippingLabel.id]) return null; // already selected => ignore
+        
+        
+        
+        // actions:
+        const preferedShippingProviderRaw   = !preferedShippingProviderId ? null : (shippingListEntities[preferedShippingProviderId] ?? null);
+        const preferedShippingProviderName  = preferedShippingProviderRaw?.name.toLowerCase() ?? null;
+        if (!preferedShippingProviderName) return null;
+        const preferedShippingLabel = (
+            Object.values(shippingLabelListEntities)
+            .filter((shippingLabel): shippingLabel is Exclude<typeof shippingLabel, undefined> => (shippingLabel !== undefined))
+            .find((shippingLabel) =>
+                (shippingLabel.name.toLowerCase() === preferedShippingProviderName)
+            )
+            ??
+            null
+        );
+        
+        
+        
+        return [
+            preferedShippingProviderRaw,
+            preferedShippingLabel
+        ];
+    }, [preferedShippingProviderId, shippingLabel, shippingListEntities, shippingLabelListEntities]) ?? [ null, null ];
+    const preferedShippingProvider = useMemo((): MatchingShipping|null => {
+        if (!preferedShippingProviderRaw) return null;
+        return {
+            ...preferedShippingProviderRaw,
+            rates      : order.shippingCost ?? 0,
+            weightStep : 0,
+        } satisfies MatchingShipping;
+    }, [preferedShippingProviderRaw, order.shippingCost]);
+    
+    
+    
     // refs:
     const originAddressSectionRef   = useRef<HTMLElement|null>(null);
     const shippingAddressSectionRef = useRef<HTMLElement|null>(null);
@@ -374,6 +455,18 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
         } // if
         isSubsequentStep.current = true;
     }, [checkoutStep]);
+    
+    // auto select prefered shipping label:
+    useIsomorphicLayoutEffect(() => {
+        // conditions:
+        if (!preferedShippingLabel) return; // the data is not ready => ignore
+        if (shippingLabel) return; // the selected label is already choosen => ignore
+        
+        
+        
+        // actions:
+        setShippingLabel(preferedShippingLabel);
+    }, [preferedShippingLabel]);
     
     
     
@@ -601,8 +694,15 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
         
         
         // shipping data:
-        shippingProvider,
-        setShippingProvider,
+        preferedShippingProvider,
+        preferedShippingLabel,
+        shippingLabel,
+        setShippingLabel,
+        
+        
+        
+        // payment data:
+        preferedCurrency,
         
         
         
@@ -659,8 +759,15 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
         
         
         // shipping data:
-        shippingProvider,
-        setShippingProvider,
+        preferedShippingProvider,
+        preferedShippingLabel,
+        shippingLabel,
+        setShippingLabel,
+        
+        
+        
+        // payment data:
+        preferedCurrency,
         
         
         
