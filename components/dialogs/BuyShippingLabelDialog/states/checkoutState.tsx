@@ -65,6 +65,7 @@ import {
 import {
     type DefaultShippingOriginDetail,
     type ShippingAddressDetail,
+    type ShippingPreview,
     
     type ShippingLabelDetail,
 }                           from '@/models'
@@ -74,6 +75,7 @@ import {
     // hooks:
     useGetDefaultShippingOrigin,
     useGetShippingLabelRates,
+    useGetShippingList,
 }                           from '@/store/features/api/apiSlice'
 
 // internals:
@@ -133,7 +135,8 @@ export interface CheckoutState {
     
     
     // relation data:
-    shippingList                 : EntityState<ShippingLabelDetail> | undefined
+    shippingLabelList            : EntityState<ShippingLabelDetail> | undefined
+    shippingList                 : EntityState<ShippingPreview> | undefined
     
     
     
@@ -194,6 +197,7 @@ const CheckoutStateContext = createContext<CheckoutState>({
     
     
     // relation data:
+    shippingLabelList            : undefined,
     shippingList                 : undefined,
     
     
@@ -275,7 +279,9 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
     
     // apis:
     const {                    data: originAddressInitial, isLoading : isShippingOriginLoading, isError: isShippingOriginError, refetch: refetchShippingOrigin} = useGetDefaultShippingOrigin();
-    const [getShippingLabels, {data: shippingList        , isLoading : isShippingLoading      , isError: isShippingError}] = useGetShippingLabelRates();
+    const [getShippingLabels, {data: shippingLabelList   , isLoading : isShippingLabelLoading , isError: isShippingLabelError}] = useGetShippingLabelRates();
+    const {                    data: shippingList        , isLoading : isShippingLoading      , isError: isShippingError      , refetch: refetchShipping      }  = useGetShippingList();
+    
     
     
     const isLastCheckoutStep = (checkoutStep === 'paid');
@@ -288,8 +294,10 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
             (
                 (isBusy !== 'checkCarriers')  // IGNORE shippingLoading if the business is triggered by next_button (the busy indicator belong to the next_button's icon)
                 &&
-                isShippingLoading
+                isShippingLabelLoading
             )
+            ||
+            isShippingLoading
         )
     );
     const isCheckoutError                = (
@@ -301,10 +309,12 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
             isShippingOriginError
             ||
             (
-                (checkoutStep !== 'info') // IGNORE shippingError if on the info step (the `shippingList` data is NOT YET required)
+                (checkoutStep !== 'info') // IGNORE shippingError if on the info step (the `shippingLabelList` data is NOT YET required)
                 &&
-                isShippingError
+                isShippingLabelError
             )
+            ||
+            isShippingError
         )
     );
     const isCheckoutReady                = (
@@ -544,14 +554,20 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
     });
     
     const refetchCheckout      = useEvent((): void => {
-        refetchShippingOrigin();
+        if (isShippingOriginError && !isShippingOriginLoading) {
+            refetchShippingOrigin();
+        } // if
         
-        if (isShippingError && !isShippingLoading && originAddress && shippingAddress) {
+        if (isShippingLabelError && !isShippingLabelLoading && originAddress && shippingAddress) {
             getShippingLabels({ // fire and forget
                 originAddress,
                 shippingAddress,
                 totalProductWeight,
             });
+        } // if
+        
+        if (isShippingError && !isShippingLoading) {
+            refetchShipping();
         } // if
     });
     
@@ -591,6 +607,7 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
         
         
         // relation data:
+        shippingLabelList,
         shippingList,
         
         
@@ -648,6 +665,7 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
         
         
         // relation data:
+        shippingLabelList,
         shippingList,
         
         

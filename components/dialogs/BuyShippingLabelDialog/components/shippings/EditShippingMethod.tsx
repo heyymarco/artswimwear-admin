@@ -61,6 +61,7 @@ const EditShippingMethod = (): JSX.Element|null => {
         
         
         // relation data:
+        shippingLabelList,
         shippingList,
         
         
@@ -68,14 +69,15 @@ const EditShippingMethod = (): JSX.Element|null => {
         // sections:
         shippingMethodOptionRef,
     } = useCheckoutState();
-    const filteredShippingList = !shippingList ? undefined : Object.values(shippingList.entities).filter((shippingEntry): shippingEntry is Exclude<typeof shippingEntry, undefined> => !!shippingEntry);
+    const filteredShippingLabelList = !shippingLabelList ? undefined : Object.values(shippingLabelList.entities).filter((shippingEntry): shippingEntry is Exclude<typeof shippingEntry, undefined> => !!shippingEntry);
+    const filteredShippingList      = !shippingList      ? undefined : Object.values(shippingList.entities).filter((shippingEntry): shippingEntry is Exclude<typeof shippingEntry, undefined> => !!shippingEntry);
     
     
     
     // jsx:
     return (
         <>
-            {!!filteredShippingList && <List
+            {!!filteredShippingLabelList && <List
                 // classes:
                 className={styleSheet.selectShipping}
                 
@@ -85,7 +87,7 @@ const EditShippingMethod = (): JSX.Element|null => {
                 actionCtrl={true}
             >
                 {
-                    filteredShippingList
+                    filteredShippingLabelList
                     // .sort(({rate: a}, {rate: b}) => (a - b))
                     .sort((a, b) => (!a.name || !b.name) ? 0 : (a.name < b.name) ? -1 : 1)
                     .map((shippingEntry) => {
