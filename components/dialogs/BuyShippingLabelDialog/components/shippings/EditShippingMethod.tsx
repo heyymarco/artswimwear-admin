@@ -113,7 +113,7 @@ const EditShippingMethod = (): JSX.Element|null => {
                 // behaviors:
                 actionCtrl={true}
             >
-                {!!preferedShippingProvider && !filteredShippingLabelList.some((shippingLabelEntry) => (shippingLabelEntry === shippingLabel)) &&
+                {!!preferedShippingProvider && !!shippingLabel && !filteredShippingLabelList.includes(shippingLabel) &&
                     <ListItem
                         // identifiers:
                         key='none'

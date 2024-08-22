@@ -451,25 +451,13 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
     // auto select prefered shipping label:
     useIsomorphicLayoutEffect(() => {
         // conditions:
-        if (!preferedShippingLabel) return; // the data is not ready => ignore
-        if (shippingLabel) return; // the selected label is already choosen => ignore
+        if (!!shippingLabel && shippingLabelListEntities && Object.values(shippingLabelListEntities).includes(shippingLabel)) return; // the selected label is already choosen and valid => ignore
         
         
         
         // actions:
-        setShippingLabel(preferedShippingLabel);
-    }, [preferedShippingLabel]);
-    
-    // auto unselect prefered shipping label if not listed in shippingLabelList:
-    useIsomorphicLayoutEffect(() => {
-        if (!shippingLabel) return; // not already set => nothing to clear => ignore
-        if (shippingLabelListEntities && Object.values(shippingLabelListEntities).includes(shippingLabel)) return; // still valid => no need to clear => ignore
-        
-        
-        
-        // actions:
-        setShippingLabel(undefined);
-    }, [shippingLabel, shippingLabelListEntities]);
+        setShippingLabel(preferedShippingLabel ?? undefined);
+    }, [shippingLabelListEntities, preferedShippingLabel]);
     
     
     
