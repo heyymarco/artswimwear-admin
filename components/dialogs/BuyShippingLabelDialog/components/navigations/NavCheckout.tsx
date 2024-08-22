@@ -45,10 +45,16 @@ const NavCheckout = (): JSX.Element|null => {
     // states:
     const {
         // states:
+        checkoutStep,
         checkoutProgress,
         
         isCheckoutReady,
         isCheckoutFinished,
+        
+        
+        
+        // shipping data:
+        shippingLabel,
         
         
         
@@ -128,6 +134,15 @@ const NavCheckout = (): JSX.Element|null => {
                             
                             // classes:
                             className='next'
+                            
+                            
+                            
+                            // states:
+                            enabled={
+                                (checkoutStep !== 'shipping')
+                                ||
+                                !!shippingLabel
+                            }
                             
                             
                             

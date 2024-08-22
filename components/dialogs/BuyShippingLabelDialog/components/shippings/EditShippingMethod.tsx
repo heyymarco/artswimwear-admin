@@ -113,12 +113,47 @@ const EditShippingMethod = (): JSX.Element|null => {
                 // behaviors:
                 actionCtrl={true}
             >
+                {!!preferedShippingProvider && !filteredShippingLabelList.some((shippingLabelEntry) => (shippingLabelEntry === shippingLabel)) &&
+                    <ListItem
+                        // identifiers:
+                        key='none'
+                        
+                        
+                        
+                        // refs:
+                        elmRef={shippingMethodOptionRef}
+                        
+                        
+                        
+                        // states:
+                        enabled={false}
+                    >
+                        <RadioDecorator />
+                        
+                        <span className='label'>
+                            {preferedShippingProvider.name}
+                            
+                            {' '}
+                            <Basic theme='success' size='sm' className={styleSheet.selectionBadge}>
+                                Customer&apos;s selection
+                            </Basic>
+                            {' '}
+                            <Basic theme='danger' size='sm' className={styleSheet.selectionBadge}>
+                                Not available
+                            </Basic>
+                        </span>
+                        
+                        <span className='cost'>
+                            <CurrencyDisplay amount={preferedShippingProvider.rates} currencyRate={systemCurrencyRate} />
+                        </span>
+                    </ListItem>
+                }
                 {
                     filteredShippingLabelList
                     // .sort(({rate: a}, {rate: b}) => (a - b))
                     .sort((a, b) => (!a.name || !b.name) ? 0 : (a.name < b.name) ? -1 : 1)
                     .map((shippingLabelEntry) => {
-                        const isActive = `${shippingLabelEntry.id}` === shippingLabel?.id;
+                        const isActive = (shippingLabelEntry === shippingLabel);
                         
                         
                         
