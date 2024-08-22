@@ -3,10 +3,7 @@ change to parentId both for DraftOrdersOnProducts and OrdersOnProducts
 
 
 
-[high prior] add shippings setting
-[high prior] add shipping tracking
 [high prior] add push notifications & refresh page
-[low  prior] auto cleanup expired AdminSession
 
 [high prior] verify breaking change <UpdateStatePlugin> .__first
 [high prior] removed paymentConfirmation.currency
@@ -18,9 +15,7 @@ change to parentId both for DraftOrdersOnProducts and OrdersOnProducts
 [low  prior] update DropdownList & ModalBackdrop to apply `scrollbar-gutter: stable`
 
 TODO: replace shippingCarrier from <NameEditor> to <Dropdown>
-TODO: notify to email template: shippingCarrier changed if (shippingCarrier !== shippingProvider)
 TODO: fix table layout to use subgrid
-TODO: fix PrintDialog when the document scrolled down
 TODO: add billingAddress to Orders > Payment > billingAddress
 TODO: replace CollapsibleSuspense with showDialog()
 // TODO: refresh the user model
