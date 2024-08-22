@@ -21,7 +21,7 @@ export default function DashboardPage() {
         showDialog,
     } = useDialogMessage();
     const handleClick = useEvent(async (): Promise<void> => {
-        const theOrder = filteredOrders?.[0];
+        const theOrder = filteredOrders?.[1];
         if (!theOrder) return;
         const result = await showDialog(
             <BuyShippingLabelDialog

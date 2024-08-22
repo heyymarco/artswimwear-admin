@@ -139,7 +139,7 @@ const EditShippingMethod = (): JSX.Element|null => {
                             </Basic>
                             {' '}
                             <Basic theme='danger' size='sm' className={styleSheet.selectionBadge}>
-                                Not available
+                                No longer available
                             </Basic>
                         </span>
                         
