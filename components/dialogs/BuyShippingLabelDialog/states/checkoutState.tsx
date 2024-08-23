@@ -182,7 +182,7 @@ const noopSetter   : EventHandler<unknown> = () => {};
 const noopCallback = () => {};
 const CheckoutStateContext = createContext<CheckoutState>({
     // states:
-    checkoutStep                 : 'info',
+    checkoutStep                 : 'INFO',
     checkoutProgress             : 0,
     
     isBusy                       : false,
@@ -285,7 +285,7 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
     
     
     // states:
-    const [checkoutStep, setCheckoutStep] = useState<CheckoutStep>('info');
+    const [checkoutStep, setCheckoutStep] = useState<CheckoutStep>('INFO');
     const checkoutProgress = calculateCheckoutProgress(checkoutStep);
     const [isBusy , setIsBusyInternal] = useState<BusyState>(false);
     
@@ -316,7 +316,7 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
     
     
     
-    const isLastCheckoutStep = (checkoutStep === 'paid');
+    const isLastCheckoutStep = (checkoutStep === 'PAID');
     const isCheckoutLoading              = (
         (
             // have any loading(s):
@@ -341,7 +341,7 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
             isShippingOriginError
             ||
             (
-                (checkoutStep !== 'info') // IGNORE shippingError if on the info step (the `shippingLabelList` data is NOT YET required)
+                (checkoutStep !== 'INFO') // IGNORE shippingError if on the info step (the `shippingLabelList` data is NOT YET required)
                 &&
                 isShippingLabelError
             )
@@ -477,7 +477,7 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
     });
     
     const gotoStepInformation   = useEvent((): void => {
-        setCheckoutStep('info');
+        setCheckoutStep('INFO');
         
         
         
@@ -508,8 +508,8 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
         });
     });
     const gotoStepShipping      = useEvent(async (): Promise<boolean> => {
-        const goForward = (checkoutStep === 'info');
-        if (goForward) { // go forward from 'info' => do check shipping rates
+        const goForward = (checkoutStep === 'INFO');
+        if (goForward) { // go forward from 'INFO' => do check shipping rates
             // validate:
             // enable validation and *wait* until the next re-render of validation_enabled before we're going to `querySelectorAll()`:
             setAddressValidation(true);
@@ -593,14 +593,14 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
             
             
             
-            setCheckoutStep('shipping');
+            setCheckoutStep('SHIPPING');
         } // if
         
         
         
-        if (!goForward) { // go back from 'payment' => focus to shipping method option control
+        if (!goForward) { // go back from 'PAYMENT' => focus to shipping method option control
             // go backward to shipping method:
-            setCheckoutStep('shipping');
+            setCheckoutStep('SHIPPING');
             
             
             
@@ -630,7 +630,7 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
     });
     const gotoPayment           = useEvent(async (): Promise<boolean> => {
         // const goForward = ... // always go_forward, never go_backward after finishing the payment
-        setCheckoutStep('payment');
+        setCheckoutStep('PAYMENT');
         
         
         

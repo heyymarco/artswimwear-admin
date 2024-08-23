@@ -7,10 +7,10 @@ import {
 
 
 export type CheckoutStep =
-    |'info'
-    |'shipping'
-    |'payment'
-    |'paid'
+    |'INFO'
+    |'SHIPPING'
+    |'PAYMENT'
+    |'PAID'
 
 export type BusyState =
     | false // idle

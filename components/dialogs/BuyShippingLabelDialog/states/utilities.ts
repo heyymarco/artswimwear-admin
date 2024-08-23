@@ -6,5 +6,5 @@ import {
 
 
 export const calculateCheckoutProgress = (checkoutStep: CheckoutStep): number => {
-    return ['info', 'shipping', 'payment', 'paid'].findIndex((progress) => progress === checkoutStep);
+    return (['INFO', 'SHIPPING', 'PAYMENT', 'PAID'] satisfies CheckoutStep[]).findIndex((progress) => progress === checkoutStep);
 }

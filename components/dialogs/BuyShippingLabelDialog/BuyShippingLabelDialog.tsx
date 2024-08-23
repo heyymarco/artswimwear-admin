@@ -313,7 +313,7 @@ const BuyShippingLabelDialogInternal = (props: Omit<BuyShippingLabelDialogProps,
                     // classes:
                     className={styleSheet.currentStepLayout}
                 >
-                    {(checkoutStep === 'info') && <Section
+                    {(checkoutStep === 'INFO') && <Section
                         // refs:
                         elmRef={currentStepSectionRef}
                         
@@ -353,7 +353,7 @@ const BuyShippingLabelDialogInternal = (props: Omit<BuyShippingLabelDialogProps,
                         </ExclusiveAccordion>
                     </Section>}
                     
-                    {(checkoutStep === 'shipping') && <Section
+                    {(checkoutStep === 'SHIPPING') && <Section
                         // refs:
                         elmRef={currentStepSectionRef}
                         

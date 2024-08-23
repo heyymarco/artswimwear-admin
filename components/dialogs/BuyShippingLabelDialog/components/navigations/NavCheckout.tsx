@@ -139,7 +139,7 @@ const NavCheckout = (): JSX.Element|null => {
                             
                             // states:
                             enabled={
-                                (checkoutStep !== 'shipping')
+                                (checkoutStep !== 'SHIPPING')
                                 ||
                                 !!shippingLabel
                             }
