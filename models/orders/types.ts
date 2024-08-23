@@ -1,28 +1,30 @@
-import type {
+import {
     // types:
-    WysiwygEditorState,
+    type WysiwygEditorState,
 }                           from '@/components/editors/WysiwygEditor/types'
 
 // models:
-import type {
-    Prisma,
+import {
+    type Prisma,
     
-    Customer,
-    CustomerPreference,
-    Guest,
-    GuestPreference,
-    Admin,
-    Payment,
-    PaymentConfirmation,
-    DraftOrder,
-    Order,
-    OrderCurrency,
-    ShippingAddress,
-    BillingAddress,
-    OrdersOnProducts,
-    DraftOrdersOnProducts,
-    Shipment,
+    type Customer,
+    type CustomerPreference,
+    type Guest,
+    type GuestPreference,
+    type Admin,
+    type Payment,
+    type PaymentConfirmation,
+    type DraftOrder,
+    type Order,
+    type OrderCurrency,
+    type OrdersOnProducts,
+    type DraftOrdersOnProducts,
+    type Shipment,
 }                           from '@prisma/client'
+import {
+    type ShippingAddressDetail,
+    type BillingAddressDetail,
+}                           from '../shippings'
 
 
 
@@ -114,32 +116,6 @@ export interface OrderDetailWithOptions
 export interface OrderCurrencyDetail
     extends
         Omit<OrderCurrency,
-            // records:
-            |'id'
-            
-            // relations:
-            |'parentId'
-        >
-{
-}
-
-
-
-export interface ShippingAddressDetail
-    extends
-        Omit<ShippingAddress,
-            // records:
-            |'id'
-            
-            // relations:
-            |'parentId'
-        >
-{
-}
-
-export interface BillingAddressDetail
-    extends
-        Omit<BillingAddress,
             // records:
             |'id'
             

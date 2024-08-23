@@ -4,7 +4,7 @@ import {
 }                           from '@prisma/client'
 import {
     type ShippingAddressDetail,
-}                           from '../orders'
+}                           from '../shippings'
 
 
 
