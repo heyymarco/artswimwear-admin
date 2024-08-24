@@ -28,9 +28,11 @@ export type CustomerOrGuestPreferenceDetail = Omit<CustomerOrGuestPreference,
 export interface CustomerDetail
     extends
         Omit<Customer,
+            // records:
             |'createdAt'
             |'updatedAt'
             
+            // data:
             |'emailVerified'
             |'image'
         >
@@ -47,18 +49,11 @@ export interface CustomerDetail
 export interface GuestDetail
     extends
         Omit<Guest,
+            // records:
             |'createdAt'
             |'updatedAt'
-            
-            |'emailVerified'
-            |'image'
         >
 {
-    // data:
-    // username : string|null
-    
-    
-    
     // relations:
     preference : CustomerOrGuestPreferenceDetail|null
 }
