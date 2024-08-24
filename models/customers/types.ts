@@ -12,18 +12,6 @@ import {
 export type CustomerOrGuestDetail =
     &Pick<CustomerDetail, keyof CustomerDetail & keyof GuestDetail>
     &Pick<GuestDetail   , keyof CustomerDetail & keyof GuestDetail>
-export type CustomerOrGuestPreference =
-    &Pick<CustomerPreference, keyof CustomerPreference & keyof GuestPreference>
-    &Pick<GuestPreference   , keyof CustomerPreference & keyof GuestPreference>
-export type CustomerOrGuestPreferenceDetail = Omit<CustomerOrGuestPreference,
-    // records:
-    |'id'
-    
-    // relations:
-    |'parentId'
->
-
-
 
 export interface CustomerDetail
     extends
@@ -56,4 +44,34 @@ export interface GuestDetail
 {
     // relations:
     preference : CustomerOrGuestPreferenceDetail|null
+}
+
+
+
+export type CustomerOrGuestPreferenceDetail =
+    &Pick<CustomerPreferenceDetail, keyof CustomerPreferenceDetail & keyof GuestPreferenceDetail>
+    &Pick<GuestPreferenceDetail   , keyof CustomerPreferenceDetail & keyof GuestPreferenceDetail>
+
+export interface CustomerPreferenceDetail
+    extends
+        Omit<CustomerPreference,
+            // records:
+            |'id'
+            
+            // relations:
+            |'parentId'
+        >
+{
+}
+
+export interface GuestPreferenceDetail
+    extends
+        Omit<GuestPreference,
+            // records:
+            |'id'
+            
+            // relations:
+            |'parentId'
+        >
+{
 }
