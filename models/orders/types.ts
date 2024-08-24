@@ -7,11 +7,6 @@ import {
 import {
     type Prisma,
     
-    type Customer,
-    type CustomerPreference,
-    type Guest,
-    type GuestPreference,
-    type Admin,
     type Payment,
     type PaymentConfirmation,
     type DraftOrder,
@@ -21,6 +16,10 @@ import {
     type DraftOrdersOnProducts,
     type Shipment,
 }                           from '@prisma/client'
+import {
+    type CustomerDetail,
+    type GuestDetail,
+}                           from '../customers'
 import {
     type ShippingAddressDetail,
     type BillingAddressDetail,
@@ -145,94 +144,6 @@ export interface PaymentDetail
     billingAddress ?: BillingAddressDetail|null
     
     paymentId      ?: string // an optional token for make manual_payment
-}
-
-
-
-export type CustomerOrGuest =
-    &Pick<CustomerDetail, keyof CustomerDetail & keyof GuestDetail>
-    &Pick<GuestDetail   , keyof CustomerDetail & keyof GuestDetail>
-export type CustomerOrGuestPreference =
-    &Pick<CustomerPreference, keyof CustomerPreference & keyof GuestPreference>
-    &Pick<GuestPreference   , keyof CustomerPreference & keyof GuestPreference>
-export type CustomerOrGuestPreferenceDetail = Omit<CustomerOrGuestPreference,
-    // records:
-    |'id'
-    
-    // relations:
-    |'parentId'
->
-
-
-
-export interface CustomerDetail
-    extends
-        Omit<Customer,
-            |'createdAt'
-            |'updatedAt'
-            
-            |'emailVerified'
-            |'image'
-        >
-{
-    // data:
-    // username : string|null
-    
-    
-    
-    // relations:
-    preference : CustomerOrGuestPreferenceDetail|null
-}
-
-export interface GuestDetail
-    extends
-        Omit<Guest,
-            |'createdAt'
-            |'updatedAt'
-            
-            |'emailVerified'
-            |'image'
-        >
-{
-    // data:
-    // username : string|null
-    
-    
-    
-    // relations:
-    preference : CustomerOrGuestPreferenceDetail|null
-}
-
-
-
-export interface AdminPreview
-    extends
-        Omit<Admin,
-            // records:
-            |'createdAt'
-            |'updatedAt'
-            
-            // data:
-            |'emailVerified'
-            
-            // relations:
-            |'roleId'
-        >
-{
-    username : string|null
-}
-export interface AdminDetail
-    extends
-        Omit<Admin,
-            // records:
-            |'createdAt'
-            |'updatedAt'
-            
-            // data:
-            |'emailVerified'
-        >
-{
-    username : string|null
 }
 
 
