@@ -24,6 +24,7 @@ protect change user role from himself
 protect delete user from himself
 [high prior] create a random value of @unique nullable data of DraftOrder::paymentId & Credentials::username
 [low  prior] update AddressEditor to accept/return null if all fields are empty
+[low  prior] standardize coding style of // compound_like relation // array_like relation => similar to (artswimwear) app/api/(protected)/cart/route.ts
 
 learn tiptap vs prosemirror vs lexical
 
