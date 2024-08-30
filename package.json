@@ -20,6 +20,7 @@
     "@heymarco/address-editor": "^6.12.0",
     "@heymarco/data-table": "^6.5.1",
     "@heymarco/email-editor": "^6.10.0",
+    "@heymarco/events": "^6.7.1",
     "@heymarco/image": "^6.5.0",
     "@heymarco/input-dropdown-editor": "^6.10.1",
     "@heymarco/loading-bar": "^6.5.0",
