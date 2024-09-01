@@ -24,7 +24,7 @@ export interface Tracker extends Omit<EasyPostTracker, 'tracking_details'> {
     })[]
 }
 export const registerShippingTracker = async (options: RegisterShippingTrackerOptions): Promise<Tracker|undefined> => {
-    const easyPost = getEasyPostInstance();
+    const easyPost = await getEasyPostInstance();
     if (!easyPost) return undefined;
     
     

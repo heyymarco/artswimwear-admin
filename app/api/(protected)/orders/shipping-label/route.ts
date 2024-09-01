@@ -11,13 +11,7 @@ import {
 // internal auth:
 import {
     authOptions,
-}                           from '@/app/api/auth/[...nextauth]/route'
-
-// models:
-import {
-    type ShippingLabelRequest,
-    type ShippingLabelDetail,
-}                           from '@/models'
+}                           from '@/libs/auth.server'
 
 // easypost:
 import {

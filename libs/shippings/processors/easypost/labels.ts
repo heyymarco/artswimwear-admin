@@ -141,7 +141,7 @@ export const getShippingLabels = async (options: GetShippingLabelsOptions): Prom
     
     
     
-    const easyPost = getEasyPostInstance();
+    const easyPost = await getEasyPostInstance();
     if (!easyPost) return [];
     
     
