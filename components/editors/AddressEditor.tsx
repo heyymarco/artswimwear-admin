@@ -104,10 +104,10 @@ const AddressEditor = <TElement extends Element = HTMLFormElement>(props: Addres
     // stores:
     const dispatch = useAppDispatch();
     
-    const [mountedPromise, mountedSignal] = useMemo<[Promise<boolean>, (value: boolean) => void]>(() => {
+    const [[mountedPromise, mountedSignal]] = useState<[Promise<boolean>, (value: boolean) => void]>(() => {
         const { promise, resolve } = Promise.withResolvers<boolean>();
         return [promise, resolve];
-    }, []);
+    });
     useEffect(() => {
         // setups:
         mountedSignal(true); // signal that the component is mounted
@@ -130,7 +130,7 @@ const AddressEditor = <TElement extends Element = HTMLFormElement>(props: Addres
         // actions:
         return dispatch(getCountryList()).unwrap();
     }, [mountedPromise]);
-    const stateOptionsPromise = useMemo<Promise<string[]>>(async (): Promise<string[]> => {
+    const stateOptionsPromise   = useMemo<Promise<string[]>>(async (): Promise<string[]> => {
         if (!country) return [];
         const isMounted = await mountedPromise;
         if (!isMounted) return []; // the component was unmounted before waiting for fully_mounted => return empty
@@ -140,7 +140,7 @@ const AddressEditor = <TElement extends Element = HTMLFormElement>(props: Addres
         // actions:
         return dispatch(getStateList({ countryCode: country })).unwrap();
     }, [mountedPromise, country]);
-    const cityOptionsPromise = useMemo<Promise<string[]>>(async (): Promise<string[]> => {
+    const cityOptionsPromise    = useMemo<Promise<string[]>>(async (): Promise<string[]> => {
         if (!country) return [];
         if (!state  ) return [];
         const isMounted = await mountedPromise;
