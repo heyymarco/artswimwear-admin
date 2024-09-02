@@ -6,6 +6,7 @@ import {
     
     
     // hooks:
+    useState,
     useMemo,
 }                           from 'react'
 
@@ -124,7 +125,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
     
     const lastValue : ShippingRate|undefined = value.length ? value[value.length - 1] : undefined;
     
-    const idMap = useMemo<Map<ShippingRate, string>>(() => new Map<ShippingRate, string>(), []);
+    const [idMap]           = useState<Map<ShippingRate, string>>(() => new Map<ShippingRate, string>());
     const mirrorValueWithId = useMemo((): ShippingRateWithId[] => {
         const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
         return (
@@ -147,7 +148,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
         );
     }, [value]);
     
-    const isValueValid = useMemo((): boolean => {
+    const isValueValid      = useMemo((): boolean => {
         const uniqueStartingWiths = new Set(
             value
             .map(({start}) => start)
