@@ -9,7 +9,6 @@ import {
     useState,
     useEffect,
     useRef,
-    useMemo,
 }                           from 'react'
 
 // cssfn:
@@ -252,7 +251,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
         onValueChange      : onControllableValueChange,
     });
     
-    const initialValue = useMemo<OrderOnTheWayValue>(() => value, []);
+    const [initialValue] = useState<OrderOnTheWayValue>(value);
     
     const [carrierWarning, setCarrierWarning] = useState<React.ReactNode>(null);
     const [carrierFocused, setCarrierFocused] = useState<boolean>(false);
