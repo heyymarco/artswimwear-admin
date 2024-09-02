@@ -1,7 +1,7 @@
 // react:
 import {
     // hooks:
-    useMemo,
+    useState,
 }                           from 'react'
 
 // reusable-ui core:
@@ -24,7 +24,7 @@ export interface DraftDifferentialImagesApi {
 }
 export const useDraftDifferentialImages = (): DraftDifferentialImagesApi => {
     // states:
-    const draftDifferentialImages = useMemo<Map<string, boolean|null>>(() => new Map<string, boolean|null>(), []);
+    const [draftDifferentialImages] = useState<Map<string, boolean|null>>(() => new Map<string, boolean|null>());
     
     
     
