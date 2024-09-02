@@ -254,7 +254,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
     
     const initialValue = useMemo<OrderOnTheWayValue>(() => value, []);
     
-    const [carrierWarning, setCarrierWarning ] = useState<React.ReactNode>(null);
+    const [carrierWarning, setCarrierWarning] = useState<React.ReactNode>(null);
     const [carrierFocused, setCarrierFocused] = useState<boolean>(false);
     
     const [numberWarning , setNumberWarning ] = useState<React.ReactNode>(null);
