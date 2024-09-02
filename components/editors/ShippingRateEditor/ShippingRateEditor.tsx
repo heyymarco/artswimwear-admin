@@ -7,7 +7,6 @@ import {
     
     // hooks:
     useMemo,
-    useState,
 }                           from 'react'
 
 // reusable-ui core:
@@ -125,7 +124,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
     
     const lastValue : ShippingRate|undefined = value.length ? value[value.length - 1] : undefined;
     
-    const [idMap] = useState<Map<ShippingRate, string>>(() => new Map<ShippingRate, string>());
+    const idMap = useMemo<Map<ShippingRate, string>>(() => new Map<ShippingRate, string>(), []);
     const mirrorValueWithId = useMemo((): ShippingRateWithId[] => {
         const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
         return (
