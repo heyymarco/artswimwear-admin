@@ -6,11 +6,6 @@ import {
     default as React,
 }                           from 'react'
 
-// next-auth:
-import {
-    useSession,
-}                           from 'next-auth/react'
-
 // reusable-ui core:
 import {
     // react helper hooks:
@@ -49,9 +44,6 @@ import {
 import {
     useSignInMenuStyleSheet,
 }                           from '../styles/loader'
-import {
-    resolveMediaUrl,
-}                           from '@/libs/mediaStorage.client'
 
 
 
@@ -83,12 +75,6 @@ const SignInDropdown = (props: SignInDropdownProps): JSX.Element|null => {
         // components:
         listComponent = (<List /> as React.ReactComponentElement<any, ListProps>),
     ...restDropdownListProps} = props;
-    
-    
-    
-    // sessions:
-    const { data: session } = useSession();
-    const { name: adminName, email: adminEmail, image: adminImage } = session?.user ?? {};
     
     
     
