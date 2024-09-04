@@ -57,3 +57,6 @@ export const PAGE_ROLE_TAB_DELETE                    = 'Delete'
 
 export const PAGE_SIGNIN_TITLE                       = `Sign In - ${WEBSITE_TITLE}`
 export const PAGE_SIGNIN_DESCRIPTION                 = 'Admin login.'
+
+export const PAGE_RECOVER_TITLE                      = `Reset Password - ${WEBSITE_TITLE}`
+export const PAGE_RECOVER_DESCRIPTION                = 'Reset Your Password.'

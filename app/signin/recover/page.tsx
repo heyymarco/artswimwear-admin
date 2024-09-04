@@ -12,34 +12,34 @@ import {
 // private components:
 import {
     SignInPageContent,
-}                           from './page-content'
+}                           from '../page-content'
 
 // configs:
 import {
-    PAGE_SIGNIN_TITLE,
-    PAGE_SIGNIN_DESCRIPTION,
+    PAGE_RECOVER_TITLE,
+    PAGE_RECOVER_DESCRIPTION,
 }                           from '@/website.config'
 
 
 
 export const metadata: Metadata = {
-    title       : PAGE_SIGNIN_TITLE,
-    description : PAGE_SIGNIN_DESCRIPTION,
+    title       : PAGE_RECOVER_TITLE,
+    description : PAGE_RECOVER_DESCRIPTION,
 }
 
 
 
 // react components:
-export default function SignInPage(): JSX.Element|null {
+export default function RecoverPage(): JSX.Element|null {
     /*
         handles:
-        * HARD navigation of `/signin` => SHOW <SignIn> with 'signIn' tab.
+        * HARD navigation of `/signin/recover` => SHOW <SignIn> with 'recover' tab.
     */
     
     
     
     // jsx:
     return (
-        <SignInPageContent defaultSection='signIn' />
+        <SignInPageContent defaultSection='recover' />
     );
 }

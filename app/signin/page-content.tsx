@@ -12,34 +12,62 @@ import {
     useSignInPageStyleSheet,
 }                           from './styles/loader'
 
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useIsomorphicLayoutEffect,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
 // heymarco components:
 import {
     Main,
     Section,
 }                           from '@heymarco/section'
+
+// internal components:
 import {
+    SigninTabStateProps,
+    useSigninTabState,
+    
     SignIn,
-}                           from '@heymarco/next-auth'
-
-// configs:
-import {
-    authConfigClient,
-}                           from '@/auth.config.client'
-import {
-    credentialsConfigClient,
-}                           from '@/credentials.config.client'
-
-// internals:
-import {
-    loginProviders,
-}                           from './loginProviders'
+}                           from '@/components/SignIn'
 
 
 
 // react components:
-export function SignInPageContent() {
+export interface SignInPageContentProps
+    extends
+        Pick<SigninTabStateProps,
+            // states:
+            |'defaultSection'
+        >
+{
+}
+export function SignInPageContent(props: SignInPageContentProps): JSX.Element|null {
+    // props:
+    const {
+        defaultSection = 'signIn',
+    } = props;
+    
+    
+    
     // styles:
     const styleSheet = useSignInPageStyleSheet();
+    
+    
+    
+    // states:
+    const {
+        // states:
+        setSection,
+    } = useSigninTabState();
+    
+    
+    
+    // effects:
+    useIsomorphicLayoutEffect(() => {
+        setSection(defaultSection);
+    }, []);
     
     
     
@@ -47,27 +75,7 @@ export function SignInPageContent() {
     return (
         <Main className={styleSheet.main}>
             <Section className='fill-self'>
-                <SignIn
-                    // variants:
-                    theme='primary'
-                    
-                    
-                    
-                    // auths:
-                    authConfigClient={authConfigClient}
-                    credentialsConfigClient={credentialsConfigClient}
-                    providers={loginProviders}
-                    
-                    
-                    
-                    // pages:
-                    defaultCallbackUrl='/'
-                    
-                    
-                    
-                    // components:
-                    // gotoHomeButtonComponent={null}
-                />
+                <SignIn />
             </Section>
         </Main>
     );
