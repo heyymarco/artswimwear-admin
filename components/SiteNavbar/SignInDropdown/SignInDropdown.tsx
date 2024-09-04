@@ -42,11 +42,8 @@ import {
 
 // internal components:
 import {
-    EditButton,
-}                           from '@/components/EditButton'
-import {
-    ProfileImage,
-}                           from '@/components/ProfileImage'
+    SignInInfo,
+}                           from '@/components/SignInInfo'
 
 // internals:
 import {
@@ -136,43 +133,16 @@ const SignInDropdown = (props: SignInDropdownProps): JSX.Element|null => {
                 // behaviors:
                 actionCtrl={false}
             >
-                <ProfileImage
-                    // appearances:
-                    src={resolveMediaUrl(adminImage ?? undefined)}
-                    
-                    
-                    
+                <SignInInfo
                     // variants:
-                    profileImageStyle='circle'
-                    
-                    
-                    
-                    // classes:
-                    className='image'
-                />
-                <span
-                    // classes:
-                    className='name'
-                >
-                    {adminName}
-                </span>
-                <span
-                    // classes:
-                    className='email'
-                >
-                    {adminEmail}
-                </span>
-                <EditButton
-                    // classes:
-                    className='edit'
+                    size='lg'
+                    nude={true}
                     
                     
                     
                     // handlers:
-                    onClick={(event) => handleClose(event, 'editProfile')}
-                >
-                    Edit Profile
-                </EditButton>
+                    onEdit={(event) => handleClose(event, 'editProfile')}
+                />
             </ListItem>
             <ListSeparatorItem />
             <ListItem onClick={(event) => handleClose(event, 'signOut')}>
