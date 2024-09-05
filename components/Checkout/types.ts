@@ -27,6 +27,9 @@ export interface IntlConfig {
     defaultTimezone             : number
     
     currencies                  : CurrenciesConfig
+    /**
+     * @deprecated Use `checkoutConfigXXX.payment.defaultCurrency` instead.
+     */
     defaultCurrency             : CurrencyCode
     currencyConversionRounding  : CurrencyConversionRounding
 }
