@@ -10,6 +10,7 @@ import {
     // hooks:
     useState,
     useRef,
+    useEffect,
 }                           from 'react'
 
 // next-js:
@@ -117,13 +118,27 @@ const SignInMenu = (props: SignInMenuProps): JSX.Element|null => {
     
     // sessions:
     const { data: session, status: sessionStatus } = useSession();
-    const isSignedIn  = (sessionStatus === 'authenticated');
-    const isSignedOut = (sessionStatus === 'unauthenticated');
-    const isBusy      = (sessionStatus === 'loading');
+    const [isLoading, setIsLoading] = useState<boolean>(sessionStatus === 'loading'); // the `sessionStatus === 'loading'` is not quite reliable, so we use additional loading state
+    const isSignedIn  = !isLoading && (sessionStatus === 'authenticated');
+    const isSignedOut = !isLoading && (sessionStatus === 'unauthenticated');
+    const isBusy      =  isLoading || (sessionStatus === 'loading');
     const { name: adminName, email: adminEmail, image: adminImage } = session?.user ?? {};
     const adminNameParts = adminName?.split(/\s+/gi);
     const adminFirstName = adminNameParts?.[0];
     const adminShortRestName = !!adminNameParts && (adminNameParts.length >= 2) ? adminNameParts[adminNameParts.length - 1][0] : undefined;
+    
+    
+    
+    // effects:
+    useEffect(() => {
+        // conditions:
+        if (sessionStatus === 'loading') return; // only interested to FULLY signedIn|signedOut
+        
+        
+        
+        // actions:
+        setIsLoading(false); // reset
+    }, [sessionStatus]);
     
     
     
@@ -186,6 +201,7 @@ const SignInMenu = (props: SignInMenuProps): JSX.Element|null => {
                             break;
                         
                         case 'signOut':
+                            setIsLoading(true); // the `sessionStatus === 'loading'` is not quite reliable, so we use additional loading state
                             signOut({ redirect: false, callbackUrl: pathname }); // when signed in back, redirects to current url
                             break;
                     } // switch
