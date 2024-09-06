@@ -202,7 +202,7 @@ const SignInMenu = (props: SignInMenuProps): JSX.Element|null => {
                         
                         case 'signOut':
                             setIsSigningOut(true); // set signing out
-                            signOut();
+                            signOut({ redirect: false, callbackUrl: pathname }); // when signed in back, redirects to current url
                             break;
                     } // switch
                     toggleList(false);
