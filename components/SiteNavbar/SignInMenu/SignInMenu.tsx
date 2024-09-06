@@ -153,7 +153,12 @@ const SignInMenu = (props: SignInMenuProps): JSX.Element|null => {
     // handlers:
     const router = useRouter();
     const pathname = usePathname();
-    const handleClick = useEvent(() => {
+    const handleClick = useEvent<React.MouseEventHandler<HTMLElement>>((event) => {
+        event.preventDefault();  // prevent the `href='/signin'` to HARD|SOFT navigate
+        event.stopPropagation(); // prevents the <Navbar> from auto collapsing, we'll collapse the <Navbar> manually
+        
+        
+        
         if (isFullySignedOut) {
             router.push(signInPath);
             toggleList(false);
@@ -233,6 +238,7 @@ const SignInMenu = (props: SignInMenuProps): JSX.Element|null => {
             
             // behaviors:
             actionCtrl={props.actionCtrl ?? (isFullySignedOut || isFullySignedIn)}
+            href={isFullySignedOut ? '/signin' : undefined}
             
             
             
