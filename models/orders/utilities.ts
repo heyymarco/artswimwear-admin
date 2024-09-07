@@ -486,3 +486,19 @@ export const orderStatusNext = (orderStatus : OrderStatus): OrderStatus => {
         default           : return orderStatus;
     } // switch
 }
+
+
+
+export const knownPaymentBrands = [
+    // cards:
+    'visa', 'mastercard', 'amex', 'discover', 'jcb', 'maestro',
+    
+    // wallets:
+    'paypal',
+    'googlepay', 'applepay', 'amazonpay', 'link',
+    'gopay', 'shopeepay', 'dana', 'ovo', 'tcash', 'linkaja',
+    
+    // counters:
+    'indomaret', 'alfamart',
+];
+export const isKnownPaymentBrand = (paymentBrand: string): boolean => knownPaymentBrands.includes(paymentBrand.trim().toLowerCase());
