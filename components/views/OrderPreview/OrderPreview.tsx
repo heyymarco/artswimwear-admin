@@ -22,11 +22,10 @@ import {
 //     useSession,
 // }                           from 'next-auth/react'
 
-// cssfn:
+// styles:
 import {
-    // style sheets:
-    dynamicStyleSheet,
-}                           from '@cssfn/cssfn-react'               // writes css in react hook
+    useOrderPreviewStyleSheet,
+}                           from './styles/loader'
 
 // reusable-ui core:
 import {
@@ -118,14 +117,6 @@ import {
 
 // defaults:
 const imageSize = 128;  // 128px
-
-
-
-// styles:
-const useOrderPreviewStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */'./OrderPreviewStyles')
-, { specificityWeight: 2, id: 'jb9q1hvpin' });
-import './OrderPreviewStyles';
 
 
 

@@ -4,6 +4,7 @@ import {
     descendants,
     rule,
     style,
+    scope,
 }                           from '@cssfn/core'          // writes css in javascript
 import { basics } from '@reusable-ui/components';
 import { typos, usesBorder, usesGroupable, usesPadding } from '@reusable-ui/core';
@@ -186,7 +187,9 @@ const usesOrderPreviewLayout = () => { // the <ListItem> of order list
     });
 };
 
-export default style({
-    // layouts:
-    ...usesOrderPreviewLayout(),
-});
+export default () => [
+    scope('main', {
+        // layouts:
+        ...usesOrderPreviewLayout(),
+    }, { specificityWeight: 2 }),
+];
