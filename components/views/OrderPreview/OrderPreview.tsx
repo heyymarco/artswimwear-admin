@@ -361,7 +361,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                     Payment:
                 </span>
                 
-                {!isPaid && <span className='noValue'>not paid</span>}
+                {!isPaid && <span className='noValue'>not yet paid</span>}
                 
                 {isPaid && <span className='paymentValue'>
                     <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={[totalProductPrice, totalShippingCosts]} />
