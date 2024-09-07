@@ -55,7 +55,7 @@ export interface OrderStatusBadgeProps
     
     
     // handlers:
-    onClick      : (params: { orderStatus: OrderStatus, isPaid: boolean }) => void
+    onClick     ?: (params: { orderStatus: OrderStatus, isPaid: boolean }) => void
 }
 const OrderStatusBadge = (props: OrderStatusBadgeProps): JSX.Element|null => {
     // rest props:
