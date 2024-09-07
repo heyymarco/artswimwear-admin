@@ -203,7 +203,7 @@ const AdminPreview = (props: AdminPreviewProps): JSX.Element|null => {
     const handleEdit = useEvent((editMode: EditMode): void => {
         // just for cosmetic backdrop:
         const dummyPromise = (
-            ['full', 'full-status', 'full-payment'].includes(editMode)
+            ['full', 'image', 'roleId'].includes(editMode)
             ? showDialog(
                 <DummyDialog
                     // global stackable:
