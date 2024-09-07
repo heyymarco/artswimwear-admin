@@ -91,6 +91,9 @@ import {
 import {
     OrderStatusBadge,
 }                           from '@/components/OrderStatusBadge'
+import {
+    CurrencyDisplay,
+}                           from '@/components/CurrencyDisplay'
 
 // models:
 import {
@@ -135,22 +138,35 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
     ...restListItemProps} = props;
     const {
         orderId,
+        
+        currency,
+        
+        shippingCost : totalShippingCosts,
+        
         orderStatus,
         
-        customer,
-        guest,
+        payment,
+        paymentConfirmation,
         
         items,
         
-        payment,
-        
-        paymentConfirmation,
+        customer,
+        guest,
     } = model;
     const paymentType = payment?.type;
     const {
         name  : customerName,
         email : customerEmail,
     } = customer ?? guest ?? {};
+    
+    const totalProductPrice   = items?.reduce((accum, {price, quantity}) => {
+        return accum + (price * quantity);
+    }, 0) ?? 0;
+    
+    const isCanceled          = (orderStatus === 'CANCELED');
+    const isExpired           = (orderStatus === 'EXPIRED');
+    const isCanceledOrExpired = isCanceled || isExpired;
+    const isPaid              = !isCanceledOrExpired && (!!payment && payment.type !== 'MANUAL');
     
     
     
@@ -258,6 +274,58 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                 </span>
             </p>
             
+            <p className='payment'>
+                <span>
+                    Payment:
+                </span>
+                
+                {!isPaid && <span className='noValue'>not paid</span>}
+                
+                {isPaid && <span className='paymentValue'>
+                    <CurrencyDisplay currency={currency?.currency} currencyRate={currency?.rate} amount={[totalProductPrice, totalShippingCosts]} />
+                    
+                    <span className='paymentMethod'>
+                        {
+                            (!!payment.brand && [
+                                // cards:
+                                'visa', 'mastercard', 'amex', 'discover', 'jcb', 'maestro',
+                                
+                                // wallets:
+                                'paypal',
+                                'googlepay', 'applepay', 'amazonpay', 'link',
+                                'gopay', 'shopeepay', 'dana', 'ovo', 'tcash', 'linkaja',
+                                
+                                // counters:
+                                'indomaret', 'alfamart',
+                            ].includes(payment.brand.toLowerCase()))
+                            ? <img
+                                // appearances:
+                                alt={payment.brand}
+                                src={`/brands/${payment.brand.toLowerCase()}.svg`}
+                                // width={42}
+                                // height={26}
+                                
+                                
+                                
+                                // classes:
+                                className='paymentProvider'
+                            />
+                            : (payment.brand || paymentType)
+                        }
+                        
+                        {!!payment.identifier && <span className='paymentIdentifier txt-sec'>
+                            ({payment.identifier})
+                        </span>}
+                    </span>
+                </span>}
+            </p>
+            
+            <p className='fullEditor'>
+                <EditButton icon='table_view' className='fullEditor' buttonStyle='regular' onClick={() => setEditMode('full')}>
+                    View Details
+                </EditButton>
+            </p>
+            
             {/* carousel + total quantity */}
             <CompoundWithBadge
                 // components:
@@ -320,11 +388,6 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                     </MiniCarousel>
                 }
             />
-            <p className='fullEditor'>
-                <EditButton icon='table_view' className='fullEditor' buttonStyle='regular' onClick={() => setEditMode('full')}>
-                    View Details
-                </EditButton>
-            </p>
             {/* edit dialog: */}
             <CollapsibleSuspense>
                 <SimpleEditCustomerDialog

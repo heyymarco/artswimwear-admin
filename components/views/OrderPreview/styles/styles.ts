@@ -6,9 +6,46 @@ import {
     style,
     scope,
 }                           from '@cssfn/core'          // writes css in javascript
-import { basics } from '@reusable-ui/components';
-import { typos, usesBorder, usesGroupable, usesPadding } from '@reusable-ui/core';
-import { commerces } from '@/config';
+
+import {
+    // a border (stroke) management system:
+    borders,
+    borderRadiuses,
+    
+    
+    
+    // a spacer (gap) management system:
+    spacers,
+    
+    
+    
+    // a typography management system:
+    typos,
+    
+    
+    
+    // border (stroke) stuff of UI:
+    usesBorder,
+    
+    
+    
+    // padding (inner spacing) stuff of UI:
+    usesPadding,
+    
+    
+    
+    // groups a list of UIs into a single UI:
+    usesGroupable,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
+import {
+    basics,
+}                           from '@reusable-ui/components'      // a set of official Reusable-UI components
+
+// configs:
+import {
+    commerces,
+}                           from '@/config'
 
 
 
@@ -50,11 +87,16 @@ const usesOrderPreviewLayout = () => { // the <ListItem> of order list
             // layouts:
             display: 'grid',
             gridTemplate: [[
-                '"images orderId   "', 'auto',
-                '"images customer  "', 'auto',
-                '"images fullEditor"', 'auto',
+                '"images ... orderId   "', 'auto',
+                '"images ... .........."', spacers.md,
+                '"images ... customer  "', 'auto',
+                '"images ... .........."', spacers.md,
+                '"images ... payment   "', 'auto',
+                '"images ... .........."', spacers.md, // the minimum space between payment and fullEditor
+                '"images ... .........."', 'auto',     // the extra rest space (if any) between payment and fullEditor
+                '"images ... fullEditor"', 'auto',
                 '/',
-                `calc(${imageSize}px - ${paddingVars.paddingInline}) 1fr`,
+                `${imageSize}px ${spacers.md} 1fr`,
             ]],
             
             
@@ -76,14 +118,21 @@ const usesOrderPreviewLayout = () => { // the <ListItem> of order list
             paddingInline : paddingVars.paddingInline,
             paddingBlock  : paddingVars.paddingBlock,
             
-            gapInline     : '1rem',
-            gapBlock      : '0.5rem',
-            
             
             
             // children:
             ...descendants(['.orderId', 'p'], {
                 margin: 0,
+            }),
+            ...descendants('.noValue', {
+                // appearances:
+                opacity    : 0.5,
+                
+                
+                
+                // typos:
+                fontSize   : basics.fontSizeSm,
+                fontStyle  : 'italic',
             }),
             ...descendants('.edit', {
                 ...rule(':not(.fullEditor)', {
@@ -131,6 +180,59 @@ const usesOrderPreviewLayout = () => { // the <ListItem> of order list
                 gridArea: 'customer',
                 ...children(['.name', '.email'], {
                     display: 'block',
+                }),
+            }),
+            ...children('.payment', {
+                gridArea: 'payment',
+                
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'start',
+                
+                gap: spacers.sm,
+                
+                ...children('.paymentValue', {
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    justifyContent: 'start',
+                    alignItems    : 'center',
+                    
+                    gap: spacers.sm,
+                    
+                    ...children('.paymentMethod', {
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        
+                        gap: spacers.sm,
+                        
+                        ...children('.paymentProvider', {
+                            // sizes:
+                            width           : 'auto',
+                            height          : '16px',
+                            
+                            
+                            
+                            // backgrounds:
+                            backgroundColor : 'white',
+                            
+                            
+                            
+                            // borders:
+                            border          : borderVars.border,
+                            borderWidth     : borders.defaultWidth,
+                            borderRadius    : borderRadiuses.sm,
+                            
+                            
+                            
+                            // spacings:
+                            padding         : spacers.xs,
+                        }),
+                        ...children('.paymentIdentifier', {
+                            // typos:
+                            fontSize       : typos.fontSizeSm,
+                            fontWeight     : typos.fontWeightNormal,
+                        }),
+                    }),
                 }),
             }),
             ...children('.images', {
