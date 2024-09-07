@@ -69,7 +69,7 @@ import {
     CreateHandler,
     ModelCreateOuter,
     ModelEmpty,
-}                           from '@/components/explorers/PagedModelExplorer'
+}                           from '@/components/explorers/PaginationExplorer'
 import {
     CoverageZonePreview,
 }                           from '@/components/views/CoverageZonePreview'

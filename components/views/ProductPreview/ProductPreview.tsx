@@ -73,7 +73,7 @@ import {
 }                           from '@/components/CurrencyDisplay'
 import {
     ModelPreviewProps,
-}                           from '@/components/explorers/PagedModelExplorer'
+}                           from '@/components/explorers/PaginationExplorer'
 import {
     EditButton,
 }                           from '@/components/EditButton'

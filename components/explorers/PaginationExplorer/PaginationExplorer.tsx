@@ -74,8 +74,8 @@ import {
 
 // internals components:
 import {
-    ModelPagination,
-}                           from './ModelPagination'
+    PaginationNav,
+}                           from './PaginationNav'
 
 // internals:
 import type {
@@ -84,30 +84,20 @@ import type {
     PartialModel,
 }                           from '@/libs/types'
 import {
-    // states:
-    useModelPaginationState,
-    
-    
-    
-    // react components:
-    ModelPaginationStateProps,
-    ModelPaginationStateProvider,
-}                           from '@/states/modelPaginationState'
-import {
     ModalLoadingError,
 }                           from '@/components/ModalLoadingError'
-import {
-    ModalDataEmpty,
-}                           from '@/components/ModalDataEmpty'
 import type {
     // types:
     ComplexEditModelDialogResult,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
+import {
+    usePaginationExplorerState,
+}                           from './states/paginationExplorerState'
 
 
 
 // styles:
-export const usePagedModelExplorerStyleSheet = dynamicStyleSheets(
+export const usePaginationExplorerStyleSheet = dynamicStyleSheets(
     () => import(/* webpackPrefetch: true */ './styles/styles')
 , { id: 'lm1zazz2r7' });
 import './styles/styles';
@@ -153,7 +143,7 @@ export interface ModelCreateOuterProps<TModel extends Model>
 }
 export const ModelCreateOuter = <TModel extends Model>(props: ModelCreateOuterProps<TModel>) => {
     // styles:
-    const styleSheet = usePagedModelExplorerStyleSheet();
+    const styleSheet = usePaginationExplorerStyleSheet();
     
     
     
@@ -286,7 +276,7 @@ export interface ModelPreviewProps<TModel extends Model, TElement extends Elemen
 /* <ModelEmpty> */
 export const ModelEmpty = () => {
     // styles:
-    const styleSheet = usePagedModelExplorerStyleSheet();
+    const styleSheet = usePaginationExplorerStyleSheet();
     
     
     
@@ -313,115 +303,8 @@ export const ModelEmpty = () => {
     );
 };
 
-/* <PagedModelExplorer> */
-export interface PagedModelExplorerProps<TModel extends Model>
-    extends
-        // bases:
-        PagedModelExplorerInternalProps<TModel>
-{
-    // data:
-    page                   : number
-    perPage                : number
-    setPage                : (page: number) => void
-    setPerPage             : (perPage: number) => void
-    getModelPaginationApi  : ModelPaginationStateProps<TModel>['getModelPaginationApi']
-    
-    
-    
-    // children:
-    menusBefore           ?: React.ReactNode
-    menusAfter            ?: React.ReactNode
-}
-const PagedModelExplorer         = <TModel extends Model>(props: PagedModelExplorerProps<TModel>): JSX.Element|null => {
-    // styles:
-    const styleSheet = usePagedModelExplorerStyleSheet();
-    
-    
-    
-    // rest props:
-    const {
-        // data:
-        page,
-        perPage,
-        setPage,
-        setPerPage,
-        getModelPaginationApi,
-        
-        
-        
-        // children:
-        menusBefore,
-        menusAfter,
-    ...restPagedModelExplorerProps} = props;
-    
-    
-    
-    // handlers:
-    const handleNavigateTo = useEvent((page: number) => {
-        setPage(page);
-    });
-    
-    
-    
-    // jsx:
-    return (
-        <ModelPaginationStateProvider
-            // data:
-            getModelPaginationApi={getModelPaginationApi}
-        >
-            <Section className={`fill-self ${styleSheet.main}`} theme='primary'>
-                <div className={`toolbar ${styleSheet.toolbar}`}>
-                    <div className='toolbarBefore'>
-                        {menusBefore}
-                    </div>
-                    <div className='toolbarMain'>
-                    </div>
-                    <div className='toolbarAfter'>
-                        {menusAfter}
-                    </div>
-                </div>
-                <ModelPagination<TModel>
-                    // paginations:
-                    page={page}
-                    perPage={perPage}
-                    
-                    
-                    
-                    // classes:
-                    className={styleSheet.paginTop}
-                    
-                    
-                    
-                    // handlers:
-                    onNavigateTo={handleNavigateTo}
-                />
-                <PagedModelExplorerInternal<TModel> {...restPagedModelExplorerProps} />
-                <ModelPagination<TModel>
-                    // paginations:
-                    page={page}
-                    perPage={perPage}
-                    
-                    
-                    
-                    // classes:
-                    className={styleSheet.paginBtm}
-                    
-                    
-                    
-                    // handlers:
-                    onNavigateTo={handleNavigateTo}
-                />
-            </Section>
-        </ModelPaginationStateProvider>
-    );
-};
-export {
-    PagedModelExplorer,
-    PagedModelExplorer as default,
-}
-
-/* <PagedModelExplorerInternal> */
-interface PagedModelExplorerInternalProps<TModel extends Model>
+/* <PaginationExplorer> */
+export interface PaginationExplorerProps<TModel extends Model>
     extends
         // data:
         Partial<Pick<ModelCreateOuterProps<TModel>,
@@ -435,15 +318,16 @@ interface PagedModelExplorerInternalProps<TModel extends Model>
         >>
 {
     // components:
-    modelPreviewComponent : React.ReactComponentElement<any, ModelPreviewProps<TModel, Element>>
+    modelPreviewComponent  : React.ReactComponentElement<any, ModelPreviewProps<TModel, Element>>
+    
+    
+    
+    // children:
+    menusBefore           ?: React.ReactNode
+    menusAfter            ?: React.ReactNode
 }
-const PagedModelExplorerInternal = <TModel extends Model>(props: PagedModelExplorerInternalProps<TModel>): JSX.Element|null => {
-    // styles:
-    const styleSheet = usePagedModelExplorerStyleSheet();
-    
-    
-    
-    // rest props:
+const PaginationExplorer         = <TModel extends Model>(props: PaginationExplorerProps<TModel>): JSX.Element|null => {
+    // props:
     const {
         // accessibilities:
         createItemText,
@@ -453,7 +337,18 @@ const PagedModelExplorerInternal = <TModel extends Model>(props: PagedModelExplo
         // components:
         modelCreateComponent,
         modelPreviewComponent,
+        
+        
+        
+        // children:
+        menusBefore,
+        menusAfter,
     } = props;
+    
+    
+    
+    // styles:
+    const styleSheet = usePaginationExplorerStyleSheet();
     
     
     
@@ -464,7 +359,7 @@ const PagedModelExplorerInternal = <TModel extends Model>(props: PagedModelExplo
         isFetching,
         isError,
         refetch,
-    } = useModelPaginationState<TModel>();
+    } = usePaginationExplorerState<TModel>();
     const isDataEmpty = !!data && !data.total;
     
     
@@ -476,41 +371,68 @@ const PagedModelExplorerInternal = <TModel extends Model>(props: PagedModelExplo
     
     // jsx:
     return (
-        <Basic className={`${styleSheet.listModel}${isDataEmpty ? ' empty' : ''}`} mild={true} elmRef={dataListRef}>
-            <ModalLoadingError
-                // data:
-                isFetching={isFetching}
-                isError={isError}
-                refetch={refetch}
-                
-                
-                
-                // global stackable:
-                viewport={dataListRef}
+        <Section className={`fill-self ${styleSheet.main}`} theme='primary'>
+            <div className={`toolbar ${styleSheet.toolbar}`}>
+                <div className='toolbarBefore'>
+                    {menusBefore}
+                </div>
+                <div className='toolbarMain'>
+                </div>
+                <div className='toolbarAfter'>
+                    {menusAfter}
+                </div>
+            </div>
+            
+            <PaginationNav<TModel>
+                // classes:
+                className={styleSheet.paginTop}
             />
             
-            <List listStyle='flush' className={styleSheet.listModelInner}>
-                {/* <ModelCreate> */}
-                {!!modelCreateComponent  && <ModelCreateOuter<TModel> className='solid' createItemText={createItemText} modelCreateComponent={modelCreateComponent} />}
+            <Basic className={`${styleSheet.listModel}${isDataEmpty ? ' empty' : ''}`} mild={true} elmRef={dataListRef}>
+                <ModalLoadingError
+                    // data:
+                    isFetching={isFetching}
+                    isError={isError}
+                    refetch={refetch}
+                    
+                    
+                    
+                    // global stackable:
+                    viewport={dataListRef}
+                />
                 
-                {!!data && !data.total && <ModelEmpty />}
-                
-                {!!data?.total && Object.values(data?.entities).filter((model): model is Exclude<typeof model, undefined> => !!model).map((model) =>
-                    /* <ModelPreview> */
-                    React.cloneElement<ModelPreviewProps<TModel, Element>>(modelPreviewComponent,
-                        // props:
-                        {
-                            // identifiers:
-                            key   : modelPreviewComponent.key         ?? model.id,
-                            
-                            
-                            
-                            // data:
-                            model : modelPreviewComponent.props.model ?? model,
-                        },
-                    )
-                )}
-            </List>
-        </Basic>
+                <List listStyle='flush' className={styleSheet.listModelInner}>
+                    {/* <ModelCreate> */}
+                    {!!modelCreateComponent  && <ModelCreateOuter<TModel> className='solid' createItemText={createItemText} modelCreateComponent={modelCreateComponent} />}
+                    
+                    {!!data && !data.total && <ModelEmpty />}
+                    
+                    {!!data?.total && Object.values(data?.entities).filter((model): model is Exclude<typeof model, undefined> => !!model).map((model) =>
+                        /* <ModelPreview> */
+                        React.cloneElement<ModelPreviewProps<TModel, Element>>(modelPreviewComponent,
+                            // props:
+                            {
+                                // identifiers:
+                                key   : modelPreviewComponent.key         ?? model.id,
+                                
+                                
+                                
+                                // data:
+                                model : modelPreviewComponent.props.model ?? model,
+                            },
+                        )
+                    )}
+                </List>
+            </Basic>
+            
+            <PaginationNav<TModel>
+                // classes:
+                className={styleSheet.paginBtm}
+            />
+        </Section>
     );
 };
+export {
+    PaginationExplorer,            // named export for readibility
+    PaginationExplorer as default, // default export to support React.lazy
+}

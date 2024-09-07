@@ -29,12 +29,6 @@ import {
     spacers,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
-// reusable-ui components:
-import {
-    // base-components:
-    basics,
-}                           from '@reusable-ui/components'      // a set of official Reusable-UI components
-
 
 
 // styles:

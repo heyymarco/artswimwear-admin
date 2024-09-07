@@ -4,11 +4,6 @@
 import {
     // react:
     default as React,
-    
-    
-    
-    // hooks:
-    useState,
 }                           from 'react'
 
 // // next-js:
@@ -40,8 +35,10 @@ import {
     PageError,
 }                           from '@/components/PageError'
 import {
-    PagedModelExplorer,
-}                           from '@/components/explorers/PagedModelExplorer'
+    PaginationExplorerStateProvider,
+    usePaginationExplorerState,
+    PaginationExplorer,
+}                           from '@/components/explorers/PaginationExplorer'
 import {
     EditAdminDialog,
 }                           from '@/components/dialogs/EditAdminDialog'
@@ -81,14 +78,19 @@ import './pageStyles';
 
 // react components:
 export default function AdminPage(): JSX.Element|null {
+    // jsx:
+    return (
+        <PaginationExplorerStateProvider
+            // data:
+            useGetModelPage={useGetAdminPage}
+        >
+            <AdminPageInternal />
+        </PaginationExplorerStateProvider>
+    );
+}
+function AdminPageInternal(): JSX.Element|null {
     // styles:
     const styleSheet = usePageStyleSheet();
-    
-    
-    
-    // states:
-    const [page   , setPage   ] = useState<number>(1);
-    const [perPage, setPerPage] = useState<number>(10);
     
     
     
@@ -100,8 +102,12 @@ export default function AdminPage(): JSX.Element|null {
     
     
     // stores:
-    const getModelPaginationApi = useGetAdminPage({ page, perPage });
-    const {data, isLoading: isLoadingAndNoData, isError, refetch } = getModelPaginationApi;
+    const {
+        data,
+        isLoading: isLoadingAndNoData,
+        isError,
+        refetch,
+    } = usePaginationExplorerState<AdminDetail>();
     const isErrorAndNoData = isError && !data;
     
     const getRolePaginationApi  = useGetRoleList();
@@ -113,18 +119,9 @@ export default function AdminPage(): JSX.Element|null {
     if (isErrorAndNoData   || (sessionStatus === 'unauthenticated')) return <PageError onRetry={refetch} />;
     return (
         <Main className={styleSheet.main}>
-            <PagedModelExplorer<AdminDetail>
+            <PaginationExplorer<AdminDetail>
                 // accessibilities:
                 createItemText='Add New Admin'
-                
-                
-                
-                // data:
-                page={page}
-                perPage={perPage}
-                setPage={setPage}
-                setPerPage={setPerPage}
-                getModelPaginationApi={getModelPaginationApi}
                 
                 
                 

@@ -55,7 +55,7 @@ import {
     CreateHandler,
     ModelCreateOuter,
     ModelEmpty,
-}                           from '@/components/explorers/PagedModelExplorer'
+}                           from '@/components/explorers/PaginationExplorer'
 import {
     ShippingRatePreview,
 }                           from '@/components/views/ShippingRatePreview'

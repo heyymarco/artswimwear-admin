@@ -68,7 +68,7 @@ import {
 }                           from '@/components/editors/RoleEditor'
 import type {
     CreateHandler,
-}                           from '@/components/explorers/PagedModelExplorer'
+}                           from '@/components/explorers/PaginationExplorer'
 import {
     // types:
     UpdateHandler,

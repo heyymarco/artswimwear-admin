@@ -58,7 +58,7 @@ import {
 import type {
     // react components:
     ModelPreviewProps,
-}                           from '@/components/explorers/PagedModelExplorer'
+}                           from '@/components/explorers/PaginationExplorer'
 import type {
     // types:
     ComplexEditModelDialogResult,

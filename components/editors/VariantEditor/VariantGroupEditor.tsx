@@ -49,7 +49,7 @@ import {
     ModelCreateOuterProps,
     ModelCreateOuter,
     ModelEmpty,
-}                           from '@/components/explorers/PagedModelExplorer'
+}                           from '@/components/explorers/PaginationExplorer'
 import type {
     VariantGroupPreviewProps,
 }                           from '@/components/views/VariantGroupPreview'

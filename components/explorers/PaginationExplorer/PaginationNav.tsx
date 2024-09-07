@@ -42,61 +42,46 @@ import type {
     Model,
 }                           from '@/libs/types'
 import {
-    // states:
-    useModelPaginationState,
-}                           from '@/states/modelPaginationState'
+    usePaginationExplorerState,
+}                           from './states/paginationExplorerState'
 
 
 
 // styles:
-export const useModelPaginationStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */ './styles/modelPaginationStyles')
+export const usePaginationNavStyleSheet = dynamicStyleSheet(
+    () => import(/* webpackPrefetch: true */ './styles/paginationNavStyles')
 , { id: 'k1h5chza4a' });
-import './styles/modelPaginationStyles';
+import './styles/paginationNavStyles';
 
 
 
 // react components:
-export interface ModelPaginationProps<TElement extends Element = HTMLElement>
+export interface PaginationNavProps<TElement extends Element = HTMLElement>
     extends
         PaginationProps<TElement>
 {
-    // paginations:
-    page           : number,
-    perPage        : number,
-    
-    
-    
-    // handlers:
-    onNavigateTo   : (page: number) => void
 }
-const ModelPagination = <TModel extends Model, TElement extends Element = HTMLElement>(props: ModelPaginationProps<TElement>): JSX.Element|null => {
+const PaginationNav = <TModel extends Model, TElement extends Element = HTMLElement>(props: PaginationNavProps<TElement>): JSX.Element|null => {
     // styles:
-    const styleSheet = useModelPaginationStyleSheet();
-    
-    
-    
-    // rest props:
-    const {
-        // paginations:
-        page,
-        perPage,
-        
-        
-        
-        // handlers:
-        onNavigateTo,
-    ...restPaginationProps} = props;
+    const styleSheet = usePaginationNavStyleSheet();
     
     
     
     // states:
     const {
+        // states:
+        page,
+        setPage,
+        
+        perPage,
+        
+        
+        
         // data:
         data,
         isFetching,
         isError,
-    } = useModelPaginationState<TModel>();
+    } = usePaginationExplorerState<TModel>();
     const pages       = Math.ceil((data?.total ?? 0) / perPage);
     const isDataEmpty = !!data && !data.total;
     
@@ -104,10 +89,10 @@ const ModelPagination = <TModel extends Model, TElement extends Element = HTMLEl
     
     // handlers:
     const handleNavigatePrev = useEvent((): void => {
-        onNavigateTo(1); // goto first page
+        setPage(1); // goto first page
     });
     const handleNavigateNext = useEvent((): void => {
-        onNavigateTo(pages); // goto last page
+        setPage(pages); // goto last page
     });
     
     
@@ -116,7 +101,7 @@ const ModelPagination = <TModel extends Model, TElement extends Element = HTMLEl
     return (
         <PaginationControl<TElement>
             // other props:
-            {...restPaginationProps}
+            {...props}
             
             
             
@@ -159,7 +144,7 @@ const ModelPagination = <TModel extends Model, TElement extends Element = HTMLEl
                     key={index}
                     
                     active={(index + 1) === page}
-                    onClick={() => onNavigateTo(index + 1)}
+                    onClick={() => setPage(index + 1)}
                 >
                     {index + 1}
                 </ListItem>
@@ -168,6 +153,6 @@ const ModelPagination = <TModel extends Model, TElement extends Element = HTMLEl
     );
 };
 export {
-    ModelPagination,
-    ModelPagination as default,
+    PaginationNav,
+    PaginationNav as default,
 }

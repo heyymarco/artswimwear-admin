@@ -4,11 +4,6 @@
 import {
     // react:
     default as React,
-    
-    
-    
-    // hooks:
-    useState,
 }                           from 'react'
 
 // // next-js:
@@ -57,8 +52,10 @@ import {
     PageError,
 }                           from '@/components/PageError'
 import {
-    PagedModelExplorer,
-}                           from '@/components/explorers/PagedModelExplorer'
+    PaginationExplorerStateProvider,
+    usePaginationExplorerState,
+    PaginationExplorer,
+}                           from '@/components/explorers/PaginationExplorer'
 import {
     EditShippingDialog,
 }                           from '@/components/dialogs/EditShippingDialog'
@@ -98,14 +95,19 @@ import './pageStyles';
 
 // react components:
 export default function ShippingPage(): JSX.Element|null {
+    // jsx:
+    return (
+        <PaginationExplorerStateProvider
+            // data:
+            useGetModelPage={useGetShippingPage}
+        >
+            <ShippingPageInternal />
+        </PaginationExplorerStateProvider>
+    );
+}
+function ShippingPageInternal(): JSX.Element|null {
     // styles:
     const styleSheet = usePageStyleSheet();
-    
-    
-    
-    // states:
-    const [page   , setPage   ] = useState<number>(1);
-    const [perPage, setPerPage] = useState<number>(10);
     
     
     
@@ -117,8 +119,12 @@ export default function ShippingPage(): JSX.Element|null {
     
     
     // stores:
-    const getModelPaginationApi = useGetShippingPage({ page, perPage });
-    const {data, isLoading: isLoadingAndNoData, isError, refetch } = getModelPaginationApi;
+    const {
+        data,
+        isLoading: isLoadingAndNoData,
+        isError,
+        refetch,
+    } = usePaginationExplorerState<ShippingDetail>();
     const isErrorAndNoData = isError && !data;
     
     
@@ -144,18 +150,9 @@ export default function ShippingPage(): JSX.Element|null {
     if (isErrorAndNoData   || (sessionStatus === 'unauthenticated')) return <PageError onRetry={refetch} />;
     return (
         <Main className={styleSheet.main}>
-            <PagedModelExplorer<ShippingDetail>
+            <PaginationExplorer<ShippingDetail>
                 // accessibilities:
                 createItemText='Add New Shipping'
-                
-                
-                
-                // data:
-                page={page}
-                perPage={perPage}
-                setPage={setPage}
-                setPerPage={setPerPage}
-                getModelPaginationApi={getModelPaginationApi}
                 
                 
                 

@@ -4,11 +4,6 @@
 import {
     // react:
     default as React,
-    
-    
-    
-    // hooks:
-    useState,
 }                           from 'react'
 
 // // next-js:
@@ -40,8 +35,10 @@ import {
     PageError,
 }                           from '@/components/PageError'
 import {
-    PagedModelExplorer,
-}                           from '@/components/explorers/PagedModelExplorer'
+    PaginationExplorerStateProvider,
+    usePaginationExplorerState,
+    PaginationExplorer,
+}                           from '@/components/explorers/PaginationExplorer'
 import {
     EditProductDialog,
 }                           from '@/components/dialogs/EditProductDialog'
@@ -79,14 +76,19 @@ import './pageStyles';
 
 // react components:
 export default function ProductPage(): JSX.Element|null {
+    // jsx:
+    return (
+        <PaginationExplorerStateProvider
+            // data:
+            useGetModelPage={useGetProductPage}
+        >
+            <ProductPageInternal />
+        </PaginationExplorerStateProvider>
+    );
+}
+function ProductPageInternal(): JSX.Element|null {
     // styles:
     const styleSheet = usePageStyleSheet();
-    
-    
-    
-    // states:
-    const [page   , setPage   ] = useState<number>(1);
-    const [perPage, setPerPage] = useState<number>(10);
     
     
     
@@ -98,8 +100,12 @@ export default function ProductPage(): JSX.Element|null {
     
     
     // stores:
-    const getModelPaginationApi = useGetProductPage({ page, perPage });
-    const {data, isLoading: isLoadingAndNoData, isError, refetch } = getModelPaginationApi;
+    const {
+        data,
+        isLoading: isLoadingAndNoData,
+        isError,
+        refetch,
+    } = usePaginationExplorerState<ProductDetail>();
     const isErrorAndNoData = isError && !data;
     
     
@@ -109,18 +115,9 @@ export default function ProductPage(): JSX.Element|null {
     if (isErrorAndNoData   || (sessionStatus === 'unauthenticated')) return <PageError onRetry={refetch} />;
     return (
         <Main className={styleSheet.main}>
-            <PagedModelExplorer<ProductDetail>
+            <PaginationExplorer<ProductDetail>
                 // accessibilities:
                 createItemText='Add New Product'
-                
-                
-                
-                // data:
-                page={page}
-                perPage={perPage}
-                setPage={setPage}
-                setPerPage={setPerPage}
-                getModelPaginationApi={getModelPaginationApi}
                 
                 
                 
