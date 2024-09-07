@@ -116,6 +116,11 @@ import {
     getTotalQuantity,
 }                           from './utilities'
 
+// configs:
+import {
+    checkoutConfigShared,
+}                           from '@/checkout.config.shared'
+
 
 
 // defaults:
@@ -139,7 +144,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
     const {
         orderId,
         
-        currency,
+        currency     : preferredCurrency,
         
         shippingCost : totalShippingCosts,
         
@@ -158,6 +163,9 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
         name  : customerName,
         email : customerEmail,
     } = customer ?? guest ?? {};
+    
+    const currency            = preferredCurrency?.currency ?? checkoutConfigShared.intl.defaultCurrency;
+    const currencyRate        = (!!preferredCurrency && (currency !== preferredCurrency.currency)) ? (1 / preferredCurrency.rate) : undefined;
     
     const totalProductPrice   = items?.reduce((accum, {price, quantity}) => {
         return accum + (price * quantity);
@@ -282,7 +290,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                 {!isPaid && <span className='noValue'>not paid</span>}
                 
                 {isPaid && <span className='paymentValue'>
-                    <CurrencyDisplay currency={currency?.currency} currencyRate={currency?.rate} amount={[totalProductPrice, totalShippingCosts]} />
+                    <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={[totalProductPrice, totalShippingCosts]} />
                     
                     <span className='paymentMethod'>
                         {
