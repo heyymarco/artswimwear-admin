@@ -12,11 +12,10 @@ import {
     useState,
 }                           from 'react'
 
-// cssfn:
+// styles:
 import {
-    // style sheets:
-    dynamicStyleSheets,
-}                           from '@cssfn/cssfn-react'               // writes css in react hook
+    useComplexEditModelDialogStyleSheet,
+}                           from './styles/loader'
 
 // reusable-ui core:
 import {
@@ -63,7 +62,6 @@ import {
     
     
     // dialog-components:
-    ModalExpandedChangeEvent,
     ModalCardProps,
     ModalCard,
     
@@ -91,39 +89,29 @@ import {
 }                           from '@/components/MessageError'
 
 // internals:
-import type {
-    Model,
-    PartialModel,
+import {
+    type Model,
 }                           from '@/libs/types'
-
-
-
-// styles:
-const useComplexEditModelDialogStyleSheet = dynamicStyleSheets(
-    () => import(/* webpackPrefetch: true */'./ComplexEditModelDialogStyles')
-, { id: 'h5dj0g5h71' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
-import './ComplexEditModelDialogStyles'
+import {
+    type ComplexEditModelDialogResult,
+    type ComplexEditModelDialogExpandedChangeEvent,
+    
+    type UpdateHandler,
+    type AfterUpdateHandler,
+    
+    type DeleteHandler,
+    type AfterDeleteHandler,
+    
+    type UpdateSideHandler,
+    type DeleteSideHandler,
+    
+    type ConfirmDeleteHandler,
+    type ConfirmUnsavedHandler,
+}                           from './types'
 
 
 
 // react components:
-export type ComplexEditModelDialogResult<TModel extends Model> = PartialModel<TModel>|false|undefined // TModel: created|updated; false: deleted; undefined: not created|modified
-export interface ComplexEditModelDialogExpandedChangeEvent<TModel extends Model> extends ModalExpandedChangeEvent<ComplexEditModelDialogResult<TModel>> {}
-
-export type UpdateHandler<TModel extends Model>         = (args: { id: string|null, whenAdd: boolean, whenUpdate: Record<string, boolean> }) => PartialModel<TModel>|Promise<PartialModel<TModel>>
-export type UpdateDraftHandler<TModel extends Model>    = (args: { draftModel: TModel, whenAdd: boolean, whenUpdate: Record<string, boolean> }) => PartialModel<TModel>|Promise<PartialModel<TModel>>
-export type UpdatedHandler<TModel extends Model>        = (updatedModel: PartialModel<TModel>) => void|Promise<void>
-export type AfterUpdateHandler                          = () => void|Promise<void>
-
-export type DeleteHandler<TModel extends Model>         = (deletingModel: TModel) => void|Promise<void>
-export type AfterDeleteHandler                          = () => void|Promise<void>
-
-export type UpdateSideHandler                           = () => void|Promise<void>
-export type DeleteSideHandler                           = () => void|Promise<void>
-
-export type ConfirmDeleteHandler<TModel extends Model>  = (args: { model: TModel      }) => { title?: React.ReactNode, message: React.ReactNode }
-export type ConfirmUnsavedHandler<TModel extends Model> = (args: { model: TModel|null }) => { title?: React.ReactNode, message: React.ReactNode }
-
 export interface ComplexEditModelDialogProps<TModel extends Model>
     extends
         // bases:
