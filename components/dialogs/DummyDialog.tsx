@@ -2,20 +2,13 @@
 import {
     // react:
     default as React,
-    
-    
-    
-    // hooks:
-    useRef,
-    useEffect,
-    useState,
 }                           from 'react'
 
 // reusable-ui components:
 import {
     // dialog-components:
-    ModalExpandedChangeEvent,
-    ModalProps,
+    type ModalExpandedChangeEvent,
+    type ModalProps,
     Modal,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
