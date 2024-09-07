@@ -11,11 +11,10 @@ import {
     useRef,
 }                           from 'react'
 
-// cssfn:
+// styles:
 import {
-    // style sheets:
-    dynamicStyleSheets,
-}                           from '@cssfn/cssfn-react'               // writes css in react hook
+    usePageErrorStyleSheet,
+}                           from './styles/loader'
 
 // reusable-ui components:
 import {
@@ -41,13 +40,7 @@ import {
 
 
 
-// styles:
-export const usePageErrorStyleSheet = dynamicStyleSheets(
-    () => import(/* webpackPrefetch: true */ './styles/styles')
-, { id: 'ph6g9f9c57' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
-
-
-
+// react components:
 export interface PageErrorProps extends MainProps {
     // handlers:
     onRetry ?: () => void

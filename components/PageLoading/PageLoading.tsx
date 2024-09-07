@@ -6,11 +6,10 @@ import {
     default as React,
 }                           from 'react'
 
-// cssfn:
+// styles:
 import {
-    // style sheets:
-    dynamicStyleSheet,
-}                           from '@cssfn/cssfn-react'               // writes css in react hook
+    usePageLoadingStyleSheet,
+}                           from './styles/loader'
 
 // reusable-ui components:
 import {
@@ -26,13 +25,7 @@ import {
 
 
 
-// styles:
-export const usePageLoadingStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */ './styles/styles')
-, { id: 'aj8573q2a4', specificityWeight: 2 }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
-
-
-
+// react components:
 export interface PageLoadingProps extends MainProps {}
 export const PageLoading = (props: PageLoadingProps): JSX.Element|null => {
     // styles:
