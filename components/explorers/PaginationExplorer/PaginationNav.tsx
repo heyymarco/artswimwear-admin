@@ -124,7 +124,7 @@ const PaginationNav = <TModel extends Model, TElement extends Element = HTMLElem
                 />
             }
         >
-            {!data && <ListItem actionCtrl={false} nude={true}><LoadingBar className={styleSheets.nav}
+            {!data && <ListItem actionCtrl={false} nude={true}><LoadingBar className={styleSheets.loadingBar}
                 nude={true}
                 running={isFetching}
                 theme={isError ? 'danger' : undefined}

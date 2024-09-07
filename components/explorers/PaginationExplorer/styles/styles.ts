@@ -242,7 +242,7 @@ export default () => [
         ...usesEmptyModelLayout(),
     }),
     
-    scope('nav', {
+    scope('loadingBar', {
         // sizes:
         blockSize: '100%',
     }),
