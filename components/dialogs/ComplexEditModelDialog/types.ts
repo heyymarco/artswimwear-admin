@@ -8,11 +8,6 @@ import {
 import {
     // dialog-components:
     type ModalExpandedChangeEvent,
-    
-    
-    
-    // composite-components:
-    type TabPanelProps,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // internals:
