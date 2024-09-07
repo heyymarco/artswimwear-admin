@@ -241,4 +241,9 @@ export default () => [
     scope('emptyModel', { // the <ListItem> of model add_new
         ...usesEmptyModelLayout(),
     }),
+    
+    scope('nav', {
+        // sizes:
+        blockSize: '100%',
+    }),
 ];

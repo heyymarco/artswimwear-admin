@@ -11,11 +11,10 @@ import {
     useRef,
 }                           from 'react'
 
-// cssfn:
+// styles:
 import {
-    // style sheets:
-    dynamicStyleSheets,
-}                           from '@cssfn/cssfn-react'               // writes css in react hook
+    usePaginationExplorerStyleSheet,
+}                           from './styles/loader'
 
 // reusable-ui core:
 import {
@@ -96,14 +95,6 @@ import {
 
 
 
-// styles:
-export const usePaginationExplorerStyleSheet = dynamicStyleSheets(
-    () => import(/* webpackPrefetch: true */ './styles/styles')
-, { id: 'lm1zazz2r7' });
-import './styles/styles';
-
-
-
 // react components:
 
 /* <ModelCreate> */
@@ -143,7 +134,7 @@ export interface ModelCreateOuterProps<TModel extends Model>
 }
 export const ModelCreateOuter = <TModel extends Model>(props: ModelCreateOuterProps<TModel>) => {
     // styles:
-    const styleSheet = usePaginationExplorerStyleSheet();
+    const styleSheets = usePaginationExplorerStyleSheet();
     
     
     
@@ -242,7 +233,7 @@ export const ModelCreateOuter = <TModel extends Model>(props: ModelCreateOuterPr
             
             
             // classes:
-            className : `${styleSheet.createModel} ${props.className}`,
+            className : `${styleSheets.createModel} ${props.className}`,
         },
         
         
@@ -276,7 +267,7 @@ export interface ModelPreviewProps<TModel extends Model, TElement extends Elemen
 /* <ModelEmpty> */
 export const ModelEmpty = () => {
     // styles:
-    const styleSheet = usePaginationExplorerStyleSheet();
+    const styleSheets = usePaginationExplorerStyleSheet();
     
     
     
@@ -294,7 +285,7 @@ export const ModelEmpty = () => {
             
             
             // classes:
-            className={styleSheet.emptyModel}
+            className={styleSheets.emptyModel}
         >
             <p>
                 The data is empty.
@@ -348,7 +339,7 @@ const PaginationExplorer         = <TModel extends Model>(props: PaginationExplo
     
     
     // styles:
-    const styleSheet = usePaginationExplorerStyleSheet();
+    const styleSheets = usePaginationExplorerStyleSheet();
     
     
     
@@ -371,8 +362,8 @@ const PaginationExplorer         = <TModel extends Model>(props: PaginationExplo
     
     // jsx:
     return (
-        <Section className={`fill-self ${styleSheet.main}`} theme='primary'>
-            <div className={`toolbar ${styleSheet.toolbar}`}>
+        <Section className={`fill-self ${styleSheets.main}`} theme='primary'>
+            <div className={`toolbar ${styleSheets.toolbar}`}>
                 <div className='toolbarBefore'>
                     {menusBefore}
                 </div>
@@ -385,10 +376,10 @@ const PaginationExplorer         = <TModel extends Model>(props: PaginationExplo
             
             <PaginationNav<TModel>
                 // classes:
-                className={styleSheet.paginTop}
+                className={styleSheets.paginTop}
             />
             
-            <Basic className={`${styleSheet.listModel}${isDataEmpty ? ' empty' : ''}`} mild={true} elmRef={dataListRef}>
+            <Basic className={`${styleSheets.listModel}${isDataEmpty ? ' empty' : ''}`} mild={true} elmRef={dataListRef}>
                 <ModalLoadingError
                     // data:
                     isFetching={isFetching}
@@ -401,7 +392,7 @@ const PaginationExplorer         = <TModel extends Model>(props: PaginationExplo
                     viewport={dataListRef}
                 />
                 
-                <List listStyle='flush' className={styleSheet.listModelInner}>
+                <List listStyle='flush' className={styleSheets.listModelInner}>
                     {/* <ModelCreate> */}
                     {!!modelCreateComponent  && <ModelCreateOuter<TModel> className='solid' createItemText={createItemText} modelCreateComponent={modelCreateComponent} />}
                     
@@ -427,7 +418,7 @@ const PaginationExplorer         = <TModel extends Model>(props: PaginationExplo
             
             <PaginationNav<TModel>
                 // classes:
-                className={styleSheet.paginBtm}
+                className={styleSheets.paginBtm}
             />
         </Section>
     );

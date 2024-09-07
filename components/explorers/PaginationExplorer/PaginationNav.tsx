@@ -6,11 +6,10 @@ import {
     default as React,
 }                           from 'react'
 
-// cssfn:
+// styles:
 import {
-    // style sheets:
-    dynamicStyleSheet,
-}                           from '@cssfn/cssfn-react'               // writes css in react hook
+    usePaginationExplorerStyleSheet,
+}                           from './styles/loader'
 
 // reusable-ui core:
 import {
@@ -47,14 +46,6 @@ import {
 
 
 
-// styles:
-export const usePaginationNavStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */ './styles/paginationNavStyles')
-, { id: 'k1h5chza4a' });
-import './styles/paginationNavStyles';
-
-
-
 // react components:
 export interface PaginationNavProps<TElement extends Element = HTMLElement>
     extends
@@ -63,7 +54,7 @@ export interface PaginationNavProps<TElement extends Element = HTMLElement>
 }
 const PaginationNav = <TModel extends Model, TElement extends Element = HTMLElement>(props: PaginationNavProps<TElement>): JSX.Element|null => {
     // styles:
-    const styleSheet = usePaginationNavStyleSheet();
+    const styleSheets = usePaginationExplorerStyleSheet();
     
     
     
@@ -133,7 +124,7 @@ const PaginationNav = <TModel extends Model, TElement extends Element = HTMLElem
                 />
             }
         >
-            {!data && <ListItem actionCtrl={false} nude={true}><LoadingBar className={styleSheet.main}
+            {!data && <ListItem actionCtrl={false} nude={true}><LoadingBar className={styleSheets.nav}
                 nude={true}
                 running={isFetching}
                 theme={isError ? 'danger' : undefined}
