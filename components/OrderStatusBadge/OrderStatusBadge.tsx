@@ -25,17 +25,15 @@ import {
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // models:
-import type {
-    PaymentType,
-    OrderStatus,
-}                           from '@prisma/client'
-
-// utilities:
+// models:
 import {
+    type PaymentType,
+    type OrderStatus,
+    
     orderStatusTheme,
     orderStatusText,
     orderStatusIcon,
-}                           from './utilities'
+}                           from '@/models'
 
 
 

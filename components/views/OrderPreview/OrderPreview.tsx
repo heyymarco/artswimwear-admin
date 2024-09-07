@@ -89,13 +89,13 @@ import {
     EditOrderDialog,
 }                           from '@/components/dialogs/EditOrderDialog'
 import {
-    orderStatusTheme,
     OrderStatusBadge,
 }                           from '@/components/OrderStatusBadge'
 
 // models:
-import type {
-    OrderDetail,
+import {
+    type OrderDetail,
+    orderStatusTheme,
 }                           from '@/models'
 
 // stores:

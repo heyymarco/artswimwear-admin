@@ -53,17 +53,14 @@ import {
     RadioDecorator,
 }                           from '@heymarco/radio-decorator'
 
-// internal components:
+// models:
 import {
+    type OrderDetail,
+    
     orderStatusValues,
     orderStatusText,
     orderStatusIcon,
     orderStatusNext,
-}                           from '@/components/OrderStatusBadge'
-
-// models:
-import type {
-    OrderDetail,
 }                           from '@/models'
 import type {
     OrderStatus,

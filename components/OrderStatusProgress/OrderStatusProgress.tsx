@@ -14,16 +14,13 @@ import {
     List,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
-// internal components:
+// models:
 import {
+    type OrderDetail,
+    
     orderStatusValues,
     problemOrderStatusValues,
     orderStatusText,
-}                           from '@/components/OrderStatusBadge'
-
-// models:
-import type {
-    OrderDetail,
 }                           from '@/models'
 
 
