@@ -134,7 +134,7 @@ const SignInDropdown = (props: SignInDropdownProps): JSX.Element|null => {
             <ListItem onClick={(event) => handleClose(event, 'signOut')}>
                 <Icon icon='logout' size='md' />
                 <span>
-                    Sign Out
+                    Sign out
                 </span>
             </ListItem>
         </DropdownList>

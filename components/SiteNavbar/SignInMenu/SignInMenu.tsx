@@ -289,7 +289,7 @@ const SignInMenu = (props: SignInMenuProps): JSX.Element|null => {
                         size='lg'
                     />
                     <span>
-                        Sign In
+                        Sign in
                     </span>
                 </TabPanel>
                 <TabPanel className={styleSheet.signInMenu}>
