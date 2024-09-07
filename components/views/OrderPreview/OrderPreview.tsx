@@ -9,7 +9,6 @@ import {
     
     // hooks:
     useRef,
-    useState,
 }                           from 'react'
 
 // // next-js:
@@ -31,16 +30,10 @@ import {
 import {
     // react helper hooks:
     useEvent,
-    EventHandler,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
 import {
-    // base-content-components:
-    Content,
-    
-    
-    
     // layout-components:
     ListItem,
     
@@ -51,8 +44,8 @@ import {
     
     
     
-    // dialog-components:
-    ModalExpandedChangeEvent,
+    // utility-components:
+    useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // heymarco components:
@@ -80,8 +73,8 @@ import {
     MiniCarousel,
 }                           from '@/components/MiniCarousel'
 import {
-    CollapsibleSuspense,
-}                           from '@/components/CollapsibleSuspense'
+    DummyDialog,
+}                           from '@/components/dialogs/DummyDialog'
 import {
     SimpleEditCustomerDialog,
 }                           from '@/components/dialogs/SimpleEditCustomerDialog'
@@ -182,12 +175,6 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
     
     
     
-    // states:
-    type EditMode = keyof NonNullable<(OrderDetail['customer'] & OrderDetail['guest'])>|'full'|'full-status'|'full-payment'
-    const [editMode, setEditMode] = useState<EditMode|null>(null);
-    
-    
-    
     // TODO: add privilege for orders:
     // // sessions:
     // const { data: session } = useSession();
@@ -218,15 +205,98 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
     
     
     
+    // dialogs:
+    const {
+        showDialog,
+    } = useDialogMessage();
+    
+    
+    
     // handlers:
-    const handleExpandedChange = useEvent<EventHandler<ModalExpandedChangeEvent>>(({expanded}): void => {
-        // conditions:
-        if (expanded) return; // ignore if expanded
+    type EditMode = keyof NonNullable<(OrderDetail['customer'] & OrderDetail['guest'])>|'full'|'full-status'|'full-payment'
+    const handleEdit = useEvent((editMode: EditMode): void => {
+        // just for cosmetic backdrop:
+        const dummyPromise = (
+            ['full', 'full-status', 'full-payment'].includes(editMode)
+            ? showDialog(
+                <DummyDialog
+                    // global stackable:
+                    viewport={listItemRef}
+                />
+            )
+            : undefined
+        );
         
+        const dialogPromise = showDialog((() => {
+            switch (editMode) {
+                case 'name'         : return (
+                    <SimpleEditCustomerDialog
+                        // data:
+                        model={model}
+                        edit='name'
+                        editGroup={customer ? 'customer' : 'guest'}
+                        
+                        
+                        
+                        // global stackable:
+                        viewport={listItemRef}
+                        
+                        
+                        
+                        // components:
+                        editorComponent={<NameEditor
+                            // validations:
+                            required={true}
+                        />}
+                    />
+                );
+                case 'email'        : return (
+                    <SimpleEditCustomerDialog
+                        // data:
+                        model={model}
+                        edit='email'
+                        editGroup={customer ? 'customer' : 'guest'}
+                        
+                        
+                        
+                        // global stackable:
+                        viewport={listItemRef}
+                        
+                        
+                        
+                        // components:
+                        editorComponent={<EmailEditor
+                            // validations:
+                            required={true}
+                        />}
+                    />
+                );
+                case 'full'         :
+                case 'full-status'  :
+                case 'full-payment' : return (
+                    <EditOrderDialog
+                        // data:
+                        model={model} // modify current model
+                        
+                        
+                        
+                        // auto focusable:
+                        autoFocusOn={(() => {
+                            switch (editMode) {
+                                case 'full-status'  : return 'OrderStatusButton';
+                                case 'full-payment' : return 'ConfirmPaymentButton';
+                                default             : return undefined;
+                            } // switch
+                        })()}
+                    />
+                );
+                default             : throw new Error('app error');
+            } // switch
+        })());
         
-        
-        // actions:
-        setEditMode(null);
+        if (dummyPromise) {
+            dialogPromise.collapseStartEvent().then(() => dummyPromise.closeDialog(undefined));
+        } // if
     });
     
     
@@ -271,18 +341,18 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                     
                     
                     // handlers:
-                    onClick={({isPaid}) => setEditMode(isPaid ? 'full-status' : 'full-payment')}
+                    onClick={({isPaid}) => handleEdit(isPaid ? 'full-status' : 'full-payment')}
                 />
             </h3>
             
             <p className='customer'>
                 <span className='name'>
                     <strong>{customerName}</strong>
-                    <EditButton onClick={() => setEditMode('name')} />
+                    <EditButton onClick={() => handleEdit('name')} />
                 </span>
                 <span className='email'>
                     <em>{customerEmail}</em>
-                    <EditButton onClick={() => setEditMode('email')} />
+                    <EditButton onClick={() => handleEdit('email')} />
                 </span>
             </p>
             
@@ -322,7 +392,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
             </p>
             
             <p className='fullEditor'>
-                <EditButton icon='table_view' className='fullEditor' buttonStyle='regular' onClick={() => setEditMode('full')}>
+                <EditButton icon='table_view' className='fullEditor' buttonStyle='regular' onClick={() => handleEdit('full')}>
                     View Details
                 </EditButton>
             </p>
@@ -389,81 +459,6 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                     </MiniCarousel>
                 }
             />
-            {/* edit dialog: */}
-            <CollapsibleSuspense>
-                <SimpleEditCustomerDialog
-                    // data:
-                    model={model}
-                    edit='name'
-                    editGroup={customer ? 'customer' : 'guest'}
-                    
-                    
-                    
-                    // states:
-                    expanded={editMode === 'name'}
-                    onExpandedChange={handleExpandedChange}
-                    
-                    
-                    
-                    // global stackable:
-                    viewport={listItemRef}
-                    
-                    
-                    
-                    // components:
-                    editorComponent={<NameEditor
-                        // validations:
-                        required={true}
-                    />}
-                />
-                <SimpleEditCustomerDialog
-                    // data:
-                    model={model}
-                    edit='email'
-                    editGroup={customer ? 'customer' : 'guest'}
-                    
-                    
-                    
-                    // states:
-                    expanded={editMode === 'email'}
-                    onExpandedChange={handleExpandedChange}
-                    
-                    
-                    
-                    // global stackable:
-                    viewport={listItemRef}
-                    
-                    
-                    
-                    // components:
-                    editorComponent={<EmailEditor
-                        // validations:
-                        required={true}
-                    />}
-                />
-                
-                <EditOrderDialog
-                    // data:
-                    model={model} // modify current model
-                    
-                    
-                    
-                    // states:
-                    expanded={editMode?.startsWith('full')}
-                    onExpandedChange={handleExpandedChange}
-                    
-                    
-                    
-                    // auto focusable:
-                    autoFocusOn={(() => {
-                        switch (editMode) {
-                            case 'full-status'  : return 'OrderStatusButton';
-                            case 'full-payment' : return 'ConfirmPaymentButton';
-                            default             : return undefined;
-                        } // switch
-                    })()}
-                />
-            </CollapsibleSuspense>
         </ListItem>
     );
 };
