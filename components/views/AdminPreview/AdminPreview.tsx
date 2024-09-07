@@ -9,7 +9,6 @@ import {
     
     // hooks:
     useRef,
-    useState,
 }                           from 'react'
 
 // // next-js:
@@ -32,7 +31,6 @@ import {
 import {
     // react helper hooks:
     useEvent,
-    EventHandler,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -59,8 +57,8 @@ import {
     
     
     
-    // dialog-components:
-    ModalExpandedChangeEvent,
+    // utility-components:
+    useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // heymarco components:
@@ -85,8 +83,8 @@ import {
     CompoundWithBadge,
 }                           from '@/components/CompoundWithBadge'
 import {
-    CollapsibleSuspense,
-}                           from '@/components/CollapsibleSuspense'
+    DummyDialog,
+}                           from '@/components/dialogs/DummyDialog'
 import {
     SimpleEditModelDialog,
 }                           from '@/components/dialogs/SimpleEditModelDialog'
@@ -156,12 +154,6 @@ const AdminPreview = (props: AdminPreviewProps): JSX.Element|null => {
     
     
     
-    // states:
-    type EditMode = Exclude<keyof AdminDetail, 'id'>|'full'
-    const [editMode, setEditMode] = useState<EditMode|null>(null);
-    
-    
-    
     // sessions:
     const { data: session } = useSession();
     const role = session?.role;
@@ -199,15 +191,126 @@ const AdminPreview = (props: AdminPreviewProps): JSX.Element|null => {
     
     
     
+    // dialogs:
+    const {
+        showDialog,
+    } = useDialogMessage();
+    
+    
+    
     // handlers:
-    const handleExpandedChange = useEvent<EventHandler<ModalExpandedChangeEvent>>(({expanded}): void => {
-        // conditions:
-        if (expanded) return; // ignore if expanded
+    type EditMode = Exclude<keyof AdminDetail, 'id'>|'full'
+    const handleEdit = useEvent((editMode: EditMode): void => {
+        // just for cosmetic backdrop:
+        const dummyPromise = (
+            ['full', 'full-status', 'full-payment'].includes(editMode)
+            ? showDialog(
+                <DummyDialog
+                    // global stackable:
+                    viewport={listItemRef}
+                />
+            )
+            : undefined
+        );
         
+        const dialogPromise = showDialog((() => {
+            switch (editMode) {
+                case 'name'     : return (
+                    <SimpleEditModelDialog<AdminDetail>
+                        // data:
+                        model={model}
+                        edit='name'
+                        
+                        
+                        
+                        // stores:
+                        updateModelApi={useUpdateAdmin}
+                        
+                        
+                        
+                        // global stackable:
+                        viewport={listItemRef}
+                        
+                        
+                        
+                        // components:
+                        editorComponent={<NameEditor
+                            // validations:
+                            required={true}
+                        />}
+                    />
+                );
+                case 'username' : return (
+                    <SimpleEditModelDialog<AdminDetail>
+                        // data:
+                        model={model}
+                        edit='username'
+                        
+                        
+                        
+                        // stores:
+                        updateModelApi={useUpdateAdmin}
+                        
+                        
+                        
+                        // global stackable:
+                        viewport={listItemRef}
+                        
+                        
+                        
+                        // components:
+                        editorComponent={<UniqueUsernameEditor currentValue={username ?? ''} />}
+                    />
+                );
+                case 'email'    : return (
+                    <SimpleEditModelDialog<AdminDetail>
+                        // data:
+                        model={model}
+                        edit='email'
+                        
+                        
+                        
+                        // stores:
+                        updateModelApi={useUpdateAdmin}
+                        
+                        
+                        
+                        // global stackable:
+                        viewport={listItemRef}
+                        
+                        
+                        
+                        // components:
+                        editorComponent={<UniqueEmailEditor    currentValue={email} />}
+                    />
+                );
+                case 'image'    :
+                case 'roleId'   :
+                case 'full'     : return (
+                    <EditAdminDialog
+                        // data:
+                        model={model} // modify current model
+                        
+                        
+                        
+                        // states:
+                        defaultExpandedTabIndex={((): number|undefined => {
+                            // switch (editMode === 'roleId') ? 2 : undefined
+                            switch (editMode) {
+                                case 'image'  : return 1;
+                                case 'roleId' : return 2;
+                                default       : return undefined;
+                            } // switch
+                        })()}
+                    />
+                );
+                default             : throw new Error('app error');
+            } // switch
+        })());
         
-        
-        // actions:
-        setEditMode(null);
+        if (dummyPromise) {
+            dialogPromise.collapseStartEvent().then(() => dummyPromise.closeDialog(undefined));
+        } // if
     });
     
     
@@ -245,7 +348,7 @@ const AdminPreview = (props: AdminPreviewProps): JSX.Element|null => {
                         floatingShift={10}
                         floatingOffset={-30}
                     >
-                        <EditButton className='edit overlay' onClick={() => setEditMode('image')} />
+                        <EditButton className='edit overlay' onClick={() => handleEdit('image')} />
                     </Badge>
                     : null
                 }
@@ -265,129 +368,26 @@ const AdminPreview = (props: AdminPreviewProps): JSX.Element|null => {
             
             <h3 className='name'>
                 {name}
-                {privilegeUpdateName     && <EditButton onClick={() => setEditMode('name')} />}
+                {privilegeUpdateName     && <EditButton onClick={() => handleEdit('name')} />}
             </h3>
             <p className='username'>
                 {username || <span className='noValue'>No Username</span>}
-                {privilegeUpdateUsername && <EditButton onClick={() => setEditMode('username')} />}
+                {privilegeUpdateUsername && <EditButton onClick={() => handleEdit('username')} />}
             </p>
             <p className='email'>
                 {email}
-                {privilegeUpdateEmail    && <EditButton onClick={() => setEditMode('email')} />}
+                {privilegeUpdateEmail    && <EditButton onClick={() => handleEdit('email')} />}
             </p>
             <p className='role'>
                 { isRoleLoadingAndNoData && <Busy />}
                 {!isRoleLoadingAndNoData && !!roles && !!roleId && roles?.entities?.[roleId]?.name || <span className='noValue'>No Access</span>}
-                {privilegeUpdateRole     && <EditButton onClick={() => setEditMode('roleId')} />}
+                {privilegeUpdateRole     && <EditButton onClick={() => handleEdit('roleId')} />}
             </p>
             <p className='fullEditor'>
-                {privilegeWrite          && <EditButton buttonStyle='regular' onClick={() => setEditMode('full')}>
+                {privilegeWrite          && <EditButton buttonStyle='regular' onClick={() => handleEdit('full')}>
                     Open Full Editor
                 </EditButton>}
             </p>
-            {/* edit dialog: */}
-            <CollapsibleSuspense>
-                <SimpleEditModelDialog<AdminDetail>
-                    // data:
-                    model={model}
-                    edit='name'
-                    
-                    
-                    
-                    // stores:
-                    updateModelApi={useUpdateAdmin}
-                    
-                    
-                    
-                    // states:
-                    expanded={editMode === 'name'}
-                    onExpandedChange={handleExpandedChange}
-                    
-                    
-                    
-                    // global stackable:
-                    viewport={listItemRef}
-                    
-                    
-                    
-                    // components:
-                    editorComponent={<NameEditor
-                        // validations:
-                        required={true}
-                    />}
-                />
-                <SimpleEditModelDialog<AdminDetail>
-                    // data:
-                    model={model}
-                    edit='username'
-                    
-                    
-                    
-                    // stores:
-                    updateModelApi={useUpdateAdmin}
-                    
-                    
-                    
-                    // states:
-                    expanded={editMode === 'username'}
-                    onExpandedChange={handleExpandedChange}
-                    
-                    
-                    
-                    // global stackable:
-                    viewport={listItemRef}
-                    
-                    
-                    
-                    // components:
-                    editorComponent={<UniqueUsernameEditor currentValue={username ?? ''} />}
-                />
-                <SimpleEditModelDialog<AdminDetail>
-                    // data:
-                    model={model}
-                    edit='email'
-                    
-                    
-                    
-                    // stores:
-                    updateModelApi={useUpdateAdmin}
-                    
-                    
-                    
-                    // states:
-                    expanded={editMode === 'email'}
-                    onExpandedChange={handleExpandedChange}
-                    
-                    
-                    
-                    // global stackable:
-                    viewport={listItemRef}
-                    
-                    
-                    
-                    // components:
-                    editorComponent={<UniqueEmailEditor    currentValue={email} />}
-                />
-                
-                <EditAdminDialog
-                    // data:
-                    model={model} // modify current model
-                    
-                    
-                    
-                    // states:
-                    expanded={(editMode === 'image') || (editMode === 'roleId') || (editMode === 'full')}
-                    onExpandedChange={handleExpandedChange}
-                    defaultExpandedTabIndex={((): number|undefined => {
-                        // switch (editMode === 'roleId') ? 2 : undefined
-                        switch (editMode) {
-                            case 'image'  : return 1;
-                            case 'roleId' : return 2;
-                            default       : return undefined;
-                        } // switch
-                    })()}
-                />
-            </CollapsibleSuspense>
         </ListItem>
     );
 };
