@@ -16,6 +16,7 @@ import {
 // models:
 import {
     // types:
+    type Variant,
     type VariantPreview,
 }                           from '@/models'
 
@@ -33,7 +34,7 @@ export interface VariantIndicatorProps<TElement extends Element = HTMLElement>
         IndicatorProps<TElement>
 {
     // data:
-    model ?: VariantPreview
+    model ?: VariantPreview & Partial<Pick<Variant, 'visibility'>>
 }
 const VariantIndicator = <TElement extends Element = HTMLElement>(props: VariantIndicatorProps<TElement>): JSX.Element|null => {
     // props:
@@ -75,7 +76,7 @@ const VariantIndicator = <TElement extends Element = HTMLElement>(props: Variant
         active    = true,                         // defaults to active
         enabled   = (
             !!model
-            ? (model.visibility === 'PUBLISHED')
+            ? ((model.visibility === undefined) || (model.visibility === 'PUBLISHED'))
             : false
         ),                                        // defaults to if_PUBLISHED
         title     = (
