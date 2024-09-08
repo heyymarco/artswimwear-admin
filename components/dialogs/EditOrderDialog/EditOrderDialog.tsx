@@ -204,9 +204,11 @@ import {
 import {
     useEditOrderDialogStyleSheet,
 }                           from './styles/loader'
+
+// others:
 import {
-    countryList,
-}                           from '@/libs/countryList'
+    Country,
+}                           from 'country-state-city'
 
 // configs:
 import {
@@ -764,7 +766,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             <p>
                                 {shippingAddressDetail.address}
                                 <br />
-                                {`${shippingAddressDetail.city}, ${shippingAddressDetail.state} (${shippingAddressDetail.zip}), ${countryList?.entities?.[shippingAddressDetail.country]?.name ?? shippingAddressDetail.country}`}
+                                {`${shippingAddressDetail.city}, ${shippingAddressDetail.state} (${shippingAddressDetail.zip}), ${Country.getCountryByCode(shippingAddressDetail.country)?.name ?? shippingAddressDetail.country}`}
                             </p>
                             <p>
                                 Phone: {shippingAddressDetail.phone}
