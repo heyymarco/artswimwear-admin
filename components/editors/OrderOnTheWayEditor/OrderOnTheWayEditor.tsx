@@ -728,7 +728,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
                     
                     
                     // validations:
-                    required={true}
+                    required={false}
                     
                     
                     
