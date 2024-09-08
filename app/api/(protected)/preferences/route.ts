@@ -22,7 +22,7 @@ import {
 import {
     defaultAdminPreferenceDetail,
     adminPreferenceDetailSelect,
-    convertAdminPreferenceDetailDataToPreferenceDetail,
+    convertAdminPreferenceDetailDataToAdminPreferenceDetail,
 }                           from '@/models'
 import {
     prisma,
@@ -98,7 +98,7 @@ router
             select : adminPreferenceDetailSelect,
         }))
     );
-    return Response.json(convertAdminPreferenceDetailDataToPreferenceDetail(preferenceDetailData)); // handled with success
+    return Response.json(convertAdminPreferenceDetailDataToAdminPreferenceDetail(preferenceDetailData)); // handled with success
 })
 .patch(async (req) => {
     if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
@@ -185,7 +185,7 @@ router
             },
             select : adminPreferenceDetailSelect,
         });
-        return Response.json(convertAdminPreferenceDetailDataToPreferenceDetail(preferenceDetailData)); // handled with success
+        return Response.json(convertAdminPreferenceDetailDataToAdminPreferenceDetail(preferenceDetailData)); // handled with success
     }
     catch (error: any) {
         console.log('ERROR: ', error);

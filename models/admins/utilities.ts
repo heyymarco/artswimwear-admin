@@ -49,7 +49,7 @@ export const adminPreferenceDetailSelect = {
     // relations:
     parentId             : true,
 } satisfies Prisma.AdminPreferenceSelect;
-export const convertAdminPreferenceDetailDataToPreferenceDetail = (preferenceDetailData: Awaited<ReturnType<typeof prisma.adminPreference.findFirstOrThrow<{ select: typeof adminPreferenceDetailSelect }>>>): AdminPreferenceDetail => {
+export const convertAdminPreferenceDetailDataToAdminPreferenceDetail = (preferenceDetailData: Awaited<ReturnType<typeof prisma.adminPreference.findFirstOrThrow<{ select: typeof adminPreferenceDetailSelect }>>>): AdminPreferenceDetail => {
     const {
         parentId, // rename `parentId` (adminId) to `id`, as the id of `AdminPreferenceDetail` model
         ...restPreferenceDetail
