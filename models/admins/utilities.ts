@@ -13,7 +13,7 @@ import {
 
 
 
-export const preferenceDetailSelect = {
+export const adminPreferenceDetailSelect = {
     // data:
     emailOrderNewPending : true,
     emailOrderNewPaid    : true,
@@ -30,7 +30,7 @@ export const preferenceDetailSelect = {
     // relations:
     parentId             : true,
 } satisfies Prisma.AdminPreferenceSelect;
-export const convertPreferenceDetailDataToPreferenceDetail = (preferenceDetailData: Awaited<ReturnType<typeof prisma.adminPreference.findFirstOrThrow<{ select: typeof preferenceDetailSelect }>>>): AdminPreferenceDetail => {
+export const convertPreferenceDetailDataToPreferenceDetail = (preferenceDetailData: Awaited<ReturnType<typeof prisma.adminPreference.findFirstOrThrow<{ select: typeof adminPreferenceDetailSelect }>>>): AdminPreferenceDetail => {
     const {
         parentId, // rename `parentId` (adminId) to `id`, as the id of `AdminPreferenceDetail` model
         ...restPreferenceDetail

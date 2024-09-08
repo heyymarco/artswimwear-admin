@@ -21,7 +21,7 @@ import {
 // models:
 import {
     defaultAdminPreferenceDetail,
-    preferenceDetailSelect,
+    adminPreferenceDetailSelect,
     convertPreferenceDetailDataToPreferenceDetail,
 }                           from '@/models'
 import {
@@ -87,7 +87,7 @@ router
             where  : {
                 parentId : adminId,
             },
-            select : preferenceDetailSelect,
+            select : adminPreferenceDetailSelect,
         }))
         ??
         (await prisma.adminPreference.create({
@@ -95,7 +95,7 @@ router
                 parentId : adminId,
                 ...defaultAdminPreferenceDetail,
             },
-            select : preferenceDetailSelect,
+            select : adminPreferenceDetailSelect,
         }))
     );
     return Response.json(convertPreferenceDetailDataToPreferenceDetail(preferenceDetailData)); // handled with success
@@ -183,7 +183,7 @@ router
                 emailOrderShipping,
                 emailOrderCompleted,
             },
-            select : preferenceDetailSelect,
+            select : adminPreferenceDetailSelect,
         });
         return Response.json(convertPreferenceDetailDataToPreferenceDetail(preferenceDetailData)); // handled with success
     }
