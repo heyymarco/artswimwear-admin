@@ -70,20 +70,3 @@ export interface AdminPreferenceDetail
         >
 {
 }
-
-type NoUndefinedField<T> = { [P in keyof T]-?: NoUndefinedField<NonNullable<T[P]>> }
-export const defaultAdminPreferenceDetail : NoUndefinedField<Omit<AdminPreferenceDetail, 'id'>> = {
-    // data:
-    // emailOrderNewPending : true, // TODO: restore this line
-    // emailOrderNewPaid    : true, // TODO: restore this line
-    emailOrderNewPending : false,   // TODO: remove this line
-    emailOrderNewPaid    : false,   // TODO: remove this line
-    emailOrderCanceled   : false,
-    emailOrderExpired    : false,
-    // emailOrderConfirmed  : true, // TODO: restore this line
-    emailOrderConfirmed  : false,   // TODO: remove this line
-    emailOrderRejected   : false,
-    emailOrderProcessing : false,
-    emailOrderShipping   : false,
-    emailOrderCompleted  : false,
-}
