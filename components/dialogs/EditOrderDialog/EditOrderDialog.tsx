@@ -711,7 +711,14 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                     <hr />
                     <p className='currencyBlock totalCost'>
                         Total <span className='currency'>
-                            <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={[totalProductPrice, totalShippingCosts]} />
+                            <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={[
+                                totalProductPrice,
+                                (
+                                    (isShippingCostDrifted && !printMode)
+                                    ? shipment.cost      // actual    shipping cost
+                                    : totalShippingCosts // estimated shipping cost
+                                ),
+                            ]} />
                         </span>
                     </p>
                 </Section>
