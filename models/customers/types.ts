@@ -48,6 +48,29 @@ export interface GuestDetail
 
 
 
+export interface CustomerPreferenceData
+    extends
+        // the id is mandatory:
+        Pick<CustomerPreference,
+            // records:
+            |'id'
+        >,
+        
+        // other than id & parentId are optional:
+        Partial<Omit<CustomerPreference,
+            // records:
+            |'id'
+            
+            
+            
+            // relations:
+            |'parentId'
+        >>
+{
+}
+
+
+
 export type CustomerOrGuestPreferenceDetail =
     &Pick<CustomerPreferenceDetail, keyof CustomerPreferenceDetail & keyof GuestPreferenceDetail>
     &Pick<GuestPreferenceDetail   , keyof CustomerPreferenceDetail & keyof GuestPreferenceDetail>
