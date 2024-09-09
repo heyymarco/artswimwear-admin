@@ -9,17 +9,8 @@ import {
     
     // hooks:
     useRef,
+    useState,
 }                           from 'react'
-
-// // next-js:
-// import type {
-//     Metadata,
-// }                           from 'next'
-
-// // next-auth:
-// import {
-//     useSession,
-// }                           from 'next-auth/react'
 
 // styles:
 import {
@@ -30,6 +21,7 @@ import {
 import {
     // react helper hooks:
     useEvent,
+    EventHandler,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -41,6 +33,11 @@ import {
     
     // status-components:
     Badge,
+    
+    
+    
+    // dialog-components:
+    ModalExpandedChangeEvent,
     
     
     
@@ -72,6 +69,9 @@ import {
 import {
     MiniCarousel,
 }                           from '@/components/MiniCarousel'
+import {
+    CollapsibleSuspense,
+}                           from '@/components/CollapsibleSuspense'
 import {
     DummyDialog,
 }                           from '@/components/dialogs/DummyDialog'
@@ -213,7 +213,10 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
     
     
     // handlers:
-    type EditMode = keyof NonNullable<(OrderDetail['customer'] & OrderDetail['guest'])>|'full'|'full-status'|'full-payment'
+    type SpecialEditMode = 'full'|'full-status'|'full-payment'
+    const [editMode, setEditMode] = useState<SpecialEditMode|null>(null);
+    
+    type EditMode = keyof NonNullable<(OrderDetail['customer'] & OrderDetail['guest'])>
     const handleEdit = useEvent((editMode: EditMode): void => {
         // just for cosmetic backdrop:
         const dummyPromise = (
@@ -229,7 +232,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
         
         const dialogPromise = showDialog((() => {
             switch (editMode) {
-                case 'name'         : return (
+                case 'name'  : return (
                     <SimpleEditCustomerDialog
                         // data:
                         model={model}
@@ -250,7 +253,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                         />}
                     />
                 );
-                case 'email'        : return (
+                case 'email' : return (
                     <SimpleEditCustomerDialog
                         // data:
                         model={model}
@@ -271,26 +274,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                         />}
                     />
                 );
-                case 'full'         :
-                case 'full-status'  :
-                case 'full-payment' : return (
-                    <EditOrderDialog
-                        // data:
-                        model={model} // modify current model
-                        
-                        
-                        
-                        // auto focusable:
-                        autoFocusOn={(() => {
-                            switch (editMode) {
-                                case 'full-status'  : return 'OrderStatusButton';
-                                case 'full-payment' : return 'ConfirmPaymentButton';
-                                default             : return undefined;
-                            } // switch
-                        })()}
-                    />
-                );
-                default             : throw new Error('app error');
+                default      : throw new Error('app error');
             } // switch
         })());
         
@@ -299,10 +283,20 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
         } // if
     });
     
+    const handleExpandedChange       = useEvent<EventHandler<ModalExpandedChangeEvent>>(({expanded}): void => {
+        // conditions:
+        if (expanded) return; // ignore if expanded
+        
+        
+        
+        // actions:
+        setEditMode(null);
+    });
+    
     
     
     // jsx:
-    return (
+    return (<>
         <ListItem
             // other props:
             {...restListItemProps}
@@ -341,7 +335,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                     
                     
                     // handlers:
-                    onClick={({isPaid}) => handleEdit(isPaid ? 'full-status' : 'full-payment')}
+                    onClick={({isPaid}) => setEditMode(isPaid ? 'full-status' : 'full-payment')}
                 />
             </h3>
             
@@ -392,7 +386,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
             </p>
             
             <p className='fullEditor'>
-                <EditButton icon='table_view' className='fullEditor' buttonStyle='regular' onClick={() => handleEdit('full')}>
+                <EditButton icon='table_view' className='fullEditor' buttonStyle='regular' onClick={() => setEditMode('full')}>
                     View Details
                 </EditButton>
             </p>
@@ -460,7 +454,31 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                 }
             />
         </ListItem>
-    );
+        <CollapsibleSuspense>
+            {/* workaround for 'edit model' issue, the dialog must be React's declarative way */}
+            <EditOrderDialog
+                // data:
+                model={model} // modify current model
+                
+                
+                
+                // states:
+                expanded={editMode?.startsWith('full')}
+                onExpandedChange={handleExpandedChange}
+                
+                
+                
+                // auto focusable:
+                autoFocusOn={(() => {
+                    switch (editMode) {
+                        case 'full-status'  : return 'OrderStatusButton';
+                        case 'full-payment' : return 'ConfirmPaymentButton';
+                        default             : return undefined;
+                    } // switch
+                })()}
+            />
+        </CollapsibleSuspense>
+    </>);
 };
 export {
     OrderPreview,
