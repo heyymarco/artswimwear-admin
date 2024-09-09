@@ -135,10 +135,3 @@ function OrderPageContentInternal(): JSX.Element|null {
         </Main>
     );
 }
-
-
-
-// export const metadata : Metadata = {
-//     title       : PAGE_ORDER_TITLE,
-//     description : PAGE_ORDER_DESCRIPTION,
-// };
