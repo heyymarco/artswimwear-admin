@@ -268,7 +268,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     
     // apis:
-    const [updateOrder,       {isLoading: isUpdatingOrder                                                       }] = useUpdateOrder();
+    const [updateOrder,       {isLoading: isUpdating                                                            }] = useUpdateOrder();
     const {data: productList , isLoading: isLoadingProduct , isError: isErrorProduct , refetch: refetchProduct  }  = useGetProductList();
     const {data: shippingList, isLoading: isLoadingShipping, isError: isErrorShipping, refetch: refetchShipping }  = useGetShippingList();
     const {
@@ -842,7 +842,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
             isModelError   = {isError}
             onModelRetry   = {refetchModel}
             
-            isCommiting    = {isUpdatingOrder}
+            isCommiting    = {isUpdating}
             
             
             
