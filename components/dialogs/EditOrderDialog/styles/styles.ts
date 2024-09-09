@@ -724,7 +724,7 @@ const usesNoteHeaderLayout = () => {
         justifyContent : 'center',
     });
 };
-const usesNoteBodyLayout = () => {
+const usesNoteBodyFullLayout = () => {
     return style({
         // layouts:
         display : 'grid',
@@ -735,6 +735,23 @@ const usesNoteBodyLayout = () => {
         ...children('*', {
             gridArea : '1 / 1 / 1 / 1',
         }),
+    });
+};
+const usesNoteBodyExpiredLayout = () => {
+    return style({
+        // layouts:
+        display : 'grid',
+        gridAutoFlow : 'column',
+        gridArea : [[
+            '"datetime timezone" 1fr',
+            '/',
+            '1fr max-content',
+        ]],
+        
+        
+        
+        // spacings:
+        gap: spacers.md,
     });
 };
 const usesNoteEmptyLayout = () => {
@@ -865,8 +882,11 @@ export default () => [
     scope('noteHeader', {
         ...usesNoteHeaderLayout(),
     }),
-    scope('noteBody', {
-        ...usesNoteBodyLayout(),
+    scope('noteBodyFull', {
+        ...usesNoteBodyFullLayout(),
+    }),
+    scope('noteBodyExpired', {
+        ...usesNoteBodyExpiredLayout(),
     }),
     scope('noteEmpty', {
         ...usesNoteEmptyLayout(),
