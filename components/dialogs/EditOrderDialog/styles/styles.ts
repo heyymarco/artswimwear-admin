@@ -775,23 +775,6 @@ const usesEditTroubleLayout = () => {
         alignSelf   : 'center',
     });
 };
-const usesAlternateSeparatorLayout = () => {
-    return style({
-        // layouts:
-        display: 'grid',
-        alignItems: 'center',
-        gridTemplate: [[
-            '"line1 label line2" auto',
-            '/',
-            '1fr auto 1fr'
-        ]],
-        
-        
-        
-        // spacings:
-        gap: spacers.sm,
-    });
-};
 const usesCountDownLayout = () => {
     return style({
         // layouts:
@@ -897,9 +880,6 @@ export default () => [
     scope('editTrouble', {
         ...usesEditTroubleLayout(),
     }, { specificityWeight: 2 }),
-    scope('alternateSeparator', {
-        ...usesAlternateSeparatorLayout(),
-    }),
     scope('countDown', {
         ...usesCountDownLayout(),
     }, { specificityWeight: 2 }),

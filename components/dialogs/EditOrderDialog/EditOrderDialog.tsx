@@ -52,7 +52,6 @@ import {
     
     
     // status-components:
-    Badge,
     Busy,
     
     
@@ -80,9 +79,6 @@ import {
 
 // heymarco components:
 import {
-    Image,
-}                           from '@heymarco/image'
-import {
     Section,
 }                           from '@heymarco/section'
 import {
@@ -91,6 +87,9 @@ import {
     DataTableItem,
     DataTable,
 }                           from '@heymarco/data-table'
+import {
+    AlternateSeparator,
+}                           from '@heymarco/alternate-separator'
 
 // internal components:
 import {
@@ -1502,11 +1501,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     {isPaymentRejected ? 'Payment Rejected' : 'Reject Payment'}
                                 </ButtonIcon>}
                                 
-                                <div className={styleSheet.alternateSeparator}>
-                                    <hr />
-                                    <span>or</span>
-                                    <hr />
-                                </div>
+                                <AlternateSeparator />
                                 
                                 <ButtonIcon
                                     // appearances:
