@@ -215,7 +215,7 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
         
         return updatedPromise;
     });
-    const updateOrderApi = useMemo<readonly [typeof updateOrder, typeof updateOrderState]>(() => [
+    const useUpdateModel = useMemo<readonly [typeof updateOrder, typeof updateOrderState]>(() => [
         updateOrderProxy,
         updateOrderState,
     ], [updateOrderState]);
@@ -237,7 +237,7 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
             
             
             // stores:
-            useUpdateModel={updateOrderApi as UpdateModelApi<OrderOnTheWayModel>}
+            useUpdateModel={useUpdateModel as UpdateModelApi<OrderOnTheWayModel>}
         />
     );
 };
