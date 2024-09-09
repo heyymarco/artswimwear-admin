@@ -225,7 +225,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                         
                         
                         // stores:
-                        updateModelApi={useUpdateProduct as any}
+                        useUpdateModel={useUpdateProduct as any}
                         
                         
                         
@@ -250,7 +250,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                         
                         
                         // stores:
-                        updateModelApi={useUpdateProduct as any}
+                        useUpdateModel={useUpdateProduct as any}
                         
                         
                         
@@ -299,7 +299,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                         
                         
                         // stores:
-                        updateModelApi={useUpdateProduct as any}
+                        useUpdateModel={useUpdateProduct as any}
                         
                         
                         

@@ -85,7 +85,7 @@ export const SimpleEditCustomerDialog = (props: SimpleEditCustomerDialogProps) =
             
             
             // stores:
-            updateModelApi={useUpdateOrder as () => UpdateModelApi<CustomerModel>}
+            useUpdateModel={useUpdateOrder as () => UpdateModelApi<CustomerModel>}
         />
     );
 };

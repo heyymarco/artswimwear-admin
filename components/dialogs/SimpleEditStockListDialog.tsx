@@ -72,7 +72,7 @@ export const SimpleEditStockListDialog = (props: SimpleEditStockListDialogProps)
             
             
             // stores:
-            updateModelApi={useUpdateProduct as () => UpdateModelApi<StockListModel>}
+            useUpdateModel={useUpdateProduct as () => UpdateModelApi<StockListModel>}
         />
     );
 };

@@ -224,7 +224,7 @@ const AdminPreview = (props: AdminPreviewProps): JSX.Element|null => {
                         
                         
                         // stores:
-                        updateModelApi={useUpdateAdmin}
+                        useUpdateModel={useUpdateAdmin}
                         
                         
                         
@@ -249,7 +249,7 @@ const AdminPreview = (props: AdminPreviewProps): JSX.Element|null => {
                         
                         
                         // stores:
-                        updateModelApi={useUpdateAdmin}
+                        useUpdateModel={useUpdateAdmin}
                         
                         
                         
@@ -271,7 +271,7 @@ const AdminPreview = (props: AdminPreviewProps): JSX.Element|null => {
                         
                         
                         // stores:
-                        updateModelApi={useUpdateAdmin}
+                        useUpdateModel={useUpdateAdmin}
                         
                         
                         

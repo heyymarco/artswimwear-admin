@@ -100,7 +100,7 @@ export const SimpleEditAddressDialog = (props: SimpleEditAddressDialogProps) => 
             
             
             // stores:
-            updateModelApi={useUpdateOrder as () => UpdateModelApi<AddressModel>}
+            useUpdateModel={useUpdateOrder as () => UpdateModelApi<AddressModel>}
         />
     );
 };

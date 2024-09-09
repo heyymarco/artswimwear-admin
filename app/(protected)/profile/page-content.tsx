@@ -140,7 +140,7 @@ export function ProfilePageContent() {
                 
                 
                 // stores:
-                updateModelApi={useUpdateAdmin as any}
+                useUpdateModel={useUpdateAdmin as any}
             />
             : <SimpleEditModelDialog<AdminPreview>
                 // data:
@@ -150,7 +150,7 @@ export function ProfilePageContent() {
                 
                 
                 // stores:
-                updateModelApi={useUpdateAdmin as any}
+                useUpdateModel={useUpdateAdmin as any}
                 
                 
                 

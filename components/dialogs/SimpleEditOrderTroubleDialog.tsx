@@ -82,7 +82,7 @@ export const SimpleEditOrderTroubleDialog = (props: SimpleEditOrderTroubleDialog
             
             
             // stores:
-            updateModelApi={useUpdateOrder as () => UpdateModelApi<OrderTroubleModel>}
+            useUpdateModel={useUpdateOrder as () => UpdateModelApi<OrderTroubleModel>}
         />
     );
 };

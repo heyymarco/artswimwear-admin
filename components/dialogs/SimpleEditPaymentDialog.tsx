@@ -105,7 +105,7 @@ export const SimpleEditPaymentDialog = (props: SimpleEditPaymentDialogProps) => 
             
             
             // stores:
-            updateModelApi={useUpdateOrder as () => UpdateModelApi<PaymentModel>}
+            useUpdateModel={useUpdateOrder as () => UpdateModelApi<PaymentModel>}
         />
     );
 };

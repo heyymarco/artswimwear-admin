@@ -91,7 +91,7 @@ export const SimpleEditPaymentRejectedDialog = (props: SimpleEditPaymentRejected
             
             
             // stores:
-            updateModelApi={useUpdateOrder as () => UpdateModelApi<PaymentRejectedModel>}
+            useUpdateModel={useUpdateOrder as () => UpdateModelApi<PaymentRejectedModel>}
         />
     );
 };

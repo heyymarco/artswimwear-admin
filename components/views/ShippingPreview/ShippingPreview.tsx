@@ -174,7 +174,7 @@ const ShippingPreview = (props: ShippingPreviewProps): JSX.Element|null => {
                         
                         
                         // stores:
-                        updateModelApi={useUpdateShipping}
+                        useUpdateModel={useUpdateShipping}
                         
                         
                         
@@ -194,7 +194,7 @@ const ShippingPreview = (props: ShippingPreviewProps): JSX.Element|null => {
                         
                         
                         // stores:
-                        updateModelApi={useUpdateShipping}
+                        useUpdateModel={useUpdateShipping}
                         
                         
                         

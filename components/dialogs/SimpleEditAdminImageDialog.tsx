@@ -73,7 +73,7 @@ export interface SimpleEditAdminImageDialogProps
     extends
         // bases:
         Omit<ImplementedSimpleEditModelDialogProps<AdminPreview, 'image'>, 'editorComponent'>,
-        Partial<Pick<SimpleEditModelDialogProps<AdminPreview, 'image'>, 'editorComponent'|'updateModelApi'>>
+        Partial<Pick<SimpleEditModelDialogProps<AdminPreview, 'image'>, 'editorComponent'|'useUpdateModel'>>
 {
 }
 export const SimpleEditAdminImageDialog = (props: SimpleEditAdminImageDialogProps) => {
@@ -134,7 +134,7 @@ export const SimpleEditAdminImageDialog = (props: SimpleEditAdminImageDialogProp
     }
     const {
         // stores:
-        updateModelApi,
+        useUpdateModel,
         
         
         
@@ -207,7 +207,7 @@ export const SimpleEditAdminImageDialog = (props: SimpleEditAdminImageDialogProp
             
             
             // stores:
-            updateModelApi={updateModelApi as (UpdateModelApi<AdminImageModel> | (() => UpdateModelApi<AdminImageModel>))}
+            useUpdateModel={useUpdateModel as (UpdateModelApi<AdminImageModel> | (() => UpdateModelApi<AdminImageModel>))}
             isCommiting={isLoadingCommitDeleteImage}
             isReverting={isLoadingRevertDeleteImage}
             

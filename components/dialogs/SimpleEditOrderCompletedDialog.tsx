@@ -89,7 +89,7 @@ export const SimpleEditOrderCompletedDialog = (props: SimpleEditOrderCompletedDi
             
             
             // stores:
-            updateModelApi={useUpdateOrder as () => UpdateModelApi<OrderCompletedModel>}
+            useUpdateModel={useUpdateOrder as () => UpdateModelApi<OrderCompletedModel>}
         />
     );
 };

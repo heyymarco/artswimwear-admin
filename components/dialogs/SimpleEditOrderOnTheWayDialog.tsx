@@ -237,7 +237,7 @@ export const SimpleEditOrderOnTheWayDialog = (props: SimpleEditOrderOnTheWayDial
             
             
             // stores:
-            updateModelApi={updateOrderApi as UpdateModelApi<OrderOnTheWayModel>}
+            useUpdateModel={updateOrderApi as UpdateModelApi<OrderOnTheWayModel>}
         />
     );
 };
