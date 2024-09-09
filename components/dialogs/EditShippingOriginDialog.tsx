@@ -115,10 +115,8 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
     
     
     // stores:
-    const {data: modelData,   isLoading : isLoadingAndNoData, isError: isErrorModel, refetch: refetchModel} = useGetDefaultShippingOrigin();
-    const isErrorAndNoData = isErrorModel && !modelData;
-    
-    const [updateDefaultShippingOrigin, {isLoading : isLoadingUpdate}] = useUpdateDefaultShippingOrigin();
+    const {data: modelData, isLoading, isError, refetch} = useGetDefaultShippingOrigin();
+    const [updateDefaultShippingOrigin, {isLoading : isUpdating}] = useUpdateDefaultShippingOrigin();
     
     
     
@@ -184,12 +182,12 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
             
             
             // stores:
-            isModelLoading = {isLoadingAndNoData}
-            isModelError   = {isErrorAndNoData}
-            onModelRetry   = {refetchModel}
+            isModelLoading = {isLoading}
+            isModelError   = {isError}
+            onModelRetry   = {refetch}
             
             isModified     = {isModified}
-            isCommiting    = {isLoadingUpdate}
+            isCommiting    = {isUpdating}
             
             
             

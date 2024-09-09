@@ -115,10 +115,8 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
     
     
     // stores:
-    const {data: modelData,   isLoading : isLoadingAndNoData, isError: isErrorModel, refetch: refetchModel} = useGetPreference();
-    const isErrorAndNoData = isErrorModel && !modelData;
-    
-    const [updatePreference, {isLoading : isLoadingUpdate}] = useUpdatePreference();
+    const {data: modelData, isLoading, isError, refetch} = useGetPreference();
+    const [updatePreference, {isLoading : isUpdating}] = useUpdatePreference();
     
     
     
@@ -197,12 +195,12 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
             
             
             // stores:
-            isModelLoading = {isLoadingAndNoData}
-            isModelError   = {isErrorAndNoData}
-            onModelRetry   = {refetchModel}
+            isModelLoading = {isLoading}
+            isModelError   = {isError}
+            onModelRetry   = {refetch}
             
             isModified     = {isModified}
-            isCommiting    = {isLoadingUpdate}
+            isCommiting    = {isUpdating}
             
             
             

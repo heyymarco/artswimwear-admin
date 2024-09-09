@@ -99,8 +99,7 @@ export const ViewShipmentDialog = (props: ViewShipmentDialogProps) => {
     
     
     // stores:
-    const {data: model, isLoading : isLoadingAndNoData, isError: isErrorModel, refetch: refetchModel} = useGetShipment(orderId);
-    const isErrorAndNoData = isErrorModel && !model;
+    const {data: model, isLoading, isError, refetch: refetch} = useGetShipment(orderId);
     
     
     
@@ -130,9 +129,9 @@ export const ViewShipmentDialog = (props: ViewShipmentDialogProps) => {
             
             
             // stores:
-            isModelLoading = {isLoadingAndNoData}
-            isModelError   = {isErrorAndNoData}
-            onModelRetry   = {refetchModel}
+            isModelLoading = {isLoading}
+            isModelError   = {isError}
+            onModelRetry   = {refetch}
         >
             <div className={styleSheet.page}>
                 <DataTable breakpoint='sm' className={styleSheet.tableInfo}>
