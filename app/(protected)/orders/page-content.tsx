@@ -6,12 +6,6 @@ import {
     default as React,
 }                           from 'react'
 
-// styles:
-import {
-    // style sheets:
-    useOrderPageStyleSheet,
-}                           from './styles/loader'
-
 // reusable-ui core:
 import {
     // react helper hooks:
@@ -29,12 +23,10 @@ import {
     useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
-// heymarco components:
-import {
-    Main,
-}                           from '@heymarco/section'
-
 // internal components:
+import {
+    SimpleMainPage,
+}                           from '@/components/pages/SimpleMainPage'
 import {
     PageLoading,
 }                           from '@/components/PageLoading'
@@ -79,11 +71,6 @@ export function OrderPageContent(): JSX.Element|null {
     );
 }
 function OrderPageContentInternal(): JSX.Element|null {
-    // styles:
-    const styleSheet = useOrderPageStyleSheet();
-    
-    
-    
     // stores:
     const {
         data,
@@ -115,7 +102,7 @@ function OrderPageContentInternal(): JSX.Element|null {
     if (isLoadingAndNoData) return <PageLoading />;
     if (isErrorAndNoData  ) return <PageError onRetry={refetch} />;
     return (
-        <Main className={styleSheet.main}>
+        <SimpleMainPage>
             <PaginationExplorer<OrderDetail>
                 // components:
                 modelPreviewComponent={
@@ -132,6 +119,6 @@ function OrderPageContentInternal(): JSX.Element|null {
                     <ButtonIcon size='sm' mild={true} icon='notifications' title='Notification settings' onClick={handleChangeNotificationSettings} />
                 </>}
             />
-        </Main>
+        </SimpleMainPage>
     );
 }
