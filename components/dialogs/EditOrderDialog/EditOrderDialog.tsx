@@ -267,10 +267,10 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     
     
-    // stores:
-    const [updateOrder,       {isLoading: isUpdatingOrder                             }] = useUpdateOrder();
-    const {data: shippingList, isLoading: isLoadingShipping, isError: isErrorShipping }  = useGetShippingList();
-    const {data: productList , isLoading: isLoadingProduct , isError: isErrorProduct  }  = useGetProductList();
+    // apis:
+    const [updateOrder,       {isLoading: isUpdatingOrder                                                       }] = useUpdateOrder();
+    const {data: productList , isLoading: isLoadingProduct , isError: isErrorProduct , refetch: refetchProduct  }  = useGetProductList();
+    const {data: shippingList, isLoading: isLoadingShipping, isError: isErrorShipping, refetch: refetchShipping }  = useGetShippingList();
     const {
         orderStatus,
         orderTrouble,
@@ -326,7 +326,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     const [preferredTimezone, setPreferredTimezone] = useState<number>(() => customerOrGuestPreferredTimezone ?? checkoutConfigShared.intl.defaultTimezone);
     
-    const shippingProvider       = shippingList?.entities?.[shippingProviderId ?? ''];
+    const shippingProvider       = !shippingProviderId ? undefined : shippingList?.entities?.[shippingProviderId];
     
     const totalProductPrice      = items?.reduce((accum, {price, quantity}) => {
         return accum + (price * quantity);
@@ -348,6 +348,42 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         (shipment.cost !== null)
         &&
         (shipment.cost !== totalShippingCosts)
+    );
+    
+    
+    
+    // statuses:
+    const isLoading = (
+        // have any loading(s):
+        
+        isLoadingProduct
+        ||
+        (
+            !!shippingAddressDetail // IGNORE shippingLoading if no shipping required
+            &&
+            isLoadingShipping
+        )
+        /* isOther1Loading */
+        /* isOther2Loading */
+        /* isOther3Loading */
+    );
+    const isError   = (
+        !isLoading // while still LOADING => consider as NOT error
+        &&
+        (
+            // have any error(s):
+            
+            isErrorProduct
+            ||
+            (
+                !!shippingAddressDetail // IGNORE shippingError if no shipping required
+                &&
+                isErrorShipping
+            )
+            /* isOther1Error */
+            /* isOther2Error */
+            /* isOther3Error */
+        )
     );
     
     
@@ -530,6 +566,11 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     });
     const handleExpandedEnd          = useEvent(() => {
         setShouldTriggerAutoFocus(true);
+    });
+    
+    const refetchModel               = useEvent((): void => {
+        if (isErrorProduct  && !isLoadingProduct ) refetchProduct();
+        if (isErrorShipping && !isLoadingShipping) refetchShipping();
     });
     
     
@@ -730,13 +771,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                     
                     <Section title='Deliver To' theme={printMode ? 'light' : 'secondary'} className={styleSheet.orderDeliverySection}>
                         <Basic tag='strong' className={`${styleSheet.badge} ${styleSheet.shippingBadge}`}>
-                            {
-                                isLoadingShipping
-                                ? <Busy />
-                                : isErrorShipping
-                                    ? 'Error getting shipping data'
-                                    : (shippingProvider?.name ?? 'DELETED SHIPPING PROVIDER')
-                            }
+                            {shippingProvider?.name ?? 'DELETED SHIPPING PROVIDER'}
                             
                             {!printMode && !!shipment?.number && <ButtonIcon
                                 // appearances:
@@ -803,7 +838,11 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
             
             
             // stores:
-            isCommiting = {isUpdatingOrder}
+            isModelLoading = {isLoading}
+            isModelError   = {isError}
+            onModelRetry   = {refetchModel}
+            
+            isCommiting    = {isUpdatingOrder}
             
             
             
