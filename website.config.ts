@@ -5,7 +5,7 @@ export const WEBSITE_LANGUAGE                        = 'en'
 export const WEBSITE_FAVICON_PNG                     = '/artswimwear.png'
 export const WEBSITE_FAVICON_SVG                     = '/artswimwear.svg'
 
-export const WEBSITE_TITLE                           = 'admin.ARTSWIMWEAR.com'
+export const WEBSITE_TITLE                           = 'ARTSWIMWEAR.com'
 
 export const PAGE_PRODUCT_TITLE                      = `Products - ${WEBSITE_TITLE}`
 export const PAGE_PRODUCT_DESCRIPTION                = 'Product management.'
