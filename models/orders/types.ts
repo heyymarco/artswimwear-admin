@@ -13,7 +13,7 @@ import {
     type Order,
     type OrderCurrency,
     type OrdersOnProducts,
-    type DraftOrdersOnProducts,
+    type DraftOrderItem,
     type Shipment,
 }                           from '@prisma/client'
 import {
@@ -155,7 +155,7 @@ export type RevertDraftOrder = Pick<DraftOrderDetail,
     // data:
     |'orderId'
 > & {
-    items : Pick<DraftOrdersOnProducts,
+    items : Pick<DraftOrderItem,
         // data:
         |'quantity'
         
