@@ -455,7 +455,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
             />
         </ListItem>
         <CollapsibleSuspense>
-            {/* workaround for `updateOrder({ orderStatus })` issue, the dialog must be React's declarative way */}
+            {/* workaround for `updateOrder({ shippingAddress, orderStatus, payment, paymentConfirmation, orderTrouble })` issue, the dialog must be React's declarative way */}
             <EditOrderDialog
                 // data:
                 model={model} // modify current model
