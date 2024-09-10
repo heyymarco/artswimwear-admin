@@ -1,5 +1,4 @@
 moved items after shippingCost, both for DraftOrder and Order
-change to parentId both for DraftOrdersOnProducts and OrdersOnProducts
 
 
 

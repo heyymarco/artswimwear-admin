@@ -12,7 +12,7 @@ import {
     type DraftOrder,
     type Order,
     type OrderCurrency,
-    type OrdersOnProducts,
+    type OrderItem,
     type DraftOrderItem,
     type Shipment,
 }                           from '@prisma/client'
@@ -71,7 +71,7 @@ export interface OrderDetail
     
     
     // relations:
-    items    : Omit<OrdersOnProducts,
+    items    : Omit<OrderItem,
         // records:
         |'id'
         
@@ -190,7 +190,7 @@ export type CancelOrder = Pick<OrderDetail,
     payment : Pick<PaymentDetail,
         |'type'
     >|null
-    items : Pick<OrdersOnProducts,
+    items : Pick<OrderItem,
         // data:
         |'quantity'
         
