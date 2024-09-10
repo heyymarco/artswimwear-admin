@@ -8,6 +8,11 @@ import {
     scope,
 }                           from '@cssfn/core'          // writes css in javascript
 import {
+    // a responsive management system:
+    breakpoints,
+    
+    
+    
     // border (stroke) stuff of UI:
     usesBorder,
     
@@ -206,6 +211,12 @@ export const usesEditDescription = () => {
 };
 
 export default () => [
+    scope('dialog', {
+        boxSizing     : 'border-box',
+        maxInlineSize : `${breakpoints.lg}px`,
+        // maxBlockSize  : `${breakpoints.sm}px`, // unlimited for max height
+    }, {specificityWeight: 4}),
+    
     scope('infoTab', {
         ...usesInfoTabLayout(),
     }),

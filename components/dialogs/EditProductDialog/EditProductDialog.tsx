@@ -18,11 +18,10 @@ import {
     useSession,
 }                           from 'next-auth/react'
 
-// cssfn:
+// styles:
 import {
-    // style sheets:
-    dynamicStyleSheets,
-}                           from '@cssfn/cssfn-react'               // writes css in react hook
+    useEditProductDialogStyleSheet,
+}                           from './styles/loader'
 
 // reusable-ui core:
 import {
@@ -160,14 +159,6 @@ import {
 
 
 
-// styles:
-const useEditProductDialogStyleSheet = dynamicStyleSheets(
-    () => import(/* webpackPrefetch: true */'./EditProductDialogStyles')
-, { id: 'pkeb1tledn' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
-import './EditProductDialogStyles';
-
-
-
 // utilities:
 const noVariantStockList : StockDetail[] = [{
     id         : ' emptyId',
@@ -199,7 +190,12 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         
         // states:
         defaultExpandedTabIndex = 0,
-    ...restComplexEditModelDialogProps} = props;
+        
+        
+        
+        // other props:
+        ...restEditProductDialogProps
+    } = props;
     
     
     
@@ -438,6 +434,25 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     
     
     
+    // default props:
+    const {
+        // variants:
+        horzAlign = 'stretch',
+        vertAlign = 'center',
+        
+        
+        
+        // classes:
+        className = styleSheet.dialog,
+        
+        
+        
+        // other props:
+        ...restComplexEditModelDialogProps
+    } = restEditProductDialogProps;
+    
+    
+    
     // jsx:
     return (
         <ComplexEditModelDialog<ProductDetail>
@@ -466,6 +481,17 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             isCommiting = {isLoadingUpdate || isLoadingCommitDeleteImage || isLoadingCommitMoveImage}
             isReverting = {                   isLoadingRevertDeleteImage}
             isDeleting  = {isLoadingDelete || isLoadingCommitDeleteImage}
+            
+            
+            
+            // variants:
+            horzAlign = {horzAlign}
+            vertAlign = {vertAlign}
+            
+            
+            
+            // classes:
+            className = {className}
             
             
             
