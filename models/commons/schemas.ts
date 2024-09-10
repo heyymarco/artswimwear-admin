@@ -23,7 +23,7 @@ export const CurrencySchema = z.enum([
 
 
 
-export const IdSchema            = z.string().min(1);
+export const ModelIdSchema       = z.string().min(1);
 export const ModelNameSchema     = z.string().trim().min(1).max(30);
 export const HumanFullNameSchema = z.string().trim().min(2).max(30);
 export const EmailSchema         = z.string().email().trim().min(5).max(50);
