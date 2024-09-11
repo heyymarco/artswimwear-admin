@@ -162,7 +162,7 @@ export const apiSlice = createApi({
             
             // more efficient:
             onCacheEntryAdded: async (arg, api) => {
-                await cumulativeUpdatePaginationCache('getProductPage', (arg.id !== ''), api);
+                await cumulativeUpdatePaginationCache(api, 'getProductPage', (arg.id !== ''));
             },
         }),
         deleteProduct               : builder.mutation<Pick<ProductDetail, 'id'>, MutationArgs<Pick<ProductDetail, 'id'>>>({
@@ -280,7 +280,7 @@ export const apiSlice = createApi({
             
             // more efficient:
             onCacheEntryAdded: async (arg, api) => {
-                await cumulativeUpdatePaginationCache('getOrderPage', (arg.id !== ''), api);
+                await cumulativeUpdatePaginationCache(api, 'getOrderPage', (arg.id !== ''));
             },
         }),
         getShipment                 : builder.query<ShipmentDetail, string>({
@@ -374,7 +374,7 @@ export const apiSlice = createApi({
             
             // more efficient:
             onCacheEntryAdded: async (arg, api) => {
-                await cumulativeUpdatePaginationCache('getShippingPage', (arg.id !== ''), api);
+                await cumulativeUpdatePaginationCache(api, 'getShippingPage', (arg.id !== ''));
             },
         }),
         deleteShipping              : builder.mutation<Pick<ShippingDetail, 'id'>, MutationArgs<Pick<ShippingDetail, 'id'>>>({
@@ -449,7 +449,7 @@ export const apiSlice = createApi({
             
             // more efficient:
             onCacheEntryAdded: async (arg, api) => {
-                await cumulativeUpdatePaginationCache('getAdminPage', (arg.id !== ''), api);
+                await cumulativeUpdatePaginationCache(api, 'getAdminPage', (arg.id !== ''));
             },
         }),
         deleteAdmin                 : builder.mutation<Pick<AdminDetail, 'id'>, MutationArgs<Pick<AdminDetail, 'id'>>>({
@@ -619,7 +619,7 @@ export const apiSlice = createApi({
 
 
 
-const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQueryArg, TBaseQuery extends BaseQueryFn>(endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, isUpdating: boolean, api: MutationCacheLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>) => {
+const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationCacheLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, isUpdating: boolean) => {
     // updated TEntry data:
     const { data: mutatedEntry } = await api.cacheDataLoaded;
     const { id: mutatedId } = mutatedEntry;
