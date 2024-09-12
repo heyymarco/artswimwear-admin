@@ -641,9 +641,32 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             (allQueryCache.endpointName === endpointName)
         )
     );
-    const testDataHasId         = (data: unknown, id: string): boolean => {
+    const selectIndexOfId       = (data: unknown, id: string): number => {
         const paginationData = data as Pagination<TEntry>;
-        return paginationData?.entities.some((searchEntry) => (searchEntry.id === id));
+        return paginationData.entities.findIndex((searchEntry) => (searchEntry.id === id));
+    };
+    const selectRangeFromArgs   = (originalArgs: unknown): { indexStart: number, indexEnd: number, perPage: number } => {
+        const paginationArgs = originalArgs as PaginationArgs;
+        const {
+            page,
+            perPage,
+        } = paginationArgs;
+        
+        
+        
+        /*
+            index   [page, perpage]     indexStart              indexEnd
+            012	    [1, 3]              (1 - 1) * 3   = 0       (0 + 3) - 1   = 2
+            345	    [2, 3]              (2 - 1) * 3   = 3       (3 + 3) - 1   = 5
+            678	    [3, 3]              (3 - 1) * 3   = 6       (6 + 3) - 1   = 8
+        */
+        const indexStart = (page - 1) * perPage; // the entry_index of the first_entry of current pagination
+        const indexEnd   = indexStart + perPage - 1;
+        return {
+            indexStart,
+            indexEnd,
+            perPage,
+        };
     };
     const selectEntriesFromData = (data: unknown): Iterable<TEntry> => {
         const paginationData = data as Pagination<TEntry>;
@@ -657,10 +680,12 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
     
     
     const lastPaginationQueryCache       = paginationQueryCaches?.[paginationQueryCaches.length - 1];
-    const validPerPage                   = (lastPaginationQueryCache.originalArgs as (PaginationArgs|undefined))?.perPage ?? 1;
+    const {
+        perPage : validPerPage,
+    }                                    = selectRangeFromArgs(lastPaginationQueryCache.originalArgs);
     const validTotalEntries              = selectTotalFromData(lastPaginationQueryCache);
     const hasInvalidPaginationQueryCache = paginationQueryCaches.some((paginationQueryCache) =>
-        ((paginationQueryCache.originalArgs as (PaginationArgs|undefined))?.perPage !== validPerPage)
+        (selectRangeFromArgs(paginationQueryCache.originalArgs).perPage !== validPerPage)
         ||
         (selectTotalFromData(paginationQueryCache) !== validTotalEntries)
     );
@@ -683,7 +708,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             .filter((paginationQueryCache) =>
                 (paginationQueryCache.data !== undefined) // ignore undefined data
                 &&
-                testDataHasId(paginationQueryCache.data, mutatedId)
+                (selectIndexOfId(paginationQueryCache.data, mutatedId) >= 0) // is FOUND
             )
         );
         if (updatedPaginationQueryCaches.length !== 1) {
@@ -722,7 +747,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             .filter((paginationQueryCache) =>
                 (paginationQueryCache.data !== undefined) // ignore undefined data
                 &&
-                !testDataHasId(paginationQueryCache.data, mutatedId)
+                (selectIndexOfId(paginationQueryCache.data, mutatedId) < 0) // is NOT found
             )
         );
         
@@ -739,18 +764,13 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             //#region merge all existing pagination(s)'s entry to `mergedEntryList` 
             for (const paginationQueryCache of paginationQueryCaches) {
                 const {
-                    page    = 1,
-                    perPage = 1,
-                } = paginationQueryCache.originalArgs as PaginationArgs;
-                
-                
-                
-                const baseIndex  = (page - 1) * perPage; // the entry_index of the first_entry of current pagination
-                let   subIndex   = 0;                    // a counter of subIndex relative to baseIndex
-                const shiftCount = 1;                    // adding a/some new_entry causing the whole pagination are positive_shifted by the_number_of_new_entries
+                    indexStart,       // the entry_index of the first_entry of current pagination
+                } = selectRangeFromArgs(paginationQueryCache.originalArgs);
+                let   indexSub   = 0; // a counter of indexSub relative to indexStart
+                const shiftCount = 1; // adding a/some new_entry causing the whole pagination are positive_shifted by the_number_of_new_entries
                 if (paginationQueryCache.data !== undefined) { // ignore undefined data
                     for (const entry of selectEntriesFromData(paginationQueryCache.data)) {
-                        mergedEntryList[baseIndex + (subIndex++) + shiftCount] = entry;
+                        mergedEntryList[indexStart + (indexSub++) + shiftCount] = entry;
                     } // for
                 } // if
             } // for
@@ -762,14 +782,10 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             let isLastPaginationOverflowing = false;
             for (const shiftedPaginationQueryCache of shiftedPaginationQueryCaches) {
                 const {
-                    page    = 1,
-                    perPage = 1,
-                } = shiftedPaginationQueryCache.originalArgs as PaginationArgs;
-                
-                
-                
-                const baseIndex  = (page - 1) * perPage; // the entry_index of the first_entry of current pagination
-                const theNewFirstEntryOfShiftedPagination : TEntry|undefined = mergedEntryList?.[baseIndex]; // take the *new* first_entry of current pagination, the old_first_entry...the_2nd_last_entry will be second_entry...last_entry
+                    indexStart,       // the entry_index of the first_entry of current pagination
+                    perPage,
+                } = selectRangeFromArgs(shiftedPaginationQueryCache.originalArgs);
+                const theNewFirstEntryOfShiftedPagination : TEntry|undefined = mergedEntryList?.[indexStart]; // take the *new* first_entry of current pagination, the old_first_entry...the_2nd_last_entry will be second_entry...last_entry
                 if (theNewFirstEntryOfShiftedPagination !== undefined) {
                     // update cache:
                     api.dispatch(
@@ -805,12 +821,11 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                         mergedEntryList[mergedEntryList.length - 1] // take the last (the overflowing entry)
                     ],
                 };
-                const perPage = (paginationQueryCaches?.[paginationQueryCaches.length - 1]?.originalArgs as (PaginationArgs|undefined))?.perPage ?? 1;
                 // append new cache:
                 api.dispatch(
                     apiSlice.util.upsertQueryData(endpointName, /* args: */ {
-                        page    : Math.ceil(isLastPaginationOverflowing / perPage),
-                        perPage : perPage
+                        page    : Math.ceil(isLastPaginationOverflowing / validPerPage),
+                        perPage : validPerPage
                     }, /* value: */ (newPagination as Pagination<any>))
                 );
             } // if
@@ -819,15 +834,17 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
     
     /* delete existing data: COMPLEX: the number of paginations is scaled_down */
     else {
-        const deletedPaginationQueryCaches = (
+        const deletedPaginationIndices = (
             paginationQueryCaches
             .filter((paginationQueryCache) =>
                 (paginationQueryCache.data !== undefined) // ignore undefined data
-                &&
-                testDataHasId(paginationQueryCache.data, mutatedId)
             )
+            .map((paginationQueryCache) =>
+                selectIndexOfId(paginationQueryCache.data, mutatedId)
+            )
+            .filter((deletedPaginationIndex) => (deletedPaginationIndex >= 0)) // is FOUND
         );
-        if (deletedPaginationQueryCaches.length !== 1) {
+        if (deletedPaginationIndices.length !== 1) {
             // the queryCaches should have ONE valid deleted data => panic => clear all the caches and (may) trigger the rtk to re-fetch
             
             // clear caches:
@@ -836,20 +853,41 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             );
             return; // panic => cannot further reconstruct
         } // if
-        const deletedPaginationQueryCache = deletedPaginationQueryCaches[0];
+        const deletedPaginationIndex = deletedPaginationIndices[0];
         
         
         
-        // reconstructuring the deleted entry, so the invalidatesTag can be avoided:
-        // update cache:
-        api.dispatch(
-            apiSlice.util.updateQueryData(endpointName, deletedPaginationQueryCache.originalArgs as any, (deletedPaginationQueryCacheData) => {
-                const currentEntryIndex = deletedPaginationQueryCacheData.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
-                if (currentEntryIndex < 0) return; // not found => nothing to delete
-                deletedPaginationQueryCacheData.entities.splice(currentEntryIndex, 1); // remove the oldEntry
-                deletedPaginationQueryCacheData.total--; // reduce the total entries
-            })
+        const shiftedPaginationQueryCaches = (
+            paginationQueryCaches
+            .filter((paginationQueryCache) =>
+                (paginationQueryCache.data !== undefined) // ignore undefined data
+                &&
+                ((): boolean => {
+                    const {
+                        indexStart,
+                        indexEnd,
+                    } = selectRangeFromArgs(paginationQueryCache.originalArgs);
+                    return (
+                        (indexStart >= deletedPaginationIndex)
+                        &&
+                        (indexEnd   <= deletedPaginationIndex)
+                    );
+                })()
+            )
         );
+        
+        
+        
+        // // reconstructuring the deleted entry, so the invalidatesTag can be avoided:
+        // // update cache:
+        // api.dispatch(
+        //     apiSlice.util.updateQueryData(endpointName, deletedPaginationQueryCache.originalArgs as any, (deletedPaginationQueryCacheData) => {
+        //         const currentEntryIndex = deletedPaginationQueryCacheData.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
+        //         if (currentEntryIndex < 0) return; // not found => nothing to delete
+        //         deletedPaginationQueryCacheData.entities.splice(currentEntryIndex, 1); // remove the oldEntry
+        //         deletedPaginationQueryCacheData.total--; // reduce the total entries
+        //     })
+        // );
     } // if
 };
 
