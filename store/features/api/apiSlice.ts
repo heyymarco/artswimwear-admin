@@ -649,7 +649,44 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         const paginationData = data as Pagination<TEntry>;
         return paginationData.entities;
     };
-    if (updateType === 'CREATE') { // add new data:
+    
+    /* update existing data: SIMPLE: the number of paginations is unchanged */
+    if (updateType === 'UPDATE') {
+        const currentPaginationQueryCaches = (
+            paginationQueryCaches
+            .filter((paginationQueryCache) =>
+                /*
+                    currentPagination : the pagination having entry.id === mutatedId
+                    => select it
+                    
+                    restPaginations   : the paginations not having entry.id ==== mutatedId
+                    => do not select them
+                */
+                (paginationQueryCache.data !== undefined) // ignore undefined data
+                &&
+                testDataHasId(paginationQueryCache.data, mutatedId)
+            )
+        );
+        
+        
+        
+        // reconstructuring the mutated entry, so the invalidatesTag can be avoided:
+        if (currentPaginationQueryCaches.length) {
+            for (const currentPaginationQueryCache of currentPaginationQueryCaches) {
+                // update cache:
+                api.dispatch(
+                    apiSlice.util.updateQueryData(endpointName, currentPaginationQueryCache.originalArgs as any, (currentPaginationQueryCacheData) => {
+                        const currentEntryIndex = currentPaginationQueryCacheData.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
+                        if (currentEntryIndex < 0) return; // not found => nothing to update
+                        currentPaginationQueryCacheData.entities[currentEntryIndex] = (mutatedEntry as any); // replace oldEntry with mutatedEntry
+                    })
+                );
+            } // for
+        } // if
+    }
+    
+    /* add new data: COMPLEX: the number of paginations is scaled_up */
+    else if (updateType === 'CREATE') {
         /*
             Adding a_new_entry causing the restPagination(s) shifted their entries to neighboringPagination(s).
             [876] [543] [210] + 9 => [987] [654] [321] [0]
@@ -750,40 +787,9 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             } // if
         } // if
     }
-    else if (updateType === 'UPDATE') { // update existing data:
-        const currentPaginationQueryCaches = (
-            paginationQueryCaches
-            .filter((paginationQueryCache) =>
-                /*
-                    currentPagination : the pagination having entry.id === mutatedId
-                    => select it
-                    
-                    restPaginations   : the paginations not having entry.id ==== mutatedId
-                    => do not select them
-                */
-                (paginationQueryCache.data !== undefined) // ignore undefined data
-                &&
-                testDataHasId(paginationQueryCache.data, mutatedId)
-            )
-        );
-        
-        
-        
-        // reconstructuring the mutated entry, so the invalidatesTag can be avoided:
-        if (currentPaginationQueryCaches.length) {
-            for (const currentPaginationQueryCache of currentPaginationQueryCaches) {
-                // update cache:
-                api.dispatch(
-                    apiSlice.util.updateQueryData(endpointName, currentPaginationQueryCache.originalArgs as any, (currentPaginationQueryCacheData) => {
-                        const currentEntryIndex = currentPaginationQueryCacheData.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
-                        if (currentEntryIndex < 0) return; // not found => nothing to update
-                        currentPaginationQueryCacheData.entities[currentEntryIndex] = (mutatedEntry as any); // replace oldEntry with mutatedEntry
-                    })
-                );
-            } // for
-        } // if
-    }
-    else { // delete existing data:
+    
+    /* delete existing data: COMPLEX: the number of paginations is scaled_down */
+    else {
         const currentPaginationQueryCaches = (
             paginationQueryCaches
             .filter((paginationQueryCache) =>
