@@ -759,10 +759,6 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         //#region BACKUP the entries from paginations (which will be shifted) 
         const mergedEntryList : TEntry[] = [];
         for (const shiftedPaginationQueryCache of shiftedPaginationQueryCaches) {
-            if (shiftedPaginationQueryCache.data === undefined) continue; // ignore undefined data
-            
-            
-            
             const {
                 indexStart, // the first_entry_index of the first_entry of current pagination
                 indexEnd,   // the last_entry_index  of the first_entry of current pagination
@@ -772,17 +768,18 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             
             const paginationEntries = selectEntriesFromData(shiftedPaginationQueryCache.data);
             for (
-                let indexWalk    = indexStart,
+                let indexCopy    = indexStart,
                     indexBase    = 0,
                     indexBaseMax = paginationEntries.length - 1
                     ;
-                    (indexWalk <= indexEnd)
+                    (indexCopy <= indexEnd)
                     &&
                     (indexBase <= indexBaseMax)
                     ;
-                    indexWalk++, indexBase++
+                    indexCopy++,
+                    indexBase++
             ) {
-                mergedEntryList[indexWalk] = paginationEntries[indexBase];
+                mergedEntryList[indexCopy] = paginationEntries[indexBase];
             } // for
         } // for
         //#endregion BACKUP the entries from paginations (which will be shifted) 
@@ -898,6 +895,36 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         
         
         // reconstructuring the deleted entry, so the invalidatesTag can be avoided:
+        
+        
+        
+        //#region BACKUP the entries from paginations (which will be shifted) 
+        const mergedEntryList : TEntry[] = [];
+        for (const shiftedPaginationQueryCache of shiftedPaginationQueryCaches) {
+            const {
+                indexStart, // the first_entry_index of the first_entry of current pagination
+                indexEnd,   // the last_entry_index  of the first_entry of current pagination
+            } = selectRangeFromArgs(shiftedPaginationQueryCache.originalArgs);
+            
+            
+            
+            const paginationEntries = selectEntriesFromData(shiftedPaginationQueryCache.data);
+            for (
+                let indexCopy    = indexStart,
+                    indexBase    = 0,
+                    indexBaseMax = paginationEntries.length - 1
+                    ;
+                    (indexCopy <= indexEnd)
+                    &&
+                    (indexBase <= indexBaseMax)
+                    ;
+                    indexCopy++,
+                    indexBase++
+            ) {
+                mergedEntryList[indexCopy] = paginationEntries[indexBase];
+            } // for
+        } // for
+        //#endregion BACKUP the entries from paginations (which will be shifted) 
     } // if
 };
 
