@@ -822,7 +822,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             
             
             //#region RESTORE the overflowing entry (if any) to a new pagination
-            if ((lastOverflowingEntry !== undefined) && mergedEntryList.length) {
+            if (lastOverflowingEntry !== undefined) {
                 const newPagination : Pagination<TEntry> = {
                     total    : newTotalEntries,
                     entities : [
