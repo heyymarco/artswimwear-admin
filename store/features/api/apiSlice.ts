@@ -780,6 +780,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             
             // SHIFT the new_entry at the BEGINNING of the list:
             mergedEntryList.unshift(mutatedEntry);
+            // re-calculate the total entries:
             const newTotalEntries = validTotalEntries + 1;
             
             
