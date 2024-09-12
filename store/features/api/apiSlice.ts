@@ -801,17 +801,18 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             
             
             
-            const theNewFirstEntryOfShiftedPagination : TEntry|undefined = mergedEntryList?.[indexStart]; // take the *new* first_entry of current pagination, the old_first_entry...the_2nd_last_entry will be second_entry...last_entry
-            if (theNewFirstEntryOfShiftedPagination !== undefined) {
+            const neighboringEntry : TEntry|undefined = mergedEntryList?.[indexStart]; // take the *valid* first_entry of current pagination, the old_first_entry...the_2nd_last_entry will be 2nd_first_entry...last_entry
+            if (neighboringEntry !== undefined) {
                 // update cache:
                 api.dispatch(
                     apiSlice.util.updateQueryData(endpointName, shiftedPaginationQueryCache.originalArgs as any, (shiftedPaginationQueryCacheData) => {
-                        shiftedPaginationQueryCacheData.entities.unshift((theNewFirstEntryOfShiftedPagination as any)); // append the shiftingEntry at first index
+                        shiftedPaginationQueryCacheData.entities.unshift(neighboringEntry as any); // append the neighboringEntry at first index
                         shiftedPaginationQueryCacheData.total = newTotalEntries; // update the total data
                         
-                        if (shiftedPaginationQueryCacheData.entities.length > validPerPage) { // the rest pagination is overflowing => a new pagination needs to be added
-                            shiftedPaginationQueryCacheData.entities.pop() as unknown as TEntry; // remove the last entry to avoid overflowing
-                        } // if
+                        // allows growing up to perPage size BUT limits growing more than perPage size:
+                        if (shiftedPaginationQueryCacheData.entities.length > validPerPage) shiftedPaginationQueryCacheData.entities.pop();
+                        
+                        // the limited_entry will be placed at a new pagination
                     })
                 );
             } // if
@@ -820,21 +821,21 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         
         
         
-        //#region RESTORE the last_entry, if not found in paginations
-        const globalIndexLast = mergedEntryList.length - 1;
+        //#region RESTORE the limited_entry, if not found in paginations
+        const limitedEntryIndex = mergedEntryList.length - 1;
         if (!shiftedPaginationQueryCaches.some(({originalArgs, data}) => {
             const indexLast = (
                 selectRangeFromArgs(originalArgs).indexStart
                 +
                 (selectEntriesFromData(data).length - 1)
             );
-            return (indexLast >= globalIndexLast);
+            return (indexLast >= limitedEntryIndex);
         })) {
-            const globalEntryLast = mergedEntryList[globalIndexLast];
+            const limitedEntry = mergedEntryList[limitedEntryIndex];
             const newPagination : Pagination<TEntry> = {
                 total    : newTotalEntries,
                 entities : [
-                    globalEntryLast,
+                    limitedEntry,
                 ],
             };
             
@@ -848,7 +849,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                 }, /* value: */ (newPagination as Pagination<any>))
             );
         } // if
-        //#endregion RESTORE the last_entry, if not found in paginations
+        //#endregion RESTORE the limited_entry, if not found in paginations
     }
     
     /* delete existing data: COMPLEX: the number of paginations is scaled_down */
@@ -936,7 +937,37 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         // SHIFT the new_entry at the DELETED_INDEX of the list:
         mergedEntryList.splice(indexDeleted, 1);
         // re-calculate the total entries:
-        const newTotalEntries = validTotalEntries + 1;
+        const newTotalEntries = validTotalEntries - 1;
+        
+        
+        
+        //#region RESTORE the shifted paginations from the backup
+        for (const shiftedPaginationQueryCache of shiftedPaginationQueryCaches) {
+            const {
+                indexStart, // the first_entry_index of the first_entry of current pagination
+                indexEnd,   // the last_entry_index  of the first_entry of current pagination
+            } = selectRangeFromArgs(shiftedPaginationQueryCache.originalArgs);
+            
+            
+            
+            const neighboringEntry : TEntry|undefined = mergedEntryList?.[indexEnd]; // take the *valid* last_entry of current pagination, the old_2nd_first_entry...the_last_entry will be first_entry...2nd_last_entry
+            if (neighboringEntry !== undefined) {
+                // update cache:
+                api.dispatch(
+                    apiSlice.util.updateQueryData(endpointName, shiftedPaginationQueryCache.originalArgs as any, (shiftedPaginationQueryCacheData) => {
+                        if ((indexStart >= indexDeleted) && (indexEnd <= indexDeleted)) {
+                            shiftedPaginationQueryCacheData.entities.splice(indexDeleted - indexStart, 1); // remove the deleted entry at specific index
+                        }
+                        else {
+                            shiftedPaginationQueryCacheData.entities.shift(); // remove the first entry for shifting
+                        } // if
+                        shiftedPaginationQueryCacheData.entities.push(neighboringEntry as any); // append the neighboringEntry at last index to maintain perPage size
+                        shiftedPaginationQueryCacheData.total = newTotalEntries; // update the total data
+                    })
+                );
+            } // if
+        } // for
+        //#endregion RESTORE the shifted paginations from the backup
     } // if
 };
 
