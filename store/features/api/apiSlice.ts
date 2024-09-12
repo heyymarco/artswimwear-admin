@@ -635,12 +635,20 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
     const allQueryCaches        = state.api.queries;
     const paginationQueryCaches = (
         Object.values(allQueryCaches)
-        .filter((allQueryCache): allQueryCache is QuerySubState<BaseEndpointDefinition<TQueryArg, TBaseQuery, Pagination<TEntry>>> =>
+        .filter((allQueryCache): allQueryCache is Exclude<typeof allQueryCache, undefined> =>
             (allQueryCache !== undefined)
             &&
             (allQueryCache.endpointName === endpointName)
         )
     );
+    const testDataHasId = (data: unknown, id: string): boolean => {
+        const paginationData = data as Pagination<TEntry>;
+        return paginationData?.entities.some((searchEntry) => (searchEntry.id === id));
+    };
+    const selectEntriesFromData = (data: unknown): Iterable<TEntry> => {
+        const paginationData = data as Pagination<TEntry>;
+        return paginationData.entities;
+    };
     if (updateType === 'CREATE') { // add new data:
         /*
             Adding a_new_entry causing the restPagination(s) shifted their entries to neighboringPagination(s).
@@ -657,7 +665,9 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                     restPaginations   : the paginations not having entry.id ==== mutatedId
                     => select them all
                 */
-                !paginationQueryCache.data?.entities.some((searchEntry) => (searchEntry.id === mutatedId))
+                (paginationQueryCache.data !== undefined) // ignore undefined data
+                &&
+                !testDataHasId(paginationQueryCache.data, mutatedId)
             )
         );
         
@@ -675,9 +685,11 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                 const baseIndex  = (page - 1) * perPage;
                 let   subIndex   = 0;
                 const shiftCount = 1;
-                for (const entry of (paginationQueryCache.data?.entities ?? [])) {
-                    accumDataMap[baseIndex + (subIndex++) + shiftCount] = entry;
-                } // for
+                if (paginationQueryCache.data !== undefined) { // ignore undefined data
+                    for (const entry of selectEntriesFromData(paginationQueryCache.data)) {
+                        accumDataMap[baseIndex + (subIndex++) + shiftCount] = entry;
+                    } // for
+                } // if
             } // for
             
             
@@ -749,7 +761,9 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                     restPaginations   : the paginations not having entry.id ==== mutatedId
                     => do not select them
                 */
-                !!paginationQueryCache.data?.entities.some((searchEntry) => (searchEntry.id === mutatedId))
+                (paginationQueryCache.data !== undefined) // ignore undefined data
+                &&
+                testDataHasId(paginationQueryCache.data, mutatedId)
             )
         );
         
@@ -780,7 +794,9 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                     restPaginations   : the paginations not having entry.id ==== mutatedId
                     => do not select them
                 */
-                !!paginationQueryCache.data?.entities.some((searchEntry) => (searchEntry.id === mutatedId))
+                (paginationQueryCache.data !== undefined) // ignore undefined data
+                &&
+                testDataHasId(paginationQueryCache.data, mutatedId)
             )
         );
         
