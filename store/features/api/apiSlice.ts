@@ -797,7 +797,6 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         for (const shiftedPaginationQueryCache of shiftedPaginationQueryCaches) {
             const {
                 indexStart, // the first_entry_index of the first_entry of current pagination
-                perPage,
             } = selectRangeFromArgs(shiftedPaginationQueryCache.originalArgs);
             
             
@@ -810,7 +809,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                         shiftedPaginationQueryCacheData.entities.unshift((theNewFirstEntryOfShiftedPagination as any)); // append the shiftingEntry at first index
                         shiftedPaginationQueryCacheData.total = newTotalEntries; // update the total data
                         
-                        if (shiftedPaginationQueryCacheData.entities.length > perPage) { // the rest pagination is overflowing => a new pagination needs to be added
+                        if (shiftedPaginationQueryCacheData.entities.length > validPerPage) { // the rest pagination is overflowing => a new pagination needs to be added
                             shiftedPaginationQueryCacheData.entities.pop() as unknown as TEntry; // remove the last entry to avoid overflowing
                         } // if
                     })
