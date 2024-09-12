@@ -856,10 +856,16 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
     else {
         const deletedPaginationIndices = (
             paginationQueryCaches
-            .map((paginationQueryCache) =>
-                selectIndexOfId(paginationQueryCache.data, mutatedId)
+            .map((paginationQueryCache) => ({
+                indexStart        : selectRangeFromArgs(paginationQueryCache.originalArgs).indexStart,
+                indexLocalDeleted : selectIndexOfId(paginationQueryCache.data, mutatedId),
+            }))
+            .filter(({ indexLocalDeleted }) =>
+                (indexLocalDeleted >= 0) // is FOUND
             )
-            .filter((deletedPaginationIndex) => (deletedPaginationIndex >= 0)) // is FOUND
+            .map(({ indexStart, indexLocalDeleted }) =>
+                (indexStart + indexLocalDeleted) // convert local index to global index
+            )
         );
         if (deletedPaginationIndices.length !== 1) {
             // the queryCaches should have ONE valid deleted data => panic => clear all the caches and (may) trigger the rtk to re-fetch
@@ -925,6 +931,13 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             } // for
         } // for
         //#endregion BACKUP the entries from paginations (which will be shifted) 
+        
+        
+        
+        // SHIFT the new_entry at the DELETED_INDEX of the list:
+        mergedEntryList.splice(deletedPaginationIndex, 1);
+        // re-calculate the total entries:
+        const newTotalEntries = validTotalEntries + 1;
     } // if
 };
 
