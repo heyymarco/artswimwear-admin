@@ -692,7 +692,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             [876] [543] [210] + 9 => [987] [654] [321] [0]
             page1 page2 page3        page1 page2 page3 pageTail
         */
-        const restPaginationQueryCaches = (
+        const addedPaginationQueryCaches = (
             paginationQueryCaches
             .filter((paginationQueryCache) =>
                 /*
@@ -711,32 +711,37 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         
         
         // reconstructuring the added entry, so the invalidatesTag can be avoided:
-        if (restPaginationQueryCaches.length) {
+        if (addedPaginationQueryCaches.length) {
             const accumDataMap : TEntry[] = [mutatedEntry];
+            
+            
+            
+            //#region collect the existing paginations to `accumDataMap` 
             for (const paginationQueryCache of paginationQueryCaches) {
                 const {
                     page    = 1,
                     perPage = 1,
                 } = paginationQueryCache.originalArgs as PaginationArgs;
                 
-                const baseIndex  = (page - 1) * perPage;
-                let   subIndex   = 0;
-                const shiftCount = 1;
+                const baseIndex  = (page - 1) * perPage; // an index of data in the current pagination
+                let   subIndex   = 0;                    // a counter of subIndex relative to baseIndex
+                const shiftCount = 1;                    // adding a new entry causing the whole pagination are shifted by one_step
                 if (paginationQueryCache.data !== undefined) { // ignore undefined data
                     for (const entry of selectEntriesFromData(paginationQueryCache.data)) {
                         accumDataMap[baseIndex + (subIndex++) + shiftCount] = entry;
                     } // for
                 } // if
             } // for
+            //#endregion collect the existing paginations to `accumDataMap` 
             
             
             
             let overflowingPaginationEntriesCount : number|undefined = undefined;
-            for (const restPaginationQueryCache of restPaginationQueryCaches) {
+            for (const addedPaginationQueryCache of addedPaginationQueryCaches) {
                 const {
                     page    = 1,
                     perPage = 1,
-                } = restPaginationQueryCache.originalArgs as PaginationArgs;
+                } = addedPaginationQueryCache.originalArgs as PaginationArgs;
                 const baseIndex  = (page - 1) * perPage;
                 
                 
@@ -745,7 +750,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                 if (theFirstEntryOnCurrentPagination) {
                     // update cache:
                     api.dispatch(
-                        apiSlice.util.updateQueryData(endpointName, restPaginationQueryCache.originalArgs as any, (restPaginationQueryCacheData) => {
+                        apiSlice.util.updateQueryData(endpointName, addedPaginationQueryCache.originalArgs as any, (restPaginationQueryCacheData) => {
                             restPaginationQueryCacheData.entities.unshift((theFirstEntryOnCurrentPagination as any)); // append the shiftingEntry at first index
                             
                             if (restPaginationQueryCacheData.entities.length > perPage) { // the rest pagination is overflowing => a new pagination needs to be added
