@@ -722,7 +722,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         
         
         
-        // reconstructuring the added entry, so the invalidatesTag can be avoided:
+        // reconstructuring the shifted entries, so the invalidatesTag can be avoided:
         if (shiftedPaginationQueryCaches.length) {
             const mergedEntryList : TEntry[] = [
                 mutatedEntry, // place the new_entry at index 0
