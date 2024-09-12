@@ -686,22 +686,28 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                 testDataHasId(paginationQueryCache.data, mutatedId)
             )
         );
+        if (updatedPaginationQueryCaches.length !== 1) {
+            // the queryCaches should have ONE valid updated data => panic => clear all the caches and (may) trigger the rtk to re-fetch
+            
+            // clear caches:
+            api.dispatch(
+                apiSlice.util.invalidateTags(tags)
+            );
+            return; // panic => cannot further reconstruct
+        } // if
+        const updatedPaginationQueryCache = updatedPaginationQueryCaches[0];
         
         
         
         // reconstructuring the updated entry, so the invalidatesTag can be avoided:
-        if (updatedPaginationQueryCaches.length) {
-            for (const updatedPaginationQueryCache of updatedPaginationQueryCaches) {
-                // update cache:
-                api.dispatch(
-                    apiSlice.util.updateQueryData(endpointName, updatedPaginationQueryCache.originalArgs as any, (updatedPaginationQueryCacheData) => {
-                        const currentEntryIndex = updatedPaginationQueryCacheData.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
-                        if (currentEntryIndex < 0) return; // not found => nothing to update
-                        updatedPaginationQueryCacheData.entities[currentEntryIndex] = (mutatedEntry as any); // replace oldEntry with mutatedEntry
-                    })
-                );
-            } // for
-        } // if
+        // update cache:
+        api.dispatch(
+            apiSlice.util.updateQueryData(endpointName, updatedPaginationQueryCache.originalArgs as any, (updatedPaginationQueryCacheData) => {
+                const currentEntryIndex = updatedPaginationQueryCacheData.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
+                if (currentEntryIndex < 0) return; // not found => nothing to update
+                updatedPaginationQueryCacheData.entities[currentEntryIndex] = (mutatedEntry as any); // replace oldEntry with mutatedEntry
+            })
+        );
     }
     
     /* add new data: COMPLEX: the number of paginations is scaled_up */
@@ -821,23 +827,29 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                 testDataHasId(paginationQueryCache.data, mutatedId)
             )
         );
+        if (deletedPaginationQueryCaches.length !== 1) {
+            // the queryCaches should have ONE valid deleted data => panic => clear all the caches and (may) trigger the rtk to re-fetch
+            
+            // clear caches:
+            api.dispatch(
+                apiSlice.util.invalidateTags(tags)
+            );
+            return; // panic => cannot further reconstruct
+        } // if
+        const deletedPaginationQueryCache = deletedPaginationQueryCaches[0];
         
         
         
         // reconstructuring the deleted entry, so the invalidatesTag can be avoided:
-        if (deletedPaginationQueryCaches.length) {
-            for (const deletedPaginationQueryCache of deletedPaginationQueryCaches) {
-                // update cache:
-                api.dispatch(
-                    apiSlice.util.updateQueryData(endpointName, deletedPaginationQueryCache.originalArgs as any, (deletedPaginationQueryCacheData) => {
-                        const currentEntryIndex = deletedPaginationQueryCacheData.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
-                        if (currentEntryIndex < 0) return; // not found => nothing to delete
-                        deletedPaginationQueryCacheData.entities.splice(currentEntryIndex, 1); // remove the oldEntry
-                        deletedPaginationQueryCacheData.total--; // reduce the total entries
-                    })
-                );
-            } // for
-        } // if
+        // update cache:
+        api.dispatch(
+            apiSlice.util.updateQueryData(endpointName, deletedPaginationQueryCache.originalArgs as any, (deletedPaginationQueryCacheData) => {
+                const currentEntryIndex = deletedPaginationQueryCacheData.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
+                if (currentEntryIndex < 0) return; // not found => nothing to delete
+                deletedPaginationQueryCacheData.entities.splice(currentEntryIndex, 1); // remove the oldEntry
+                deletedPaginationQueryCacheData.total--; // reduce the total entries
+            })
+        );
     } // if
 };
 
