@@ -162,7 +162,7 @@ export const apiSlice = createApi({
             
             // more efficient:
             onCacheEntryAdded: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getProductPage', (arg.id !== ''));
+                await cumulativeUpdatePaginationCache(api, 'getProductPage', (arg.id === '') ? 'CREATE' : 'UPDATE');
             },
         }),
         deleteProduct               : builder.mutation<Pick<ProductDetail, 'id'>, MutationArgs<Pick<ProductDetail, 'id'>>>({
@@ -280,7 +280,7 @@ export const apiSlice = createApi({
             
             // more efficient:
             onCacheEntryAdded: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getOrderPage', (arg.id !== ''));
+                await cumulativeUpdatePaginationCache(api, 'getOrderPage', (arg.id === '') ? 'CREATE' : 'UPDATE');
             },
         }),
         getShipment                 : builder.query<ShipmentDetail, string>({
@@ -374,7 +374,7 @@ export const apiSlice = createApi({
             
             // more efficient:
             onCacheEntryAdded: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getShippingPage', (arg.id !== ''));
+                await cumulativeUpdatePaginationCache(api, 'getShippingPage', (arg.id === '') ? 'CREATE' : 'UPDATE');
             },
         }),
         deleteShipping              : builder.mutation<Pick<ShippingDetail, 'id'>, MutationArgs<Pick<ShippingDetail, 'id'>>>({
@@ -449,7 +449,7 @@ export const apiSlice = createApi({
             
             // more efficient:
             onCacheEntryAdded: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getAdminPage', (arg.id !== ''));
+                await cumulativeUpdatePaginationCache(api, 'getAdminPage', (arg.id === '') ? 'CREATE' : 'UPDATE');
             },
         }),
         deleteAdmin                 : builder.mutation<Pick<AdminDetail, 'id'>, MutationArgs<Pick<AdminDetail, 'id'>>>({
@@ -619,7 +619,11 @@ export const apiSlice = createApi({
 
 
 
-const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationCacheLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, isUpdating: boolean) => {
+type UpdateType =
+    |'CREATE'
+    |'UPDATE'
+    |'DELETE'
+const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationCacheLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, updateType: UpdateType) => {
     // updated TEntry data:
     const { data: mutatedEntry } = await api.cacheDataLoaded;
     const { id: mutatedId } = mutatedEntry;
@@ -632,12 +636,12 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
     const paginationQueryCaches = (
         Object.values(allQueryCaches)
         .filter((allQueryCache): allQueryCache is QuerySubState<BaseEndpointDefinition<TQueryArg, TBaseQuery, Pagination<TEntry>>> =>
-            !!allQueryCache
+            (allQueryCache !== undefined)
             &&
             (allQueryCache.endpointName === endpointName)
         )
     );
-    if (!isUpdating) { // add new data:
+    if (updateType === 'CREATE') { // add new data:
         /*
             Adding a_new_entry causing the restPagination(s) shifted their entries to neighboringPagination(s).
             [876] [543] [210] + 9 => [987] [654] [321] [0]
@@ -659,7 +663,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         
         
         
-        // reconstructuring the restPagination(s), so the invalidatesTag can be avoided:
+        // reconstructuring the added entry, so the invalidatesTag can be avoided:
         if (restPaginationQueryCaches.length) {
             const accumDataMap : TEntry[] = [mutatedEntry];
             for (const paginationQueryCache of paginationQueryCaches) {
@@ -671,7 +675,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                 const baseIndex  = (page - 1) * perPage;
                 let   subIndex   = 0;
                 const shiftCount = 1;
-                for (const entry of (paginationQueryCache.data as Pagination<TEntry>).entities) {
+                for (const entry of (paginationQueryCache.data?.entities ?? [])) {
                     accumDataMap[baseIndex + (subIndex++) + shiftCount] = entry;
                 } // for
             } // for
@@ -715,9 +719,9 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             
             
             
-            // if the last pagination is overflowing => a new pagination needs to be added:
+            // if the last pagination is overflowing => add a new pagination:
             if (overflowingPaginationEntriesCount && accumDataMap.length) {
-                const lastPagination : Pagination<TEntry> = {
+                const newPagination : Pagination<TEntry> = {
                     total    : overflowingPaginationEntriesCount,
                     entities : [
                         accumDataMap[accumDataMap.length - 1] // take the last (the overflowing entry)
@@ -729,12 +733,12 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                     apiSlice.util.upsertQueryData(endpointName, /* args: */ {
                         page    : Math.ceil(overflowingPaginationEntriesCount / perPage),
                         perPage : perPage
-                    }, /* value: */ (lastPagination as Pagination<any>))
+                    }, /* value: */ (newPagination as Pagination<any>))
                 );
             } // if
         } // if
     }
-    else { // update existing data:
+    else if (updateType === 'UPDATE') { // update existing data:
         const currentPaginationQueryCaches = (
             paginationQueryCaches
             .filter((paginationQueryCache) =>
@@ -751,15 +755,47 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         
         
         
-        // reconstructuring the mutated pagination, so the invalidatesTag can be avoided:
+        // reconstructuring the mutated entry, so the invalidatesTag can be avoided:
         if (currentPaginationQueryCaches.length) {
             for (const currentPaginationQueryCache of currentPaginationQueryCaches) {
                 // update cache:
                 api.dispatch(
                     apiSlice.util.updateQueryData(endpointName, currentPaginationQueryCache.originalArgs as any, (currentPaginationQueryCacheData) => {
                         const currentEntryIndex = currentPaginationQueryCacheData.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
-                        if (currentEntryIndex < 0) return;
+                        if (currentEntryIndex < 0) return; // not found => nothing to update
                         currentPaginationQueryCacheData.entities[currentEntryIndex] = (mutatedEntry as any); // replace oldEntry with mutatedEntry
+                    })
+                );
+            } // for
+        } // if
+    }
+    else { // delete existing data:
+        const currentPaginationQueryCaches = (
+            paginationQueryCaches
+            .filter((paginationQueryCache) =>
+                /*
+                    currentPagination : the pagination having entry.id === mutatedId
+                    => select it
+                    
+                    restPaginations   : the paginations not having entry.id ==== mutatedId
+                    => do not select them
+                */
+                !!paginationQueryCache.data?.entities.some((searchEntry) => (searchEntry.id === mutatedId))
+            )
+        );
+        
+        
+        
+        // reconstructuring the deleted entry, so the invalidatesTag can be avoided:
+        if (currentPaginationQueryCaches.length) {
+            for (const currentPaginationQueryCache of currentPaginationQueryCaches) {
+                // update cache:
+                api.dispatch(
+                    apiSlice.util.updateQueryData(endpointName, currentPaginationQueryCache.originalArgs as any, (currentPaginationQueryCacheData) => {
+                        const currentEntryIndex = currentPaginationQueryCacheData.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
+                        if (currentEntryIndex < 0) return; // not found => nothing to delete
+                        currentPaginationQueryCacheData.entities.splice(currentEntryIndex, 1); // remove the oldEntry
+                        currentPaginationQueryCacheData.total--; // reduce the total entries
                     })
                 );
             } // for
