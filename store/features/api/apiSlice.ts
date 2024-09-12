@@ -725,6 +725,9 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         
         
         // reconstructuring the updated entry, so the invalidatesTag can be avoided:
+        
+        
+        
         // update cache:
         api.dispatch(
             apiSlice.util.updateQueryData(endpointName, updatedPaginationQueryCache.originalArgs as any, (updatedPaginationQueryCacheData) => {
@@ -750,109 +753,113 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                 (selectIndexOfId(paginationQueryCache.data, mutatedId) < 0) // is NOT found
             )
         );
+        if (!shiftedPaginationQueryCaches.length) {
+            return; // cache not found => no further reconstruct
+        } // if
         
         
         
         // reconstructuring the shifted entries, so the invalidatesTag can be avoided:
-        if (shiftedPaginationQueryCaches.length) {
-            //#region BACKUP the entries from paginations (which will be shifted) 
-            const mergedEntryList : TEntry[] = [];
-            for (const paginationQueryCache of paginationQueryCaches) {
-                if (paginationQueryCache.data === undefined) continue; // ignore undefined data
-                
-                
-                
-                const {
-                    indexStart, // the first_entry_index of the first_entry of current pagination
-                    indexEnd,   // the last_entry_index  of the first_entry of current pagination
-                } = selectRangeFromArgs(paginationQueryCache.originalArgs);
-                
-                
-                
-                const paginationEntries = selectEntriesFromData(paginationQueryCache.data);
-                for (
-                    let indexWalk    = indexStart,
-                        indexBase    = 0,
-                        indexBaseMax = paginationEntries.length - 1
-                        ;
-                        (indexWalk <= indexEnd)
-                        &&
-                        (indexBase <= indexBaseMax)
-                        ;
-                        indexWalk++, indexBase++
-                ) {
-                    mergedEntryList[indexWalk] = paginationEntries[indexBase];
-                } // for
+        
+        
+        
+        //#region BACKUP the entries from paginations (which will be shifted) 
+        const mergedEntryList : TEntry[] = [];
+        for (const paginationQueryCache of paginationQueryCaches) {
+            if (paginationQueryCache.data === undefined) continue; // ignore undefined data
+            
+            
+            
+            const {
+                indexStart, // the first_entry_index of the first_entry of current pagination
+                indexEnd,   // the last_entry_index  of the first_entry of current pagination
+            } = selectRangeFromArgs(paginationQueryCache.originalArgs);
+            
+            
+            
+            const paginationEntries = selectEntriesFromData(paginationQueryCache.data);
+            for (
+                let indexWalk    = indexStart,
+                    indexBase    = 0,
+                    indexBaseMax = paginationEntries.length - 1
+                    ;
+                    (indexWalk <= indexEnd)
+                    &&
+                    (indexBase <= indexBaseMax)
+                    ;
+                    indexWalk++, indexBase++
+            ) {
+                mergedEntryList[indexWalk] = paginationEntries[indexBase];
             } // for
-            //#endregion BACKUP the entries from paginations (which will be shifted) 
+        } // for
+        //#endregion BACKUP the entries from paginations (which will be shifted) 
+        
+        
+        
+        // SHIFT the new_entry at the BEGINNING of the list:
+        mergedEntryList.unshift(mutatedEntry);
+        // re-calculate the total entries:
+        const newTotalEntries = validTotalEntries + 1;
+        
+        
+        
+        //#region RESTORE the shifted paginations from the backup
+        for (const shiftedPaginationQueryCache of shiftedPaginationQueryCaches) {
+            const {
+                indexStart, // the first_entry_index of the first_entry of current pagination
+                perPage,
+            } = selectRangeFromArgs(shiftedPaginationQueryCache.originalArgs);
             
             
             
-            // SHIFT the new_entry at the BEGINNING of the list:
-            mergedEntryList.unshift(mutatedEntry);
-            // re-calculate the total entries:
-            const newTotalEntries = validTotalEntries + 1;
-            
-            
-            
-            //#region RESTORE the shifted paginations from the backup
-            for (const shiftedPaginationQueryCache of shiftedPaginationQueryCaches) {
-                const {
-                    indexStart, // the first_entry_index of the first_entry of current pagination
-                    perPage,
-                } = selectRangeFromArgs(shiftedPaginationQueryCache.originalArgs);
-                
-                
-                
-                const theNewFirstEntryOfShiftedPagination : TEntry|undefined = mergedEntryList?.[indexStart]; // take the *new* first_entry of current pagination, the old_first_entry...the_2nd_last_entry will be second_entry...last_entry
-                if (theNewFirstEntryOfShiftedPagination !== undefined) {
-                    // update cache:
-                    api.dispatch(
-                        apiSlice.util.updateQueryData(endpointName, shiftedPaginationQueryCache.originalArgs as any, (shiftedPaginationQueryCacheData) => {
-                            shiftedPaginationQueryCacheData.entities.unshift((theNewFirstEntryOfShiftedPagination as any)); // append the shiftingEntry at first index
-                            shiftedPaginationQueryCacheData.total = newTotalEntries; // update the total data
-                            
-                            if (shiftedPaginationQueryCacheData.entities.length > perPage) { // the rest pagination is overflowing => a new pagination needs to be added
-                                shiftedPaginationQueryCacheData.entities.pop() as unknown as TEntry; // remove the last entry to avoid overflowing
-                            } // if
-                        })
-                    );
-                } // if
-            } // for
-            //#endregion RESTORE the shifted paginations from the backup
-            
-            
-            
-            //#region RESTORE the last_entry, if not found in paginations
-            const globalIndexLast = mergedEntryList.length - 1;
-            if (!shiftedPaginationQueryCaches.some(({originalArgs, data}) => {
-                const indexLast = (
-                    selectRangeFromArgs(originalArgs).indexStart
-                    +
-                    (selectEntriesFromData(data).length - 1)
-                );
-                return (indexLast >= globalIndexLast);
-            })) {
-                const globalEntryLast = mergedEntryList[globalIndexLast];
-                const newPagination : Pagination<TEntry> = {
-                    total    : newTotalEntries,
-                    entities : [
-                        globalEntryLast,
-                    ],
-                };
-                
-                
-                
-                // append new cache:
+            const theNewFirstEntryOfShiftedPagination : TEntry|undefined = mergedEntryList?.[indexStart]; // take the *new* first_entry of current pagination, the old_first_entry...the_2nd_last_entry will be second_entry...last_entry
+            if (theNewFirstEntryOfShiftedPagination !== undefined) {
+                // update cache:
                 api.dispatch(
-                    apiSlice.util.upsertQueryData(endpointName, /* args: */ {
-                        page    : Math.ceil(newTotalEntries / validPerPage),
-                        perPage : validPerPage
-                    }, /* value: */ (newPagination as Pagination<any>))
+                    apiSlice.util.updateQueryData(endpointName, shiftedPaginationQueryCache.originalArgs as any, (shiftedPaginationQueryCacheData) => {
+                        shiftedPaginationQueryCacheData.entities.unshift((theNewFirstEntryOfShiftedPagination as any)); // append the shiftingEntry at first index
+                        shiftedPaginationQueryCacheData.total = newTotalEntries; // update the total data
+                        
+                        if (shiftedPaginationQueryCacheData.entities.length > perPage) { // the rest pagination is overflowing => a new pagination needs to be added
+                            shiftedPaginationQueryCacheData.entities.pop() as unknown as TEntry; // remove the last entry to avoid overflowing
+                        } // if
+                    })
                 );
             } // if
-            //#endregion RESTORE the last_entry, if not found in paginations
+        } // for
+        //#endregion RESTORE the shifted paginations from the backup
+        
+        
+        
+        //#region RESTORE the last_entry, if not found in paginations
+        const globalIndexLast = mergedEntryList.length - 1;
+        if (!shiftedPaginationQueryCaches.some(({originalArgs, data}) => {
+            const indexLast = (
+                selectRangeFromArgs(originalArgs).indexStart
+                +
+                (selectEntriesFromData(data).length - 1)
+            );
+            return (indexLast >= globalIndexLast);
+        })) {
+            const globalEntryLast = mergedEntryList[globalIndexLast];
+            const newPagination : Pagination<TEntry> = {
+                total    : newTotalEntries,
+                entities : [
+                    globalEntryLast,
+                ],
+            };
+            
+            
+            
+            // append new cache:
+            api.dispatch(
+                apiSlice.util.upsertQueryData(endpointName, /* args: */ {
+                    page    : Math.ceil(newTotalEntries / validPerPage),
+                    perPage : validPerPage
+                }, /* value: */ (newPagination as Pagination<any>))
+            );
         } // if
+        //#endregion RESTORE the last_entry, if not found in paginations
     }
     
     /* delete existing data: COMPLEX: the number of paginations is scaled_down */
