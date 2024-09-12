@@ -725,8 +725,9 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             //#endregion merge all existing pagination(s)'s entry to `mergedEntryList` 
             
             
-            
-            let overflowingPaginationEntriesCount : number|undefined = undefined;
+            //#region sync the pagination's entries with the sliced `mergedEntryList` 
+            let isLastPaginationOverflowing = false;
+            let totalEntries                = 0;
             for (const shiftedPaginationQueryCache of shiftedPaginationQueryCaches) {
                 const {
                     page    = 1,
@@ -736,37 +737,39 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                 
                 
                 const baseIndex  = (page - 1) * perPage; // the entry_index of the first_entry of current pagination
-                const theFirstEntryOfShiftedPagination : TEntry|undefined = mergedEntryList?.[baseIndex];
-                if (theFirstEntryOfShiftedPagination !== undefined) {
+                const theNewFirstEntryOfShiftedPagination : TEntry|undefined = mergedEntryList?.[baseIndex]; // take the *new* first_entry of current pagination, the old_first_entry...the_2nd_last_entry will be second_entry...last_entry
+                if (theNewFirstEntryOfShiftedPagination !== undefined) {
                     // update cache:
                     api.dispatch(
                         apiSlice.util.updateQueryData(endpointName, shiftedPaginationQueryCache.originalArgs as any, (shiftedPaginationQueryCacheData) => {
-                            shiftedPaginationQueryCacheData.entities.unshift((theFirstEntryOfShiftedPagination as any)); // append the shiftingEntry at first index
+                            shiftedPaginationQueryCacheData.entities.unshift((theNewFirstEntryOfShiftedPagination as any)); // append the shiftingEntry at first index
                             
                             if (shiftedPaginationQueryCacheData.entities.length > perPage) { // the rest pagination is overflowing => a new pagination needs to be added
-                                shiftedPaginationQueryCacheData.total++;
-                                overflowingPaginationEntriesCount = shiftedPaginationQueryCacheData.total;
+                                shiftedPaginationQueryCacheData.total++; // update the total data
+                                totalEntries                = shiftedPaginationQueryCacheData.total;
+                                isLastPaginationOverflowing = true;
                                 
-                                shiftedPaginationQueryCacheData.entities.pop();  // remove the last entry to avoid overflowing
+                                shiftedPaginationQueryCacheData.entities.pop(); // remove the last entry to avoid overflowing
                             }
                             else {
                                 // the rest pagination is not overlowing => no need to add a more pagination:
-                                overflowingPaginationEntriesCount = undefined;
+                                isLastPaginationOverflowing = false;
                             } // if
                         })
                     );
                 }
                 else {
-                    overflowingPaginationEntriesCount = undefined;
+                    isLastPaginationOverflowing = false;
                 } // if
             } // for
+            //#endregion sync the pagination's entries with the sliced `mergedEntryList` 
             
             
             
             // if the last pagination is overflowing => add a new pagination:
-            if (overflowingPaginationEntriesCount && mergedEntryList.length) {
+            if (isLastPaginationOverflowing && mergedEntryList.length) {
                 const newPagination : Pagination<TEntry> = {
-                    total    : overflowingPaginationEntriesCount,
+                    total    : totalEntries,
                     entities : [
                         mergedEntryList[mergedEntryList.length - 1] // take the last (the overflowing entry)
                     ],
@@ -775,7 +778,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                 // append new cache:
                 api.dispatch(
                     apiSlice.util.upsertQueryData(endpointName, /* args: */ {
-                        page    : Math.ceil(overflowingPaginationEntriesCount / perPage),
+                        page    : Math.ceil(isLastPaginationOverflowing / perPage),
                         perPage : perPage
                     }, /* value: */ (newPagination as Pagination<any>))
                 );
