@@ -689,7 +689,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         
         
         
-        // reconstructuring the mutated entry, so the invalidatesTag can be avoided:
+        // reconstructuring the updated entry, so the invalidatesTag can be avoided:
         if (updatedPaginationQueryCaches.length) {
             for (const updatedPaginationQueryCache of updatedPaginationQueryCaches) {
                 // update cache:
