@@ -639,6 +639,8 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             (allQueryCache !== undefined)
             &&
             (allQueryCache.endpointName === endpointName)
+            &&
+            (allQueryCache.data !== undefined)
         )
     );
     const selectIndexOfId       = (data: unknown, id: string): number => {
@@ -706,8 +708,6 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         const updatedPaginationQueryCaches = (
             paginationQueryCaches
             .filter((paginationQueryCache) =>
-                (paginationQueryCache.data !== undefined) // ignore undefined data
-                &&
                 (selectIndexOfId(paginationQueryCache.data, mutatedId) >= 0) // is FOUND
             )
         );
@@ -745,12 +745,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             [876] [543] [210] + 9 => [987] [654] [321] [0]
             page1 page2 page3        page1 page2 page3 pageTail
         */
-        const shiftedPaginationQueryCaches = (
-            paginationQueryCaches
-            .filter((paginationQueryCache) =>
-                (paginationQueryCache.data !== undefined) // ignore undefined data
-            )
-        );
+        const shiftedPaginationQueryCaches = paginationQueryCaches;
         if (!shiftedPaginationQueryCaches.length) {
             return; // cache not found => no further reconstruct
         } // if
@@ -864,9 +859,6 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
     else {
         const deletedPaginationIndices = (
             paginationQueryCaches
-            .filter((paginationQueryCache) =>
-                (paginationQueryCache.data !== undefined) // ignore undefined data
-            )
             .map((paginationQueryCache) =>
                 selectIndexOfId(paginationQueryCache.data, mutatedId)
             )
@@ -887,21 +879,20 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         
         const shiftedPaginationQueryCaches = (
             paginationQueryCaches
-            .filter((paginationQueryCache) =>
-                (paginationQueryCache.data !== undefined) // ignore undefined data
-                &&
-                ((): boolean => {
-                    const {
-                        indexStart,
-                        indexEnd,
-                    } = selectRangeFromArgs(paginationQueryCache.originalArgs);
-                    return (
-                        (indexStart >= deletedPaginationIndex)
-                        &&
-                        (indexEnd   <= deletedPaginationIndex)
-                    );
-                })()
-            )
+            .filter((paginationQueryCache) => {
+                const {
+                    indexStart,
+                    indexEnd,
+                } = selectRangeFromArgs(paginationQueryCache.originalArgs);
+                
+                
+                
+                return (
+                    (indexStart >= deletedPaginationIndex)
+                    &&
+                    (indexEnd   <= deletedPaginationIndex)
+                );
+            })
         );
         
         
