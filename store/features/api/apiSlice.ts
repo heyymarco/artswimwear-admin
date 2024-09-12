@@ -749,8 +749,6 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             paginationQueryCaches
             .filter((paginationQueryCache) =>
                 (paginationQueryCache.data !== undefined) // ignore undefined data
-                &&
-                (selectIndexOfId(paginationQueryCache.data, mutatedId) < 0) // is NOT found
             )
         );
         if (!shiftedPaginationQueryCaches.length) {
@@ -765,19 +763,19 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         
         //#region BACKUP the entries from paginations (which will be shifted) 
         const mergedEntryList : TEntry[] = [];
-        for (const paginationQueryCache of paginationQueryCaches) {
-            if (paginationQueryCache.data === undefined) continue; // ignore undefined data
+        for (const shiftedPaginationQueryCache of shiftedPaginationQueryCaches) {
+            if (shiftedPaginationQueryCache.data === undefined) continue; // ignore undefined data
             
             
             
             const {
                 indexStart, // the first_entry_index of the first_entry of current pagination
                 indexEnd,   // the last_entry_index  of the first_entry of current pagination
-            } = selectRangeFromArgs(paginationQueryCache.originalArgs);
+            } = selectRangeFromArgs(shiftedPaginationQueryCache.originalArgs);
             
             
             
-            const paginationEntries = selectEntriesFromData(paginationQueryCache.data);
+            const paginationEntries = selectEntriesFromData(shiftedPaginationQueryCache.data);
             for (
                 let indexWalk    = indexStart,
                     indexBase    = 0,
@@ -908,16 +906,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         
         
         
-        // // reconstructuring the deleted entry, so the invalidatesTag can be avoided:
-        // // update cache:
-        // api.dispatch(
-        //     apiSlice.util.updateQueryData(endpointName, deletedPaginationQueryCache.originalArgs as any, (deletedPaginationQueryCacheData) => {
-        //         const currentEntryIndex = deletedPaginationQueryCacheData.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
-        //         if (currentEntryIndex < 0) return; // not found => nothing to delete
-        //         deletedPaginationQueryCacheData.entities.splice(currentEntryIndex, 1); // remove the oldEntry
-        //         deletedPaginationQueryCacheData.total--; // reduce the total entries
-        //     })
-        // );
+        // reconstructuring the deleted entry, so the invalidatesTag can be avoided:
     } // if
 };
 
