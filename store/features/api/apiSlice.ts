@@ -795,11 +795,11 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         
         
         //#region RESTORE the shifted paginations from the backup
-        for (const shiftedPaginationQueryCache of shiftedPaginationQueryCaches) {
+        for (const { originalArgs, data } of shiftedPaginationQueryCaches) {
             const {
                 indexStart, // the first_entry_index of the first_entry of current pagination
                 page,
-            } = selectRangeFromArg(shiftedPaginationQueryCache.originalArgs);
+            } = selectRangeFromArg(originalArgs);
             
             
             
@@ -813,7 +813,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             else {
                 // update cache:
                 api.dispatch(
-                    apiSlice.util.updateQueryData(endpointName, shiftedPaginationQueryCache.originalArgs as PaginationArgs, (shiftedPaginationQueryCacheData) => {
+                    apiSlice.util.updateQueryData(endpointName, originalArgs as PaginationArgs, (shiftedPaginationQueryCacheData) => {
                         shiftedPaginationQueryCacheData.entities.unshift(neighboringEntry as any); // append the neighboringEntry at first index
                         shiftedPaginationQueryCacheData.total = newTotalEntries; // update the total data
                         
@@ -831,7 +831,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         
         //#region RESTORE the limited_entry, if not found in paginations
         const limitedEntryIndex = mergedEntryList.length - 1;
-        if (!shiftedPaginationQueryCaches.some(({originalArgs, data}) => {
+        if (!shiftedPaginationQueryCaches.some(({ originalArgs, data }) => {
             const indexLast = (
                 selectRangeFromArg(originalArgs).indexStart
                 +
@@ -950,16 +950,20 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         
         
         //#region RESTORE the shifted paginations from the backup
-        for (const shiftedPaginationQueryCache of shiftedPaginationQueryCaches) {
+        for (const { originalArgs, data } of shiftedPaginationQueryCaches) {
             const {
                 indexStart, // the first_entry_index of the first_entry of current pagination
-                indexEnd,   // the last_entry_index  of the first_entry of current pagination
                 page,
-            } = selectRangeFromArg(shiftedPaginationQueryCache.originalArgs);
+            } = selectRangeFromArg(originalArgs);
+            const indexLast = (
+                indexStart
+                +
+                (selectEntriesFromData(data).length - 1)
+            );
             
             
             
-            const neighboringEntry : TEntry|undefined = mergedEntryList?.[indexEnd]; // take the *valid* last_entry of current pagination, the old_2nd_first_entry...the_last_entry will be first_entry...2nd_last_entry
+            const neighboringEntry : TEntry|undefined = mergedEntryList?.[indexLast]; // take the *valid* last_entry of current pagination, the old_2nd_first_entry...the_last_entry will be first_entry...2nd_last_entry
             if (neighboringEntry === undefined) {
                 // clear current pagination cache:
                 api.dispatch(
@@ -969,8 +973,8 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             else {
                 // update cache:
                 api.dispatch(
-                    apiSlice.util.updateQueryData(endpointName, shiftedPaginationQueryCache.originalArgs as PaginationArgs, (shiftedPaginationQueryCacheData) => {
-                        if ((indexStart >= indexDeleted) && (indexEnd <= indexDeleted)) {
+                    apiSlice.util.updateQueryData(endpointName, originalArgs as PaginationArgs, (shiftedPaginationQueryCacheData) => {
+                        if ((indexStart >= indexDeleted) && (indexLast <= indexDeleted)) {
                             shiftedPaginationQueryCacheData.entities.splice(indexDeleted - indexStart, 1); // remove the deleted entry at specific index
                         }
                         else {
