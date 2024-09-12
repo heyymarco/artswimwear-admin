@@ -875,7 +875,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             );
             return; // panic => cannot further reconstruct
         } // if
-        const deletedPaginationIndex = deletedPaginationIndices[0];
+        const indexDeleted = deletedPaginationIndices[0];
         
         
         
@@ -890,9 +890,9 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                 
                 
                 return (
-                    (indexStart >= deletedPaginationIndex)
+                    (indexStart >= indexDeleted)
                     &&
-                    (indexEnd   <= deletedPaginationIndex)
+                    (indexEnd   <= indexDeleted)
                 );
             })
         );
@@ -934,7 +934,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         
         
         // SHIFT the new_entry at the DELETED_INDEX of the list:
-        mergedEntryList.splice(deletedPaginationIndex, 1);
+        mergedEntryList.splice(indexDeleted, 1);
         // re-calculate the total entries:
         const newTotalEntries = validTotalEntries + 1;
     } // if
