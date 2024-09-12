@@ -131,7 +131,7 @@ export const apiSlice = createApi({
                 method : 'POST',
                 body   : params,
             }),
-            providesTags: (result, error, page)  => {
+            providesTags: (result, error, paginationArg)  => {
                 return [
                     ...(result?.entities ?? []).map((product): { type: 'Products', id: string } => ({
                         type : 'Products',
@@ -140,7 +140,7 @@ export const apiSlice = createApi({
                     
                     {
                         type : 'Products',
-                        id   : 'PRODUCT_LIST',
+                        id   : paginationArg.page,
                     },
                 ];
             },
@@ -162,7 +162,7 @@ export const apiSlice = createApi({
             
             // more efficient:
             onCacheEntryAdded: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getProductPage', (arg.id === '') ? 'CREATE' : 'UPDATE', ['Products']);
+                await cumulativeUpdatePaginationCache(api, 'getProductPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'Products');
             },
         }),
         deleteProduct               : builder.mutation<Pick<ProductDetail, 'id'>, MutationArgs<Pick<ProductDetail, 'id'>>>({
@@ -249,7 +249,7 @@ export const apiSlice = createApi({
                 method : 'POST',
                 body   : params,
             }),
-            providesTags: (result, error, page)  => {
+            providesTags: (result, error, paginationArg)  => {
                 return [
                     ...(result?.entities ?? []).map((order): { type: 'Orders', id: string } => ({
                         type : 'Orders',
@@ -258,7 +258,7 @@ export const apiSlice = createApi({
                     
                     {
                         type : 'Orders',
-                        id   : 'ORDER_LIST',
+                        id   : paginationArg.page,
                     },
                 ];
             },
@@ -280,7 +280,7 @@ export const apiSlice = createApi({
             
             // more efficient:
             onCacheEntryAdded: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getOrderPage', (arg.id === '') ? 'CREATE' : 'UPDATE', ['Orders']);
+                await cumulativeUpdatePaginationCache(api, 'getOrderPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'Orders');
             },
         }),
         getShipment                 : builder.query<ShipmentDetail, string>({
@@ -343,7 +343,7 @@ export const apiSlice = createApi({
                 method : 'POST',
                 body   : params,
             }),
-            providesTags: (result, error, page)  => {
+            providesTags: (result, error, paginationArg)  => {
                 return [
                     ...(result?.entities ?? []).map((shipping): { type: 'Shippings', id: string } => ({
                         type : 'Shippings',
@@ -352,7 +352,7 @@ export const apiSlice = createApi({
                     
                     {
                         type : 'Shippings',
-                        id   : 'SHIPPING_LIST',
+                        id   : paginationArg.page,
                     },
                 ];
             },
@@ -374,7 +374,7 @@ export const apiSlice = createApi({
             
             // more efficient:
             onCacheEntryAdded: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getShippingPage', (arg.id === '') ? 'CREATE' : 'UPDATE', ['Shippings']);
+                await cumulativeUpdatePaginationCache(api, 'getShippingPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'Shippings');
             },
         }),
         deleteShipping              : builder.mutation<Pick<ShippingDetail, 'id'>, MutationArgs<Pick<ShippingDetail, 'id'>>>({
@@ -418,7 +418,7 @@ export const apiSlice = createApi({
                 method : 'POST',
                 body   : params,
             }),
-            providesTags: (result, error, page)  => {
+            providesTags: (result, error, paginationArg)  => {
                 return [
                     ...(result?.entities ?? []).map((admin): { type: 'Admins', id: string } => ({
                         type : 'Admins',
@@ -427,7 +427,7 @@ export const apiSlice = createApi({
                     
                     {
                         type : 'Admins',
-                        id   : 'ADMIN_LIST',
+                        id   : paginationArg.page,
                     },
                 ];
             },
@@ -449,7 +449,7 @@ export const apiSlice = createApi({
             
             // more efficient:
             onCacheEntryAdded: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getAdminPage', (arg.id === '') ? 'CREATE' : 'UPDATE', ['Admins']);
+                await cumulativeUpdatePaginationCache(api, 'getAdminPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'Admins');
             },
         }),
         deleteAdmin                 : builder.mutation<Pick<AdminDetail, 'id'>, MutationArgs<Pick<AdminDetail, 'id'>>>({
@@ -623,7 +623,7 @@ type UpdateType =
     |'CREATE'
     |'UPDATE'
     |'DELETE'
-const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationCacheLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, updateType: UpdateType, tags: Parameters<typeof apiSlice.util.invalidateTags>[0]) => {
+const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationCacheLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, updateType: UpdateType, invalidateTag: Extract<Parameters<typeof apiSlice.util.invalidateTags>[0][number], string>) => {
     // updated TEntry data:
     const { data: mutatedEntry } = await api.cacheDataLoaded;
     const { id: mutatedId } = mutatedEntry;
@@ -647,8 +647,8 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         const paginationData = data as Pagination<TEntry>;
         return paginationData.entities.findIndex((searchEntry) => (searchEntry.id === id));
     };
-    const selectRangeFromArgs   = (originalArgs: unknown): { indexStart: number, indexEnd: number, perPage: number } => {
-        const paginationArgs = originalArgs as PaginationArgs;
+    const selectRangeFromArg    = (originalArg: unknown): { indexStart: number, indexEnd: number, page: number, perPage: number } => {
+        const paginationArgs = originalArg as PaginationArgs;
         const {
             page,
             perPage,
@@ -667,6 +667,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         return {
             indexStart,
             indexEnd,
+            page,
             perPage,
         };
     };
@@ -684,10 +685,10 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
     const lastPaginationQueryCache       = paginationQueryCaches?.[paginationQueryCaches.length - 1];
     const {
         perPage : validPerPage,
-    }                                    = selectRangeFromArgs(lastPaginationQueryCache.originalArgs);
+    }                                    = selectRangeFromArg(lastPaginationQueryCache.originalArgs);
     const validTotalEntries              = selectTotalFromData(lastPaginationQueryCache);
     const hasInvalidPaginationQueryCache = paginationQueryCaches.some((paginationQueryCache) =>
-        (selectRangeFromArgs(paginationQueryCache.originalArgs).perPage !== validPerPage)
+        (selectRangeFromArg(paginationQueryCache.originalArgs).perPage !== validPerPage)
         ||
         (selectTotalFromData(paginationQueryCache) !== validTotalEntries)
     );
@@ -696,7 +697,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         
         // clear caches:
         api.dispatch(
-            apiSlice.util.invalidateTags(tags)
+            apiSlice.util.invalidateTags([invalidateTag])
         );
         return; // panic => cannot further reconstruct
     } // if
@@ -716,7 +717,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             
             // clear caches:
             api.dispatch(
-                apiSlice.util.invalidateTags(tags)
+                apiSlice.util.invalidateTags([invalidateTag])
             );
             return; // panic => cannot further reconstruct
         } // if
@@ -730,7 +731,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         
         // update cache:
         api.dispatch(
-            apiSlice.util.updateQueryData(endpointName, updatedPaginationQueryCache.originalArgs as any, (updatedPaginationQueryCacheData) => {
+            apiSlice.util.updateQueryData(endpointName, updatedPaginationQueryCache.originalArgs as PaginationArgs, (updatedPaginationQueryCacheData) => {
                 const currentEntryIndex = updatedPaginationQueryCacheData.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
                 if (currentEntryIndex < 0) return; // not found => nothing to update
                 updatedPaginationQueryCacheData.entities[currentEntryIndex] = (mutatedEntry as any); // replace oldEntry with mutatedEntry
@@ -762,7 +763,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             const {
                 indexStart, // the first_entry_index of the first_entry of current pagination
                 indexEnd,   // the last_entry_index  of the first_entry of current pagination
-            } = selectRangeFromArgs(shiftedPaginationQueryCache.originalArgs);
+            } = selectRangeFromArg(shiftedPaginationQueryCache.originalArgs);
             
             
             
@@ -797,15 +798,22 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         for (const shiftedPaginationQueryCache of shiftedPaginationQueryCaches) {
             const {
                 indexStart, // the first_entry_index of the first_entry of current pagination
-            } = selectRangeFromArgs(shiftedPaginationQueryCache.originalArgs);
+                page,
+            } = selectRangeFromArg(shiftedPaginationQueryCache.originalArgs);
             
             
             
             const neighboringEntry : TEntry|undefined = mergedEntryList?.[indexStart]; // take the *valid* first_entry of current pagination, the old_first_entry...the_2nd_last_entry will be 2nd_first_entry...last_entry
-            if (neighboringEntry !== undefined) {
+            if (neighboringEntry === undefined) {
+                // clear current pagination cache:
+                api.dispatch(
+                    apiSlice.util.invalidateTags([{ type: invalidateTag, id: page }])
+                );
+            }
+            else {
                 // update cache:
                 api.dispatch(
-                    apiSlice.util.updateQueryData(endpointName, shiftedPaginationQueryCache.originalArgs as any, (shiftedPaginationQueryCacheData) => {
+                    apiSlice.util.updateQueryData(endpointName, shiftedPaginationQueryCache.originalArgs as PaginationArgs, (shiftedPaginationQueryCacheData) => {
                         shiftedPaginationQueryCacheData.entities.unshift(neighboringEntry as any); // append the neighboringEntry at first index
                         shiftedPaginationQueryCacheData.total = newTotalEntries; // update the total data
                         
@@ -825,7 +833,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         const limitedEntryIndex = mergedEntryList.length - 1;
         if (!shiftedPaginationQueryCaches.some(({originalArgs, data}) => {
             const indexLast = (
-                selectRangeFromArgs(originalArgs).indexStart
+                selectRangeFromArg(originalArgs).indexStart
                 +
                 (selectEntriesFromData(data).length - 1)
             );
@@ -857,7 +865,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         const deletedPaginationIndices = (
             paginationQueryCaches
             .map((paginationQueryCache) => ({
-                indexStart        : selectRangeFromArgs(paginationQueryCache.originalArgs).indexStart,
+                indexStart        : selectRangeFromArg(paginationQueryCache.originalArgs).indexStart,
                 indexLocalDeleted : selectIndexOfId(paginationQueryCache.data, mutatedId),
             }))
             .filter(({ indexLocalDeleted }) =>
@@ -872,7 +880,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             
             // clear caches:
             api.dispatch(
-                apiSlice.util.invalidateTags(tags)
+                apiSlice.util.invalidateTags([invalidateTag])
             );
             return; // panic => cannot further reconstruct
         } // if
@@ -886,7 +894,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                 const {
                     indexStart,
                     indexEnd,
-                } = selectRangeFromArgs(paginationQueryCache.originalArgs);
+                } = selectRangeFromArg(paginationQueryCache.originalArgs);
                 
                 
                 
@@ -910,7 +918,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             const {
                 indexStart, // the first_entry_index of the first_entry of current pagination
                 indexEnd,   // the last_entry_index  of the first_entry of current pagination
-            } = selectRangeFromArgs(shiftedPaginationQueryCache.originalArgs);
+            } = selectRangeFromArg(shiftedPaginationQueryCache.originalArgs);
             
             
             
@@ -946,15 +954,22 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             const {
                 indexStart, // the first_entry_index of the first_entry of current pagination
                 indexEnd,   // the last_entry_index  of the first_entry of current pagination
-            } = selectRangeFromArgs(shiftedPaginationQueryCache.originalArgs);
+                page,
+            } = selectRangeFromArg(shiftedPaginationQueryCache.originalArgs);
             
             
             
             const neighboringEntry : TEntry|undefined = mergedEntryList?.[indexEnd]; // take the *valid* last_entry of current pagination, the old_2nd_first_entry...the_last_entry will be first_entry...2nd_last_entry
-            if (neighboringEntry !== undefined) {
+            if (neighboringEntry === undefined) {
+                // clear current pagination cache:
+                api.dispatch(
+                    apiSlice.util.invalidateTags([{ type: invalidateTag, id: page }])
+                );
+            }
+            else {
                 // update cache:
                 api.dispatch(
-                    apiSlice.util.updateQueryData(endpointName, shiftedPaginationQueryCache.originalArgs as any, (shiftedPaginationQueryCacheData) => {
+                    apiSlice.util.updateQueryData(endpointName, shiftedPaginationQueryCache.originalArgs as PaginationArgs, (shiftedPaginationQueryCacheData) => {
                         if ((indexStart >= indexDeleted) && (indexEnd <= indexDeleted)) {
                             shiftedPaginationQueryCacheData.entities.splice(indexDeleted - indexStart, 1); // remove the deleted entry at specific index
                         }
