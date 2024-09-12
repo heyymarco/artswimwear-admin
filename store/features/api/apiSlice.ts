@@ -652,16 +652,9 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
     
     /* update existing data: SIMPLE: the number of paginations is unchanged */
     if (updateType === 'UPDATE') {
-        const currentPaginationQueryCaches = (
+        const updatedPaginationQueryCaches = (
             paginationQueryCaches
             .filter((paginationQueryCache) =>
-                /*
-                    currentPagination : the pagination having entry.id === mutatedId
-                    => select it
-                    
-                    restPaginations   : the paginations not having entry.id ==== mutatedId
-                    => do not select them
-                */
                 (paginationQueryCache.data !== undefined) // ignore undefined data
                 &&
                 testDataHasId(paginationQueryCache.data, mutatedId)
@@ -671,14 +664,14 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         
         
         // reconstructuring the mutated entry, so the invalidatesTag can be avoided:
-        if (currentPaginationQueryCaches.length) {
-            for (const currentPaginationQueryCache of currentPaginationQueryCaches) {
+        if (updatedPaginationQueryCaches.length) {
+            for (const updatedPaginationQueryCache of updatedPaginationQueryCaches) {
                 // update cache:
                 api.dispatch(
-                    apiSlice.util.updateQueryData(endpointName, currentPaginationQueryCache.originalArgs as any, (currentPaginationQueryCacheData) => {
-                        const currentEntryIndex = currentPaginationQueryCacheData.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
+                    apiSlice.util.updateQueryData(endpointName, updatedPaginationQueryCache.originalArgs as any, (updatedPaginationQueryCacheData) => {
+                        const currentEntryIndex = updatedPaginationQueryCacheData.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
                         if (currentEntryIndex < 0) return; // not found => nothing to update
-                        currentPaginationQueryCacheData.entities[currentEntryIndex] = (mutatedEntry as any); // replace oldEntry with mutatedEntry
+                        updatedPaginationQueryCacheData.entities[currentEntryIndex] = (mutatedEntry as any); // replace oldEntry with mutatedEntry
                     })
                 );
             } // for
@@ -692,16 +685,9 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             [876] [543] [210] + 9 => [987] [654] [321] [0]
             page1 page2 page3        page1 page2 page3 pageTail
         */
-        const addedPaginationQueryCaches = (
+        const shiftedPaginationQueryCaches = (
             paginationQueryCaches
             .filter((paginationQueryCache) =>
-                /*
-                    currentPagination : the pagination having entry.id === mutatedId
-                    => do not select
-                    
-                    restPaginations   : the paginations not having entry.id ==== mutatedId
-                    => select them all
-                */
                 (paginationQueryCache.data !== undefined) // ignore undefined data
                 &&
                 !testDataHasId(paginationQueryCache.data, mutatedId)
@@ -711,53 +697,57 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         
         
         // reconstructuring the added entry, so the invalidatesTag can be avoided:
-        if (addedPaginationQueryCaches.length) {
-            const accumDataMap : TEntry[] = [mutatedEntry];
+        if (shiftedPaginationQueryCaches.length) {
+            const mergedEntryList : TEntry[] = [
+                mutatedEntry, // place the new_entry at index 0
+            ];
             
             
             
-            //#region collect the existing paginations to `accumDataMap` 
+            //#region merge all existing pagination(s)'s entry to `mergedEntryList` 
             for (const paginationQueryCache of paginationQueryCaches) {
                 const {
                     page    = 1,
                     perPage = 1,
                 } = paginationQueryCache.originalArgs as PaginationArgs;
                 
-                const baseIndex  = (page - 1) * perPage; // an index of data in the current pagination
+                
+                
+                const baseIndex  = (page - 1) * perPage; // the entry_index of the first_entry of current pagination
                 let   subIndex   = 0;                    // a counter of subIndex relative to baseIndex
-                const shiftCount = 1;                    // adding a new entry causing the whole pagination are shifted by one_step
+                const shiftCount = 1;                    // adding a/some new_entry causing the whole pagination are positive_shifted by the_number_of_new_entries
                 if (paginationQueryCache.data !== undefined) { // ignore undefined data
                     for (const entry of selectEntriesFromData(paginationQueryCache.data)) {
-                        accumDataMap[baseIndex + (subIndex++) + shiftCount] = entry;
+                        mergedEntryList[baseIndex + (subIndex++) + shiftCount] = entry;
                     } // for
                 } // if
             } // for
-            //#endregion collect the existing paginations to `accumDataMap` 
+            //#endregion merge all existing pagination(s)'s entry to `mergedEntryList` 
             
             
             
             let overflowingPaginationEntriesCount : number|undefined = undefined;
-            for (const addedPaginationQueryCache of addedPaginationQueryCaches) {
+            for (const shiftedPaginationQueryCache of shiftedPaginationQueryCaches) {
                 const {
                     page    = 1,
                     perPage = 1,
-                } = addedPaginationQueryCache.originalArgs as PaginationArgs;
-                const baseIndex  = (page - 1) * perPage;
+                } = shiftedPaginationQueryCache.originalArgs as PaginationArgs;
                 
                 
                 
-                const theFirstEntryOnCurrentPagination : TEntry|undefined = accumDataMap?.[baseIndex];
-                if (theFirstEntryOnCurrentPagination) {
+                const baseIndex  = (page - 1) * perPage; // the entry_index of the first_entry of current pagination
+                const theFirstEntryOfShiftedPagination : TEntry|undefined = mergedEntryList?.[baseIndex];
+                if (theFirstEntryOfShiftedPagination !== undefined) {
                     // update cache:
                     api.dispatch(
-                        apiSlice.util.updateQueryData(endpointName, addedPaginationQueryCache.originalArgs as any, (restPaginationQueryCacheData) => {
-                            restPaginationQueryCacheData.entities.unshift((theFirstEntryOnCurrentPagination as any)); // append the shiftingEntry at first index
+                        apiSlice.util.updateQueryData(endpointName, shiftedPaginationQueryCache.originalArgs as any, (shiftedPaginationQueryCacheData) => {
+                            shiftedPaginationQueryCacheData.entities.unshift((theFirstEntryOfShiftedPagination as any)); // append the shiftingEntry at first index
                             
-                            if (restPaginationQueryCacheData.entities.length > perPage) { // the rest pagination is overflowing => a new pagination needs to be added
-                                restPaginationQueryCacheData.total++;
-                                overflowingPaginationEntriesCount = restPaginationQueryCacheData.total;
+                            if (shiftedPaginationQueryCacheData.entities.length > perPage) { // the rest pagination is overflowing => a new pagination needs to be added
+                                shiftedPaginationQueryCacheData.total++;
+                                overflowingPaginationEntriesCount = shiftedPaginationQueryCacheData.total;
                                 
-                                restPaginationQueryCacheData.entities.pop();  // remove the last entry to avoid overflowing
+                                shiftedPaginationQueryCacheData.entities.pop();  // remove the last entry to avoid overflowing
                             }
                             else {
                                 // the rest pagination is not overlowing => no need to add a more pagination:
@@ -774,11 +764,11 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             
             
             // if the last pagination is overflowing => add a new pagination:
-            if (overflowingPaginationEntriesCount && accumDataMap.length) {
+            if (overflowingPaginationEntriesCount && mergedEntryList.length) {
                 const newPagination : Pagination<TEntry> = {
                     total    : overflowingPaginationEntriesCount,
                     entities : [
-                        accumDataMap[accumDataMap.length - 1] // take the last (the overflowing entry)
+                        mergedEntryList[mergedEntryList.length - 1] // take the last (the overflowing entry)
                     ],
                 };
                 const perPage = (paginationQueryCaches?.[paginationQueryCaches.length - 1]?.originalArgs as (PaginationArgs|undefined))?.perPage ?? 1;
@@ -795,16 +785,9 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
     
     /* delete existing data: COMPLEX: the number of paginations is scaled_down */
     else {
-        const currentPaginationQueryCaches = (
+        const deletedPaginationQueryCaches = (
             paginationQueryCaches
             .filter((paginationQueryCache) =>
-                /*
-                    currentPagination : the pagination having entry.id === mutatedId
-                    => select it
-                    
-                    restPaginations   : the paginations not having entry.id ==== mutatedId
-                    => do not select them
-                */
                 (paginationQueryCache.data !== undefined) // ignore undefined data
                 &&
                 testDataHasId(paginationQueryCache.data, mutatedId)
@@ -814,15 +797,15 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         
         
         // reconstructuring the deleted entry, so the invalidatesTag can be avoided:
-        if (currentPaginationQueryCaches.length) {
-            for (const currentPaginationQueryCache of currentPaginationQueryCaches) {
+        if (deletedPaginationQueryCaches.length) {
+            for (const deletedPaginationQueryCache of deletedPaginationQueryCaches) {
                 // update cache:
                 api.dispatch(
-                    apiSlice.util.updateQueryData(endpointName, currentPaginationQueryCache.originalArgs as any, (currentPaginationQueryCacheData) => {
-                        const currentEntryIndex = currentPaginationQueryCacheData.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
+                    apiSlice.util.updateQueryData(endpointName, deletedPaginationQueryCache.originalArgs as any, (deletedPaginationQueryCacheData) => {
+                        const currentEntryIndex = deletedPaginationQueryCacheData.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
                         if (currentEntryIndex < 0) return; // not found => nothing to delete
-                        currentPaginationQueryCacheData.entities.splice(currentEntryIndex, 1); // remove the oldEntry
-                        currentPaginationQueryCacheData.total--; // reduce the total entries
+                        deletedPaginationQueryCacheData.entities.splice(currentEntryIndex, 1); // remove the oldEntry
+                        deletedPaginationQueryCacheData.total--; // reduce the total entries
                     })
                 );
             } // for
