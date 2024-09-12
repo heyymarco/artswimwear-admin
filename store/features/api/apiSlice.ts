@@ -162,7 +162,7 @@ export const apiSlice = createApi({
             
             // more efficient:
             onCacheEntryAdded: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getProductPage', (arg.id === '') ? 'CREATE' : 'UPDATE');
+                await cumulativeUpdatePaginationCache(api, 'getProductPage', (arg.id === '') ? 'CREATE' : 'UPDATE', ['Products']);
             },
         }),
         deleteProduct               : builder.mutation<Pick<ProductDetail, 'id'>, MutationArgs<Pick<ProductDetail, 'id'>>>({
@@ -280,7 +280,7 @@ export const apiSlice = createApi({
             
             // more efficient:
             onCacheEntryAdded: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getOrderPage', (arg.id === '') ? 'CREATE' : 'UPDATE');
+                await cumulativeUpdatePaginationCache(api, 'getOrderPage', (arg.id === '') ? 'CREATE' : 'UPDATE', ['Orders']);
             },
         }),
         getShipment                 : builder.query<ShipmentDetail, string>({
@@ -374,7 +374,7 @@ export const apiSlice = createApi({
             
             // more efficient:
             onCacheEntryAdded: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getShippingPage', (arg.id === '') ? 'CREATE' : 'UPDATE');
+                await cumulativeUpdatePaginationCache(api, 'getShippingPage', (arg.id === '') ? 'CREATE' : 'UPDATE', ['Shippings']);
             },
         }),
         deleteShipping              : builder.mutation<Pick<ShippingDetail, 'id'>, MutationArgs<Pick<ShippingDetail, 'id'>>>({
@@ -449,7 +449,7 @@ export const apiSlice = createApi({
             
             // more efficient:
             onCacheEntryAdded: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getAdminPage', (arg.id === '') ? 'CREATE' : 'UPDATE');
+                await cumulativeUpdatePaginationCache(api, 'getAdminPage', (arg.id === '') ? 'CREATE' : 'UPDATE', ['Admins']);
             },
         }),
         deleteAdmin                 : builder.mutation<Pick<AdminDetail, 'id'>, MutationArgs<Pick<AdminDetail, 'id'>>>({
@@ -623,7 +623,7 @@ type UpdateType =
     |'CREATE'
     |'UPDATE'
     |'DELETE'
-const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationCacheLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, updateType: UpdateType) => {
+const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationCacheLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, updateType: UpdateType, tags: Parameters<typeof apiSlice.util.invalidateTags>[0]) => {
     // updated TEntry data:
     const { data: mutatedEntry } = await api.cacheDataLoaded;
     const { id: mutatedId } = mutatedEntry;
@@ -641,7 +641,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             (allQueryCache.endpointName === endpointName)
         )
     );
-    const testDataHasId = (data: unknown, id: string): boolean => {
+    const testDataHasId         = (data: unknown, id: string): boolean => {
         const paginationData = data as Pagination<TEntry>;
         return paginationData?.entities.some((searchEntry) => (searchEntry.id === id));
     };
@@ -649,6 +649,32 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         const paginationData = data as Pagination<TEntry>;
         return paginationData.entities;
     };
+    const selectTotalFromData   = (data: unknown): number => {
+        const paginationData = data as Pagination<TEntry>;
+        return paginationData.total;
+    };
+    
+    
+    
+    const lastPaginationQueryCache       = paginationQueryCaches?.[paginationQueryCaches.length - 1];
+    const validPerPage                   = (lastPaginationQueryCache.originalArgs as (PaginationArgs|undefined))?.perPage ?? 1;
+    const validTotalEntries              = selectTotalFromData(lastPaginationQueryCache);
+    const hasInvalidPaginationQueryCache = paginationQueryCaches.some((paginationQueryCache) =>
+        ((paginationQueryCache.originalArgs as (PaginationArgs|undefined))?.perPage !== validPerPage)
+        ||
+        (selectTotalFromData(paginationQueryCache) !== validTotalEntries)
+    );
+    if (hasInvalidPaginationQueryCache) {
+        // the queryCaches has a/some inconsistent data => panic => clear all the caches and (may) trigger the rtk to re-fetch
+        
+        // clear caches:
+        api.dispatch(
+            apiSlice.util.invalidateTags(tags)
+        );
+        return; // panic => cannot further reconstruct
+    } // if
+    
+    
     
     /* update existing data: SIMPLE: the number of paginations is unchanged */
     if (updateType === 'UPDATE') {
@@ -726,8 +752,8 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             
             
             //#region sync the pagination's entries with the sliced `mergedEntryList` 
+            const totalEntries              = validTotalEntries + 1;
             let isLastPaginationOverflowing = false;
-            let totalEntries                = 0;
             for (const shiftedPaginationQueryCache of shiftedPaginationQueryCaches) {
                 const {
                     page    = 1,
@@ -745,8 +771,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                             shiftedPaginationQueryCacheData.entities.unshift((theNewFirstEntryOfShiftedPagination as any)); // append the shiftingEntry at first index
                             
                             if (shiftedPaginationQueryCacheData.entities.length > perPage) { // the rest pagination is overflowing => a new pagination needs to be added
-                                shiftedPaginationQueryCacheData.total++; // update the total data
-                                totalEntries                = shiftedPaginationQueryCacheData.total;
+                                shiftedPaginationQueryCacheData.total = totalEntries; // update the total data
                                 isLastPaginationOverflowing = true;
                                 
                                 shiftedPaginationQueryCacheData.entities.pop(); // remove the last entry to avoid overflowing
