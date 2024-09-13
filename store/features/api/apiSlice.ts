@@ -761,8 +761,8 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         const mergedEntryList : TEntry[] = []; // use an `Array<TEntry>` instead of `Map<number, TEntry>`, so we can SHIFT the key easily
         for (const shiftedPaginationQueryCache of shiftedPaginationQueryCaches) {
             const {
-                indexStart, // the first_entry_index of the first_entry of current pagination
-                indexEnd,   // the last_entry_index  of the first_entry of current pagination
+                indexStart, // the global first_entry_index
+                indexEnd,   // the global last_entry_index
             } = selectRangeFromArg(shiftedPaginationQueryCache.originalArgs);
             
             
@@ -790,7 +790,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         //#region RESTORE the shifted paginations from the backup
         for (const { originalArgs, data } of shiftedPaginationQueryCaches) {
             const {
-                indexStart, // the first_entry_index of the first_entry of current pagination
+                indexStart, // the global first_entry_index
                 page,
             } = selectRangeFromArg(originalArgs);
             
@@ -875,7 +875,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         const mergedEntryList : TEntry[] = []; // use an `Array<TEntry>` instead of `Map<number, TEntry>`, so we can SHIFT the key easily
         for (const shiftedPaginationQueryCache of shiftedPaginationQueryCaches) {
             const {
-                indexStart, // the first_entry_index of the first_entry of current pagination
+                indexStart, // the global first_entry_index
             } = selectRangeFromArg(shiftedPaginationQueryCache.originalArgs);
             
             
@@ -902,8 +902,8 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         //#region RESTORE the shifted paginations from the backup
         for (const { originalArgs, data } of shiftedPaginationQueryCaches) {
             const {
-                indexStart, // the first_entry_index of the first_entry of current pagination
-                indexEnd,   // the last_entry_index  of the first_entry of current pagination
+                indexStart, // the global first_entry_index
+                indexEnd,   // the global last_entry_index
                 page,
             } = selectRangeFromArg(originalArgs);
             
