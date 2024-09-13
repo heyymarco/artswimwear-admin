@@ -911,33 +911,42 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             
             
             const entryEnd = mergedEntryList?.[indexEnd] as TEntry|undefined; // take the *valid* last_entry of current pagination, the old_2nd_first_entry...the_last_entry will be first_entry...2nd_last_entry
-            if (entryEnd === undefined) {
-                // UNABLE to reconstruct current pagination cache => invalidate the cache:
-                api.dispatch(
-                    apiSlice.util.invalidateTags([{ type: invalidateTag, id: page }])
-                );
-            }
-            else {
-                // update cache:
-                api.dispatch(
-                    apiSlice.util.updateQueryData(endpointName, originalArgs as PaginationArgs, (shiftedPaginationQueryCacheData) => {
-                        const indexLast = (
-                            indexStart
-                            +
-                            (selectEntriesFromData(data).length - 1)
+            // // if (entryEnd === undefined) {
+            // //     // UNABLE to reconstruct current pagination cache => invalidate the cache:
+            // //     api.dispatch(
+            // //         apiSlice.util.invalidateTags([{ type: invalidateTag, id: page }])
+            // //     );
+            // // }
+            // // else {
+            // // } // if
+            // update cache:
+            api.dispatch(
+                apiSlice.util.updateQueryData(endpointName, originalArgs as PaginationArgs, (shiftedPaginationQueryCacheData) => {
+                    const indexLast = (
+                        indexStart
+                        +
+                        (selectEntriesFromData(data).length - 1)
+                    );
+                    if ((indexStart >= indexDeleted) && (indexLast <= indexDeleted)) {
+                        const relativeIndexDeleted = indexDeleted - indexStart;
+                        shiftedPaginationQueryCacheData.entities.splice(relativeIndexDeleted, 1); // remove the deleted entry at specific index
+                    }
+                    else {
+                        shiftedPaginationQueryCacheData.entities.shift(); // remove the first entry for shifting
+                    } // if
+                    if (entryEnd !== undefined) (shiftedPaginationQueryCacheData.entities as unknown as TEntry[]).push(entryEnd); // append the entryEnd at last index to maintain perPage size
+                    shiftedPaginationQueryCacheData.total = newTotalEntries; // update the total data
+                    
+                    
+                    
+                    if (!shiftedPaginationQueryCacheData.entities.length) {
+                        // EMPTY pagination cache => invalidate the cache:
+                        api.dispatch(
+                            apiSlice.util.invalidateTags([{ type: invalidateTag, id: page }])
                         );
-                        if ((indexStart >= indexDeleted) && (indexLast <= indexDeleted)) {
-                            const relativeIndexDeleted = indexDeleted - indexStart;
-                            shiftedPaginationQueryCacheData.entities.splice(relativeIndexDeleted, 1); // remove the deleted entry at specific index
-                        }
-                        else {
-                            shiftedPaginationQueryCacheData.entities.shift(); // remove the first entry for shifting
-                        } // if
-                        (shiftedPaginationQueryCacheData.entities as unknown as TEntry[]).push(entryEnd); // append the entryEnd at last index to maintain perPage size
-                        shiftedPaginationQueryCacheData.total = newTotalEntries; // update the total data
-                    })
-                );
-            } // if
+                    } // if
+                })
+            );
         } // for
         //#endregion RESTORE the shifted paginations from the backup
     } // if
