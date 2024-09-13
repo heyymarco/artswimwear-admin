@@ -533,14 +533,57 @@ export const apiSlice = createApi({
 
 
 
+// utilities:
+const selectIdFromEntry     = <TEntry extends { id: string }>(entry: TEntry): string => {
+    return entry.id;
+};
+const selectIndexOfId       = <TEntry extends { id: string }>(data: unknown, id: string): number => {
+    const paginationData = data as Pagination<TEntry>;
+    return paginationData.entities.findIndex((searchEntry) => (selectIdFromEntry<TEntry>(searchEntry) === id));
+};
+const selectRangeFromArg    = (originalArg: unknown): { indexStart: number, indexEnd: number, page: number, perPage: number } => {
+    const paginationArgs = originalArg as PaginationArgs;
+    const {
+        page,
+        perPage,
+    } = paginationArgs;
+    
+    
+    
+    /*
+        index   [page, perpage]     indexStart              indexEnd
+        012	    [1, 3]              (1 - 1) * 3   = 0       (0 + 3) - 1   = 2
+        345	    [2, 3]              (2 - 1) * 3   = 3       (3 + 3) - 1   = 5
+        678	    [3, 3]              (3 - 1) * 3   = 6       (6 + 3) - 1   = 8
+    */
+    const indexStart = (page - 1) * perPage; // the entry_index of the first_entry of current pagination
+    const indexEnd   = indexStart + (perPage - 1);
+    return {
+        indexStart,
+        indexEnd,
+        page,
+        perPage,
+    };
+};
+const selectEntriesFromData = <TEntry extends { id: string }>(data: unknown): TEntry[] => {
+    const paginationData = data as Pagination<TEntry>;
+    return paginationData.entities;
+};
+const selectTotalFromData   = (data: unknown): number => {
+    const paginationData = data as Pagination<unknown>;
+    return paginationData.total;
+};
+
+
+
 type UpdateType =
     |'CREATE'
     |'UPDATE'
     |'DELETE'
 const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationCacheLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, updateType: UpdateType, invalidateTag: Extract<Parameters<typeof apiSlice.util.invalidateTags>[0][number], string>) => {
-    // updated TEntry data:
+    // mutated TEntry data:
     const { data: mutatedEntry } = await api.cacheDataLoaded;
-    const { id: mutatedId } = mutatedEntry;
+    const mutatedId = selectIdFromEntry<TEntry>(mutatedEntry);
     
     
     
@@ -557,42 +600,6 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             (allQueryCache.data !== undefined)
         )
     );
-    const selectIndexOfId       = (data: unknown, id: string): number => {
-        const paginationData = data as Pagination<TEntry>;
-        return paginationData.entities.findIndex((searchEntry) => (searchEntry.id === id));
-    };
-    const selectRangeFromArg    = (originalArg: unknown): { indexStart: number, indexEnd: number, page: number, perPage: number } => {
-        const paginationArgs = originalArg as PaginationArgs;
-        const {
-            page,
-            perPage,
-        } = paginationArgs;
-        
-        
-        
-        /*
-            index   [page, perpage]     indexStart              indexEnd
-            012	    [1, 3]              (1 - 1) * 3   = 0       (0 + 3) - 1   = 2
-            345	    [2, 3]              (2 - 1) * 3   = 3       (3 + 3) - 1   = 5
-            678	    [3, 3]              (3 - 1) * 3   = 6       (6 + 3) - 1   = 8
-        */
-        const indexStart = (page - 1) * perPage; // the entry_index of the first_entry of current pagination
-        const indexEnd   = indexStart + (perPage - 1);
-        return {
-            indexStart,
-            indexEnd,
-            page,
-            perPage,
-        };
-    };
-    const selectEntriesFromData = (data: unknown): TEntry[] => {
-        const paginationData = data as Pagination<TEntry>;
-        return paginationData.entities;
-    };
-    const selectTotalFromData   = (data: unknown): number => {
-        const paginationData = data as Pagination<TEntry>;
-        return paginationData.total;
-    };
     
     
     
@@ -618,7 +625,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         const updatedPaginationQueryCaches = (
             paginationQueryCaches
             .filter((paginationQueryCache) =>
-                (selectIndexOfId(paginationQueryCache.data, mutatedId) >= 0) // is FOUND
+                (selectIndexOfId<TEntry>(paginationQueryCache.data, mutatedId) >= 0) // is FOUND
             )
         );
         if (updatedPaginationQueryCaches.length !== 1) {
@@ -680,7 +687,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                 Only the last_entry of current pagination is useful for backup.
                 After the whole `mergedEntryList` shifted_down, the last_entry becomes the first_entry of the next pagination chains.
             */
-            const paginationEntries = selectEntriesFromData(shiftedPaginationQueryCache.data);
+            const paginationEntries = selectEntriesFromData<TEntry>(shiftedPaginationQueryCache.data);
             const relativeIndexEnd = indexEnd - indexStart; // a zero based starting index, select the LAST pagination entry
             const entryEnd = (relativeIndexEnd < paginationEntries.length) ? paginationEntries[relativeIndexEnd] : undefined;
             if (entryEnd !== undefined) mergedEntryList[indexEnd] = entryEnd; // if exists, copy the LAST pagination entry
@@ -745,7 +752,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             paginationQueryCaches
             .map((paginationQueryCache) => ({
                 indexStart        : selectRangeFromArg(paginationQueryCache.originalArgs).indexStart,
-                indexLocalDeleted : selectIndexOfId(paginationQueryCache.data, mutatedId),
+                indexLocalDeleted : selectIndexOfId<TEntry>(paginationQueryCache.data, mutatedId),
             }))
             .filter(({ indexLocalDeleted }) =>
                 (indexLocalDeleted >= 0) // is FOUND
@@ -804,7 +811,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                 Only the first_entry of current pagination is useful for backup.
                 After the whole `mergedEntryList` shifted_up, the first_entry becomes the last_entry of the prev pagination chains.
             */
-            const paginationEntries = selectEntriesFromData(shiftedPaginationQueryCache.data);
+            const paginationEntries = selectEntriesFromData<TEntry>(shiftedPaginationQueryCache.data);
             const entryStart = paginationEntries[0] as TEntry|undefined; // a zero based starting index, select the FIRST pagination entry
             if (entryStart !== undefined) mergedEntryList[indexStart] = entryStart; // if exists, copy the FIRST pagination entry
         } // for
@@ -838,7 +845,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                     const indexLast = (
                         indexStart
                         +
-                        (selectEntriesFromData(data).length - 1)
+                        (selectEntriesFromData<TEntry>(data).length - 1)
                     );
                     if ((indexDeleted >= indexStart) && (indexDeleted <= indexLast)) {
                         // REMOVE the deleted entry at specific index:
