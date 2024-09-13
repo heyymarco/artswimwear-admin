@@ -597,13 +597,8 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
     
     
     const lastPaginationQueryCache       = paginationQueryCaches?.[paginationQueryCaches.length - 1];
-    const {
-        perPage : validPerPage,
-    }                                    = selectRangeFromArg(lastPaginationQueryCache.originalArgs);
     const validTotalEntries              = selectTotalFromData(lastPaginationQueryCache);
     const hasInvalidPaginationQueryCache = paginationQueryCaches.some((paginationQueryCache) =>
-        (selectRangeFromArg(paginationQueryCache.originalArgs).perPage !== validPerPage)
-        ||
         (selectTotalFromData(paginationQueryCache) !== validTotalEntries)
     );
     if (hasInvalidPaginationQueryCache) {
