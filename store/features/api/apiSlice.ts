@@ -734,7 +734,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             apiSlice.util.updateQueryData(endpointName, updatedPaginationQueryCache.originalArgs as PaginationArgs, (updatedPaginationQueryCacheData) => {
                 const currentEntryIndex = updatedPaginationQueryCacheData.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
                 if (currentEntryIndex < 0) return; // not found => nothing to update
-                updatedPaginationQueryCacheData.entities[currentEntryIndex] = (mutatedEntry as any); // replace oldEntry with mutatedEntry
+                (updatedPaginationQueryCacheData.entities as unknown as TEntry[])[currentEntryIndex] = (mutatedEntry); // replace oldEntry with mutatedEntry
             })
         );
     }
@@ -807,7 +807,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                 // reconstruct current pagination cache:
                 api.dispatch(
                     apiSlice.util.updateQueryData(endpointName, originalArgs as PaginationArgs, (shiftedPaginationQueryCacheData) => {
-                        shiftedPaginationQueryCacheData.entities.unshift(entryStart as any); // append the entryStart at first index
+                        (shiftedPaginationQueryCacheData.entities as unknown as TEntry[]).unshift(entryStart); // append the entryStart at first index
                         shiftedPaginationQueryCacheData.total = newTotalEntries; // update the total data
                         
                         // allows growing up to perPage size BUT limits growing more than perPage size:
@@ -933,7 +933,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                         else {
                             shiftedPaginationQueryCacheData.entities.shift(); // remove the first entry for shifting
                         } // if
-                        shiftedPaginationQueryCacheData.entities.push(entryEnd as any); // append the entryEnd at last index to maintain perPage size
+                        (shiftedPaginationQueryCacheData.entities as unknown as TEntry[]).push(entryEnd); // append the entryEnd at last index to maintain perPage size
                         shiftedPaginationQueryCacheData.total = newTotalEntries; // update the total data
                     })
                 );
