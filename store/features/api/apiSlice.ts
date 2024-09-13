@@ -533,6 +533,60 @@ export const apiSlice = createApi({
 
 
 
+export const {
+    useGetProductListQuery                 : useGetProductList,
+    useGetProductPageQuery                 : useGetProductPage,
+    useUpdateProductMutation               : useUpdateProduct,
+    useDeleteProductMutation               : useDeleteProduct,
+    useLazyAvailablePathQuery              : useAvailablePath,
+    
+    useGetTemplateVariantGroupListQuery    : useGetTemplateVariantGroupList,
+    useUpdateTemplateVariantGroupMutation  : useUpdateTemplateVariantGroup,
+    useDeleteTemplateVariantGroupMutation  : useDeleteTemplateVariantGroup,
+    
+    useGetOrderPageQuery                   : useGetOrderPage,
+    useUpdateOrderMutation                 : useUpdateOrder,
+    useGetShipmentQuery                    : useGetShipment,
+    useLazyGetShippingLabelRatesQuery      : useGetShippingLabelRates,
+    
+    useGetDefaultShippingOriginQuery       : useGetDefaultShippingOrigin,
+    useUpdateDefaultShippingOriginMutation : useUpdateDefaultShippingOrigin,
+    useGetShippingListQuery                : useGetShippingList,
+    useGetShippingPageQuery                : useGetShippingPage,
+    useUpdateShippingMutation              : useUpdateShipping,
+    useDeleteShippingMutation              : useDeleteShipping,
+    // useLazyGetCountryListQuery             : useGetCountryList,
+    // useLazyGetStateListQuery               : useGetStateList,
+    // useLazyGetCityListQuery                : useGetCityList,
+    
+    useGetAdminPageQuery                   : useGetAdminPage,
+    useUpdateAdminMutation                 : useUpdateAdmin,
+    useDeleteAdminMutation                 : useDeleteAdmin,
+    useLazyAvailableUsernameQuery          : useAvailableUsername,
+    useLazyNotProhibitedUsernameQuery      : useNotProhibitedUsername,
+    useLazyAvailableEmailQuery             : useAvailableEmail,
+    
+    useGetRoleListQuery                    : useGetRoleList,
+    useUpdateRoleMutation                  : useUpdateRole,
+    useDeleteRoleMutation                  : useDeleteRole,
+    useLazyAvailableRolenameQuery          : useAvailableRolename,
+    
+    useGetPreferenceQuery                  : useGetPreference,
+    useUpdatePreferenceMutation            : useUpdatePreference,
+    
+    usePostImageMutation                   : usePostImage,
+    useDeleteImageMutation                 : useDeleteImage,
+    useMoveImageMutation                   : useMoveImage,
+} = apiSlice;
+
+export const {
+    getCountryList : { initiate : getCountryList },
+    getStateList   : { initiate : getStateList   },
+    getCityList    : { initiate : getCityList    },
+} = apiSlice.endpoints;
+
+
+
 // utilities:
 const selectIdFromEntry     = <TEntry extends { id: string }>(entry: TEntry): string => {
     return entry.id;
@@ -573,8 +627,6 @@ const selectTotalFromData   = (data: unknown): number => {
     const paginationData = data as Pagination<unknown>;
     return paginationData.total;
 };
-
-
 
 type UpdateType =
     |'CREATE'
@@ -883,57 +935,3 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         //#endregion RESTORE the shifted paginations from the backup
     } // if
 };
-
-
-
-export const {
-    useGetProductListQuery                 : useGetProductList,
-    useGetProductPageQuery                 : useGetProductPage,
-    useUpdateProductMutation               : useUpdateProduct,
-    useDeleteProductMutation               : useDeleteProduct,
-    useLazyAvailablePathQuery              : useAvailablePath,
-    
-    useGetTemplateVariantGroupListQuery    : useGetTemplateVariantGroupList,
-    useUpdateTemplateVariantGroupMutation  : useUpdateTemplateVariantGroup,
-    useDeleteTemplateVariantGroupMutation  : useDeleteTemplateVariantGroup,
-    
-    useGetOrderPageQuery                   : useGetOrderPage,
-    useUpdateOrderMutation                 : useUpdateOrder,
-    useGetShipmentQuery                    : useGetShipment,
-    useLazyGetShippingLabelRatesQuery      : useGetShippingLabelRates,
-    
-    useGetDefaultShippingOriginQuery       : useGetDefaultShippingOrigin,
-    useUpdateDefaultShippingOriginMutation : useUpdateDefaultShippingOrigin,
-    useGetShippingListQuery                : useGetShippingList,
-    useGetShippingPageQuery                : useGetShippingPage,
-    useUpdateShippingMutation              : useUpdateShipping,
-    useDeleteShippingMutation              : useDeleteShipping,
-    // useLazyGetCountryListQuery             : useGetCountryList,
-    // useLazyGetStateListQuery               : useGetStateList,
-    // useLazyGetCityListQuery                : useGetCityList,
-    
-    useGetAdminPageQuery                   : useGetAdminPage,
-    useUpdateAdminMutation                 : useUpdateAdmin,
-    useDeleteAdminMutation                 : useDeleteAdmin,
-    useLazyAvailableUsernameQuery          : useAvailableUsername,
-    useLazyNotProhibitedUsernameQuery      : useNotProhibitedUsername,
-    useLazyAvailableEmailQuery             : useAvailableEmail,
-    
-    useGetRoleListQuery                    : useGetRoleList,
-    useUpdateRoleMutation                  : useUpdateRole,
-    useDeleteRoleMutation                  : useDeleteRole,
-    useLazyAvailableRolenameQuery          : useAvailableRolename,
-    
-    useGetPreferenceQuery                  : useGetPreference,
-    useUpdatePreferenceMutation            : useUpdatePreference,
-    
-    usePostImageMutation                   : usePostImage,
-    useDeleteImageMutation                 : useDeleteImage,
-    useMoveImageMutation                   : useMoveImage,
-} = apiSlice;
-
-export const {
-    getCountryList : { initiate : getCountryList },
-    getStateList   : { initiate : getStateList   },
-    getCityList    : { initiate : getCityList    },
-} = apiSlice.endpoints;
