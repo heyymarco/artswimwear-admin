@@ -930,7 +930,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                         +
                         (selectEntriesFromData(data).length - 1)
                     );
-                    if ((indexStart >= indexDeleted) && (indexLast <= indexDeleted)) {
+                    if ((indexDeleted >= indexStart) && (indexDeleted <= indexLast)) {
                         // REMOVE the deleted entry at specific index:
                         const relativeIndexDeleted = indexDeleted - indexStart;
                         shiftedPaginationQueryCacheData.entities.splice(relativeIndexDeleted, 1);
