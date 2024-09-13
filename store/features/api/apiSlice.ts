@@ -885,7 +885,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                 After the whole `mergedEntryList` shifted_up, the first_entry becomes the last_entry of the prev pagination chains.
             */
             const paginationEntries = selectEntriesFromData(shiftedPaginationQueryCache.data);
-            const entryStart = paginationEntries[0] as TEntry|undefined;
+            const entryStart = paginationEntries[0] as TEntry|undefined; // a zero based starting index, select the FIRST pagination entry
             if (entryStart !== undefined) mergedEntryList[indexStart] = entryStart; // if exists, copy the FIRST pagination entry
         } // for
         //#endregion BACKUP the entries from paginations (which will be shifted) 
