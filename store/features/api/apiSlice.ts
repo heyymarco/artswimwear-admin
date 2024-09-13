@@ -788,7 +788,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         
         
         //#region RESTORE the shifted paginations from the backup
-        for (const { originalArgs, data } of shiftedPaginationQueryCaches) {
+        for (const { originalArgs } of shiftedPaginationQueryCaches) {
             const {
                 indexStart, // the global first_entry_index
                 page,
