@@ -706,6 +706,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             const {
                 indexStart, // the global first_entry_index
                 page,
+                perPage,
             } = selectRangeFromArg(originalArgs);
             
             const entryStart = mergedEntryList[indexStart] as TEntry|undefined; // take the *valid* first_entry of current pagination, the old_first_entry...the_2nd_last_entry will be 2nd_first_entry...last_entry
@@ -733,7 +734,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                         
                         
                         // if OVERFLOW pagination size => remove the last entry:
-                        if (shiftedPaginationQueryCacheData.entities.length > validPerPage) {
+                        if (shiftedPaginationQueryCacheData.entities.length > perPage) {
                             shiftedPaginationQueryCacheData.entities.pop();
                         } // if
                     })
