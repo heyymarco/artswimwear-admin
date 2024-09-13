@@ -772,9 +772,9 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                 After the whole `mergedEntryList` shifted_down, the last_entry becomes the first_entry of the next pagination chains.
             */
             const paginationEntries = selectEntriesFromData(shiftedPaginationQueryCache.data);
-            const relativeIndexEnd = indexEnd - indexStart;
+            const relativeIndexEnd = indexEnd - indexStart; // a zero based starting index, select the LAST pagination entry
             const entryEnd = (relativeIndexEnd < paginationEntries.length) ? paginationEntries[relativeIndexEnd] : undefined;
-            if (entryEnd !== undefined) mergedEntryList[indexEnd] = entryEnd;
+            if (entryEnd !== undefined) mergedEntryList[indexEnd] = entryEnd; // if exists, copy the LAST pagination entry
         } // for
         //#endregion BACKUP the entries from paginations (which will be shifted) 
         
@@ -872,7 +872,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         
         
         //#region BACKUP the entries from paginations (which will be shifted) 
-        const mergedEntryList : TEntry[] = [];
+        const mergedEntryList : TEntry[] = []; // use an `Array<TEntry>` instead of `Map<number, TEntry>`, so we can SHIFT the key easily
         for (const shiftedPaginationQueryCache of shiftedPaginationQueryCaches) {
             const {
                 indexStart, // the first_entry_index of the first_entry of current pagination
@@ -885,9 +885,9 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                 After the whole `mergedEntryList` shifted_up, the first_entry becomes the last_entry of the prev pagination chains.
             */
             const paginationEntries = selectEntriesFromData(shiftedPaginationQueryCache.data);
-            const relativeIndexStart = 0;
+            const relativeIndexStart = 0; // a zero based starting index, select the FIRST pagination entry
             const entryStart = (relativeIndexStart < paginationEntries.length) ? paginationEntries[relativeIndexStart] : undefined;
-            if (entryStart !== undefined) mergedEntryList[indexStart] = entryStart;
+            if (entryStart !== undefined) mergedEntryList[indexStart] = entryStart; // if exists, copy the FIRST pagination entry
         } // for
         //#endregion BACKUP the entries from paginations (which will be shifted) 
         
