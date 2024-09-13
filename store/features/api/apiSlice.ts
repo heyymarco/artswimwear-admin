@@ -114,7 +114,7 @@ export const apiSlice = createApi({
     baseQuery : axiosBaseQuery({
         baseUrl: `${process.env.NEXT_PUBLIC_APP_URL ?? ''}/api`
     }),
-    tagTypes: ['Products', 'TemplateVariantGroups', 'Orders', 'DefaultShippingOrigins', 'Shippings', 'States', 'Admins', 'Preferences', 'Roles'],
+    tagTypes: ['Product', 'TemplateVariantGroups', 'Order', 'DefaultShippingOrigins', 'Shipping', 'States', 'Admin', 'Preferences', 'Roles'],
     endpoints : (builder) => ({
         getProductList              : builder.query<EntityState<ProductPreview>, void>({
             query : () => ({
@@ -126,64 +126,41 @@ export const apiSlice = createApi({
             },
         }),
         getProductPage              : builder.query<Pagination<ProductDetail>, PaginationArgs>({
-            query : (params) => ({
+            query : (arg) => ({
                 url    : 'products',
                 method : 'POST',
-                body   : params,
+                body   : arg,
             }),
-            providesTags: (result, error, paginationArg)  => {
-                return [
-                    ...(result?.entities ?? []).map((product): { type: 'Products', id: string } => ({
-                        type : 'Products',
-                        id   : product.id,
-                    })),
-                    
-                    {
-                        type : 'Products',
-                        id   : paginationArg.page,
-                    },
-                ];
+            providesTags: (result, error, arg)  => {
+                return [{
+                    type : 'Product',
+                    id   : arg.page,
+                }];
             },
         }),
         updateProduct               : builder.mutation<ProductDetail, MutationArgs<Omit<ProductDetail, 'stocks'> & { stocks?: (number|null)[] }>>({
-            query: (patch) => ({
+            query: (arg) => ({
                 url    : 'products',
                 method : 'PATCH',
-                body   : patch
+                body   : arg
             }),
-            
-            // inefficient:
-            // invalidatesTags: (product, error, arg) => [
-            //     ...((!product ? [] : [{
-            //         type : 'Products',
-            //         id   : product.id,
-            //     }]) as Array<{ type: 'Products', id: string }>),
-            // ],
-            
-            // more efficient:
             onCacheEntryAdded: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getProductPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'Products');
+                await cumulativeUpdatePaginationCache(api, 'getProductPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'Product');
             },
         }),
         deleteProduct               : builder.mutation<Pick<ProductDetail, 'id'>, MutationArgs<Pick<ProductDetail, 'id'>>>({
-            query: (params) => ({
+            query: (arg) => ({
                 url    : 'products',
                 method : 'DELETE',
-                body   : params
+                body   : arg
             }),
-            invalidatesTags: (product, error, arg) => [
-                ...((!product ? [{
-                    type : 'Products',
-                    id   : 'PRODUCT_LIST', // delete unspecified => invalidates the whole list
-                }] : [{
-                    type : 'Products',
-                    id   : product.id,     // delete existing    => invalidates the modified
-                }]) as Array<{ type: 'Products', id: string }>),
-            ],
+            onCacheEntryAdded: async (arg, api) => {
+                await cumulativeUpdatePaginationCache(api, 'getProductPage', 'DELETE', 'Product');
+            },
         }),
         availablePath               : builder.query<boolean, string>({
-            query: (path) => ({
-                url    : `products/check-path?path=${encodeURIComponent(path)}`,
+            query: (arg) => ({
+                url    : `products/check-path?path=${encodeURIComponent(arg)}`,
                 method : 'GET',
             }),
         }),
@@ -244,43 +221,26 @@ export const apiSlice = createApi({
         }),
         
         getOrderPage                : builder.query<Pagination<OrderDetail>, PaginationArgs>({
-            query : (params) => ({
+            query : (arg) => ({
                 url    : 'orders',
                 method : 'POST',
-                body   : params,
+                body   : arg,
             }),
-            providesTags: (result, error, paginationArg)  => {
-                return [
-                    ...(result?.entities ?? []).map((order): { type: 'Orders', id: string } => ({
-                        type : 'Orders',
-                        id   : order.id,
-                    })),
-                    
-                    {
-                        type : 'Orders',
-                        id   : paginationArg.page,
-                    },
-                ];
+            providesTags: (result, error, arg)  => {
+                return [{
+                    type : 'Order',
+                    id   : arg.page,
+                }];
             },
         }),
         updateOrder                 : builder.mutation<OrderDetail, MutationArgs<OrderDetailWithOptions>>({
-            query: (patch) => ({
+            query: (arg) => ({
                 url    : 'orders',
                 method : 'PATCH',
-                body   : patch
+                body   : arg
             }),
-            
-            // inefficient:
-            // invalidatesTags: (order, error, arg) => [
-            //     ...((!order ? [] : [{
-            //         type : 'Orders',
-            //         id   : order.id,
-            //     }]) as Array<{ type: 'Orders', id: string }>),
-            // ],
-            
-            // more efficient:
             onCacheEntryAdded: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getOrderPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'Orders');
+                await cumulativeUpdatePaginationCache(api, 'getOrderPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'Order');
             },
         }),
         getShipment                 : builder.query<ShipmentDetail, string>({
@@ -338,43 +298,26 @@ export const apiSlice = createApi({
             },
         }),
         getShippingPage             : builder.query<Pagination<ShippingDetail>, PaginationArgs>({
-            query : (params) => ({
+            query : (arg) => ({
                 url    : 'shippings',
                 method : 'POST',
-                body   : params,
+                body   : arg,
             }),
-            providesTags: (result, error, paginationArg)  => {
-                return [
-                    ...(result?.entities ?? []).map((shipping): { type: 'Shippings', id: string } => ({
-                        type : 'Shippings',
-                        id   : shipping.id,
-                    })),
-                    
-                    {
-                        type : 'Shippings',
-                        id   : paginationArg.page,
-                    },
-                ];
+            providesTags: (result, error, arg)  => {
+                return [{
+                    type : 'Shipping',
+                    id   : arg.page,
+                }];
             },
         }),
         updateShipping              : builder.mutation<ShippingDetail, MutationArgs<ShippingDetail>>({
-            query: (patch) => ({
+            query: (arg) => ({
                 url    : 'shippings',
                 method : 'PATCH',
-                body   : patch
+                body   : arg
             }),
-            
-            // inefficient:
-            // invalidatesTags: (shipping, error, arg) => [
-            //     ...((!shipping ? [] : [{
-            //         type : 'Shippings',
-            //         id   : shipping.id,
-            //     }]) as Array<{ type: 'Shippings', id: string }>),
-            // ],
-            
-            // more efficient:
             onCacheEntryAdded: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getShippingPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'Shippings');
+                await cumulativeUpdatePaginationCache(api, 'getShippingPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'Shipping');
             },
         }),
         deleteShipping              : builder.mutation<Pick<ShippingDetail, 'id'>, MutationArgs<Pick<ShippingDetail, 'id'>>>({
@@ -383,15 +326,9 @@ export const apiSlice = createApi({
                 method : 'DELETE',
                 body   : params
             }),
-            invalidatesTags: (shipping, error, arg) => [
-                ...((!shipping ? [{
-                    type : 'Shippings',
-                    id   : 'SHIPPING_LIST', // delete unspecified => invalidates the whole list
-                }] : [{
-                    type : 'Shippings',
-                    id   : shipping.id,     // delete existing    => invalidates the modified
-                }]) as Array<{ type: 'Shippings', id: string }>),
-            ],
+            onCacheEntryAdded: async (arg, api) => {
+                await cumulativeUpdatePaginationCache(api, 'getShippingPage', 'DELETE', 'Shipping');
+            },
         }),
         getCountryList              : builder.query<string[], void>({
             query : () => ({
@@ -413,43 +350,26 @@ export const apiSlice = createApi({
         }),
         
         getAdminPage                : builder.query<Pagination<AdminDetail>, PaginationArgs>({
-            query : (params) => ({
+            query : (arg) => ({
                 url    : 'admins',
                 method : 'POST',
-                body   : params,
+                body   : arg,
             }),
-            providesTags: (result, error, paginationArg)  => {
-                return [
-                    ...(result?.entities ?? []).map((admin): { type: 'Admins', id: string } => ({
-                        type : 'Admins',
-                        id   : admin.id,
-                    })),
-                    
-                    {
-                        type : 'Admins',
-                        id   : paginationArg.page,
-                    },
-                ];
+            providesTags: (result, error, arg)  => {
+                return [{
+                    type : 'Admin',
+                    id   : arg.page,
+                }];
             },
         }),
         updateAdmin                 : builder.mutation<AdminDetail, MutationArgs<AdminDetail>>({
-            query: (patch) => ({
+            query: (arg) => ({
                 url    : 'admins',
                 method : 'PATCH',
-                body   : patch
+                body   : arg
             }),
-            
-            // inefficient:
-            // invalidatesTags: (admin, error, arg) => [
-            //     ...((!admin ? [] : [{
-            //         type : 'Admins',
-            //         id   : admin.id,
-            //     }]) as Array<{ type: 'Admins', id: string }>),
-            // ],
-            
-            // more efficient:
             onCacheEntryAdded: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getAdminPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'Admins');
+                await cumulativeUpdatePaginationCache(api, 'getAdminPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'Admin');
             },
         }),
         deleteAdmin                 : builder.mutation<Pick<AdminDetail, 'id'>, MutationArgs<Pick<AdminDetail, 'id'>>>({
@@ -458,15 +378,9 @@ export const apiSlice = createApi({
                 method : 'DELETE',
                 body   : params
             }),
-            invalidatesTags: (admin, error, arg) => [
-                ...((!admin ? [{
-                    type : 'Admins',
-                    id   : 'ADMIN_LIST', // delete unspecified => invalidates the whole list
-                }] : [{
-                    type : 'Admins',
-                    id   : admin.id,     // delete existing    => invalidates the modified
-                }]) as Array<{ type: 'Admins', id: string }>),
-            ],
+            onCacheEntryAdded: async (arg, api) => {
+                await cumulativeUpdatePaginationCache(api, 'getAdminPage', 'DELETE', 'Admin');
+            },
         }),
         availableUsername           : builder.query<boolean, string>({
             query: (username) => ({
