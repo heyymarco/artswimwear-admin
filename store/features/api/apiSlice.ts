@@ -5,11 +5,13 @@ import type { BaseEndpointDefinition, MutationCacheLifecycleApi }   from '@redux
 import type { UseQuery, UseQueryHookResult }                        from '@reduxjs/toolkit/dist/query/react/buildHooks'
 
 // types:
-import type {
-    PaginationArgs,
-    Pagination,
+import {
+    type Model,
     
-    MutationArgs,
+    type PaginationArgs,
+    type Pagination,
+    
+    type MutationArgs,
 }                           from '@/libs/types'
 
 // models:
@@ -588,10 +590,10 @@ export const {
 
 
 // utilities:
-const selectIdFromEntry     = <TEntry extends { id: string }>(entry: TEntry): string => {
+const selectIdFromEntry     = <TEntry extends Model>(entry: TEntry): string => {
     return entry.id;
 };
-const selectIndexOfId       = <TEntry extends { id: string }>(data: unknown, id: string): number => {
+const selectIndexOfId       = <TEntry extends Model>(data: unknown, id: string): number => {
     const paginationData = data as Pagination<TEntry>;
     return paginationData.entities.findIndex((searchEntry) => (selectIdFromEntry<TEntry>(searchEntry) === id));
 };
@@ -619,7 +621,7 @@ const selectRangeFromArg    = (originalArg: unknown): { indexStart: number, inde
         perPage,
     };
 };
-const selectEntriesFromData = <TEntry extends { id: string }>(data: unknown): TEntry[] => {
+const selectEntriesFromData = <TEntry extends Model>(data: unknown): TEntry[] => {
     const paginationData = data as Pagination<TEntry>;
     return paginationData.entities;
 };
@@ -632,7 +634,7 @@ type UpdateType =
     |'CREATE'
     |'UPDATE'
     |'DELETE'
-const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationCacheLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, updateType: UpdateType, invalidateTag: Extract<Parameters<typeof apiSlice.util.invalidateTags>[0][number], string>) => {
+const cumulativeUpdatePaginationCache = async <TEntry extends Model, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationCacheLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, updateType: UpdateType, invalidateTag: Extract<Parameters<typeof apiSlice.util.invalidateTags>[0][number], string>) => {
     // mutated TEntry data:
     const { data: mutatedEntry } = await api.cacheDataLoaded;
     const mutatedId = selectIdFromEntry<TEntry>(mutatedEntry);
