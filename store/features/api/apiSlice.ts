@@ -758,7 +758,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         
         
         //#region BACKUP the entries from paginations (which will be shifted) 
-        const mergedEntryList : TEntry[] = [];
+        const mergedEntryList : TEntry[] = []; // use an `Array<TEntry>` instead of `Map<number, TEntry>`, so we can SHIFT the key easily
         for (const shiftedPaginationQueryCache of shiftedPaginationQueryCaches) {
             const {
                 indexStart, // the first_entry_index of the first_entry of current pagination
@@ -767,21 +767,14 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             
             
             
+            /*
+                Only the last_entry of current pagination is useful for backup.
+                After the whole `mergedEntryList` shifted_down, the last_entry becomes the first_entry of the next pagination chains.
+            */
             const paginationEntries = selectEntriesFromData(shiftedPaginationQueryCache.data);
-            for (
-                let indexCopy    = indexStart,
-                    indexBase    = 0,
-                    indexBaseMax = paginationEntries.length - 1
-                    ;
-                    (indexCopy <= indexEnd)
-                    &&
-                    (indexBase <= indexBaseMax)
-                    ;
-                    indexCopy++,
-                    indexBase++
-            ) {
-                mergedEntryList[indexCopy] = paginationEntries[indexBase];
-            } // for
+            const relativeIndexEnd = indexEnd - indexStart;
+            const entryEnd = (relativeIndexEnd < paginationEntries.length) ? paginationEntries[relativeIndexEnd] : undefined;
+            if (entryEnd !== undefined) mergedEntryList[indexEnd] = entryEnd;
         } // for
         //#endregion BACKUP the entries from paginations (which will be shifted) 
         
@@ -803,61 +796,27 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             
             
             
-            const neighboringEntry : TEntry|undefined = mergedEntryList?.[indexStart]; // take the *valid* first_entry of current pagination, the old_first_entry...the_2nd_last_entry will be 2nd_first_entry...last_entry
-            if (neighboringEntry === undefined) {
-                // clear current pagination cache:
+            const entryStart : TEntry|undefined = mergedEntryList?.[indexStart]; // take the *valid* first_entry of current pagination, the old_first_entry...the_2nd_last_entry will be 2nd_first_entry...last_entry
+            if (entryStart === undefined) {
+                // UNABLE to reconstruct current pagination cache => invalidate the cache:
                 api.dispatch(
                     apiSlice.util.invalidateTags([{ type: invalidateTag, id: page }])
                 );
             }
             else {
-                // update cache:
+                // reconstruct current pagination cache:
                 api.dispatch(
                     apiSlice.util.updateQueryData(endpointName, originalArgs as PaginationArgs, (shiftedPaginationQueryCacheData) => {
-                        shiftedPaginationQueryCacheData.entities.unshift(neighboringEntry as any); // append the neighboringEntry at first index
+                        shiftedPaginationQueryCacheData.entities.unshift(entryStart as any); // append the entryStart at first index
                         shiftedPaginationQueryCacheData.total = newTotalEntries; // update the total data
                         
                         // allows growing up to perPage size BUT limits growing more than perPage size:
                         if (shiftedPaginationQueryCacheData.entities.length > validPerPage) shiftedPaginationQueryCacheData.entities.pop();
-                        
-                        // the limited_entry will be placed at a new pagination
                     })
                 );
             } // if
         } // for
         //#endregion RESTORE the shifted paginations from the backup
-        
-        
-        
-        //#region RESTORE the limited_entry, if not found in paginations
-        const limitedEntryIndex = mergedEntryList.length - 1;
-        if (!shiftedPaginationQueryCaches.some(({ originalArgs, data }) => {
-            const indexLast = (
-                selectRangeFromArg(originalArgs).indexStart
-                +
-                (selectEntriesFromData(data).length - 1)
-            );
-            return (indexLast >= limitedEntryIndex);
-        })) {
-            const limitedEntry = mergedEntryList[limitedEntryIndex];
-            const newPagination : Pagination<TEntry> = {
-                total    : newTotalEntries,
-                entities : [
-                    limitedEntry,
-                ],
-            };
-            
-            
-            
-            // append new cache:
-            api.dispatch(
-                apiSlice.util.upsertQueryData(endpointName, /* args: */ {
-                    page    : Math.ceil(newTotalEntries / validPerPage),
-                    perPage : validPerPage
-                }, /* value: */ (newPagination as Pagination<any>))
-            );
-        } // if
-        //#endregion RESTORE the limited_entry, if not found in paginations
     }
     
     /* delete existing data: COMPLEX: the number of paginations is scaled_down */
@@ -917,26 +876,18 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         for (const shiftedPaginationQueryCache of shiftedPaginationQueryCaches) {
             const {
                 indexStart, // the first_entry_index of the first_entry of current pagination
-                indexEnd,   // the last_entry_index  of the first_entry of current pagination
             } = selectRangeFromArg(shiftedPaginationQueryCache.originalArgs);
             
             
             
+            /*
+                Only the first_entry of current pagination is useful for backup.
+                After the whole `mergedEntryList` shifted_up, the first_entry becomes the last_entry of the prev pagination chains.
+            */
             const paginationEntries = selectEntriesFromData(shiftedPaginationQueryCache.data);
-            for (
-                let indexCopy    = indexStart,
-                    indexBase    = 0,
-                    indexBaseMax = paginationEntries.length - 1
-                    ;
-                    (indexCopy <= indexEnd)
-                    &&
-                    (indexBase <= indexBaseMax)
-                    ;
-                    indexCopy++,
-                    indexBase++
-            ) {
-                mergedEntryList[indexCopy] = paginationEntries[indexBase];
-            } // for
+            const relativeIndexStart = 0;
+            const entryStart = (relativeIndexStart < paginationEntries.length) ? paginationEntries[relativeIndexStart] : undefined;
+            if (entryStart !== undefined) mergedEntryList[indexStart] = entryStart;
         } // for
         //#endregion BACKUP the entries from paginations (which will be shifted) 
         
@@ -953,19 +904,15 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
         for (const { originalArgs, data } of shiftedPaginationQueryCaches) {
             const {
                 indexStart, // the first_entry_index of the first_entry of current pagination
+                indexEnd,   // the last_entry_index  of the first_entry of current pagination
                 page,
             } = selectRangeFromArg(originalArgs);
-            const indexLast = (
-                indexStart
-                +
-                (selectEntriesFromData(data).length - 1)
-            );
             
             
             
-            const neighboringEntry : TEntry|undefined = mergedEntryList?.[indexLast]; // take the *valid* last_entry of current pagination, the old_2nd_first_entry...the_last_entry will be first_entry...2nd_last_entry
-            if (neighboringEntry === undefined) {
-                // clear current pagination cache:
+            const entryEnd : TEntry|undefined = mergedEntryList?.[indexEnd]; // take the *valid* last_entry of current pagination, the old_2nd_first_entry...the_last_entry will be first_entry...2nd_last_entry
+            if (entryEnd === undefined) {
+                // UNABLE to reconstruct current pagination cache => invalidate the cache:
                 api.dispatch(
                     apiSlice.util.invalidateTags([{ type: invalidateTag, id: page }])
                 );
@@ -974,13 +921,19 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                 // update cache:
                 api.dispatch(
                     apiSlice.util.updateQueryData(endpointName, originalArgs as PaginationArgs, (shiftedPaginationQueryCacheData) => {
+                        const indexLast = (
+                            indexStart
+                            +
+                            (selectEntriesFromData(data).length - 1)
+                        );
                         if ((indexStart >= indexDeleted) && (indexLast <= indexDeleted)) {
-                            shiftedPaginationQueryCacheData.entities.splice(indexDeleted - indexStart, 1); // remove the deleted entry at specific index
+                            const relativeIndexDeleted = indexDeleted - indexStart;
+                            shiftedPaginationQueryCacheData.entities.splice(relativeIndexDeleted, 1); // remove the deleted entry at specific index
                         }
                         else {
                             shiftedPaginationQueryCacheData.entities.shift(); // remove the first entry for shifting
                         } // if
-                        shiftedPaginationQueryCacheData.entities.push(neighboringEntry as any); // append the neighboringEntry at last index to maintain perPage size
+                        shiftedPaginationQueryCacheData.entities.push(entryEnd as any); // append the entryEnd at last index to maintain perPage size
                         shiftedPaginationQueryCacheData.total = newTotalEntries; // update the total data
                     })
                 );
