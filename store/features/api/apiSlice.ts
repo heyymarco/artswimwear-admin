@@ -796,7 +796,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             
             
             
-            const entryStart : TEntry|undefined = mergedEntryList?.[indexStart]; // take the *valid* first_entry of current pagination, the old_first_entry...the_2nd_last_entry will be 2nd_first_entry...last_entry
+            const entryStart = mergedEntryList?.[indexStart] as TEntry|undefined; // take the *valid* first_entry of current pagination, the old_first_entry...the_2nd_last_entry will be 2nd_first_entry...last_entry
             if (entryStart === undefined) {
                 // UNABLE to reconstruct current pagination cache => invalidate the cache:
                 api.dispatch(
@@ -910,7 +910,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             
             
             
-            const entryEnd : TEntry|undefined = mergedEntryList?.[indexEnd]; // take the *valid* last_entry of current pagination, the old_2nd_first_entry...the_last_entry will be first_entry...2nd_last_entry
+            const entryEnd = mergedEntryList?.[indexEnd] as TEntry|undefined; // take the *valid* last_entry of current pagination, the old_2nd_first_entry...the_last_entry will be first_entry...2nd_last_entry
             if (entryEnd === undefined) {
                 // UNABLE to reconstruct current pagination cache => invalidate the cache:
                 api.dispatch(
