@@ -794,9 +794,10 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                 page,
             } = selectRangeFromArg(originalArgs);
             
+            const entryStart = mergedEntryList[indexStart] as TEntry|undefined; // take the *valid* first_entry of current pagination, the old_first_entry...the_2nd_last_entry will be 2nd_first_entry...last_entry
             
             
-            const entryStart = mergedEntryList?.[indexStart] as TEntry|undefined; // take the *valid* first_entry of current pagination, the old_first_entry...the_2nd_last_entry will be 2nd_first_entry...last_entry
+            
             if (entryStart === undefined) {
                 // UNABLE to reconstruct current pagination cache => invalidate the cache:
                 api.dispatch(
@@ -807,11 +808,20 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                 // reconstruct current pagination cache:
                 api.dispatch(
                     apiSlice.util.updateQueryData(endpointName, originalArgs as PaginationArgs, (shiftedPaginationQueryCacheData) => {
-                        (shiftedPaginationQueryCacheData.entities as unknown as TEntry[]).unshift(entryStart); // append the entryStart at first index
-                        shiftedPaginationQueryCacheData.total = newTotalEntries; // update the total data
+                        // RESTORE the entryStart at the BEGINNING of the pagination:
+                        (shiftedPaginationQueryCacheData.entities as unknown as TEntry[]).unshift(entryStart);
                         
-                        // allows growing up to perPage size BUT limits growing more than perPage size:
-                        if (shiftedPaginationQueryCacheData.entities.length > validPerPage) shiftedPaginationQueryCacheData.entities.pop();
+                        
+                        
+                        // update the total data:
+                        shiftedPaginationQueryCacheData.total = newTotalEntries;
+                        
+                        
+                        
+                        // if OVERFLOW pagination size => remove the last entry:
+                        if (shiftedPaginationQueryCacheData.entities.length > validPerPage) {
+                            shiftedPaginationQueryCacheData.entities.pop();
+                        } // if
                     })
                 );
             } // if
@@ -907,18 +917,11 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                 page,
             } = selectRangeFromArg(originalArgs);
             
+            const entryEnd = mergedEntryList[indexEnd] as TEntry|undefined; // take the *valid* last_entry of current pagination, the old_2nd_first_entry...the_last_entry will be first_entry...2nd_last_entry
             
             
-            const entryEnd = mergedEntryList?.[indexEnd] as TEntry|undefined; // take the *valid* last_entry of current pagination, the old_2nd_first_entry...the_last_entry will be first_entry...2nd_last_entry
-            // // if (entryEnd === undefined) {
-            // //     // UNABLE to reconstruct current pagination cache => invalidate the cache:
-            // //     api.dispatch(
-            // //         apiSlice.util.invalidateTags([{ type: invalidateTag, id: page }])
-            // //     );
-            // // }
-            // // else {
-            // // } // if
-            // update cache:
+            
+            // reconstruct current pagination cache:
             api.dispatch(
                 apiSlice.util.updateQueryData(endpointName, originalArgs as PaginationArgs, (shiftedPaginationQueryCacheData) => {
                     const indexLast = (
@@ -927,19 +930,31 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
                         (selectEntriesFromData(data).length - 1)
                     );
                     if ((indexStart >= indexDeleted) && (indexLast <= indexDeleted)) {
+                        // REMOVE the deleted entry at specific index:
                         const relativeIndexDeleted = indexDeleted - indexStart;
-                        shiftedPaginationQueryCacheData.entities.splice(relativeIndexDeleted, 1); // remove the deleted entry at specific index
+                        shiftedPaginationQueryCacheData.entities.splice(relativeIndexDeleted, 1);
                     }
                     else {
-                        shiftedPaginationQueryCacheData.entities.shift(); // remove the first entry for shifting
+                        // because ONE entry in prev pagination has been DELETED => ALL subsequent paginations are SHIFTED_UP:
+                        // REMOVE the first entry for shifting:
+                        shiftedPaginationQueryCacheData.entities.shift();
                     } // if
-                    if (entryEnd !== undefined) (shiftedPaginationQueryCacheData.entities as unknown as TEntry[]).push(entryEnd); // append the entryEnd at last index to maintain perPage size
-                    shiftedPaginationQueryCacheData.total = newTotalEntries; // update the total data
                     
                     
                     
+                    // a shifting compensation to maintain pagination size (if possible):
+                    // RESTORE the entryStart at the END of the pagination:
+                    if (entryEnd !== undefined /* if possible */) (shiftedPaginationQueryCacheData.entities as unknown as TEntry[]).push(entryEnd);
+                    
+                    
+                    
+                    // update the total data:
+                    shiftedPaginationQueryCacheData.total = newTotalEntries;
+                    
+                    
+                    
+                    // if UNDERFLOW (empty) pagination size => invalidate the cache:
                     if (!shiftedPaginationQueryCacheData.entities.length) {
-                        // EMPTY pagination cache => invalidate the cache:
                         api.dispatch(
                             apiSlice.util.invalidateTags([{ type: invalidateTag, id: page }])
                         );
