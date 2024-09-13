@@ -924,6 +924,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends { id: string }, TQ
             // reconstruct current pagination cache:
             api.dispatch(
                 apiSlice.util.updateQueryData(endpointName, originalArgs as PaginationArgs, (shiftedPaginationQueryCacheData) => {
+                    // Shift up at the top/middle of pagination:
                     const indexLast = (
                         indexStart
                         +
