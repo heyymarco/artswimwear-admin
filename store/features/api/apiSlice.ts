@@ -594,7 +594,7 @@ const selectIdFromEntry     = <TEntry extends Model|string>(entry: TEntry): stri
     return (typeof(entry) === 'string') ? entry : entry.id;
 };
 const selectEntriesFromData = <TEntry extends Model|string>(data: unknown): TEntry[] => {
-    const items = Array.isArray(data) ? data : (data as Pagination<TEntry>).entities;
+    const items = Array.isArray(data) ? (data as TEntry[]) : (data as Pagination<TEntry>).entities;
     return items;
 };
 const selectIndexOfId       = <TEntry extends Model|string>(data: unknown, id: string): number => {
@@ -800,9 +800,9 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
     else {
         const deletedPaginationIndices = (
             paginationQueryCaches
-            .map((paginationQueryCache) => ({
-                indexStart        : selectRangeFromArg(paginationQueryCache.originalArgs).indexStart,
-                indexLocalDeleted : selectIndexOfId<TEntry>(paginationQueryCache.data, mutatedId),
+            .map(({ originalArgs, data }) => ({
+                indexStart        : selectRangeFromArg(originalArgs).indexStart,
+                indexLocalDeleted : selectIndexOfId<TEntry>(data, mutatedId),
             }))
             .filter(({ indexLocalDeleted }) =>
                 (indexLocalDeleted >= 0) // is FOUND
