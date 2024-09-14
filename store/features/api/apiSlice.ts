@@ -116,7 +116,7 @@ export const apiSlice = createApi({
     baseQuery : axiosBaseQuery({
         baseUrl: `${process.env.NEXT_PUBLIC_APP_URL ?? ''}/api`
     }),
-    tagTypes: ['Product', 'TemplateVariantGroups', 'Order', 'DefaultShippingOrigins', 'Shipping', 'States', 'Admin', 'Preferences', 'Roles'],
+    tagTypes: ['Product', 'TemplateVariantGroup', 'Order', 'DefaultShippingOrigins', 'Shipping', 'States', 'Admin', 'Preferences', 'Role'],
     endpoints : (builder) => ({
         getProductList              : builder.query<EntityState<ProductPreview>, void>({
             query : () => ({
@@ -175,51 +175,29 @@ export const apiSlice = createApi({
             transformResponse(response: TemplateVariantGroupDetail[]) {
                 return templateVariantGroupListAdapter.addMany(templateVariantGroupListAdapter.getInitialState(), response);
             },
-            providesTags: (result, error, page)  => {
-                return [
-                    ...(result?.ids ?? []).map((id): { type: 'TemplateVariantGroups', id: string } => ({
-                        type : 'TemplateVariantGroups',
-                        id   : `${id}`,
-                    })),
-                    
-                    {
-                        type : 'TemplateVariantGroups',
-                        id   : 'TEMPLATE_VARIANT_LIST',
-                    },
-                ];
+            providesTags: (result, error, arg)  => {
+                return ['TemplateVariantGroup'];
             },
         }),
         updateTemplateVariantGroup  : builder.mutation<TemplateVariantGroupDetail, MutationArgs<TemplateVariantGroupDetail>>({
-            query: (patch) => ({
+            query: (arg) => ({
                 url    : 'products/template-variants',
                 method : 'PATCH',
-                body   : patch
+                body   : arg
             }),
-            invalidatesTags: (templateVariantGroup, error, arg) => [
-                ...(((!arg.id || !templateVariantGroup) ? [{
-                    type : 'TemplateVariantGroups',
-                    id   : 'TEMPLATE_VARIANT_LIST', // create new      => invalidates the whole list
-                }] : [{
-                    type : 'TemplateVariantGroups',
-                    id   : templateVariantGroup.id,     // update existing => invalidates the modified
-                }]) as Array<{ type: 'TemplateVariantGroups', id: string }>),
-            ],
+            onCacheEntryAdded: async (arg, api) => {
+                await cumulativeUpdateEntityCache(api, 'getTemplateVariantGroupList', (arg.id === '') ? 'CREATE' : 'UPDATE', 'TemplateVariantGroup');
+            },
         }),
         deleteTemplateVariantGroup  : builder.mutation<Pick<TemplateVariantGroupDetail, 'id'>, MutationArgs<Pick<TemplateVariantGroupDetail, 'id'>>>({
-            query: (params) => ({
+            query: (arg) => ({
                 url    : 'products/template-variants',
                 method : 'DELETE',
-                body   : params
+                body   : arg
             }),
-            invalidatesTags: (templateVariantGroup, error, arg) => [
-                ...((!templateVariantGroup ? [{
-                    type : 'TemplateVariantGroups',
-                    id   : 'TEMPLATE_VARIANT_LIST', // delete unspecified => invalidates the whole list
-                }] : [{
-                    type : 'TemplateVariantGroups',
-                    id   : templateVariantGroup.id,     // delete existing    => invalidates the modified
-                }]) as Array<{ type: 'TemplateVariantGroups', id: string }>),
-            ],
+            onCacheEntryAdded: async (arg, api) => {
+                await cumulativeUpdateEntityCache(api, 'getTemplateVariantGroupList', 'DELETE', 'TemplateVariantGroup');
+            },
         }),
         
         getOrderPage                : builder.query<Pagination<OrderDetail>, PaginationArgs>({
@@ -411,51 +389,29 @@ export const apiSlice = createApi({
             transformResponse(response: RoleDetail[]) {
                 return roleListAdapter.addMany(roleListAdapter.getInitialState(), response);
             },
-            providesTags: (result, error, page)  => {
-                return [
-                    ...(result?.ids ?? []).map((id): { type: 'Roles', id: string } => ({
-                        type : 'Roles',
-                        id   : `${id}`,
-                    })),
-                    
-                    {
-                        type : 'Roles',
-                        id   : 'ROLE_LIST',
-                    },
-                ];
+            providesTags: (result, error, arg)  => {
+                return ['Role'];
             },
         }),
         updateRole                  : builder.mutation<RoleDetail, MutationArgs<RoleDetail>>({
-            query: (patch) => ({
+            query: (arg) => ({
                 url    : 'roles',
                 method : 'PATCH',
-                body   : patch
+                body   : arg
             }),
-            invalidatesTags: (role, error, arg) => [
-                ...(((!arg.id || !role) ? [{
-                    type : 'Roles',
-                    id   : 'ROLE_LIST', // create new      => invalidates the whole list
-                }] : [{
-                    type : 'Roles',
-                    id   : role.id,     // update existing => invalidates the modified
-                }]) as Array<{ type: 'Roles', id: string }>),
-            ],
+            onCacheEntryAdded: async (arg, api) => {
+                await cumulativeUpdateEntityCache(api, 'getRoleList', (arg.id === '') ? 'CREATE' : 'UPDATE', 'Role');
+            },
         }),
         deleteRole                  : builder.mutation<Pick<RoleDetail, 'id'>, MutationArgs<Pick<RoleDetail, 'id'>>>({
-            query: (params) => ({
+            query: (arg) => ({
                 url    : 'roles',
                 method : 'DELETE',
-                body   : params
+                body   : arg
             }),
-            invalidatesTags: (role, error, arg) => [
-                ...((!role ? [{
-                    type : 'Roles',
-                    id   : 'ROLE_LIST', // delete unspecified => invalidates the whole list
-                }] : [{
-                    type : 'Roles',
-                    id   : role.id,     // delete existing    => invalidates the modified
-                }]) as Array<{ type: 'Roles', id: string }>),
-            ],
+            onCacheEntryAdded: async (arg, api) => {
+                await cumulativeUpdateEntityCache(api, 'getRoleList', 'DELETE', 'Role');
+            },
         }),
         availableRolename           : builder.query<boolean, string>({
             query: (name) => ({
