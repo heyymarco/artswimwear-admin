@@ -590,8 +590,12 @@ export const {
 
 
 // utilities:
-const selectIdFromEntry     = <TEntry extends Model|string>(entry: TEntry): string => {
-    return (typeof(entry) === 'string') ? entry : entry.id;
+const selectTotalFromData   = (data: unknown): number => {
+    return (
+        ('ids' in (data as EntityState<unknown>|Pagination<unknown>))
+        ? (data as EntityState<unknown>).ids.length
+        : (data as Pagination<unknown>).total
+    );
 };
 const selectEntriesFromData = <TEntry extends Model|string>(data: unknown): TEntry[] => {
     const items = (
@@ -600,6 +604,9 @@ const selectEntriesFromData = <TEntry extends Model|string>(data: unknown): TEnt
         : (data as Pagination<TEntry>).entities
     );
     return items;
+};
+const selectIdFromEntry     = <TEntry extends Model|string>(entry: TEntry): string => {
+    return (typeof(entry) === 'string') ? entry : entry.id;
 };
 const selectIndexOfId       = <TEntry extends Model|string>(data: unknown, id: string): number => {
     return (
@@ -641,13 +648,6 @@ const selectRangeFromArg    = (originalArg: unknown): { indexStart: number, inde
         page,
         perPage,
     };
-};
-const selectTotalFromData   = (data: unknown): number => {
-    return (
-        ('ids' in (data as EntityState<unknown>|Pagination<unknown>))
-        ? (data as EntityState<unknown>).ids.length
-        : (data as Pagination<unknown>).total
-    );
 };
 
 type UpdateType =
