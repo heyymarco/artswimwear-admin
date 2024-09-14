@@ -662,6 +662,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
             
             
             /*
+                Assumes the other pagination caches having the same perPage size:
                 Only the last_entry of current pagination is useful for backup.
                 After the whole `mergedEntryList` shifted_down, the last_entry becomes the first_entry of the next pagination chains.
             */
@@ -791,6 +792,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
             
             
             /*
+                Assumes the other pagination caches having the same perPage size:
                 Only the first_entry of current pagination is useful for backup.
                 After the whole `mergedEntryList` shifted_up, the first_entry becomes the last_entry of the prev pagination chains.
             */
