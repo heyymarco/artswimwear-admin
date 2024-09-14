@@ -839,7 +839,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
                 
                 
                 return (
-                    (indexDeleted >= indexStart) && (indexDeleted <= indexLast) // the deleted_pagination => within indexStart to indexLast
+                    ((indexDeleted >= indexStart) && (indexDeleted <= indexLast)) // the deleted_pagination => within indexStart to indexLast
                     ||
                     (indexStart > indexDeleted) // the shifted_up_pagination => below the deleted_pagination
                 );
