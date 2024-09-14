@@ -648,7 +648,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
     // find related TEntry data(s):
     const state                 = api.getState();
     const allQueryCaches        = state.api.queries;
-    const paginationQueryCaches = (
+    const collectionQueryCaches = (
         Object.values(allQueryCaches)
         .filter((allQueryCache): allQueryCache is Exclude<typeof allQueryCache, undefined> =>
             (allQueryCache !== undefined)
@@ -661,12 +661,12 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
     
     
     
-    const lastPaginationQueryCache       = paginationQueryCaches?.[paginationQueryCaches.length - 1];
-    const validTotalEntries              = selectTotalFromData(lastPaginationQueryCache);
-    const hasInvalidPaginationQueryCache = paginationQueryCaches.some((paginationQueryCache) =>
+    const lastCollectionQueryCache       = collectionQueryCaches?.[collectionQueryCaches.length - 1];
+    const validTotalEntries              = selectTotalFromData(lastCollectionQueryCache);
+    const hasInvalidCollectionQueryCache = collectionQueryCaches.some((paginationQueryCache) =>
         (selectTotalFromData(paginationQueryCache) !== validTotalEntries)
     );
-    if (hasInvalidPaginationQueryCache) {
+    if (hasInvalidCollectionQueryCache) {
         // the queryCaches has a/some inconsistent data => panic => clear all the caches and (may) trigger the rtk to re-fetch
         
         // clear caches:
@@ -681,7 +681,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
     /* update existing data: SIMPLE: the number of paginations is unchanged */
     if (updateType === 'UPDATE') {
         const updatedPaginationQueryCaches = (
-            paginationQueryCaches
+            collectionQueryCaches
             .filter(({ data }) =>
                 (selectIndexOfId<TEntry>(data, mutatedId) >= 0) // is FOUND
             )
@@ -694,9 +694,9 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
         
         
         // update cache:
-        for (const updatedPaginationQueryCache of updatedPaginationQueryCaches) {
+        for (const { originalArgs } of updatedPaginationQueryCaches) {
             api.dispatch(
-                apiSlice.util.updateQueryData(endpointName, updatedPaginationQueryCache.originalArgs as PaginationArgs, (updatedPaginationQueryCacheData) => {
+                apiSlice.util.updateQueryData(endpointName, originalArgs as PaginationArgs, (updatedPaginationQueryCacheData) => {
                     const currentEntryIndex = selectIndexOfId(updatedPaginationQueryCacheData, mutatedId);
                     if (currentEntryIndex < 0) return; // not found => nothing to update
                     (updatedPaginationQueryCacheData.entities as unknown as TEntry[])[currentEntryIndex] = (mutatedEntry); // replace oldEntry with mutatedEntry
@@ -712,8 +712,8 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
             [876] [543] [210] + 9 => [987] [654] [321] [0]
             page1 page2 page3        page1 page2 page3 pageTail
         */
-        const shiftedPaginationQueryCaches = paginationQueryCaches;
-        if (!shiftedPaginationQueryCaches.length) {
+        const shiftedCollectionQueryCaches = collectionQueryCaches;
+        if (!shiftedCollectionQueryCaches.length) {
             return; // cache not found => no further reconstruct
         } // if
         
@@ -725,11 +725,11 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
         
         //#region BACKUP the entries from paginations (which will be shifted) 
         const mergedEntryList : TEntry[] = []; // use an `Array<TEntry>` instead of `Map<number, TEntry>`, so we can SHIFT the key easily
-        for (const shiftedPaginationQueryCache of shiftedPaginationQueryCaches) {
+        for (const { originalArgs, data } of shiftedCollectionQueryCaches) {
             const {
                 indexStart, // the global first_entry_index
                 indexEnd,   // the global last_entry_index
-            } = selectRangeFromArg(shiftedPaginationQueryCache.originalArgs);
+            } = selectRangeFromArg(originalArgs);
             
             
             
@@ -737,7 +737,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
                 Only the last_entry of current pagination is useful for backup.
                 After the whole `mergedEntryList` shifted_down, the last_entry becomes the first_entry of the next pagination chains.
             */
-            const paginationEntries = selectEntriesFromData<TEntry>(shiftedPaginationQueryCache.data);
+            const paginationEntries = selectEntriesFromData<TEntry>(data);
             const relativeIndexEnd = indexEnd - indexStart; // a zero based starting index, select the LAST pagination entry
             const entryEnd = (relativeIndexEnd < paginationEntries.length) ? paginationEntries[relativeIndexEnd] : undefined;
             if (entryEnd !== undefined) mergedEntryList[indexEnd] = entryEnd; // if exists, copy the LAST pagination entry
@@ -754,7 +754,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
         
         
         //#region RESTORE the shifted paginations from the backup
-        for (const { originalArgs } of shiftedPaginationQueryCaches) {
+        for (const { originalArgs } of shiftedCollectionQueryCaches) {
             const {
                 indexStart, // the global first_entry_index
                 page,
@@ -799,7 +799,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
     /* delete existing data: COMPLEX: the number of paginations is scaled_down */
     else {
         const deletedPaginationIndices = (
-            paginationQueryCaches
+            collectionQueryCaches
             .map(({ originalArgs, data }) => ({
                 indexStart        : selectRangeFromArg(originalArgs).indexStart,
                 indexLocalDeleted : selectIndexOfId<TEntry>(data, mutatedId),
@@ -825,8 +825,8 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
         
         
         
-        const shiftedPaginationQueryCaches = (
-            paginationQueryCaches
+        const shiftedCollectionQueryCaches = (
+            collectionQueryCaches
             .filter(({ originalArgs, data }) => {
                 const {
                     indexStart,
@@ -855,10 +855,10 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
         
         //#region BACKUP the entries from paginations (which will be shifted) 
         const mergedEntryList : TEntry[] = []; // use an `Array<TEntry>` instead of `Map<number, TEntry>`, so we can SHIFT the key easily
-        for (const shiftedPaginationQueryCache of shiftedPaginationQueryCaches) {
+        for (const { originalArgs, data } of shiftedCollectionQueryCaches) {
             const {
                 indexStart, // the global first_entry_index
-            } = selectRangeFromArg(shiftedPaginationQueryCache.originalArgs);
+            } = selectRangeFromArg(originalArgs);
             
             
             
@@ -866,7 +866,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
                 Only the first_entry of current pagination is useful for backup.
                 After the whole `mergedEntryList` shifted_up, the first_entry becomes the last_entry of the prev pagination chains.
             */
-            const paginationEntries = selectEntriesFromData<TEntry>(shiftedPaginationQueryCache.data);
+            const paginationEntries = selectEntriesFromData<TEntry>(data);
             const entryStart = paginationEntries[0] as TEntry|undefined; // a zero based starting index, select the FIRST pagination entry
             if (entryStart !== undefined) mergedEntryList[indexStart] = entryStart; // if exists, copy the FIRST pagination entry
         } // for
@@ -882,7 +882,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
         
         
         //#region RESTORE the shifted paginations from the backup
-        for (const { originalArgs, data } of shiftedPaginationQueryCaches) {
+        for (const { originalArgs, data } of shiftedCollectionQueryCaches) {
             const {
                 indexStart, // the global first_entry_index
                 indexEnd,   // the global last_entry_index
