@@ -677,10 +677,14 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
     
     
     
-    const lastCollectionQueryCache       = collectionQueryCaches?.[collectionQueryCaches.length - 1];
-    const validTotalEntries              = selectTotalFromData(lastCollectionQueryCache);
-    const hasInvalidCollectionQueryCache = collectionQueryCaches.some((collectionQueryCache) =>
-        (selectTotalFromData(collectionQueryCache) !== validTotalEntries)
+    const lastCollectionQueryCache       = collectionQueryCaches.length ? collectionQueryCaches[collectionQueryCaches.length - 1] : undefined;
+    if (lastCollectionQueryCache === undefined) {
+        // there's no queryCaches to update => nothing to do
+        return;
+    } // if
+    const validTotalEntries              = selectTotalFromData(lastCollectionQueryCache.data);
+    const hasInvalidCollectionQueryCache = collectionQueryCaches.some(({ data }) =>
+        (selectTotalFromData(data) !== validTotalEntries)
     );
     if (hasInvalidCollectionQueryCache) {
         // the queryCaches has a/some inconsistent data => panic => clear all the caches and (may) trigger the rtk to re-fetch
@@ -977,10 +981,14 @@ const cumulativeUpdateEntityCache     = async <TEntry extends Model|string, TQue
     
     
     
-    const lastCollectionQueryCache       = collectionQueryCaches?.[collectionQueryCaches.length - 1];
-    const validTotalEntries              = selectTotalFromData(lastCollectionQueryCache);
-    const hasInvalidCollectionQueryCache = collectionQueryCaches.some((collectionQueryCache) =>
-        (selectTotalFromData(collectionQueryCache) !== validTotalEntries)
+    const lastCollectionQueryCache       = collectionQueryCaches.length ? collectionQueryCaches[collectionQueryCaches.length - 1] : undefined;
+    if (lastCollectionQueryCache === undefined) {
+        // there's no queryCaches to update => nothing to do
+        return;
+    } // if
+    const validTotalEntries              = selectTotalFromData(lastCollectionQueryCache.data);
+    const hasInvalidCollectionQueryCache = collectionQueryCaches.some(({ data }) =>
+        (selectTotalFromData(data) !== validTotalEntries)
     );
     if (hasInvalidCollectionQueryCache) {
         // the queryCaches has a/some inconsistent data => panic => clear all the caches and (may) trigger the rtk to re-fetch
