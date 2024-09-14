@@ -1,4 +1,4 @@
-import { createEntityAdapter, EntityState }                         from '@reduxjs/toolkit'
+import { createEntityAdapter, EntityState, Dictionary }                         from '@reduxjs/toolkit'
 import { BaseQueryFn, createApi, QueryStatus }                      from '@reduxjs/toolkit/query/react'
 import type { QuerySubState }                                       from '@reduxjs/toolkit/dist/query/core/apiState'
 import type { BaseEndpointDefinition, MutationCacheLifecycleApi }   from '@reduxjs/toolkit/dist/query/endpointDefinitions'
@@ -594,14 +594,27 @@ const selectIdFromEntry     = <TEntry extends Model|string>(entry: TEntry): stri
     return (typeof(entry) === 'string') ? entry : entry.id;
 };
 const selectEntriesFromData = <TEntry extends Model|string>(data: unknown): TEntry[] => {
-    const items = Array.isArray(data) ? (data as TEntry[]) : (data as Pagination<TEntry>).entities;
+    const items = (
+        ('ids' in (data as EntityState<TEntry>|Pagination<TEntry>))
+        ? Object.values((data as EntityState<TEntry>).entities).filter((entity) : entity is Exclude<typeof entity, undefined> => (entity !== undefined))
+        : (data as Pagination<TEntry>).entities
+    );
     return items;
 };
 const selectIndexOfId       = <TEntry extends Model|string>(data: unknown, id: string): number => {
     return (
-        selectEntriesFromData<TEntry>(data)
-        .findIndex((searchEntry) =>
-            (selectIdFromEntry<TEntry>(searchEntry) === id)
+        ('ids' in (data as EntityState<TEntry>|Pagination<TEntry>))
+        ? (
+            (data as EntityState<TEntry>).ids
+            .findIndex((searchId) =>
+                (searchId === id)
+            )
+        )
+        : (
+            selectEntriesFromData<TEntry>(data)
+            .findIndex((searchEntry) =>
+                (selectIdFromEntry<TEntry>(searchEntry) === id)
+            )
         )
     );
 };
@@ -936,5 +949,142 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
             );
         } // for
         //#endregion RESTORE the shifted paginations from the backup
+    } // if
+};
+const cumulativeUpdateEntityCache     = async <TEntry extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationCacheLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getTemplateVariantGroupList'|'getRoleList'>, updateType: UpdateType, invalidateTag: Extract<Parameters<typeof apiSlice.util.invalidateTags>[0][number], string>) => {
+    // mutated TEntry data:
+    const { data: mutatedEntry } = await api.cacheDataLoaded;
+    const mutatedId = selectIdFromEntry<TEntry>(mutatedEntry);
+    
+    
+    
+    // find related TEntry data(s):
+    const state                 = api.getState();
+    const allQueryCaches        = state.api.queries;
+    const collectionQueryCaches = (
+        Object.values(allQueryCaches)
+        .filter((allQueryCache): allQueryCache is Exclude<typeof allQueryCache, undefined> =>
+            (allQueryCache !== undefined)
+            &&
+            (allQueryCache.endpointName === endpointName)
+            &&
+            (allQueryCache.data !== undefined)
+        )
+    );
+    
+    
+    
+    const lastCollectionQueryCache       = collectionQueryCaches?.[collectionQueryCaches.length - 1];
+    const validTotalEntries              = selectTotalFromData(lastCollectionQueryCache);
+    const hasInvalidCollectionQueryCache = collectionQueryCaches.some((collectionQueryCache) =>
+        (selectTotalFromData(collectionQueryCache) !== validTotalEntries)
+    );
+    if (hasInvalidCollectionQueryCache) {
+        // the queryCaches has a/some inconsistent data => panic => clear all the caches and (may) trigger the rtk to re-fetch
+        
+        // clear caches:
+        api.dispatch(
+            apiSlice.util.invalidateTags([invalidateTag])
+        );
+        return; // panic => cannot further reconstruct
+    } // if
+    
+    
+    
+    /* update existing data: SIMPLE: the number of collection_items is unchanged */
+    if (updateType === 'UPDATE') {
+        const updatedCollectionQueryCaches = (
+            collectionQueryCaches
+            .filter(({ data }) =>
+                (selectIndexOfId<TEntry>(data, mutatedId) >= 0) // is FOUND
+            )
+        );
+        
+        
+        
+        // reconstructuring the updated entry, so the invalidatesTag can be avoided:
+        
+        
+        
+        // update cache:
+        for (const { originalArgs } of updatedCollectionQueryCaches) {
+            api.dispatch(
+                apiSlice.util.updateQueryData(endpointName, undefined, (updatedEntityQueryCacheData) => {
+                    const currentEntryIndex = selectIndexOfId<TEntry>(updatedEntityQueryCacheData, mutatedId);
+                    if (currentEntryIndex < 0) return; // not found => nothing to update
+                    (updatedEntityQueryCacheData.entities as unknown as TEntry[])[currentEntryIndex] = (mutatedEntry); // replace oldEntry with mutatedEntry
+                })
+            );
+        } // for
+    }
+    
+    /* add new data: COMPLEX: the number of collection_items is scaled_up */
+    else if (updateType === 'CREATE') {
+        const shiftedCollectionQueryCaches = collectionQueryCaches;
+        if (!shiftedCollectionQueryCaches.length) {
+            return; // cache not found => no further reconstruct
+        } // if
+        
+        
+        
+        // reconstructuring the shifted entries, so the invalidatesTag can be avoided:
+        
+        
+        
+        //#region INSERT the new entry to the cache's entity
+        for (const { originalArgs } of shiftedCollectionQueryCaches) {
+            // reconstruct current entity cache:
+            api.dispatch(
+                apiSlice.util.updateQueryData(endpointName, undefined, (shiftedEntityQueryCacheData) => {
+                    // INSERT the new entry:
+                    (shiftedEntityQueryCacheData.entities as Dictionary<TEntry>) = {
+                        [mutatedId] : mutatedEntry, // place the inserted entry to the first property
+                        ...shiftedEntityQueryCacheData.entities as Dictionary<TEntry>,
+                    } satisfies Dictionary<TEntry>;
+                    
+                    
+                    
+                    // INSERT the new entry's id at the BEGINNING of the ids:
+                    shiftedEntityQueryCacheData.ids.unshift(mutatedId);
+                })
+            );
+        } // for
+        //#endregion INSERT the new entry to the cache's entity
+    }
+    
+    /* delete existing data: COMPLEX: the number of collection_items is scaled_down */
+    else {
+        const shiftedCollectionQueryCaches = (
+            collectionQueryCaches
+            .filter(({ data }) => {
+                return (
+                    (selectIndexOfId<TEntry>(data, mutatedId) >= 0) // is FOUND
+                );
+            })
+        );
+        
+        
+        
+        // reconstructuring the deleted entry, so the invalidatesTag can be avoided:
+        
+        
+        
+        //#region REMOVE the deleted entry from the cache's entity
+        for (const { originalArgs, data } of shiftedCollectionQueryCaches) {
+            // reconstruct current entity cache:
+            api.dispatch(
+                apiSlice.util.updateQueryData(endpointName, undefined, (shiftedEntityQueryCacheData) => {
+                    // REMOVE the deleted entry:
+                    delete (shiftedEntityQueryCacheData.entities as Dictionary<TEntry>)[mutatedId];
+                    
+                    
+                    
+                    // REMOVE the deleted entry's id at the BEGINNING of the ids:
+                    const indexOfId = selectIndexOfId<TEntry>(shiftedEntityQueryCacheData, mutatedId);
+                    if (indexOfId >= 0) shiftedEntityQueryCacheData.ids.splice(indexOfId, 1);
+                })
+            );
+        } // for
+        //#endregion REMOVE the deleted entry from the cache's entity
     } // if
 };
