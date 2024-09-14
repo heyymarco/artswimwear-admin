@@ -898,7 +898,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
         
         
         //#region RESTORE the shifted paginations from the backup
-        for (const { originalArgs, data } of shiftedCollectionQueryCaches) {
+        for (const { originalArgs } of shiftedCollectionQueryCaches) {
             const {
                 indexStart, // the global first_entry_index
                 indexEnd,   // the global last_entry_index
@@ -1073,7 +1073,7 @@ const cumulativeUpdateEntityCache     = async <TEntry extends Model|string, TQue
         
         
         //#region REMOVE the deleted entry from the cache's entity
-        for (const { originalArgs, data } of shiftedCollectionQueryCaches) {
+        for (const { originalArgs } of shiftedCollectionQueryCaches) {
             // reconstruct current entity cache:
             api.dispatch(
                 apiSlice.util.updateQueryData(endpointName, undefined, (data) => {
