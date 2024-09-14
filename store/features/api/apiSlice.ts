@@ -641,9 +641,6 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
             page1 page2 page3        page1 page2 page3 pageTail
         */
         const shiftedCollectionQueryCaches = collectionQueryCaches;
-        if (!shiftedCollectionQueryCaches.length) {
-            return; // cache not found => no further reconstruct
-        } // if
         
         
         
@@ -940,9 +937,6 @@ const cumulativeUpdateEntityCache     = async <TEntry extends Model|string, TQue
     /* add new data: COMPLEX: the number of collection_items is scaled_up */
     else if (updateType === 'CREATE') {
         const shiftedCollectionQueryCaches = collectionQueryCaches;
-        if (!shiftedCollectionQueryCaches.length) {
-            return; // cache not found => no further reconstruct
-        } // if
         
         
         
