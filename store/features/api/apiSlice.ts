@@ -715,7 +715,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
                 apiSlice.util.updateQueryData(endpointName, originalArgs as PaginationArgs, (updatedPaginationQueryCacheData) => {
                     const currentEntryIndex = selectIndexOfId<TEntry>(updatedPaginationQueryCacheData, mutatedId);
                     if (currentEntryIndex < 0) return; // not found => nothing to update
-                    (updatedPaginationQueryCacheData.entities as unknown as TEntry[])[currentEntryIndex] = (mutatedEntry); // replace oldEntry with mutatedEntry
+                    (updatedPaginationQueryCacheData.entities as unknown as TEntry[])[currentEntryIndex] = mutatedEntry; // replace oldEntry with mutatedEntry
                 })
             );
         } // for
@@ -1015,7 +1015,7 @@ const cumulativeUpdateEntityCache     = async <TEntry extends Model|string, TQue
                 apiSlice.util.updateQueryData(endpointName, undefined, (updatedEntityQueryCacheData) => {
                     const currentEntryIndex = selectIndexOfId<TEntry>(updatedEntityQueryCacheData, mutatedId);
                     if (currentEntryIndex < 0) return; // not found => nothing to update
-                    (updatedEntityQueryCacheData.entities as unknown as TEntry[])[currentEntryIndex] = (mutatedEntry); // replace oldEntry with mutatedEntry
+                    (updatedEntityQueryCacheData.entities as unknown as TEntry[])[currentEntryIndex] = mutatedEntry; // replace oldEntry with mutatedEntry
                 })
             );
         } // for
