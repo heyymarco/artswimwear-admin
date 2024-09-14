@@ -682,8 +682,8 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
     if (updateType === 'UPDATE') {
         const updatedPaginationQueryCaches = (
             paginationQueryCaches
-            .filter((paginationQueryCache) =>
-                (selectIndexOfId<TEntry>(paginationQueryCache.data, mutatedId) >= 0) // is FOUND
+            .filter(({ data }) =>
+                (selectIndexOfId<TEntry>(data, mutatedId) >= 0) // is FOUND
             )
         );
         
