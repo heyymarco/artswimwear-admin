@@ -975,11 +975,9 @@ const cumulativeUpdateEntityCache     = async <TEntry extends Model|string, TQue
     else {
         const shiftedCollectionQueryCaches = (
             collectionQueryCaches
-            .filter(({ data }) => {
-                return (
-                    (selectIndexOfId<TEntry>(data, mutatedId) >= 0) // is FOUND
-                );
-            })
+            .filter(({ data }) =>
+                (selectIndexOfId<TEntry>(data, mutatedId) >= 0) // is FOUND
+            )
         );
         
         
