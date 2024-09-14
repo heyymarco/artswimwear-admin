@@ -697,7 +697,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
         for (const updatedPaginationQueryCache of updatedPaginationQueryCaches) {
             api.dispatch(
                 apiSlice.util.updateQueryData(endpointName, updatedPaginationQueryCache.originalArgs as PaginationArgs, (updatedPaginationQueryCacheData) => {
-                    const currentEntryIndex = updatedPaginationQueryCacheData.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
+                    const currentEntryIndex = selectIndexOfId(updatedPaginationQueryCacheData, mutatedId);
                     if (currentEntryIndex < 0) return; // not found => nothing to update
                     (updatedPaginationQueryCacheData.entities as unknown as TEntry[])[currentEntryIndex] = (mutatedEntry); // replace oldEntry with mutatedEntry
                 })
