@@ -811,8 +811,9 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
                 (indexStart + indexLocalDeleted) // convert local index to global index
             )
         );
-        if (deletedPaginationIndices.length !== 1) {
-            // the queryCaches should have ONE valid deleted data => panic => clear all the caches and (may) trigger the rtk to re-fetch
+        const uniqueDeletedPaginationIndices = Array.from(new Set<number>(deletedPaginationIndices));
+        if (uniqueDeletedPaginationIndices.length !== 1) {
+            // all the deleted queryCaches should have ONE valid deleted index, otherwise => panic => clear all the caches and (may) trigger the rtk to re-fetch
             
             // clear caches:
             api.dispatch(
@@ -820,7 +821,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
             );
             return; // panic => cannot further reconstruct
         } // if
-        const indexDeleted = deletedPaginationIndices[0];
+        const indexDeleted = uniqueDeletedPaginationIndices[0];
         
         
         
