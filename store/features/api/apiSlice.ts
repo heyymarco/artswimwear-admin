@@ -712,10 +712,10 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
         // update cache:
         for (const { originalArgs } of updatedCollectionQueryCaches) {
             api.dispatch(
-                apiSlice.util.updateQueryData(endpointName, originalArgs as PaginationArgs, (updatedPaginationQueryCacheData) => {
-                    const currentEntryIndex = selectIndexOfId<TEntry>(updatedPaginationQueryCacheData, mutatedId);
+                apiSlice.util.updateQueryData(endpointName, originalArgs as PaginationArgs, (data) => {
+                    const currentEntryIndex = selectIndexOfId<TEntry>(data, mutatedId);
                     if (currentEntryIndex < 0) return; // not found => nothing to update
-                    (updatedPaginationQueryCacheData.entities as unknown as TEntry[])[currentEntryIndex] = mutatedEntry; // replace oldEntry with mutatedEntry
+                    (data.entities as unknown as TEntry[])[currentEntryIndex] = mutatedEntry; // replace oldEntry with mutatedEntry
                 })
             );
         } // for
@@ -790,20 +790,20 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
             else {
                 // reconstruct current pagination cache:
                 api.dispatch(
-                    apiSlice.util.updateQueryData(endpointName, originalArgs as PaginationArgs, (shiftedPaginationQueryCacheData) => {
+                    apiSlice.util.updateQueryData(endpointName, originalArgs as PaginationArgs, (data) => {
                         // RESTORE the entryStart at the BEGINNING of the pagination:
-                        (shiftedPaginationQueryCacheData.entities as unknown as TEntry[]).unshift(entryStart);
+                        (data.entities as unknown as TEntry[]).unshift(entryStart);
                         
                         
                         
                         // update the total data:
-                        shiftedPaginationQueryCacheData.total = newTotalEntries;
+                        data.total = newTotalEntries;
                         
                         
                         
                         // if OVERFLOW pagination size => remove the last entry:
-                        if (shiftedPaginationQueryCacheData.entities.length > perPage) {
-                            shiftedPaginationQueryCacheData.entities.pop();
+                        if (data.entities.length > perPage) {
+                            data.entities.pop();
                         } // if
                     })
                 );
@@ -911,7 +911,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
             
             // reconstruct current pagination cache:
             api.dispatch(
-                apiSlice.util.updateQueryData(endpointName, originalArgs as PaginationArgs, (shiftedPaginationQueryCacheData) => {
+                apiSlice.util.updateQueryData(endpointName, originalArgs as PaginationArgs, (data) => {
                     // Shift up at the top/middle of pagination:
                     const indexLast = (
                         indexStart
@@ -921,29 +921,29 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
                     if ((indexDeleted >= indexStart) && (indexDeleted <= indexLast)) { // the deleted_pagination => within indexStart to indexLast
                         // REMOVE the deleted entry at specific index:
                         const relativeIndexDeleted = indexDeleted - indexStart;
-                        shiftedPaginationQueryCacheData.entities.splice(relativeIndexDeleted, 1);
+                        data.entities.splice(relativeIndexDeleted, 1);
                     }
                     else { // the shifted_up_pagination => below the deleted_pagination
                         // because ONE entry in prev pagination has been DELETED => ALL subsequent paginations are SHIFTED_UP:
                         // REMOVE the first entry for shifting:
-                        shiftedPaginationQueryCacheData.entities.shift();
+                        data.entities.shift();
                     } // if
                     
                     
                     
                     // a shifting compensation to maintain pagination size (if possible):
                     // RESTORE the entryStart at the END of the pagination:
-                    if (entryEnd !== undefined /* if possible */) (shiftedPaginationQueryCacheData.entities as unknown as TEntry[]).push(entryEnd);
+                    if (entryEnd !== undefined /* if possible */) (data.entities as unknown as TEntry[]).push(entryEnd);
                     
                     
                     
                     // update the total data:
-                    shiftedPaginationQueryCacheData.total = newTotalEntries;
+                    data.total = newTotalEntries;
                     
                     
                     
                     // if UNDERFLOW (empty) pagination size => invalidate the cache:
-                    if (!shiftedPaginationQueryCacheData.entities.length) {
+                    if (!data.entities.length) {
                         api.dispatch(
                             apiSlice.util.invalidateTags([{ type: invalidateTag, id: page }])
                         );
@@ -1012,10 +1012,10 @@ const cumulativeUpdateEntityCache     = async <TEntry extends Model|string, TQue
         // update cache:
         for (const { originalArgs } of updatedCollectionQueryCaches) {
             api.dispatch(
-                apiSlice.util.updateQueryData(endpointName, undefined, (updatedEntityQueryCacheData) => {
-                    const currentEntryIndex = selectIndexOfId<TEntry>(updatedEntityQueryCacheData, mutatedId);
+                apiSlice.util.updateQueryData(endpointName, undefined, (data) => {
+                    const currentEntryIndex = selectIndexOfId<TEntry>(data, mutatedId);
                     if (currentEntryIndex < 0) return; // not found => nothing to update
-                    (updatedEntityQueryCacheData.entities as Dictionary<TEntry>)[mutatedId] = mutatedEntry; // replace oldEntry with mutatedEntry
+                    (data.entities as Dictionary<TEntry>)[mutatedId] = mutatedEntry; // replace oldEntry with mutatedEntry
                 })
             );
         } // for
@@ -1038,17 +1038,17 @@ const cumulativeUpdateEntityCache     = async <TEntry extends Model|string, TQue
         for (const { originalArgs } of shiftedCollectionQueryCaches) {
             // reconstruct current entity cache:
             api.dispatch(
-                apiSlice.util.updateQueryData(endpointName, undefined, (shiftedEntityQueryCacheData) => {
+                apiSlice.util.updateQueryData(endpointName, undefined, (data) => {
                     // INSERT the new entry:
-                    (shiftedEntityQueryCacheData.entities as Dictionary<TEntry>) = {
+                    (data.entities as Dictionary<TEntry>) = {
                         [mutatedId] : mutatedEntry, // place the inserted entry to the first property
-                        ...shiftedEntityQueryCacheData.entities as Dictionary<TEntry>,
+                        ...data.entities as Dictionary<TEntry>,
                     } satisfies Dictionary<TEntry>;
                     
                     
                     
                     // INSERT the new entry's id at the BEGINNING of the ids:
-                    shiftedEntityQueryCacheData.ids.unshift(mutatedId);
+                    data.ids.unshift(mutatedId);
                 })
             );
         } // for
@@ -1076,15 +1076,15 @@ const cumulativeUpdateEntityCache     = async <TEntry extends Model|string, TQue
         for (const { originalArgs, data } of shiftedCollectionQueryCaches) {
             // reconstruct current entity cache:
             api.dispatch(
-                apiSlice.util.updateQueryData(endpointName, undefined, (shiftedEntityQueryCacheData) => {
+                apiSlice.util.updateQueryData(endpointName, undefined, (data) => {
                     // REMOVE the deleted entry:
-                    delete (shiftedEntityQueryCacheData.entities as Dictionary<TEntry>)[mutatedId];
+                    delete (data.entities as Dictionary<TEntry>)[mutatedId];
                     
                     
                     
                     // REMOVE the deleted entry's id at the BEGINNING of the ids:
-                    const indexOfId = selectIndexOfId<TEntry>(shiftedEntityQueryCacheData, mutatedId);
-                    if (indexOfId >= 0) shiftedEntityQueryCacheData.ids.splice(indexOfId, 1);
+                    const indexOfId = selectIndexOfId<TEntry>(data, mutatedId);
+                    if (indexOfId >= 0) data.ids.splice(indexOfId, 1);
                 })
             );
         } // for
