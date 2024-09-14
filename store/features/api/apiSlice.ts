@@ -593,9 +593,17 @@ export const {
 const selectIdFromEntry     = <TEntry extends Model|string>(entry: TEntry): string => {
     return (typeof(entry) === 'string') ? entry : entry.id;
 };
+const selectEntriesFromData = <TEntry extends Model|string>(data: unknown): TEntry[] => {
+    const items = Array.isArray(data) ? data : (data as Pagination<TEntry>).entities;
+    return items;
+};
 const selectIndexOfId       = <TEntry extends Model|string>(data: unknown, id: string): number => {
-    const paginationData = data as Pagination<TEntry>;
-    return paginationData.entities.findIndex((searchEntry) => (selectIdFromEntry<TEntry>(searchEntry) === id));
+    return (
+        selectEntriesFromData<TEntry>(data)
+        .findIndex((searchEntry) =>
+            (selectIdFromEntry<TEntry>(searchEntry) === id)
+        )
+    );
 };
 const selectRangeFromArg    = (originalArg: unknown): { indexStart: number, indexEnd: number, page: number, perPage: number } => {
     const paginationArgs = originalArg as PaginationArgs;
@@ -620,10 +628,6 @@ const selectRangeFromArg    = (originalArg: unknown): { indexStart: number, inde
         page,
         perPage,
     };
-};
-const selectEntriesFromData = <TEntry extends Model|string>(data: unknown): TEntry[] => {
-    const paginationData = data as Pagination<TEntry>;
-    return paginationData.entities;
 };
 const selectTotalFromData   = (data: unknown): number => {
     const paginationData = data as Pagination<unknown>;
@@ -682,16 +686,6 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
                 (selectIndexOfId<TEntry>(paginationQueryCache.data, mutatedId) >= 0) // is FOUND
             )
         );
-        if (updatedPaginationQueryCaches.length !== 1) {
-            // the queryCaches should have ONE valid updated data => panic => clear all the caches and (may) trigger the rtk to re-fetch
-            
-            // clear caches:
-            api.dispatch(
-                apiSlice.util.invalidateTags([invalidateTag])
-            );
-            return; // panic => cannot further reconstruct
-        } // if
-        const updatedPaginationQueryCache = updatedPaginationQueryCaches[0];
         
         
         
@@ -700,13 +694,15 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
         
         
         // update cache:
-        api.dispatch(
-            apiSlice.util.updateQueryData(endpointName, updatedPaginationQueryCache.originalArgs as PaginationArgs, (updatedPaginationQueryCacheData) => {
-                const currentEntryIndex = updatedPaginationQueryCacheData.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
-                if (currentEntryIndex < 0) return; // not found => nothing to update
-                (updatedPaginationQueryCacheData.entities as unknown as TEntry[])[currentEntryIndex] = (mutatedEntry); // replace oldEntry with mutatedEntry
-            })
-        );
+        for (const updatedPaginationQueryCache of updatedPaginationQueryCaches) {
+            api.dispatch(
+                apiSlice.util.updateQueryData(endpointName, updatedPaginationQueryCache.originalArgs as PaginationArgs, (updatedPaginationQueryCacheData) => {
+                    const currentEntryIndex = updatedPaginationQueryCacheData.entities.findIndex((searchEntry) => (searchEntry.id === mutatedId));
+                    if (currentEntryIndex < 0) return; // not found => nothing to update
+                    (updatedPaginationQueryCacheData.entities as unknown as TEntry[])[currentEntryIndex] = (mutatedEntry); // replace oldEntry with mutatedEntry
+                })
+            );
+        } // for
     }
     
     /* add new data: COMPLEX: the number of paginations is scaled_up */
@@ -838,11 +834,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
                 
                 
                 
-                return (
-                    (indexStart >= indexDeleted)
-                    &&
-                    (indexEnd   <= indexDeleted)
-                );
+                return (indexDeleted >= indexStart) && (indexDeleted <= indexEnd);
             })
         );
         
