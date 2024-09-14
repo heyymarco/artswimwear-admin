@@ -898,12 +898,17 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
         
         
         //#region RESTORE the shifted paginations from the backup
-        for (const { originalArgs } of shiftedCollectionQueryCaches) {
+        for (const { originalArgs, data } of shiftedCollectionQueryCaches) {
             const {
                 indexStart, // the global first_entry_index
                 indexEnd,   // the global last_entry_index
                 page,
             } = selectRangeFromArg(originalArgs);
+            const indexLast = (
+                indexStart
+                +
+                (selectEntriesFromData<TEntry>(data).length - 1)
+            );
             
             const entryEnd = mergedEntryList[indexEnd] as TEntry|undefined; // take the *valid* last_entry of current pagination, the old_2nd_first_entry...the_last_entry will be first_entry...2nd_last_entry
             
@@ -913,11 +918,6 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
             api.dispatch(
                 apiSlice.util.updateQueryData(endpointName, originalArgs as PaginationArgs, (data) => {
                     // Shift up at the top/middle of pagination:
-                    const indexLast = (
-                        indexStart
-                        +
-                        (selectEntriesFromData<TEntry>(data).length - 1)
-                    );
                     if ((indexDeleted >= indexStart) && (indexDeleted <= indexLast)) { // the deleted_pagination => within indexStart to indexLast
                         // REMOVE the deleted entry at specific index:
                         const relativeIndexDeleted = indexDeleted - indexStart;
