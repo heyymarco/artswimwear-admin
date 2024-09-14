@@ -116,7 +116,7 @@ export const apiSlice = createApi({
     baseQuery : axiosBaseQuery({
         baseUrl: `${process.env.NEXT_PUBLIC_APP_URL ?? ''}/api`
     }),
-    tagTypes: ['Product', 'TemplateVariantGroup', 'Order', 'DefaultShippingOrigins', 'Shipping', 'States', 'Admin', 'Preferences', 'Role'],
+    tagTypes: ['Product', 'TemplateVariantGroup', 'Order', 'DefaultShippingOrigin', 'Shipping', 'States', 'Admin', 'Preference', 'Role'],
     endpoints : (builder) => ({
         getProductList              : builder.query<EntityState<ProductPreview>, void>({
             query : () => ({
@@ -133,12 +133,7 @@ export const apiSlice = createApi({
                 method : 'POST',
                 body   : arg,
             }),
-            providesTags: (result, error, arg)  => {
-                return [{
-                    type : 'Product',
-                    id   : arg.page,
-                }];
-            },
+            providesTags: (data, error, arg) => [{ type: 'Product', id: arg.page }],
         }),
         updateProduct               : builder.mutation<ProductDetail, MutationArgs<Omit<ProductDetail, 'stocks'> & { stocks?: (number|null)[] }>>({
             query: (arg) => ({
@@ -175,9 +170,7 @@ export const apiSlice = createApi({
             transformResponse(response: TemplateVariantGroupDetail[]) {
                 return templateVariantGroupListAdapter.addMany(templateVariantGroupListAdapter.getInitialState(), response);
             },
-            providesTags: (result, error, arg)  => {
-                return ['TemplateVariantGroup'];
-            },
+            providesTags: ['TemplateVariantGroup'],
         }),
         updateTemplateVariantGroup  : builder.mutation<TemplateVariantGroupDetail, MutationArgs<TemplateVariantGroupDetail>>({
             query: (arg) => ({
@@ -206,12 +199,7 @@ export const apiSlice = createApi({
                 method : 'POST',
                 body   : arg,
             }),
-            providesTags: (result, error, arg)  => {
-                return [{
-                    type : 'Order',
-                    id   : arg.page,
-                }];
-            },
+            providesTags: (data, error, arg) => [{ type: 'Order', id: arg.page }],
         }),
         updateOrder                 : builder.mutation<OrderDetail, MutationArgs<OrderDetailWithOptions>>({
             query: (arg) => ({
@@ -245,27 +233,15 @@ export const apiSlice = createApi({
                 url    : 'shippings/origin',
                 method : 'GET',
             }),
-            providesTags: (result, error, page)  => {
-                return [
-                    {
-                        type : 'DefaultShippingOrigins',
-                        id   : 'DEFAULT_SHIPPING_ORIGIN',
-                    },
-                ];
-            },
+            providesTags: ['DefaultShippingOrigin'],
         }),
         updateDefaultShippingOrigin : builder.mutation<DefaultShippingOriginDetail, MutationArgs<DefaultShippingOriginDetail>|null>({
-            query: (patch) => ({
+            query: (arg) => ({
                 url    : 'shippings/origin',
                 method : 'PATCH',
-                body   : patch ?? {}
+                body   : arg ?? {}
             }),
-            invalidatesTags: (defaultShippingOrigin, error, arg) => [
-                {
-                    type : 'DefaultShippingOrigins',
-                    id   : 'DEFAULT_SHIPPING_ORIGIN',
-                },
-            ],
+            invalidatesTags: ['DefaultShippingOrigin'],
         }),
         
         getShippingList             : builder.query<EntityState<ShippingPreview>, void>({
@@ -283,12 +259,7 @@ export const apiSlice = createApi({
                 method : 'POST',
                 body   : arg,
             }),
-            providesTags: (result, error, arg)  => {
-                return [{
-                    type : 'Shipping',
-                    id   : arg.page,
-                }];
-            },
+            providesTags: (data, error, arg) => [{ type: 'Shipping', id: arg.page }],
         }),
         updateShipping              : builder.mutation<ShippingDetail, MutationArgs<ShippingDetail>>({
             query: (arg) => ({
@@ -335,12 +306,7 @@ export const apiSlice = createApi({
                 method : 'POST',
                 body   : arg,
             }),
-            providesTags: (result, error, arg)  => {
-                return [{
-                    type : 'Admin',
-                    id   : arg.page,
-                }];
-            },
+            providesTags: (data, error, arg) => [{ type: 'Admin', id: arg.page }],
         }),
         updateAdmin                 : builder.mutation<AdminDetail, MutationArgs<AdminDetail>>({
             query: (arg) => ({
@@ -389,9 +355,7 @@ export const apiSlice = createApi({
             transformResponse(response: RoleDetail[]) {
                 return roleListAdapter.addMany(roleListAdapter.getInitialState(), response);
             },
-            providesTags: (result, error, arg)  => {
-                return ['Role'];
-            },
+            providesTags: ['Role'],
         }),
         updateRole                  : builder.mutation<RoleDetail, MutationArgs<RoleDetail>>({
             query: (arg) => ({
@@ -425,27 +389,15 @@ export const apiSlice = createApi({
                 url    : 'preferences',
                 method : 'GET',
             }),
-            providesTags: (result, error, page)  => {
-                return [
-                    {
-                        type : 'Preferences',
-                        id   : 'PREFERENCES',
-                    },
-                ];
-            },
+            providesTags: ['Preference'],
         }),
         updatePreference            : builder.mutation<AdminPreferenceDetail, MutationArgs<AdminPreferenceData>>({
-            query: (patch) => ({
+            query: (arg) => ({
                 url    : 'preferences',
                 method : 'PATCH',
-                body   : patch
+                body   : arg
             }),
-            invalidatesTags: (preference, error, arg) => [
-                {
-                    type : 'Preferences',
-                    id   : 'PREFERENCES',
-                },
-            ],
+            invalidatesTags: ['Preference'],
         }),
         
         postImage                   : builder.mutation<ImageId, { image: File, folder?: string, onUploadProgress?: (percentage: number) => void, abortSignal?: AbortSignal }>({
