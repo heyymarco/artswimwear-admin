@@ -663,8 +663,8 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
     
     const lastCollectionQueryCache       = collectionQueryCaches?.[collectionQueryCaches.length - 1];
     const validTotalEntries              = selectTotalFromData(lastCollectionQueryCache);
-    const hasInvalidCollectionQueryCache = collectionQueryCaches.some((paginationQueryCache) =>
-        (selectTotalFromData(paginationQueryCache) !== validTotalEntries)
+    const hasInvalidCollectionQueryCache = collectionQueryCaches.some((collectionQueryCache) =>
+        (selectTotalFromData(collectionQueryCache) !== validTotalEntries)
     );
     if (hasInvalidCollectionQueryCache) {
         // the queryCaches has a/some inconsistent data => panic => clear all the caches and (may) trigger the rtk to re-fetch
@@ -678,9 +678,9 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
     
     
     
-    /* update existing data: SIMPLE: the number of paginations is unchanged */
+    /* update existing data: SIMPLE: the number of collection_items is unchanged */
     if (updateType === 'UPDATE') {
-        const updatedPaginationQueryCaches = (
+        const updatedCollectionQueryCaches = (
             collectionQueryCaches
             .filter(({ data }) =>
                 (selectIndexOfId<TEntry>(data, mutatedId) >= 0) // is FOUND
@@ -694,7 +694,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
         
         
         // update cache:
-        for (const { originalArgs } of updatedPaginationQueryCaches) {
+        for (const { originalArgs } of updatedCollectionQueryCaches) {
             api.dispatch(
                 apiSlice.util.updateQueryData(endpointName, originalArgs as PaginationArgs, (updatedPaginationQueryCacheData) => {
                     const currentEntryIndex = selectIndexOfId(updatedPaginationQueryCacheData, mutatedId);
@@ -705,7 +705,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
         } // for
     }
     
-    /* add new data: COMPLEX: the number of paginations is scaled_up */
+    /* add new data: COMPLEX: the number of collection_items is scaled_up */
     else if (updateType === 'CREATE') {
         /*
             Adding a_new_entry causing the restPagination(s) shifted their entries to neighboringPagination(s).
@@ -796,7 +796,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
         //#endregion RESTORE the shifted paginations from the backup
     }
     
-    /* delete existing data: COMPLEX: the number of paginations is scaled_down */
+    /* delete existing data: COMPLEX: the number of collection_items is scaled_down */
     else {
         const deletedPaginationIndices = (
             collectionQueryCaches
