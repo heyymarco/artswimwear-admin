@@ -618,7 +618,7 @@ const selectIndexOfId       = <TEntry extends Model|string>(data: unknown, id: s
             )
         )
         : (
-            selectEntriesFromData<TEntry>(data)
+            (data as Pagination<TEntry>).entities
             .findIndex((searchEntry) =>
                 (selectIdFromEntry<TEntry>(searchEntry) === id)
             )
