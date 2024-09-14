@@ -116,7 +116,7 @@ export const apiSlice = createApi({
     baseQuery : axiosBaseQuery({
         baseUrl: `${process.env.NEXT_PUBLIC_APP_URL ?? ''}/api`
     }),
-    tagTypes: ['Product', 'TemplateVariantGroup', 'Order', 'DefaultShippingOrigin', 'Shipping', 'States', 'Admin', 'Preference', 'Role'],
+    tagTypes: ['Product', 'TemplateVariantGroup', 'Order', 'DefaultShippingOrigin', 'Shipping', 'Admin', 'Preference', 'Role'],
     endpoints : (builder) => ({
         getProductList              : builder.query<EntityState<ProductPreview>, void>({
             query : () => ({
