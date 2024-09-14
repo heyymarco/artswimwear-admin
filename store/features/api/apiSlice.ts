@@ -179,7 +179,7 @@ export const apiSlice = createApi({
                 body   : arg
             }),
             onCacheEntryAdded: async (arg, api) => {
-                await cumulativeUpdateEntityCache(api, 'getTemplateVariantGroupList', (arg.id === '') ? 'CREATE' : 'UPDATE', 'TemplateVariantGroup');
+                await cumulativeUpdateEntityCache(api, 'getTemplateVariantGroupList', 'UPSERT', 'TemplateVariantGroup');
             },
         }),
         deleteTemplateVariantGroup  : builder.mutation<Pick<TemplateVariantGroupDetail, 'id'>, MutationArgs<Pick<TemplateVariantGroupDetail, 'id'>>>({
@@ -364,7 +364,7 @@ export const apiSlice = createApi({
                 body   : arg
             }),
             onCacheEntryAdded: async (arg, api) => {
-                await cumulativeUpdateEntityCache(api, 'getRoleList', (arg.id === '') ? 'CREATE' : 'UPDATE', 'Role');
+                await cumulativeUpdateEntityCache(api, 'getRoleList', 'UPSERT', 'Role');
             },
         }),
         deleteRole                  : builder.mutation<Pick<RoleDetail, 'id'>, MutationArgs<Pick<RoleDetail, 'id'>>>({
@@ -558,11 +558,11 @@ const selectRangeFromArg    = (originalArg: unknown): { indexStart: number, inde
     };
 };
 
-type UpdateType =
+type PaginationUpdateType =
     |'CREATE'
     |'UPDATE'
     |'DELETE'
-const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationCacheLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, updateType: UpdateType, invalidateTag: Extract<Parameters<typeof apiSlice.util.invalidateTags>[0][number], string>) => {
+const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationCacheLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, updateType: PaginationUpdateType, invalidateTag: Extract<Parameters<typeof apiSlice.util.invalidateTags>[0][number], string>) => {
     // mutated TEntry data:
     const { data: mutatedEntry } = await api.cacheDataLoaded;
     const mutatedId = selectIdFromEntry<TEntry>(mutatedEntry);
@@ -865,7 +865,11 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
         //#endregion RESTORE the shifted paginations from the backup
     } // if
 };
-const cumulativeUpdateEntityCache     = async <TEntry extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationCacheLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getTemplateVariantGroupList'|'getRoleList'>, updateType: UpdateType, invalidateTag: Extract<Parameters<typeof apiSlice.util.invalidateTags>[0][number], string>) => {
+
+type EntityUpdateType =
+    |'UPSERT'
+    |'DELETE'
+const cumulativeUpdateEntityCache     = async <TEntry extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationCacheLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getTemplateVariantGroupList'|'getRoleList'>, updateType: EntityUpdateType, invalidateTag: Extract<Parameters<typeof apiSlice.util.invalidateTags>[0][number], string>) => {
     // mutated TEntry data:
     const { data: mutatedEntry } = await api.cacheDataLoaded;
     const mutatedId = selectIdFromEntry<TEntry>(mutatedEntry);
@@ -909,33 +913,8 @@ const cumulativeUpdateEntityCache     = async <TEntry extends Model|string, TQue
     
     
     
-    /* update existing data: SIMPLE: the number of collection_items is unchanged */
-    if (updateType === 'UPDATE') {
-        const updatedCollectionQueryCaches = (
-            collectionQueryCaches
-            .filter(({ data }) =>
-                (selectIndexOfId<TEntry>(data, mutatedId) >= 0) // is FOUND
-            )
-        );
-        
-        
-        
-        // reconstructuring the updated entry, so the invalidatesTag can be avoided:
-        
-        
-        
-        // update cache:
-        for (const { originalArgs } of updatedCollectionQueryCaches) {
-            api.dispatch(
-                apiSlice.util.updateQueryData(endpointName, originalArgs as any, (data) => {
-                    (data.entities as Dictionary<TEntry>)[mutatedId] = mutatedEntry; // replace oldEntry with mutatedEntry
-                })
-            );
-        } // for
-    }
-    
-    /* add new data: COMPLEX: the number of collection_items is scaled_up */
-    else if (updateType === 'CREATE') {
+    /* update existing data -or- add new data: COMPLEX: the number of collection_items MAY scaled_up */
+    if (updateType === 'UPSERT') {
         const shiftedCollectionQueryCaches = collectionQueryCaches;
         
         
@@ -949,16 +928,22 @@ const cumulativeUpdateEntityCache     = async <TEntry extends Model|string, TQue
             // reconstruct current entity cache:
             api.dispatch(
                 apiSlice.util.updateQueryData(endpointName, originalArgs as any, (data) => {
-                    // INSERT the new entry:
-                    (data.entities as Dictionary<TEntry>) = {
-                        [mutatedId] : mutatedEntry, // place the inserted entry to the first property
-                        ...data.entities as Dictionary<TEntry>,
-                    } satisfies Dictionary<TEntry>;
-                    
-                    
-                    
-                    // INSERT the new entry's id at the BEGINNING of the ids:
-                    data.ids.unshift(mutatedId);
+                    if (selectIndexOfId<TEntry>(data, mutatedId) >= 0) { // is FOUND
+                        // UPDATE the existing entry:
+                        (data.entities as Dictionary<TEntry>)[mutatedId] = mutatedEntry; // replace oldEntry with mutatedEntry
+                    }
+                    else {
+                        // INSERT the new entry:
+                        (data.entities as Dictionary<TEntry>) = {
+                            [mutatedId] : mutatedEntry, // place the inserted entry to the first property
+                            ...data.entities as Dictionary<TEntry>,
+                        } satisfies Dictionary<TEntry>;
+                        
+                        
+                        
+                        // INSERT the new entry's id at the BEGINNING of the ids:
+                        data.ids.unshift(mutatedId);
+                    } // if
                 })
             );
         } // for
