@@ -643,8 +643,11 @@ const selectRangeFromArg    = (originalArg: unknown): { indexStart: number, inde
     };
 };
 const selectTotalFromData   = (data: unknown): number => {
-    const paginationData = data as Pagination<unknown>;
-    return paginationData.total;
+    return (
+        ('ids' in (data as EntityState<unknown>|Pagination<unknown>))
+        ? (data as EntityState<unknown>).ids.length
+        : (data as Pagination<unknown>).total
+    );
 };
 
 type UpdateType =
