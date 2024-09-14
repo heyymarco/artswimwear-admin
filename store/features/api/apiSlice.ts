@@ -1021,8 +1021,6 @@ const cumulativeUpdateEntityCache     = async <TEntry extends Model|string, TQue
         for (const { originalArgs } of updatedCollectionQueryCaches) {
             api.dispatch(
                 apiSlice.util.updateQueryData(endpointName, undefined, (data) => {
-                    const currentEntryIndex = selectIndexOfId<TEntry>(data, mutatedId);
-                    if (currentEntryIndex < 0) return; // not found => nothing to update
                     (data.entities as Dictionary<TEntry>)[mutatedId] = mutatedEntry; // replace oldEntry with mutatedEntry
                 })
             );
