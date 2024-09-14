@@ -854,7 +854,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
                 const indexLast = (
                     indexStart
                     +
-                    (selectEntriesFromData<TEntry>(data).length - 1)
+                    (selectTotalFromData(data) - 1)
                 );
                 
                 
@@ -911,7 +911,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
             const indexLast = (
                 indexStart
                 +
-                (selectEntriesFromData<TEntry>(data).length - 1)
+                (selectTotalFromData(data) - 1)
             );
             
             const entryEnd = mergedEntryList[indexEnd] as TEntry|undefined; // take the *valid* last_entry of current pagination, the old_2nd_first_entry...the_last_entry will be first_entry...2nd_last_entry
