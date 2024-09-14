@@ -798,7 +798,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
     
     /* delete existing data: COMPLEX: the number of collection_items is scaled_down */
     else {
-        const deletedPaginationIndices = (
+        const deletedCollectionIndices = (
             collectionQueryCaches
             .map(({ originalArgs, data }) => ({
                 indexStart        : selectRangeFromArg(originalArgs).indexStart,
@@ -811,8 +811,8 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
                 (indexStart + indexLocalDeleted) // convert local index to global index
             )
         );
-        const uniqueDeletedPaginationIndices = Array.from(new Set<number>(deletedPaginationIndices));
-        if (uniqueDeletedPaginationIndices.length !== 1) {
+        const uniqueDeletedCollectionIndices = Array.from(new Set<number>(deletedCollectionIndices));
+        if (uniqueDeletedCollectionIndices.length !== 1) {
             // all the deleted queryCaches should have ONE valid deleted index, otherwise => panic => clear all the caches and (may) trigger the rtk to re-fetch
             
             // clear caches:
