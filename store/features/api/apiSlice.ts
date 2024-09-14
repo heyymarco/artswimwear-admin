@@ -826,15 +826,23 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
         
         const shiftedPaginationQueryCaches = (
             paginationQueryCaches
-            .filter((paginationQueryCache) => {
+            .filter(({ originalArgs, data }) => {
                 const {
                     indexStart,
-                    indexEnd,
-                } = selectRangeFromArg(paginationQueryCache.originalArgs);
+                } = selectRangeFromArg(originalArgs);
+                const indexLast = (
+                    indexStart
+                    +
+                    (selectEntriesFromData<TEntry>(data).length - 1)
+                );
                 
                 
                 
-                return (indexDeleted >= indexStart) && (indexDeleted <= indexEnd);
+                return (
+                    (indexDeleted >= indexStart) && (indexDeleted <= indexLast) // the deleted_pagination => within indexStart to indexLast
+                    ||
+                    (indexStart > indexDeleted) // the shifted_up_pagination => below the deleted_pagination
+                );
             })
         );
         
@@ -893,12 +901,12 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
                         +
                         (selectEntriesFromData<TEntry>(data).length - 1)
                     );
-                    if ((indexDeleted >= indexStart) && (indexDeleted <= indexLast)) {
+                    if ((indexDeleted >= indexStart) && (indexDeleted <= indexLast)) { // the deleted_pagination => within indexStart to indexLast
                         // REMOVE the deleted entry at specific index:
                         const relativeIndexDeleted = indexDeleted - indexStart;
                         shiftedPaginationQueryCacheData.entities.splice(relativeIndexDeleted, 1);
                     }
-                    else {
+                    else { // the shifted_up_pagination => below the deleted_pagination
                         // because ONE entry in prev pagination has been DELETED => ALL subsequent paginations are SHIFTED_UP:
                         // REMOVE the first entry for shifting:
                         shiftedPaginationQueryCacheData.entities.shift();
