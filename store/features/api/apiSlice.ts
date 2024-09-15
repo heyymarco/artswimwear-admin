@@ -1,8 +1,18 @@
-import { createEntityAdapter, EntityState, Dictionary }                         from '@reduxjs/toolkit'
-import { BaseQueryFn, createApi, QueryStatus }                      from '@reduxjs/toolkit/query/react'
-import type { QuerySubState }                                       from '@reduxjs/toolkit/dist/query/core/apiState'
-import type { BaseEndpointDefinition, MutationCacheLifecycleApi }   from '@reduxjs/toolkit/dist/query/endpointDefinitions'
-import type { UseQuery, UseQueryHookResult }                        from '@reduxjs/toolkit/dist/query/react/buildHooks'
+// redux:
+import {
+    type Dictionary,
+    type EntityState,
+    
+    createEntityAdapter,
+}                           from '@reduxjs/toolkit'
+import {
+    type BaseQueryFn,
+    
+    createApi,
+}                           from '@reduxjs/toolkit/query/react'
+import {
+    type MutationLifecycleApi,
+}                           from '@reduxjs/toolkit/dist/query/endpointDefinitions'
 
 // types:
 import {
@@ -33,18 +43,20 @@ import {
     
     type ShippingLabelRequest,
     type ShippingLabelDetail,
-}                                               from '@/models'
+}                           from '@/models'
 
 // apis:
-import type { ImageId }                         from '@/app/api/(protected)/uploads/route'
-export type { ImageId }                         from '@/app/api/(protected)/uploads/route'
+import {
+    type ImageId,
+}                           from '@/app/api/(protected)/uploads/route'
 
 // other libs:
 import {
+    type AxiosRequestConfig,
+    type AxiosError,
+    
     default as axios,
-    AxiosRequestConfig,
     CanceledError,
-    AxiosError,
 }                           from 'axios'
 
 
@@ -141,7 +153,7 @@ export const apiSlice = createApi({
                 method : 'PATCH',
                 body   : arg
             }),
-            onCacheEntryAdded: async (arg, api) => {
+            onQueryStarted: async (arg, api) => {
                 await cumulativeUpdatePaginationCache(api, 'getProductPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'Product');
             },
         }),
@@ -151,7 +163,7 @@ export const apiSlice = createApi({
                 method : 'DELETE',
                 body   : arg
             }),
-            onCacheEntryAdded: async (arg, api) => {
+            onQueryStarted: async (arg, api) => {
                 await cumulativeUpdatePaginationCache(api, 'getProductPage', 'DELETE', 'Product');
             },
         }),
@@ -178,7 +190,7 @@ export const apiSlice = createApi({
                 method : 'PATCH',
                 body   : arg
             }),
-            onCacheEntryAdded: async (arg, api) => {
+            onQueryStarted: async (arg, api) => {
                 await cumulativeUpdateEntityCache(api, 'getTemplateVariantGroupList', 'UPSERT', 'TemplateVariantGroup');
             },
         }),
@@ -188,7 +200,7 @@ export const apiSlice = createApi({
                 method : 'DELETE',
                 body   : arg
             }),
-            onCacheEntryAdded: async (arg, api) => {
+            onQueryStarted: async (arg, api) => {
                 await cumulativeUpdateEntityCache(api, 'getTemplateVariantGroupList', 'DELETE', 'TemplateVariantGroup');
             },
         }),
@@ -207,7 +219,7 @@ export const apiSlice = createApi({
                 method : 'PATCH',
                 body   : arg
             }),
-            onCacheEntryAdded: async (arg, api) => {
+            onQueryStarted: async (arg, api) => {
                 await cumulativeUpdatePaginationCache(api, 'getOrderPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'Order');
             },
         }),
@@ -267,7 +279,7 @@ export const apiSlice = createApi({
                 method : 'PATCH',
                 body   : arg
             }),
-            onCacheEntryAdded: async (arg, api) => {
+            onQueryStarted: async (arg, api) => {
                 await cumulativeUpdatePaginationCache(api, 'getShippingPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'Shipping');
             },
         }),
@@ -277,7 +289,7 @@ export const apiSlice = createApi({
                 method : 'DELETE',
                 body   : params
             }),
-            onCacheEntryAdded: async (arg, api) => {
+            onQueryStarted: async (arg, api) => {
                 await cumulativeUpdatePaginationCache(api, 'getShippingPage', 'DELETE', 'Shipping');
             },
         }),
@@ -314,7 +326,7 @@ export const apiSlice = createApi({
                 method : 'PATCH',
                 body   : arg
             }),
-            onCacheEntryAdded: async (arg, api) => {
+            onQueryStarted: async (arg, api) => {
                 await cumulativeUpdatePaginationCache(api, 'getAdminPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'Admin');
             },
         }),
@@ -324,7 +336,7 @@ export const apiSlice = createApi({
                 method : 'DELETE',
                 body   : params
             }),
-            onCacheEntryAdded: async (arg, api) => {
+            onQueryStarted: async (arg, api) => {
                 await cumulativeUpdatePaginationCache(api, 'getAdminPage', 'DELETE', 'Admin');
             },
         }),
@@ -363,7 +375,7 @@ export const apiSlice = createApi({
                 method : 'PATCH',
                 body   : arg
             }),
-            onCacheEntryAdded: async (arg, api) => {
+            onQueryStarted: async (arg, api) => {
                 await cumulativeUpdateEntityCache(api, 'getRoleList', 'UPSERT', 'Role');
             },
         }),
@@ -373,7 +385,7 @@ export const apiSlice = createApi({
                 method : 'DELETE',
                 body   : arg
             }),
-            onCacheEntryAdded: async (arg, api) => {
+            onQueryStarted: async (arg, api) => {
                 await cumulativeUpdateEntityCache(api, 'getRoleList', 'DELETE', 'Role');
             },
         }),
@@ -562,9 +574,18 @@ type PaginationUpdateType =
     |'CREATE'
     |'UPDATE'
     |'DELETE'
-const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationCacheLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, updateType: PaginationUpdateType, invalidateTag: Extract<Parameters<typeof apiSlice.util.invalidateTags>[0][number], string>) => {
+const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, updateType: PaginationUpdateType, invalidateTag: Extract<Parameters<typeof apiSlice.util.invalidateTags>[0][number], string>) => {
     // mutated TEntry data:
-    const { data: mutatedEntry } = await api.cacheDataLoaded;
+    const mutatedEntry = await (async (): Promise<TEntry|undefined> => {
+        try {
+            const { data: mutatedEntry } = await api.queryFulfilled;
+            return mutatedEntry;
+        }
+        catch {
+            return undefined;
+        } // try
+    })();
+    if (mutatedEntry === undefined) return; // api request aborted|failed => nothing to update
     const mutatedId = selectIdFromEntry<TEntry>(mutatedEntry);
     
     
@@ -869,9 +890,18 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
 type EntityUpdateType =
     |'UPSERT'
     |'DELETE'
-const cumulativeUpdateEntityCache     = async <TEntry extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationCacheLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getTemplateVariantGroupList'|'getRoleList'>, updateType: EntityUpdateType, invalidateTag: Extract<Parameters<typeof apiSlice.util.invalidateTags>[0][number], string>) => {
+const cumulativeUpdateEntityCache     = async <TEntry extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getTemplateVariantGroupList'|'getRoleList'>, updateType: EntityUpdateType, invalidateTag: Extract<Parameters<typeof apiSlice.util.invalidateTags>[0][number], string>) => {
     // mutated TEntry data:
-    const { data: mutatedEntry } = await api.cacheDataLoaded;
+    const mutatedEntry = await (async (): Promise<TEntry|undefined> => {
+        try {
+            const { data: mutatedEntry } = await api.queryFulfilled;
+            return mutatedEntry;
+        }
+        catch {
+            return undefined;
+        } // try
+    })();
+    if (mutatedEntry === undefined) return; // api request aborted|failed => nothing to update
     const mutatedId = selectIdFromEntry<TEntry>(mutatedEntry);
     
     
