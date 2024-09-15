@@ -31,6 +31,11 @@ import {
     useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
+// heymarco components:
+import {
+    Section,
+}                           from '@heymarco/section'
+
 // internal components:
 import {
     PageLoading,
@@ -118,35 +123,37 @@ function ShippingPageContentInternal(): JSX.Element|null {
     if (isErrorAndNoData   || (sessionStatus === 'unauthenticated')) return <PageError onRetry={refetch} />;
     return (
         <SimpleMainPage>
-            <PaginationExplorer<ShippingDetail>
-                // accessibilities:
-                createItemText='Add New Shipping'
-                
-                
-                
-                // components:
-                modelPreviewComponent={
-                    <ShippingPreview
-                        // data:
-                        model={undefined as any}
-                    />
-                }
-                modelCreateComponent={
-                    privilegeAdd
-                    ? <EditShippingDialog
-                        // data:
-                        model={null} // create a new model
-                    />
-                    : undefined
-                }
-                
-                
-                
-                // children:
-                menusBefore={<>
-                    <ButtonIcon size='sm' mild={true} icon='home' title='Change shipping origin' onClick={handleChangeNotificationSettings} />
-                </>}
-            />
+            <Section theme='primary'>
+                <PaginationExplorer<ShippingDetail>
+                    // accessibilities:
+                    createItemText='Add New Shipping'
+                    
+                    
+                    
+                    // components:
+                    modelPreviewComponent={
+                        <ShippingPreview
+                            // data:
+                            model={undefined as any}
+                        />
+                    }
+                    modelCreateComponent={
+                        privilegeAdd
+                        ? <EditShippingDialog
+                            // data:
+                            model={null} // create a new model
+                        />
+                        : undefined
+                    }
+                    
+                    
+                    
+                    // children:
+                    menusBefore={<>
+                        <ButtonIcon size='sm' mild={true} icon='home' title='Change shipping origin' onClick={handleChangeNotificationSettings} />
+                    </>}
+                />
+            </Section>
         </SimpleMainPage>
     );
 }

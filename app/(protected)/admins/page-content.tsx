@@ -11,6 +11,11 @@ import {
     useSession,
 }                           from 'next-auth/react'
 
+// heymarco components:
+import {
+    Section,
+}                           from '@heymarco/section'
+
 // internal components:
 import {
     SimpleMainPage,
@@ -87,33 +92,35 @@ function AdminPageContentInternal(): JSX.Element|null {
     if (isErrorAndNoData   || (sessionStatus === 'unauthenticated')) return <PageError onRetry={refetch} />;
     return (
         <SimpleMainPage>
-            <PaginationExplorer<AdminDetail>
-                // accessibilities:
-                createItemText='Add New Admin'
-                
-                
-                
-                // components:
-                modelPreviewComponent={
-                    <AdminPreview
-                        // data:
-                        model={undefined as any}
-                        
-                        
-                        
-                        // stores:
-                        getRolePaginationApi={getRolePaginationApi}
-                    />
-                }
-                modelCreateComponent={
-                    privilegeAdd
-                    ? <EditAdminDialog
-                        // data:
-                        model={null} // create a new model
-                    />
-                    : undefined
-                }
-            />
+            <Section theme='primary'>
+                <PaginationExplorer<AdminDetail>
+                    // accessibilities:
+                    createItemText='Add New Admin'
+                    
+                    
+                    
+                    // components:
+                    modelPreviewComponent={
+                        <AdminPreview
+                            // data:
+                            model={undefined as any}
+                            
+                            
+                            
+                            // stores:
+                            getRolePaginationApi={getRolePaginationApi}
+                        />
+                    }
+                    modelCreateComponent={
+                        privilegeAdd
+                        ? <EditAdminDialog
+                            // data:
+                            model={null} // create a new model
+                        />
+                        : undefined
+                    }
+                />
+            </Section>
         </SimpleMainPage>
     );
 }

@@ -23,6 +23,11 @@ import {
     useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
+// heymarco components:
+import {
+    Section,
+}                           from '@heymarco/section'
+
 // internal components:
 import {
     SimpleMainPage,
@@ -103,22 +108,24 @@ function OrderPageContentInternal(): JSX.Element|null {
     if (isErrorAndNoData  ) return <PageError onRetry={refetch} />;
     return (
         <SimpleMainPage>
-            <PaginationExplorer<OrderDetail>
-                // components:
-                modelPreviewComponent={
-                    <OrderPreview
-                        // data:
-                        model={undefined as any}
-                    />
-                }
-                
-                
-                
-                // children:
-                menusAfter={<>
-                    <ButtonIcon size='sm' mild={true} icon='notifications' title='Notification settings' onClick={handleChangeNotificationSettings} />
-                </>}
-            />
+            <Section theme='primary'>
+                <PaginationExplorer<OrderDetail>
+                    // components:
+                    modelPreviewComponent={
+                        <OrderPreview
+                            // data:
+                            model={undefined as any}
+                        />
+                    }
+                    
+                    
+                    
+                    // children:
+                    menusAfter={<>
+                        <ButtonIcon size='sm' mild={true} icon='notifications' title='Notification settings' onClick={handleChangeNotificationSettings} />
+                    </>}
+                />
+            </Section>
         </SimpleMainPage>
     );
 }
