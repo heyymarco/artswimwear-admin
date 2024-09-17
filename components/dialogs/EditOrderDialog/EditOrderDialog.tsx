@@ -1041,7 +1041,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                             
                             
                             // components:
-                            controlComponent={<React.Fragment />}
+                            controlComponent={null}
                         >
                             {isCanceled && <>
                                 <p>
@@ -1284,7 +1284,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                 
                                 
                                 // components:
-                                controlComponent={<React.Fragment />}
+                                controlComponent={null}
                             >
                                 <p>
                                     Attention: The buyer has <strong>not confirmed the payment</strong> yet.
@@ -1312,7 +1312,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     
                                     
                                     // components:
-                                    controlComponent={<React.Fragment />}
+                                    controlComponent={null}
                                 >
                                     <p>
                                         The buyer has <strong>confirmed the payment</strong>.
@@ -1339,7 +1339,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                     
                                     
                                     // components:
-                                    controlComponent={<React.Fragment />}
+                                    controlComponent={null}
                                 >
                                     <p>
                                         You have <strong>rejected</strong> the buyer&apos;s payment confirmation.
