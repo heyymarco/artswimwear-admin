@@ -72,13 +72,13 @@ import './ShippingRatePreviewStyles';
 // react components:
 export interface ShippingRatePreviewProps extends ModelPreviewProps<ShippingRateWithId> {
     // values:
-    rates      : ShippingRateWithId[]
+    rates          : ShippingRateWithId[]
     
     
     
     // handlers:
-    onUpdated ?: UpdatedHandler<ShippingRateWithId>
-    onDeleted ?: DeleteHandler<ShippingRateWithId>
+    onModelUpdate ?: UpdatedHandler<ShippingRateWithId>
+    onModelDelete ?: DeleteHandler<ShippingRateWithId>
 }
 const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null => {
     // styles:
@@ -99,8 +99,8 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
         
         
         // handlers:
-        onUpdated,
-        onDeleted,
+        onModelUpdate,
+        onModelDelete,
     ...restListItemProps} = props;
     const {
         id,
@@ -120,7 +120,7 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
     // handlers:
     const handleStartingWeightChange = useEvent<EditorChangeEventHandler<number|null>>((newValue) => {
         // conditions:
-        if (!onUpdated) return;
+        if (!onModelUpdate) return;
         
         let newStart = newValue ?? 0;
         if (rates.some(({id: otherId, start: otherStart}) => (otherId !== id) && (otherStart === newStart))) { // a duplicate found
@@ -133,20 +133,20 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
         
         // actions:
         model.start = newStart;
-        onUpdated(model);
+        onModelUpdate(model);
     });
     const handleRateChange           = useEvent<EditorChangeEventHandler<number|null>>((newValue) => {
         // conditions:
-        if (!onUpdated) return;
+        if (!onModelUpdate) return;
         
         
         
         // actions:
         model.rate = newValue ?? 0;
-        onUpdated(model);
+        onModelUpdate(model);
     });
     const handleDelete               = useEvent(() => {
-        onDeleted?.(model);
+        onModelDelete?.(model);
     });
     
     

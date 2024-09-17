@@ -81,15 +81,15 @@ import './RolePreviewStyles';
 
 
 // react components:
-export interface RolePreviewProps extends Omit<ModelPreviewProps<RoleDetail>, 'onChange'> {
+export interface RolePreviewProps extends Omit<ModelPreviewProps<RoleDetail>, 'onModelChange'> {
     // appearances:
-    isShown    : boolean
+    isShown        : boolean
     
     
     
     // handlers:
-    onChange  ?: EditorChangeEventHandler<string|null>
-    onDeleted ?: DeleteHandler<RoleDetail>
+    onModelChange ?: EditorChangeEventHandler<string|null>
+    onModelDelete ?: DeleteHandler<RoleDetail>
 }
 const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     // styles:
@@ -120,8 +120,8 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         
         
         // handlers:
-        onChange,
-        onDeleted,
+        onModelChange,
+        onModelDelete,
     ...restListItemProps} = props;
     const {
         id,
@@ -150,7 +150,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         
         
         // actions:
-        onChange?.(id || null); // null (no selection) if the id is an empty string
+        onModelChange?.(id || null); // null (no selection) if the id is an empty string
     });
     const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async (event) => {
         event.stopPropagation(); // prevents triggering `ListItem::onClick`
@@ -164,7 +164,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
             />
         );
         if (updatedRoleModel === false) {
-            await onDeleted?.(model);
+            await onModelDelete?.(model);
         } // if
     });
     

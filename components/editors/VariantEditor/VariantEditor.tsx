@@ -239,18 +239,18 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
                     // props:
                     {
                         // identifiers:
-                        key       : modelPreviewComponent.key         ?? modelOption.id,
+                        key           : modelPreviewComponent.key         ?? modelOption.id,
                         
                         
                         
                         // data:
-                        model     : modelPreviewComponent.props.model ?? modelOption,
+                        model         : modelPreviewComponent.props.model ?? modelOption,
                         
                         
                         
                         // handlers:
-                        onUpdated : handleModelUpdated,
-                        onDeleted : handleModelDeleted,
+                        onModelUpdate : handleModelUpdated,
+                        onModelDelete : handleModelDeleted,
                     },
                 )
             )}

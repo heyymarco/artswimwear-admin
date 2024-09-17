@@ -111,13 +111,13 @@ export interface CoverageZonePreviewProps<TCoverageZoneDetail extends CoverageZo
         >
 {
     // data:
-    modelName  : string
+    modelName      : string
     
     
     
     // handlers:
-    onUpdated ?: UpdatedHandler<TCoverageZoneDetail>
-    onDeleted ?: DeleteHandler<TCoverageZoneDetail>
+    onModelUpdate ?: UpdatedHandler<TCoverageZoneDetail>
+    onModelDelete ?: DeleteHandler<TCoverageZoneDetail>
 }
 const CoverageZonePreview = <TCoverageZoneDetail extends CoverageZoneDetail<TCoverageSubzoneDetail>, TCoverageSubzoneDetail extends CoverageSubzoneDetail>(props: CoverageZonePreviewProps<TCoverageZoneDetail, TCoverageSubzoneDetail>): JSX.Element|null => {
     // styles:
@@ -134,8 +134,8 @@ const CoverageZonePreview = <TCoverageZoneDetail extends CoverageZoneDetail<TCov
         
         
         // handlers:
-        onUpdated,
-        onDeleted,
+        onModelUpdate,
+        onModelDelete,
         
         
         
@@ -229,11 +229,11 @@ const CoverageZonePreview = <TCoverageZoneDetail extends CoverageZoneDetail<TCov
                 break;
             
             case false:     // dialog deleted
-                await onDeleted?.(model);
+                await onModelDelete?.(model);
                 break;
             
             default:        // dialog updated
-                await onUpdated?.(updatedCoverageZoneModel);
+                await onModelUpdate?.(updatedCoverageZoneModel);
         } // switch
     });
     

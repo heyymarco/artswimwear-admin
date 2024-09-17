@@ -401,8 +401,8 @@ const CoverageZoneEditor = <TCoverageZoneDetail extends CoverageZoneDetail<TCove
                             
                             
                             // handlers:
-                            onUpdated={handleModelUpdated}
-                            onDeleted={handleModelDeleted}
+                            onModelUpdate={handleModelUpdated}
+                            onModelDelete={handleModelDeleted}
                         />
                     )}
                     

@@ -104,9 +104,9 @@ export interface TemplateVariantGroupPreviewProps
         >
 {
     // handlers:
-    onUpdated     ?: UpdatedHandler<TemplateVariantGroupDetail>
-    onDeleted     ?: DeleteHandler<TemplateVariantGroupDetail>
-    onEditing     ?: React.MouseEventHandler<HTMLButtonElement>
+    onModelUpdate ?: UpdatedHandler<TemplateVariantGroupDetail>
+    onModelDelete ?: DeleteHandler<TemplateVariantGroupDetail>
+    onModelEdit   ?: React.MouseEventHandler<HTMLButtonElement>
 }
 const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): JSX.Element|null => {
     // styles:
@@ -122,9 +122,9 @@ const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): J
         
         
         // handlers:
-        onUpdated,
-        onDeleted,
-        onEditing,
+        onModelUpdate,
+        onModelDelete,
+        onModelEdit,
     ...restListItemProps} = props;
     const {
         id,
@@ -172,7 +172,7 @@ const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): J
     
     // handlers:
     const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async (event) => {
-        onEditing?.(event);
+        onModelEdit?.(event);
         
         
         
@@ -199,11 +199,11 @@ const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): J
                 break;
             
             case false:     // dialog deleted
-                await onDeleted?.(model);
+                await onModelDelete?.(model);
                 break;
             
             default:        // dialog updated
-                await onUpdated?.(updatedVariantGroupModel);
+                await onModelUpdate?.(updatedVariantGroupModel);
         } // switch
     });
     

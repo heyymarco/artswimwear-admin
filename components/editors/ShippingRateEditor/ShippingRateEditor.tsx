@@ -283,8 +283,8 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
                         
                         
                         // handlers:
-                        onUpdated={handleModelUpdated}
-                        onDeleted={handleModelDeleted}
+                        onModelUpdate={handleModelUpdated}
+                        onModelDelete={handleModelDeleted}
                     />
                 )}
                 

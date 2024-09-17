@@ -355,8 +355,8 @@ const TemplateVariantMenuItems = (props: TemplateVariantMenuItemsProps): JSX.Ele
                     
                     
                     // handlers:
-                    onClick   = {(event) => handleSelectTemplateVariant(event, model)}
-                    onEditing = {handleEditingTemplateVariant}
+                    onClick     = {(event) => handleSelectTemplateVariant(event, model)}
+                    onModelEdit = {handleEditingTemplateVariant}
                 />
             )}
         </>

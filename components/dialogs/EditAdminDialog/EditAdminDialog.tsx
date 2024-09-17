@@ -563,7 +563,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
                                 
                                 
                                 // handlers:
-                                onDeleted={handleRoleDeleted}
+                                onModelDelete={handleRoleDeleted}
                             />
                         }
                         modelCreateComponent={
