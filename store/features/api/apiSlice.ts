@@ -398,14 +398,14 @@ export const apiSlice = createApi({
         
         getPreference               : builder.query<AdminPreferenceDetail, void>({
             query : () => ({
-                url    : 'preferences',
+                url    : 'admins/preferences',
                 method : 'GET',
             }),
             providesTags: ['Preference'],
         }),
         updatePreference            : builder.mutation<AdminPreferenceDetail, MutationArgs<AdminPreferenceData>>({
             query: (arg) => ({
-                url    : 'preferences',
+                url    : 'admins/preferences',
                 method : 'PATCH',
                 body   : arg
             }),
