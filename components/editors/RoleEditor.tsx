@@ -66,7 +66,7 @@ interface RoleEditorProps<TElement extends Element = HTMLElement>
             
             
             // handlers:
-            |'onModelCreated'
+            |'onModelCreate'
         >>
 {
     // values:
@@ -96,7 +96,7 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
         
         
         // handlers:
-        onModelCreated,
+        onModelCreate,
     ...restListProps} = props;
     
     const filteredValueOptions = !valueOptions ? undefined : Object.values(valueOptions.entities).filter((model): model is Exclude<typeof model, undefined> => !!model);
@@ -134,7 +134,7 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
                 
                 
                 // handlers:
-                onModelCreated={onModelCreated}
+                onModelCreate={onModelCreate}
             />}
             
             {valueOptionsWithNone.map((modelOption) =>

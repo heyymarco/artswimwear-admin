@@ -578,7 +578,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
                         
                         
                         // handlers:
-                        onModelCreated={handleRoleCreated}
+                        onModelCreate={handleRoleCreated}
                     />
             }</TabPanel>
         </>}</ComplexEditModelDialog>

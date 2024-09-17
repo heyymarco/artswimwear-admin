@@ -313,7 +313,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
                     
                     
                     // handlers:
-                    onModelCreated={handleModelCreated}
+                    onModelCreate={handleModelCreated}
                 />
             </List>
         </EditableControl>

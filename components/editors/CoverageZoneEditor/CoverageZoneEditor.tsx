@@ -466,7 +466,7 @@ const CoverageZoneEditor = <TCoverageZoneDetail extends CoverageZoneDetail<TCove
                         
                         
                         // handlers:
-                        onModelCreated={handleModelCreated}
+                        onModelCreate={handleModelCreated}
                     />
                 </OrderableList>
             </ShippingStateProvider>

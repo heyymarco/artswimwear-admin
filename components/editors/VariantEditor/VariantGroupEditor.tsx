@@ -285,7 +285,7 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
                     
                     
                     // handlers:
-                    onModelCreated={handleModelCreated}
+                    onModelCreate={handleModelCreated}
                 />}
                 
                 {!value.length && <ModelEmpty />}
