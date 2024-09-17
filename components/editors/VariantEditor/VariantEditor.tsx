@@ -228,7 +228,7 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
                 
                 
                 // handlers:
-                onCreated={handleModelCreated}
+                onModelCreated={handleModelCreated}
             />}
             
             {!value.length && <ModelEmpty />}
