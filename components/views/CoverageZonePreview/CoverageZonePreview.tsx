@@ -53,7 +53,7 @@ import {
 }                           from '@/components/Grip'
 import {
     ModelPreviewProps,
-}                           from '@/components/explorers/PaginationExplorer'
+}                           from '@/components/explorers/PaginationList'
 import {
     // types:
     type ComplexEditModelDialogResult,

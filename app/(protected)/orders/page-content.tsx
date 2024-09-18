@@ -39,10 +39,12 @@ import {
     PageError,
 }                           from '@/components/PageError'
 import {
-    PaginationExplorerStateProvider,
-    usePaginationExplorerState,
-    PaginationExplorer,
-}                           from '@/components/explorers/PaginationExplorer'
+    PaginationStateProvider,
+    usePaginationState,
+}                           from '@/components/explorers/Pagination'
+import {
+    PaginationList,
+}                           from '@/components/explorers/PaginationList'
 import {
     OrderPreview,
 }                           from '@/components/views/OrderPreview'
@@ -67,12 +69,12 @@ import {
 export function OrderPageContent(): JSX.Element|null {
     // jsx:
     return (
-        <PaginationExplorerStateProvider
+        <PaginationStateProvider
             // data:
             useGetModelPage={useGetOrderPage}
         >
             <OrderPageContentInternal />
-        </PaginationExplorerStateProvider>
+        </PaginationStateProvider>
     );
 }
 function OrderPageContentInternal(): JSX.Element|null {
@@ -82,7 +84,7 @@ function OrderPageContentInternal(): JSX.Element|null {
         isLoading: isLoadingAndNoData,
         isError,
         refetch,
-    } = usePaginationExplorerState<OrderDetail>();
+    } = usePaginationState<OrderDetail>();
     const isErrorAndNoData = isError && !data;
     
     
@@ -109,7 +111,7 @@ function OrderPageContentInternal(): JSX.Element|null {
     return (
         <SimpleMainPage>
             <Section theme='primary'>
-                <PaginationExplorer<OrderDetail>
+                <PaginationList<OrderDetail>
                     // components:
                     modelPreviewComponent={
                         <OrderPreview

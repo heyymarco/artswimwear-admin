@@ -25,7 +25,7 @@ import type {
 import {
     ModelCreateOuterProps,
     ModelCreateOuter,
-}                           from '@/components/explorers/PaginationExplorer'
+}                           from '@/components/explorers/PaginationList'
 import type {
     RolePreviewProps,
 }                           from '@/components/views/RolePreview'

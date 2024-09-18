@@ -44,12 +44,14 @@ import type {
     EditVariantDialogProps,
 }                           from '@/components/dialogs/EditVariantDialog'
 import {
-    ModelCreateProps,
-    CreateHandler,
-    ModelCreateOuterProps,
+    type CreateHandler,
+    type ModelCreateProps,
+}                           from '@/components/explorers/Pagination'
+import {
+    type ModelCreateOuterProps,
     ModelCreateOuter,
     ModelEmpty,
-}                           from '@/components/explorers/PaginationExplorer'
+}                           from '@/components/explorers/PaginationList'
 import type {
     VariantPreviewProps,
 }                           from '@/components/views/VariantPreview'

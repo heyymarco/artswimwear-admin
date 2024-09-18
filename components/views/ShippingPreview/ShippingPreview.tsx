@@ -57,7 +57,7 @@ import {
 // internal components:
 import {
     ModelPreviewProps,
-}                           from '@/components/explorers/PaginationExplorer'
+}                           from '@/components/explorers/PaginationList'
 import {
     EditButton,
 }                           from '@/components/EditButton'

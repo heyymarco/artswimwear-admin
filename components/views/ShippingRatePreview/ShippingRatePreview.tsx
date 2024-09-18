@@ -38,7 +38,7 @@ import {
 // internal components:
 import {
     ModelPreviewProps,
-}                           from '@/components/explorers/PaginationExplorer'
+}                           from '@/components/explorers/PaginationList'
 import type {
     // types:
     UpdatedHandler,

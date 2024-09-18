@@ -27,10 +27,12 @@ import {
     PageError,
 }                           from '@/components/PageError'
 import {
-    PaginationExplorerStateProvider,
-    usePaginationExplorerState,
-    PaginationExplorer,
-}                           from '@/components/explorers/PaginationExplorer'
+    PaginationStateProvider,
+    usePaginationState,
+}                           from '@/components/explorers/Pagination'
+import {
+    PaginationList,
+}                           from '@/components/explorers/PaginationList'
 import {
     EditAdminDialog,
 }                           from '@/components/dialogs/EditAdminDialog'
@@ -58,12 +60,12 @@ import {
 export function AdminPageContent(): JSX.Element|null {
     // jsx:
     return (
-        <PaginationExplorerStateProvider
+        <PaginationStateProvider
             // data:
             useGetModelPage={useGetAdminPage}
         >
             <AdminPageContentInternal />
-        </PaginationExplorerStateProvider>
+        </PaginationStateProvider>
     );
 }
 function AdminPageContentInternal(): JSX.Element|null {
@@ -80,7 +82,7 @@ function AdminPageContentInternal(): JSX.Element|null {
         isLoading: isLoadingAndNoData,
         isError,
         refetch,
-    } = usePaginationExplorerState<AdminDetail>();
+    } = usePaginationState<AdminDetail>();
     const isErrorAndNoData = isError && !data;
     
     const getRolePaginationApi  = useGetRoleList();
@@ -93,7 +95,7 @@ function AdminPageContentInternal(): JSX.Element|null {
     return (
         <SimpleMainPage>
             <Section theme='primary'>
-                <PaginationExplorer<AdminDetail>
+                <PaginationList<AdminDetail>
                     // accessibilities:
                     createItemText='Add New Admin'
                     

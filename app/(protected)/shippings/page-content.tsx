@@ -44,10 +44,12 @@ import {
     PageError,
 }                           from '@/components/PageError'
 import {
-    PaginationExplorerStateProvider,
-    usePaginationExplorerState,
-    PaginationExplorer,
-}                           from '@/components/explorers/PaginationExplorer'
+    PaginationStateProvider,
+    usePaginationState,
+}                           from '@/components/explorers/Pagination'
+import {
+    PaginationList,
+}                           from '@/components/explorers/PaginationList'
 import {
     EditShippingDialog,
 }                           from '@/components/dialogs/EditShippingDialog'
@@ -75,12 +77,12 @@ import {
 export function ShippingPageContent(): JSX.Element|null {
     // jsx:
     return (
-        <PaginationExplorerStateProvider
+        <PaginationStateProvider
             // data:
             useGetModelPage={useGetShippingPage}
         >
             <ShippingPageContentInternal />
-        </PaginationExplorerStateProvider>
+        </PaginationStateProvider>
     );
 }
 function ShippingPageContentInternal(): JSX.Element|null {
@@ -97,7 +99,7 @@ function ShippingPageContentInternal(): JSX.Element|null {
         isLoading: isLoadingAndNoData,
         isError,
         refetch,
-    } = usePaginationExplorerState<ShippingDetail>();
+    } = usePaginationState<ShippingDetail>();
     const isErrorAndNoData = isError && !data;
     
     
@@ -124,7 +126,7 @@ function ShippingPageContentInternal(): JSX.Element|null {
     return (
         <SimpleMainPage>
             <Section theme='primary'>
-                <PaginationExplorer<ShippingDetail>
+                <PaginationList<ShippingDetail>
                     // accessibilities:
                     createItemText='Add New Shipping'
                     

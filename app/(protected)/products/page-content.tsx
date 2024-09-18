@@ -27,10 +27,12 @@ import {
     PageError,
 }                           from '@/components/PageError'
 import {
-    PaginationExplorerStateProvider,
-    usePaginationExplorerState,
-    PaginationExplorer,
-}                           from '@/components/explorers/PaginationExplorer'
+    PaginationStateProvider,
+    usePaginationState,
+}                           from '@/components/explorers/Pagination'
+import {
+    PaginationList,
+}                           from '@/components/explorers/PaginationList'
 import {
     EditProductDialog,
 }                           from '@/components/dialogs/EditProductDialog'
@@ -56,12 +58,12 @@ import {
 export function ProductPageContent(): JSX.Element|null {
     // jsx:
     return (
-        <PaginationExplorerStateProvider
+        <PaginationStateProvider
             // data:
             useGetModelPage={useGetProductPage}
         >
             <ProductPageContentInternal />
-        </PaginationExplorerStateProvider>
+        </PaginationStateProvider>
     );
 }
 function ProductPageContentInternal(): JSX.Element|null {
@@ -78,7 +80,7 @@ function ProductPageContentInternal(): JSX.Element|null {
         isLoading: isLoadingAndNoData,
         isError,
         refetch,
-    } = usePaginationExplorerState<ProductDetail>();
+    } = usePaginationState<ProductDetail>();
     const isErrorAndNoData = isError && !data;
     
     
@@ -89,7 +91,7 @@ function ProductPageContentInternal(): JSX.Element|null {
     return (
         <SimpleMainPage>
             <Section theme='primary'>
-                <PaginationExplorer<ProductDetail>
+                <PaginationList<ProductDetail>
                     // accessibilities:
                     createItemText='Add New Product'
                     

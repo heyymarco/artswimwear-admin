@@ -52,10 +52,12 @@ import type {
     DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
-    CreateHandler,
+    type CreateHandler,
+}                           from '@/components/explorers/Pagination'
+import {
     ModelCreateOuter,
     ModelEmpty,
-}                           from '@/components/explorers/PaginationExplorer'
+}                           from '@/components/explorers/PaginationList'
 import {
     ShippingRatePreview,
 }                           from '@/components/views/ShippingRatePreview'

@@ -66,10 +66,12 @@ import {
     EditCoverageZoneDialog,
 }                           from '@/components/dialogs/EditCoverageZoneDialog'
 import {
-    CreateHandler,
+    type CreateHandler,
+}                           from '@/components/explorers/Pagination'
+import {
     ModelCreateOuter,
     ModelEmpty,
-}                           from '@/components/explorers/PaginationExplorer'
+}                           from '@/components/explorers/PaginationList'
 import {
     CoverageZonePreview,
 }                           from '@/components/views/CoverageZonePreview'
