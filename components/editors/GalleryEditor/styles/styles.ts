@@ -121,14 +121,8 @@ export const usesGalleryEditorLayout = () => {
         ...style({
             // layouts:
             display             : 'grid',        // use css block grid for layouting, the core of our GalleryEditor layout
-            gridAutoFlow        : 'row',         // items direction is to inline & wrap's direction is to block
-            gridAutoRows        : galleryEditors.itemRaiseRowHeight,
             gridTemplateColumns : `repeat(auto-fill, minmax(${galleryEditors.itemMinColumnWidth}, 1fr))`,
-            gridTemplateRows    : '1fr',         // consistent height for each item
-            
-            // item default sizes:
-            justifyItems        : 'stretch',     // each item fills the entire Gallery's column width
-            alignItems          : 'stretch',     // consistent height for each item
+            gridAutoRows        : '1fr',         // make all <GalleryItem>s having consistent height
             
             
             
