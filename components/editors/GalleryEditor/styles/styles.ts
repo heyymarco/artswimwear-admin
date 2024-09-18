@@ -120,7 +120,7 @@ export const usesGalleryEditorLayout = () => {
         // layouts:
         ...style({
             // layouts:
-            display             : 'grid',        // use css block grid for layouting, the core of our GalleryEditor layout
+            display             : 'grid',        // use css block grid for layouting, the core of our <GalleryEditor> layout
             gridTemplateColumns : `repeat(auto-fill, minmax(${galleryEditors.itemMinColumnWidth}, 1fr))`,
             gridAutoRows        : '1fr',         // make all <GalleryItem>s having consistent height
             
