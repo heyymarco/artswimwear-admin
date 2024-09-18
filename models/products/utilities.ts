@@ -5,9 +5,17 @@ import {
 
 // models:
 import {
+    type ProductPreview,
+}                           from './types'
+import {
     // types:
     type Prisma,
 }                           from '@/models'
+
+// ORMs:
+import {
+    type prisma,
+}                           from '@/libs/prisma.server'
 
 // internals:
 import {
@@ -25,6 +33,114 @@ import {
 
 
 // utilities:
+export const productPreviewSelect = {
+    id             : true,
+    name           : true,
+    price          : true,
+    shippingWeight : true,
+    images         : true,
+    
+    variantGroups : {
+        select : {
+            variants : {
+                select : {
+                    id         : true,
+                    
+                    visibility : true,
+                    
+                    name       : true,
+                },
+                orderBy : {
+                    sort : 'asc',
+                },
+            },
+        },
+        orderBy : {
+            sort : 'asc',
+        },
+    },
+} satisfies Prisma.ProductSelect;
+export const convertProductPreviewDataToProductPreview = (productPreviewData: Awaited<ReturnType<typeof prisma.product.findFirstOrThrow<{ select: typeof productPreviewSelect }>>>): ProductPreview => {
+    const {
+        images,        // take
+        variantGroups, // take
+    ...restProduct} = productPreviewData;
+    return {
+        ...restProduct,
+        image         : images?.[0],
+        variantGroups : (
+            variantGroups
+            .map(({variants}) =>
+                variants
+            )
+        ),
+    };
+};
+
+
+
+export const productDetailSelect = {
+    id             : true,
+                
+    visibility     : true,
+    
+    name           : true,
+    
+    price          : true,
+    shippingWeight : true,
+    
+    stock          : true,
+    
+    path           : true,
+    
+    excerpt        : true,
+    description    : true,
+    
+    images         : true,
+    
+    variantGroups : {
+        select: {
+            id                 : true,
+            
+            sort               : true,
+            
+            name               : true,
+            hasDedicatedStocks : true,
+            
+            variants           : {
+                select: {
+                    id             : true,
+                    
+                    visibility     : true,
+                    sort           : true,
+                    
+                    name           : true,
+                    price          : true,
+                    shippingWeight : true,
+                    images         : true,
+                },
+                orderBy : {
+                    sort: 'asc',
+                },
+            },
+        },
+        orderBy : {
+            sort: 'asc',
+        },
+    },
+    stocks : {
+        select: {
+            id         : true,
+            
+            value      : true,
+            
+            variantIds : true,
+        },
+    },
+} satisfies Prisma.ProductSelect;
+
+
+
 export const templateVariantGroupDetailSelect = {
     id                 : true,
     

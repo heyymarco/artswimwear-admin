@@ -30,6 +30,10 @@ import {
     
     
     // utilities:
+    productPreviewSelect,
+    convertProductPreviewDataToProductPreview,
+    productDetailSelect,
+    
     selectId,
     createVariantGroupDiff,
     createStockMap,
@@ -92,50 +96,9 @@ router
     
     const productPreviews : ProductPreview[] = (
         (await prisma.product.findMany({
-            select: {
-                id             : true,
-                name           : true,
-                price          : true,
-                shippingWeight : true,
-                images         : true,
-                
-                variantGroups : {
-                    select : {
-                        variants : {
-                            select : {
-                                id         : true,
-                                
-                                visibility : true,
-                                
-                                name       : true,
-                            },
-                            orderBy : {
-                                sort : 'asc',
-                            },
-                        },
-                    },
-                    orderBy : {
-                        sort : 'asc',
-                    },
-                },
-            },
+            select: productPreviewSelect,
         }))
-        .map((product) => {
-            const {
-                images,        // take
-                variantGroups, // take
-            ...restProduct} = product;
-            return {
-                ...restProduct,
-                image         : images?.[0],
-                variantGroups : (
-                    variantGroups
-                    .map(({variants}) =>
-                        variants
-                    )
-                ),
-            };
-        })
+        .map(convertProductPreviewDataToProductPreview)
     );
     return Response.json(productPreviews); // handled with success
 })
@@ -192,65 +155,7 @@ You do not have the privilege to view the products.`
     const [total, paged] = await prisma.$transaction([
         prisma.product.count(),
         prisma.product.findMany({
-            select: {
-                id             : true,
-                
-                visibility     : true,
-                
-                name           : true,
-                
-                price          : true,
-                shippingWeight : true,
-                
-                stock          : true,
-                
-                path           : true,
-                
-                excerpt        : true,
-                description    : true,
-                
-                images         : true,
-                
-                variantGroups : {
-                    select: {
-                        id                 : true,
-                        
-                        sort               : true,
-                        
-                        name               : true,
-                        hasDedicatedStocks : true,
-                        
-                        variants           : {
-                            select: {
-                                id             : true,
-                                
-                                visibility     : true,
-                                sort           : true,
-                                
-                                name           : true,
-                                price          : true,
-                                shippingWeight : true,
-                                images         : true,
-                            },
-                            orderBy : {
-                                sort: 'asc',
-                            },
-                        },
-                    },
-                    orderBy : {
-                        sort: 'asc',
-                    },
-                },
-                stocks : {
-                    select: {
-                        id         : true,
-                        
-                        value      : true,
-                        
-                        variantIds : true,
-                    },
-                },
-            },
+            select: productDetailSelect,
             orderBy : {
                 createdAt: 'desc',
             },
