@@ -17,6 +17,10 @@ import {
     useMemo,
     useState,
 }                           from 'react'
+import {
+    type Draft,
+    produce,
+}                           from 'immer'
 
 // reusable-ui core:
 import {
@@ -183,4 +187,93 @@ export {
     PaginationStateProvider,            // named export for readibility
     PaginationStateProvider as default, // default export to support React.lazy
 }
+
+
+
+export type InterceptEventHandler<TModel extends Model> = (state: Draft<PaginationState<TModel>>) => Draft<PaginationState<TModel>> | void | undefined;
+export interface InterceptPaginationStateProps<TModel extends Model> {
+    onIntercept : InterceptEventHandler<TModel>
+}
+export const InterceptPaginationStateProvider = <TModel extends Model>(props: React.PropsWithChildren<InterceptPaginationStateProps<TModel>>): JSX.Element|null => {
+    // props:
+    const {
+        // states:
+        onIntercept,
+        
+        
+        
+        // children:
+        children,
+    } = props;
+    
+    
+    
+    // states:
+    const paginationState = usePaginationState<TModel>();
+    const {
+        // states:
+        page,
+        setPage,                  // stable ref
+        
+        perPage,
+        setPerPage,               // stable ref
+        
+        
+        
+        // data:
+        data,
+        
+        isFetching,
+        isLoading,
+        isError,
+        
+        refetch,
+    } = produce(paginationState, onIntercept);
+    const interceptedPaginationState = useMemo<PaginationState<TModel>>(() => ({
+        // states:
+        page,
+        setPage,                  // stable ref
+        
+        perPage,
+        setPerPage,               // stable ref
+        
+        
+        
+        // data:
+        data,
+        
+        isFetching,
+        isLoading,
+        isError,
+        
+        refetch,
+    }), [
+        // states:
+        page,
+        // setPage,               // stable ref
+        
+        perPage,
+        // setPerPage,            // stable ref
+        
+        
+        
+        // data:
+        data,
+        
+        isFetching,
+        isLoading,
+        isError,
+        
+        refetch,
+    ]);
+    
+    
+    
+    // jsx:
+    return (
+        <PaginationStateContext.Provider value={interceptedPaginationState}>
+            {children}
+        </PaginationStateContext.Provider>
+    );
+};
 //#endregion paginationState
