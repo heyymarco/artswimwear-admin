@@ -69,7 +69,7 @@ import {
 export function OrderPageContent(): JSX.Element|null {
     // jsx:
     return (
-        <PaginationStateProvider
+        <PaginationStateProvider<OrderDetail>
             // data:
             useGetModelPage={useGetOrderPage}
         >

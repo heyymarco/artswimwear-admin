@@ -58,7 +58,7 @@ import {
 export function ProductPageContent(): JSX.Element|null {
     // jsx:
     return (
-        <PaginationStateProvider
+        <PaginationStateProvider<ProductDetail>
             // data:
             useGetModelPage={useGetProductPage}
         >

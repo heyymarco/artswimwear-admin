@@ -60,7 +60,7 @@ import {
 export function AdminPageContent(): JSX.Element|null {
     // jsx:
     return (
-        <PaginationStateProvider
+        <PaginationStateProvider<AdminDetail>
             // data:
             useGetModelPage={useGetAdminPage}
         >

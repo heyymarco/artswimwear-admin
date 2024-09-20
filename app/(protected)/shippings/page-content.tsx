@@ -77,7 +77,7 @@ import {
 export function ShippingPageContent(): JSX.Element|null {
     // jsx:
     return (
-        <PaginationStateProvider
+        <PaginationStateProvider<ShippingDetail>
             // data:
             useGetModelPage={useGetShippingPage}
         >
