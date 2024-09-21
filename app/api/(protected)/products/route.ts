@@ -94,6 +94,35 @@ router
     
     
     
+    //#region parsing request
+    const {
+        id,
+    } = Object.fromEntries(new URL(req.url, 'https://localhost/').searchParams.entries());
+    //#endregion parsing request
+    
+    
+    
+    if (id) {
+        const productPreviewData = (
+            await prisma.product.findUnique({
+                where  : {
+                    id         : id, // find by id
+                },
+                select : productPreviewSelect,
+            })
+        );
+        
+        if (!productPreviewData) {
+            return Response.json({
+                error: `The product with specified id "${id}" is not found.`,
+            }, { status: 404 }); // handled with error
+        } // if
+        
+        return Response.json(convertProductPreviewDataToProductPreview(productPreviewData) satisfies ProductPreview); // handled with success
+    } // if
+    
+    
+    
     const productPreviews : ProductPreview[] = (
         (await prisma.product.findMany({
             select: productPreviewSelect,

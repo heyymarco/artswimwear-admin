@@ -139,6 +139,12 @@ export const apiSlice = createApi({
                 return productListAdapter.addMany(productListAdapter.getInitialState(), response);
             },
         }),
+        getProductPreview           : builder.query<ProductPreview, string>({
+            query : (arg: string) => ({
+                url    : `products?id=${encodeURIComponent(arg)}`,
+                method : 'GET',
+            }),
+        }),
         getProductPage              : builder.query<Pagination<ProductDetail>, PaginationArgs>({
             query : (arg) => ({
                 url    : 'products',
@@ -457,6 +463,7 @@ export const apiSlice = createApi({
 
 export const {
     useGetProductListQuery                 : useGetProductList,
+    useGetProductPreviewQuery              : useGetProductPreview,
     useGetProductPageQuery                 : useGetProductPage,
     useUpdateProductMutation               : useUpdateProduct,
     useDeleteProductMutation               : useDeleteProduct,
@@ -502,6 +509,8 @@ export const {
 } = apiSlice;
 
 export const {
+    getProductPreview : { initiate : getProductPreview },
+    
     getCountryList : { initiate : getCountryList },
     getStateList   : { initiate : getStateList   },
     getCityList    : { initiate : getCityList    },
