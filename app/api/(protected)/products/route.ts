@@ -29,6 +29,11 @@ import {
     
     
     
+    // schemas:
+    ModelIdSchema,
+    
+    
+    
     // utilities:
     productPreviewSelect,
     convertProductPreviewDataToProductPreview,
@@ -90,46 +95,46 @@ router
     return await next();
 })
 .get(async (req) => {
-    /* required for displaying related_products in orders page */
-    
-    
-    
-    //#region parsing request
+    //#region parsing and validating request
+    const requestData = await (async () => {
+        try {
+            const data = Object.fromEntries(new URL(req.url, 'https://localhost/').searchParams.entries());
+            return {
+                id : ModelIdSchema.parse(data?.id),
+            };
+        }
+        catch {
+            return null;
+        } // try
+    })();
+    if (requestData === null) {
+        return Response.json({
+            error: 'Invalid data.',
+        }, { status: 400 }); // handled with error
+    } // if
     const {
         id,
-    } = Object.fromEntries(new URL(req.url, 'https://localhost/').searchParams.entries());
-    //#endregion parsing request
+    } = requestData;
+    //#endregion parsing and validating request
     
     
     
-    if (id) {
-        const productPreviewData = (
-            await prisma.product.findUnique({
-                where  : {
-                    id         : id, // find by id
-                },
-                select : productPreviewSelect,
-            })
-        );
-        
-        if (!productPreviewData) {
-            return Response.json({
-                error: `The product with specified id "${id}" is not found.`,
-            }, { status: 404 }); // handled with error
-        } // if
-        
-        return Response.json(convertProductPreviewDataToProductPreview(productPreviewData) satisfies ProductPreview); // handled with success
+    const productPreviewData = (
+        await prisma.product.findUnique({
+            where  : {
+                id         : id, // find by id
+            },
+            select : productPreviewSelect,
+        })
+    );
+    
+    if (!productPreviewData) {
+        return Response.json({
+            error: `The product with specified id "${id}" is not found.`,
+        }, { status: 404 }); // handled with error
     } // if
     
-    
-    
-    const productPreviews : ProductPreview[] = (
-        (await prisma.product.findMany({
-            select: productPreviewSelect,
-        }))
-        .map(convertProductPreviewDataToProductPreview)
-    );
-    return Response.json(productPreviews); // handled with success
+    return Response.json(convertProductPreviewDataToProductPreview(productPreviewData) satisfies ProductPreview); // handled with success
 })
 .post(async (req) => {
     /* required for displaying products page */

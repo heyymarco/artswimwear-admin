@@ -130,15 +130,6 @@ export const apiSlice = createApi({
     }),
     tagTypes: ['Product', 'TemplateVariantGroup', 'Order', 'DefaultShippingOrigin', 'Shipping', 'Admin', 'Preference', 'Role'],
     endpoints : (builder) => ({
-        getProductList              : builder.query<EntityState<ProductPreview>, void>({
-            query : () => ({
-                url    : 'products',
-                method : 'GET',
-            }),
-            transformResponse(response: ProductPreview[]) {
-                return productListAdapter.addMany(productListAdapter.getInitialState(), response);
-            },
-        }),
         getProductPreview           : builder.query<ProductPreview, string>({
             query : (arg: string) => ({
                 url    : `products?id=${encodeURIComponent(arg)}`,
@@ -462,7 +453,6 @@ export const apiSlice = createApi({
 
 
 export const {
-    useGetProductListQuery                 : useGetProductList,
     useGetProductPreviewQuery              : useGetProductPreview,
     useGetProductPageQuery                 : useGetProductPage,
     useUpdateProductMutation               : useUpdateProduct,
