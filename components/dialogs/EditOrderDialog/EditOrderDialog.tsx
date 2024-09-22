@@ -269,7 +269,6 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     
     // apis:
     const [updateOrder,       {isLoading: isUpdating                                                            }] = useUpdateOrder();
-    const {data: productList , isLoading: isLoadingProduct , isError: isErrorProduct , refetch: refetchProduct  }  = useGetProductList();
     const {data: shippingList, isLoading: isLoadingShipping, isError: isErrorShipping, refetch: refetchShipping }  = useGetShippingList();
     const {
         orderStatus,
@@ -356,8 +355,6 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     const isLoading = (
         // have any loading(s):
         
-        isLoadingProduct
-        ||
         (
             !!shippingAddressDetail // IGNORE shippingLoading if no shipping required
             &&
@@ -373,8 +370,6 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         (
             // have any error(s):
             
-            isErrorProduct
-            ||
             (
                 !!shippingAddressDetail // IGNORE shippingError if no shipping required
                 &&
@@ -569,7 +564,6 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
     });
     
     const refetchModel               = useEvent((): void => {
-        if (isErrorProduct  && !isLoadingProduct ) refetchProduct();
         if (isErrorShipping && !isLoadingShipping) refetchShipping();
     });
     
@@ -726,7 +720,6 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                 // relation data:
                                 productId={productId}
                                 variantIds={variantIds}
-                                productList={productList}
                             />
                         )}
                     </List>
