@@ -64,9 +64,6 @@ import {
 const shippingListAdapter             = createEntityAdapter<ShippingPreview>({
     selectId : (shippingPreview) => shippingPreview.id,
 });
-const productListAdapter              = createEntityAdapter<ProductPreview>({
-    selectId : (productPreview) => productPreview.id,
-});
 const templateVariantGroupListAdapter = createEntityAdapter<TemplateVariantGroupDetail>({
     selectId : (roleDetail) => roleDetail.id,
 });
