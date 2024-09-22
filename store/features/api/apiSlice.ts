@@ -570,7 +570,19 @@ type PaginationUpdateType =
     |'CREATE'
     |'UPDATE'
     |'DELETE'
-const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, updateType: PaginationUpdateType, invalidateTag: Extract<Parameters<typeof apiSlice.util.invalidateTags>[0][number], string>, providedMutatedEntry?: TEntry) => {
+interface PaginationUpdateOptions<TEntry extends Model|string> {
+    providedMutatedEntry ?: TEntry
+    predicate            ?: (originalArgs: unknown) => boolean
+}
+const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, updateType: PaginationUpdateType, invalidateTag: Extract<Parameters<typeof apiSlice.util.invalidateTags>[0][number], string>, options?: PaginationUpdateOptions<TEntry>) => {
+    // options
+    const {
+        providedMutatedEntry,
+        predicate,
+    } = options ?? {};
+    
+    
+    
     // mutated TEntry data:
     const mutatedEntry : TEntry|undefined = (providedMutatedEntry !== undefined) ? providedMutatedEntry : await (async (): Promise<TEntry|undefined> => {
         try {
@@ -597,6 +609,8 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
             (allQueryCache.endpointName === endpointName)
             &&
             (allQueryCache.data !== undefined)
+            &&
+            ((predicate === undefined) || predicate(allQueryCache.originalArgs))
         )
     );
     
@@ -894,7 +908,19 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
 type EntityUpdateType =
     |'UPSERT'
     |'DELETE'
-const cumulativeUpdateEntityCache     = async <TEntry extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getTemplateVariantGroupList'|'getRoleList'>, updateType: EntityUpdateType, invalidateTag: Extract<Parameters<typeof apiSlice.util.invalidateTags>[0][number], string>, providedMutatedEntry?: TEntry) => {
+interface EntityUpdateOptions<TEntry extends Model|string> {
+    providedMutatedEntry ?: TEntry
+    predicate            ?: (originalArgs: unknown) => boolean
+}
+const cumulativeUpdateEntityCache     = async <TEntry extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getTemplateVariantGroupList'|'getRoleList'>, updateType: EntityUpdateType, invalidateTag: Extract<Parameters<typeof apiSlice.util.invalidateTags>[0][number], string>, options?: EntityUpdateOptions<TEntry>) => {
+    // options
+    const {
+        providedMutatedEntry,
+        predicate,
+    } = options ?? {};
+    
+    
+    
     // mutated TEntry data:
     const mutatedEntry : TEntry|undefined = (providedMutatedEntry !== undefined) ? providedMutatedEntry : await (async (): Promise<TEntry|undefined> => {
         try {
@@ -921,6 +947,8 @@ const cumulativeUpdateEntityCache     = async <TEntry extends Model|string, TQue
             (allQueryCache.endpointName === endpointName)
             &&
             (allQueryCache.data !== undefined)
+            &&
+            ((predicate === undefined) || predicate(allQueryCache.originalArgs))
         )
     );
     
