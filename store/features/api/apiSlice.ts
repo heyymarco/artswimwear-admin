@@ -125,21 +125,15 @@ export const apiSlice = createApi({
     baseQuery : axiosBaseQuery({
         baseUrl: `${process.env.NEXT_PUBLIC_APP_URL ?? ''}/api`
     }),
-    tagTypes: ['Product', 'TemplateVariantGroup', 'Order', 'DefaultShippingOrigin', 'Shipping', 'Admin', 'Preference', 'Role'],
+    tagTypes: ['ProductPage', 'TemplateVariantGroup', 'Order', 'DefaultShippingOrigin', 'Shipping', 'Admin', 'Preference', 'Role'],
     endpoints : (builder) => ({
-        getProductPreview           : builder.query<ProductPreview, string>({
-            query : (arg: string) => ({
-                url    : `products?id=${encodeURIComponent(arg)}`,
-                method : 'GET',
-            }),
-        }),
         getProductPage              : builder.query<Pagination<ProductDetail>, PaginationArgs>({
             query : (arg) => ({
                 url    : 'products',
                 method : 'POST',
                 body   : arg,
             }),
-            providesTags: (data, error, arg) => [{ type: 'Product', id: arg.page }],
+            providesTags: (data, error, arg) => [{ type: 'ProductPage', id: arg.page }],
         }),
         updateProduct               : builder.mutation<ProductDetail, MutationArgs<Omit<ProductDetail, 'stocks'> & { stocks?: (number|null)[] }>>({
             query: (arg) => ({
@@ -148,7 +142,7 @@ export const apiSlice = createApi({
                 body   : arg
             }),
             onQueryStarted: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getProductPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'Product');
+                await cumulativeUpdatePaginationCache(api, 'getProductPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'ProductPage');
             },
         }),
         deleteProduct               : builder.mutation<Pick<ProductDetail, 'id'>, MutationArgs<Pick<ProductDetail, 'id'>>>({
@@ -158,8 +152,14 @@ export const apiSlice = createApi({
                 body   : arg
             }),
             onQueryStarted: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getProductPage', 'DELETE', 'Product');
+                await cumulativeUpdatePaginationCache(api, 'getProductPage', 'DELETE', 'ProductPage');
             },
+        }),
+        getProductPreview           : builder.query<ProductPreview, string>({
+            query : (arg: string) => ({
+                url    : `products?id=${encodeURIComponent(arg)}`,
+                method : 'GET',
+            }),
         }),
         availablePath               : builder.query<boolean, string>({
             query: (arg) => ({
@@ -450,10 +450,10 @@ export const apiSlice = createApi({
 
 
 export const {
-    useGetProductPreviewQuery              : useGetProductPreview,
     useGetProductPageQuery                 : useGetProductPage,
     useUpdateProductMutation               : useUpdateProduct,
     useDeleteProductMutation               : useDeleteProduct,
+    useGetProductPreviewQuery              : useGetProductPreview,
     useLazyAvailablePathQuery              : useAvailablePath,
     
     useGetTemplateVariantGroupListQuery    : useGetTemplateVariantGroupList,
