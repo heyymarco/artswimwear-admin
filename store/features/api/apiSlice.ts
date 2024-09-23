@@ -125,7 +125,7 @@ export const apiSlice = createApi({
     baseQuery : axiosBaseQuery({
         baseUrl: `${process.env.NEXT_PUBLIC_APP_URL ?? ''}/api`
     }),
-    tagTypes: ['ProductPage', 'ProductPreview', 'TemplateVariantGroup', 'Order', 'Shipping', 'DefaultShippingOrigin', 'Admin', 'Role', 'Preference'],
+    tagTypes: ['ProductPage', 'TemplateVariantGroup', 'Order', 'Shipping', 'DefaultShippingOrigin', 'Admin', 'Role', 'Preference'],
     endpoints : (builder) => ({
         getProductPage              : builder.query<Pagination<ProductDetail>, PaginationArgs>({
             query : (arg) => ({
@@ -161,7 +161,6 @@ export const apiSlice = createApi({
                 url    : `products?id=${encodeURIComponent(arg)}`,
                 method : 'GET',
             }),
-            providesTags: (data, error, arg) => [{ type: 'ProductPreview', id: arg }],
         }),
         availablePath               : builder.query<boolean, string>({
             query: (arg) => ({
