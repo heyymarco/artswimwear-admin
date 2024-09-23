@@ -125,7 +125,7 @@ export const apiSlice = createApi({
     baseQuery : axiosBaseQuery({
         baseUrl: `${process.env.NEXT_PUBLIC_APP_URL ?? ''}/api`
     }),
-    tagTypes: ['ProductPage', 'TemplateVariantGroup', 'Order', 'Shipping', 'DefaultShippingOrigin', 'Admin', 'Role', 'Preference'],
+    tagTypes: ['ProductPage', 'TemplateVariantGroupEntity', 'OrderPage', 'ShippingPage', 'DefaultShippingOriginData', 'AdminPage', 'RoleEntity', 'PreferenceData'],
     endpoints : (builder) => ({
         getProductPage              : builder.query<Pagination<ProductDetail>, PaginationArgs>({
             query : (arg) => ({
@@ -179,7 +179,7 @@ export const apiSlice = createApi({
             transformResponse(response: TemplateVariantGroupDetail[]) {
                 return templateVariantGroupListAdapter.addMany(templateVariantGroupListAdapter.getInitialState(), response);
             },
-            providesTags: ['TemplateVariantGroup'],
+            providesTags: ['TemplateVariantGroupEntity'],
         }),
         updateTemplateVariantGroup  : builder.mutation<TemplateVariantGroupDetail, MutationArgs<TemplateVariantGroupDetail>>({
             query: (arg) => ({
@@ -188,7 +188,7 @@ export const apiSlice = createApi({
                 body   : arg
             }),
             onQueryStarted: async (arg, api) => {
-                await cumulativeUpdateEntityCache(api, 'getTemplateVariantGroupList', 'UPSERT', 'TemplateVariantGroup');
+                await cumulativeUpdateEntityCache(api, 'getTemplateVariantGroupList', 'UPSERT', 'TemplateVariantGroupEntity');
             },
         }),
         deleteTemplateVariantGroup  : builder.mutation<Pick<TemplateVariantGroupDetail, 'id'>, MutationArgs<Pick<TemplateVariantGroupDetail, 'id'>>>({
@@ -198,7 +198,7 @@ export const apiSlice = createApi({
                 body   : arg
             }),
             onQueryStarted: async (arg, api) => {
-                await cumulativeUpdateEntityCache(api, 'getTemplateVariantGroupList', 'DELETE', 'TemplateVariantGroup');
+                await cumulativeUpdateEntityCache(api, 'getTemplateVariantGroupList', 'DELETE', 'TemplateVariantGroupEntity');
             },
         }),
         
@@ -210,7 +210,7 @@ export const apiSlice = createApi({
                 method : 'POST',
                 body   : arg,
             }),
-            providesTags: (data, error, arg) => [{ type: 'Order', id: arg.page }],
+            providesTags: (data, error, arg) => [{ type: 'OrderPage', id: arg.page }],
         }),
         updateOrder                 : builder.mutation<OrderDetail, MutationArgs<OrderDetailWithOptions>>({
             query: (arg) => ({
@@ -219,7 +219,7 @@ export const apiSlice = createApi({
                 body   : arg
             }),
             onQueryStarted: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getOrderPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'Order');
+                await cumulativeUpdatePaginationCache(api, 'getOrderPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'OrderPage');
             },
         }),
         
@@ -248,7 +248,7 @@ export const apiSlice = createApi({
                 method : 'POST',
                 body   : arg,
             }),
-            providesTags: (data, error, arg) => [{ type: 'Shipping', id: arg.page }],
+            providesTags: (data, error, arg) => [{ type: 'ShippingPage', id: arg.page }],
         }),
         updateShipping              : builder.mutation<ShippingDetail, MutationArgs<ShippingDetail>>({
             query: (arg) => ({
@@ -257,7 +257,7 @@ export const apiSlice = createApi({
                 body   : arg
             }),
             onQueryStarted: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getShippingPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'Shipping');
+                await cumulativeUpdatePaginationCache(api, 'getShippingPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'ShippingPage');
             },
         }),
         deleteShipping              : builder.mutation<Pick<ShippingDetail, 'id'>, MutationArgs<Pick<ShippingDetail, 'id'>>>({
@@ -267,7 +267,7 @@ export const apiSlice = createApi({
                 body   : params
             }),
             onQueryStarted: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getShippingPage', 'DELETE', 'Shipping');
+                await cumulativeUpdatePaginationCache(api, 'getShippingPage', 'DELETE', 'ShippingPage');
             },
         }),
         
@@ -276,7 +276,7 @@ export const apiSlice = createApi({
                 url    : 'shippings/origin',
                 method : 'GET',
             }),
-            providesTags: ['DefaultShippingOrigin'],
+            providesTags: ['DefaultShippingOriginData'],
         }),
         updateDefaultShippingOrigin : builder.mutation<DefaultShippingOriginDetail, MutationArgs<DefaultShippingOriginDetail>|null>({
             query: (arg) => ({
@@ -284,7 +284,7 @@ export const apiSlice = createApi({
                 method : 'PATCH',
                 body   : arg ?? {}
             }),
-            invalidatesTags: ['DefaultShippingOrigin'],
+            invalidatesTags: ['DefaultShippingOriginData'],
         }),
         
         getShippingList             : builder.query<EntityState<ShippingPreview>, void>({
@@ -324,7 +324,7 @@ export const apiSlice = createApi({
                 method : 'POST',
                 body   : arg,
             }),
-            providesTags: (data, error, arg) => [{ type: 'Admin', id: arg.page }],
+            providesTags: (data, error, arg) => [{ type: 'AdminPage', id: arg.page }],
         }),
         updateAdmin                 : builder.mutation<AdminDetail, MutationArgs<AdminDetail>>({
             query: (arg) => ({
@@ -333,7 +333,7 @@ export const apiSlice = createApi({
                 body   : arg
             }),
             onQueryStarted: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getAdminPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'Admin');
+                await cumulativeUpdatePaginationCache(api, 'getAdminPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'AdminPage');
             },
         }),
         deleteAdmin                 : builder.mutation<Pick<AdminDetail, 'id'>, MutationArgs<Pick<AdminDetail, 'id'>>>({
@@ -343,7 +343,7 @@ export const apiSlice = createApi({
                 body   : params
             }),
             onQueryStarted: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getAdminPage', 'DELETE', 'Admin');
+                await cumulativeUpdatePaginationCache(api, 'getAdminPage', 'DELETE', 'AdminPage');
             },
         }),
         
@@ -376,7 +376,7 @@ export const apiSlice = createApi({
             transformResponse(response: RoleDetail[]) {
                 return roleListAdapter.addMany(roleListAdapter.getInitialState(), response);
             },
-            providesTags: ['Role'],
+            providesTags: ['RoleEntity'],
         }),
         updateRole                  : builder.mutation<RoleDetail, MutationArgs<RoleDetail>>({
             query: (arg) => ({
@@ -385,7 +385,7 @@ export const apiSlice = createApi({
                 body   : arg
             }),
             onQueryStarted: async (arg, api) => {
-                await cumulativeUpdateEntityCache(api, 'getRoleList', 'UPSERT', 'Role');
+                await cumulativeUpdateEntityCache(api, 'getRoleList', 'UPSERT', 'RoleEntity');
             },
         }),
         deleteRole                  : builder.mutation<Pick<RoleDetail, 'id'>, MutationArgs<Pick<RoleDetail, 'id'>>>({
@@ -395,7 +395,7 @@ export const apiSlice = createApi({
                 body   : arg
             }),
             onQueryStarted: async (arg, api) => {
-                await cumulativeUpdateEntityCache(api, 'getRoleList', 'DELETE', 'Role');
+                await cumulativeUpdateEntityCache(api, 'getRoleList', 'DELETE', 'RoleEntity');
             },
         }),
         
@@ -413,7 +413,7 @@ export const apiSlice = createApi({
                 url    : 'admins/preferences',
                 method : 'GET',
             }),
-            providesTags: ['Preference'],
+            providesTags: ['PreferenceData'],
         }),
         updatePreference            : builder.mutation<AdminPreferenceDetail, MutationArgs<AdminPreferenceData>>({
             query: (arg) => ({
@@ -421,7 +421,7 @@ export const apiSlice = createApi({
                 method : 'PATCH',
                 body   : arg
             }),
-            invalidatesTags: ['Preference'],
+            invalidatesTags: ['PreferenceData'],
         }),
         
         
