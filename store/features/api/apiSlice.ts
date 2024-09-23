@@ -125,7 +125,7 @@ export const apiSlice = createApi({
     baseQuery : axiosBaseQuery({
         baseUrl: `${process.env.NEXT_PUBLIC_APP_URL ?? ''}/api`
     }),
-    tagTypes: ['ProductPage', 'TemplateVariantGroup', 'Order', 'DefaultShippingOrigin', 'Shipping', 'Admin', 'Preference', 'Role'],
+    tagTypes: ['ProductPage', 'ProductPreview', 'TemplateVariantGroup', 'Order', 'Shipping', 'DefaultShippingOrigin', 'Admin', 'Role', 'Preference'],
     endpoints : (builder) => ({
         getProductPage              : builder.query<Pagination<ProductDetail>, PaginationArgs>({
             query : (arg) => ({
@@ -155,11 +155,13 @@ export const apiSlice = createApi({
                 await cumulativeUpdatePaginationCache(api, 'getProductPage', 'DELETE', 'ProductPage');
             },
         }),
+        
         getProductPreview           : builder.query<ProductPreview, string>({
             query : (arg: string) => ({
                 url    : `products?id=${encodeURIComponent(arg)}`,
                 method : 'GET',
             }),
+            providesTags: (data, error, arg) => [{ type: 'ProductPreview', id: arg }],
         }),
         availablePath               : builder.query<boolean, string>({
             query: (arg) => ({
@@ -167,6 +169,8 @@ export const apiSlice = createApi({
                 method : 'GET',
             }),
         }),
+        
+        
         
         getTemplateVariantGroupList : builder.query<EntityState<TemplateVariantGroupDetail>, void>({
             query : () => ({
@@ -199,6 +203,8 @@ export const apiSlice = createApi({
             },
         }),
         
+        
+        
         getOrderPage                : builder.query<Pagination<OrderDetail>, PaginationArgs>({
             query : (arg) => ({
                 url    : 'orders',
@@ -217,6 +223,7 @@ export const apiSlice = createApi({
                 await cumulativeUpdatePaginationCache(api, 'getOrderPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'Order');
             },
         }),
+        
         getShipment                 : builder.query<ShipmentDetail, string>({
             query : (orderId) => ({
                 url    : `orders/shipment?orderId=${encodeURIComponent(orderId)}`,
@@ -234,31 +241,8 @@ export const apiSlice = createApi({
             },
         }),
         
-        getDefaultShippingOrigin    : builder.query<DefaultShippingOriginDetail|null, void>({
-            query : () => ({
-                url    : 'shippings/origin',
-                method : 'GET',
-            }),
-            providesTags: ['DefaultShippingOrigin'],
-        }),
-        updateDefaultShippingOrigin : builder.mutation<DefaultShippingOriginDetail, MutationArgs<DefaultShippingOriginDetail>|null>({
-            query: (arg) => ({
-                url    : 'shippings/origin',
-                method : 'PATCH',
-                body   : arg ?? {}
-            }),
-            invalidatesTags: ['DefaultShippingOrigin'],
-        }),
         
-        getShippingList             : builder.query<EntityState<ShippingPreview>, void>({
-            query : () => ({
-                url    : 'shippings',
-                method : 'GET',
-            }),
-            transformResponse(response: ShippingPreview[]) {
-                return shippingListAdapter.addMany(shippingListAdapter.getInitialState(), response);
-            },
-        }),
+        
         getShippingPage             : builder.query<Pagination<ShippingDetail>, PaginationArgs>({
             query : (arg) => ({
                 url    : 'shippings',
@@ -287,6 +271,33 @@ export const apiSlice = createApi({
                 await cumulativeUpdatePaginationCache(api, 'getShippingPage', 'DELETE', 'Shipping');
             },
         }),
+        
+        getDefaultShippingOrigin    : builder.query<DefaultShippingOriginDetail|null, void>({
+            query : () => ({
+                url    : 'shippings/origin',
+                method : 'GET',
+            }),
+            providesTags: ['DefaultShippingOrigin'],
+        }),
+        updateDefaultShippingOrigin : builder.mutation<DefaultShippingOriginDetail, MutationArgs<DefaultShippingOriginDetail>|null>({
+            query: (arg) => ({
+                url    : 'shippings/origin',
+                method : 'PATCH',
+                body   : arg ?? {}
+            }),
+            invalidatesTags: ['DefaultShippingOrigin'],
+        }),
+        
+        getShippingList             : builder.query<EntityState<ShippingPreview>, void>({
+            query : () => ({
+                url    : 'shippings',
+                method : 'GET',
+            }),
+            transformResponse(response: ShippingPreview[]) {
+                return shippingListAdapter.addMany(shippingListAdapter.getInitialState(), response);
+            },
+        }),
+        
         getCountryList              : builder.query<string[], void>({
             query : () => ({
                 url    : `shippings/countries`,
@@ -305,6 +316,8 @@ export const apiSlice = createApi({
                 method : 'GET',
             }),
         }),
+        
+        
         
         getAdminPage                : builder.query<Pagination<AdminDetail>, PaginationArgs>({
             query : (arg) => ({
@@ -334,6 +347,7 @@ export const apiSlice = createApi({
                 await cumulativeUpdatePaginationCache(api, 'getAdminPage', 'DELETE', 'Admin');
             },
         }),
+        
         availableUsername           : builder.query<boolean, string>({
             query: (username) => ({
                 url    : `admins/check-username?username=${encodeURIComponent(username)}`, // cloned from @heymarco/next-auth, because this api was disabled in auth.config.shared
@@ -352,6 +366,8 @@ export const apiSlice = createApi({
                 method : 'GET',
             }),
         }),
+        
+        
         
         getRoleList                 : builder.query<EntityState<RoleDetail>, void>({
             query : () => ({
@@ -383,12 +399,15 @@ export const apiSlice = createApi({
                 await cumulativeUpdateEntityCache(api, 'getRoleList', 'DELETE', 'Role');
             },
         }),
+        
         availableRolename           : builder.query<boolean, string>({
             query: (name) => ({
                 url    : `roles/check-name?name=${encodeURIComponent(name)}`,
                 method : 'GET',
             }),
         }),
+        
+        
         
         getPreference               : builder.query<AdminPreferenceDetail, void>({
             query : () => ({
@@ -405,6 +424,8 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ['Preference'],
         }),
+        
+        
         
         postImage                   : builder.mutation<ImageId, { image: File, folder?: string, onUploadProgress?: (percentage: number) => void, abortSignal?: AbortSignal }>({
             query: ({ image, folder, onUploadProgress, abortSignal }) => ({
@@ -453,42 +474,63 @@ export const {
     useGetProductPageQuery                 : useGetProductPage,
     useUpdateProductMutation               : useUpdateProduct,
     useDeleteProductMutation               : useDeleteProduct,
+    
     useGetProductPreviewQuery              : useGetProductPreview,
     useLazyAvailablePathQuery              : useAvailablePath,
+    
+    
     
     useGetTemplateVariantGroupListQuery    : useGetTemplateVariantGroupList,
     useUpdateTemplateVariantGroupMutation  : useUpdateTemplateVariantGroup,
     useDeleteTemplateVariantGroupMutation  : useDeleteTemplateVariantGroup,
     
+    
+    
     useGetOrderPageQuery                   : useGetOrderPage,
     useUpdateOrderMutation                 : useUpdateOrder,
+    
     useGetShipmentQuery                    : useGetShipment,
     useLazyGetShippingLabelRatesQuery      : useGetShippingLabelRates,
     
-    useGetDefaultShippingOriginQuery       : useGetDefaultShippingOrigin,
-    useUpdateDefaultShippingOriginMutation : useUpdateDefaultShippingOrigin,
-    useGetShippingListQuery                : useGetShippingList,
+    
+    
     useGetShippingPageQuery                : useGetShippingPage,
     useUpdateShippingMutation              : useUpdateShipping,
     useDeleteShippingMutation              : useDeleteShipping,
+    
+    useGetDefaultShippingOriginQuery       : useGetDefaultShippingOrigin,
+    useUpdateDefaultShippingOriginMutation : useUpdateDefaultShippingOrigin,
+    
+    useGetShippingListQuery                : useGetShippingList,
+    
     // useLazyGetCountryListQuery             : useGetCountryList,
     // useLazyGetStateListQuery               : useGetStateList,
     // useLazyGetCityListQuery                : useGetCityList,
     
+    
+    
     useGetAdminPageQuery                   : useGetAdminPage,
     useUpdateAdminMutation                 : useUpdateAdmin,
     useDeleteAdminMutation                 : useDeleteAdmin,
+    
     useLazyAvailableUsernameQuery          : useAvailableUsername,
     useLazyNotProhibitedUsernameQuery      : useNotProhibitedUsername,
     useLazyAvailableEmailQuery             : useAvailableEmail,
     
+    
+    
     useGetRoleListQuery                    : useGetRoleList,
     useUpdateRoleMutation                  : useUpdateRole,
     useDeleteRoleMutation                  : useDeleteRole,
+    
     useLazyAvailableRolenameQuery          : useAvailableRolename,
+    
+    
     
     useGetPreferenceQuery                  : useGetPreference,
     useUpdatePreferenceMutation            : useUpdatePreference,
+    
+    
     
     usePostImageMutation                   : usePostImage,
     useDeleteImageMutation                 : useDeleteImage,
@@ -498,9 +540,11 @@ export const {
 export const {
     getProductPreview : { initiate : getProductPreview },
     
-    getCountryList : { initiate : getCountryList },
-    getStateList   : { initiate : getStateList   },
-    getCityList    : { initiate : getCityList    },
+    
+    
+    getCountryList    : { initiate : getCountryList    },
+    getStateList      : { initiate : getStateList      },
+    getCityList       : { initiate : getCityList       },
 } = apiSlice.endpoints;
 
 
