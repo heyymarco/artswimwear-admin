@@ -26,11 +26,13 @@ import {
     ModalCard,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
+// models:
+import {
+    type Model,
+    type Pagination,
+}                           from '@/models'
+
 // internals:
-import type {
-    Pagination,
-    Model,
-}                           from '@/libs/types'
 import {
     MessageDataEmpty,
 }                           from '@/components/MessageDataEmpty'

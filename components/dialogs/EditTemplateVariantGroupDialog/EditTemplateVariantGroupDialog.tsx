@@ -37,14 +37,10 @@ import {
     EditVariantGroupDialog,
 }                           from '@/components/dialogs/EditVariantGroupDialog'
 
-// internals:
-import type {
-    PartialModel,
-}                           from '@/libs/types'
-
 // models:
 import {
     // types:
+    type PartialModel,
     type VariantGroupDetail,
     type TemplateVariantGroupDetail,
 }                           from '@/models'

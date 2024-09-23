@@ -36,17 +36,13 @@ import {
     ImplementedSimpleEditModelDialogProps,
     SimpleEditModelDialog,
 }                           from '@/components/dialogs/SimpleEditModelDialog'
-import type {
-    OrderOnTheWayValue,
+import {
+    type OrderOnTheWayValue,
 }                           from '@/components/editors/OrderOnTheWayEditor'
-
-// types:
-import type {
-    MutationArgs,
-}                           from '@/libs/types'
 
 // models:
 import {
+    type MutationArgs,
     type OrderDetail,
     type OrderDetailWithOptions,
     

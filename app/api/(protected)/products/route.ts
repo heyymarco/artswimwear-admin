@@ -13,14 +13,11 @@ import {
     createEdgeRouter,
 }                           from 'next-connect'
 
-// types:
-import type {
-    Pagination,
-}                           from '@/libs/types'
-
 // models:
 import {
     // types:
+    type Pagination,
+    
     type VariantGroupDetail,
     type VariantGroupDiff,
     

@@ -94,14 +94,10 @@ import {
     ShippingStateProvider,
 }                           from '@/components/editors/CoverageZoneEditor/states/shippingState'
 
-// types:
-import {
-    type PartialModel,
-}                           from '@/libs/types'
-
 // models:
 import {
     // types:
+    type PartialModel,
     type CoverageZoneDetail,
     type CoverageSubzoneDetail,
     type ShippingEta,

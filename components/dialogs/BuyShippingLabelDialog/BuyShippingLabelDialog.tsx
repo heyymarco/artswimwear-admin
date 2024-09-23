@@ -121,12 +121,6 @@ import {
     type OrderDetail,
 }                           from '@/models'
 
-// internals:
-import type {
-    Model,
-    PartialModel,
-}                           from '@/libs/types'
-
 // contexts:
 import {
     CheckoutStateProvider,

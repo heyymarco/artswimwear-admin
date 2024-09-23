@@ -19,22 +19,18 @@ import {
     ImplementedSimpleEditModelDialogProps,
     SimpleEditModelDialog,
 }                           from '@/components/dialogs/SimpleEditModelDialog'
-import type {
-    WysiwygEditorState,
+import {
+    type WysiwygEditorState,
 }                           from '@/components/editors/WysiwygEditor'
 
-// types:
-import type {
-    MutationArgs,
-}                           from '@/libs/types'
-
 // models:
-import type {
-    OrderDetail,
-    OrderDetailWithOptions,
+import {
+    type MutationArgs,
+    type OrderDetail,
+    type OrderDetailWithOptions,
 }                           from '@/models'
-import type {
-    Prisma,
+import {
+    type Prisma,
 }                           from '@prisma/client'
 
 // stores:

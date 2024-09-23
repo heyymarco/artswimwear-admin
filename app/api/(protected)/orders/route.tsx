@@ -19,13 +19,9 @@ import {
     createEdgeRouter,
 }                           from 'next-connect'
 
-// types:
-import type {
-    Pagination,
-}                           from '@/libs/types'
-
 // models:
 import {
+    type Pagination,
     type OrderDetail,
     type ShipmentPreview,
     

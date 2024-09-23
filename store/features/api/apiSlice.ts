@@ -14,18 +14,15 @@ import {
     type MutationLifecycleApi,
 }                           from '@reduxjs/toolkit/dist/query/endpointDefinitions'
 
-// types:
+// models:
 import {
     type Model,
     
-    type PaginationArgs,
     type Pagination,
     
     type MutationArgs,
-}                           from '@/libs/types'
-
-// models:
-import {
+    type PaginationArgs,
+    
     type OrderDetail,
     type OrderDetailWithOptions,
     type DefaultShippingOriginDetail,
