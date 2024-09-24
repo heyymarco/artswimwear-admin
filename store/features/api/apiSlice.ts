@@ -610,6 +610,7 @@ type PaginationUpdateType =
     |'CREATE'
     |'UPDATE'
     |'UPSERT'
+    |'UPDATE_OR_INVALIDATE'
     |'DELETE'
 interface PaginationUpdateOptions<TEntry extends Model|string> {
     providedMutatedEntry ?: TEntry
@@ -679,7 +680,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
     
     
     /* update existing data: SIMPLE: the number of collection_items is unchanged */
-    if ((updateType === 'UPDATE') || (updateType === 'UPSERT')) {
+    if ((updateType === 'UPDATE') || (updateType === 'UPSERT') || (updateType === 'UPDATE_OR_INVALIDATE')) {
         const mutatedPaginationIndices = (
             collectionQueryCaches
             .map(({ originalArgs, data }) => ({
@@ -695,8 +696,15 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
         );
         const uniqueMutatedPaginationIndices = Array.from(new Set<number>(mutatedPaginationIndices));
         if (uniqueMutatedPaginationIndices.length === 0) { // not found
-            if (updateType === 'UPSERT') { // UPSERT
-                // nothing to update => switch to CREATE mode:
+            if (updateType === 'UPDATE_OR_INVALIDATE') {
+                // UNABLE to update current pagination cache => invalidate all caches:
+                api.dispatch(
+                    apiSlice.util.invalidateTags([invalidateTag])
+                );
+                return; // invalidated => done
+            }
+            else if (updateType === 'UPSERT') { // UPSERT
+                // nothing to update => fallback to CREATE mode:
                 return cumulativeUpdatePaginationCache(api, endpointName, 'CREATE', invalidateTag, options);
             }
             else { // UPDATE
