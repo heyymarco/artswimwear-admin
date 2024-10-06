@@ -7,6 +7,7 @@ import {
 }                           from '@reduxjs/toolkit'
 import {
     type BaseQueryFn,
+    QueryStatus,
     
     createApi,
 }                           from '@reduxjs/toolkit/query/react'
@@ -648,6 +649,8 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
         .filter((allQueryCache): allQueryCache is Exclude<typeof allQueryCache, undefined> =>
             (allQueryCache !== undefined)
             &&
+            (allQueryCache.status === QueryStatus.fulfilled)
+            &&
             (allQueryCache.endpointName === endpointName)
             &&
             (allQueryCache.data !== undefined)
@@ -1044,6 +1047,8 @@ const cumulativeUpdateEntityCache     = async <TEntry extends Model|string, TQue
         Object.values(allQueryCaches)
         .filter((allQueryCache): allQueryCache is Exclude<typeof allQueryCache, undefined> =>
             (allQueryCache !== undefined)
+            &&
+            (allQueryCache.status === QueryStatus.fulfilled)
             &&
             (allQueryCache.endpointName === endpointName)
             &&
