@@ -112,6 +112,13 @@ router
         product_uv,
         product_d,
         
+        category_r,
+        category_c,
+        category_ud,
+        category_ui,
+        category_uv,
+        category_d,
+        
         order_r,
         order_us,
         order_usa,
@@ -193,6 +200,13 @@ You do not have the privilege to modify the role.`
             product_us,
             product_uv,
             product_d,
+            
+            category_r,
+            category_c,
+            category_ud,
+            category_ui,
+            category_uv,
+            category_d,
             
             order_r,
             order_us,

@@ -147,6 +147,13 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
     const [product_uv , setProduct_uv ] = useState<boolean>(model?.product_uv ?? false);
     const [product_d  , setProduct_d  ] = useState<boolean>(model?.product_d  ?? false);
     
+    const [category_r , setCategory_r ] = useState<boolean>(model?.category_r  ?? false);
+    const [category_c , setCategory_c ] = useState<boolean>(model?.category_c  ?? false);
+    const [category_ud, setCategory_ud] = useState<boolean>(model?.category_ud ?? false);
+    const [category_ui, setCategory_ui] = useState<boolean>(model?.category_ui ?? false);
+    const [category_uv, setCategory_uv] = useState<boolean>(model?.category_uv ?? false);
+    const [category_d , setCategory_d ] = useState<boolean>(model?.category_d  ?? false);
+    
     const [order_r    , setOrder_r    ] = useState<boolean>(model?.order_r     ?? false);
     const [order_us   , setOrder_us   ] = useState<boolean>(model?.order_us    ?? false);
     const [order_usa  , setOrder_usa  ] = useState<boolean>(model?.order_usa   ?? false);
@@ -208,6 +215,13 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             product_us,
             product_uv,
             product_d,
+            
+            category_r,
+            category_c,
+            category_ud,
+            category_ui,
+            category_uv,
+            category_d,
             
             order_r,
             order_us,
@@ -394,6 +408,33 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
                                         Change Visibility
                                     </Check>
                                     <Check className='check editor' active={product_d}  onActiveChange={({active}) => { setProduct_d(active);  setIsModified(true); }}>
+                                        Delete
+                                    </Check>
+                                </AccessibilityProvider>
+                            </AccordionItem>
+                            
+                            <AccordionItem label='Categories' inheritEnabled={false}>
+                                <AccessibilityProvider
+                                    // accessibilities:
+                                    /* enable|disable accessibility for all <Check> */
+                                    enabled={whenUpdate.update || whenAdd}
+                                >
+                                    <Check className='check editor' active={category_r}  onActiveChange={({active}) => { setCategory_r(active);  setIsModified(true); }}>
+                                        View
+                                    </Check>
+                                    <Check className='check editor' active={category_c}  onActiveChange={({active}) => { setCategory_c(active);  setIsModified(true); }}>
+                                        Add New
+                                    </Check>
+                                    <Check className='check editor' active={category_ud} onActiveChange={({active}) => { setCategory_ud(active); setIsModified(true); }}>
+                                        Change Name, Path &amp; Description
+                                    </Check>
+                                    <Check className='check editor' active={category_ui} onActiveChange={({active}) => { setCategory_ui(active); setIsModified(true); }}>
+                                        Change Images
+                                    </Check>
+                                    <Check className='check editor' active={category_uv} onActiveChange={({active}) => { setCategory_uv(active); setIsModified(true); }}>
+                                        Change Visibility
+                                    </Check>
+                                    <Check className='check editor' active={category_d}  onActiveChange={({active}) => { setCategory_d(active);  setIsModified(true); }}>
                                         Delete
                                     </Check>
                                 </AccessibilityProvider>

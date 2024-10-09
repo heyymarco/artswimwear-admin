@@ -20,6 +20,13 @@ export const roleDetailSelect = {
     product_uv  : true,
     product_d   : true,
     
+    category_r  : true,
+    category_c  : true,
+    category_ud : true,
+    category_ui : true,
+    category_uv : true,
+    category_d  : true,
+    
     order_r     : true,
     order_us    : true,
     order_usa   : true,
