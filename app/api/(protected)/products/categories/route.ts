@@ -44,8 +44,8 @@ import {
 
 
 // configs:
+export const dynamic    = 'force-dynamic';
 export const fetchCache = 'force-no-store';
-export const maxDuration = 30; // this function can run for a maximum of 30 seconds for rebuild stock maps
 
 
 
@@ -177,20 +177,12 @@ You do not have the privilege to view the categories.`
         
         name,
         
-        price,
-        shippingWeight,
-        
-        stock,
-        
         path,
         
         excerpt,
         description,
         
         images,
-        
-        variantGroups : variantGroupsRaw,
-        stocks        : stocksRaw,
     } = await req.json();
     //#endregion parsing request
     
@@ -206,12 +198,6 @@ You do not have the privilege to view the categories.`
         ||
         ((name           !== undefined)                              && ((typeof(name)           !== 'string') || (name.length    < 1)))
         ||
-        ((price          !== undefined)                              && ((typeof(price)          !== 'number') || !isFinite(price)          || (price          < 0)))
-        ||
-        ((shippingWeight !== undefined) && (shippingWeight !== null) && ((typeof(shippingWeight) !== 'number') || !isFinite(shippingWeight) || (shippingWeight < 0)))
-        ||
-        ((stock          !== undefined) && (stock          !== null) && ((typeof(stock)          !== 'number') || !isFinite(stock)          || (stock          < 0) || ((stock % 1) !== 0)))
-        ||
         ((path           !== undefined)                              && ((typeof(path)           !== 'string') || (path.length    < 1)))
         ||
         ((excerpt        !== undefined) && (excerpt        !== null) && ((typeof(excerpt)        !== 'string') || (excerpt.length < 1)))
@@ -224,82 +210,6 @@ You do not have the privilege to view the categories.`
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
-    
-    if (
-        (variantGroupsRaw !== undefined)
-        &&
-        (
-            !Array.isArray(variantGroupsRaw)
-            ||
-            !variantGroupsRaw.every((variantGroupRaw) =>
-                (typeof(variantGroupRaw) === 'object')
-                &&
-                (Object.keys(variantGroupRaw).length === 5)
-                &&
-                /* 1: */ ((typeof(variantGroupRaw.id) === 'string') && ((!variantGroupRaw.id || (variantGroupRaw.id[0] === ' ')) || (!!id && (variantGroupRaw.id.length <= 40))))
-                &&
-                /* 2: */ ((typeof(variantGroupRaw.sort) === 'number') && (variantGroupRaw.sort >= Number.MIN_SAFE_INTEGER) && (variantGroupRaw.sort <= Number.MAX_SAFE_INTEGER))
-                &&
-                /* 3: */ ((typeof(variantGroupRaw.name) === 'string') && !!variantGroupRaw.name)
-                &&
-                /* 4: */ (typeof(variantGroupRaw.hasDedicatedStocks) === 'boolean')
-                &&
-                /* 5: */ ((): boolean => {
-                    const {variants: variantsRaw} = variantGroupRaw;
-                    return (
-                        Array.isArray(variantsRaw)
-                        &&
-                        variantsRaw.every((variantRaw) =>
-                            (Object.keys(variantRaw).length === 7)
-                            &&
-                            /* 1: */ ((typeof(variantRaw.id) === 'string') && ((!variantRaw.id || (variantRaw.id[0] === ' ')) || (!!variantGroupRaw.id && (variantRaw.id.length <= 40))))
-                            &&
-                            /* 2: */ ((typeof(variantRaw.visibility) === 'string') && ['PUBLISHED', 'DRAFT'].includes(variantRaw.visibility))
-                            &&
-                            /* 3: */ ((typeof(variantRaw.sort) === 'number') && (variantRaw.sort >= Number.MIN_SAFE_INTEGER) && (variantRaw.sort <= Number.MAX_SAFE_INTEGER))
-                            &&
-                            /* 4: */ ((typeof(variantGroupRaw.name) === 'string') && !!variantGroupRaw.name)
-                            &&
-                            /* 5: */ ((variantRaw.price === null) || ((typeof(variantRaw.price) === 'number') && (variantRaw.price >= 0) && (variantRaw.price <= Number.MAX_SAFE_INTEGER)))
-                            &&
-                            /* 6: */ ((variantRaw.shippingWeight === null) || ((typeof(variantRaw.shippingWeight) === 'number') && (variantRaw.shippingWeight >= 0) && (variantRaw.shippingWeight <= Number.MAX_SAFE_INTEGER)))
-                            &&
-                            /* 7: */ ((): boolean => {
-                                const {images: imagesRaw} = variantRaw;
-                                return (
-                                    Array.isArray(imagesRaw)
-                                    &&
-                                    imagesRaw.every((imageRaw) =>
-                                        (typeof(imageRaw) === 'string')
-                                    )
-                                );
-                            })()
-                        )
-                    );
-                })()
-            )
-        )
-    ) {
-        return Response.json({
-            error: 'Invalid data.',
-        }, { status: 400 }); // handled with error
-    } // if
-    
-    if (
-        (stocksRaw !== undefined)
-        &&
-        (
-            !Array.isArray(stocksRaw)
-            ||
-            !stocksRaw.every((stock) =>
-                ((stock === null) || (typeof(stock) === 'number'))
-            )
-        )
-    ) {
-        return Response.json({
-            error: 'Invalid data.',
-        }, { status: 400 }); // handled with error
-    }
     //#endregion validating request
     
     
@@ -378,7 +288,7 @@ You do not have the privilege to modify the category visibility.`
             
             return Response.json(categoryDetail); // handled with success
             //#endregion save changes
-        }, { timeout: 20000 }); // give a longer timeout for rebuild stock maps
+        });
     }
     catch (error: any) {
         console.log('ERROR: ', error);
