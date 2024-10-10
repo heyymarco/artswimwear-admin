@@ -25,6 +25,7 @@ import {
     // schemas:
     ModelIdSchema,
     PaginationArgSchema,
+    CategoryDetailSchema,
     
     
     
@@ -34,7 +35,7 @@ import {
     convertCategoryDetailDataToCategoryDetail,
 }                           from '@/models'
 import {
-    type Prisma,
+    Prisma,
 }                           from '@prisma/client'
 
 // ORMs:
@@ -140,7 +141,7 @@ You do not have the privilege to view the categories.`
     
     
     const [total, paged] = await prisma.$transaction(async (prismaTransaction) => {
-        const categoryOrderBy: Extract<Prisma.CategorySelect['subcategories'], object>['orderBy'] = {
+        const categoryOrderBy : ReturnType<typeof categoryDetailSelect>['subcategories']['orderBy'] = {
             createdAt: 'desc',
         };
         const categorySelect = categoryDetailSelect(categoryOrderBy);
@@ -180,48 +181,55 @@ You do not have the privilege to view the categories.`
     // return Response.json({ message: 'not found'    }, { status: 400 }); // handled with error
     // return Response.json({ message: 'server error' }, { status: 500 }); // handled with error
     
-    //#region parsing request
-    const {
-        id,
-        
-        visibility,
-        
-        name,
-        
-        path,
-        
-        excerpt,
-        description,
-        
-        images,
-    } = await req.json();
-    //#endregion parsing request
     
     
-    
-    //#region validating request
-    if (
-        (typeof(id)      !== 'string' )
-        
-        ||
-        
-        ((visibility     !== undefined)                              && ((typeof(visibility)     !== 'string') || !['PUBLISHED', 'HIDDEN', 'DRAFT'].includes(visibility)))
-        ||
-        ((name           !== undefined)                              && ((typeof(name)           !== 'string') || (name.length    < 1)))
-        ||
-        ((path           !== undefined)                              && ((typeof(path)           !== 'string') || (path.length    < 1)))
-        ||
-        ((excerpt        !== undefined) && (excerpt        !== null) && ((typeof(excerpt)        !== 'string') || (excerpt.length < 1)))
-        ||
-        ((description    !== undefined) && (description    !== null) &&  (typeof(description)    !== 'object'))
-        ||
-        ((images         !== undefined)                              && ((Array.isArray(images)  !== true    ) || !images.every((image) => (typeof(image) === 'string') && !!image.length)))
-    ) {
+    //#region parsing and validating request
+    const requestData = await (async () => {
+        try {
+            const data = await req.json();
+            const categoryDetailRaw = CategoryDetailSchema.parse(data);
+            if (!categoryDetailRaw.id) {
+                // when creating a new model (no id), the `visibility`|`name`|`path` must be exist:
+                if ((categoryDetailRaw.visibility === undefined) || (categoryDetailRaw.name === undefined) || (categoryDetailRaw.path === undefined)) return null;
+                
+                
+                
+                return {
+                    categoryDetail : categoryDetailRaw as CategoryDetail & Required<Pick<CategoryDetail, 'visibility'|'name'|'path'>>,
+                };
+            }
+            else {
+                return {
+                    categoryDetail : categoryDetailRaw satisfies CategoryDetail,
+                };
+            }
+        }
+        catch {
+            return null;
+        } // try
+    })();
+    if (requestData === null) {
         return Response.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
-    //#endregion validating request
+    const {
+        categoryDetail : {
+            id,
+            
+            visibility,
+            
+            name,
+            
+            path,
+            
+            excerpt,
+            description,
+            
+            images,
+        },
+    } = requestData;
+    //#endregion parsing and validating request
     
     
     
@@ -268,21 +276,21 @@ You do not have the privilege to modify the category visibility.`
                 path,
                 
                 excerpt,
-                description,
+                description : (description === null) ? Prisma.DbNull : description,
                 
                 images,
                 
                 // relations:
             } satisfies Prisma.CategoryUpdateInput;
             
-            const categoryOrderBy: Extract<Prisma.CategorySelect['subcategories'], object>['orderBy'] = {
+            const categoryOrderBy: ReturnType<typeof categoryDetailSelect>['subcategories']['orderBy'] = {
                 createdAt: 'desc',
             };
             const categorySelect = categoryDetailSelect(categoryOrderBy);
             const categoryDetailData = (
                 !id
                 ? await prismaTransaction.category.create({
-                    data   : data,
+                    data   : data as (typeof data & Required<Pick<CategoryDetail, 'visibility'|'name'|'path'>>),
                     select : categorySelect,
                 })
                 : await prismaTransaction.category.update({
