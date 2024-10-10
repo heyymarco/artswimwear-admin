@@ -128,10 +128,12 @@ export const ProductDetailSchema = z.object({
 }) satisfies z.Schema<ProductDetail>;
 
 export const ProductUpdateRequestSchema = MutationArgsSchema(
-    ProductDetailSchema.omit({ stocks: true })
-    .merge(
-        z.object({
-            stocks : z.array(StockDetailSchema.shape.value).optional(),
-        }) satisfies z.Schema<{ stocks?: StockDetail['value'][] }>
-    ) satisfies z.Schema<ProductUpdateRequest>
-);
+    (
+        ProductDetailSchema.omit({ stocks: true })
+        .merge(
+            z.object({
+                stocks : z.array(StockDetailSchema.shape.value).optional(),
+            }) satisfies z.Schema<{ stocks?: StockDetail['value'][] }>
+        )
+    )
+) satisfies z.Schema<ProductUpdateRequest>;
