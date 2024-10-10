@@ -194,6 +194,13 @@ You do not have the privilege to view the products.`
             take    : perPage,
         }),
     ]);
+    for (const productDetail of paged) {
+        // a workaround of non_working_orderBy of `product.findMany`:
+        productDetail.variantGroups.sort(({sort: sortA}, {sort: sortB}) => sortA - sortB); // mutate
+        for (const variantGroup of productDetail.variantGroups) {
+            variantGroup.variants.sort(({sort: sortA}, {sort: sortB}) => sortA - sortB); // mutate
+        } // for
+    } // for
     const paginationProductDetail : Pagination<ProductDetail> = {
         total    : total,
         entities : paged,
@@ -731,83 +738,22 @@ You do not have the privilege to modify the product stock(s).`
                     }
                 } : undefined,
             } satisfies Prisma.ProductUpdateInput;
-            const select = {
-                id             : true,
-                
-                visibility     : true,
-                
-                name           : true,
-                
-                price          : true,
-                shippingWeight : true,
-                
-                stock          : true,
-                
-                path           : true,
-                
-                excerpt        : true,
-                description    : true,
-                
-                images         : true,
-                
-                variantGroups : {
-                    select: {
-                        id                 : true,
-                        
-                        sort               : true,
-                        
-                        name               : true,
-                        hasDedicatedStocks : true,
-                        
-                        variants           : {
-                            select: {
-                                id             : true,
-                                
-                                visibility     : true,
-                                sort           : true,
-                                
-                                name           : true,
-                                price          : true,
-                                shippingWeight : true,
-                                images         : true,
-                            },
-                            // doesn't work:
-                            // orderBy : {
-                            //     sort: 'asc',
-                            // },
-                        },
-                    },
-                    // doesn't work:
-                    // orderBy : {
-                    //     sort: 'asc',
-                    // },
-                },
-                stocks : {
-                    select: {
-                        id         : true,
-                        
-                        value      : true,
-                        
-                        variantIds : true,
-                    },
-                },
-            } satisfies Prisma.ProductSelect;
             const productDetail : ProductDetail = (
                 !id
                 ? await prismaTransaction.product.create({
                     data   : data,
-                    select : select,
+                    select : productDetailSelect,
                 })
                 : await prismaTransaction.product.update({
                     where  : {
                         id : id,
                     },
                     data   : data,
-                    select : select,
+                    select : productDetailSelect,
                 })
             );
             
-            // a workaround of non_working_orderBy of product.create() & product.update():
+            // a workaround of non_working_orderBy of `product.create()` & `product.update()`:
             productDetail.variantGroups.sort(({sort: sortA}, {sort: sortB}) => sortA - sortB); // mutate
             for (const variantGroup of productDetail.variantGroups) {
                 variantGroup.variants.sort(({sort: sortA}, {sort: sortB}) => sortA - sortB); // mutate
