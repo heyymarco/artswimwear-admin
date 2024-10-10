@@ -243,9 +243,7 @@ You do not have the privilege to view the products.`
                 
                 
                 return {
-                    productUpdateRequest: {
-                        ...productUpdateRequestRaw,
-                    } as ProductUpdateRequest & Required<Pick<ProductUpdateRequest, 'visibility'|'name'|'price'|'path'>>,
+                    productUpdateRequest : productUpdateRequestRaw as ProductUpdateRequest & Required<Pick<ProductUpdateRequest, 'visibility'|'name'|'price'|'path'>>,
                 };
             }
             else {
