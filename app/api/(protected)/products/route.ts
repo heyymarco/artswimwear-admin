@@ -23,12 +23,14 @@ import {
     
     type ProductPreview,
     type ProductDetail,
+    type ProductUpdateRequest,
     
     
     
     // schemas:
     ModelIdSchema,
     PaginationArgSchema,
+    ProductUpdateRequestSchema,
     
     
     
@@ -42,7 +44,7 @@ import {
     createStockMap,
 }                           from '@/models'
 import {
-    type Prisma,
+    Prisma,
 }                           from '@prisma/client'
 
 // ORMs:
@@ -227,138 +229,65 @@ You do not have the privilege to view the products.`
     // return Response.json({ message: 'not found'    }, { status: 400 }); // handled with error
     // return Response.json({ message: 'server error' }, { status: 500 }); // handled with error
     
-    //#region parsing request
+    
+    
+    //#region parsing and validating request
+    const requestData = await (async () => {
+        try {
+            const data = await req.json();
+            const productUpdateRequestRaw = ProductUpdateRequestSchema.parse(data);
+            if (!productUpdateRequestRaw.id) {
+                // when creating a new model (no id), the `visibility`|`name`|`price`|`path` must be exist:
+                if ((productUpdateRequestRaw.visibility === undefined) || (productUpdateRequestRaw.name === undefined) || (productUpdateRequestRaw.price === undefined) || (productUpdateRequestRaw.path === undefined)) return null;
+                
+                
+                
+                return {
+                    productUpdateRequest: {
+                        ...productUpdateRequestRaw,
+                    } as ProductUpdateRequest & Required<Pick<ProductUpdateRequest, 'visibility'|'name'|'price'|'path'>>,
+                };
+            }
+            else {
+                return {
+                    productUpdateRequest : productUpdateRequestRaw satisfies ProductUpdateRequest,
+                };
+            }
+        }
+        catch {
+            return null;
+        } // try
+    })();
+    if (requestData === null) {
+        return Response.json({
+            error: 'Invalid data.',
+        }, { status: 400 }); // handled with error
+    } // if
     const {
-        id,
-        
-        visibility,
-        
-        name,
-        
-        price,
-        shippingWeight,
-        
-        stock,
-        
-        path,
-        
-        excerpt,
-        description,
-        
-        images,
-        
-        variantGroups : variantGroupsRaw,
-        stocks        : stocksRaw,
-    } = await req.json();
-    //#endregion parsing request
-    
-    
-    
-    //#region validating request
-    if (
-        (typeof(id)      !== 'string' )
-        
-        ||
-        
-        ((visibility     !== undefined)                              && ((typeof(visibility)     !== 'string') || !['PUBLISHED', 'HIDDEN', 'DRAFT'].includes(visibility)))
-        ||
-        ((name           !== undefined)                              && ((typeof(name)           !== 'string') || (name.length    < 1)))
-        ||
-        ((price          !== undefined)                              && ((typeof(price)          !== 'number') || !isFinite(price)          || (price          < 0)))
-        ||
-        ((shippingWeight !== undefined) && (shippingWeight !== null) && ((typeof(shippingWeight) !== 'number') || !isFinite(shippingWeight) || (shippingWeight < 0)))
-        ||
-        ((stock          !== undefined) && (stock          !== null) && ((typeof(stock)          !== 'number') || !isFinite(stock)          || (stock          < 0) || ((stock % 1) !== 0)))
-        ||
-        ((path           !== undefined)                              && ((typeof(path)           !== 'string') || (path.length    < 1)))
-        ||
-        ((excerpt        !== undefined) && (excerpt        !== null) && ((typeof(excerpt)        !== 'string') || (excerpt.length < 1)))
-        ||
-        ((description    !== undefined) && (description    !== null) &&  (typeof(description)    !== 'object'))
-        ||
-        ((images         !== undefined)                              && ((Array.isArray(images)  !== true    ) || !images.every((image) => (typeof(image) === 'string') && !!image.length)))
-    ) {
-        return Response.json({
-            error: 'Invalid data.',
-        }, { status: 400 }); // handled with error
-    } // if
-    
-    if (
-        (variantGroupsRaw !== undefined)
-        &&
-        (
-            !Array.isArray(variantGroupsRaw)
-            ||
-            !variantGroupsRaw.every((variantGroupRaw) =>
-                (typeof(variantGroupRaw) === 'object')
-                &&
-                (Object.keys(variantGroupRaw).length === 5)
-                &&
-                /* 1: */ ((typeof(variantGroupRaw.id) === 'string') && ((!variantGroupRaw.id || (variantGroupRaw.id[0] === ' ')) || (!!id && (variantGroupRaw.id.length <= 40))))
-                &&
-                /* 2: */ ((typeof(variantGroupRaw.sort) === 'number') && (variantGroupRaw.sort >= Number.MIN_SAFE_INTEGER) && (variantGroupRaw.sort <= Number.MAX_SAFE_INTEGER))
-                &&
-                /* 3: */ ((typeof(variantGroupRaw.name) === 'string') && !!variantGroupRaw.name)
-                &&
-                /* 4: */ (typeof(variantGroupRaw.hasDedicatedStocks) === 'boolean')
-                &&
-                /* 5: */ ((): boolean => {
-                    const {variants: variantsRaw} = variantGroupRaw;
-                    return (
-                        Array.isArray(variantsRaw)
-                        &&
-                        variantsRaw.every((variantRaw) =>
-                            (Object.keys(variantRaw).length === 7)
-                            &&
-                            /* 1: */ ((typeof(variantRaw.id) === 'string') && ((!variantRaw.id || (variantRaw.id[0] === ' ')) || (!!variantGroupRaw.id && (variantRaw.id.length <= 40))))
-                            &&
-                            /* 2: */ ((typeof(variantRaw.visibility) === 'string') && ['PUBLISHED', 'DRAFT'].includes(variantRaw.visibility))
-                            &&
-                            /* 3: */ ((typeof(variantRaw.sort) === 'number') && (variantRaw.sort >= Number.MIN_SAFE_INTEGER) && (variantRaw.sort <= Number.MAX_SAFE_INTEGER))
-                            &&
-                            /* 4: */ ((typeof(variantGroupRaw.name) === 'string') && !!variantGroupRaw.name)
-                            &&
-                            /* 5: */ ((variantRaw.price === null) || ((typeof(variantRaw.price) === 'number') && (variantRaw.price >= 0) && (variantRaw.price <= Number.MAX_SAFE_INTEGER)))
-                            &&
-                            /* 6: */ ((variantRaw.shippingWeight === null) || ((typeof(variantRaw.shippingWeight) === 'number') && (variantRaw.shippingWeight >= 0) && (variantRaw.shippingWeight <= Number.MAX_SAFE_INTEGER)))
-                            &&
-                            /* 7: */ ((): boolean => {
-                                const {images: imagesRaw} = variantRaw;
-                                return (
-                                    Array.isArray(imagesRaw)
-                                    &&
-                                    imagesRaw.every((imageRaw) =>
-                                        (typeof(imageRaw) === 'string')
-                                    )
-                                );
-                            })()
-                        )
-                    );
-                })()
-            )
-        )
-    ) {
-        return Response.json({
-            error: 'Invalid data.',
-        }, { status: 400 }); // handled with error
-    } // if
-    
-    if (
-        (stocksRaw !== undefined)
-        &&
-        (
-            !Array.isArray(stocksRaw)
-            ||
-            !stocksRaw.every((stock) =>
-                ((stock === null) || (typeof(stock) === 'number'))
-            )
-        )
-    ) {
-        return Response.json({
-            error: 'Invalid data.',
-        }, { status: 400 }); // handled with error
-    }
-    //#endregion validating request
+        productUpdateRequest : {
+            id,
+            
+            visibility,
+            
+            name,
+            
+            price,
+            shippingWeight,
+            
+            stock,
+            
+            path,
+            
+            excerpt,
+            description,
+            
+            images,
+            
+            variantGroups : variantGroupsRaw,
+            stocks        : stocksRaw,
+        },
+    } = requestData;
+    //#endregion parsing and validating request
     
     
     
@@ -685,7 +614,7 @@ You do not have the privilege to modify the product stock(s).`
                 path,
                 
                 excerpt,
-                description,
+                description : (description === null) ? Prisma.DbNull : description,
                 
                 images,
                 
@@ -748,7 +677,7 @@ You do not have the privilege to modify the product stock(s).`
             const productDetail : ProductDetail = (
                 !id
                 ? await prismaTransaction.product.create({
-                    data   : data,
+                    data   : data as (typeof data & Required<Pick<ProductUpdateRequest, 'visibility'|'name'|'price'|'path'>>),
                     select : productDetailSelect,
                 })
                 : await prismaTransaction.product.update({

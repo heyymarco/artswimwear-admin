@@ -32,6 +32,7 @@ import {
     type RoleDetail,
     type ProductPreview,
     type ProductDetail,
+    type ProductUpdateRequest,
     type TemplateVariantGroupDetail,
     type AdminDetail,
     type AdminPreferenceData,
@@ -133,7 +134,7 @@ export const apiSlice = createApi({
             }),
             providesTags: (data, error, arg) => [{ type: 'ProductPage', id: arg.page }],
         }),
-        updateProduct               : builder.mutation<ProductDetail, MutationArgs<Omit<ProductDetail, 'stocks'> & { stocks?: (number|null)[] }>>({
+        updateProduct               : builder.mutation<ProductDetail, ProductUpdateRequest>({
             query: (arg) => ({
                 url    : 'products',
                 method : 'PATCH',

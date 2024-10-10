@@ -127,7 +127,7 @@ export const ProductDetailSchema = z.object({
     stocks             : z.array(StockDetailSchema),
 }) satisfies z.Schema<ProductDetail>;
 
-export const ProductUpdateRequestSchema = MutationArgsSchema(
+export const ProductUpdateRequestSchema = MutationArgsSchema<Omit<ProductDetail, 'stocks'> & { stocks?: StockDetail['value'][] }>(
     (
         ProductDetailSchema.omit({ stocks: true })
         .merge(
