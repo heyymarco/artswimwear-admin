@@ -145,7 +145,7 @@ export const apiSlice = createApi({
         }),
         deleteProduct               : builder.mutation<Pick<ProductDetail, 'id'>, MutationArgs<Pick<ProductDetail, 'id'>>>({
             query: (arg) => ({
-                url    : 'products',
+                url    : `products?id=${encodeURIComponent(arg.id)}`,
                 method : 'DELETE',
                 body   : arg
             }),
@@ -155,7 +155,7 @@ export const apiSlice = createApi({
         }),
         
         getProductPreview           : builder.query<ProductPreview, string>({
-            query : (arg: string) => ({
+            query : (arg) => ({
                 url    : `products?id=${encodeURIComponent(arg)}`,
                 method : 'GET',
             }),
