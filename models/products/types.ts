@@ -12,6 +12,9 @@ import {
     
     type Category,
 }                           from '@prisma/client'
+import {
+    type MutationArgs,
+}                           from '../commons'
 
 
 
@@ -95,6 +98,15 @@ export interface ProductDetail
 {
     variantGroups : VariantGroupDetail[]
     stocks        : StockDetail[]
+}
+
+export interface ProductUpdateRequest
+    extends
+        MutationArgs<
+            &Omit<ProductDetail, 'stocks'>
+            &{ stocks?: StockDetail['value'][] }
+        >
+{
 }
 
 
