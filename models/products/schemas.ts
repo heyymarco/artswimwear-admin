@@ -133,5 +133,5 @@ export const ProductUpdateRequestSchema = MutationArgsSchema(
         z.object({
             stocks : z.array(StockDetailSchema.shape.value).optional(),
         }) satisfies z.Schema<{ stocks?: StockDetail['value'][] }>
-    )
+    ) satisfies z.Schema<ProductUpdateRequest>
 );
