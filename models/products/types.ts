@@ -9,6 +9,8 @@ import {
     type Product,
     
     type Stock,
+    
+    type Category,
 }                           from '@prisma/client'
 
 
@@ -110,4 +112,20 @@ export interface StockDetail
 export interface ProductPricePart {
     priceParts : number[],
     quantity   : number
+}
+
+
+
+export interface CategoryDetail
+    extends
+        Omit<Category,
+            // records:
+            |'createdAt'
+            |'updatedAt'
+            
+            // relations:
+            |'parentId'
+        >
+{
+    subcategories : CategoryDetail[]
 }
