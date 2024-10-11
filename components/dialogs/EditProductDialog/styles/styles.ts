@@ -158,6 +158,11 @@ const usesCategoryTabLayout = () => {
         
         // scrolls:
         overscrollBehavior : 'none',
+        
+        
+        
+        // sizes:
+        contain: 'size', // ignores the size of this tab, so the width & height of the dialog depends on another tab's size
     });
 };
 const usesEditDescription = () => {
