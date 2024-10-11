@@ -859,6 +859,12 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                     useGetModelPage={useGetCategoryPage}
                 >
                     <CategoryEditor
+                        // appearances:
+                        showPaginationTop={false}
+                        autoHidePagination={true}
+                        
+                        
+                        
                         // components:
                         modelPreviewComponent={
                             <CategoryPreview
