@@ -15,6 +15,7 @@ import {
     type ProductDetail,
     type ProductUpdateRequest,
     type CategoryDetail,
+    type CategoryUpdateRequest,
 }                           from './types'
 import {
     ModelIdSchema,
@@ -159,3 +160,7 @@ export const CategoryDetailSchema : z.ZodType<CategoryDetail> = z.object({
     
     subcategories      : z.lazy(() => z.array(CategoryDetailSchema)),
 }) satisfies z.Schema<CategoryDetail>;
+
+export const CategoryUpdateRequestSchema = MutationArgsSchema<Omit<CategoryDetail, 'stocks'> & { stocks?: StockDetail['value'][] }>(
+    CategoryDetailSchema
+) satisfies z.Schema<CategoryUpdateRequest>;

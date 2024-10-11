@@ -19,13 +19,14 @@ import {
     type Pagination,
     
     type CategoryDetail,
+    type CategoryUpdateRequest,
     
     
     
     // schemas:
     ModelIdSchema,
     PaginationArgSchema,
-    CategoryDetailSchema,
+    CategoryUpdateRequestSchema,
     
     
     
@@ -187,20 +188,20 @@ You do not have the privilege to view the categories.`
     const requestData = await (async () => {
         try {
             const data = await req.json();
-            const categoryDetailRaw = CategoryDetailSchema.parse(data);
-            if (!categoryDetailRaw.id) {
+            const categoryUpdateRequestRaw = CategoryUpdateRequestSchema.parse(data);
+            if (!categoryUpdateRequestRaw.id) {
                 // when creating a new model (no id), the `visibility`|`name`|`path` must be exist:
-                if ((categoryDetailRaw.visibility === undefined) || (categoryDetailRaw.name === undefined) || (categoryDetailRaw.path === undefined)) return null;
+                if ((categoryUpdateRequestRaw.visibility === undefined) || (categoryUpdateRequestRaw.name === undefined) || (categoryUpdateRequestRaw.path === undefined)) return null;
                 
                 
                 
                 return {
-                    categoryDetail : categoryDetailRaw as CategoryDetail & Required<Pick<CategoryDetail, 'visibility'|'name'|'path'>>,
+                    categoryUpdateRequest : categoryUpdateRequestRaw as CategoryUpdateRequest & Required<Pick<CategoryUpdateRequest, 'visibility'|'name'|'path'>>,
                 };
             }
             else {
                 return {
-                    categoryDetail : categoryDetailRaw satisfies CategoryDetail,
+                    categoryUpdateRequest : categoryUpdateRequestRaw satisfies CategoryUpdateRequest,
                 };
             }
         }
@@ -214,7 +215,7 @@ You do not have the privilege to view the categories.`
         }, { status: 400 }); // handled with error
     } // if
     const {
-        categoryDetail : {
+        categoryUpdateRequest : {
             id,
             
             visibility,
@@ -290,7 +291,7 @@ You do not have the privilege to modify the category visibility.`
             const categoryDetailData = (
                 !id
                 ? await prismaTransaction.category.create({
-                    data   : data as (typeof data & Required<Pick<CategoryDetail, 'visibility'|'name'|'path'>>),
+                    data   : data as (typeof data & Required<Pick<CategoryUpdateRequest, 'visibility'|'name'|'path'>>),
                     select : categorySelect,
                 })
                 : await prismaTransaction.category.update({
