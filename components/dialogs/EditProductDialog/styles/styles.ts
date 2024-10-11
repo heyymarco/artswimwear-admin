@@ -149,6 +149,12 @@ export const usesDescriptionTabLayout = () => {
         overscrollBehavior : 'none',
     });
 };
+export const usesCategoryTabLayout = () => {
+    return style({
+        // scrolls:
+        overscrollBehavior : 'none',
+    });
+};
 export const usesEditDescription = () => {
     // dependencies:
     
@@ -232,6 +238,9 @@ export default () => [
     scope('descriptionTab', {
         ...usesDescriptionTabLayout(),
     }),
+    scope('categoryTab', {
+        ...usesCategoryTabLayout(),
+    }, { specificityWeight: 2 }),
     scope('editDescription', {
         ...usesEditDescription(),
     }, { specificityWeight: 2 }),

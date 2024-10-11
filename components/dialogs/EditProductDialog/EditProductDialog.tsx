@@ -74,6 +74,9 @@ import {
     WysiwygEditor,
 }                           from '@/components/editors/WysiwygEditor'
 import {
+    CategoryEditor,
+}                           from '@/components/editors/CategoryEditor'
+import {
     // types:
     UpdateHandler,
     
@@ -110,22 +113,29 @@ import {
 import {
     StockPreview,
 }                           from '@/components/views/StockPreview'
-
-// models:
-import type {
-    ProductVisibility,
-    Stock,
-}                           from '@prisma/client'
 import {
-    createVariantGroupDiff,
-    createStockMap,
-}                           from '@/models'
+    CategoryPreview,
+}                           from '@/components/views/CategoryPreview'
+import {
+    PaginationStateProvider,
+    usePaginationState,
+}                           from '@/components/explorers/Pagination'
 
 // models:
 import {
+    // types:
+    type ProductVisibility,
+    type Stock,
     type ProductDetail,
     type VariantGroupDetail,
     type StockDetail,
+    type CategoryDetail,
+    
+    
+    
+    // utilities:
+    createVariantGroupDiff,
+    createStockMap,
 }                           from '@/models'
 
 // stores:
@@ -133,6 +143,8 @@ import {
     // hooks:
     useUpdateProduct,
     useDeleteProduct,
+    
+    useGetCategoryPage,
     
     usePostImage,
     useDeleteImage,
@@ -154,6 +166,7 @@ import {
     PAGE_PRODUCT_TAB_STOCKS,
     PAGE_PRODUCT_TAB_IMAGES,
     PAGE_PRODUCT_TAB_DESCRIPTION,
+    PAGE_PRODUCT_TAB_CATEGORY,
     PAGE_PRODUCT_TAB_DELETE,
 }                           from '@/website.config'
 
@@ -176,6 +189,22 @@ export interface EditProductDialogProps
 {
 }
 const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
+    // jsx:
+    return (
+        <PaginationStateProvider<CategoryDetail>
+            // states:
+            initialPerPage={10}
+            
+            
+            
+            // data:
+            useGetModelPage={useGetCategoryPage}
+        >
+            <EditProductDialogInternal {...props} />
+        </PaginationStateProvider>
+    );
+}
+const EditProductDialogInternal = (props: EditProductDialogProps): JSX.Element|null => {
     // styles:
     const styleSheet = useEditProductDialogStyleSheet();
     
@@ -238,6 +267,11 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     const [commitDeleteImage, {isLoading : isLoadingCommitDeleteImage}] = useDeleteImage();
     const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
     const [commitMoveImage  , {isLoading : isLoadingCommitMoveImage  }] = useMoveImage();
+    const {
+        isLoading : isLoadingCategory,
+        isError   : isErrorCategory,
+        refetch   : refetchCategory,
+    } = usePaginationState<CategoryDetail>();
     
     const variantGroupList = model?.variantGroups;
     const [unmodifiedVariantGroups, setUnmodifiedVariantGroups] = useState<VariantGroupDetail[]|undefined>(variantGroupList);
@@ -245,7 +279,31 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     if ((unmodifiedVariantGroups?.length !== variantGroupList?.length) || unmodifiedVariantGroups?.some((item, index) => (item !== variantGroupList?.[index]))) {
         setUnmodifiedVariantGroups(variantGroupList); // tracks the new changes
         setVariantGroups(variantGroupList);           // discard the user changes
-    } // if  
+    } // if
+    
+    
+    
+    // statuses:
+    const isLoading = (
+        // have any loading(s):
+        
+        isLoadingCategory
+        /* isOther1Loading */
+        /* isOther2Loading */
+        /* isOther3Loading */
+    );
+    const isError   = (
+        !isLoading // while still LOADING => consider as NOT error
+        &&
+        (
+            // have any error(s):
+            
+            isErrorCategory
+            /* isOther1Error */
+            /* isOther2Error */
+            /* isOther3Error */
+        )
+    );
     
     
     
@@ -419,6 +477,10 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         );
     });
     
+    const refetchModel               = useEvent((): void => {
+        if (isErrorCategory && !isLoadingCategory) refetchCategory();
+    });
+    
     
     
     // privileges:
@@ -476,11 +538,15 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             
             
             // stores:
-            isModified  = {isModified}
+            isModelLoading = {isLoading}
+            isModelError   = {isError}
+            onModelRetry   = {refetchModel}
             
-            isCommiting = {isLoadingUpdate || isLoadingCommitDeleteImage || isLoadingCommitMoveImage}
-            isReverting = {                   isLoadingRevertDeleteImage}
-            isDeleting  = {isLoadingDelete || isLoadingCommitDeleteImage}
+            isModified     = {isModified}
+            
+            isCommiting    = {isLoadingUpdate || isLoadingCommitDeleteImage || isLoadingCommitMoveImage}
+            isReverting    = {                   isLoadingRevertDeleteImage}
+            isDeleting     = {isLoadingDelete || isLoadingCommitDeleteImage}
             
             
             
@@ -831,6 +897,17 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         placeholder='Type product description here...'
                     />
                 </WysiwygEditor>
+            </TabPanel>
+            <TabPanel label={PAGE_PRODUCT_TAB_CATEGORY}     panelComponent={<Generic className={styleSheet.categoryTab} />}>
+                <CategoryEditor
+                    // components:
+                    modelPreviewComponent={
+                        <CategoryPreview
+                            // data:
+                            model={undefined as any}
+                        />
+                    }
+                />
             </TabPanel>
         </>}</ComplexEditModelDialog>
     );

@@ -33,6 +33,7 @@ import {
     type ProductPreview,
     type ProductDetail,
     type ProductUpdateRequest,
+    type CategoryDetail,
     type TemplateVariantGroupDetail,
     type AdminDetail,
     type AdminPreferenceData,
@@ -124,7 +125,7 @@ export const apiSlice = createApi({
     baseQuery : axiosBaseQuery({
         baseUrl: `${process.env.NEXT_PUBLIC_APP_URL ?? ''}/api`
     }),
-    tagTypes: ['ProductPage', 'TemplateVariantGroupEntity', 'OrderPage', 'ShippingPage', 'DefaultShippingOriginData', 'AdminPage', 'RoleEntity', 'PreferenceData'],
+    tagTypes: ['ProductPage', 'CategoryPage', 'TemplateVariantGroupEntity', 'OrderPage', 'ShippingPage', 'DefaultShippingOriginData', 'AdminPage', 'RoleEntity', 'PreferenceData'],
     endpoints : (builder) => ({
         getProductPage              : builder.query<Pagination<ProductDetail>, PaginationArgs>({
             query : (arg) => ({
@@ -166,6 +167,37 @@ export const apiSlice = createApi({
                 url    : `products/check-path?path=${encodeURIComponent(arg)}`,
                 method : 'GET',
             }),
+        }),
+        
+        
+        
+        getCategoryPage             : builder.query<Pagination<CategoryDetail>, PaginationArgs>({
+            query : (arg) => ({
+                url    : 'products/categories',
+                method : 'POST',
+                body   : arg,
+            }),
+            providesTags: (data, error, arg) => [{ type: 'CategoryPage', id: arg.page }],
+        }),
+        updateCategory              : builder.mutation<CategoryDetail, CategoryDetail>({
+            query: (arg) => ({
+                url    : 'products/categories',
+                method : 'PATCH',
+                body   : arg
+            }),
+            onQueryStarted: async (arg, api) => {
+                await cumulativeUpdatePaginationCache(api, 'getCategoryPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'CategoryPage');
+            },
+        }),
+        deleteCategory              : builder.mutation<Pick<CategoryDetail, 'id'>, MutationArgs<Pick<CategoryDetail, 'id'>>>({
+            query: (arg) => ({
+                url    : `products/categories?id=${encodeURIComponent(arg.id)}`,
+                method : 'DELETE',
+                body   : arg
+            }),
+            onQueryStarted: async (arg, api) => {
+                await cumulativeUpdatePaginationCache(api, 'getCategoryPage', 'DELETE', 'CategoryPage');
+            },
         }),
         
         
@@ -478,6 +510,12 @@ export const {
     
     
     
+    useGetCategoryPageQuery                : useGetCategoryPage,
+    useUpdateCategoryMutation              : useUpdateCategory,
+    useDeleteCategoryMutation              : useDeleteCategory,
+    
+    
+    
     useGetTemplateVariantGroupListQuery    : useGetTemplateVariantGroupList,
     useUpdateTemplateVariantGroupMutation  : useUpdateTemplateVariantGroup,
     useDeleteTemplateVariantGroupMutation  : useDeleteTemplateVariantGroup,
@@ -618,7 +656,7 @@ interface PaginationUpdateOptions<TEntry extends Model|string> {
     providedMutatedEntry ?: TEntry
     predicate            ?: (originalArgs: unknown) => boolean
 }
-const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, updateType: PaginationUpdateType, invalidateTag: Extract<Parameters<typeof apiSlice.util.invalidateTags>[0][number], string>, options?: PaginationUpdateOptions<TEntry>) => {
+const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getCategoryPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, updateType: PaginationUpdateType, invalidateTag: Extract<Parameters<typeof apiSlice.util.invalidateTags>[0][number], string>, options?: PaginationUpdateOptions<TEntry>) => {
     // options
     const {
         providedMutatedEntry,

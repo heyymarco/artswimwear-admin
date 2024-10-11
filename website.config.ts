@@ -22,6 +22,7 @@ export const PAGE_PRODUCT_TAB_VARIANTS               = 'Variants'
 export const PAGE_PRODUCT_TAB_STOCKS                 = 'Stocks'
 export const PAGE_PRODUCT_TAB_IMAGES                 = 'Images'
 export const PAGE_PRODUCT_TAB_DESCRIPTION            = 'Description'
+export const PAGE_PRODUCT_TAB_CATEGORY               = 'Category'
 export const PAGE_PRODUCT_TAB_DELETE                 = 'Delete'
 
 export const PAGE_VARIANT_GROUP_TAB_INFORMATIONS     = 'Informations'
