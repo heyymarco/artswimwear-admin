@@ -72,7 +72,6 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
         
         
         // components:
-        modelCreateComponent,
         modelPreviewComponent,
         
         

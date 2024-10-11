@@ -141,3 +141,9 @@ export interface CategoryDetail
 {
     subcategories : CategoryDetail[]
 }
+
+export interface CategoryUpdateRequest
+    extends
+        MutationArgs<CategoryDetail>
+{
+}

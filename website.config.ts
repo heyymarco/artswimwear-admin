@@ -25,6 +25,11 @@ export const PAGE_PRODUCT_TAB_DESCRIPTION            = 'Description'
 export const PAGE_PRODUCT_TAB_CATEGORY               = 'Category'
 export const PAGE_PRODUCT_TAB_DELETE                 = 'Delete'
 
+export const PAGE_CATEGORY_TAB_INFORMATIONS           = 'Informations'
+export const PAGE_CATEGORY_TAB_IMAGES                 = 'Images'
+export const PAGE_CATEGORY_TAB_DESCRIPTION            = 'Description'
+export const PAGE_CATEGORY_TAB_DELETE                 = 'Delete'
+
 export const PAGE_VARIANT_GROUP_TAB_INFORMATIONS     = 'Informations'
 export const PAGE_VARIANT_GROUP_TAB_DELETE           = 'Delete'
 

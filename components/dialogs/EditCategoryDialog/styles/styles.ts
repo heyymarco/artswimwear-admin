@@ -60,12 +60,6 @@ const usesInfoTabLayout = () => {
                 '"path-label       "', 'auto',
                 '"path-editor      "', 'auto',
                 '"................."', spacers.sm,
-                '"price-label      "', 'auto',
-                '"price-editor     "', 'auto',
-                '"................."', spacers.sm,
-                '"sWeight-label    "', 'auto',
-                '"sWeight-editor   "', 'auto',
-                '"................."', spacers.sm,
                 '"visibility-label "', 'auto',
                 '"visibility-editor"', 'auto',
                 '/',
@@ -78,9 +72,6 @@ const usesInfoTabLayout = () => {
                     '"................. ................."', spacers.sm,
                     '"path-label               path-label"', 'auto',
                     '"path-editor             path-editor"', 'auto',
-                    '"................. ................."', spacers.sm,
-                    '"price-label           sWeight-label"', 'auto',
-                    '"price-editor         sWeight-editor"', 'auto',
                     '"................. ................."', spacers.sm,
                     '"visibility-label   visibility-label"', 'auto',
                     '"visibility-editor visibility-editor"', 'auto',
@@ -104,37 +95,9 @@ const usesInfoTabLayout = () => {
             ...children('.path.label'       , { gridArea: 'path-label'        }),
             ...children('.path.editor'      , { gridArea: 'path-editor'       }),
             
-            ...children('.price.label'      , { gridArea: 'price-label'       }),
-            ...children('.price.editor'     , { gridArea: 'price-editor'      }),
-            
-            ...children('.sWeight.label'    , { gridArea: 'sWeight-label'     }),
-            ...children('.sWeight.editor'   , { gridArea: 'sWeight-editor'    }),
-            
             ...children('.visibility.label' , { gridArea: 'visibility-label'  }),
             ...children('.visibility.editor', { gridArea: 'visibility-editor' }),
         }),
-    });
-};
-const usesVariantsTabLayout = () => {
-    return style({
-        // layouts:
-        display      : 'grid',
-        alignContent : 'start',
-    });
-};
-const usesStocksTabLayout = () => {
-    return style({
-        // layouts:
-        display      : 'grid',
-        alignContent : 'start',
-        ...rule(':not(:has(>ul>li>*>.variants))', {
-            alignContent : 'center',
-        }),
-        
-        
-        
-        // spacings:
-        padding: 0,
     });
 };
 const usesImagesTabLayout = () => {
@@ -151,12 +114,6 @@ const usesDescriptionTabLayout = () => {
 };
 const usesCategoryTabLayout = () => {
     return style({
-        // layouts:
-        display: 'grid',
-        alignContent: 'start',
-        
-        
-        
         // scrolls:
         overscrollBehavior : 'none',
     });
@@ -232,12 +189,6 @@ export default () => [
     scope('infoTab', {
         ...usesInfoTabLayout(),
     }),
-    scope('variantsTab', {
-        ...usesVariantsTabLayout(),
-    }, { specificityWeight: 4 }),
-    scope('stocksTab', {
-        ...usesStocksTabLayout(),
-    }, { specificityWeight: 4 }),
     scope('imagesTab', {
         ...usesImagesTabLayout(),
     }),

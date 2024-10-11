@@ -34,6 +34,7 @@ import {
     type ProductDetail,
     type ProductUpdateRequest,
     type CategoryDetail,
+    type CategoryUpdateRequest,
     type TemplateVariantGroupDetail,
     type AdminDetail,
     type AdminPreferenceData,
@@ -179,7 +180,7 @@ export const apiSlice = createApi({
             }),
             providesTags: (data, error, arg) => [{ type: 'CategoryPage', id: arg.page }],
         }),
-        updateCategory              : builder.mutation<CategoryDetail, CategoryDetail>({
+        updateCategory              : builder.mutation<CategoryDetail, CategoryUpdateRequest>({
             query: (arg) => ({
                 url    : 'products/categories',
                 method : 'PATCH',

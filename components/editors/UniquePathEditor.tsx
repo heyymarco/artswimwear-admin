@@ -51,13 +51,15 @@ export interface UniquePathEditorProps<TElement extends Element = HTMLSpanElemen
         ImplementedUniqueEditorProps<TElement>
 {
     // appearances:
-    homeUrl ?: string
+    homeUrl   ?: string
+    modelSlug ?: string
 }
 const UniquePathEditor = <TElement extends Element = HTMLSpanElement>(props: UniquePathEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // appearances:
         homeUrl = STORE_WEBSITE_URL,
+        modelSlug = '/products/',
     ...restUniqueEditorProps} = props;
     
     
@@ -122,7 +124,7 @@ const UniquePathEditor = <TElement extends Element = HTMLSpanElement>(props: Uni
                             // classes:
                             className='solid'
                         >
-                            /products/
+                            {modelSlug}
                         </Label>
                     }
                     editorComponent={
