@@ -118,7 +118,6 @@ import {
 }                           from '@/components/views/CategoryPreview'
 import {
     PaginationStateProvider,
-    usePaginationState,
 }                           from '@/components/explorers/Pagination'
 
 // models:
@@ -189,22 +188,6 @@ export interface EditProductDialogProps
 {
 }
 const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
-    // jsx:
-    return (
-        <PaginationStateProvider<CategoryDetail>
-            // states:
-            initialPerPage={10}
-            
-            
-            
-            // data:
-            useGetModelPage={useGetCategoryPage}
-        >
-            <EditProductDialogInternal {...props} />
-        </PaginationStateProvider>
-    );
-}
-const EditProductDialogInternal = (props: EditProductDialogProps): JSX.Element|null => {
     // styles:
     const styleSheet = useEditProductDialogStyleSheet();
     
@@ -267,11 +250,6 @@ const EditProductDialogInternal = (props: EditProductDialogProps): JSX.Element|n
     const [commitDeleteImage, {isLoading : isLoadingCommitDeleteImage}] = useDeleteImage();
     const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
     const [commitMoveImage  , {isLoading : isLoadingCommitMoveImage  }] = useMoveImage();
-    const {
-        isLoading : isLoadingCategory,
-        isError   : isErrorCategory,
-        refetch   : refetchCategory,
-    } = usePaginationState<CategoryDetail>();
     
     const variantGroupList = model?.variantGroups;
     const [unmodifiedVariantGroups, setUnmodifiedVariantGroups] = useState<VariantGroupDetail[]|undefined>(variantGroupList);
@@ -280,30 +258,6 @@ const EditProductDialogInternal = (props: EditProductDialogProps): JSX.Element|n
         setUnmodifiedVariantGroups(variantGroupList); // tracks the new changes
         setVariantGroups(variantGroupList);           // discard the user changes
     } // if
-    
-    
-    
-    // statuses:
-    const isLoading = (
-        // have any loading(s):
-        
-        isLoadingCategory
-        /* isOther1Loading */
-        /* isOther2Loading */
-        /* isOther3Loading */
-    );
-    const isError   = (
-        !isLoading // while still LOADING => consider as NOT error
-        &&
-        (
-            // have any error(s):
-            
-            isErrorCategory
-            /* isOther1Error */
-            /* isOther2Error */
-            /* isOther3Error */
-        )
-    );
     
     
     
@@ -477,10 +431,6 @@ const EditProductDialogInternal = (props: EditProductDialogProps): JSX.Element|n
         );
     });
     
-    const refetchModel               = useEvent((): void => {
-        if (isErrorCategory && !isLoadingCategory) refetchCategory();
-    });
-    
     
     
     // privileges:
@@ -538,10 +488,6 @@ const EditProductDialogInternal = (props: EditProductDialogProps): JSX.Element|n
             
             
             // stores:
-            isModelLoading = {isLoading}
-            isModelError   = {isError}
-            onModelRetry   = {refetchModel}
-            
             isModified     = {isModified}
             
             isCommiting    = {isLoadingUpdate || isLoadingCommitDeleteImage || isLoadingCommitMoveImage}
@@ -899,15 +845,25 @@ const EditProductDialogInternal = (props: EditProductDialogProps): JSX.Element|n
                 </WysiwygEditor>
             </TabPanel>
             <TabPanel label={PAGE_PRODUCT_TAB_CATEGORY}     panelComponent={<Generic className={styleSheet.categoryTab} />}>
-                <CategoryEditor
-                    // components:
-                    modelPreviewComponent={
-                        <CategoryPreview
-                            // data:
-                            model={undefined as any}
-                        />
-                    }
-                />
+                <PaginationStateProvider<CategoryDetail>
+                    // states:
+                    initialPerPage={10}
+                    
+                    
+                    
+                    // data:
+                    useGetModelPage={useGetCategoryPage}
+                >
+                    <CategoryEditor
+                        // components:
+                        modelPreviewComponent={
+                            <CategoryPreview
+                                // data:
+                                model={undefined as any}
+                            />
+                        }
+                    />
+                </PaginationStateProvider>
             </TabPanel>
         </>}</ComplexEditModelDialog>
     );
