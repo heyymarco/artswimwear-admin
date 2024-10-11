@@ -35,7 +35,7 @@ import {
 
 
 // styles:
-export const usesInfoTabLayout = () => {
+const usesInfoTabLayout = () => {
     return style({
         // layout:
         display: 'grid',
@@ -115,14 +115,14 @@ export const usesInfoTabLayout = () => {
         }),
     });
 };
-export const usesVariantsTabLayout = () => {
+const usesVariantsTabLayout = () => {
     return style({
         // layouts:
         display      : 'grid',
         alignContent : 'start',
     });
 };
-export const usesStocksTabLayout = () => {
+const usesStocksTabLayout = () => {
     return style({
         // layouts:
         display      : 'grid',
@@ -137,25 +137,25 @@ export const usesStocksTabLayout = () => {
         padding: 0,
     });
 };
-export const usesImagesTabLayout = () => {
+const usesImagesTabLayout = () => {
     return style({
         // scrolls:
         overscrollBehavior : 'none',
     });
 };
-export const usesDescriptionTabLayout = () => {
+const usesDescriptionTabLayout = () => {
     return style({
         // scrolls:
         overscrollBehavior : 'none',
     });
 };
-export const usesCategoryTabLayout = () => {
+const usesCategoryTabLayout = () => {
     return style({
         // scrolls:
         overscrollBehavior : 'none',
     });
 };
-export const usesEditDescription = () => {
+const usesEditDescription = () => {
     // dependencies:
     
     // capabilities:
