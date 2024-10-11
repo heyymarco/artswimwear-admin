@@ -91,10 +91,9 @@ import {
 import {
     SimpleEditModelDialog,
 }                           from '@/components/dialogs/SimpleEditModelDialog'
-// TODO:
-// import {
-//     EditCategoryDialog,
-// }                           from '@/components/dialogs/EditCategoryDialog'
+import {
+    EditCategoryDialog,
+}                           from '@/components/dialogs/EditCategoryDialog'
 
 // models:
 import {
@@ -235,23 +234,22 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                     />
                 );
                 case 'images'     :
-                // TODO:
-                // case 'full'       : return (
-                //     <EditCategoryDialog
-                //         // data:
-                //         model={model} // modify current model
-                //         
-                //         
-                //         
-                //         // states:
-                //         defaultExpandedTabIndex={(() => {
-                //             switch (editMode) {
-                //                 case 'images'   : return 3;
-                //                 default         : return undefined;
-                //             } // switch
-                //         })()}
-                //     />
-                // );
+                case 'full'       : return (
+                    <EditCategoryDialog
+                        // data:
+                        model={model} // modify current model
+                        
+                        
+                        
+                        // states:
+                        defaultExpandedTabIndex={(() => {
+                            switch (editMode) {
+                                case 'images'   : return 1;
+                                default         : return undefined;
+                            } // switch
+                        })()}
+                    />
+                );
                 default           : throw new Error('app error');
             } // switch
         })());
