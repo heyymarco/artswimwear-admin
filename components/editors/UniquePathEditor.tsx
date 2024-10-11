@@ -31,16 +31,32 @@ import {
     UniqueEditor,
 }                           from '@/components/editors/UniqueEditor'
 
-// stores:
-import {
-    // hooks:
-    useAvailablePath,
-}                           from '@/store/features/api/apiSlice'
-
 // configs:
 import {
     STORE_WEBSITE_URL,
 }                           from '@/website.config'
+
+
+
+// types:
+export type UseModelAvailablePath = () => UseGetModelAvailablePathApi
+export type UseGetModelAvailablePathApi = [
+    (path: string) => {
+        unwrap : () => Promise<boolean>
+    },
+    
+    {
+        // data:
+        data       ?: boolean
+        isLoading   : boolean
+        isFetching  : boolean
+        isError     : boolean
+    },
+    
+    {
+        lastArg: string
+    },
+]
 
 
 
@@ -52,20 +68,35 @@ export interface UniquePathEditorProps<TElement extends Element = HTMLSpanElemen
 {
     // appearances:
     homeUrl   ?: string
-    modelSlug ?: string
+    modelSlug  : string
+    
+    
+    
+    // data:
+    useModelAvailablePath : UseModelAvailablePath
 }
 const UniquePathEditor = <TElement extends Element = HTMLSpanElement>(props: UniquePathEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // appearances:
         homeUrl = STORE_WEBSITE_URL,
-        modelSlug = '/products/',
-    ...restUniqueEditorProps} = props;
+        modelSlug,
+        
+        
+        
+        // data:
+        useModelAvailablePath,
+        
+        
+        
+        // other props:
+        ...restUniqueEditorProps
+    } = props;
     
     
     
     // stores:
-    const [availablePath] = useAvailablePath();
+    const [availablePath] = useModelAvailablePath();
     
     
     

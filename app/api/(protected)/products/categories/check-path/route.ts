@@ -87,7 +87,7 @@ router
     
     //#region query result
     try {
-        const result = await prisma.product.findFirst({
+        const result = await prisma.category.findFirst({
             where  : {
                 path : { equals: path, mode: 'insensitive' }, // case-insensitive comparison
             },

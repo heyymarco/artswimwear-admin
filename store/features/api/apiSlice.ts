@@ -163,7 +163,7 @@ export const apiSlice = createApi({
                 method : 'GET',
             }),
         }),
-        availablePath               : builder.query<boolean, string>({
+        productAvailablePath        : builder.query<boolean, string>({
             query: (arg) => ({
                 url    : `products/check-path?path=${encodeURIComponent(arg)}`,
                 method : 'GET',
@@ -199,6 +199,13 @@ export const apiSlice = createApi({
             onQueryStarted: async (arg, api) => {
                 await cumulativeUpdatePaginationCache(api, 'getCategoryPage', 'DELETE', 'CategoryPage');
             },
+        }),
+        
+        categoryAvailablePath       : builder.query<boolean, string>({
+            query: (arg) => ({
+                url    : `products/categories/check-path?path=${encodeURIComponent(arg)}`,
+                method : 'GET',
+            }),
         }),
         
         
@@ -507,13 +514,15 @@ export const {
     useDeleteProductMutation               : useDeleteProduct,
     
     useGetProductPreviewQuery              : useGetProductPreview,
-    useLazyAvailablePathQuery              : useAvailablePath,
+    useLazyProductAvailablePathQuery       : useProductAvailablePath,
     
     
     
     useGetCategoryPageQuery                : useGetCategoryPage,
     useUpdateCategoryMutation              : useUpdateCategory,
     useDeleteCategoryMutation              : useDeleteCategory,
+    
+    useLazyCategoryAvailablePathQuery      : useCategoryAvailablePath,
     
     
     

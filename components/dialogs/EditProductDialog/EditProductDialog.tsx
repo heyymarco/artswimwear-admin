@@ -147,6 +147,8 @@ import {
     useUpdateProduct,
     useDeleteProduct,
     
+    useProductAvailablePath,
+    
     useGetCategoryPage,
     
     usePostImage,
@@ -574,8 +576,18 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                     
                     <span className='path label'>Path:</span>
                     <UniquePathEditor
+                        // data:
+                        useModelAvailablePath={useProductAvailablePath}
+                        
+                        
+                        
                         // classes:
                         className='path editor'
+                        
+                        
+                        
+                        // appearances:
+                        modelSlug='/products/'
                         
                         
                         

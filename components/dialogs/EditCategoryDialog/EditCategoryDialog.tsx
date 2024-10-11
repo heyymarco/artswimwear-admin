@@ -96,6 +96,8 @@ import {
     useUpdateCategory,
     useDeleteCategory,
     
+    useCategoryAvailablePath,
+    
     usePostImage,
     useDeleteImage,
     useMoveImage,
@@ -457,6 +459,11 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
                     
                     <span className='path label'>Path:</span>
                     <UniquePathEditor
+                        // data:
+                        useModelAvailablePath={useCategoryAvailablePath}
+                        
+                        
+                        
                         // classes:
                         className='path editor'
                         
