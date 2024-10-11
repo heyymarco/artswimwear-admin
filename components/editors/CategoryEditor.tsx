@@ -64,6 +64,11 @@ interface CategoryEditorProps<TElement extends Element = HTMLElement>
 const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
+        // accessibilities:
+        createItemText = 'Add New Category',
+        
+        
+        
         // values:
         defaultValue,
         value,
@@ -92,6 +97,11 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
         <PaginationList<CategoryDetail, TElement>
             // other props:
             {...restPaginationListProps}
+            
+            
+            
+            // accessibilities:
+            createItemText={createItemText}
             
             
             
