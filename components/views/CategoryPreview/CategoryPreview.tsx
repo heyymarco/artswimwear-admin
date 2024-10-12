@@ -115,7 +115,7 @@ import {
 
 
 // defaults:
-const imageSize = 128;  // 128px
+const minImageWidth = 102;  // 102px === (100px + (2* paddingBlock)) * aspectRatio === (120px + (2* 16px)) * 2/3
 
 
 
@@ -324,7 +324,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                                 
                                 alt={name ?? ''}
                                 src={resolveMediaUrl(image)}
-                                sizes={`${imageSize}px`}
+                                sizes={`${minImageWidth}px`}
                             />
                         )}
                     </MiniCarousel>
@@ -340,9 +340,9 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                 {privilegeUpdateVisibility  && <EditButton onClick={() => handleEdit('visibility')} />}
             </p>
             <p className='fullEditor'>
-                {privilegeWrite             && <Button buttonStyle='link' onClick={() => handleEdit('full')}>
-                    More...
-                </Button>}
+                {privilegeWrite             && <EditButton icon='list' title='View the order details' className='fullEditor' buttonStyle='regular' onClick={() => handleEdit('full')}>
+                    View Details
+                </EditButton>}
             </p>
         </ListItem>
     );

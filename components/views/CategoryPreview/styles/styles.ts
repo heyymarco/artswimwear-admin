@@ -11,7 +11,7 @@ import { commerces } from '@/config';
 
 
 // styles:
-const imageSize = 128;  // 128px
+const minImageHeight = 120; // 120px
 const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
     // dependencies:
     
@@ -55,7 +55,7 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
                 '"images ... .........."', 'auto',     // the extra rest space (if any) between payment and fullEditor
                 '"images ... fullEditor"', 'auto',
                 '/',
-                `${imageSize}px ${spacers.md} 1fr`,
+                `calc(((${minImageHeight}px + (2 * ${paddingVars.paddingBlock})) * ${commerces.defaultProductAspectRatio}) - ${paddingVars.paddingInline}) ${spacers.md} 1fr`,
             ]],
             
             
