@@ -445,7 +445,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                 {privilegeUpdateVisibility  && <EditButton onClick={() => handleEdit('visibility')} />}
             </p>
             <p className='fullEditor'>
-                {privilegeWrite             && <EditButton icon='table_view' title='View the order details' className='fullEditor' buttonStyle='regular' onClick={() => handleEdit('full')}>
+                {privilegeWrite             && <EditButton icon='list' title='View the order details' className='fullEditor' buttonStyle='regular' onClick={() => handleEdit('full')}>
                     View Details
                 </EditButton>}
             </p>
