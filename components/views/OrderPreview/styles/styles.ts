@@ -50,7 +50,7 @@ import {
 
 
 // styles:
-const imageSize = 128;  // 128px
+const minImageHeight = 200; // 200px
 const usesOrderPreviewLayout = () => { // the <ListItem> of order list
     // dependencies:
     
@@ -96,7 +96,7 @@ const usesOrderPreviewLayout = () => { // the <ListItem> of order list
                 '"images ... .........."', 'auto',     // the extra rest space (if any) between payment and fullEditor
                 '"images ... fullEditor"', 'auto',
                 '/',
-                `${imageSize}px ${spacers.md} 1fr`,
+                `calc(((${minImageHeight}px + (2 * ${paddingVars.paddingBlock})) * ${commerces.defaultProductAspectRatio}) - ${paddingVars.paddingInline}) ${spacers.md} 1fr`,
             ]],
             
             

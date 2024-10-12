@@ -112,7 +112,7 @@ import {
 
 
 // defaults:
-const imageSize = 128;  // 128px
+const minImageWidth = 155;  // 155px === (200px + (2* paddingBlock)) * aspectRatio === (200px + (2* 16px)) * 2/3
 
 
 
@@ -369,7 +369,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
             </p>
             
             <p className='fullEditor'>
-                <EditButton icon='table_view' className='fullEditor' buttonStyle='regular' onClick={() => setEditMode('full')}>
+            <EditButton icon='list' title='View the order details' className='fullEditor' buttonStyle='regular' onClick={() => setEditMode('full')}>
                     View Details
                 </EditButton>
             </p>
@@ -421,7 +421,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                                         
                                         
                                         // appearances:
-                                        sizes={`${imageSize}px`}
+                                        sizes={`${minImageWidth}px`}
                                         
                                         
                                         
