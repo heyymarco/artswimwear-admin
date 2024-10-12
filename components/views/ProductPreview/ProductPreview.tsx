@@ -40,7 +40,7 @@ import {
     
     
     // simple-components:
-    Button,
+    ButtonIcon,
     
     
     
@@ -445,9 +445,9 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                 {privilegeUpdateVisibility  && <EditButton onClick={() => handleEdit('visibility')} />}
             </p>
             <p className='fullEditor'>
-                {privilegeWrite             && <Button buttonStyle='link' onClick={() => handleEdit('full')}>
-                    More...
-                </Button>}
+                {privilegeWrite             && <ButtonIcon icon='list' iconPosition='end' buttonStyle='link' onClick={() => handleEdit('full')}>
+                    Details
+                </ButtonIcon>}
             </p>
         </ListItem>
     );

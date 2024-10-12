@@ -164,6 +164,13 @@ const usesProductPreviewLayout = () => { // the <ListItem> of product list
             }),
             ...children('.fullEditor', {
                 gridArea: 'fullEditor',
+                
+                
+                
+                // typos:
+                ...children('button', {
+                    textDecoration: 'none',
+                }),
             }),
             ...descendants('[role="dialog"]', {
                 // remove the padding of <Dialog>'s backdrop:
