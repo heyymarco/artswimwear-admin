@@ -274,6 +274,11 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
             
             
             
+            // variants:
+            theme={(visibility !== 'PUBLISHED') ? 'secondary' : undefined}
+            
+            
+            
             // classes:
             className={styleSheet.main}
         >

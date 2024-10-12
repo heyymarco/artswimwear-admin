@@ -336,6 +336,11 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
             
             
             
+            // variants:
+            theme={(visibility !== 'PUBLISHED') ? 'secondary' : undefined}
+            
+            
+            
             // classes:
             className={styleSheet.main}
         >
