@@ -6,12 +6,13 @@ import {
     style,
 }                           from '@cssfn/core'          // writes css in javascript
 import { basics } from '@reusable-ui/components';
-import { typos, usesBorder, usesGroupable, usesPadding } from '@reusable-ui/core';
+import { spacers, typos, usesBorder, usesGroupable, usesPadding } from '@reusable-ui/core';
+import { commerces } from '@/config';
 
 
 
 // styles:
-const imageSize = 128;  // 128px
+const minImageHeight = 200; // 200px
 const usesAdminPreviewLayout = () => { // the <ListItem> of admin list
     // dependencies:
     
@@ -48,13 +49,18 @@ const usesAdminPreviewLayout = () => { // the <ListItem> of admin list
             // layouts:
             display: 'grid',
             gridTemplate: [[
-                '"adminImg      name "', 'auto',
-                '"adminImg  username "', 'auto',
-                '"adminImg     email "', 'auto',
-                '"adminImg      role "', 'auto',
-                '"adminImg fullEditor"', 'auto',
+                '"adminImg ... name      "', 'auto',
+                '"adminImg ... .........."', spacers.md,
+                '"adminImg ... username  "', 'auto',
+                '"adminImg ... .........."', spacers.md,
+                '"adminImg ... email     "', 'auto',
+                '"adminImg ... .........."', spacers.md,
+                '"adminImg ... role      "', 'auto',
+                '"adminImg ... .........."', spacers.md, // the minimum space between visibility and fullEditor
+                '"adminImg ... .........."', 'auto',     // the extra rest space (if any) between payment and fullEditor
+                '"adminImg ... fullEditor"', 'auto',
                 '/',
-                `calc(${imageSize}px - ${paddingVars.paddingInline}) 1fr`,
+                `calc(((${minImageHeight}px + (2 * ${paddingVars.paddingBlock})) * ${commerces.defaultProductAspectRatio}) - ${paddingVars.paddingInline}) ${spacers.md} 1fr`,
             ]],
             
             
@@ -75,9 +81,6 @@ const usesAdminPreviewLayout = () => { // the <ListItem> of admin list
          // padding       : paddingVars.padding,
             paddingInline : paddingVars.paddingInline,
             paddingBlock  : paddingVars.paddingBlock,
-            
-            gapInline     : '1rem',
-            gapBlock      : '0.5rem',
             
             
             

@@ -384,7 +384,7 @@ const AdminPreview = (props: AdminPreviewProps): JSX.Element|null => {
                 {privilegeUpdateRole     && <EditButton onClick={() => handleEdit('roleId')} />}
             </p>
             <p className='fullEditor'>
-                {privilegeWrite          && <EditButton buttonStyle='regular' onClick={() => handleEdit('full')}>
+                {privilegeWrite          && <EditButton icon='list' title='View the order details' className='fullEditor' buttonStyle='regular' onClick={() => handleEdit('full')}>
                     Open Full Editor
                 </EditButton>}
             </p>
