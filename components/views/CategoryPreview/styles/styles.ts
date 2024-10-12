@@ -48,11 +48,14 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
             // layouts:
             display: 'grid',
             gridTemplate: [[
-                '"images      name "', 'auto',
-                '"images visibility"', 'auto',
-                '"images fullEditor"', 'auto',
+                '"images ... name      "', 'auto',
+                '"images ... .........."', spacers.md,
+                '"images ... visibility"', 'auto',
+                '"images ... .........."', spacers.md, // the minimum space between visibility and fullEditor
+                '"images ... .........."', 'auto',     // the extra rest space (if any) between payment and fullEditor
+                '"images ... fullEditor"', 'auto',
                 '/',
-                `calc(${imageSize}px - ${paddingVars.paddingInline}) 1fr`,
+                `${imageSize}px ${spacers.md} 1fr`,
             ]],
             
             
@@ -73,9 +76,6 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
          // padding       : paddingVars.padding,
             paddingInline : paddingVars.paddingInline,
             paddingBlock  : paddingVars.paddingBlock,
-            
-            gapInline     : spacers.md,
-            gapBlock      : spacers.xs,
             
             
             

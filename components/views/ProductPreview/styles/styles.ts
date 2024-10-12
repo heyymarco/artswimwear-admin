@@ -11,7 +11,7 @@ import { commerces } from '@/config';
 
 
 // styles:
-const minImageHeight = 170; // 170px
+const minImageHeight = 200; // 200px
 const usesProductPreviewLayout = () => { // the <ListItem> of product list
     // dependencies:
     
@@ -61,7 +61,7 @@ const usesProductPreviewLayout = () => { // the <ListItem> of product list
                 '"images ... .........."', 'auto',     // the extra rest space (if any) between payment and fullEditor
                 '"images ... fullEditor"', 'auto',
                 '/',
-                `calc((${minImageHeight}px + (2 * ${paddingVars.paddingBlock})) * ${commerces.defaultProductAspectRatio}) ${spacers.md} 1fr`,
+                `calc(((${minImageHeight}px + (2 * ${paddingVars.paddingBlock})) * ${commerces.defaultProductAspectRatio}) - ${paddingVars.paddingInline}) ${spacers.md} 1fr`,
             ]],
             
             
@@ -164,13 +164,6 @@ const usesProductPreviewLayout = () => { // the <ListItem> of product list
             }),
             ...children('.fullEditor', {
                 gridArea: 'fullEditor',
-                
-                
-                
-                // typos:
-                ...children('button', {
-                    textDecoration: 'none',
-                }),
             }),
             ...descendants('[role="dialog"]', {
                 // remove the padding of <Dialog>'s backdrop:
