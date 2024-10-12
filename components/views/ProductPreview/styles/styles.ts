@@ -11,7 +11,7 @@ import { commerces } from '@/config';
 
 
 // styles:
-const imageSize = 128;  // 128px
+const minImageHeight = 170; // 170px
 const usesProductPreviewLayout = () => { // the <ListItem> of product list
     // dependencies:
     
@@ -48,14 +48,20 @@ const usesProductPreviewLayout = () => { // the <ListItem> of product list
             // layouts:
             display: 'grid',
             gridTemplate: [[
-                '"images      name "', 'auto',
-                '"images   variants"', 'auto',
-                '"images      price"', 'auto',
-                '"images     stocks"', 'auto',
-                '"images visibility"', 'auto',
-                '"images fullEditor"', 'auto',
+                '"images ... name      "', 'auto',
+                '"images ... .........."', spacers.sm,
+                '"images ... variants  "', 'auto',
+                '"images ... .........."', spacers.sm,
+                '"images ... price     "', 'auto',
+                '"images ... .........."', spacers.sm,
+                '"images ... stocks    "', 'auto',
+                '"images ... .........."', spacers.sm,
+                '"images ... visibility"', 'auto',
+                '"images ... .........."', spacers.sm, // the minimum space between visibility and fullEditor
+                '"images ... .........."', 'auto',     // the extra rest space (if any) between payment and fullEditor
+                '"images ... fullEditor"', 'auto',
                 '/',
-                `calc(${imageSize}px - ${paddingVars.paddingInline}) 1fr`,
+                `calc((${minImageHeight}px + (2 * ${paddingVars.paddingBlock})) * ${commerces.defaultProductAspectRatio}) ${spacers.md} 1fr`,
             ]],
             
             
@@ -76,9 +82,6 @@ const usesProductPreviewLayout = () => { // the <ListItem> of product list
          // padding       : paddingVars.padding,
             paddingInline : paddingVars.paddingInline,
             paddingBlock  : paddingVars.paddingBlock,
-            
-            gapInline     : spacers.md,
-            gapBlock      : spacers.xs,
             
             
             

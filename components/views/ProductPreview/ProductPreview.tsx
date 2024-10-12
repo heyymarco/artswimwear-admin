@@ -21,11 +21,10 @@ import {
     useSession,
 }                           from 'next-auth/react'
 
-// cssfn:
+// styles:
 import {
-    // style sheets:
-    dynamicStyleSheet,
-}                           from '@cssfn/cssfn-react'               // writes css in react hook
+    useProductPreviewStyleSheet,
+}                           from './styles/loader'
 
 // reusable-ui core:
 import {
@@ -131,15 +130,7 @@ import {
 
 
 // defaults:
-const imageSize = 128;  // 128px
-
-
-
-// styles:
-const usePageStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */'./ProductPreviewStyles')
-, { specificityWeight: 2, id: 'u76xb8csqd' });
-import './ProductPreviewStyles';
+const minImageWidth = 150;  // 150px === ((170px + (2* paddingBlock)) * aspectRatio) + paddingInline === ((170px + (2* 16px)) * 2/3) + 16
 
 
 
@@ -147,7 +138,7 @@ import './ProductPreviewStyles';
 interface ProductPreviewProps extends ModelPreviewProps<ProductDetail> {}
 const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
     // styles:
-    const styleSheet = usePageStyleSheet();
+    const styleSheet = useProductPreviewStyleSheet();
     
     
     
@@ -405,7 +396,7 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                                 
                                 alt={name ?? ''}
                                 src={resolveMediaUrl(image)}
-                                sizes={`${imageSize}px`}
+                                sizes={`${minImageWidth}px`}
                             />
                         )}
                     </MiniCarousel>
