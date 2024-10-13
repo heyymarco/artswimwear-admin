@@ -134,8 +134,36 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
                 }),
             }),
             ...children('.name', {
-                gridArea: 'name',
-                fontSize: typos.fontSizeXl,
+                // positions:
+                gridArea   : 'name',
+                justifyContent : 'start',
+                alignItems : 'center',
+                
+                
+                
+                // layouts:
+                display: 'grid',
+                
+                
+                
+                // children:
+                ...children('.decorator', {
+                    // typos:
+                    fontSize: typos.fontSizeXl,
+                    
+                    
+                    
+                    // children:
+                    ...children(':first-child', {
+                        // spacings:
+                        marginInlineEnd: spacers.sm,
+                        
+                        
+                        
+                        // typos:
+                        fontSize: 'inherit',
+                    }),
+                }),
             }),
             ...children('.visibility', {
                 // positions:

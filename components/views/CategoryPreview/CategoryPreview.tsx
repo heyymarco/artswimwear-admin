@@ -70,11 +70,11 @@ import {
 import {
     NameEditor,
 }                           from '@heymarco/name-editor'
+import {
+    CheckDecorator,
+}                           from '@heymarco/check-decorator'
 
 // internal components:
-import {
-    CurrencyDisplay,
-}                           from '@/components/CurrencyDisplay'
 import {
     ModelPreviewProps,
 }                           from '@/components/explorers/PaginationList'
@@ -134,7 +134,13 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
     
     // rest props:
     const {
+        // data:
         model,
+        
+        
+        
+        // accessibilities:
+        readOnly = false,
     ...restListItemProps} = props;
     const {
         visibility,
@@ -337,7 +343,17 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
             />
             
             <h3 className='name'>
-                {name}
+                <CheckDecorator
+                    // classes:
+                    className='decorator'
+                    
+                    
+                    
+                    // accessibilities:
+                    enabled={!readOnly}
+                >
+                    {name}
+                </CheckDecorator>
             </h3>
             
             {(model.visibility !== 'PUBLISHED') && <Basic tag='span' theme='secondary' size='sm' className='visibility'>DRAFT</Basic>}
