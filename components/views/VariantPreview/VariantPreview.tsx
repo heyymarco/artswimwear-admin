@@ -25,7 +25,7 @@ import {
 // reusable-ui components:
 import {
     // base-components:
-    Indicator,
+    Basic,
     
     
     
@@ -228,7 +228,7 @@ const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
                 {name}
             </p>
             
-            {(model.visibility !== 'PUBLISHED') && <Indicator key={id} tag='span' className='visibility' size='sm' active enabled={false}>DRAFT</Indicator>}
+            {(model.visibility !== 'PUBLISHED') && <Basic tag='span' theme='secondary' size='sm' className='visibility'>DRAFT</Basic>}
             
             <Grip className='grip' enabled={!!privilegeUpdate?.description} />
             
