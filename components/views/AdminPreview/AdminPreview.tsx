@@ -11,21 +11,15 @@ import {
     useRef,
 }                           from 'react'
 
-// // next-js:
-// import type {
-//     Metadata,
-// }                           from 'next'
-
 // next-auth:
 import {
     useSession,
 }                           from 'next-auth/react'
 
-// cssfn:
+// styles:
 import {
-    // style sheets:
-    dynamicStyleSheet,
-}                           from '@cssfn/cssfn-react'               // writes css in react hook
+    useAdminPreviewStyleSheet,
+}                           from './styles/loader'
 
 // reusable-ui core:
 import {
@@ -110,14 +104,6 @@ import {
 import {
     resolveMediaUrl,
 }                           from '@/libs/mediaStorage.client'
-
-
-
-// styles:
-const useAdminPreviewStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */'./AdminPreviewStyles')
-, { specificityWeight: 2, id: 'rue4mgistn' });
-import './AdminPreviewStyles';
 
 
 
