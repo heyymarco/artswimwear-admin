@@ -6,11 +6,10 @@ import {
     default as React,
 }                           from 'react'
 
-// cssfn:
+// styles:
 import {
-    // style sheets:
-    dynamicStyleSheet,
-}                           from '@cssfn/cssfn-react'               // writes css in react hook
+    useStockPreviewStyleSheet,
+}                           from './styles/loader'
 
 // reusable-ui core:
 import {
@@ -56,14 +55,6 @@ import {
     type VariantDetail,
     type StockDetail,
 }                           from '@/models'
-
-
-
-// styles:
-const useStockPreviewStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */'./StockPreviewStyles')
-, { specificityWeight: 2, id: 'a6iitzq7zg' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
-import './StockPreviewStyles';
 
 
 
