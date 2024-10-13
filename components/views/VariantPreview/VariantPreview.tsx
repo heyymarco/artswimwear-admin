@@ -11,11 +11,10 @@ import {
     useRef,
 }                           from 'react'
 
-// cssfn:
+// styles:
 import {
-    // style sheets:
-    dynamicStyleSheet,
-}                           from '@cssfn/cssfn-react'               // writes css in react hook
+    useVariantPreviewStyleSheet,
+}                           from './styles/loader'
 
 // reusable-ui core:
 import {
@@ -81,14 +80,6 @@ import {
     // types:
     type VariantDetail,
 }                           from '@/models'
-
-
-
-// styles:
-const useVariantPreviewStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */'./VariantPreviewStyles')
-, { specificityWeight: 2, id: 'ksusgysqhs' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
-import './VariantPreviewStyles';
 
 
 
@@ -233,14 +224,26 @@ const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
             // handlers:
             onOrderStart={handleOrderStart}
         >
-            <p className='name'>{name}</p>
+            <p className='name'>
+                {name}
+            </p>
             
             {(model.visibility !== 'PUBLISHED') && <Indicator key={id} tag='span' className='visibility' size='sm' active enabled={false}>DRAFT</Indicator>}
             
             <Grip className='grip' enabled={!!privilegeUpdate?.description} />
             
             <EditButton
+                // classes:
+                className='edit'
+                
+                
+                
+                // components:
                 iconComponent={<Icon icon='edit' />}
+                
+                
+                
+                // handlers:
                 onClick={handleEditButtonClick}
             />
         </OrderableListItem>
