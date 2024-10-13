@@ -4,10 +4,25 @@ import {
     default as React,
 }                           from 'react'
 
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useEvent,
+}                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
+
 // internal components:
-import type {
+import {
+    // types:
+    type DeleteHandler,
+}                           from '@/components/dialogs/ComplexEditModelDialog'
+import {
+    // types:
+    type EditorChangeEventHandler,
+    
+    
+    
     // react components:
-    EditorProps,
+    type EditorProps,
 }                           from '@/components/editors/Editor'
 import {
     ModelCreateOuterProps,
@@ -15,8 +30,9 @@ import {
     PaginationListProps,
     PaginationList,
 }                           from '@/components/explorers/PaginationList'
-import type {
-    CategoryPreviewProps,
+import {
+    type ModelSelectEvent,
+    type CategoryPreviewProps,
 }                           from '@/components/views/CategoryPreview'
 
 // models:
@@ -30,9 +46,9 @@ import {
 interface CategoryEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Pick<EditorProps<TElement, string|null>,
+        Pick<EditorProps<TElement, Set<string>>,
             // values:
-            |'defaultValue' // not supported, controllable only
+            // |'defaultValue' // not supported, controllable only
             |'value'
             |'onChange'
         >,
@@ -70,7 +86,7 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
         
         
         // values:
-        defaultValue,
+        // defaultValue, // not supported, controllable only
         value,
         onChange,
         
@@ -89,6 +105,37 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
         // other props:
         ...restPaginationListProps
     } = props;
+    
+    
+    
+    // handlers:
+    const handleModelSelect = useEvent<EditorChangeEventHandler<ModelSelectEvent>>(({ id, selected }) => {
+        // conditions:
+        if (!onChange) return; // no onChange handler => noop
+        
+        
+        
+        if (selected) {
+            // add to collection:
+            if (!value /* no collection */ || !value.has(id) /* the collection not having the id */) {
+                const valueCopy = new Set<string>(value);
+                valueCopy.add(id);
+                onChange(valueCopy);
+            } // if
+        }
+        else {
+            // remove from collection:
+            if (value /* has collection */ && value.has(id) /* the collection having the id */) {
+                const valueCopy = new Set<string>(value);
+                valueCopy.delete(id);
+                onChange(valueCopy);
+            } // if
+        } // if
+    });
+    const handleModelDelete = useEvent<DeleteHandler<CategoryDetail>>(({ id }) => {
+        // if the model deleted => treat as unselect:
+        handleModelSelect({ id, selected: false });
+    });
     
     
     
@@ -128,7 +175,8 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
                         
                         
                         // handlers:
-                        // onModelChange : onChange,
+                        onModelSelect : handleModelSelect,
+                        onModelDelete : handleModelDelete,
                     },
                 )
             }

@@ -11,11 +11,6 @@ import {
     useRef,
 }                           from 'react'
 
-// // next-js:
-// import type {
-//     Metadata,
-// }                           from 'next'
-
 // next-auth:
 import {
     useSession,
@@ -30,6 +25,8 @@ import {
 import {
     // react helper hooks:
     useEvent,
+    type EventHandler,
+    type ActiveChangeEvent,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -46,6 +43,7 @@ import {
     
     // simple-components:
     Icon,
+    Check,
     
     
     
@@ -67,12 +65,6 @@ import {
 import {
     Image,
 }                           from '@heymarco/image'
-import {
-    NameEditor,
-}                           from '@heymarco/name-editor'
-import {
-    CheckDecorator,
-}                           from '@heymarco/check-decorator'
 
 // internal components:
 import {
@@ -82,8 +74,8 @@ import {
     EditButton,
 }                           from '@/components/EditButton'
 import {
-    VisibilityEditor,
-}                           from '@/components/editors/VisibilityEditor'
+    type EditorChangeEventHandler,
+}                           from '@/components/editors/Editor'
 import {
     CompoundWithBadge,
 }                           from '@/components/CompoundWithBadge'
@@ -94,8 +86,10 @@ import {
     DummyDialog,
 }                           from '@/components/dialogs/DummyDialog'
 import {
-    SimpleEditModelDialog,
-}                           from '@/components/dialogs/SimpleEditModelDialog'
+    // types:
+    type ComplexEditModelDialogResult,
+    type DeleteHandler,
+}                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
     EditCategoryDialog,
 }                           from '@/components/dialogs/EditCategoryDialog'
@@ -105,12 +99,6 @@ import {
     // types:
     type CategoryDetail,
 }                           from '@/models'
-
-// stores:
-import {
-    // hooks:
-    useUpdateCategory,
-}                           from '@/store/features/api/apiSlice'
 
 // internals:
 import {
@@ -124,8 +112,24 @@ const minImageWidth = 88;  // 88px === (100px + (2* paddingBlock)) * aspectRatio
 
 
 
+// types:
+export interface ModelSelectEvent {
+    id       : string
+    selected : boolean
+}
+
+
+
 // react components:
-export interface CategoryPreviewProps extends ModelPreviewProps<CategoryDetail> {}
+export interface CategoryPreviewProps
+    extends
+        // bases:
+        ModelPreviewProps<CategoryDetail>
+{
+    // handlers:
+    onModelSelect ?: EditorChangeEventHandler<ModelSelectEvent>
+    onModelDelete ?: DeleteHandler<CategoryDetail>
+}
 const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
     // styles:
     const styleSheet = useCategoryStyleSheet();
@@ -141,7 +145,18 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
         
         // accessibilities:
         readOnly = false,
-    ...restListItemProps} = props;
+        
+        
+        
+        // handlers:
+        onModelSelect,
+        onModelDelete,
+        
+        
+        
+        // other props:
+        ...restListItemProps
+    } = props;
     const {
         visibility,
         name,
@@ -195,55 +210,8 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
             : undefined
         );
         
-        const dialogPromise = showDialog((() => {
+        const dialogPromise = showDialog<ComplexEditModelDialogResult<CategoryDetail>>((() => {
             switch (editMode) {
-                case 'name'       : return (
-                    <SimpleEditModelDialog<CategoryDetail>
-                        // data:
-                        model={model}
-                        edit='name'
-                        
-                        
-                        
-                        // stores:
-                        useUpdateModel={useUpdateCategory}
-                        
-                        
-                        
-                        // global stackable:
-                        viewport={listItemRef}
-                        
-                        
-                        
-                        // components:
-                        editorComponent={<NameEditor
-                            // validations:
-                            required={true}
-                        />}
-                    />
-                );
-                case 'visibility' : return (
-                    <SimpleEditModelDialog<CategoryDetail>
-                        // data:
-                        model={model}
-                        edit='visibility'
-                        
-                        
-                        
-                        // stores:
-                        useUpdateModel={useUpdateCategory}
-                        
-                        
-                        
-                        // global stackable:
-                        viewport={listItemRef}
-                        
-                        
-                        
-                        // components:
-                        editorComponent={<VisibilityEditor theme='primaryAlt' />}
-                    />
-                );
                 case 'images'     :
                 case 'full'       : return (
                     <EditCategoryDialog
@@ -268,6 +236,15 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
         if (dummyPromise) {
             dialogPromise.collapseStartEvent().then(() => dummyPromise.closeDialog(undefined));
         } // if
+        
+        dialogPromise.then((updatedModel) => {
+            if (updatedModel === false) {
+                onModelDelete?.(model);
+            } // if
+        });
+    });
+    const handleCheckActiveChange = useEvent<EventHandler<ActiveChangeEvent>>(({ active }) => {
+        onModelSelect?.({ id: model.id, selected: active });
     });
     
     
@@ -343,7 +320,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
             />
             
             <h3 className='name'>
-                <CheckDecorator
+                <Check
                     // classes:
                     className='decorator'
                     
@@ -351,9 +328,14 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                     
                     // accessibilities:
                     enabled={!readOnly}
+                    
+                    
+                    
+                    // handlers:
+                    onActiveChange={handleCheckActiveChange}
                 >
                     {name}
-                </CheckDecorator>
+                </Check>
             </h3>
             
             {(visibility !== 'PUBLISHED') && <Basic tag='span' theme='secondary' size='sm' className='visibility'>DRAFT</Basic>}
