@@ -58,7 +58,7 @@ const usesProductPreviewLayout = () => { // the <ListItem> of product list
                 '"images ... .........."', spacers.sm,
                 '"images ... visibility"', 'auto',
                 '"images ... .........."', spacers.sm, // the minimum space between visibility and fullEditor
-                '"images ... .........."', 'auto',     // the extra rest space (if any) between payment and fullEditor
+                '"images ... .........."', 'auto',     // the extra rest space (if any) between visibility and fullEditor
                 '"images ... fullEditor"', 'auto',
                 '/',
                 `calc(((${minImageHeight}px + (2 * ${paddingVars.paddingBlock})) * ${commerces.defaultProductAspectRatio}) - ${paddingVars.paddingInline}) ${spacers.md} 1fr`,

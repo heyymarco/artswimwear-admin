@@ -52,7 +52,7 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
                 '"images ... .........."', spacers.md,
                 '"images ... visibility"', 'auto',
                 '"images ... .........."', spacers.md, // the minimum space between visibility and fullEditor
-                '"images ... .........."', 'auto',     // the extra rest space (if any) between payment and fullEditor
+                '"images ... .........."', 'auto',     // the extra rest space (if any) between visibility and fullEditor
                 '"images ... fullEditor"', 'auto',
                 '/',
                 `calc(((${minImageHeight}px + (2 * ${paddingVars.paddingBlock})) * ${commerces.defaultProductAspectRatio}) - ${paddingVars.paddingInline}) ${spacers.md} 1fr`,

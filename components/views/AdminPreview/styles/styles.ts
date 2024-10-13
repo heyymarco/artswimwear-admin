@@ -56,8 +56,8 @@ const usesAdminPreviewLayout = () => { // the <ListItem> of admin list
                 '"adminImg ... email     "', 'auto',
                 '"adminImg ... .........."', spacers.md,
                 '"adminImg ... role      "', 'auto',
-                '"adminImg ... .........."', spacers.md, // the minimum space between visibility and fullEditor
-                '"adminImg ... .........."', 'auto',     // the extra rest space (if any) between payment and fullEditor
+                '"adminImg ... .........."', spacers.md, // the minimum space between role and fullEditor
+                '"adminImg ... .........."', 'auto',     // the extra rest space (if any) between role and fullEditor
                 '"adminImg ... fullEditor"', 'auto',
                 '/',
                 `calc(((${minImageHeight}px + (2 * ${paddingVars.paddingBlock})) * ${commerces.defaultProductAspectRatio}) - ${paddingVars.paddingInline}) ${spacers.md} 1fr`,
