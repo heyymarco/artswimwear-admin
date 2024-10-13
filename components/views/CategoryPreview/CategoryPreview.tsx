@@ -356,7 +356,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                 </CheckDecorator>
             </h3>
             
-            {(model.visibility !== 'PUBLISHED') && <Basic tag='span' theme='secondary' size='sm' className='visibility'>DRAFT</Basic>}
+            {(visibility !== 'PUBLISHED') && <Basic tag='span' theme='secondary' size='sm' className='visibility'>DRAFT</Basic>}
             
             {privilegeWrite && <EditButton
                 // classes:
