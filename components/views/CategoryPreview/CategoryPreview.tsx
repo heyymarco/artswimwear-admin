@@ -104,7 +104,7 @@ import {
 // stores:
 import {
     // hooks:
-    useUpdateProduct,
+    useUpdateCategory,
 }                           from '@/store/features/api/apiSlice'
 
 // internals:
@@ -195,7 +195,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                         
                         
                         // stores:
-                        useUpdateModel={useUpdateProduct as any}
+                        useUpdateModel={useUpdateCategory}
                         
                         
                         
@@ -220,7 +220,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                         
                         
                         // stores:
-                        useUpdateModel={useUpdateProduct as any}
+                        useUpdateModel={useUpdateCategory}
                         
                         
                         
