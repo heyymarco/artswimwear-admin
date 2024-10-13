@@ -11,7 +11,7 @@ import { commerces } from '@/config';
 
 
 // styles:
-const minImageHeight = 120; // 120px
+const minImageHeight = 100; // 100px
 const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
     // dependencies:
     
@@ -48,15 +48,11 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
             // layouts:
             display: 'grid',
             gridTemplate: [[
-                '"images ... name      "', 'auto',
-                '"images ... .........."', spacers.md,
-                '"images ... visibility"', 'auto',
-                '"images ... .........."', spacers.md, // the minimum space between visibility and fullEditor
-                '"images ... .........."', 'auto',     // the extra rest space (if any) between visibility and fullEditor
-                '"images ... fullEditor"', 'auto',
+                '"images ... name visibility edit"', 'auto',
                 '/',
-                `calc(((${minImageHeight}px + (2 * ${paddingVars.paddingBlock})) * ${commerces.defaultProductAspectRatio}) - ${paddingVars.paddingInline}) ${spacers.md} 1fr`,
+                `calc(((${minImageHeight}px + (2 * ${paddingVars.paddingBlock})) * ${commerces.defaultProductAspectRatio}) - ${paddingVars.paddingInline}) ${spacers.md} 1fr min-content min-content`,
             ]],
+            alignItems : 'start',
             
             
             
@@ -142,10 +138,21 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
                 fontSize: typos.fontSizeXl,
             }),
             ...children('.visibility', {
-                gridArea: 'visibility',
+                // positions:
+                gridArea : 'visibility',
+                
+                
+                
+                // spacings:
+                padding       : spacers.xs,
+                
+                
+                
+                // typos:
+                lineHeight    : 1,
             }),
-            ...children('.fullEditor', {
-                gridArea: 'fullEditor',
+            ...children('.edit', {
+                gridArea: 'edit',
             }),
             ...descendants('[role="dialog"]', {
                 // remove the padding of <Dialog>'s backdrop:

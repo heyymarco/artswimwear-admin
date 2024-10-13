@@ -34,13 +34,18 @@ import {
 
 // reusable-ui components:
 import {
+    // base-components:
+    Basic,
+    
+    
+    
     // base-content-components:
     Content,
     
     
     
     // simple-components:
-    Button,
+    Icon,
     
     
     
@@ -115,7 +120,7 @@ import {
 
 
 // defaults:
-const minImageWidth = 102;  // 102px === (100px + (2* paddingBlock)) * aspectRatio === (120px + (2* 16px)) * 2/3
+const minImageWidth = 88;  // 88px === (100px + (2* paddingBlock)) * aspectRatio === (100px + (2* 16px)) * 2/3
 
 
 
@@ -274,11 +279,6 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
             
             
             
-            // variants:
-            theme={(visibility !== 'PUBLISHED') ? 'secondary' : undefined}
-            
-            
-            
             // classes:
             className={styleSheet.main}
         >
@@ -338,17 +338,24 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
             
             <h3 className='name'>
                 {name}
-                {privilegeUpdateDescription && <EditButton onClick={() => handleEdit('name')} />}
             </h3>
-            <p className='visibility'>
-                Visibility: <strong className='value'>{visibility}</strong>
-                {privilegeUpdateVisibility  && <EditButton onClick={() => handleEdit('visibility')} />}
-            </p>
-            <p className='fullEditor'>
-                {privilegeWrite             && <EditButton icon='list' title='View the order details' className='fullEditor' buttonStyle='regular' onClick={() => handleEdit('full')}>
-                    View Details
-                </EditButton>}
-            </p>
+            
+            {(model.visibility !== 'PUBLISHED') && <Basic tag='span' theme='secondary' size='sm' className='visibility'>DRAFT</Basic>}
+            
+            {privilegeWrite && <EditButton
+                // classes:
+                className='edit'
+                
+                
+                
+                // components:
+                iconComponent={<Icon icon='edit' />}
+                
+                
+                
+                // handlers:
+                onClick={() => handleEdit('full')}
+            />}
         </ListItem>
     );
 };
