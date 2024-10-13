@@ -11,11 +11,10 @@ import {
     useRef,
 }                           from 'react'
 
-// cssfn:
+// styles:
 import {
-    // style sheets:
-    dynamicStyleSheet,
-}                           from '@cssfn/cssfn-react'               // writes css in react hook
+    useTemplateVariantGroupPreviewStyleSheet,
+}                           from './styles/loader'
 
 // reusable-ui core:
 import {
@@ -76,14 +75,6 @@ import {
     // types:
     type TemplateVariantGroupDetail,
 }                           from '@/models'
-
-
-
-// styles:
-const useTemplateVariantGroupPreviewStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */'./TemplateVariantGroupPreviewStyles')
-, { specificityWeight: 2, id: 'bt1unv97as' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
-import './TemplateVariantGroupPreviewStyles';
 
 
 
@@ -235,7 +226,9 @@ const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): J
             // handlers:
             onOrderStart={handleOrderStart}
         >
-            <p className='name'>{name}</p>
+            <p className='name'>
+                {name}
+            </p>
             
             <p className='preview'>
                 {
@@ -250,7 +243,17 @@ const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): J
             </p>
             
             <EditButton
+                // classes:
+                className='edit'
+                
+                
+                
+                // components:
                 iconComponent={<Icon icon='edit' />}
+                
+                
+                
+                // handlers:
                 onClick={handleEditButtonClick}
             />
         </OrderableListItem>
