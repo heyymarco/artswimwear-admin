@@ -164,7 +164,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
             />
         );
         if (updatedRoleModel === false) {
-            await onModelDelete?.(model);
+            onModelDelete?.(model);
         } // if
     });
     
