@@ -21,11 +21,10 @@ import {
     useSession,
 }                           from 'next-auth/react'
 
-// cssfn:
+// styles:
 import {
-    // style sheets:
-    dynamicStyleSheet,
-}                           from '@cssfn/cssfn-react'               // writes css in react hook
+    useShippingPreviewStyleSheet,
+}                           from './styles/loader'
 
 // reusable-ui core:
 import {
@@ -35,11 +34,6 @@ import {
 
 // reusable-ui components:
 import {
-    // simple-components:
-    Button,
-    
-    
-    
     // layout-components:
     ListItem,
     
@@ -87,19 +81,11 @@ import {
 
 
 
-// styles:
-const usePageStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */'./ShippingPreviewStyles')
-, { specificityWeight: 2, id: 'kr8hwb6q2w' });
-import './ShippingPreviewStyles';
-
-
-
 // react components:
 export interface ShippingPreviewProps extends ModelPreviewProps<ShippingDetail> {}
 const ShippingPreview = (props: ShippingPreviewProps): JSX.Element|null => {
     // styles:
-    const styleSheet = usePageStyleSheet();
+    const styleSheet = useShippingPreviewStyleSheet();
     
     
     
@@ -253,9 +239,9 @@ const ShippingPreview = (props: ShippingPreviewProps): JSX.Element|null => {
                 {privilegeUpdateVisibility  && <EditButton onClick={() => handleEdit('visibility')} />}
             </p>
             <p className='fullEditor'>
-                {privilegeWrite             && <Button buttonStyle='link' onClick={() => handleEdit('full')}>
-                    More...
-                </Button>}
+                {privilegeWrite             && <EditButton icon='list' title='View the order details' className='fullEditor' buttonStyle='regular' onClick={() => handleEdit('full')}>
+                    View Details
+                </EditButton>}
             </p>
         </ListItem>
     );

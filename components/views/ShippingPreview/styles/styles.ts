@@ -28,8 +28,11 @@ const usesShippingPreviewLayout = () => { // the <ListItem> of shipping list
             // layouts:
             display: 'grid',
             gridTemplate: [[
-                '"     name "', 'auto',
+                '"name      "', 'auto',
+                '".........."', spacers.sm,
                 '"visibility"', 'auto',
+                '".........."', spacers.md, // the minimum space between visibility and fullEditor
+                '".........."', 'auto',     // the extra rest space (if any) between visibility and fullEditor
                 '"fullEditor"', 'auto',
                 '/',
                 `1fr`,
@@ -53,9 +56,6 @@ const usesShippingPreviewLayout = () => { // the <ListItem> of shipping list
          // padding       : paddingVars.padding,
             paddingInline : paddingVars.paddingInline,
             paddingBlock  : paddingVars.paddingBlock,
-            
-            gapInline     : spacers.md,
-            gapBlock      : spacers.xs,
             
             
             
