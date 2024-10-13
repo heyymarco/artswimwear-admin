@@ -72,14 +72,18 @@ import {
 
 
 // react components:
-export interface RolePreviewProps extends Omit<ModelPreviewProps<RoleDetail>, 'onModelChange'> {
+export interface RolePreviewProps
+    extends
+        // bases:
+        ModelPreviewProps<RoleDetail>
+{
     // appearances:
     isShown        : boolean
     
     
     
     // handlers:
-    onModelChange ?: EditorChangeEventHandler<string|null>
+    onModelSelect ?: EditorChangeEventHandler<string|null>
     onModelDelete ?: DeleteHandler<RoleDetail>
 }
 const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
@@ -111,9 +115,14 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         
         
         // handlers:
-        onModelChange,
+        onModelSelect,
         onModelDelete,
-    ...restListItemProps} = props;
+        
+        
+        
+        // other props:
+        ...restListItemProps
+    } = props;
     const {
         id,
         name,
@@ -141,7 +150,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         
         
         // actions:
-        onModelChange?.(id || null); // null (no selection) if the id is an empty string
+        onModelSelect?.(id || null); // null (no selection) if the id is an empty string
     });
     const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async (event) => {
         event.stopPropagation(); // prevents triggering `ListItem::onClick`
