@@ -12,11 +12,10 @@ import {
     useEffect,
 }                           from 'react'
 
-// cssfn:
+// styles:
 import {
-    // style sheets:
-    dynamicStyleSheet,
-}                           from '@cssfn/cssfn-react'               // writes css in react hook
+    useRolePreviewStyleSheet,
+}                           from './styles/loader'
 
 // reusable-ui core:
 import {
@@ -69,14 +68,6 @@ import {
 import {
     type RoleDetail,
 }                           from '@/models'
-
-
-
-// styles:
-const useRolePreviewStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */'./RolePreviewStyles')
-, { specificityWeight: 2, id: 'r52809dkaf' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
-import './RolePreviewStyles';
 
 
 
@@ -256,9 +247,21 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
                 // accessibilities:
                 enabled={!readOnly}
             />
-            <p className='name'>{!!id ? name : <span className='noValue'>No Access</span>}</p>
+            <p className='name'>
+                {!!id ? name : <span className='noValue'>No Access</span>}
+            </p>
             {!!id && <EditButton
+                // classes:
+                className='edit'
+                
+                
+                
+                // components:
                 iconComponent={<Icon icon='edit' mild={active} />}
+                
+                
+                
+                // handlers:
                 onClick={handleEditButtonClick}
             />}
         </ListItem>

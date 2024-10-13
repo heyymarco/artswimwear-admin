@@ -15,7 +15,7 @@ const usesRolePreviewLayout = () => { // the <ListItem> of role list
         gridTemplate  : [[
             '"decorator name edit"',
             '/',
-            'auto 1fr auto',
+            'min-content 1fr min-content',
         ]],
         
         
