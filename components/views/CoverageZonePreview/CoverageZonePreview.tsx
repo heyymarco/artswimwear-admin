@@ -6,11 +6,10 @@ import {
     default as React,
 }                           from 'react'
 
-// cssfn:
+// styles:
 import {
-    // style sheets:
-    dynamicStyleSheet,
-}                           from '@cssfn/cssfn-react'               // writes css in react hook
+    useCoverageZonePreviewStyleSheet,
+}                           from './styles/loader'
 
 // reusable-ui core:
 import {
@@ -82,14 +81,6 @@ import {
 
 
 
-// styles:
-const usePageStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */'./CoverageZonePreviewStyles')
-, { specificityWeight: 2, id: 'uf3vqkp1o4' });
-import './CoverageZonePreviewStyles';
-
-
-
 // handlers:
 const handleOrderStart = (event: OrderableListItemDragStartEvent<HTMLElement>): void => {
     if (!(event.target as HTMLElement)?.classList?.contains?.('grip')) event.response = false;
@@ -121,7 +112,7 @@ export interface CoverageZonePreviewProps<TCoverageZoneDetail extends CoverageZo
 }
 const CoverageZonePreview = <TCoverageZoneDetail extends CoverageZoneDetail<TCoverageSubzoneDetail>, TCoverageSubzoneDetail extends CoverageSubzoneDetail>(props: CoverageZonePreviewProps<TCoverageZoneDetail, TCoverageSubzoneDetail>): JSX.Element|null => {
     // styles:
-    const styleSheet = usePageStyleSheet();
+    const styleSheet = useCoverageZonePreviewStyleSheet();
     
     
     
@@ -255,12 +246,24 @@ const CoverageZonePreview = <TCoverageZoneDetail extends CoverageZoneDetail<TCov
             // handlers:
             onOrderStart={handleOrderStart}
         >
-            {!zoneNameOverride ? name : zoneNameOverride(name)}
+            <span className='name'>
+                {!zoneNameOverride ? name : zoneNameOverride(name)}
+            </span>
             
             <Grip className='grip' enabled={!isDisabledOrReadOnly} />
             
             <EditButton
+                // classes:
+                className='edit'
+                
+                
+                
+                // components:
                 iconComponent={<Icon icon='edit' />}
+                
+                
+                
+                // handlers:
                 onClick={handleEditButtonClick}
             />
         </OrderableListItem>

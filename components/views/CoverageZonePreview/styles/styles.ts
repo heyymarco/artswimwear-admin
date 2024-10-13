@@ -18,9 +18,9 @@ const usesCoverageZonePreviewLayout = () => { // the <ListItem> of shipping list
         display            : 'grid',
         alignContent       : 'start',
         gridTemplate       : [[
-            '"country grip delete"', 'auto',
+            '"name grip delete"', 'auto',
             '/',
-            '1fr min-content max-content'
+            '1fr min-content min-content'
         ]],
         
         
@@ -31,9 +31,9 @@ const usesCoverageZonePreviewLayout = () => { // the <ListItem> of shipping list
         
         
         // children:
-        ...children('.country', { gridArea: 'rate'   }),
+        ...children('.name'   , { gridArea : 'name'   }),
         ...children('.grip'   , { gridArea : 'grip'  }),
-        ...children('.delete' , { gridArea: 'delete' }),
+        ...children('.delete' , { gridArea : 'delete' }),
     });
 };
 
