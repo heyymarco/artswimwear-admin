@@ -20,7 +20,7 @@ const usesShippingRatePreviewLayout = () => { // the <ListItem> of shipping list
         gridTemplate       : [[
             '"sWeight rate delete"', 'auto',
             '/',
-            '1fr 1fr max-content'
+            '1fr 1fr min-content'
         ]],
         
         

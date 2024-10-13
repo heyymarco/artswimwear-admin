@@ -6,11 +6,10 @@ import {
     default as React,
 }                           from 'react'
 
-// cssfn:
+// styles:
 import {
-    // style sheets:
-    dynamicStyleSheet,
-}                           from '@cssfn/cssfn-react'               // writes css in react hook
+    useShippingRatePreviewStyleSheet,
+}                           from './styles/loader'
 
 // reusable-ui core:
 import {
@@ -61,14 +60,6 @@ import {
 
 
 
-// styles:
-const usePageStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */'./ShippingRatePreviewStyles')
-, { specificityWeight: 2, id: 'vpjp5di20y' });
-import './ShippingRatePreviewStyles';
-
-
-
 // react components:
 export interface ShippingRatePreviewProps extends ModelPreviewProps<ShippingRateWithId> {
     // values:
@@ -82,7 +73,7 @@ export interface ShippingRatePreviewProps extends ModelPreviewProps<ShippingRate
 }
 const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null => {
     // styles:
-    const styleSheet = usePageStyleSheet();
+    const styleSheet = useShippingRatePreviewStyleSheet();
     
     
     
