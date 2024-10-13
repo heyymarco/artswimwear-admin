@@ -44,6 +44,11 @@ const usesVariantPreviewLayout = () => { // the <ListItem> of variant list
             margin: 0,
         }),
         ...children('.visibility', {
+            // positions:
+            gridArea : 'visibility',
+            
+            
+            
             // spacings:
             padding       : spacers.xs,
             
