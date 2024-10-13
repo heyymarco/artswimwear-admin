@@ -43,7 +43,7 @@ interface RoleEditorProps<TElement extends Element = HTMLElement>
         // bases:
         Pick<EditorProps<TElement, string|null>,
             // values:
-            |'defaultValue' // not supported, controllable only
+            // |'defaultValue' // not supported, controllable only
             |'value'
             |'onChange'
         >,
@@ -83,7 +83,7 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
         // values:
         valueOptions,
         
-        defaultValue,
+        // defaultValue, // not supported, controllable only
         value,
         onChange,
         
@@ -97,7 +97,12 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
         
         // handlers:
         onModelCreate,
-    ...restListProps} = props;
+        
+        
+        
+        // other props:
+        ...restListProps
+    } = props;
     
     const filteredValueOptions = !valueOptions ? undefined : Object.values(valueOptions.entities).filter((model): model is Exclude<typeof model, undefined> => !!model);
     const valueOptionsWithNone : RoleDetail[] = [
