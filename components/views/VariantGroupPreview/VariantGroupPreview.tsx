@@ -11,11 +11,10 @@ import {
     useRef,
 }                           from 'react'
 
-// cssfn:
+// styles:
 import {
-    // style sheets:
-    dynamicStyleSheet,
-}                           from '@cssfn/cssfn-react'               // writes css in react hook
+    useVariantGroupPreviewStyleSheet,
+}                           from './styles/loader'
 
 // reusable-ui core:
 import {
@@ -84,14 +83,6 @@ import {
     // types:
     type VariantGroupDetail,
 }                           from '@/models'
-
-
-
-// styles:
-const useVariantGroupPreviewStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */'./VariantGroupPreviewStyles')
-, { specificityWeight: 2, id: 'iy5w85wh2c' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
-import './VariantGroupPreviewStyles';
 
 
 
@@ -237,7 +228,9 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
             // handlers:
             onOrderStart={handleOrderStart}
         >
-            <p className='name'>{name}</p>
+            <p className='name'>
+                {name}
+            </p>
             
             <p className='preview'>
                 {
@@ -254,7 +247,17 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
             <Grip className='grip' enabled={!!privilegeUpdate?.description} />
             
             <EditButton
+                // classes:
+                className='edit'
+                
+                
+                
+                // components:
                 iconComponent={<Icon icon='edit' />}
+                
+                
+                
+                // handlers:
                 onClick={handleEditButtonClick}
             />
         </OrderableListItem>
