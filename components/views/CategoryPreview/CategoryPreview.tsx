@@ -125,11 +125,21 @@ export interface ModelSelectEvent {
 export interface CategoryPreviewProps
     extends
         // bases:
-        ModelPreviewProps<CategoryDetail>
+        Omit<ModelPreviewProps<CategoryDetail>,
+            // values:
+            |'value'
+            |'onChange'
+        >
 {
     // data:
     parentCategoryId : string|null
     selectedIds   ?: Set<string>
+    
+    
+    
+    // values:
+    value    : Set<string>
+    onChange : EditorChangeEventHandler<Set<string>>
     
     
     
@@ -158,6 +168,12 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
         
         // data:
         selectedIds,
+        
+        
+        
+        // values:
+        value,
+        onChange,
         
         
         
@@ -233,6 +249,12 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                         // data:
                         parentCategoryId={parentCategoryId}
                         model={model} // modify current model
+                        
+                        
+                        
+                        // values:
+                        value={value}
+                        onChange={onChange}
                         
                         
                         

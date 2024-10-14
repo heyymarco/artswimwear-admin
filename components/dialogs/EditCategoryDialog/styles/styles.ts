@@ -112,10 +112,20 @@ const usesDescriptionTabLayout = () => {
         overscrollBehavior : 'none',
     });
 };
-const usesCategoryTabLayout = () => {
+const usesCategoriesTabLayout = () => {
     return style({
+        // layouts:
+        display: 'grid',
+        
+        
+        
         // scrolls:
         overscrollBehavior : 'none',
+        
+        
+        
+        // sizes:
+        contain: 'size', // ignores the size of this tab, so the width & height of the dialog depends on another tab's size
     });
 };
 const usesEditDescription = () => {
@@ -195,8 +205,8 @@ export default () => [
     scope('descriptionTab', {
         ...usesDescriptionTabLayout(),
     }),
-    scope('categoryTab', {
-        ...usesCategoryTabLayout(),
+    scope('categoriesTab', {
+        ...usesCategoriesTabLayout(),
     }, { specificityWeight: 2 }),
     scope('editDescription', {
         ...usesEditDescription(),

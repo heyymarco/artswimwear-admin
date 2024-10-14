@@ -902,6 +902,12 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                                 // data:
                                 parentCategoryId={null}
                                 model={undefined as any}
+                                
+                                
+                                
+                                // values:
+                                value={categories}
+                                onChange={setCategories}
                             />
                         }
                         modelCreateComponent={
@@ -912,6 +918,12 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                                 // data:
                                 parentCategoryId={null}
                                 model={null} // create a new model
+                                
+                                
+                                
+                                // values:
+                                value={categories}
+                                onChange={setCategories}
                             />
                             // : undefined
                         }

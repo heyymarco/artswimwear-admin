@@ -50,6 +50,10 @@ import {
 
 // internal components:
 import {
+    // types:
+    type EditorChangeEventHandler,
+}                           from '@/components/editors/Editor'
+import {
     UniquePathEditor,
 }                           from '@/components/editors/UniquePathEditor'
 import {
@@ -64,6 +68,12 @@ import {
     EditorPlugin,
     WysiwygEditor,
 }                           from '@/components/editors/WysiwygEditor'
+import {
+    CategoryEditor,
+}                           from '@/components/editors/CategoryEditor'
+import {
+    PaginationStateProvider,
+}                           from '@/components/explorers/Pagination'
 import {
     // types:
     UpdateHandler,
@@ -82,10 +92,15 @@ import {
     ImplementedComplexEditModelDialogProps,
     ComplexEditModelDialog,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
+import {
+    CategoryPreview,
+}                           from '@/components/views/CategoryPreview'
 
 // models:
 import {
     // types:
+    type PaginationArgs,
+    
     type ProductVisibility,
     type CategoryDetail,
 }                           from '@/models'
@@ -97,6 +112,8 @@ import {
     useDeleteCategory,
     
     useCategoryAvailablePath,
+    
+    useGetCategoryPage as _useGetCategoryPage,
     
     usePostImage,
     useDeleteImage,
@@ -116,8 +133,21 @@ import {
     PAGE_CATEGORY_TAB_INFORMATIONS,
     PAGE_CATEGORY_TAB_IMAGES,
     PAGE_CATEGORY_TAB_DESCRIPTION,
+    PAGE_CATEGORY_TAB_SUBCATEGORIES,
     PAGE_CATEGORY_TAB_DELETE,
 }                           from '@/website.config'
+
+
+
+// hooks:
+const useUseGetSubCategoryPage = (parentCategoryId : string|null) => {
+    return (arg: PaginationArgs) => {
+        return _useGetCategoryPage({
+            ...arg,
+            parent : parentCategoryId,
+        });
+    };
+};
 
 
 
@@ -125,9 +155,20 @@ import {
 export interface EditCategoryDialogProps
     extends
         // bases:
-        ImplementedComplexEditModelDialogProps<CategoryDetail>
+        Omit<ImplementedComplexEditModelDialogProps<CategoryDetail>,
+            // values:
+            |'value'
+            |'onChange'
+        >
 {
+    // data:
     parentCategoryId : string|null
+    
+    
+    
+    // values:
+    value    : Set<string>
+    onChange : EditorChangeEventHandler<Set<string>>
 }
 const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null => {
     // styles:
@@ -140,6 +181,12 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         // data:
         parentCategoryId,
         model = null,
+        
+        
+        
+        // values:
+        value,
+        onChange,
         
         
         
@@ -191,6 +238,8 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
     const [commitDeleteImage, {isLoading : isLoadingCommitDeleteImage}] = useDeleteImage();
     const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
     const [commitMoveImage  , {isLoading : isLoadingCommitMoveImage  }] = useMoveImage();
+    
+    const _useGetSubCategoryPage = useUseGetSubCategoryPage(parentCategoryId);
     
     
     
@@ -430,7 +479,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
             onConfirmDelete={handleConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
-            <TabPanel label={PAGE_CATEGORY_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
+            <TabPanel label={PAGE_CATEGORY_TAB_INFORMATIONS}  panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>
                     <span className='name label'>Name:</span>
                     <NameEditor
@@ -520,7 +569,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
                     />
                 </form>
             </TabPanel>
-            <TabPanel label={PAGE_CATEGORY_TAB_IMAGES}       panelComponent={<Generic className={styleSheet.imagesTab} />}>
+            <TabPanel label={PAGE_CATEGORY_TAB_IMAGES}        panelComponent={<Generic className={styleSheet.imagesTab} />}>
                 <GalleryEditor<HTMLElement, string>
                     // variants:
                     nude={true}
@@ -585,7 +634,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
                     onResolveImageUrl={resolveMediaUrl<never>}
                 />
             </TabPanel>
-            <TabPanel label={PAGE_CATEGORY_TAB_DESCRIPTION}  panelComponent={<Generic className={styleSheet.descriptionTab} />}>
+            <TabPanel label={PAGE_CATEGORY_TAB_DESCRIPTION}   panelComponent={<Generic className={styleSheet.descriptionTab} />}>
                 <WysiwygEditor
                     // refs:
                     elmRef={(defaultExpandedTabIndex === 2) ? firstEditorRef : undefined}
@@ -615,6 +664,63 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
                         placeholder='Type category description here...'
                     />
                 </WysiwygEditor>
+            </TabPanel>
+            <TabPanel label={PAGE_CATEGORY_TAB_SUBCATEGORIES} panelComponent={<Generic className={styleSheet.categoriesTab} />}>
+                <PaginationStateProvider<CategoryDetail>
+                    // states:
+                    initialPerPage={10}
+                    
+                    
+                    
+                    // data:
+                    useGetModelPage={_useGetSubCategoryPage}
+                >
+                    <CategoryEditor
+                        // appearances:
+                        showPaginationTop={false}
+                        autoHidePagination={true}
+                        
+                        
+                        
+                        // values:
+                        value={value}
+                        onChange={onChange}
+                        
+                        
+                        
+                        // components:
+                        modelPreviewComponent={
+                            <CategoryPreview
+                                // data:
+                                parentCategoryId={parentCategoryId}
+                                model={undefined as any}
+                                
+                                
+                                
+                                // values:
+                                value={value}
+                                onChange={onChange}
+                            />
+                        }
+                        modelCreateComponent={
+                            // TODO: add privilege for category
+                            // privilegeAdd
+                            // ?
+                            <EditCategoryDialog
+                                // data:
+                                parentCategoryId={parentCategoryId}
+                                model={null} // create a new model
+                                
+                                
+                                
+                                // values:
+                                value={value}
+                                onChange={onChange}
+                            />
+                            // : undefined
+                        }
+                    />
+                </PaginationStateProvider>
             </TabPanel>
         </>}</ComplexEditModelDialog>
     );
