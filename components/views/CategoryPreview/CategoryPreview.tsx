@@ -97,6 +97,7 @@ import {
 // models:
 import {
     // types:
+    type CategoryPreview,
     type CategoryDetail,
 }                           from '@/models'
 
@@ -172,6 +173,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
         visibility,
         name,
         images,
+        subcategories,
     } = model;
     
     
@@ -371,10 +373,42 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                 
                 {(visibility !== 'PUBLISHED') && <Basic tag='span' theme='secondary' size='sm' className='visibility'>DRAFT</Basic>}
             </h3>
+            
+            <SubcategoryList subcategories={subcategories} />
         </ListItem>
     );
 };
 export {
     CategoryPreview,
     CategoryPreview as default,
+}
+
+
+
+interface SubcategoryListProps {
+    // data:
+    subcategories : CategoryPreview[]
+}
+const SubcategoryList = (props: SubcategoryListProps): JSX.Element|null => {
+    // props:
+    const {
+        // data:
+        subcategories,
+    } = props;
+    
+    
+    
+    // jsx:
+    if (!subcategories.length) return null;
+    return (
+        <ul>
+            {subcategories
+            .map(({name, subcategories}, index) =>
+                <li key={index}>
+                    <h4>{name}</h4>
+                    <SubcategoryList subcategories={subcategories} />
+                </li>
+            )}
+        </ul>
+    );
 }
