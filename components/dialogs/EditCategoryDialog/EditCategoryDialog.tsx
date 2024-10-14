@@ -692,7 +692,6 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
                         modelPreviewComponent={
                             <CategoryPreview
                                 // data:
-                                parentCategoryId={parentCategoryId}
                                 model={undefined as any}
                                 
                                 
