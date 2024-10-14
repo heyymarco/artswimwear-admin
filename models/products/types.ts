@@ -168,14 +168,11 @@ export interface CategoryPageRequest
 
 export interface CategoryUpdateRequest
     extends
-        MutationArgs<CategoryDetail>
+        MutationArgs<
+            &CategoryDetail
+            &{ parent : Category['parentId'] }
+        >
 {
-}
-export interface CategoryUpdateParam
-    extends
-        CategoryUpdateRequest
-{
-    parent : Category['parentId']
 }
 
 export interface CategoryDeleteRequest

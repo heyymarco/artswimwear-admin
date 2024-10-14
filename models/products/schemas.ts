@@ -7,6 +7,7 @@ import {
 import {
     type ProductVisibility,
     type VariantVisibility,
+    type Category,
 }                           from '@prisma/client'
 import {
     type VariantDetail,
@@ -184,11 +185,16 @@ export const CategoryDetailSchema = z.object({
 export const CategoryPageRequestSchema   = PaginationArgSchema.merge(
     z.object({
         parent : ModelIdSchema.nullable(),
-    })
+    }) satisfies z.Schema<{ parent : Category['parentId'] }>
 ) satisfies z.Schema<CategoryPageRequest>;
 
-export const CategoryUpdateRequestSchema = MutationArgsSchema<CategoryDetail>(
+export const CategoryUpdateRequestSchema = MutationArgsSchema<CategoryDetail & { parent : Category['parentId'] }>(
     CategoryDetailSchema
+    .merge(
+        z.object({
+            parent : ModelIdSchema.nullable(),
+        }) satisfies z.Schema<{ parent : Category['parentId'] }>
+    )
 ) satisfies z.Schema<CategoryUpdateRequest>;
 
 export const CategoryDeleteRequestSchema = MutationArgsSchema<Pick<CategoryDetail, 'id'>>(

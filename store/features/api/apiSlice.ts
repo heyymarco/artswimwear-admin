@@ -36,7 +36,6 @@ import {
     type CategoryDetail,
     type CategoryPageRequest,
     type CategoryUpdateRequest,
-    type CategoryUpdateParam,
     type CategoryDeleteParam,
     type TemplateVariantGroupDetail,
     type AdminDetail,
@@ -183,11 +182,11 @@ export const apiSlice = createApi({
             }),
             providesTags: (data, error, arg) => [{ type: 'CategoryPage', id: `${arg.parent ?? ''}:${arg.page}` }],
         }),
-        updateCategory              : builder.mutation<CategoryDetail, CategoryUpdateParam>({
-            query: ({ parent: _parent, ...categoryUpdateRequest }) => ({
+        updateCategory              : builder.mutation<CategoryDetail, CategoryUpdateRequest>({
+            query: (arg) => ({
                 url    : 'products/categories',
                 method : 'PATCH',
-                body   : categoryUpdateRequest satisfies CategoryUpdateRequest
+                body   : arg
             }),
             onQueryStarted: async (arg, api) => {
                 await cumulativeUpdatePaginationCache(api, 'getCategoryPage', (arg.id === '') ? 'CREATE' : 'UPDATE', { type: 'CategoryPage', id: arg.parent ?? ''});

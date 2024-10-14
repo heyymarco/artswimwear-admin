@@ -220,6 +220,8 @@ You do not have the privilege to view the categories.`
     } // if
     const {
         categoryUpdateRequest : {
+            parent,
+            
             id,
             
             visibility,
@@ -286,6 +288,12 @@ You do not have the privilege to modify the category visibility.`
                 images,
                 
                 // relations:
+                parent : (parent === undefined) ? undefined : {
+                    connect    : (parent === null) ? undefined : {
+                        id: parent,
+                    },
+                    disconnect : (parent !== null) ? undefined : true,
+                },
             } satisfies Prisma.CategoryUpdateInput;
             
             const categoryOrderBy: ReturnType<typeof categoryDetailSelect>['subcategories']['orderBy'] = {
