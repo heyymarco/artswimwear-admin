@@ -149,7 +149,7 @@ const usesDescriptionTabLayout = () => {
         overscrollBehavior : 'none',
     });
 };
-const usesCategoryTabLayout = () => {
+const usesCategoriesTabLayout = () => {
     return style({
         // layouts:
         display: 'grid',
@@ -248,8 +248,8 @@ export default () => [
     scope('descriptionTab', {
         ...usesDescriptionTabLayout(),
     }),
-    scope('categoryTab', {
-        ...usesCategoryTabLayout(),
+    scope('categoriesTab', {
+        ...usesCategoriesTabLayout(),
     }, { specificityWeight: 2 }),
     scope('editDescription', {
         ...usesEditDescription(),

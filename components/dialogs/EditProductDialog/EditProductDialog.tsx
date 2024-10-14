@@ -173,7 +173,7 @@ import {
     PAGE_PRODUCT_TAB_STOCKS,
     PAGE_PRODUCT_TAB_IMAGES,
     PAGE_PRODUCT_TAB_DESCRIPTION,
-    PAGE_PRODUCT_TAB_CATEGORY,
+    PAGE_PRODUCT_TAB_CATEGORIES,
     PAGE_PRODUCT_TAB_DELETE,
 }                           from '@/website.config'
 
@@ -873,7 +873,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                     />
                 </WysiwygEditor>
             </TabPanel>
-            <TabPanel label={PAGE_PRODUCT_TAB_CATEGORY}     panelComponent={<Generic className={styleSheet.categoryTab} />}>
+            <TabPanel label={PAGE_PRODUCT_TAB_CATEGORIES}   panelComponent={<Generic className={styleSheet.categoriesTab} />}>
                 <PaginationStateProvider<CategoryDetail>
                     // states:
                     initialPerPage={10}
