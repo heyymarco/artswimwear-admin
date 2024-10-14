@@ -629,8 +629,8 @@ export const convertCategoryPreviewDataToCategoryPreview = async (selector: Retu
             ...restCategoryPreview,
             image : images.length ? images[0] : null,
             subcategories : (
-                Array.from(subcategoryIds)
-                .map((subcategoryId) => subcategoryListEntry.entities?.[subcategoryId])
+                subcategories
+                .map(({id: subcategoryId}) => subcategoryListEntry.entities?.[subcategoryId])
                 .filter((subcategory): subcategory is Exclude<typeof subcategory, undefined> => (subcategory !== undefined))
             ),
         }))
@@ -667,8 +667,8 @@ export const convertCategoryDetailDataToCategoryDetail = async (selector: Return
         .map(({ subcategories, ...restCategoryDetail }): CategoryDetail => ({
             ...restCategoryDetail,
             subcategories : (
-                Array.from(subcategoryIds)
-                .map((subcategoryId) => subcategoryListEntry.entities?.[subcategoryId])
+                subcategories
+                .map(({id: subcategoryId}) => subcategoryListEntry.entities?.[subcategoryId])
                 .filter((subcategory): subcategory is Exclude<typeof subcategory, undefined> => (subcategory !== undefined))
             ),
         }))

@@ -397,7 +397,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                 {(visibility !== 'PUBLISHED') && <Basic tag='span' theme='secondary' size='sm' className='visibility'>DRAFT</Basic>}
             </h3>
             
-            <SubcategoryList subcategories={subcategories} />
+            <SubcategoryList className='subcategories' subcategories={subcategories} />
         </ListItem>
     );
 };
@@ -408,7 +408,11 @@ export {
 
 
 
-interface SubcategoryListProps {
+interface SubcategoryListProps
+    extends
+        // bases:
+        React.HTMLAttributes<HTMLUListElement>
+{
     // data:
     subcategories : CategoryPreview[]
 }
@@ -417,6 +421,11 @@ const SubcategoryList = (props: SubcategoryListProps): JSX.Element|null => {
     const {
         // data:
         subcategories,
+        
+        
+        
+        // other props:
+        ...restUlProps
     } = props;
     
     
@@ -424,7 +433,10 @@ const SubcategoryList = (props: SubcategoryListProps): JSX.Element|null => {
     // jsx:
     if (!subcategories.length) return null;
     return (
-        <ul>
+        <ul
+            // other props:
+            {...restUlProps}
+        >
             {subcategories
             .map(({name, subcategories}, index) =>
                 <li key={index}>

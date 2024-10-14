@@ -48,7 +48,8 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
             // layouts:
             display: 'grid',
             gridTemplate: [[
-                '"images ... name"', 'auto',
+                '"images ... name         "', 'auto',
+                '"images ... subcategories"', 'max-content',
                 '/',
                 `calc(((${minImageHeight}px + (2 * ${paddingVars.paddingBlock})) * ${commerces.defaultProductAspectRatio}) - ${paddingVars.paddingInline}) ${spacers.md} 1fr`,
             ]],
@@ -190,6 +191,19 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
                 }),
                 ...children('.edit', {
                     gridArea: 'edit',
+                }),
+            }),
+            ...children('.subcategories', {
+                // positions:
+                gridArea   : 'subcategories',
+                
+                
+                
+                // children:
+                ...children('li', {
+                    ...children('*', {
+                        display: 'inline-block',
+                    }),
                 }),
             }),
             ...descendants('[role="dialog"]', {
