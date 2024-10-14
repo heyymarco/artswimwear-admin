@@ -126,6 +126,11 @@ export interface CategoryPreviewProps
         // bases:
         ModelPreviewProps<CategoryDetail>
 {
+    // data:
+    selectedIds   ?: Set<string>
+    
+    
+    
     // handlers:
     onModelSelect ?: EditorChangeEventHandler<ModelSelectEvent>
     onModelDelete ?: DeleteHandler<CategoryDetail>
@@ -148,6 +153,11 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
         
         
         
+        // data:
+        selectedIds,
+        
+        
+        
         // handlers:
         onModelSelect,
         onModelDelete,
@@ -158,6 +168,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
         ...restListItemProps
     } = props;
     const {
+        id,
         visibility,
         name,
         images,
@@ -331,7 +342,8 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                     
                     
                     
-                    // handlers:
+                    // states:
+                    active={!!selectedIds && selectedIds.has(id)}
                     onActiveChange={handleCheckActiveChange}
                 >
                     {name}

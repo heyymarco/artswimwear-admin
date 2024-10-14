@@ -158,19 +158,8 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
                 React.cloneElement<CategoryPreviewProps>(modelPreviewComponent,
                     // props:
                     {
-                        // TODO:
-                        // // identifiers:
-                        // key           : modelPreviewComponent.key          ?? modelOption.id,
-                        // 
-                        // 
-                        // 
-                        // // data:
-                        // model         : modelPreviewComponent.props.model  ?? modelOption,
-                        // 
-                        // 
-                        // 
-                        // // states:
-                        // active        : modelPreviewComponent.props.active ?? ((value ?? '') === modelOption.id),
+                        // data:
+                        selectedIds   : modelPreviewComponent.props.selectedIds ?? value,
                         
                         
                         

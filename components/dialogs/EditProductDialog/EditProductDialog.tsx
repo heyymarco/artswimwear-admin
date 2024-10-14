@@ -238,6 +238,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             return null;
         } // try
     });
+    const [categories      , setCategories    ] = useState<Set<string>            >(() => new Set<string>());
     
     const draftDifferentialImages               = useDraftDifferentialImages();
     
@@ -874,6 +875,12 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         // appearances:
                         showPaginationTop={false}
                         autoHidePagination={true}
+                        
+                        
+                        
+                        // values:
+                        value={categories}
+                        onChange={setCategories}
                         
                         
                         
