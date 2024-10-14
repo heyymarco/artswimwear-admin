@@ -128,6 +128,22 @@ export interface ProductPricePart {
 
 
 
+export interface CategoryPreview
+    extends
+        Pick<Category,
+            // records:
+            |'id'
+            
+            // data:
+            |'visibility'
+            
+            |'name'
+        >
+{
+    image         : Category['images'][number] | null
+    subcategories : CategoryPreview[]
+}
+
 export interface CategoryDetail
     extends
         Omit<Category,
@@ -139,7 +155,7 @@ export interface CategoryDetail
             |'parentId'
         >
 {
-    subcategories : CategoryDetail[]
+    subcategories : CategoryPreview[]
 }
 
 export interface CategoryUpdateRequest

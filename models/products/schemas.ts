@@ -14,6 +14,7 @@ import {
     type StockDetail,
     type ProductDetail,
     type ProductUpdateRequest,
+    type CategoryPreview,
     type CategoryDetail,
     type CategoryUpdateRequest,
 }                           from './types'
@@ -140,6 +141,22 @@ export const ProductUpdateRequestSchema = MutationArgsSchema<Omit<ProductDetail,
 
 
 
+export const CategoryPreviewSchema : z.ZodType<CategoryPreview> = z.object({
+    // records:
+    id                 : ModelIdSchema,
+    
+    
+    
+    // data:
+    visibility         : ProductVisibilitySchema,
+    
+    name               : ModelNameSchema,
+    
+    image              : ImageUrlSchema.nullable(),
+    
+    subcategories      : z.lazy(() => z.array(CategoryPreviewSchema)),
+}) satisfies z.Schema<CategoryPreview>;
+
 export const CategoryDetailSchema : z.ZodType<CategoryDetail> = z.object({
     // records:
     id                 : ModelIdSchema,
@@ -158,7 +175,7 @@ export const CategoryDetailSchema : z.ZodType<CategoryDetail> = z.object({
     
     images             : z.array(ImageUrlSchema),
     
-    subcategories      : z.lazy(() => z.array(CategoryDetailSchema)),
+    subcategories      : z.array(CategoryPreviewSchema),
 }) satisfies z.Schema<CategoryDetail>;
 
 export const CategoryUpdateRequestSchema = MutationArgsSchema<Omit<CategoryDetail, 'stocks'> & { stocks?: StockDetail['value'][] }>(
