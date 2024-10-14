@@ -14,6 +14,7 @@ import {
 }                           from '@prisma/client'
 import {
     type MutationArgs,
+    type PaginationArgs,
 }                           from '../commons'
 
 
@@ -158,8 +159,33 @@ export interface CategoryDetail
     subcategories : CategoryPreview[]
 }
 
+export interface CategoryPageRequest
+    extends
+        PaginationArgs
+{
+    parent : Category['parentId']
+}
+
 export interface CategoryUpdateRequest
     extends
         MutationArgs<CategoryDetail>
 {
+}
+export interface CategoryUpdateParam
+    extends
+        CategoryUpdateRequest
+{
+    parent : Category['parentId']
+}
+
+export interface CategoryDeleteRequest
+    extends
+        MutationArgs<Pick<CategoryDetail, 'id'>>
+{
+}
+export interface CategoryDeleteParam
+    extends
+        CategoryDeleteRequest
+{
+    parent : Category['parentId']
 }

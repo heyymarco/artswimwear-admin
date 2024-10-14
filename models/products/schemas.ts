@@ -16,7 +16,9 @@ import {
     type ProductUpdateRequest,
     type CategoryPreview,
     type CategoryDetail,
+    type CategoryPageRequest,
     type CategoryUpdateRequest,
+    type CategoryDeleteRequest,
 }                           from './types'
 import {
     ModelIdSchema,
@@ -29,6 +31,7 @@ import {
     JsonSchema,
     
     MutationArgsSchema,
+    PaginationArgSchema,
 }                           from '../commons'
 
 
@@ -157,7 +160,7 @@ export const CategoryPreviewSchema : z.ZodType<CategoryPreview> = z.object({
     subcategories      : z.lazy(() => z.array(CategoryPreviewSchema)),
 }) satisfies z.Schema<CategoryPreview>;
 
-export const CategoryDetailSchema : z.ZodType<CategoryDetail> = z.object({
+export const CategoryDetailSchema = z.object({
     // records:
     id                 : ModelIdSchema,
     
@@ -178,6 +181,16 @@ export const CategoryDetailSchema : z.ZodType<CategoryDetail> = z.object({
     subcategories      : z.array(CategoryPreviewSchema),
 }) satisfies z.Schema<CategoryDetail>;
 
-export const CategoryUpdateRequestSchema = MutationArgsSchema<Omit<CategoryDetail, 'stocks'> & { stocks?: StockDetail['value'][] }>(
+export const CategoryPageRequestSchema   = PaginationArgSchema.merge(
+    z.object({
+        parent : ModelIdSchema.nullable(),
+    })
+) satisfies z.Schema<CategoryPageRequest>;
+
+export const CategoryUpdateRequestSchema = MutationArgsSchema<CategoryDetail>(
     CategoryDetailSchema
 ) satisfies z.Schema<CategoryUpdateRequest>;
+
+export const CategoryDeleteRequestSchema = MutationArgsSchema<Pick<CategoryDetail, 'id'>>(
+    CategoryDetailSchema.pick({ id: true })
+) satisfies z.Schema<CategoryDeleteRequest>;

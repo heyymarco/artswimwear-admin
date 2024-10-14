@@ -127,6 +127,8 @@ import {
 // models:
 import {
     // types:
+    type PaginationArgs,
+    
     type ProductVisibility,
     type Stock,
     type ProductDetail,
@@ -183,6 +185,16 @@ const noVariantStockList : StockDetail[] = [{
     value      : null,
     variantIds : [],
 }];
+
+
+
+// hooks:
+const useGetRootCategoryPage = (arg: PaginationArgs) => {
+    return useGetCategoryPage({
+        ...arg,
+        parent : null,
+    });
+};
 
 
 
@@ -869,7 +881,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                     
                     
                     // data:
-                    useGetModelPage={useGetCategoryPage}
+                    useGetModelPage={useGetRootCategoryPage}
                 >
                     <CategoryEditor
                         // appearances:
@@ -888,6 +900,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         modelPreviewComponent={
                             <CategoryPreview
                                 // data:
+                                parentCategoryId={null}
                                 model={undefined as any}
                             />
                         }
@@ -897,6 +910,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                             // ?
                             <EditCategoryDialog
                                 // data:
+                                parentCategoryId={null}
                                 model={null} // create a new model
                             />
                             // : undefined

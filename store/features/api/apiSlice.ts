@@ -34,7 +34,10 @@ import {
     type ProductDetail,
     type ProductUpdateRequest,
     type CategoryDetail,
+    type CategoryPageRequest,
     type CategoryUpdateRequest,
+    type CategoryUpdateParam,
+    type CategoryDeleteParam,
     type TemplateVariantGroupDetail,
     type AdminDetail,
     type AdminPreferenceData,
@@ -172,32 +175,31 @@ export const apiSlice = createApi({
         
         
         
-        getCategoryPage             : builder.query<Pagination<CategoryDetail>, PaginationArgs>({
+        getCategoryPage             : builder.query<Pagination<CategoryDetail>, CategoryPageRequest>({
             query : (arg) => ({
                 url    : 'products/categories',
                 method : 'POST',
                 body   : arg,
             }),
-            providesTags: (data, error, arg) => [{ type: 'CategoryPage', id: arg.page }],
+            providesTags: (data, error, arg) => [{ type: 'CategoryPage', id: `${arg.parent ?? ''}:${arg.page}` }],
         }),
-        updateCategory              : builder.mutation<CategoryDetail, CategoryUpdateRequest>({
-            query: (arg) => ({
+        updateCategory              : builder.mutation<CategoryDetail, CategoryUpdateParam>({
+            query: ({ parent: _parent, ...categoryUpdateRequest }) => ({
                 url    : 'products/categories',
                 method : 'PATCH',
-                body   : arg
+                body   : categoryUpdateRequest satisfies CategoryUpdateRequest
             }),
             onQueryStarted: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getCategoryPage', (arg.id === '') ? 'CREATE' : 'UPDATE', 'CategoryPage');
+                await cumulativeUpdatePaginationCache(api, 'getCategoryPage', (arg.id === '') ? 'CREATE' : 'UPDATE', { type: 'CategoryPage', id: arg.parent ?? ''});
             },
         }),
-        deleteCategory              : builder.mutation<Pick<CategoryDetail, 'id'>, MutationArgs<Pick<CategoryDetail, 'id'>>>({
-            query: (arg) => ({
-                url    : `products/categories?id=${encodeURIComponent(arg.id)}`,
+        deleteCategory              : builder.mutation<Pick<CategoryDetail, 'id'>, CategoryDeleteParam>({
+            query: ({ id }) => ({
+                url    : `products/categories?id=${encodeURIComponent(id)}`,
                 method : 'DELETE',
-                body   : arg
             }),
             onQueryStarted: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getCategoryPage', 'DELETE', 'CategoryPage');
+                await cumulativeUpdatePaginationCache(api, 'getCategoryPage', 'DELETE', { type: 'CategoryPage', id: arg.parent ?? ''});
             },
         }),
         
@@ -665,12 +667,22 @@ type PaginationUpdateType =
 interface PaginationUpdateOptions<TEntry extends Model|string> {
     providedMutatedEntry ?: TEntry
     predicate            ?: (originalArgs: unknown) => boolean
+    invalidatePageTag    ?: (tag: Parameters<typeof apiSlice.util.invalidateTags>[0][number], page: number) => string|number
 }
-const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getCategoryPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, updateType: PaginationUpdateType, invalidateTag: Extract<Parameters<typeof apiSlice.util.invalidateTags>[0][number], string>, options?: PaginationUpdateOptions<TEntry>) => {
+const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getCategoryPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, updateType: PaginationUpdateType, invalidateTag: Parameters<typeof apiSlice.util.invalidateTags>[0][number], options?: PaginationUpdateOptions<TEntry>) => {
     // options
     const {
         providedMutatedEntry,
         predicate,
+        invalidatePageTag = (tag: Parameters<typeof apiSlice.util.invalidateTags>[0][number], page: number) => {
+            if (typeof(tag) === 'string') {
+                return page; // the tag doesn't have id => just use page number
+            }
+            else {
+                const { id } = tag;
+                return `${id}:${page}`; // merges tag's id and page number
+            } // if
+        },
     } = options ?? {};
     
     
@@ -883,7 +895,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
             if (entryStart === undefined) {
                 // UNABLE to reconstruct current pagination cache => invalidate the cache:
                 api.dispatch(
-                    apiSlice.util.invalidateTags([{ type: invalidateTag, id: page }])
+                    apiSlice.util.invalidateTags([{ type: (typeof(invalidateTag) === 'string') ? invalidateTag : invalidateTag.id as any, id: invalidatePageTag(invalidateTag, page) }])
                 );
             }
             else {
@@ -1048,7 +1060,7 @@ const cumulativeUpdatePaginationCache = async <TEntry extends Model|string, TQue
                     // if UNDERFLOW (empty) pagination size => invalidate the cache:
                     if (!data.entities.length) {
                         api.dispatch(
-                            apiSlice.util.invalidateTags([{ type: invalidateTag, id: page }])
+                            apiSlice.util.invalidateTags([{ type: (typeof(invalidateTag) === 'string') ? invalidateTag : invalidateTag.id as any, id: invalidatePageTag(invalidateTag, page) }])
                         );
                     } // if
                 })
@@ -1065,7 +1077,7 @@ interface EntityUpdateOptions<TEntry extends Model|string> {
     providedMutatedEntry ?: TEntry
     predicate            ?: (originalArgs: unknown) => boolean
 }
-const cumulativeUpdateEntityCache     = async <TEntry extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getTemplateVariantGroupList'|'getRoleList'>, updateType: EntityUpdateType, invalidateTag: Extract<Parameters<typeof apiSlice.util.invalidateTags>[0][number], string>, options?: EntityUpdateOptions<TEntry>) => {
+const cumulativeUpdateEntityCache     = async <TEntry extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationLifecycleApi<TQueryArg, TBaseQuery, TEntry, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getTemplateVariantGroupList'|'getRoleList'>, updateType: EntityUpdateType, invalidateTag: Parameters<typeof apiSlice.util.invalidateTags>[0][number], options?: EntityUpdateOptions<TEntry>) => {
     // options
     const {
         providedMutatedEntry,

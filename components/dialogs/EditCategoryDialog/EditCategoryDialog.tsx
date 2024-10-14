@@ -127,6 +127,7 @@ export interface EditCategoryDialogProps
         // bases:
         ImplementedComplexEditModelDialogProps<CategoryDetail>
 {
+    parentCategoryId : string|null
 }
 const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null => {
     // styles:
@@ -137,6 +138,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
     // rest props:
     const {
         // data:
+        parentCategoryId,
         model = null,
         
         
@@ -237,6 +239,8 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         
         try {
             return await updateCategory({
+                parent         : parentCategoryId,
+                
                 id             : id ?? '',
                 
                 visibility     : (whenUpdate.visibility  || whenAdd) ? visibility                                        : undefined,
@@ -262,7 +266,9 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
     
     const handleDelete               = useEvent<DeleteHandler<CategoryDetail>>(async ({id}) => {
         await deleteCategory({
-            id : id,
+            parent         : parentCategoryId,
+            
+            id             : id,
         }).unwrap();
     });
     

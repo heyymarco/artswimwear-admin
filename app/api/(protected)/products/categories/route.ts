@@ -26,7 +26,10 @@ import {
     // schemas:
     ModelIdSchema,
     PaginationArgSchema,
+    
+    CategoryPageRequestSchema,
     CategoryUpdateRequestSchema,
+    CategoryDeleteRequestSchema,
     
     
     
@@ -108,7 +111,7 @@ router
         try {
             const data = await req.json();
             return {
-                paginationArg : PaginationArgSchema.parse(data),
+                categoryPageRequest : CategoryPageRequestSchema.parse(data),
             };
         }
         catch {
@@ -121,9 +124,10 @@ router
         }, { status: 400 }); // handled with error
     } // if
     const {
-        paginationArg : {
+        categoryPageRequest : {
             page,
             perPage,
+            parent,
         },
     } = requestData;
     //#endregion parsing and validating request
@@ -151,7 +155,7 @@ You do not have the privilege to view the categories.`
             prismaTransaction.category.count(),
             prismaTransaction.category.findMany({
                 where   : {
-                    parentId : null, // important to avoid cyclic `parent` reference, we select the top_most category
+                    parentId : parent,
                 },
                 select  : categorySelect,
                 orderBy : categoryOrderBy,
@@ -322,7 +326,7 @@ You do not have the privilege to modify the category visibility.`
         try {
             const data = Object.fromEntries(new URL(req.url, 'https://localhost/').searchParams.entries());
             return {
-                id : ModelIdSchema.parse(data?.id),
+                categoryDeleteRequest : CategoryDeleteRequestSchema.parse(data),
             };
         }
         catch {
@@ -335,7 +339,9 @@ You do not have the privilege to modify the category visibility.`
         }, { status: 400 }); // handled with error
     } // if
     const {
-        id,
+        categoryDeleteRequest: {
+            id,
+        },
     } = requestData;
     //#endregion parsing and validating request
     
