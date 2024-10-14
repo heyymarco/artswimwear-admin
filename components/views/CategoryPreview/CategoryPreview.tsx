@@ -342,30 +342,35 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                     
                     
                     
+                    // variants:
+                    theme={(visibility !== 'PUBLISHED') ? 'secondary' : undefined}
+                    
+                    
+                    
                     // states:
                     active={!!selectedIds && selectedIds.has(id)}
                     onActiveChange={handleCheckActiveChange}
                 >
                     {name}
                 </Check>
+                
+                {privilegeWrite && <EditButton
+                    // classes:
+                    className='edit'
+                    
+                    
+                    
+                    // components:
+                    iconComponent={<Icon icon='edit' />}
+                    
+                    
+                    
+                    // handlers:
+                    onClick={() => handleEdit('full')}
+                />}
+                
+                {(visibility !== 'PUBLISHED') && <Basic tag='span' theme='secondary' size='sm' className='visibility'>DRAFT</Basic>}
             </h3>
-            
-            {(visibility !== 'PUBLISHED') && <Basic tag='span' theme='secondary' size='sm' className='visibility'>DRAFT</Basic>}
-            
-            {privilegeWrite && <EditButton
-                // classes:
-                className='edit'
-                
-                
-                
-                // components:
-                iconComponent={<Icon icon='edit' />}
-                
-                
-                
-                // handlers:
-                onClick={() => handleEdit('full')}
-            />}
         </ListItem>
     );
 };

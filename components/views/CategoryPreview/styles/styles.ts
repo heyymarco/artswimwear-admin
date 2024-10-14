@@ -48,9 +48,9 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
             // layouts:
             display: 'grid',
             gridTemplate: [[
-                '"images ... name visibility edit"', 'auto',
+                '"images ... name"', 'auto',
                 '/',
-                `calc(((${minImageHeight}px + (2 * ${paddingVars.paddingBlock})) * ${commerces.defaultProductAspectRatio}) - ${paddingVars.paddingInline}) ${spacers.md} 1fr min-content min-content`,
+                `calc(((${minImageHeight}px + (2 * ${paddingVars.paddingBlock})) * ${commerces.defaultProductAspectRatio}) - ${paddingVars.paddingInline}) ${spacers.md} 1fr`,
             ]],
             alignItems : 'start',
             
@@ -143,6 +143,16 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
                 
                 // layouts:
                 display: 'grid',
+                gridTemplate: [[
+                    '"decorator edit visibility" auto',
+                    '/',
+                    'max-content min-content min-content'
+                ]],
+                
+                
+                
+                // spacings:
+                gap: spacers.xs,
                 
                 
                 
@@ -164,23 +174,23 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
                         fontSize: 'inherit',
                     }),
                 }),
-            }),
-            ...children('.visibility', {
-                // positions:
-                gridArea : 'visibility',
-                
-                
-                
-                // spacings:
-                padding       : spacers.xs,
-                
-                
-                
-                // typos:
-                lineHeight    : 1,
-            }),
-            ...children('.edit', {
-                gridArea: 'edit',
+                ...children('.visibility', {
+                    // positions:
+                    gridArea : 'visibility',
+                    
+                    
+                    
+                    // spacings:
+                    padding       : spacers.xs,
+                    
+                    
+                    
+                    // typos:
+                    lineHeight    : 1,
+                }),
+                ...children('.edit', {
+                    gridArea: 'edit',
+                }),
             }),
             ...descendants('[role="dialog"]', {
                 // remove the padding of <Dialog>'s backdrop:
