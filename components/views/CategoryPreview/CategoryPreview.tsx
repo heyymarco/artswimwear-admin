@@ -771,6 +771,21 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                     {name}
                 </Check>
                 
+                {privilegeWrite && <EditButton
+                    // classes:
+                    className='edit'
+                    
+                    
+                    
+                    // components:
+                    iconComponent={<Icon icon='edit' />}
+                    
+                    
+                    
+                    // handlers:
+                    onClick={() => handleEdit('full')}
+                />}
+                
                 <VisibilityBadge visibility={visibility} className='visibility' />
             </h4>
             
