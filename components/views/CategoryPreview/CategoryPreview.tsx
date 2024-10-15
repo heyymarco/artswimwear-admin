@@ -160,11 +160,6 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
         
         
         
-        // accessibilities:
-        readOnly = false,
-        
-        
-        
         // data:
         parentCategoryId,
         selectedIds,
@@ -282,7 +277,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
         });
     });
     const handleCheckActiveChange = useEvent<EventHandler<ActiveChangeEvent>>(({ active }) => {
-        onModelSelect?.({ id: model.id, selected: active });
+        onModelSelect?.({ id: id, selected: active });
     });
     
     
@@ -364,11 +359,6 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                     
                     
                     
-                    // accessibilities:
-                    enabled={!readOnly}
-                    
-                    
-                    
                     // variants:
                     theme={(visibility !== 'PUBLISHED') ? 'secondary' : undefined}
                     
@@ -399,7 +389,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                 {(visibility !== 'PUBLISHED') && <Basic tag='span' theme='secondary' size='sm' className='visibility'>DRAFT</Basic>}
             </h3>
             
-            <SubcategoryList className='subcategories' subcategories={subcategories} />
+            <SubcategoryList className='subcategories' subcategories={subcategories} selectedIds={selectedIds} onModelSelect={onModelSelect} />
         </ListItem>
     );
 };
@@ -417,12 +407,24 @@ interface SubcategoryListProps
 {
     // data:
     subcategories : CategoryPreview[]
+    selectedIds   ?: Set<string>
+    
+    
+    
+    // handlers:
+    onModelSelect ?: EditorChangeEventHandler<ModelSelectEvent>
 }
 const SubcategoryList = (props: SubcategoryListProps): JSX.Element|null => {
     // props:
     const {
         // data:
         subcategories,
+        selectedIds,
+        
+        
+        
+        // handlers:
+        onModelSelect,
         
         
         
@@ -439,13 +441,87 @@ const SubcategoryList = (props: SubcategoryListProps): JSX.Element|null => {
             // other props:
             {...restUlProps}
         >
-            {subcategories
-            .map(({name, subcategories}, index) =>
-                <li key={index}>
-                    <h4>{name}</h4>
-                    <SubcategoryList subcategories={subcategories} />
-                </li>
+            {subcategories.map((subcategory, index) =>
+                <SubcategoryListItem key={index} model={subcategory} selectedIds={selectedIds} onModelSelect={onModelSelect} />
             )}
         </ul>
+    );
+}
+
+interface SubcategoryListItemProps
+    extends
+        // bases:
+        React.HTMLAttributes<HTMLLIElement>
+{
+    // data:
+    model: CategoryPreview
+    selectedIds   ?: Set<string>
+    
+    
+    
+    // handlers:
+    onModelSelect ?: EditorChangeEventHandler<ModelSelectEvent>
+}
+const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null => {
+    // props:
+    const {
+        // data:
+        model,
+        selectedIds,
+        
+        
+        
+        // handlers:
+        onModelSelect,
+        
+        
+        
+        // other props:
+        ...restLIProps
+    } = props;
+    const {
+        id,
+        visibility,
+        name,
+        image,
+        subcategories,
+    } = model;
+    
+    
+    
+    // handlers:
+    const handleCheckActiveChange = useEvent<EventHandler<ActiveChangeEvent>>(({ active }) => {
+        onModelSelect?.({ id: id, selected: active });
+    });
+    
+    
+    
+    // jsx:
+    return (
+        <li
+            // other props:
+            {...restLIProps}
+        >
+            <h4 className='name'>
+                <Check
+                    // classes:
+                    className='decorator'
+                    
+                    
+                    
+                    // variants:
+                    theme={(visibility !== 'PUBLISHED') ? 'secondary' : undefined}
+                    
+                    
+                    
+                    // states:
+                    active={!!selectedIds && selectedIds.has(id)}
+                    onActiveChange={handleCheckActiveChange}
+                >
+                    {name}
+                </Check>
+            </h4>
+            <SubcategoryList subcategories={subcategories} />
+        </li>
     );
 }
