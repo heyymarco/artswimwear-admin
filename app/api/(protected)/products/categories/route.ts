@@ -236,6 +236,11 @@ You do not have the privilege to view the categories.`
             images,
         },
     } = requestData;
+    if (parent === id) { // cannot place into itself
+        return Response.json({
+            error: 'Invalid data.',
+        }, { status: 400 }); // handled with error
+    } // if
     //#endregion parsing and validating request
     
     
