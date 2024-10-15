@@ -51,6 +51,9 @@ import {
 import {
     Grip,
 }                           from '@/components/Grip'
+import {
+    VisibilityBadge,
+}                           from '@/components/VisibilityBadge'
 import type {
     // react components:
     ModelPreviewProps,
@@ -122,6 +125,7 @@ const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
     ...restListItemProps} = props;
     const {
         id,
+        visibility,
         name,
     } = model;
     
@@ -228,7 +232,7 @@ const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
                 {name}
             </p>
             
-            {(model.visibility !== 'PUBLISHED') && <Basic tag='span' theme='secondary' size='sm' className='visibility'>DRAFT</Basic>}
+            <VisibilityBadge visibility={visibility} className='visibility' />
             
             <Grip className='grip' enabled={!!privilegeUpdate?.description} />
             
