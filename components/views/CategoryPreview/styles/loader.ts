@@ -1,13 +1,13 @@
 // cssfn:
 import {
     // style sheets:
-    dynamicStyleSheet,
+    dynamicStyleSheets,
 }                           from '@cssfn/cssfn-react'               // writes css in react hook
 
 
 
 // styles:
 import './styles';
-export const useCategoryStyleSheet = dynamicStyleSheet(
+export const useCategoryStyleSheet = dynamicStyleSheets(
     () => import(/* webpackPrefetch: true */'./styles')
-, { specificityWeight: 2, id: 'aby18j3qj2' });
+, { id: 'aby18j3qj2' });

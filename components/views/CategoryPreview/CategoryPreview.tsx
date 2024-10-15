@@ -48,6 +48,8 @@ import {
     
     
     // layout-components:
+    ListProps,
+    List,
     ListItem,
     
     
@@ -59,6 +61,7 @@ import {
     
     // utility-components:
     useDialogMessage,
+    ListItemProps,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // heymarco components:
@@ -82,6 +85,9 @@ import {
 import {
     MiniCarousel,
 }                           from '@/components/MiniCarousel'
+import {
+    VisibilityBadge,
+}                           from '@/components/VisibilityBadge'
 import {
     DummyDialog,
 }                           from '@/components/dialogs/DummyDialog'
@@ -296,7 +302,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
             
             
             // classes:
-            className={styleSheet.main}
+            className={styleSheet.categoryPreview}
         >
             {/* carousel + edit button */}
             <CompoundWithBadge
@@ -386,7 +392,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                     onClick={() => handleEdit('full')}
                 />}
                 
-                {(visibility !== 'PUBLISHED') && <Basic tag='span' theme='secondary' size='sm' className='visibility'>DRAFT</Basic>}
+                <VisibilityBadge visibility={visibility} className='visibility' />
             </h3>
             
             <SubcategoryList className='subcategories' subcategories={subcategories} selectedIds={selectedIds} onModelSelect={onModelSelect} />
@@ -403,7 +409,7 @@ export {
 interface SubcategoryListProps
     extends
         // bases:
-        React.HTMLAttributes<HTMLUListElement>
+        ListProps
 {
     // data:
     subcategories : CategoryPreview[]
@@ -437,21 +443,21 @@ const SubcategoryList = (props: SubcategoryListProps): JSX.Element|null => {
     // jsx:
     if (!subcategories.length) return null;
     return (
-        <ul
+        <List
             // other props:
             {...restUlProps}
         >
             {subcategories.map((subcategory, index) =>
                 <SubcategoryListItem key={index} model={subcategory} selectedIds={selectedIds} onModelSelect={onModelSelect} />
             )}
-        </ul>
+        </List>
     );
 }
 
 interface SubcategoryListItemProps
     extends
         // bases:
-        React.HTMLAttributes<HTMLLIElement>
+        ListItemProps
 {
     // data:
     model: CategoryPreview
@@ -463,6 +469,11 @@ interface SubcategoryListItemProps
     onModelSelect ?: EditorChangeEventHandler<ModelSelectEvent>
 }
 const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null => {
+    // styles:
+    const styleSheet = useCategoryStyleSheet();
+    
+    
+    
     // props:
     const {
         // data:
@@ -477,7 +488,7 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
         
         
         // other props:
-        ...restLIProps
+        ...restSubcategoryListItemProps
     } = props;
     const {
         id,
@@ -489,6 +500,24 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
     
     
     
+    // sessions:
+    const { data: session } = useSession();
+    const role = session?.role;
+ // const privilegeAdd               = !!role?.category_c;
+    const privilegeUpdateDescription = !!role?.category_ud;
+    const privilegeUpdateImages      = !!role?.category_ui;
+    const privilegeUpdateVisibility  = !!role?.category_uv;
+    const privilegeDelete            = !!role?.category_d;
+    const privilegeWrite             = (
+        /* privilegeAdd */ // except for add
+        privilegeUpdateDescription
+        || privilegeUpdateImages
+        || privilegeUpdateVisibility
+        || privilegeDelete
+    );
+    
+    
+    
     // handlers:
     const handleCheckActiveChange = useEvent<EventHandler<ActiveChangeEvent>>(({ active }) => {
         onModelSelect?.({ id: id, selected: active });
@@ -496,12 +525,62 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
     
     
     
+    // default props:
+    const {
+        // classes:
+        className = styleSheet.subcategoryPreview,
+        
+        
+        
+        // other props:
+        ...restListItemProps
+    } = restSubcategoryListItemProps;
+    
+    
+    
     // jsx:
     return (
-        <li
+        <ListItem
             // other props:
-            {...restLIProps}
+            {...restListItemProps}
+            
+            
+            
+            // classes:
+            className={className}
         >
+            {/* image + edit button */}
+            <CompoundWithBadge
+                // components:
+                wrapperComponent={<React.Fragment />}
+                badgeComponent={
+                    privilegeUpdateImages
+                    ? <Badge
+                        // variants:
+                        nude={true}
+                        
+                        
+                        
+                        // floatable:
+                        floatingPlacement='left-start'
+                        floatingShift={10}
+                        floatingOffset={-30}
+                    >
+                        <EditButton className='edit overlay' onClick={undefined} />
+                    </Badge>
+                    : null
+                }
+                elementComponent={
+                    <Basic className='image' mild={true}>
+                        {!!image && <Image
+                            alt={name ?? ''}
+                            src={resolveMediaUrl(image)}
+                            sizes={`${minImageWidth}px`}
+                        />}
+                    </Basic>
+                }
+            />
+            
             <h4 className='name'>
                 <Check
                     // classes:
@@ -520,8 +599,10 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                 >
                     {name}
                 </Check>
+                
+                <VisibilityBadge visibility={visibility} className='visibility' />
             </h4>
-            <SubcategoryList subcategories={subcategories} />
-        </li>
+            <SubcategoryList className='subcategories' subcategories={subcategories} />
+        </ListItem>
     );
 }
