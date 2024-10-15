@@ -132,6 +132,7 @@ export interface CategoryPreviewProps
         >
 {
     // data:
+    parentCategoryId : string|null
     selectedIds   ?: Set<string>
     
     
@@ -165,6 +166,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
         
         
         // data:
+        parentCategoryId,
         selectedIds,
         
         
@@ -245,7 +247,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                 case 'full'       : return (
                     <EditCategoryDialog
                         // data:
-                        parentCategoryId={model.id}
+                        parentCategoryId={parentCategoryId}
                         model={model} // modify current model
                         
                         

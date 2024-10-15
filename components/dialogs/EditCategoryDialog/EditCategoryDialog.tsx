@@ -198,6 +198,11 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         // other props:
         ...restEditCategoryDialogProps
     } = props;
+    if (process.env.NODE_ENV === 'development') {
+        if (parentCategoryId === model?.id) {
+            throw new Error('invalid logic');
+        } // if
+    } // if
     
     
     
@@ -239,7 +244,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
     const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
     const [commitMoveImage  , {isLoading : isLoadingCommitMoveImage  }] = useMoveImage();
     
-    const _useGetSubCategoryPage = useUseGetSubCategoryPage(parentCategoryId);
+    const _useGetSubCategoryPage = useUseGetSubCategoryPage(model?.id ?? null); // views the sub_categories of current_category_dialog
     
     
     
@@ -692,6 +697,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
                         modelPreviewComponent={
                             <CategoryPreview
                                 // data:
+                                parentCategoryId={model?.id ?? null} // creates the sub_categories of current_category_dialog
                                 model={undefined as any}
                                 
                                 
@@ -707,7 +713,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
                             // ?
                             <EditCategoryDialog
                                 // data:
-                                parentCategoryId={parentCategoryId}
+                                parentCategoryId={model?.id ?? null} // creates the sub_categories of current_category_dialog
                                 model={null} // create a new model
                                 
                                 

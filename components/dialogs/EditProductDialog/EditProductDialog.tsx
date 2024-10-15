@@ -900,6 +900,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         modelPreviewComponent={
                             <CategoryPreview
                                 // data:
+                                parentCategoryId={null} // creates the root_categories of current_product_dialog
                                 model={undefined as any}
                                 
                                 
@@ -915,7 +916,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                             // ?
                             <EditCategoryDialog
                                 // data:
-                                parentCategoryId={null}
+                                parentCategoryId={null} // creates the root_categories of current_product_dialog
                                 model={null} // create a new model
                                 
                                 
