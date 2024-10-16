@@ -10,13 +10,7 @@ import {
     // hooks:
     useRef,
     useState,
-    useMemo,
 }                           from 'react'
-
-// next-auth:
-import {
-    useSession,
-}                           from 'next-auth/react'
 
 // styles:
 import {
@@ -69,6 +63,17 @@ import {
     WysiwygEditor,
 }                           from '@/components/editors/WysiwygEditor'
 import {
+    // types:
+    CategoryState,
+    
+    
+    
+    // utilities:
+    privilegeCategoryUpdateFullAccess,
+    
+    
+    
+    // react components:
     CategoryEditor,
 }                           from '@/components/editors/CategoryEditor'
 import {
@@ -159,7 +164,10 @@ export interface EditCategoryDialogProps
             // values:
             |'value'
             |'onChange'
-        >
+        >,
+        
+        // privileges & states:
+        CategoryState
 {
     // data:
     parentCategoryId : string|null
@@ -176,6 +184,11 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
     
     
     
+    // stores:
+    const draftDifferentialImages = useDraftDifferentialImages();
+    
+    
+    
     // rest props:
     const {
         // data:
@@ -187,6 +200,19 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         // values:
         value,
         onChange,
+        
+        
+        
+        // privileges:
+        privilegeAdd,
+        privilegeUpdate,
+        privilegeDelete,
+        
+        
+        
+        // images:
+        registerAddedImage   = draftDifferentialImages.registerAddedImage,
+        registerDeletedImage = draftDifferentialImages.registerDeletedImage,
         
         
         
@@ -225,14 +251,6 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
             return null;
         } // try
     });
-    
-    const draftDifferentialImages               = useDraftDifferentialImages();
-    
-    
-    
-    // sessions:
-    const { data: session } = useSession();
-    const role = session?.role;
     
     
     
@@ -381,17 +399,6 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
             name.trim().toLowerCase().replace(/(\s|_|-)+/ig, '-')
         );
     });
-    
-    
-    
-    // privileges:
-    const privilegeAdd    = !!role?.category_c;
-    const privilegeUpdate = useMemo(() => ({
-        description : !!role?.category_ud,
-        images      : !!role?.category_ui,
-        visibility  : !!role?.category_uv,
-    }), [role]);
-    const privilegeDelete = !!role?.category_d;
     
     
     
@@ -616,7 +623,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
                             }).unwrap();
                             
                             // register to actual_delete the new_image when reverted:
-                            draftDifferentialImages.registerAddedImage(imageId);
+                            registerAddedImage(imageId);
                             
                             return imageId;
                         }
@@ -632,7 +639,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
                     }}
                     onDeleteImage={async ({ imageData: imageId }) => {
                         // register to actual_delete the deleted_image when committed:
-                        draftDifferentialImages.registerDeletedImage(imageId);
+                        registerDeletedImage(imageId);
                         
                         return true;
                     }}
@@ -693,26 +700,25 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
                         
                         
                         
-                        // TODO:
-                        // // privileges:
-                        // privilegeAdd    = {                                              privilegeCategoryAdd   }
-                        // /*
-                        //     when edit_mode (update):
-                        //         * the editing  capability follows the `privilegeCategoryUpdate`
-                        //         * the deleting capability follows the `privilegeCategoryDelete`
-                        //     
-                        //     when create_mode (add):
-                        //         * ALWAYS be ABLE to edit   the Category (because the data is *not_yet_exsist* on the database)
-                        //         * ALWAYS be ABLE to delete the Category (because the data is *not_yet_exsist* on the database)
-                        // */
-                        // privilegeUpdate = {whenAdd ? privilegeCategoryUpdateFullAccess : privilegeCategoryUpdate}
-                        // privilegeDelete = {whenAdd ?               true                : privilegeCategoryDelete}
-                        // 
-                        // 
-                        // 
-                        // // images:
-                        // registerAddedImage   = {registerAddedImage}
-                        // registerDeletedImage = {registerDeletedImage}
+                        // privileges:
+                        privilegeAdd    = {                                              privilegeAdd   }
+                        /*
+                            when edit_mode (update):
+                                * the editing  capability follows the `privilegeUpdate`
+                                * the deleting capability follows the `privilegeDelete`
+                            
+                            when create_mode (add):
+                                * ALWAYS be ABLE to edit   the Category (because the data is *not_yet_exsist* on the database)
+                                * ALWAYS be ABLE to delete the Category (because the data is *not_yet_exsist* on the database)
+                        */
+                        privilegeUpdate = {whenAdd ? privilegeCategoryUpdateFullAccess : privilegeUpdate}
+                        privilegeDelete = {whenAdd ?               true                : privilegeDelete}
+                        
+                        
+                        
+                        // images:
+                        registerAddedImage   = {registerAddedImage  }
+                        registerDeletedImage = {registerDeletedImage}
                         
                         
                         
@@ -731,9 +737,8 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
                             />
                         }
                         modelCreateComponent={
-                            // TODO: add privilege for category
-                            // privilegeAdd
-                            // ?
+                            privilegeAdd
+                            ?
                             <EditCategoryDialog
                                 // data:
                                 parentCategoryId={model?.id ?? null} // creates the sub_categories of current_category_dialog
@@ -744,8 +749,28 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
                                 // values:
                                 value={value}
                                 onChange={onChange}
+                                
+                                
+                                
+                                // workaround for penetrating <CategoryStateProvider> to showDialog():
+                                // privileges:
+                                /*
+                                    when create_mode (add):
+                                    * ALWAYS be ABLE to edit   the Category (because the data is *not_yet_exsist* on the database)
+                                    * ALWAYS be ABLE to delete the Category (because the data is *not_yet_exsist* on the database)
+                                */
+                                privilegeAdd    = {privilegeAdd   }
+                                privilegeUpdate = {privilegeCategoryUpdateFullAccess}
+                                privilegeDelete = {true}
+                                
+                                
+                                
+                                // workaround for penetrating <CategoryStateProvider> to showDialog():
+                                // images:
+                                registerAddedImage   = {registerAddedImage  }
+                                registerDeletedImage = {registerDeletedImage}
                             />
-                            // : undefined
+                            : undefined
                         }
                     />
                 </PaginationStateProvider>

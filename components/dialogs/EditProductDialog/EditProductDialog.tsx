@@ -957,6 +957,26 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                                 // values:
                                 value={categories}
                                 onChange={setCategories}
+                                
+                                
+                                
+                                // workaround for penetrating <CategoryStateProvider> to showDialog():
+                                // privileges:
+                                /*
+                                    when create_mode (add):
+                                    * ALWAYS be ABLE to edit   the Category (because the data is *not_yet_exsist* on the database)
+                                    * ALWAYS be ABLE to delete the Category (because the data is *not_yet_exsist* on the database)
+                                */
+                                privilegeAdd    = {privilegeAdd   }
+                                privilegeUpdate = {privilegeCategoryUpdateFullAccess}
+                                privilegeDelete = {true}
+                                
+                                
+                                
+                                // workaround for penetrating <CategoryStateProvider> to showDialog():
+                                // images:
+                                registerAddedImage   = {undefined} // no need to intercept the images of root_categories
+                                registerDeletedImage = {undefined} // no need to intercept the images of root_categories
                             />
                             : undefined
                         }

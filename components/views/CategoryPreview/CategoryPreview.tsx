@@ -80,6 +80,10 @@ import {
     type EditorChangeEventHandler,
 }                           from '@/components/editors/Editor'
 import {
+    // states:
+    useCategoryState,
+}                           from '@/components/editors/CategoryEditor'
+import {
     CompoundWithBadge,
 }                           from '@/components/CompoundWithBadge'
 import {
@@ -197,14 +201,14 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
     
     
     
-    // sessions:
-    const { data: session } = useSession();
-    const role = session?.role;
- // const privilegeAdd               = !!role?.category_c;
-    const privilegeUpdateDescription = !!role?.category_ud;
-    const privilegeUpdateImages      = !!role?.category_ui;
-    const privilegeUpdateVisibility  = !!role?.category_uv;
-    const privilegeDelete            = !!role?.category_d;
+    // states:
+    // workaround for penetrating <CategoryStateProvider> to showDialog():
+    const categoryState = useCategoryState();
+ // const privilegeAdd               = !!categoryState.privilegeAdd;
+    const privilegeUpdateDescription = !!categoryState.privilegeUpdate?.description;
+    const privilegeUpdateImages      = !!categoryState.privilegeUpdate?.images;
+    const privilegeUpdateVisibility  = !!categoryState.privilegeUpdate?.visibility;
+    const privilegeDelete            = !!categoryState.privilegeDelete;
     const privilegeWrite             = (
         /* privilegeAdd */ // except for add
         privilegeUpdateDescription
@@ -266,6 +270,11 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                                 default         : return undefined;
                             } // switch
                         })()}
+                        
+                        
+                        
+                        // workaround for penetrating <CategoryStateProvider> to showDialog():
+                        {...categoryState}
                     />
                 );
                 default           : throw new Error('app error');
@@ -608,14 +617,14 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
     
     
     
-    // sessions:
-    const { data: session } = useSession();
-    const role = session?.role;
- // const privilegeAdd               = !!role?.category_c;
-    const privilegeUpdateDescription = !!role?.category_ud;
-    const privilegeUpdateImages      = !!role?.category_ui;
-    const privilegeUpdateVisibility  = !!role?.category_uv;
-    const privilegeDelete            = !!role?.category_d;
+    // states:
+    // workaround for penetrating <CategoryStateProvider> to showDialog():
+    const categoryState = useCategoryState();
+ // const privilegeAdd               = !!categoryState.privilegeAdd;
+    const privilegeUpdateDescription = !!categoryState.privilegeUpdate?.description;
+    const privilegeUpdateImages      = !!categoryState.privilegeUpdate?.images;
+    const privilegeUpdateVisibility  = !!categoryState.privilegeUpdate?.visibility;
+    const privilegeDelete            = !!categoryState.privilegeDelete;
     const privilegeWrite             = (
         /* privilegeAdd */ // except for add
         privilegeUpdateDescription
@@ -660,8 +669,7 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                     <EditCategoryDialog
                         // data:
                         parentCategoryId={parentCategoryId}
-                        // TODO: remove as any
-                        model={model as any} // modify current model
+                        model={model} // modify current model
                         
                         
                         
@@ -678,6 +686,11 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                                 default         : return undefined;
                             } // switch
                         })()}
+                        
+                        
+                        
+                        // workaround for penetrating <CategoryStateProvider> to showDialog():
+                        {...categoryState}
                     />
                 );
                 default           : throw new Error('app error');
@@ -690,8 +703,7 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
         
         dialogPromise.then((updatedModel) => {
             if (updatedModel === false) {
-                // TODO: remove as any
-                onModelDelete?.(model as any);
+                onModelDelete?.(model);
             } // if
         });
     });
