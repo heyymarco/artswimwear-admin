@@ -189,7 +189,7 @@ export const apiSlice = createApi({
                 body   : arg
             }),
             onQueryStarted: async (arg, api) => {
-                await cumulativeUpdatePaginationCache(api, 'getCategoryPage', (arg.id === '') ? 'CREATE' : 'UPDATE', { type: 'CategoryPage', id: arg.parent ?? ''});
+                await cumulativeUpdatePaginationCache(api, 'getCategoryPage', (arg.id === '') ? 'CREATE' : 'UPDATE', { type: 'CategoryPage', id: arg.parent ?? ''}, { predicate: (arg.id === '') ? (originalArgs) => ((originalArgs as CategoryUpdateRequest).parent === arg.parent) : undefined, });
             },
         }),
         deleteCategory              : builder.mutation<Pick<CategoryDetail, 'id'>, CategoryDeleteParam>({
