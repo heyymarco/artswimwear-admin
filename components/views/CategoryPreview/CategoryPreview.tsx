@@ -463,7 +463,7 @@ interface SubcategoryListProps
         >
 {
     // data:
-    parentCategoryId : string|null
+    parentCategoryId : string
     subcategories : CategoryPreview[]
     selectedIds   ?: Set<string>
     
@@ -553,7 +553,7 @@ interface SubcategoryListItemProps
         >
 {
     // data:
-    parentCategoryId : string|null
+    parentCategoryId : string
     model: CategoryPreview
     selectedIds   ?: Set<string>
     
