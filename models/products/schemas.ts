@@ -145,7 +145,7 @@ export const ProductUpdateRequestSchema = MutationArgsSchema<Omit<ProductDetail,
 
 
 
-export const CategoryPreviewSchema : z.ZodType<CategoryPreview> = z.object({
+export const CategoryPreviewSchema = z.object({
     // records:
     id                 : ModelIdSchema,
     
@@ -158,7 +158,7 @@ export const CategoryPreviewSchema : z.ZodType<CategoryPreview> = z.object({
     
     image              : ImageUrlSchema.nullable(),
     
-    subcategories      : z.lazy(() => z.array(CategoryPreviewSchema)),
+    subcategories      : z.lazy((): z.ZodArray<z.ZodType<CategoryPreview, z.ZodTypeDef, CategoryPreview>, 'many'> => z.array(CategoryPreviewSchema)),
 }) satisfies z.Schema<CategoryPreview>;
 
 export const CategoryDetailSchema = z.object({
@@ -179,7 +179,7 @@ export const CategoryDetailSchema = z.object({
     
     images             : z.array(ImageUrlSchema),
     
-    subcategories      : z.array(CategoryPreviewSchema),
+    subcategories      : z.lazy((): z.ZodArray<z.ZodType<CategoryDetail, z.ZodTypeDef, CategoryDetail>, 'many'> => z.array(CategoryDetailSchema)),
 }) satisfies z.Schema<CategoryDetail>;
 
 export const CategoryPageRequestSchema   = PaginationArgSchema.merge(

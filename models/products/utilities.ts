@@ -657,11 +657,11 @@ export const convertCategoryDetailDataToCategoryDetail = async (selector: Return
         },
         select : selector,
     });
-    const subcategoryPreviews = await convertCategoryPreviewDataToCategoryPreview(selector, subcategoryDetailData, prismaTransaction);
-    const subcategoryListAdapter = createEntityAdapter<CategoryPreview>({
+    const subcategoryDetails = await convertCategoryDetailDataToCategoryDetail(selector, subcategoryDetailData, prismaTransaction);
+    const subcategoryListAdapter = createEntityAdapter<CategoryDetail>({
         selectId : (subcategory) => subcategory.id,
     });
-    const subcategoryListEntry = subcategoryListAdapter.addMany(subcategoryListAdapter.getInitialState(), subcategoryPreviews);
+    const subcategoryListEntry = subcategoryListAdapter.addMany(subcategoryListAdapter.getInitialState(), subcategoryDetails);
     return (
         categoryDetailData
         .map(({ subcategories, ...restCategoryDetail }): CategoryDetail => ({

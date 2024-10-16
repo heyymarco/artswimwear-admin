@@ -103,7 +103,6 @@ import {
 // models:
 import {
     // types:
-    type CategoryPreview,
     type CategoryDetail,
 }                           from '@/models'
 
@@ -464,7 +463,7 @@ interface SubcategoryListProps
 {
     // data:
     parentCategoryId : string
-    subcategories : CategoryPreview[]
+    subcategories : CategoryDetail[]
     selectedIds   ?: Set<string>
     
     
@@ -554,7 +553,7 @@ interface SubcategoryListItemProps
 {
     // data:
     parentCategoryId : string
-    model: CategoryPreview
+    model: CategoryDetail
     selectedIds   ?: Set<string>
     
     
@@ -603,7 +602,7 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
         id,
         visibility,
         name,
-        image,
+        images,
         subcategories,
     } = model;
     
@@ -763,16 +762,36 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                         // classes:
                         className='preview'
                     >
-                        <Image
-                            alt={name ?? ''}
-                            src={resolveMediaUrl(image ?? undefined)}
-                            sizes={`${minImageWidthSub}px`}
+                        <MiniCarousel
+                            // variants:
+                            theme='danger'
+                            nude={true}
                             
                             
                             
                             // classes:
                             className='image'
-                        />
+                            
+                            
+                            
+                            // components:
+                            basicComponent={<Content theme='primary' />}
+                        >
+                            {images.map((image, index) =>
+                                <Image
+                                    // identifiers:
+                                    key={index}
+                                    
+                                    
+                                    
+                                    className='prodImg'
+                                    
+                                    alt={name ?? ''}
+                                    src={resolveMediaUrl(image)}
+                                    sizes={`${minImageWidth}px`}
+                                />
+                            )}
+                        </MiniCarousel>
                     </Basic>
                 }
             />

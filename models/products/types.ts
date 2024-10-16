@@ -156,7 +156,7 @@ export interface CategoryDetail
             |'parentId'
         >
 {
-    subcategories : CategoryPreview[]
+    subcategories : CategoryDetail[]
 }
 
 export interface CategoryPageRequest
