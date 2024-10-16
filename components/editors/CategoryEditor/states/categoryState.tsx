@@ -97,30 +97,37 @@ export const useCategoryState = (): CategoryState => {
 // react components:
 export interface CategoryStateProps
     extends
-        // apis:
-        CategoryPrivilege,
-        
-        // states:
-        Partial<Pick<DraftDifferentialImagesApi,
-            // images:
-            |'registerAddedImage'
-            |'registerDeletedImage'
-        >>
+        Partial<CategoryState>
 {
 }
 const CategoryStateProvider = (props: React.PropsWithChildren<CategoryStateProps>): JSX.Element|null => {
-    // rest props:
     const {
         // privileges:
-        privilegeAdd,
-        privilegeUpdate,
-        privilegeDelete,
+        privilegeAdd         : defaultPrivilegeAdd,
+        privilegeUpdate      : defaultPrivilegeUpdate,
+        privilegeDelete      : defaultPrivilegeDelete,
         
         
         
         // images:
-        registerAddedImage,
-        registerDeletedImage,
+        registerAddedImage   : defaultRegisterAddedImage,
+        registerDeletedImage : defaultRegisterDeletedImage,
+    } = useCategoryState();
+    
+    
+    
+    // props:
+    const {
+        // privileges:
+        privilegeAdd         = defaultPrivilegeAdd,
+        privilegeUpdate      = defaultPrivilegeUpdate,
+        privilegeDelete      = defaultPrivilegeDelete,
+        
+        
+        
+        // images:
+        registerAddedImage   = defaultRegisterAddedImage,
+        registerDeletedImage = defaultRegisterDeletedImage,
     } = props;
     
     
