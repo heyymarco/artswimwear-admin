@@ -103,30 +103,37 @@ export const useVariantState = (): VariantState => {
 // react components:
 export interface VariantStateProps
     extends
-        // apis:
-        VariantPrivilege,
-        
-        // states:
-        Partial<Pick<DraftDifferentialImagesApi,
-            // images:
-            |'registerAddedImage'
-            |'registerDeletedImage'
-        >>
+        Partial<VariantState>
 {
 }
 const VariantStateProvider = (props: React.PropsWithChildren<VariantStateProps>): JSX.Element|null => {
-    // rest props:
     const {
         // privileges:
-        privilegeAdd,
-        privilegeUpdate,
-        privilegeDelete,
+        privilegeAdd         : defaultPrivilegeAdd,
+        privilegeUpdate      : defaultPrivilegeUpdate,
+        privilegeDelete      : defaultPrivilegeDelete,
         
         
         
         // images:
-        registerAddedImage,
-        registerDeletedImage,
+        registerAddedImage   : defaultRegisterAddedImage,
+        registerDeletedImage : defaultRegisterDeletedImage,
+    } = useVariantState();
+    
+    
+    
+    // props:
+    const {
+        // privileges:
+        privilegeAdd         = defaultPrivilegeAdd,
+        privilegeUpdate      = defaultPrivilegeUpdate,
+        privilegeDelete      = defaultPrivilegeDelete,
+        
+        
+        
+        // images:
+        registerAddedImage   = defaultRegisterAddedImage,
+        registerDeletedImage = defaultRegisterDeletedImage,
     } = props;
     
     

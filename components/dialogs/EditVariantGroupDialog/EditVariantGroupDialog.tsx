@@ -400,9 +400,7 @@ const EditVariantGroupDialog = (props: EditVariantGroupDialogProps): JSX.Element
                                     
                                     
                                     
-                                    // images:
-                                    registerAddedImage   = {undefined}
-                                    registerDeletedImage = {undefined}
+                                    /* the variantState will be overriden by <VariantEditor> */
                                 />
                                 : undefined
                             }
