@@ -471,8 +471,8 @@ interface SubcategoryListProps
         >
 {
     // data:
-    parentCategoryId : string
     subcategories : CategoryDetail[]
+    parentCategoryId : string
     selectedIds   ?: Set<string>
     
     
@@ -561,8 +561,8 @@ interface SubcategoryListItemProps
         >
 {
     // data:
-    parentCategoryId : string
     model: CategoryDetail
+    parentCategoryId : string
     selectedIds   ?: Set<string>
     
     
