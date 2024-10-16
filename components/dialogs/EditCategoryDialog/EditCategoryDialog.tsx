@@ -693,6 +693,29 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
                         
                         
                         
+                        // TODO:
+                        // // privileges:
+                        // privilegeAdd    = {                                              privilegeCategoryAdd   }
+                        // /*
+                        //     when edit_mode (update):
+                        //         * the editing  capability follows the `privilegeCategoryUpdate`
+                        //         * the deleting capability follows the `privilegeCategoryDelete`
+                        //     
+                        //     when create_mode (add):
+                        //         * ALWAYS be ABLE to edit   the Category (because the data is *not_yet_exsist* on the database)
+                        //         * ALWAYS be ABLE to delete the Category (because the data is *not_yet_exsist* on the database)
+                        // */
+                        // privilegeUpdate = {whenAdd ? privilegeCategoryUpdateFullAccess : privilegeCategoryUpdate}
+                        // privilegeDelete = {whenAdd ?               true                : privilegeCategoryDelete}
+                        // 
+                        // 
+                        // 
+                        // // images:
+                        // registerAddedImage   = {registerAddedImage}
+                        // registerDeletedImage = {registerDeletedImage}
+                        
+                        
+                        
                         // components:
                         modelPreviewComponent={
                             <CategoryPreview

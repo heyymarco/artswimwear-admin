@@ -29,7 +29,7 @@ import type {
 //#region categoryState
 
 // types:
-export interface VariantPrivilege
+export interface CategoryPrivilege
 {
     // privileges:
     privilegeAdd     ?: boolean
@@ -44,7 +44,7 @@ export interface VariantPrivilege
 
 
 // utilities:
-export const privilegeVariantUpdateFullAccess : Required<VariantPrivilege>['privilegeUpdate'] = {
+export const privilegeCategoryUpdateFullAccess : Required<CategoryPrivilege>['privilegeUpdate'] = {
     description : true,
     images      : true,
     visibility  : true,
@@ -56,7 +56,7 @@ export const privilegeVariantUpdateFullAccess : Required<VariantPrivilege>['priv
 export interface CategoryState
     extends
         // apis:
-        VariantPrivilege,
+        CategoryPrivilege,
         
         // states:
         Partial<Pick<DraftDifferentialImagesApi,
@@ -98,7 +98,7 @@ export const useCategoryState = (): CategoryState => {
 export interface CategoryStateProps
     extends
         // apis:
-        VariantPrivilege,
+        CategoryPrivilege,
         
         // states:
         Partial<Pick<DraftDifferentialImagesApi,

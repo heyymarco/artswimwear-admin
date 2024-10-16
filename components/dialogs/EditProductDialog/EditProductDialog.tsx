@@ -74,6 +74,12 @@ import {
     WysiwygEditor,
 }                           from '@/components/editors/WysiwygEditor'
 import {
+    // utilities:
+    privilegeCategoryUpdateFullAccess,
+    
+    
+    
+    // react components:
     CategoryEditor,
 }                           from '@/components/editors/CategoryEditor'
 import {
@@ -462,6 +468,14 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         visibility  : !!role?.product_uv,
     }), [role]);
     const privilegeDelete = !!role?.product_d;
+    
+    const privilegeCategoryAdd    = !!role?.category_c;
+    const privilegeCategoryUpdate = useMemo(() => ({
+        description : !!role?.category_ud,
+        images      : !!role?.category_ui,
+        visibility  : !!role?.category_uv,
+    }), [role]);
+    const privilegeCategoryDelete = !!role?.category_d;
     
     
     
@@ -894,6 +908,28 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         
                         
                         
+                        // privileges:
+                        privilegeAdd    = {                                              privilegeCategoryAdd   }
+                        /*
+                            when edit_mode (update):
+                                * the editing  capability follows the `privilegeCategoryUpdate`
+                                * the deleting capability follows the `privilegeCategoryDelete`
+                            
+                            when create_mode (add):
+                                * ALWAYS be ABLE to edit   the Category (because the data is *not_yet_exsist* on the database)
+                                * ALWAYS be ABLE to delete the Category (because the data is *not_yet_exsist* on the database)
+                        */
+                        privilegeUpdate = {whenAdd ? privilegeCategoryUpdateFullAccess : privilegeCategoryUpdate}
+                        privilegeDelete = {whenAdd ?               true                : privilegeCategoryDelete}
+                        
+                        
+                        
+                        // images:
+                        registerAddedImage   = {undefined} // no need to intercept the images of root_categories
+                        registerDeletedImage = {undefined} // no need to intercept the images of root_categories
+                        
+                        
+                        
                         // components:
                         modelPreviewComponent={
                             <CategoryPreview
@@ -909,9 +945,8 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                             />
                         }
                         modelCreateComponent={
-                            // TODO: add privilege for category
-                            // privilegeAdd
-                            // ?
+                            privilegeCategoryAdd
+                            ?
                             <EditCategoryDialog
                                 // data:
                                 parentCategoryId={null} // creates the root_categories of current_product_dialog
@@ -923,7 +958,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                                 value={categories}
                                 onChange={setCategories}
                             />
-                            // : undefined
+                            : undefined
                         }
                     />
                 </PaginationStateProvider>

@@ -40,6 +40,18 @@ import {
     type CategoryDetail,
 }                           from '@/models'
 
+// internals:
+import {
+    // types:
+    CategoryState,
+    CategoryStateProps,
+    
+    
+    
+    // react components:
+    CategoryStateProvider,
+}                           from './states/categoryState'
+
 
 
 // react components:
@@ -72,7 +84,10 @@ interface CategoryEditorProps<TElement extends Element = HTMLElement>
             
             // handlers:
             |'onModelCreate'
-        >>
+        >>,
+        
+        // states:
+        CategoryStateProps
 {
     // components:
     modelPreviewComponent  : React.ReactComponentElement<any, CategoryPreviewProps>
@@ -89,6 +104,19 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
         // defaultValue, // not supported, controllable only
         value,
         onChange,
+        
+        
+        
+        // privileges:
+        privilegeAdd,
+        privilegeUpdate,
+        privilegeDelete,
+        
+        
+        
+        // images:
+        registerAddedImage,
+        registerDeletedImage,
         
         
         
@@ -141,35 +169,48 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
     
     // jsx:
     return (
-        <PaginationList<CategoryDetail, TElement>
-            // other props:
-            {...restPaginationListProps}
+        <CategoryStateProvider
+            // privileges:
+            privilegeAdd    = {privilegeAdd   }
+            privilegeUpdate = {privilegeUpdate}
+            privilegeDelete = {privilegeDelete}
             
             
             
-            // accessibilities:
-            createItemText={createItemText}
-            
-            
-            
-            // components:
-            modelPreviewComponent={
-                /* <ModelPreview> */
-                React.cloneElement<CategoryPreviewProps>(modelPreviewComponent,
-                    // props:
-                    {
-                        // data:
-                        selectedIds   : modelPreviewComponent.props.selectedIds ?? value,
-                        
-                        
-                        
-                        // handlers:
-                        onModelSelect : handleModelSelect,
-                        onModelDelete : handleModelDelete,
-                    },
-                )
-            }
-        />
+            // images:
+            registerAddedImage   = {registerAddedImage  }
+            registerDeletedImage = {registerDeletedImage}
+        >
+            <PaginationList<CategoryDetail, TElement>
+                // other props:
+                {...restPaginationListProps}
+                
+                
+                
+                // accessibilities:
+                createItemText={createItemText}
+                
+                
+                
+                // components:
+                modelPreviewComponent={
+                    /* <ModelPreview> */
+                    React.cloneElement<CategoryPreviewProps>(modelPreviewComponent,
+                        // props:
+                        {
+                            // data:
+                            selectedIds   : modelPreviewComponent.props.selectedIds ?? value,
+                            
+                            
+                            
+                            // handlers:
+                            onModelSelect : handleModelSelect,
+                            onModelDelete : handleModelDelete,
+                        },
+                    )
+                }
+            />
+        </CategoryStateProvider>
     );
 };
 export {
