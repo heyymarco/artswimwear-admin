@@ -967,7 +967,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                                     * ALWAYS be ABLE to edit   the Category (because the data is *not_yet_exsist* on the database)
                                     * ALWAYS be ABLE to delete the Category (because the data is *not_yet_exsist* on the database)
                                 */
-                                privilegeAdd    = {privilegeAdd   }
+                                privilegeAdd    = {privilegeCategoryAdd}
                                 privilegeUpdate = {privilegeCategoryUpdateFullAccess}
                                 privilegeDelete = {true}
                                 

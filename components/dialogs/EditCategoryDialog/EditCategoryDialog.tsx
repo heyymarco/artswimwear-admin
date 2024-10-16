@@ -759,7 +759,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
                                     * ALWAYS be ABLE to edit   the Category (because the data is *not_yet_exsist* on the database)
                                     * ALWAYS be ABLE to delete the Category (because the data is *not_yet_exsist* on the database)
                                 */
-                                privilegeAdd    = {privilegeAdd   }
+                                privilegeAdd    = {privilegeAdd}
                                 privilegeUpdate = {privilegeCategoryUpdateFullAccess}
                                 privilegeDelete = {true}
                                 
