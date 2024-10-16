@@ -746,9 +746,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                             
                             
                             
-                            // images:
-                            registerAddedImage   = {undefined}
-                            registerDeletedImage = {undefined}
+                            /* the variantState will be overriden by <VariantGroupEditor> */
                         />
                         : undefined
                     }
