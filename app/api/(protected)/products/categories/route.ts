@@ -152,7 +152,11 @@ You do not have the privilege to view the categories.`
         const categorySelect = categoryDetailSelect(categoryOrderBy);
         
         const [total, paged] = await Promise.all([
-            prismaTransaction.category.count(),
+            prismaTransaction.category.count({
+                where   : {
+                    parentId : parent,
+                },
+            }),
             prismaTransaction.category.findMany({
                 where   : {
                     parentId : parent,
