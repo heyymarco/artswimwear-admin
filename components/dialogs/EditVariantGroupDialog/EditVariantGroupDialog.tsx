@@ -401,9 +401,7 @@ const EditVariantGroupDialog = (props: EditVariantGroupDialogProps): JSX.Element
                                     
                                     
                                     // images:
-                                    // @ts-ignore
                                     registerAddedImage   = {undefined}
-                                    // @ts-ignore
                                     registerDeletedImage = {undefined}
                                 />
                                 : undefined

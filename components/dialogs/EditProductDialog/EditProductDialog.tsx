@@ -733,9 +733,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                             
                             
                             // images:
-                            // @ts-ignore
                             registerAddedImage   = {undefined}
-                            // @ts-ignore
                             registerDeletedImage = {undefined}
                         />
                         : undefined
