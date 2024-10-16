@@ -115,7 +115,8 @@ import {
 
 
 // defaults:
-const minImageWidth = 88;  // 88px === (100px + (2* paddingBlock)) * aspectRatio === (100px + (2* 16px)) * 2/3
+const minImageWidth = 102;  // 102px === (120px + (2* paddingBlock)) * aspectRatio === (120px + (2* 16px)) * 2/3
+const minImageWidthSub = 75;   // 75px === (80px + (2* paddingBlock)) * aspectRatio === (80px + (2* 16px)) * 2/3
 
 
 
@@ -340,35 +341,46 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                     : null
                 }
                 elementComponent={
-                    <MiniCarousel
+                    <Basic
                         // variants:
-                        theme='danger'
+                        mild={true}
                         
                         
                         
                         // classes:
-                        className='images'
-                        
-                        
-                        
-                        // components:
-                        basicComponent={<Content theme='primary' />}
+                        className='preview'
                     >
-                        {images.map((image, index) =>
-                            <Image
-                                // identifiers:
-                                key={index}
-                                
-                                
-                                
-                                className='prodImg'
-                                
-                                alt={name ?? ''}
-                                src={resolveMediaUrl(image)}
-                                sizes={`${minImageWidth}px`}
-                            />
-                        )}
-                    </MiniCarousel>
+                        <MiniCarousel
+                            // variants:
+                            theme='danger'
+                            nude={true}
+                            
+                            
+                            
+                            // classes:
+                            className='image'
+                            
+                            
+                            
+                            // components:
+                            basicComponent={<Content theme='primary' />}
+                        >
+                            {images.map((image, index) =>
+                                <Image
+                                    // identifiers:
+                                    key={index}
+                                    
+                                    
+                                    
+                                    className='prodImg'
+                                    
+                                    alt={name ?? ''}
+                                    src={resolveMediaUrl(image)}
+                                    sizes={`${minImageWidth}px`}
+                                />
+                            )}
+                        </MiniCarousel>
+                    </Basic>
                 }
             />
             
@@ -694,7 +706,7 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
     // default props:
     const {
         // classes:
-        className = styleSheet.subcategoryPreview,
+        className = `${styleSheet.categoryPreview} ${styleSheet.categoryPreviewSub}`,
         
         
         
@@ -742,12 +754,25 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                     : null
                 }
                 elementComponent={
-                    <Basic className='image' mild={true}>
-                        {!!image && <Image
+                    <Basic
+                        // variants:
+                        mild={true}
+                        
+                        
+                        
+                        // classes:
+                        className='preview'
+                    >
+                        <Image
                             alt={name ?? ''}
-                            src={resolveMediaUrl(image)}
-                            sizes={`${minImageWidth}px`}
-                        />}
+                            src={resolveMediaUrl(image ?? undefined)}
+                            sizes={`${minImageWidthSub}px`}
+                            
+                            
+                            
+                            // classes:
+                            className='image'
+                        />
                     </Basic>
                 }
             />
