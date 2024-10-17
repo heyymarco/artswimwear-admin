@@ -143,7 +143,6 @@ export interface CategoryPreviewProps
 {
     // data:
     parentCategoryId : string|null
-    selectedIds   ?: Set<string>
     
     
     
@@ -172,7 +171,6 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
         
         // data:
         parentCategoryId,
-        selectedIds,
         
         
         
@@ -405,7 +403,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                     
                     
                     // states:
-                    active={!!selectedIds && selectedIds.has(id)}
+                    active={value.has(id)}
                     onActiveChange={handleCheckActiveChange}
                 >
                     {name}
@@ -433,7 +431,6 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                 // data:
                 parentCategoryId={model.id} // creates the sub_categories of current_category_dialog
                 subcategories={subcategories}
-                selectedIds={selectedIds}
                 
                 
                 
@@ -473,7 +470,6 @@ interface SubcategoryListProps
     // data:
     subcategories : CategoryDetail[]
     parentCategoryId : string
-    selectedIds   ?: Set<string>
     
     
     
@@ -493,7 +489,6 @@ const SubcategoryList = (props: SubcategoryListProps): JSX.Element|null => {
         // data:
         parentCategoryId,
         subcategories,
-        selectedIds,
         
         
         
@@ -532,7 +527,6 @@ const SubcategoryList = (props: SubcategoryListProps): JSX.Element|null => {
                     // data:
                     parentCategoryId={parentCategoryId}
                     model={subcategory}
-                    selectedIds={selectedIds}
                     
                     
                     
@@ -563,7 +557,6 @@ interface SubcategoryListItemProps
     // data:
     model: CategoryDetail
     parentCategoryId : string
-    selectedIds   ?: Set<string>
     
     
     
@@ -588,7 +581,6 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
         // data:
         parentCategoryId,
         model,
-        selectedIds,
         
         
         
@@ -821,7 +813,7 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                     
                     
                     // states:
-                    active={!!selectedIds && selectedIds.has(id)}
+                    active={value.has(id)}
                     onActiveChange={handleCheckActiveChange}
                 >
                     {name}
@@ -849,7 +841,6 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                 // data:
                 parentCategoryId={model.id} // creates the sub_categories of current_category_dialog
                 subcategories={subcategories}
-                selectedIds={selectedIds}
                 
                 
                 
