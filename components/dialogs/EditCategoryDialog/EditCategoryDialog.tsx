@@ -224,10 +224,9 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         
         
         // databases:
-        mockCategoryDb       : mockCategoryDbRaw,
+        mockCategoryDb,
     } = categoryState;
-    const isDbMocked     = !!mockCategoryDbRaw;
-    const mockCategoryDb = mockCategoryDbRaw ?? internalMockCategoryDb; // use internal mock if null
+    const isDbMocked = !!mockCategoryDb;
     
     const nestedCategoryState : CategoryStateProps = {
         ...categoryState,
@@ -241,17 +240,13 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         
         // databases:
         mockCategoryDb   : ((): MockCategoryDb|null => {
-            if (!mockCategoryDb) return null;
-            
-            
-            
-            const existingMockSubcategoryDb = mockCategoryDb.subcategories;
+            const existingMockSubcategoryDb = (mockCategoryDb ?? internalMockCategoryDb).subcategories;
             if (existingMockSubcategoryDb) return existingMockSubcategoryDb;
             
             
             
             const newMockSubcategoryDb : MockCategoryDb = [];
-            mockCategoryDb.subcategories = newMockSubcategoryDb;
+            (mockCategoryDb ?? internalMockCategoryDb).subcategories = newMockSubcategoryDb;
             return newMockSubcategoryDb;
         })(),
     };
