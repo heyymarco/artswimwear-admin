@@ -118,8 +118,6 @@ import {
     
     useCategoryAvailablePath,
     
-    useGetCategoryPage as _useGetCategoryPage,
-    
     usePostImage,
     useDeleteImage,
     useMoveImage,
@@ -146,34 +144,6 @@ import {
     PAGE_CATEGORY_TAB_SUBCATEGORIES,
     PAGE_CATEGORY_TAB_DELETE,
 }                           from '@/website.config'
-
-
-
-// hooks:
-const useUseGetSubCategoryPage = (parentCategoryId : string|null, mockCategoryDb?: MockCategoryDb|null) => {
-    return (arg: PaginationArgs): UseGetModelPageApi<CategoryDetail> => {
-        const isDbMocked = !!mockCategoryDb;
-        if (isDbMocked) {
-            return {
-                // data:
-                data         : {
-                    total    : mockCategoryDb.length,
-                    entities : mockCategoryDb.slice((arg.page - 1) * arg.perPage),
-                },
-                isLoading    : false,
-                isFetching   : false,
-                isError      : false,
-                refetch      : () => {},
-            };
-        }
-        else {
-            return _useGetCategoryPage({
-                ...arg,
-                parent : parentCategoryId,
-            });
-        } // if
-    };
-};
 
 
 
@@ -261,6 +231,16 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
     } = categoryState;
     const isDbMocked = !!mockCategoryDb;
     
+    const nestedMockCategoryDb = ((): MockCategoryDb => {
+        const existingMockSubcategoryDb = (mockCategoryDb ?? internalMockCategoryDb).subcategories;
+        if (existingMockSubcategoryDb) return existingMockSubcategoryDb;
+        
+        
+        
+        const newMockSubcategoryDb : MockCategoryDb = [];
+        (mockCategoryDb ?? internalMockCategoryDb).subcategories = newMockSubcategoryDb;
+        return newMockSubcategoryDb;
+    })();
     const nestedCategoryState : CategoryStateProps = {
         ...categoryState,
         
@@ -272,16 +252,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         
         
         // databases:
-        mockCategoryDb   : ((): MockCategoryDb => {
-            const existingMockSubcategoryDb = (mockCategoryDb ?? internalMockCategoryDb).subcategories;
-            if (existingMockSubcategoryDb) return existingMockSubcategoryDb;
-            
-            
-            
-            const newMockSubcategoryDb : MockCategoryDb = [];
-            (mockCategoryDb ?? internalMockCategoryDb).subcategories = newMockSubcategoryDb;
-            return newMockSubcategoryDb;
-        })(),
+        mockCategoryDb   : nestedMockCategoryDb,
     };
     
     
@@ -324,7 +295,19 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
     const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
     const [commitMoveImage  , {isLoading : isLoadingCommitMoveImage  }] = useMoveImage();
     
-    const _useGetSubCategoryPage = useUseGetSubCategoryPage(model?.id ?? null, mockCategoryDb); // views the sub_categories of current_category_dialog
+    const _useGetMockedSubCategoryPage = useEvent((arg: PaginationArgs): UseGetModelPageApi<CategoryDetail> => {
+        return {
+            // data:
+            data         : {
+                total    : nestedMockCategoryDb.length,
+                entities : nestedMockCategoryDb.slice((arg.page - 1) * arg.perPage),
+            },
+            isLoading    : false,
+            isFetching   : false,
+            isError      : false,
+            refetch      : () => {},
+        };
+    });
     
     
     
@@ -790,7 +773,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
                     
                     
                     // data:
-                    useGetModelPage={_useGetSubCategoryPage}
+                    useGetModelPage={_useGetMockedSubCategoryPage}
                 >
                     <CategoryStateProvider
                         {...nestedCategoryState}
