@@ -93,9 +93,7 @@ const VariantStateContext = createContext<VariantState>(defaultVariantStateConte
 VariantStateContext.displayName  = 'VariantState';
 
 export const useVariantState = (): VariantState => {
-    const variantState = useContext(VariantStateContext);
-    if (variantState === defaultVariantStateContext) throw Error('not inside <VariantStateProvider>');
-    return variantState;
+    return useContext(VariantStateContext);
 }
 
 
