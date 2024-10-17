@@ -91,6 +91,11 @@ export interface CategoryState
     
     
     
+    // behaviors:
+    selectable           : boolean
+    
+    
+    
     // values:
     value                : Set<string>
     onChange             : EditorChangeEventHandler<Set<string>>
@@ -123,6 +128,11 @@ const defaultCategoryStateContext : CategoryState = {
     
     // data:
     parentCategoryId     : null,
+    
+    
+    
+    // behaviors:
+    selectable           : false,
     
     
     
@@ -171,6 +181,11 @@ const CategoryStateProvider = (props: React.PropsWithChildren<CategoryStateProps
         
         
         
+        // behaviors:
+        selectable           : defaultSelectable,
+        
+        
+        
         // values:
         value                : defaultValue,
         onChange             : defaultOnChange,
@@ -201,6 +216,11 @@ const CategoryStateProvider = (props: React.PropsWithChildren<CategoryStateProps
         
         // data:
         parentCategoryId     = defaultParentCategoryId,
+        
+        
+        
+        // behaviors:
+        selectable           = defaultSelectable,
         
         
         
@@ -237,6 +257,11 @@ const CategoryStateProvider = (props: React.PropsWithChildren<CategoryStateProps
         
         
         
+        // behaviors:
+        selectable,
+        
+        
+        
         // values:
         value,
         onChange,
@@ -262,6 +287,11 @@ const CategoryStateProvider = (props: React.PropsWithChildren<CategoryStateProps
         
         // data:
         parentCategoryId,
+        
+        
+        
+        // behaviors:
+        selectable,
         
         
         

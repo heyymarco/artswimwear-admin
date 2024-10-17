@@ -166,9 +166,13 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
     
     
     // states:
-    // workaround for penetrating <CategoryStateProvider> to showDialog():
     const categoryState = useCategoryState();
     const {
+        // behaviors:
+        selectable,
+        
+        
+        
         // values:
         value,
         
@@ -246,7 +250,14 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                         
                         // workaround for penetrating <CategoryStateProvider> to showDialog():
                         // states:
-                        categoryState={categoryState}
+                        categoryState={{
+                            ...categoryState,
+                            
+                            
+                            
+                            // behaviors:
+                            selectable : false,
+                        }}
                     />
                 );
                 default           : throw new Error('app error');
@@ -365,7 +376,13 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
             />
             
             <h3 className='name'>
-                <Check
+                {!selectable && <span
+                    // classes:
+                    className='decorator'
+                >
+                    {name}
+                </span>}
+                {selectable && <Check
                     // classes:
                     className='decorator'
                     
@@ -381,7 +398,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                     onActiveChange={handleCheckActiveChange}
                 >
                     {name}
-                </Check>
+                </Check>}
                 
                 {privilegeWrite && <EditButton
                     // classes:
@@ -514,6 +531,11 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
     // states:
     const categoryState = useCategoryState();
     const {
+        // behaviors:
+        selectable,
+        
+        
+        
         // values:
         value,
         
@@ -591,7 +613,14 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                         
                         // workaround for penetrating <CategoryStateProvider> to showDialog():
                         // states:
-                        categoryState={categoryState}
+                        categoryState={{
+                            ...categoryState,
+                            
+                            
+                            
+                            // behaviors:
+                            selectable : false,
+                        }}
                     />
                 );
                 default           : throw new Error('app error');
@@ -710,7 +739,13 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
             />
             
             <h4 className='name'>
-                <Check
+                {!selectable && <span
+                    // classes:
+                    className='decorator'
+                >
+                    {name}
+                </span>}
+                {selectable && <Check
                     // classes:
                     className='decorator'
                     
@@ -726,7 +761,7 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                     onActiveChange={handleCheckActiveChange}
                 >
                     {name}
-                </Check>
+                </Check>}
                 
                 {privilegeWrite && <EditButton
                     // classes:

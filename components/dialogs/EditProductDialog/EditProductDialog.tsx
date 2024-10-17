@@ -911,6 +911,11 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                             
                             
                             
+                            // behaviors:
+                            selectable={true}
+                            
+                            
+                            
                             // values:
                             value={categories}
                             onChange={setCategories}

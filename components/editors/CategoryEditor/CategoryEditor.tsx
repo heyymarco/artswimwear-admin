@@ -43,12 +43,17 @@ import {
 // internals:
 import {
     // types:
-    CategoryState,
-    CategoryStateProps,
+    type CategoryState,
+    
+    
+    
+    // states:
+    useCategoryState,
     
     
     
     // react components:
+    type CategoryStateProps,
     CategoryStateProvider,
 }                           from './states/categoryState'
 
@@ -96,13 +101,37 @@ interface CategoryEditorProps<TElement extends Element = HTMLElement>
             // images:
             |'registerAddedImage'
             |'registerDeletedImage'
+            
+            // behaviors:
+            |'selectable'
         >
 {
     // components:
     modelPreviewComponent  : React.ReactComponentElement<any, CategoryPreviewProps>
 }
 const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryEditorProps<TElement>): JSX.Element|null => {
-    // rest props:
+    // default states:
+    const {
+        // privileges:
+        privilegeAdd         : defaultPrivilegeAdd,
+        privilegeUpdate      : defaultPrivilegeUpdate,
+        privilegeDelete      : defaultPrivilegeDelete,
+        
+        
+        
+        // images:
+        registerAddedImage   : defaultRegisterAddedImage,
+        registerDeletedImage : defaultRegisterDeletedImage,
+        
+        
+        
+        // behaviors:
+        selectable           : defaultSelectable,
+    } = useCategoryState();
+    
+    
+    
+    // props:
     const {
         // accessibilities:
         createItemText = 'Add New Category',
@@ -117,15 +146,20 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
         
         
         // privileges:
-        privilegeAdd,
-        privilegeUpdate,
-        privilegeDelete,
+        privilegeAdd         = defaultPrivilegeAdd,
+        privilegeUpdate      = defaultPrivilegeUpdate,
+        privilegeDelete      = defaultPrivilegeDelete,
         
         
         
         // images:
-        registerAddedImage,
-        registerDeletedImage,
+        registerAddedImage   = defaultRegisterAddedImage,
+        registerDeletedImage = defaultRegisterDeletedImage,
+        
+        
+        
+        // behaviors:
+        selectable           = defaultSelectable,
         
         
         
@@ -189,6 +223,11 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
             // images:
             registerAddedImage   = {registerAddedImage  }
             registerDeletedImage = {registerDeletedImage}
+            
+            
+            
+            // behaviors:
+            selectable={selectable}
             
             
             
