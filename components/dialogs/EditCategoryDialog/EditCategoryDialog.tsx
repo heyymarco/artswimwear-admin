@@ -220,7 +220,17 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
     
     
     // states:
-    const [internalMockCategoryDb] = useState<MockCategoryDb>(() => []);
+    const [internalMockCategoryDb] = useState<MockCategoryDb>(() => {
+        if (model) {
+            const newMockCategoryDb : MockCategoryDb = [];
+            newMockCategoryDb.subcategories = model.subcategories.slice(0); // slice(0) => clone the array of subcategories (the array is locked by immer)
+            return newMockCategoryDb;
+        } // if
+        
+        
+        
+        return [];
+    });
     const {
         // privileges:
         privilegeAdd,
