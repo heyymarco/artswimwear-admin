@@ -239,7 +239,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         
         
         // databases:
-        mockCategoryDb   : ((): MockCategoryDb|null => {
+        mockCategoryDb   : ((): MockCategoryDb => {
             const existingMockSubcategoryDb = (mockCategoryDb ?? internalMockCategoryDb).subcategories;
             if (existingMockSubcategoryDb) return existingMockSubcategoryDb;
             
