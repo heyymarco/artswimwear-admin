@@ -87,9 +87,7 @@ const CategoryStateContext = createContext<CategoryState>(defaultCategoryStateCo
 CategoryStateContext.displayName  = 'CategoryState';
 
 export const useCategoryState = (): CategoryState => {
-    const categoryState = useContext(CategoryStateContext);
-    if (categoryState === defaultCategoryStateContext) throw Error('not inside <CategoryStateProvider>');
-    return categoryState;
+    return useContext(CategoryStateContext);
 }
 
 
