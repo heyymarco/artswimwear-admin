@@ -72,6 +72,11 @@ import {
     EditButton,
 }                           from '@/components/EditButton'
 import {
+    // databases:
+    type MockCategoryDb,
+    
+    
+    
     // states:
     useCategoryState,
     
@@ -175,6 +180,11 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
         
         // values:
         value,
+        
+        
+        
+        // databases:
+        mockCategoryDb,
         
         
         
@@ -421,6 +431,24 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
             <CategoryStateProvider
                 // data:
                 parentCategoryId={model.id} // creates the sub_categories of current_category_view
+                
+                
+                
+                // databases:
+                mockCategoryDb={((): MockCategoryDb|undefined => {
+                    if (!mockCategoryDb) return undefined; // no mock_db => no sub_mock_db
+                    
+                    
+                    
+                    const existingMockSubcategoryDb = mockCategoryDb.subcategories;
+                    if (existingMockSubcategoryDb) return existingMockSubcategoryDb;
+                    
+                    
+                    
+                    const newMockSubcategoryDb : MockCategoryDb = [];
+                    mockCategoryDb.subcategories = newMockSubcategoryDb;
+                    return newMockSubcategoryDb;
+                })()}
             >
                 <SubcategoryList
                     // data:
@@ -538,6 +566,11 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
         
         // values:
         value,
+        
+        
+        
+        // databases:
+        mockCategoryDb,
         
         
         
@@ -784,6 +817,24 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
             <CategoryStateProvider
                 // data:
                 parentCategoryId={model.id} // creates the sub_categories of current_category_view
+                
+                
+                
+                // databases:
+                mockCategoryDb={((): MockCategoryDb|undefined => {
+                    if (!mockCategoryDb) return undefined; // no mock_db => no sub_mock_db
+                    
+                    
+                    
+                    const existingMockSubcategoryDb = mockCategoryDb.subcategories;
+                    if (existingMockSubcategoryDb) return existingMockSubcategoryDb;
+                    
+                    
+                    
+                    const newMockSubcategoryDb : MockCategoryDb = [];
+                    mockCategoryDb.subcategories = newMockSubcategoryDb;
+                    return newMockSubcategoryDb;
+                })()}
             >
                 <SubcategoryList
                     // data:
