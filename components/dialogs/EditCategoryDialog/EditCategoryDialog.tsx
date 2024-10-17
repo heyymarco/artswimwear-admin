@@ -75,6 +75,7 @@ import {
     CategoryEditor,
 }                           from '@/components/editors/CategoryEditor'
 import {
+    type UseGetModelPageApi,
     PaginationStateProvider,
 }                           from '@/components/explorers/Pagination'
 import {
@@ -102,6 +103,7 @@ import {
 // models:
 import {
     // types:
+    type MutationArgs,
     type PaginationArgs,
     
     type ProductVisibility,
@@ -131,6 +133,11 @@ import {
     useDraftDifferentialImages,
 }                           from '@/states/draftDifferentialImages'
 
+// others:
+import {
+    customAlphabet,
+}                           from 'nanoid/async'
+
 // configs:
 import {
     PAGE_CATEGORY_TAB_INFORMATIONS,
@@ -143,12 +150,28 @@ import {
 
 
 // hooks:
-const useUseGetSubCategoryPage = (parentCategoryId : string|null) => {
-    return (arg: PaginationArgs) => {
-        return _useGetCategoryPage({
-            ...arg,
-            parent : parentCategoryId,
-        });
+const useUseGetSubCategoryPage = (parentCategoryId : string|null, mockCategoryDb?: MockCategoryDb|null) => {
+    return (arg: PaginationArgs): UseGetModelPageApi<CategoryDetail> => {
+        const isDbMocked = !!mockCategoryDb;
+        if (isDbMocked) {
+            return {
+                // data:
+                data         : {
+                    total    : mockCategoryDb.length,
+                    entities : mockCategoryDb.slice((arg.page - 1) * arg.perPage),
+                },
+                isLoading    : false,
+                isFetching   : false,
+                isError      : false,
+                refetch      : () => {},
+            };
+        }
+        else {
+            return _useGetCategoryPage({
+                ...arg,
+                parent : parentCategoryId,
+            });
+        } // if
     };
 };
 
@@ -291,7 +314,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
     const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
     const [commitMoveImage  , {isLoading : isLoadingCommitMoveImage  }] = useMoveImage();
     
-    const _useGetSubCategoryPage = useUseGetSubCategoryPage(model?.id ?? null); // views the sub_categories of current_category_dialog
+    const _useGetSubCategoryPage = useUseGetSubCategoryPage(model?.id ?? null, mockCategoryDb); // views the sub_categories of current_category_dialog
     
     
     
@@ -338,39 +361,81 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         
         
         
-        try {
-            return await updateCategory({
-                parent         : parentCategoryId,
-                
-                id             : id ?? '',
-                
-                visibility     : (whenUpdate.visibility  || whenAdd) ? visibility                                        : undefined,
-                name           : (whenUpdate.description || whenAdd) ? name                                              : undefined,
-                path           : (whenUpdate.description || whenAdd) ? path                                              : undefined,
-                images         : (whenUpdate.images      || whenAdd) ? updatedImages                                     : undefined,
-                description    : (whenUpdate.description || whenAdd) ? ((description?.toJSON?.() ?? description) as any) : undefined,
-            }).unwrap();
-        }
-        finally {
-            if (immigratedImages.length) {
-                try {
-                    await commitDeleteImage({
-                        imageId : immigratedImages,
-                    }).unwrap();
-                }
-                catch {
-                    // ignore any deleteImages error
-                } // try
+        id ??= await (async () => {
+            const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
+            return ` ${await nanoid()}`; // starts with space{random-temporary-id}
+        })();
+        
+        const mutatedData : MutationArgs<CategoryDetail> = {
+            id             : id,
+            
+            visibility     : (whenUpdate.visibility  || whenAdd) ? visibility                                        : undefined,
+            name           : (whenUpdate.description || whenAdd) ? name                                              : undefined,
+            path           : (whenUpdate.description || whenAdd) ? path                                              : undefined,
+            images         : (whenUpdate.images      || whenAdd) ? updatedImages                                     : undefined,
+            description    : (whenUpdate.description || whenAdd) ? ((description?.toJSON?.() ?? description) as any) : undefined,
+        };
+        
+        
+        
+        if (isDbMocked) {
+            const recordIndex = mockCategoryDb.findIndex(({id: searchId}) => (searchId === id));
+            if (recordIndex >= 0) {
+                const currentRecord : CategoryDetail = mockCategoryDb[recordIndex];
+                const updatedRecord : CategoryDetail = {
+                    ...currentRecord,
+                    ...mutatedData,
+                };
+                mockCategoryDb[recordIndex] = updatedRecord;
+                return updatedRecord;
             } // if
-        } // try
+            
+            
+            
+            const newRecord : CategoryDetail = {
+                excerpt       : '',
+                subcategories : [],
+                ...mutatedData as Pick<CategoryDetail, 'id'|'visibility'|'name'|'path'|'images'|'description'>,
+            };
+            mockCategoryDb.unshift(newRecord);
+            return newRecord;
+        }
+        else {
+            try {
+                return await updateCategory({
+                    parent         : parentCategoryId,
+                    
+                    ...mutatedData,
+                }).unwrap();
+            }
+            finally {
+                if (immigratedImages.length) {
+                    try {
+                        await commitDeleteImage({
+                            imageId : immigratedImages,
+                        }).unwrap();
+                    }
+                    catch {
+                        // ignore any deleteImages error
+                    } // try
+                } // if
+            } // try
+        } // if
     });
     
     const handleDelete               = useEvent<DeleteHandler<CategoryDetail>>(async ({id}) => {
-        await deleteCategory({
-            parent         : parentCategoryId,
-            
-            id             : id,
-        }).unwrap();
+        if (isDbMocked) {
+            const recordIndex = mockCategoryDb.findIndex(({id: searchId}) => (searchId === id));
+            if (recordIndex < 0) return;
+            mockCategoryDb.splice(recordIndex, 1);
+        }
+        else {
+            await deleteCategory({
+                parent         : parentCategoryId,
+                
+                id             : id,
+            }).unwrap();
+        } // if
     });
     
     const handleSideUpdate           = useEvent<UpdateSideHandler>(async () => {
