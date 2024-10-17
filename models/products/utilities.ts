@@ -674,3 +674,69 @@ export const convertCategoryDetailDataToCategoryDetail = async (selector: Return
         }))
     );
 }
+
+
+
+export interface CategoryDiff {
+    categoryOris : CategoryDetail[]
+    
+    categoryDels : string[]
+    categoryAdds : (Omit<CategoryDetail, 'id'|'subcategories'> & Pick<CategoryDiff, 'categoryAdds'>)[]
+    categoryMods : (Omit<CategoryDetail,      'subcategories'> & CategoryDiff)[]
+}
+export const createCategoryDiff = (categories: CategoryDetail[], categoryOris : CategoryDetail[]): CategoryDiff => {
+    const categoryDels : CategoryDiff['categoryDels'] = (() => {
+        const postedIds  : string[] = categories.map(selectId);
+        const currentIds : string[] = categoryOris.map(selectId);
+        return currentIds.filter((currentId) => !postedIds.includes(currentId));
+    })();
+    const categoryAdds : CategoryDiff['categoryAdds'] = [];
+    const categoryMods : CategoryDiff['categoryMods'] = [];
+    for (const {id: groupId, subcategories, ...restCategory} of categories) {
+        const {
+            categoryOris : subcategoryOris,
+            
+            categoryDels : subcategoryDels,
+            categoryAdds : subcategoryAdds,
+            categoryMods : subcategoryMods,
+        } = createCategoryDiff(
+            subcategories,
+            categoryOris.find(({id: parentId}) => (parentId === groupId))?.subcategories ?? []
+        );
+        
+        
+        
+        if (!groupId || (groupId[0] === ' ')) {
+            categoryAdds.push({
+                // data:
+                ...restCategory,
+                
+                // relations:
+                categoryAdds : subcategoryAdds,
+            });
+            continue;
+        } // if
+        
+        
+        
+        categoryMods.push({
+            // data:
+            id   : groupId,
+            ...restCategory,
+            
+            // relations:
+            categoryOris : subcategoryOris,
+            
+            categoryDels : subcategoryDels,
+            categoryAdds : subcategoryAdds,
+            categoryMods : subcategoryMods,
+        });
+    } // for
+    return {
+        categoryOris,
+        
+        categoryDels,
+        categoryAdds,
+        categoryMods,
+    };
+}
