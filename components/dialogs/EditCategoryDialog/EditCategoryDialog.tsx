@@ -270,7 +270,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
     
     
     // refs:
-    const firstEditorRef = useRef<HTMLInputElement|null>(null); // TODO: finish this
+    const firstEditorRef = useRef<HTMLInputElement|null>(null);
     
     
     
