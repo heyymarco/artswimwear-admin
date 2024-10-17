@@ -64,6 +64,11 @@ import {
     
     
     
+    // databases:
+    type MockCategoryDb,
+    
+    
+    
     // react components:
     type CategoryStateProps,
     CategoryStateProvider,
@@ -172,7 +177,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
     
     
     
-    // rest props:
+    // props:
     const {
         // data:
         model = null,
@@ -192,6 +197,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
     
     
     // states:
+    const [internalMockCategoryDb] = useState<MockCategoryDb>(() => []);
     const {
         // privileges:
         privilegeAdd,
@@ -214,7 +220,14 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         // values:
         value,
         onChange,
+        
+        
+        
+        // databases:
+        mockCategoryDb       : mockCategoryDbRaw,
     } = categoryState;
+    const isDbMocked     = !!mockCategoryDbRaw;
+    const mockCategoryDb = mockCategoryDbRaw ?? internalMockCategoryDb; // use internal mock if null
     
     const nestedCategoryState : CategoryStateProps = {
         ...categoryState,
@@ -223,6 +236,24 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         
         // data:
         parentCategoryId : model?.id ?? null, // creates the sub_categories of current_category_dialog
+        
+        
+        
+        // databases:
+        mockCategoryDb   : ((): MockCategoryDb|null => {
+            if (!mockCategoryDb) return null;
+            
+            
+            
+            const existingMockSubcategoryDb = mockCategoryDb.subcategories;
+            if (existingMockSubcategoryDb) return existingMockSubcategoryDb;
+            
+            
+            
+            const newMockSubcategoryDb : MockCategoryDb = [];
+            mockCategoryDb.subcategories = newMockSubcategoryDb;
+            return newMockSubcategoryDb;
+        })(),
     };
     
     
@@ -434,7 +465,8 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
             
             // data:
             modelName='Category'
-            modelEntryName={model?.name}
+            // modelEntryName={model?.name}
+            modelEntryName={isDbMocked ? `${model?.name} (mocked)` : model?.name} // TODO: remove this line
             model={model}
             
             

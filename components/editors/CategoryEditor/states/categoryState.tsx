@@ -73,6 +73,16 @@ export const privilegeCategoryUpdateFullAccess : Required<CategoryPrivilege>['pr
 
 
 
+// databases:
+export interface MockCategoryDb
+    extends
+        Array<CategoryDetail>
+{
+    subcategories ?: MockCategoryDb
+}
+
+
+
 // contexts:
 export interface CategoryState
     extends
@@ -99,6 +109,11 @@ export interface CategoryState
     // values:
     value                : Set<string>
     onChange             : EditorChangeEventHandler<Set<string>>
+    
+    
+    
+    // databases:
+    mockCategoryDb       : MockCategoryDb|null
     
     
     
@@ -139,6 +154,11 @@ const defaultCategoryStateContext : CategoryState = {
     // values:
     value                : new Set<string>(),
     onChange             : noopCallback,
+    
+    
+    
+    // databases:
+    mockCategoryDb       : null,
     
     
     
@@ -192,6 +212,11 @@ const CategoryStateProvider = (props: React.PropsWithChildren<CategoryStateProps
         
         
         
+        // databases:
+        mockCategoryDb       : defaultMockCategoryDb,
+        
+        
+        
         // handlers:
         onModelSelect        : defaultOnModelSelect,
         onModelDelete        : defaultOnModelDelete,
@@ -230,6 +255,11 @@ const CategoryStateProvider = (props: React.PropsWithChildren<CategoryStateProps
         
         
         
+        // databases:
+        mockCategoryDb       = defaultMockCategoryDb,
+        
+        
+        
         // handlers:
         onModelSelect        = defaultOnModelSelect,
         onModelDelete        = defaultOnModelDelete,
@@ -265,6 +295,11 @@ const CategoryStateProvider = (props: React.PropsWithChildren<CategoryStateProps
         // values:
         value,
         onChange,
+        
+        
+        
+        // databases:
+        mockCategoryDb,
         
         
         
