@@ -73,15 +73,15 @@ export interface VariantState
 
 const defaultVariantStateContext : VariantState = {
     // privileges:
-    privilegeAdd    : false,
-    privilegeUpdate : {
+    privilegeAdd         : false,
+    privilegeUpdate      : {
         description : false,
         images      : false,
         price       : false,
         stock       : false,
         visibility  : false,
     },
-    privilegeDelete : false,
+    privilegeDelete      : false,
     
     
     
