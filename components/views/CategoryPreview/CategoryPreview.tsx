@@ -11,11 +11,6 @@ import {
     useRef,
 }                           from 'react'
 
-// next-auth:
-import {
-    useSession,
-}                           from 'next-auth/react'
-
 // styles:
 import {
     useCategoryStyleSheet,
@@ -77,11 +72,13 @@ import {
     EditButton,
 }                           from '@/components/EditButton'
 import {
-    type EditorChangeEventHandler,
-}                           from '@/components/editors/Editor'
-import {
     // states:
     useCategoryState,
+    
+    
+    
+    // react components:
+    CategoryStateProvider,
 }                           from '@/components/editors/CategoryEditor'
 import {
     CompoundWithBadge,
@@ -141,20 +138,6 @@ export interface CategoryPreviewProps
             |'onChange'
         >
 {
-    // data:
-    parentCategoryId : string|null
-    
-    
-    
-    // values:
-    value    : Set<string>
-    onChange : EditorChangeEventHandler<Set<string>>
-    
-    
-    
-    // handlers:
-    onModelSelect ?: EditorChangeEventHandler<ModelSelectEvent>
-    onModelDelete ?: DeleteHandler<CategoryDetail>
 }
 const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
     // styles:
@@ -166,23 +149,6 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
     const {
         // data:
         model,
-        
-        
-        
-        // data:
-        parentCategoryId,
-        
-        
-        
-        // values:
-        value,
-        onChange,
-        
-        
-        
-        // handlers:
-        onModelSelect,
-        onModelDelete,
         
         
         
@@ -202,6 +168,20 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
     // states:
     // workaround for penetrating <CategoryStateProvider> to showDialog():
     const categoryState = useCategoryState();
+    const {
+        // values:
+        value,
+        
+        
+        
+        // handlers:
+        onModelSelect,
+        onModelDelete,
+    } = categoryState;
+    
+    
+    
+    // privileges:
  // const privilegeAdd               = !!categoryState.privilegeAdd;
     const privilegeUpdateDescription = !!categoryState.privilegeUpdate?.description;
     const privilegeUpdateImages      = !!categoryState.privilegeUpdate?.images;
@@ -250,14 +230,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                 case 'full'       : return (
                     <EditCategoryDialog
                         // data:
-                        parentCategoryId={parentCategoryId}
                         model={model} // modify current model
-                        
-                        
-                        
-                        // values:
-                        value={value}
-                        onChange={onChange}
                         
                         
                         
@@ -272,7 +245,8 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                         
                         
                         // workaround for penetrating <CategoryStateProvider> to showDialog():
-                        {...categoryState}
+                        // states:
+                        categoryState={categoryState}
                     />
                 );
                 default           : throw new Error('app error');
@@ -427,27 +401,20 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                 <VisibilityBadge visibility={visibility} className='visibility' />
             </h3>
             
-            <SubcategoryList
+            <CategoryStateProvider
                 // data:
-                parentCategoryId={model.id} // creates the sub_categories of current_category_dialog
-                subcategories={subcategories}
-                
-                
-                
-                // values:
-                value={value}
-                onChange={onChange}
-                
-                
-                
-                // classes:
-                className='subcategories'
-                
-                
-                
-                // handlers:
-                onModelSelect={onModelSelect}
-            />
+                parentCategoryId={model.id} // creates the sub_categories of current_category_view
+            >
+                <SubcategoryList
+                    // data:
+                    subcategories={subcategories}
+                    
+                    
+                    
+                    // classes:
+                    className='subcategories'
+                />
+            </CategoryStateProvider>
         </ListItem>
     );
 };
@@ -469,43 +436,17 @@ interface SubcategoryListProps
 {
     // data:
     subcategories : CategoryDetail[]
-    parentCategoryId : string
-    
-    
-    
-    // values:
-    value    : Set<string>
-    onChange : EditorChangeEventHandler<Set<string>>
-    
-    
-    
-    // handlers:
-    onModelSelect ?: EditorChangeEventHandler<ModelSelectEvent>
-    onModelDelete ?: DeleteHandler<CategoryDetail>
 }
 const SubcategoryList = (props: SubcategoryListProps): JSX.Element|null => {
     // props:
     const {
         // data:
-        parentCategoryId,
         subcategories,
         
         
         
-        // values:
-        value,
-        onChange,
-        
-        
-        
-        // handlers:
-        onModelSelect,
-        onModelDelete,
-        
-        
-        
         // other props:
-        ...restUlProps
+        ...restListProps
     } = props;
     
     
@@ -515,7 +456,7 @@ const SubcategoryList = (props: SubcategoryListProps): JSX.Element|null => {
     return (
         <List
             // other props:
-            {...restUlProps}
+            {...restListProps}
         >
             {subcategories.map((subcategory, index) =>
                 <SubcategoryListItem
@@ -525,20 +466,7 @@ const SubcategoryList = (props: SubcategoryListProps): JSX.Element|null => {
                     
                     
                     // data:
-                    parentCategoryId={parentCategoryId}
                     model={subcategory}
-                    
-                    
-                    
-                    // values:
-                    value={value}
-                    onChange={onChange}
-                    
-                    
-                    
-                    // handlers:
-                    onModelSelect={onModelSelect}
-                    onModelDelete={onModelDelete}
                 />
             )}
         </List>
@@ -556,19 +484,6 @@ interface SubcategoryListItemProps
 {
     // data:
     model: CategoryDetail
-    parentCategoryId : string
-    
-    
-    
-    // values:
-    value    : Set<string>
-    onChange : EditorChangeEventHandler<Set<string>>
-    
-    
-    
-    // handlers:
-    onModelSelect ?: EditorChangeEventHandler<ModelSelectEvent>
-    onModelDelete ?: DeleteHandler<CategoryDetail>
 }
 const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null => {
     // styles:
@@ -579,20 +494,7 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
     // props:
     const {
         // data:
-        parentCategoryId,
         model,
-        
-        
-        
-        // values:
-        value,
-        onChange,
-        
-        
-        
-        // handlers:
-        onModelSelect,
-        onModelDelete,
         
         
         
@@ -610,8 +512,21 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
     
     
     // states:
-    // workaround for penetrating <CategoryStateProvider> to showDialog():
     const categoryState = useCategoryState();
+    const {
+        // values:
+        value,
+        
+        
+        
+        // handlers:
+        onModelSelect,
+        onModelDelete,
+    } = categoryState;
+    
+    
+    
+    // privileges:
  // const privilegeAdd               = !!categoryState.privilegeAdd;
     const privilegeUpdateDescription = !!categoryState.privilegeUpdate?.description;
     const privilegeUpdateImages      = !!categoryState.privilegeUpdate?.images;
@@ -660,14 +575,7 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                 case 'full'       : return (
                     <EditCategoryDialog
                         // data:
-                        parentCategoryId={parentCategoryId}
                         model={model} // modify current model
-                        
-                        
-                        
-                        // values:
-                        value={value}
-                        onChange={onChange}
                         
                         
                         
@@ -682,7 +590,8 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                         
                         
                         // workaround for penetrating <CategoryStateProvider> to showDialog():
-                        {...categoryState}
+                        // states:
+                        categoryState={categoryState}
                     />
                 );
                 default           : throw new Error('app error');
@@ -792,7 +701,7 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                                     
                                     alt={name ?? ''}
                                     src={resolveMediaUrl(image)}
-                                    sizes={`${minImageWidth}px`}
+                                    sizes={`${minImageWidthSub}px`}
                                 />
                             )}
                         </MiniCarousel>
@@ -837,27 +746,20 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                 <VisibilityBadge visibility={visibility} className='visibility' />
             </h4>
             
-            <SubcategoryList
+            <CategoryStateProvider
                 // data:
-                parentCategoryId={model.id} // creates the sub_categories of current_category_dialog
-                subcategories={subcategories}
-                
-                
-                
-                // values:
-                value={value}
-                onChange={onChange}
-                
-                
-                
-                // classes:
-                className='subcategories'
-                
-                
-                
-                // handlers:
-                onModelSelect={onModelSelect}
-            />
+                parentCategoryId={model.id} // creates the sub_categories of current_category_view
+            >
+                <SubcategoryList
+                    // data:
+                    subcategories={subcategories}
+                    
+                    
+                    
+                    // classes:
+                    className='subcategories'
+                />
+            </CategoryStateProvider>
         </ListItem>
     );
 }

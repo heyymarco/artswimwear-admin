@@ -15,6 +15,22 @@ import {
     useMemo,
 }                           from 'react'
 
+// internal components:
+import {
+    // types:
+    type EditorChangeEventHandler,
+}                           from '@/components/editors/Editor'
+import {
+    // types:
+    type DeleteHandler,
+}                           from '@/components/dialogs/ComplexEditModelDialog'
+
+// models:
+import {
+    // types:
+    type CategoryDetail,
+}                           from '@/models'
+
 // internals:
 import type {
     DraftDifferentialImagesApi,
@@ -41,6 +57,11 @@ export interface CategoryPrivilege
     privilegeDelete  ?: boolean
 }
 
+export interface ModelSelectEvent {
+    id       : string
+    selected : boolean
+}
+
 
 
 // utilities:
@@ -65,23 +86,55 @@ export interface CategoryState
             |'registerDeletedImage'
         >>
 {
+    // data:
+    parentCategoryId     : string|null
+    
+    
+    
+    // values:
+    value                : Set<string>
+    onChange             : EditorChangeEventHandler<Set<string>>
+    
+    
+    
+    // handlers:
+    onModelSelect        : EditorChangeEventHandler<ModelSelectEvent>
+    onModelDelete        : DeleteHandler<CategoryDetail>
 }
 
+const noopCallback = () => {};
 const defaultCategoryStateContext : CategoryState = {
     // privileges:
-    privilegeAdd    : false,
-    privilegeUpdate : {
+    privilegeAdd         : false,
+    privilegeUpdate      : {
         description : false,
         images      : false,
         visibility  : false,
     },
-    privilegeDelete : false,
+    privilegeDelete      : false,
     
     
     
     // images:
     registerAddedImage   : () => {},
     registerDeletedImage : () => {},
+    
+    
+    
+    // data:
+    parentCategoryId     : null,
+    
+    
+    
+    // values:
+    value                : new Set<string>(),
+    onChange             : noopCallback,
+    
+    
+    
+    // handlers:
+    onModelSelect        : noopCallback,
+    onModelDelete        : noopCallback,
 }
 const CategoryStateContext = createContext<CategoryState>(defaultCategoryStateContext);
 CategoryStateContext.displayName  = 'CategoryState';
@@ -110,6 +163,23 @@ const CategoryStateProvider = (props: React.PropsWithChildren<CategoryStateProps
         // images:
         registerAddedImage   : defaultRegisterAddedImage,
         registerDeletedImage : defaultRegisterDeletedImage,
+        
+        
+        
+        // data:
+        parentCategoryId     : defaultParentCategoryId,
+        
+        
+        
+        // values:
+        value                : defaultValue,
+        onChange             : defaultOnChange,
+        
+        
+        
+        // handlers:
+        onModelSelect        : defaultOnModelSelect,
+        onModelDelete        : defaultOnModelDelete,
     } = useCategoryState();
     
     
@@ -126,6 +196,23 @@ const CategoryStateProvider = (props: React.PropsWithChildren<CategoryStateProps
         // images:
         registerAddedImage   = defaultRegisterAddedImage,
         registerDeletedImage = defaultRegisterDeletedImage,
+        
+        
+        
+        // data:
+        parentCategoryId     = defaultParentCategoryId,
+        
+        
+        
+        // values:
+        value                = defaultValue,
+        onChange             = defaultOnChange,
+        
+        
+        
+        // handlers:
+        onModelSelect        = defaultOnModelSelect,
+        onModelDelete        = defaultOnModelDelete,
     } = props;
     
     
@@ -142,6 +229,23 @@ const CategoryStateProvider = (props: React.PropsWithChildren<CategoryStateProps
         // images:
         registerAddedImage,
         registerDeletedImage,
+        
+        
+        
+        // data:
+        parentCategoryId,
+        
+        
+        
+        // values:
+        value,
+        onChange,
+        
+        
+        
+        // handlers:
+        onModelSelect,
+        onModelDelete,
     }), [
         // privileges:
         privilegeAdd,
@@ -153,6 +257,23 @@ const CategoryStateProvider = (props: React.PropsWithChildren<CategoryStateProps
         // images:
         registerAddedImage,
         registerDeletedImage,
+        
+        
+        
+        // data:
+        parentCategoryId,
+        
+        
+        
+        // values:
+        value,
+        onChange,
+        
+        
+        
+        // handlers:
+        onModelSelect,
+        onModelDelete,
     ]);
     
     

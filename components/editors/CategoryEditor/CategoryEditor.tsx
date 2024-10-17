@@ -87,7 +87,16 @@ interface CategoryEditorProps<TElement extends Element = HTMLElement>
         >>,
         
         // states:
-        CategoryStateProps
+        Pick<CategoryStateProps,
+            // privileges:
+            |'privilegeAdd'
+            |'privilegeUpdate'
+            |'privilegeDelete'
+            
+            // images:
+            |'registerAddedImage'
+            |'registerDeletedImage'
+        >
 {
     // components:
     modelPreviewComponent  : React.ReactComponentElement<any, CategoryPreviewProps>
@@ -180,6 +189,17 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
             // images:
             registerAddedImage   = {registerAddedImage  }
             registerDeletedImage = {registerDeletedImage}
+            
+            
+            
+            // values:
+            value={value}
+            
+            
+            
+            // handlers:
+            onModelSelect={handleModelSelect}
+            onModelDelete={handleModelDelete}
         >
             <PaginationList<CategoryDetail, TElement>
                 // other props:
@@ -193,22 +213,7 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
                 
                 
                 // components:
-                modelPreviewComponent={
-                    /* <ModelPreview> */
-                    React.cloneElement<CategoryPreviewProps>(modelPreviewComponent,
-                        // props:
-                        {
-                            // values:
-                            value         : modelPreviewComponent.props.value ?? value,
-                            
-                            
-                            
-                            // handlers:
-                            onModelSelect : handleModelSelect,
-                            onModelDelete : handleModelDelete,
-                        },
-                    )
-                }
+                modelPreviewComponent={modelPreviewComponent}
             />
         </CategoryStateProvider>
     );

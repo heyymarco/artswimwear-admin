@@ -44,10 +44,6 @@ import {
 
 // internal components:
 import {
-    // types:
-    type EditorChangeEventHandler,
-}                           from '@/components/editors/Editor'
-import {
     UniquePathEditor,
 }                           from '@/components/editors/UniquePathEditor'
 import {
@@ -63,17 +59,14 @@ import {
     WysiwygEditor,
 }                           from '@/components/editors/WysiwygEditor'
 import {
-    // types:
-    CategoryState,
-    
-    
-    
     // utilities:
     privilegeCategoryUpdateFullAccess,
     
     
     
     // react components:
+    type CategoryStateProps,
+    CategoryStateProvider,
     CategoryEditor,
 }                           from '@/components/editors/CategoryEditor'
 import {
@@ -164,19 +157,9 @@ export interface EditCategoryDialogProps
             // values:
             |'value'
             |'onChange'
-        >,
-        
-        // privileges & states:
-        CategoryState
+        >
 {
-    // data:
-    parentCategoryId : string|null
-    
-    
-    
-    // values:
-    value    : Set<string>
-    onChange : EditorChangeEventHandler<Set<string>>
+    categoryState : CategoryStateProps
 }
 const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null => {
     // styles:
@@ -192,17 +175,24 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
     // rest props:
     const {
         // data:
-        parentCategoryId,
         model = null,
         
         
         
-        // values:
-        value,
-        onChange,
+        // states:
+        categoryState,
+        defaultExpandedTabIndex = 0,
         
         
         
+        // other props:
+        ...restEditCategoryDialogProps
+    } = props;
+    
+    
+    
+    // states:
+    const {
         // privileges:
         privilegeAdd,
         privilegeUpdate,
@@ -216,14 +206,27 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         
         
         
-        // states:
-        defaultExpandedTabIndex = 0,
+        // data:
+        parentCategoryId     = null,
         
         
         
-        // other props:
-        ...restEditCategoryDialogProps
-    } = props;
+        // values:
+        value,
+        onChange,
+    } = categoryState;
+    
+    const nestedCategoryState : CategoryStateProps = {
+        ...categoryState,
+        
+        
+        
+        // data:
+        parentCategoryId : model?.id ?? null, // creates the sub_categories of current_category_dialog
+    };
+    
+    
+    
     if (process.env.NODE_ENV === 'development') {
         if (parentCategoryId === model?.id) {
             throw new Error('invalid logic');
@@ -687,92 +690,82 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
                     // data:
                     useGetModelPage={_useGetSubCategoryPage}
                 >
-                    <CategoryEditor
-                        // appearances:
-                        showPaginationTop={false}
-                        autoHidePagination={true}
-                        
-                        
-                        
-                        // values:
-                        value={value}
-                        onChange={onChange}
-                        
-                        
-                        
-                        // privileges:
-                        privilegeAdd    = {                                              privilegeAdd   }
-                        /*
-                            when edit_mode (update):
-                                * the editing  capability follows the `privilegeUpdate`
-                                * the deleting capability follows the `privilegeDelete`
+                    <CategoryStateProvider
+                        {...nestedCategoryState}
+                    >
+                        <CategoryEditor
+                            // appearances:
+                            showPaginationTop={false}
+                            autoHidePagination={true}
                             
-                            when create_mode (add):
-                                * ALWAYS be ABLE to edit   the Category (because the data is *not_yet_exsist* on the database)
-                                * ALWAYS be ABLE to delete the Category (because the data is *not_yet_exsist* on the database)
-                        */
-                        privilegeUpdate = {whenAdd ? privilegeCategoryUpdateFullAccess : privilegeUpdate}
-                        privilegeDelete = {whenAdd ?               true                : privilegeDelete}
-                        
-                        
-                        
-                        // images:
-                        registerAddedImage   = {registerAddedImage  }
-                        registerDeletedImage = {registerDeletedImage}
-                        
-                        
-                        
-                        // components:
-                        modelPreviewComponent={
-                            <CategoryPreview
-                                // data:
-                                parentCategoryId={model?.id ?? null} // creates the sub_categories of current_category_dialog
-                                model={undefined as any}
+                            
+                            
+                            // values:
+                            value={value}
+                            onChange={onChange}
+                            
+                            
+                            
+                            // privileges:
+                            privilegeAdd    = {                                              privilegeAdd   }
+                            /*
+                                when edit_mode (update):
+                                    * the editing  capability follows the `privilegeUpdate`
+                                    * the deleting capability follows the `privilegeDelete`
                                 
-                                
-                                
-                                // values:
-                                value={value}
-                                onChange={onChange}
-                            />
-                        }
-                        modelCreateComponent={
-                            privilegeAdd
-                            ?
-                            <EditCategoryDialog
-                                // data:
-                                parentCategoryId={model?.id ?? null} // creates the sub_categories of current_category_dialog
-                                model={null} // create a new model
-                                
-                                
-                                
-                                // values:
-                                value={value}
-                                onChange={onChange}
-                                
-                                
-                                
-                                // workaround for penetrating <CategoryStateProvider> to showDialog():
-                                // privileges:
-                                /*
-                                    when create_mode (add):
+                                when create_mode (add):
                                     * ALWAYS be ABLE to edit   the Category (because the data is *not_yet_exsist* on the database)
                                     * ALWAYS be ABLE to delete the Category (because the data is *not_yet_exsist* on the database)
-                                */
-                                privilegeAdd    = {privilegeAdd}
-                                privilegeUpdate = {privilegeCategoryUpdateFullAccess}
-                                privilegeDelete = {true}
-                                
-                                
-                                
-                                // workaround for penetrating <CategoryStateProvider> to showDialog():
-                                // images:
-                                registerAddedImage   = {registerAddedImage  }
-                                registerDeletedImage = {registerDeletedImage}
-                            />
-                            : undefined
-                        }
-                    />
+                            */
+                            privilegeUpdate = {whenAdd ? privilegeCategoryUpdateFullAccess : privilegeUpdate}
+                            privilegeDelete = {whenAdd ?               true                : privilegeDelete}
+                            
+                            
+                            
+                            // images:
+                            registerAddedImage   = {registerAddedImage  }
+                            registerDeletedImage = {registerDeletedImage}
+                            
+                            
+                            
+                            // components:
+                            modelPreviewComponent={
+                                <CategoryPreview
+                                    // data:
+                                    model={undefined as any}
+                                />
+                            }
+                            modelCreateComponent={
+                                privilegeAdd
+                                ?
+                                <EditCategoryDialog
+                                    // data:
+                                    model={null} // create a new model
+                                    
+                                    
+                                    
+                                    // workaround for penetrating <CategoryStateProvider> to showDialog():
+                                    // states:
+                                    categoryState={{
+                                        ...nestedCategoryState,
+                                        
+                                        
+                                        
+                                        // privileges:
+                                        /*
+                                            when create_mode (add):
+                                            * ALWAYS be ABLE to edit   the Category (because the data is *not_yet_exsist* on the database)
+                                            * ALWAYS be ABLE to delete the Category (because the data is *not_yet_exsist* on the database)
+                                        */
+                                        privilegeAdd    : privilegeAdd,
+                                        privilegeUpdate : privilegeCategoryUpdateFullAccess,
+                                        privilegeDelete : true,
+                                    }}
+                                />
+                                : undefined
+                            }
+                        />
+                    </CategoryStateProvider>
                 </PaginationStateProvider>
             </TabPanel>
         </>}</ComplexEditModelDialog>
