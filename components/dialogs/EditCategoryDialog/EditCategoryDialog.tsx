@@ -113,7 +113,7 @@ import {
     useUpdateCategory,
     useDeleteCategory,
     
-    useCategoryAvailablePath,
+    useCategoryAvailablePath as _useCategoryAvailablePath,
     
     usePostImage,
     useDeleteImage,
@@ -319,7 +319,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         };
     });
     const _useMockedCategoryAvailablePath = useEvent((): UseGetModelAvailablePathApi => {
-        const [availablePath, { data, isLoading, isFetching, isError }, { lastArg }] = useCategoryAvailablePath();
+        const [availablePath, { data, isLoading, isFetching, isError }, { lastArg }] = _useCategoryAvailablePath();
         
         return [
             (path: string) => ({
