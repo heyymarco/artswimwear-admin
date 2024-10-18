@@ -431,7 +431,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
             
             
             const newRecord : CategoryDetail = {
-                excerpt       : '',
+                excerpt       : null,
                 subcategories : [], // a new record doesn't have subcategories => assign an empty array
                 ...mutatedData as Pick<CategoryDetail, 'id'|'visibility'|'name'|'path'|'images'|'description'>, // the mutated data
             };
