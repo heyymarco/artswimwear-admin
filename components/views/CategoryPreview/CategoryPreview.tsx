@@ -433,6 +433,11 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                 mockCategoryDb={((): CategoryDetail[]|undefined => {
                     // conditions:
                     const mockModel = (mockCategoryDb && model) ? mockCategoryDb.find(({ id: searchId }) => (searchId === model.id)) : undefined;
+                    if (process.env.NODE_ENV === 'development') {
+                        if (!mockModel && mockCategoryDb && model) {
+                            throw new Error('invalid mockCategoryDb');
+                        } // if
+                    } // if
                     if (!mockModel) return undefined; // no mock_db provided on <ancestor> => no sub_mock_db
                     
                     
@@ -815,6 +820,11 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                 mockCategoryDb={((): CategoryDetail[]|undefined => {
                     // conditions:
                     const mockModel = (mockCategoryDb && model) ? mockCategoryDb.find(({ id: searchId }) => (searchId === model.id)) : undefined;
+                    if (process.env.NODE_ENV === 'development') {
+                        if (!mockModel && mockCategoryDb && model) {
+                            throw new Error('invalid mockCategoryDb');
+                        } // if
+                    } // if
                     if (!mockModel) return undefined; // no mock_db provided on <ancestor> => no sub_mock_db
                     
                     
