@@ -64,21 +64,25 @@ export interface ModelSelectEvent {
 
 
 
-// utilities:
-export const privilegeCategoryUpdateFullAccess : Required<CategoryPrivilege>['privilegeUpdate'] = {
-    description : true,
-    images      : true,
-    visibility  : true,
-};
-
-
-
 // databases:
 export interface MockCategoryDb
     extends
         Array<CategoryDetail>
 {
     subcategories ?: MockCategoryDb
+}
+
+
+
+// utilities:
+export const privilegeCategoryUpdateFullAccess : Required<CategoryPrivilege>['privilegeUpdate'] = {
+    description : true,
+    images      : true,
+    visibility  : true,
+};
+export const getNestedCategoryPaths = (categories: MockCategoryDb|undefined): string[] => {
+    if (!categories) return [];
+    return categories.flatMap(({path, subcategories}): string[] => [path, ...getNestedCategoryPaths(subcategories)]);
 }
 
 
@@ -114,6 +118,7 @@ export interface CategoryState
     
     // databases:
     mockCategoryDb       : MockCategoryDb|null
+    mockCurrentPaths     : string[]|null
     
     
     
@@ -159,6 +164,7 @@ const defaultCategoryStateContext : CategoryState = {
     
     // databases:
     mockCategoryDb       : null,
+    mockCurrentPaths     : null,
     
     
     
@@ -214,6 +220,7 @@ const CategoryStateProvider = (props: React.PropsWithChildren<CategoryStateProps
         
         // databases:
         mockCategoryDb       : defaultMockCategoryDb,
+        mockCurrentPaths     : defaultMockCurrentPaths,
         
         
         
@@ -257,6 +264,7 @@ const CategoryStateProvider = (props: React.PropsWithChildren<CategoryStateProps
         
         // databases:
         mockCategoryDb       = defaultMockCategoryDb,
+        mockCurrentPaths     = defaultMockCurrentPaths,
         
         
         
@@ -300,6 +308,7 @@ const CategoryStateProvider = (props: React.PropsWithChildren<CategoryStateProps
         
         // databases:
         mockCategoryDb,
+        mockCurrentPaths,
         
         
         
@@ -333,6 +342,12 @@ const CategoryStateProvider = (props: React.PropsWithChildren<CategoryStateProps
         // values:
         value,
         onChange,
+        
+        
+        
+        // databases:
+        mockCategoryDb,
+        mockCurrentPaths,
         
         
         

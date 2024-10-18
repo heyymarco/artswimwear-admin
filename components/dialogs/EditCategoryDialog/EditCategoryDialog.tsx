@@ -44,6 +44,7 @@ import {
 
 // internal components:
 import {
+    type UseGetModelAvailablePathApi,
     UniquePathEditor,
 }                           from '@/components/editors/UniquePathEditor'
 import {
@@ -59,13 +60,14 @@ import {
     WysiwygEditor,
 }                           from '@/components/editors/WysiwygEditor'
 import {
-    // utilities:
-    privilegeCategoryUpdateFullAccess,
-    
-    
-    
     // databases:
     type MockCategoryDb,
+    
+    
+    
+    // utilities:
+    privilegeCategoryUpdateFullAccess,
+    getNestedCategoryPaths,
     
     
     
@@ -191,15 +193,24 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
     
     // states:
     const [internalMockCategoryDb] = useState<MockCategoryDb>(() => {
-        if (model) {
-            const newMockCategoryDb : MockCategoryDb = [];
-            newMockCategoryDb.subcategories = model.subcategories.slice(0); // slice(0) => clone the array of subcategories (the array is locked by immer)
-            return newMockCategoryDb;
-        } // if
+        // conditions:
+        if (!model) return [];
         
         
         
-        return [];
+        // mocks:
+        const newMockCategoryDb : MockCategoryDb = [];
+        newMockCategoryDb.subcategories = model.subcategories.slice(0); // slice(0) => clone the array of subcategories (the array is locked by immer)
+        return newMockCategoryDb;
+    });
+    const [internalMockCurrentPaths] = useState<string[]|undefined>(() => {
+        // conditions:
+        if (!model) return undefined;
+        
+        
+        
+        // mocks:
+        return getNestedCategoryPaths(model.subcategories);
     });
     const {
         // privileges:
@@ -228,15 +239,18 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         
         // databases:
         mockCategoryDb,
+        mockCurrentPaths,
     } = categoryState;
     const isDbMocked = !!mockCategoryDb;
     
     const nestedMockCategoryDb = ((): MockCategoryDb => {
+        // get the existing mock_subcategories:
         const existingMockSubcategoryDb = (mockCategoryDb ?? internalMockCategoryDb).subcategories;
         if (existingMockSubcategoryDb) return existingMockSubcategoryDb;
         
         
         
+        // create and assign a new mock_subcategories:
         const newMockSubcategoryDb : MockCategoryDb = [];
         (mockCategoryDb ?? internalMockCategoryDb).subcategories = newMockSubcategoryDb;
         return newMockSubcategoryDb;
@@ -253,6 +267,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         
         // databases:
         mockCategoryDb   : nestedMockCategoryDb,
+        mockCurrentPaths : internalMockCurrentPaths,
     };
     
     
@@ -307,6 +322,41 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
             isError      : false,
             refetch      : () => {},
         };
+    });
+    const _useMockedCategoryAvailablePath = useEvent((): UseGetModelAvailablePathApi => {
+        const [availablePath, { data, isLoading, isFetching, isError }, { lastArg }] = useCategoryAvailablePath();
+        
+        return [
+            (path: string) => ({
+                unwrap : async (): Promise<boolean> => {
+                    if (isDbMocked) {
+                        const pathLowercase = path.toLowerCase();
+                        
+                        const categoryPaths = getNestedCategoryPaths(mockCategoryDb);
+                        if (categoryPaths.some((searchPath) => (searchPath.toLowerCase() === pathLowercase))) return false;
+                        
+                        const currentPaths  = (mockCurrentPaths ?? internalMockCurrentPaths);
+                        if (currentPaths?.some((searchPath) => (searchPath.toLowerCase() === pathLowercase))) return true;
+                    } // if
+                    
+                    
+                    
+                    return availablePath(path).unwrap();
+                },
+            }),
+            
+            {
+                // data:
+                data,
+                isLoading,
+                isFetching,
+                isError,
+            },
+            
+            {
+                lastArg,
+            },
+        ];
     });
     
     
@@ -615,7 +665,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
                     <span className='path label'>Path:</span>
                     <UniquePathEditor
                         // data:
-                        useModelAvailablePath={useCategoryAvailablePath}
+                        useModelAvailablePath={_useMockedCategoryAvailablePath}
                         
                         
                         
