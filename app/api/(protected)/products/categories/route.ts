@@ -37,6 +37,11 @@ import {
     categoryDetailSelect,
     
     convertCategoryDetailDataToCategoryDetail,
+    type CategoryDiff,
+    createCategoryDiff,
+    createVariantGroupDiff,
+    createCoverageCountryDiff,
+    createTemplateVariantDiff,
 }                           from '@/models'
 import {
     Prisma,
@@ -238,6 +243,8 @@ You do not have the privilege to view the categories.`
             description,
             
             images,
+            
+            subcategories,
         },
     } = requestData;
     if (parent === id) { // cannot place into itself
@@ -251,6 +258,24 @@ You do not have the privilege to view the categories.`
     
     try {
         return await prisma.$transaction(async (prismaTransaction): Promise<Response> => {
+            //#region diffing subcategories
+            const subcategoryDiff = (subcategories === undefined) ? undefined : await (async (): Promise<CategoryDiff> => {
+                const categoryOrderBy: ReturnType<typeof categoryDetailSelect>['subcategories']['orderBy'] = {
+                    createdAt: 'desc',
+                };
+                const categorySelect = categoryDetailSelect(categoryOrderBy);
+                const subcategoryOrisData = !id ? [] : await prismaTransaction.category.findMany({
+                    where  : {
+                        parentId : id,
+                    },
+                    select : categorySelect,
+                });
+                return createCategoryDiff(subcategories, await convertCategoryDetailDataToCategoryDetail(categorySelect, subcategoryOrisData, prismaTransaction));
+            })()
+            //#endregion diffing subcategories
+            
+            
+            
             //#region validating privileges
             const session = (req as any).session as Session;
             if (!id) {
@@ -278,6 +303,129 @@ You do not have the privilege to modify the category images.`
 
 You do not have the privilege to modify the category visibility.`
                 }, { status: 403 }); // handled with error: forbidden
+                
+                if (subcategoryDiff !== undefined) {
+                    // const {
+                    //     categoryOris : subcategoryOris,
+                    //     
+                    //     categoryDels : subcategoryDels,
+                    //     categoryAdds : subcategoryAdds,
+                    //     categoryMods : subcategoryMods,
+                    // } = subcategoryDiff;
+                    
+                    
+                    
+                    if (!session.role?.category_c && ((): boolean => {
+                        const hasDeepNestedAdd = (categoryDiff: CategoryDiff): boolean => {
+                            if (categoryDiff.categoryAdds.length) return true;
+                            for (const categoryMod of categoryDiff.categoryMods) {
+                                if (hasDeepNestedAdd(categoryMod)) return true;
+                            } // for
+                            return false;
+                        };
+                        return hasDeepNestedAdd(subcategoryDiff);
+                    })()) return Response.json({ error:
+`Access denied.
+
+You do not have the privilege to add new category.`
+                    }, { status: 403 }); // handled with error: forbidden
+                    
+                    
+                    
+                    if (!session.role?.category_d && ((): boolean => {
+                        const hasDeepNestedDel = (categoryDiff: CategoryDiff): boolean => {
+                            if (categoryDiff.categoryDels.length) return true;
+                            for (const categoryMod of categoryDiff.categoryMods) {
+                                if (hasDeepNestedDel(categoryMod)) return true;
+                            } // for
+                            return false;
+                        };
+                        return hasDeepNestedDel(subcategoryDiff);
+                    })()) return Response.json({ error:
+`Access denied.
+
+You do not have the privilege to delete the category.`
+                    }, { status: 403 }); // handled with error: forbidden
+                    
+                    
+                    
+                    if (!session.role?.category_ud && ((): boolean => {
+                        const hasDeepNestedModDescription = (categoryDiff: CategoryDiff): boolean => {
+                            if (categoryDiff.categoryMods.some(({id, categoryOris: subcategoryOris, name, path, excerpt, description}): boolean => {
+                                const subcategoryOri = subcategoryOris.find(({id: idOri}) => (idOri === id));
+                                return (
+                                    (name        !== subcategoryOri?.name       )
+                                    ||
+                                    (path        !== subcategoryOri?.path       )
+                                    ||
+                                    (excerpt     !== subcategoryOri?.excerpt    )
+                                    ||
+                                    (description !== subcategoryOri?.description)
+                                );
+                            })) return true;
+                            for (const categoryMod of categoryDiff.categoryMods) {
+                                if (hasDeepNestedModDescription(categoryMod)) return true;
+                            } // for
+                            return false;
+                        };
+                        return hasDeepNestedModDescription(subcategoryDiff);
+                    })()) return Response.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the category name, path, excerpt, and/or description.`
+                    }, { status: 403 }); // handled with error: forbidden
+                    
+                    
+                    
+                    if (!session.role?.category_ui && ((): boolean => {
+                        const hasDeepNestedModDescription = (categoryDiff: CategoryDiff): boolean => {
+                            if (categoryDiff.categoryMods.some(({id, categoryOris: subcategoryOris, images}): boolean => {
+                                const imagesOri = subcategoryOris.find(({id: idOri}) => (idOri === id))?.images ?? [];
+                                return (
+                                    (images.length !== imagesOri.length)
+                                    ||
+                                    ((): boolean => {
+                                        for (let index = 0; index < images.length; index++) {
+                                            if (images[index] !== imagesOri[index]) return true;
+                                        } // for
+                                        return false;
+                                    })()
+                                );
+                            })) return true;
+                            for (const categoryMod of categoryDiff.categoryMods) {
+                                if (hasDeepNestedModDescription(categoryMod)) return true;
+                            } // for
+                            return false;
+                        };
+                        return hasDeepNestedModDescription(subcategoryDiff);
+                    })()) return Response.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the category images.`
+                    }, { status: 403 }); // handled with error: forbidden
+                    
+                    
+                    
+                    if (!session.role?.category_uv && ((): boolean => {
+                        const hasDeepNestedModDescription = (categoryDiff: CategoryDiff): boolean => {
+                            if (categoryDiff.categoryMods.some(({id, categoryOris: subcategoryOris, visibility}): boolean => {
+                                const subcategoryOri = subcategoryOris.find(({id: idOri}) => (idOri === id));
+                                return (
+                                    (visibility !== subcategoryOri?.visibility)
+                                );
+                            })) return true;
+                            for (const categoryMod of categoryDiff.categoryMods) {
+                                if (hasDeepNestedModDescription(categoryMod)) return true;
+                            } // for
+                            return false;
+                        };
+                        return hasDeepNestedModDescription(subcategoryDiff);
+                    })()) return Response.json({ error:
+`Access denied.
+
+You do not have the privilege to modify the category visibility.`
+                    }, { status: 403 }); // handled with error: forbidden
+                } // if
             } // if
             //#endregion validating privileges
             
