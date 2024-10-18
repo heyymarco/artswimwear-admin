@@ -305,16 +305,6 @@ You do not have the privilege to modify the category visibility.`
                 }, { status: 403 }); // handled with error: forbidden
                 
                 if (subcategoryDiff !== undefined) {
-                    // const {
-                    //     categoryOris : subcategoryOris,
-                    //     
-                    //     categoryDels : subcategoryDels,
-                    //     categoryAdds : subcategoryAdds,
-                    //     categoryMods : subcategoryMods,
-                    // } = subcategoryDiff;
-                    
-                    
-                    
                     if (!session.role?.category_c && ((): boolean => {
                         const hasDeepNestedAdd = (categoryDiff: CategoryDiff): boolean => {
                             if (categoryDiff.categoryAdds.length) return true;
@@ -432,6 +422,70 @@ You do not have the privilege to modify the category visibility.`
             
             
             //#region save changes
+            const defineDeleteDeepNestedSubcategories = (categoryDels: CategoryDiff['categoryDels']): Extract<Prisma.CategoryUpdateInput['subcategories'], {}>['delete'] => {
+                // conditions:
+                if (!categoryDels.length) return undefined;
+                
+                
+                
+                return (
+                    categoryDels
+                    .map((categoryId) => ({
+                        // conditions:
+                        id : categoryId,
+                    }))
+                );
+            }
+            const defineCreateDeepNestedSubcategories = (categoryAdds: CategoryDiff['categoryAdds']): Extract<Prisma.CategoryUpdateInput['subcategories'], {}>['create'] => {
+                // conditions:
+                if (!categoryAdds.length) return undefined;
+                
+                
+                
+                return (
+                    categoryAdds
+                    .map(({categoryAdds, description, ...restSubCategory}) => ({
+                        // data:
+                        ...restSubCategory,
+                        description : (description === null) ? Prisma.DbNull : description,
+                        
+                        // relations:
+                        subcategories : {
+                            create : defineCreateDeepNestedSubcategories(categoryAdds),
+                        }
+                    }))
+                );
+            }
+            const defineUpdateDeepNestedSubcategories = (categoryMods: CategoryDiff['categoryMods']): Extract<Prisma.CategoryUpdateInput['subcategories'], {}>['update'] => {
+                // conditions:
+                if (!categoryMods.length) return undefined;
+                
+                
+                
+                return (
+                    categoryMods
+                    .map(({categoryOris: _categoryOris, id: categoryId, categoryDels, categoryAdds, categoryMods, description, ...restSubCategory}) => ({
+                        where : {
+                            // conditions:
+                            id : categoryId,
+                        },
+                        data  : {
+                            // data:
+                            ...restSubCategory,
+                            description : (description === null) ? Prisma.DbNull : description,
+                            
+                            // relations:
+                            subcategories : {
+                                delete : defineDeleteDeepNestedSubcategories(categoryDels),
+                                
+                                create : defineCreateDeepNestedSubcategories(categoryAdds),
+                                
+                                update : defineUpdateDeepNestedSubcategories(categoryMods),
+                            },
+                        },
+                    }))
+                );
+            }
             const data = {
                 visibility,
                 
@@ -450,6 +504,14 @@ You do not have the privilege to modify the category visibility.`
                         id: parent,
                     },
                     disconnect : (parent !== null) ? undefined : true,
+                },
+                
+                subcategories : (subcategoryDiff === undefined) ? undefined : {
+                    delete : defineDeleteDeepNestedSubcategories(subcategoryDiff.categoryDels),
+                    
+                    create : defineCreateDeepNestedSubcategories(subcategoryDiff.categoryAdds),
+                    
+                    update : defineUpdateDeepNestedSubcategories(subcategoryDiff.categoryMods),
                 },
             } satisfies Prisma.CategoryUpdateInput;
             
