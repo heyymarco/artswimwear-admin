@@ -189,7 +189,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
     // states:
     const [internalMockSubcategoryDb] = useState<CategoryDetail[]>(() => {
         if (!model) return [];
-        return model.subcategories.slice(0); // clone the real_subcategories
+        return structuredClone(model.subcategories); // deep_clone the real_subcategories that has frozen by immer
     });
     const [internalMockCurrentPaths] = useState<string[]|undefined>(() => {
         // conditions:
@@ -234,6 +234,11 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
     const nestedMockCategoryDb = ((): CategoryDetail[] => {
         // conditions:
         const mockModel = (mockCategoryDb && model) ? mockCategoryDb.find(({ id: searchId }) => (searchId === model.id)) : undefined;
+        if (process.env.NODE_ENV === 'development') {
+            if (!mockModel && mockCategoryDb && model) {
+                throw new Error('invalid mockCategoryDb');
+            } // if
+        } // if
         if (!mockModel) return internalMockSubcategoryDb; // no mock_db provided on <ancestor> => use internal mock_subcategories
         
         
@@ -260,7 +265,11 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
     
     if (process.env.NODE_ENV === 'development') {
         if (parentCategoryId === model?.id) {
-            throw new Error('invalid logic');
+            throw new Error('invalid parentCategoryId');
+        } // if
+        
+        if (mockCategoryDb && !Object.isExtensible(mockCategoryDb)) {
+            throw new Error('invalid mockCategoryDb');
         } // if
     } // if
     
