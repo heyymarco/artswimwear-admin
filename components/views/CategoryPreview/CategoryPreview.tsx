@@ -72,11 +72,6 @@ import {
     EditButton,
 }                           from '@/components/EditButton'
 import {
-    // databases:
-    type MockCategoryDb,
-    
-    
-    
     // states:
     useCategoryState,
     
@@ -435,19 +430,15 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                 
                 
                 // databases:
-                mockCategoryDb={((): MockCategoryDb|undefined => {
-                    if (!mockCategoryDb) return undefined; // no mock_db => no sub_mock_db
+                mockCategoryDb={((): CategoryDetail[]|undefined => {
+                    // conditions:
+                    const mockModel = (mockCategoryDb && model) ? mockCategoryDb.find(({ id: searchId }) => (searchId === model.id)) : undefined;
+                    if (!mockModel) return undefined; // no mock_db provided on <ancestor> => no sub_mock_db
                     
                     
                     
-                    const existingMockSubcategoryDb = mockCategoryDb.subcategories;
-                    if (existingMockSubcategoryDb) return existingMockSubcategoryDb;
-                    
-                    
-                    
-                    const newMockSubcategoryDb : MockCategoryDb = [];
-                    mockCategoryDb.subcategories = newMockSubcategoryDb;
-                    return newMockSubcategoryDb;
+                    // get the mock_subcategories of current mockModel:
+                    return mockModel.subcategories;
                 })()}
             >
                 <SubcategoryList
@@ -821,19 +812,15 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                 
                 
                 // databases:
-                mockCategoryDb={((): MockCategoryDb|undefined => {
-                    if (!mockCategoryDb) return undefined; // no mock_db => no sub_mock_db
+                mockCategoryDb={((): CategoryDetail[]|undefined => {
+                    // conditions:
+                    const mockModel = (mockCategoryDb && model) ? mockCategoryDb.find(({ id: searchId }) => (searchId === model.id)) : undefined;
+                    if (!mockModel) return undefined; // no mock_db provided on <ancestor> => no sub_mock_db
                     
                     
                     
-                    const existingMockSubcategoryDb = mockCategoryDb.subcategories;
-                    if (existingMockSubcategoryDb) return existingMockSubcategoryDb;
-                    
-                    
-                    
-                    const newMockSubcategoryDb : MockCategoryDb = [];
-                    mockCategoryDb.subcategories = newMockSubcategoryDb;
-                    return newMockSubcategoryDb;
+                    // get the mock_subcategories of current mockModel:
+                    return mockModel.subcategories;
                 })()}
             >
                 <SubcategoryList

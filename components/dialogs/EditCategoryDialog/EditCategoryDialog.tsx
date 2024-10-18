@@ -60,11 +60,6 @@ import {
     WysiwygEditor,
 }                           from '@/components/editors/WysiwygEditor'
 import {
-    // databases:
-    type MockCategoryDb,
-    
-    
-    
     // utilities:
     privilegeCategoryUpdateFullAccess,
     getNestedCategoryPaths,
@@ -192,16 +187,9 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
     
     
     // states:
-    const [internalMockCategoryDb] = useState<MockCategoryDb>(() => {
-        // conditions:
+    const [internalMockSubcategoryDb] = useState<CategoryDetail[]>(() => {
         if (!model) return [];
-        
-        
-        
-        // mocks:
-        const newMockCategoryDb : MockCategoryDb = [];
-        newMockCategoryDb.subcategories = model.subcategories.slice(0); // slice(0) => clone the array of subcategories (the array is locked by immer)
-        return newMockCategoryDb;
+        return model.subcategories.slice(0); // clone the real_subcategories
     });
     const [internalMockCurrentPaths] = useState<string[]|undefined>(() => {
         // conditions:
@@ -243,17 +231,15 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
     } = categoryState;
     const isDbMocked = !!mockCategoryDb;
     
-    const nestedMockCategoryDb = ((): MockCategoryDb => {
-        // get the existing mock_subcategories:
-        const existingMockSubcategoryDb = (mockCategoryDb ?? internalMockCategoryDb).subcategories;
-        if (existingMockSubcategoryDb) return existingMockSubcategoryDb;
+    const nestedMockCategoryDb = ((): CategoryDetail[] => {
+        // conditions:
+        const mockModel = (mockCategoryDb && model) ? mockCategoryDb.find(({ id: searchId }) => (searchId === model.id)) : undefined;
+        if (!mockModel) return internalMockSubcategoryDb; // no mock_db provided on <ancestor> => use internal mock_subcategories
         
         
         
-        // create and assign a new mock_subcategories:
-        const newMockSubcategoryDb : MockCategoryDb = [];
-        (mockCategoryDb ?? internalMockCategoryDb).subcategories = newMockSubcategoryDb;
-        return newMockSubcategoryDb;
+        // get the mock_subcategories of current mockModel:
+        return mockModel.subcategories;
     })();
     const nestedCategoryState : CategoryStateProps = {
         ...categoryState,
@@ -314,8 +300,8 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         return {
             // data:
             data         : {
-                total    : nestedMockCategoryDb.length,
-                entities : nestedMockCategoryDb.slice((arg.page - 1) * arg.perPage),
+                total    : nestedMockCategoryDb?.length,
+                entities : nestedMockCategoryDb?.slice((arg.page - 1) * arg.perPage),
             },
             isLoading    : false,
             isFetching   : false,

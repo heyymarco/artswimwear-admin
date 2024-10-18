@@ -64,23 +64,13 @@ export interface ModelSelectEvent {
 
 
 
-// databases:
-export interface MockCategoryDb
-    extends
-        Array<CategoryDetail>
-{
-    subcategories ?: MockCategoryDb
-}
-
-
-
 // utilities:
 export const privilegeCategoryUpdateFullAccess : Required<CategoryPrivilege>['privilegeUpdate'] = {
     description : true,
     images      : true,
     visibility  : true,
 };
-export const getNestedCategoryPaths = (categories: MockCategoryDb|undefined): string[] => {
+export const getNestedCategoryPaths = (categories: CategoryDetail[]|undefined): string[] => {
     if (!categories) return [];
     return categories.flatMap(({path, subcategories}): string[] => [path, ...getNestedCategoryPaths(subcategories)]);
 }
@@ -117,7 +107,7 @@ export interface CategoryState
     
     
     // databases:
-    mockCategoryDb       : MockCategoryDb|null
+    mockCategoryDb       : CategoryDetail[]|null
     mockCurrentPaths     : string[]|null
     
     
