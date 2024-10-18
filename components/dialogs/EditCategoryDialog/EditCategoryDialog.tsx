@@ -421,8 +421,8 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
             if (recordIndex >= 0) {
                 const currentRecord : CategoryDetail = mockCategoryDb[recordIndex];
                 const updatedRecord : CategoryDetail = {
-                    ...currentRecord,
-                    ...mutatedData,
+                    ...currentRecord, // the original data
+                    ...mutatedData,   // the mutated data
                 };
                 mockCategoryDb[recordIndex] = updatedRecord;
                 return updatedRecord;
@@ -432,8 +432,8 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
             
             const newRecord : CategoryDetail = {
                 excerpt       : '',
-                subcategories : [],
-                ...mutatedData as Pick<CategoryDetail, 'id'|'visibility'|'name'|'path'|'images'|'description'>,
+                subcategories : [], // a new record doesn't have subcategories => assign an empty array
+                ...mutatedData as Pick<CategoryDetail, 'id'|'visibility'|'name'|'path'|'images'|'description'>, // the mutated data
             };
             mockCategoryDb.unshift(newRecord);
             return newRecord;
@@ -443,7 +443,8 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
                 return await updateCategory({
                     parent         : parentCategoryId,
                     
-                    ...mutatedData,
+                    ...mutatedData, // the mutated data
+                    subcategories  : nestedMockCategoryDb, // the mutated data on deep_nested subcategories
                 }).unwrap();
             }
             finally {
