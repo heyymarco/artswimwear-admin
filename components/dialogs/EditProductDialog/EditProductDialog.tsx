@@ -262,12 +262,6 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     
     const draftDifferentialImages               = useDraftDifferentialImages();
     
-    const rootCategoryState : CategoryStateProps = {
-        // values:
-        value    : categories,
-        onChange : setCategories,
-    };
-    
     
     
     // sessions:
@@ -322,7 +316,19 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         
         
         prevVariantGroups.current = variantGroups; // tracks the new changes
-    } // if  
+    } // if
+    
+    
+    
+    const handleSetCategories = useEvent((newCategories: Set<string>) => {
+        setCategories(newCategories);
+        setIsModified(true);
+    });
+    const rootCategoryState : CategoryStateProps = {
+        // values:
+        value    : categories,
+        onChange : handleSetCategories,
+    };
     
     
     
@@ -918,8 +924,8 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                             
                             
                             // values:
-                            value={categories}
-                            onChange={setCategories}
+                            // value={categories} // already handled in <CategoryStateProvider>
+                            // onChange={setCategories} // already handled in <CategoryStateProvider>
                             
                             
                             

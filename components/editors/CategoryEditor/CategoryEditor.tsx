@@ -127,6 +127,12 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
         
         // behaviors:
         selectable           : defaultSelectable,
+        
+        
+        
+        // values:
+        value                : defaultValue,
+        onChange             : defaultOnChange,
     } = useCategoryState();
     
     
@@ -140,8 +146,8 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
         
         // values:
         // defaultValue, // not supported, controllable only
-        value,
-        onChange,
+        value                = defaultValue,
+        onChange             = defaultOnChange,
         
         
         
@@ -233,6 +239,7 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
             
             // values:
             value={value}
+            onChange={onChange}
             
             
             
