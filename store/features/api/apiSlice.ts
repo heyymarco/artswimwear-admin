@@ -6,12 +6,14 @@ import {
     createEntityAdapter,
 }                           from '@reduxjs/toolkit'
 import {
+    type QuerySubState,
     type BaseQueryFn,
     QueryStatus,
     
     createApi,
 }                           from '@reduxjs/toolkit/query/react'
 import {
+    type BaseEndpointDefinition,
     type MutationLifecycleApi,
 }                           from '@reduxjs/toolkit/dist/query/endpointDefinitions'
 
@@ -76,6 +78,31 @@ const roleListAdapter                 = createEntityAdapter<RoleDetail>({
 const shippingLabelListAdapter        = createEntityAdapter<ShippingLabelDetail>({
     selectId : (shippingLabelDetail) => shippingLabelDetail.id,
 });
+
+
+
+// utilities:
+const updateCategoryReqursive = (pagination: Pagination<CategoryDetail>, parentCategoryId: string, updatedCategory: CategoryDetail): void => {
+    for (const categoryDetail of pagination.entities) {
+        updateDeepNestedCategoryReqursive(categoryDetail, parentCategoryId, updatedCategory);
+    } // for
+};
+const updateDeepNestedCategoryReqursive = (categoryDetail: CategoryDetail, parentCategoryId: string, updatedCategory: CategoryDetail): void => {
+    if (categoryDetail.id === parentCategoryId) { // found => update
+        const entryIndex = categoryDetail.subcategories.findIndex(({id: searchId}) => (searchId === updatedCategory.id));
+        if (entryIndex < 0) { // append new entry
+            categoryDetail.subcategories.unshift(updatedCategory);
+        }
+        else { // update existing entry
+            categoryDetail.subcategories[entryIndex] = updatedCategory;
+        } // if
+    }
+    else { // not found => deep search
+        for (const nestedCategoryDetail of categoryDetail.subcategories) {
+            updateDeepNestedCategoryReqursive(nestedCategoryDetail, parentCategoryId, updatedCategory);
+        } // for
+    } // if
+};
 
 
 
@@ -190,6 +217,61 @@ export const apiSlice = createApi({
             }),
             onQueryStarted: async (arg, api) => {
                 await cumulativeUpdatePaginationCache(api, 'getCategoryPage', (arg.id === '') ? 'CREATE' : 'UPDATE', { type: 'CategoryPage', id: arg.parent ?? ''}, { predicate: (arg.id === '') ? (originalArgs) => ((originalArgs as CategoryUpdateRequest).parent === arg.parent) : undefined, });
+                
+                
+                
+                //#region pesimistic update
+                // update related_affected_category in `getCategoryPage`:
+                await (async (): Promise<void> => {
+                    if (!arg.parent) return;
+                    const parentCategoryId = arg.parent;
+                    
+                    
+                    
+                    const updatedCategory = await(async () => {
+                        try {
+                            return (await api.queryFulfilled).data;
+                        }
+                        catch {
+                            return undefined;
+                        } // try
+                    })();
+                    if (!updatedCategory) return;
+                    
+                    
+                    
+                    // find related TEntry data(s):
+                    const endpointName          = 'getCategoryPage';
+                    const state                 = api.getState();
+                    const allQueryCaches        = state.api.queries;
+                    const categoryQueryCaches   = (
+                        Object.values(allQueryCaches)
+                        .filter((allQueryCache): allQueryCache is Exclude<typeof allQueryCache, undefined> =>
+                            (allQueryCache !== undefined)
+                            &&
+                            (allQueryCache.status === QueryStatus.fulfilled)
+                            &&
+                            (allQueryCache.endpointName === endpointName)
+                            &&
+                            (allQueryCache.data !== undefined)
+                        )
+                    ) as QuerySubState<BaseEndpointDefinition<CategoryPageRequest, any, Pagination<CategoryDetail>>>[];
+                    
+                    
+                    
+                    // update cache:
+                    for (const { originalArgs } of categoryQueryCaches) {
+                        if (originalArgs === undefined) continue;
+                        api.dispatch(
+                            apiSlice.util.updateQueryData(endpointName, originalArgs, (data) => {
+                                updateCategoryReqursive(data, parentCategoryId, updatedCategory);
+                            })
+                        );
+                    } // for
+                })();
+                if (arg.parent) {
+                }
+                //#endregion pesimistic update
             },
         }),
         deleteCategory              : builder.mutation<Pick<CategoryDetail, 'id'>, CategoryDeleteParam>({
