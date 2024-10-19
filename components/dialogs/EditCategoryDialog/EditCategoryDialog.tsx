@@ -187,11 +187,40 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
     
     
     // states:
+    const [isModified      , setIsModified    ] = useState<boolean>(false);
+    const [isPathModified  , setIsPathModified] = useState<boolean>(false);
+    
+    const [visibility      , setVisibility    ] = useState<ProductVisibility      >(model?.visibility     ?? 'DRAFT');
+    const [name            , setName          ] = useState<string                 >(model?.name           ?? ''     );
+    const [path            , setPath          ] = useState<string                 >(model?.path           ?? ''     );
+    const [images          , setImages        ] = useState<string[]               >(model?.images         ?? []     );
+    const [description     , setDescription   ] = useState<WysiwygEditorState|null>(() => {                            // optional field
+        const description = model?.description;
+        if (!description) return null;
+        if (typeof(description) === 'object') return description as any;
+        try {
+            return JSON.parse(description.toString());
+        }
+        catch {
+            return null;
+        } // try
+    });
+    
+    
+    
+    // stores:
+    const [updateCategory   , {isLoading : isLoadingUpdate           }] = useUpdateCategory();
+    const [deleteCategory   , {isLoading : isLoadingDelete           }] = useDeleteCategory();
+    const [postImage                                                  ] = usePostImage();
+    const [commitDeleteImage, {isLoading : isLoadingCommitDeleteImage}] = useDeleteImage();
+    const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
+    const [commitMoveImage  , {isLoading : isLoadingCommitMoveImage  }] = useMoveImage();
+    
     const [internalMockSubcategoryDb] = useState<CategoryDetail[]>(() => {
         if (!model) return [];
         return structuredClone(model.subcategories); // deep_clone the real_subcategories that has frozen by immer
     });
-    const [internalMockCurrentPaths] = useState<string[]|undefined>(() => {
+    const [internalMockCurrentPaths ] = useState<string[]|undefined>(() => {
         // conditions:
         if (!model) return undefined;
         
@@ -200,6 +229,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         // mocks:
         return getNestedCategoryPaths(model.subcategories);
     });
+    
     const {
         // privileges:
         privilegeAdd,
@@ -229,16 +259,27 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         mockCategoryDb,
         mockCurrentPaths,
     } = categoryState;
-    const isDbMocked = !!mockCategoryDb;
     
+    if (process.env.NODE_ENV === 'development') {
+        if (parentCategoryId === model?.id) {
+            throw new Error('invalid parentCategoryId');
+        } // if
+        
+        if (mockCategoryDb && !Object.isExtensible(mockCategoryDb)) {
+            throw new Error('invalid mockCategoryDb');
+        } // if
+    } // if
+    
+    const isDbMocked = !!mockCategoryDb;
     const nestedMockCategoryDb = ((): CategoryDetail[] => {
         // conditions:
         const mockModel = (mockCategoryDb && model) ? mockCategoryDb.find(({ id: searchId }) => (searchId === model.id)) : undefined;
-        if (process.env.NODE_ENV === 'development') {
-            if (!mockModel && mockCategoryDb && model) {
-                throw new Error('invalid mockCategoryDb');
-            } // if
-        } // if
+        /* the mockModel may be undefined for brief time after deleting the category */
+        // if (process.env.NODE_ENV === 'development') {
+        //     if (!mockModel && mockCategoryDb && model) {
+        //         throw new Error('invalid mockCategoryDb');
+        //     } // if
+        // } // if
         if (!mockModel) return internalMockSubcategoryDb; // no mock_db provided on <ancestor> => use internal mock_subcategories
         
         
@@ -260,50 +301,6 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         mockCategoryDb   : nestedMockCategoryDb,
         mockCurrentPaths : internalMockCurrentPaths,
     };
-    
-    
-    
-    if (process.env.NODE_ENV === 'development') {
-        if (parentCategoryId === model?.id) {
-            throw new Error('invalid parentCategoryId');
-        } // if
-        
-        if (mockCategoryDb && !Object.isExtensible(mockCategoryDb)) {
-            throw new Error('invalid mockCategoryDb');
-        } // if
-    } // if
-    
-    
-    
-    // states:
-    const [isModified      , setIsModified    ] = useState<boolean>(false);
-    const [isPathModified  , setIsPathModified] = useState<boolean>(false);
-    
-    const [visibility      , setVisibility    ] = useState<ProductVisibility      >(model?.visibility     ?? 'DRAFT');
-    const [name            , setName          ] = useState<string                 >(model?.name           ?? ''     );
-    const [path            , setPath          ] = useState<string                 >(model?.path           ?? ''     );
-    const [images          , setImages        ] = useState<string[]               >(model?.images         ?? []     );
-    const [description     , setDescription   ] = useState<WysiwygEditorState|null>(() => {                            // optional field
-        const description = model?.description;
-        if (!description) return null;
-        if (typeof(description) === 'object') return description as any;
-        try {
-            return JSON.parse(description.toString());
-        }
-        catch {
-            return null;
-        } // try
-    });
-    
-    
-    
-    // stores:
-    const [updateCategory   , {isLoading : isLoadingUpdate           }] = useUpdateCategory();
-    const [deleteCategory   , {isLoading : isLoadingDelete           }] = useDeleteCategory();
-    const [postImage                                                  ] = usePostImage();
-    const [commitDeleteImage, {isLoading : isLoadingCommitDeleteImage}] = useDeleteImage();
-    const [revertDeleteImage, {isLoading : isLoadingRevertDeleteImage}] = useDeleteImage();
-    const [commitMoveImage  , {isLoading : isLoadingCommitMoveImage  }] = useMoveImage();
     
     const _useGetMockedSubCategoryPage = useEvent((arg: PaginationArgs): UseGetModelPageApi<CategoryDetail> => {
         return {

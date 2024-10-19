@@ -109,6 +109,7 @@ export interface CategoryState
     // databases:
     mockCategoryDb       : CategoryDetail[]|null
     mockCurrentPaths     : string[]|null
+    notifyMockModified   : () => void
     
     
     
@@ -155,6 +156,7 @@ const defaultCategoryStateContext : CategoryState = {
     // databases:
     mockCategoryDb       : null,
     mockCurrentPaths     : null,
+    notifyMockModified   : noopCallback,
     
     
     
@@ -211,6 +213,7 @@ const CategoryStateProvider = (props: React.PropsWithChildren<CategoryStateProps
         // databases:
         mockCategoryDb       : defaultMockCategoryDb,
         mockCurrentPaths     : defaultMockCurrentPaths,
+        notifyMockModified   : defaultNotifyMockModified,
         
         
         
@@ -255,6 +258,7 @@ const CategoryStateProvider = (props: React.PropsWithChildren<CategoryStateProps
         // databases:
         mockCategoryDb       = defaultMockCategoryDb,
         mockCurrentPaths     = defaultMockCurrentPaths,
+        notifyMockModified   = defaultNotifyMockModified,
         
         
         
@@ -299,6 +303,7 @@ const CategoryStateProvider = (props: React.PropsWithChildren<CategoryStateProps
         // databases:
         mockCategoryDb,
         mockCurrentPaths,
+        notifyMockModified,
         
         
         
@@ -338,6 +343,7 @@ const CategoryStateProvider = (props: React.PropsWithChildren<CategoryStateProps
         // databases:
         mockCategoryDb,
         mockCurrentPaths,
+        notifyMockModified,
         
         
         
