@@ -90,18 +90,18 @@ const updateDeepNestedCategory = (pagination: Pagination<CategoryDetail>, parent
 const updateDeepNestedCategoryReqursive = (categoryDetail: CategoryDetail, parentCategoryId: string, updatedCategory: CategoryDetail|string): void => {
     if (categoryDetail.id === parentCategoryId) { // found => update
         const updatedCategoryId = (typeof(updatedCategory) === 'string') ? updatedCategory : updatedCategory.id;
-        const entryIndex = categoryDetail.subcategories.findIndex(({id: searchId}) => (searchId === updatedCategoryId));
+        const modelIndex = categoryDetail.subcategories.findIndex(({id: searchId}) => (searchId === updatedCategoryId));
         if (typeof(updatedCategory) === 'string') {
-            if (entryIndex >= 0) { // delete existing entry
-                categoryDetail.subcategories.splice(entryIndex, 1);
+            if (modelIndex >= 0) { // delete existing model
+                categoryDetail.subcategories.splice(modelIndex, 1);
             } // if
         }
         else {
-            if (entryIndex < 0) { // append new entry
+            if (modelIndex < 0) { // append new model
                 categoryDetail.subcategories.unshift(updatedCategory);
             }
-            else { // update existing entry
-                categoryDetail.subcategories[entryIndex] = updatedCategory;
+            else { // update existing model
+                categoryDetail.subcategories[modelIndex] = updatedCategory;
             } // if
         } // if
     }
@@ -248,7 +248,7 @@ export const apiSlice = createApi({
                     
                     
                     
-                    // find related TEntry data(s):
+                    // find related TModel data(s):
                     const endpointName        = 'getCategoryPage';
                     const categoryQueryCaches = getQueryCaches<Pagination<CategoryDetail>, CategoryPageRequest>(api, endpointName);
                     
@@ -298,7 +298,7 @@ export const apiSlice = createApi({
                     
                     
                     
-                    // find related TEntry data(s):
+                    // find related TModel data(s):
                     const endpointName        = 'getCategoryPage';
                     const categoryQueryCaches = getQueryCaches<Pagination<CategoryDetail>, CategoryPageRequest>(api, endpointName);
                     
@@ -720,30 +720,30 @@ const selectTotalFromData   = (data: unknown): number => {
         : (data as Pagination<unknown>).total
     );
 };
-const selectEntriesFromData = <TEntry extends Model|string>(data: unknown): TEntry[] => {
+const selectModelsFromData  = <TModel extends Model|string>(data: unknown): TModel[] => {
     const items = (
-        ('ids' in (data as EntityState<TEntry>|Pagination<TEntry>))
-        ? Object.values((data as EntityState<TEntry>).entities).filter((entity) : entity is Exclude<typeof entity, undefined> => (entity !== undefined))
-        : (data as Pagination<TEntry>).entities
+        ('ids' in (data as EntityState<TModel>|Pagination<TModel>))
+        ? Object.values((data as EntityState<TModel>).entities).filter((entity) : entity is Exclude<typeof entity, undefined> => (entity !== undefined))
+        : (data as Pagination<TModel>).entities
     );
     return items;
 };
-const selectIdFromModel     = <TEntry extends Model|string>(entry: TEntry): string => {
-    return (typeof(entry) === 'string') ? entry : entry.id;
+const selectIdFromModel     = <TModel extends Model|string>(model: TModel): string => {
+    return (typeof(model) === 'string') ? model : model.id;
 };
-const selectIndexOfId       = <TEntry extends Model|string>(data: unknown, id: string): number => {
+const selectIndexOfId       = <TModel extends Model|string>(data: unknown, id: string): number => {
     return (
-        ('ids' in (data as EntityState<TEntry>|Pagination<TEntry>))
+        ('ids' in (data as EntityState<TModel>|Pagination<TModel>))
         ? (
-            (data as EntityState<TEntry>).ids
+            (data as EntityState<TModel>).ids
             .findIndex((searchId) =>
                 (searchId === id)
             )
         )
         : (
-            (data as Pagination<TEntry>).entities
-            .findIndex((searchEntry) =>
-                (selectIdFromModel<TEntry>(searchEntry) === id)
+            (data as Pagination<TModel>).entities
+            .findIndex((searchModel) =>
+                (selectIdFromModel<TModel>(searchModel) === id)
             )
         )
     );
@@ -763,7 +763,7 @@ const selectRangeFromArg    = (originalArg: unknown): { indexStart: number, inde
         345	    [2, 3]              (2 - 1) * 3   = 3       (3 + 3) - 1   = 5
         678	    [3, 3]              (3 - 1) * 3   = 6       (6 + 3) - 1   = 8
     */
-    const indexStart = (page - 1) * perPage; // the entry_index of the first_entry of current pagination
+    const indexStart = (page - 1) * perPage; // the model_index of the first_model of current pagination
     const indexEnd   = indexStart + (perPage - 1);
     return {
         indexStart,
@@ -861,9 +861,9 @@ const cumulativeUpdatePaginationCache = async <TModel extends Model|string, TQue
         // there's no queryCaches to update => nothing to do
         return;
     } // if
-    const validTotalEntries              = selectTotalFromData(lastCollectionQueryCache.data);
+    const validTotalModels               = selectTotalFromData(lastCollectionQueryCache.data);
     const hasInvalidCollectionQueryCache = collectionQueryCaches.some(({ data }) =>
-        (selectTotalFromData(data) !== validTotalEntries)
+        (selectTotalFromData(data) !== validTotalModels)
     );
     if (hasInvalidCollectionQueryCache) {
         // the queryCaches has a/some inconsistent data => panic => clear all the caches and (may) trigger the rtk to re-fetch
@@ -971,7 +971,7 @@ const cumulativeUpdatePaginationCache = async <TModel extends Model|string, TQue
     /* add new data: COMPLEX: the number of collection_items is scaled_up */
     else if (updateType === 'CREATE') {
         /*
-            Adding a_new_model causing the restPagination(s) shifted their entries to neighboringPagination(s).
+            Adding a_new_model causing the restPagination(s) shifted their models to neighboringPagination(s).
             [876] [543] [210] + 9 => [987] [654] [321] [0]
             page1 page2 page3        page1 page2 page3 pageTail
         */
@@ -979,11 +979,11 @@ const cumulativeUpdatePaginationCache = async <TModel extends Model|string, TQue
         
         
         
-        // reconstructuring the shifted entries, so the invalidatesTag can be avoided:
+        // reconstructuring the shifted models, so the invalidatesTag can be avoided:
         
         
         
-        //#region BACKUP the entries from paginations (which will be shifted) 
+        //#region BACKUP the models from paginations (which will be shifted) 
         const mergedModelList : TModel[] = []; // use an `Array<TModel>` instead of `Map<number, TModel>`, so we can SHIFT the key easily
         for (const { originalArgs, data } of shiftedCollectionQueryCaches) {
             const {
@@ -998,19 +998,19 @@ const cumulativeUpdatePaginationCache = async <TModel extends Model|string, TQue
                 Only the last_model of current pagination is useful for backup.
                 After the whole `mergedModelList` shifted_down, the last_model becomes the first_model of the next pagination chains.
             */
-            const paginationEntries = selectEntriesFromData<TModel>(data);
+            const paginationModels = selectModelsFromData<TModel>(data);
             const relativeIndexEnd = indexEnd - indexStart; // a zero based starting index, select the LAST pagination model
-            const modelEnd = (relativeIndexEnd < paginationEntries.length) ? paginationEntries[relativeIndexEnd] : undefined;
+            const modelEnd = (relativeIndexEnd < paginationModels.length) ? paginationModels[relativeIndexEnd] : undefined;
             if (modelEnd !== undefined) mergedModelList[indexEnd] = modelEnd; // if exists, copy the LAST pagination model
         } // for
-        //#endregion BACKUP the entries from paginations (which will be shifted) 
+        //#endregion BACKUP the models from paginations (which will be shifted) 
         
         
         
         // INSERT the new_model at the BEGINNING of the list:
         mergedModelList.unshift(mutatedModel);
-        // re-calculate the total entries:
-        const newTotalEntries = validTotalEntries + 1;
+        // re-calculate the total models:
+        const newTotalModels = validTotalModels + 1;
         
         
         
@@ -1042,7 +1042,7 @@ const cumulativeUpdatePaginationCache = async <TModel extends Model|string, TQue
                         
                         
                         // update the total data:
-                        data.total = newTotalEntries;
+                        data.total = newTotalModels;
                         
                         
                         
@@ -1117,7 +1117,7 @@ const cumulativeUpdatePaginationCache = async <TModel extends Model|string, TQue
         
         
         
-        //#region BACKUP the entries from paginations (which will be shifted) 
+        //#region BACKUP the models from paginations (which will be shifted) 
         const mergedModelList : TModel[] = []; // use an `Array<TModel>` instead of `Map<number, TModel>`, so we can SHIFT the key easily
         for (const { originalArgs, data } of shiftedCollectionQueryCaches) {
             const {
@@ -1131,18 +1131,18 @@ const cumulativeUpdatePaginationCache = async <TModel extends Model|string, TQue
                 Only the first_model of current pagination is useful for backup.
                 After the whole `mergedModelList` shifted_up, the first_model becomes the last_model of the prev pagination chains.
             */
-            const paginationEntries = selectEntriesFromData<TModel>(data);
-            const modelStart = paginationEntries[0] as TModel|undefined; // a zero based starting index, select the FIRST pagination model
+            const paginationModels = selectModelsFromData<TModel>(data);
+            const modelStart = paginationModels[0] as TModel|undefined; // a zero based starting index, select the FIRST pagination model
             if (modelStart !== undefined) mergedModelList[indexStart] = modelStart; // if exists, copy the FIRST pagination model
         } // for
-        //#endregion BACKUP the entries from paginations (which will be shifted) 
+        //#endregion BACKUP the models from paginations (which will be shifted) 
         
         
         
         // REMOVE the del_model at the DELETED_INDEX of the list:
         mergedModelList.splice(indexDeleted, 1);
-        // re-calculate the total entries:
-        const newTotalEntries = validTotalEntries - 1;
+        // re-calculate the total models:
+        const newTotalModels = validTotalModels - 1;
         
         
         
@@ -1187,7 +1187,7 @@ const cumulativeUpdatePaginationCache = async <TModel extends Model|string, TQue
                     
                     
                     // update the total data:
-                    data.total = newTotalEntries;
+                    data.total = newTotalModels;
                     
                     
                     
@@ -1246,9 +1246,9 @@ const cumulativeUpdateEntityCache     = async <TModel extends Model|string, TQue
         // there's no queryCaches to update => nothing to do
         return;
     } // if
-    const validTotalEntries              = selectTotalFromData(lastCollectionQueryCache.data);
+    const validTotalModels               = selectTotalFromData(lastCollectionQueryCache.data);
     const hasInvalidCollectionQueryCache = collectionQueryCaches.some(({ data }) =>
-        (selectTotalFromData(data) !== validTotalEntries)
+        (selectTotalFromData(data) !== validTotalModels)
     );
     if (hasInvalidCollectionQueryCache) {
         // the queryCaches has a/some inconsistent data => panic => clear all the caches and (may) trigger the rtk to re-fetch
@@ -1268,7 +1268,7 @@ const cumulativeUpdateEntityCache     = async <TModel extends Model|string, TQue
         
         
         
-        // reconstructuring the shifted entries, so the invalidatesTag can be avoided:
+        // reconstructuring the shifted models, so the invalidatesTag can be avoided:
         
         
         
