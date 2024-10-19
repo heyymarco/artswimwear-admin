@@ -258,6 +258,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         // databases:
         mockCategoryDb,
         mockCurrentPaths,
+        notifyMockModified,
     } = categoryState;
     
     if (process.env.NODE_ENV === 'development') {
@@ -287,6 +288,9 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         // get the mock_subcategories of current mockModel:
         return mockModel.subcategories;
     })();
+    const handleNotifyMockModified = useEvent((): void => {
+        setIsModified(true);
+    });
     const nestedCategoryState : CategoryStateProps = {
         ...categoryState,
         
@@ -298,8 +302,9 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         
         
         // databases:
-        mockCategoryDb   : nestedMockCategoryDb,
-        mockCurrentPaths : internalMockCurrentPaths,
+        mockCategoryDb     : nestedMockCategoryDb,
+        mockCurrentPaths   : internalMockCurrentPaths,
+        notifyMockModified : handleNotifyMockModified,
     };
     
     const _useGetMockedSubCategoryPage = useEvent((arg: PaginationArgs): UseGetModelPageApi<CategoryDetail> => {
@@ -433,6 +438,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
                 ...mutatedData as Pick<CategoryDetail, 'id'|'visibility'|'name'|'path'|'images'|'description'>, // the mutated data
             };
             mockCategoryDb.unshift(newRecord);
+            notifyMockModified?.();
             return newRecord;
         }
         else {
@@ -464,6 +470,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
             const recordIndex = mockCategoryDb.findIndex(({id: searchId}) => (searchId === id));
             if (recordIndex < 0) return;
             mockCategoryDb.splice(recordIndex, 1);
+            notifyMockModified?.();
         }
         else {
             await deleteCategory({
