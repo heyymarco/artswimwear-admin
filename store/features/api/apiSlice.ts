@@ -264,8 +264,6 @@ export const apiSlice = createApi({
                         );
                     } // for
                 })();
-                if (arg.parent) {
-                }
                 //#endregion pesimistic update
             },
         }),
@@ -316,8 +314,6 @@ export const apiSlice = createApi({
                         );
                     } // for
                 })();
-                if (arg.parent) {
-                }
                 //#endregion pesimistic update
             },
         }),
