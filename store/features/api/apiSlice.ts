@@ -82,19 +82,27 @@ const shippingLabelListAdapter        = createEntityAdapter<ShippingLabelDetail>
 
 
 // utilities:
-const updateCategoryReqursive = (pagination: Pagination<CategoryDetail>, parentCategoryId: string, updatedCategory: CategoryDetail): void => {
+const updateDeepNestedCategory = (pagination: Pagination<CategoryDetail>, parentCategoryId: string, updatedCategory: CategoryDetail|string): void => {
     for (const categoryDetail of pagination.entities) {
         updateDeepNestedCategoryReqursive(categoryDetail, parentCategoryId, updatedCategory);
     } // for
 };
-const updateDeepNestedCategoryReqursive = (categoryDetail: CategoryDetail, parentCategoryId: string, updatedCategory: CategoryDetail): void => {
+const updateDeepNestedCategoryReqursive = (categoryDetail: CategoryDetail, parentCategoryId: string, updatedCategory: CategoryDetail|string): void => {
     if (categoryDetail.id === parentCategoryId) { // found => update
-        const entryIndex = categoryDetail.subcategories.findIndex(({id: searchId}) => (searchId === updatedCategory.id));
-        if (entryIndex < 0) { // append new entry
-            categoryDetail.subcategories.unshift(updatedCategory);
+        const updatedCategoryId = (typeof(updatedCategory) === 'string') ? updatedCategory : updatedCategory.id;
+        const entryIndex = categoryDetail.subcategories.findIndex(({id: searchId}) => (searchId === updatedCategoryId));
+        if (typeof(updatedCategory) === 'string') {
+            if (entryIndex >= 0) { // delete existing entry
+                categoryDetail.subcategories.splice(entryIndex, 1);
+            } // if
         }
-        else { // update existing entry
-            categoryDetail.subcategories[entryIndex] = updatedCategory;
+        else {
+            if (entryIndex < 0) { // append new entry
+                categoryDetail.subcategories.unshift(updatedCategory);
+            }
+            else { // update existing entry
+                categoryDetail.subcategories[entryIndex] = updatedCategory;
+            } // if
         } // if
     }
     else { // not found => deep search
@@ -264,7 +272,7 @@ export const apiSlice = createApi({
                         if (originalArgs === undefined) continue;
                         api.dispatch(
                             apiSlice.util.updateQueryData(endpointName, originalArgs, (data) => {
-                                updateCategoryReqursive(data, parentCategoryId, updatedCategory);
+                                updateDeepNestedCategory(data, parentCategoryId, updatedCategory);
                             })
                         );
                     } // for
@@ -281,6 +289,62 @@ export const apiSlice = createApi({
             }),
             onQueryStarted: async (arg, api) => {
                 await cumulativeUpdatePaginationCache(api, 'getCategoryPage', 'DELETE', { type: 'CategoryPage', id: arg.parent ?? ''});
+                
+                
+                
+                //#region pesimistic update
+                // update related_affected_category in `getCategoryPage`:
+                await (async (): Promise<void> => {
+                    if (!arg.parent) return;
+                    const parentCategoryId = arg.parent;
+                    
+                    
+                    
+                    const deletedCategoryId = await(async () => {
+                        try {
+                            await api.queryFulfilled;
+                            return arg.id;
+                        }
+                        catch {
+                            return undefined;
+                        } // try
+                    })();
+                    if (!deletedCategoryId) return;
+                    
+                    
+                    
+                    // find related TEntry data(s):
+                    const endpointName          = 'getCategoryPage';
+                    const state                 = api.getState();
+                    const allQueryCaches        = state.api.queries;
+                    const categoryQueryCaches   = (
+                        Object.values(allQueryCaches)
+                        .filter((allQueryCache): allQueryCache is Exclude<typeof allQueryCache, undefined> =>
+                            (allQueryCache !== undefined)
+                            &&
+                            (allQueryCache.status === QueryStatus.fulfilled)
+                            &&
+                            (allQueryCache.endpointName === endpointName)
+                            &&
+                            (allQueryCache.data !== undefined)
+                        )
+                    ) as QuerySubState<BaseEndpointDefinition<CategoryPageRequest, any, Pagination<CategoryDetail>>>[];
+                    
+                    
+                    
+                    // update cache:
+                    for (const { originalArgs } of categoryQueryCaches) {
+                        if (originalArgs === undefined) continue;
+                        api.dispatch(
+                            apiSlice.util.updateQueryData(endpointName, originalArgs, (data) => {
+                                updateDeepNestedCategory(data, parentCategoryId, deletedCategoryId);
+                            })
+                        );
+                    } // for
+                })();
+                if (arg.parent) {
+                }
+                //#endregion pesimistic update
             },
         }),
         
