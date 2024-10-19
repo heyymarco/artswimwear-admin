@@ -564,8 +564,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
             
             // data:
             modelName='Category'
-            // modelEntryName={model?.name}
-            modelEntryName={isDbMocked ? `${model?.name} (mocked)` : model?.name} // TODO: remove this line
+            modelEntryName={model?.name}
             model={model}
             
             
