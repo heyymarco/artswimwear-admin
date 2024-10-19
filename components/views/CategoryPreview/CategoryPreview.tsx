@@ -346,36 +346,57 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                         // classes:
                         className='preview'
                     >
-                        <MiniCarousel
-                            // variants:
-                            theme='danger'
-                            nude={true}
-                            
-                            
-                            
-                            // classes:
-                            className='image'
-                            
-                            
-                            
-                            // components:
-                            basicComponent={<Content theme='primary' />}
-                        >
-                            {images.map((image, index) =>
+                        {
+                            !images.length
+                            ? <Basic
+                                // variants:
+                                mild={true}
+                                nude={true}
+                                
+                                
+                                
+                                // classes:
+                                className='image noImage'
+                            >
                                 <Image
-                                    // identifiers:
-                                    key={index}
-                                    
-                                    
-                                    
                                     className='prodImg'
                                     
-                                    alt={name ?? ''}
-                                    src={resolveMediaUrl(image)}
-                                    sizes={`${minImageWidth}px`}
+                                    alt='No image'
+                                    src={undefined}
+                                    sizes={`${minImageWidthSub}px`}
                                 />
-                            )}
-                        </MiniCarousel>
+                            </Basic>
+                            : <MiniCarousel
+                                // variants:
+                                theme='danger'
+                                // nude={true}
+                                
+                                
+                                
+                                // classes:
+                                className='image'
+                                
+                                
+                                
+                                // components:
+                                basicComponent={<Content theme='primary' />}
+                            >
+                                {images.map((image, index) =>
+                                    <Image
+                                        // identifiers:
+                                        key={index}
+                                        
+                                        
+                                        
+                                        className='prodImg'
+                                        
+                                        alt={name ?? ''}
+                                        src={resolveMediaUrl(image)}
+                                        sizes={`${minImageWidth}px`}
+                                    />
+                                )}
+                            </MiniCarousel>
+                        }
                     </Basic>
                 }
             />
@@ -498,6 +519,7 @@ const SubcategoryList = (props: SubcategoryListProps): JSX.Element|null => {
         <List
             // other props:
             {...restListProps}
+            listStyle='flat'
         >
             {subcategories.map((subcategory, index) =>
                 <SubcategoryListItem
@@ -733,36 +755,57 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                         // classes:
                         className='preview'
                     >
-                        <MiniCarousel
-                            // variants:
-                            theme='danger'
-                            nude={true}
-                            
-                            
-                            
-                            // classes:
-                            className='image'
-                            
-                            
-                            
-                            // components:
-                            basicComponent={<Content theme='primary' />}
-                        >
-                            {images.map((image, index) =>
+                        {
+                            !images.length
+                            ? <Basic
+                                // variants:
+                                mild={true}
+                                nude={true}
+                                
+                                
+                                
+                                // classes:
+                                className='image noImage'
+                            >
                                 <Image
-                                    // identifiers:
-                                    key={index}
-                                    
-                                    
-                                    
                                     className='prodImg'
                                     
-                                    alt={name ?? ''}
-                                    src={resolveMediaUrl(image)}
+                                    alt='No image'
+                                    src={undefined}
                                     sizes={`${minImageWidthSub}px`}
                                 />
-                            )}
-                        </MiniCarousel>
+                            </Basic>
+                            : <MiniCarousel
+                                // variants:
+                                theme='danger'
+                                // nude={true}
+                                
+                                
+                                
+                                // classes:
+                                className='image'
+                                
+                                
+                                
+                                // components:
+                                basicComponent={<Content theme='primary' />}
+                            >
+                                {images.map((image, index) =>
+                                    <Image
+                                        // identifiers:
+                                        key={index}
+                                        
+                                        
+                                        
+                                        className='prodImg'
+                                        
+                                        alt={name ?? ''}
+                                        src={resolveMediaUrl(image)}
+                                        sizes={`${minImageWidthSub}px`}
+                                    />
+                                )}
+                            </MiniCarousel>
+                        }
                     </Basic>
                 }
             />

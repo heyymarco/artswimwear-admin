@@ -1,6 +1,7 @@
 // cssfn:
 import {
     // writes css in javascript:
+    rule,
     children,
     descendants,
     style,
@@ -123,6 +124,21 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
                 [borderVars.borderWidth           ] : '0px', // only setup borderRadius, no borderStroke
                 borderInlineEndWidth : basics.borderWidth,
                 
+                /*
+                    :is(.flat) >   *  > .wh287.wh287 > .preview
+                        <ul>     <li>   &&&&&&&&&&&&&&&&&&&&&&&
+                */
+                ...rule(':is(.flat)>*>&', {
+                    [borderVars.borderWidth] : basics.borderWidth,
+                    [borderVars.borderStartStartRadius] : basics.borderRadius,
+                    [borderVars.borderStartEndRadius  ] : basics.borderRadius,
+                    [borderVars.borderEndStartRadius  ] : basics.borderRadius,
+                    [borderVars.borderEndEndRadius    ] : basics.borderRadius,
+                }),
+                ...rule(':is(.flat):has(>*>&)', {
+                    gap: spacers.sm,
+                }),
+                
                 
                 
                 // spacings:
@@ -136,13 +152,38 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
                 
                 // children:
                 ...children('.image', {
+                    // layouts:
+                    ...rule('.noImage', {
+                        display: 'grid',
+                    }),
+                    
+                    
+                    
                     // sizes:
                     aspectRatio : commerces.defaultProductAspectRatio,
                     
                     
                     
+                    // borders:
+                    [borderVars.borderWidth           ] : '0px',
+                    
+                    // follows <parent>'s borderRadius
+                    
+                    /*
+                        :not(:is(.flat)) > * > .wh287.wh287 > .preview > .image
+                                 <ul>    <li>  &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+                    */
+                    ...rule(':not(:is(.flat))>*>&', { // when the <ListItem> is not .flat => follows the <ListItem>'s borderRadius, otherwise keeps the 4 edges has borderRadius(es)
+                        [borderVars.borderStartStartRadius] : groupableVars.borderStartStartRadius,
+                        [borderVars.borderStartEndRadius  ] : '0px',
+                        [borderVars.borderEndStartRadius  ] : groupableVars.borderEndStartRadius,
+                        [borderVars.borderEndEndRadius    ] : '0px',
+                    }),
+                    
+                    
+                    
                     // children:
-                    ...children('ul>li>.prodImg', {
+                    ...children(['ul>li>.prodImg', '.prodImg'], {
                         inlineSize : '100%',
                         blockSize  : '100%',
                     }),
