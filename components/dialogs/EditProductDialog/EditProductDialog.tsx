@@ -477,6 +477,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     }), [role]);
     const privilegeDelete = !!role?.product_d;
     
+    const privilegeCategoryRead   = !!role?.category_r;
     const privilegeCategoryAdd    = !!role?.category_c;
     const privilegeCategoryUpdate = useMemo(() => ({
         description : !!role?.category_ud,
@@ -891,7 +892,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                     />
                 </WysiwygEditor>
             </TabPanel>
-            <TabPanel label={PAGE_PRODUCT_TAB_CATEGORIES}   panelComponent={<Generic className={styleSheet.categoriesTab} />}>
+            {privilegeCategoryRead && <TabPanel label={PAGE_PRODUCT_TAB_CATEGORIES}   panelComponent={<Generic className={styleSheet.categoriesTab} />}>
                 <PaginationStateProvider<CategoryDetail>
                     // states:
                     initialPerPage={10}
@@ -983,7 +984,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         />
                     </CategoryStateProvider>
                 </PaginationStateProvider>
-            </TabPanel>
+            </TabPanel>}
         </>}</ComplexEditModelDialog>
     );
 };
