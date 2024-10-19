@@ -258,7 +258,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             return null;
         } // try
     });
-    const [categories      , setCategories    ] = useState<Set<string>            >(() => new Set<string>());
+    const [categories      , setCategories    ] = useState<Set<string>            >(() => new Set<string>(model?.categories));
     
     const draftDifferentialImages               = useDraftDifferentialImages();
     
@@ -333,7 +333,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     
     
     // refs:
-    const firstEditorRef = useRef<HTMLInputElement|null>(null); // TODO: finish this
+    const firstEditorRef = useRef<HTMLInputElement|null>(null);
     
     
     
@@ -389,6 +389,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                 
                 variantGroups  : (variantGroups !== unmodifiedVariantGroups) ? variantGroups                                     : undefined,
                 stocks         : (stocks        !== unmodifiedStocks       ) ? stocks.map(({value}) => value)                    : undefined,
+                categories     : (whenUpdate.description || whenAdd)         ? Array.from(categories)                            : undefined,
             }).unwrap();
         }
         finally {

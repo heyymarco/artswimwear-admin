@@ -132,6 +132,7 @@ export const ProductDetailSchema = z.object({
     
     variantGroups      : z.array(VariantGroupDetailSchema),
     stocks             : z.array(StockDetailSchema),
+    categories         : z.array(ModelIdSchema),
 }) satisfies z.Schema<ProductDetail>;
 
 export const ProductUpdateRequestSchema = MutationArgsSchema<Omit<ProductDetail, 'stocks'> & { stocks?: StockDetail['value'][] }>(

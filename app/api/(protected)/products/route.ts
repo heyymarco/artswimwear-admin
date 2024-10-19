@@ -38,6 +38,7 @@ import {
     productPreviewSelect,
     convertProductPreviewDataToProductPreview,
     productDetailSelect,
+    convertProductDetailDataToProductDetail,
     
     selectId,
     createVariantGroupDiff,
@@ -138,22 +139,6 @@ router
     return Response.json(convertProductPreviewDataToProductPreview(productPreviewData) satisfies ProductPreview); // handled with success
 })
 .post(async (req) => {
-    /* required for displaying products page */
-    
-    
-    
-    // if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
-    //     await new Promise<void>((resolve) => {
-    //         setTimeout(() => {
-    //             resolve();
-    //         }, 2000);
-    //     });
-    // } // if
-    
-    // throw '';
-    
-    
-    
     //#region parsing and validating request
     const requestData = await (async () => {
         try {
@@ -212,25 +197,11 @@ You do not have the privilege to view the products.`
     } // for
     const paginationProductDetail : Pagination<ProductDetail> = {
         total    : total,
-        entities : paged,
+        entities : paged.map(convertProductDetailDataToProductDetail),
     };
     return Response.json(paginationProductDetail); // handled with success
 })
 .patch(async (req) => {
-    if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
-        await new Promise<void>((resolve) => {
-            setTimeout(() => {
-                resolve();
-            }, 2000);
-        });
-    } // if
-    
-    // throw '';
-    // return Response.json({ message: 'not found'    }, { status: 400 }); // handled with error
-    // return Response.json({ message: 'server error' }, { status: 500 }); // handled with error
-    
-    
-    
     //#region parsing and validating request
     const requestData = await (async () => {
         try {
@@ -281,8 +252,9 @@ You do not have the privilege to view the products.`
             
             images,
             
-            variantGroups : variantGroupsRaw,
-            stocks        : stocksRaw,
+            variantGroups,
+            stocks,
+            categories,
         },
     } = requestData;
     //#endregion parsing and validating request
@@ -292,8 +264,6 @@ You do not have the privilege to view the products.`
     try {
         return await prisma.$transaction(async (prismaTransaction): Promise<Response> => {
             //#region normalize variantGroups
-            const variantGroups : VariantGroupDetail[]|undefined = variantGroupsRaw;
-            
             const variantGroupDiff = (variantGroups === undefined) ? undefined : await (async (): Promise<VariantGroupDiff> => {
                 const variantGroupOris : VariantGroupDetail[] = !id ? [] : await prismaTransaction.variantGroup.findMany({
                     where : {
@@ -332,8 +302,6 @@ You do not have the privilege to view the products.`
             })();
             //#endregion normalize variantGroups
             
-            const stocks : (number|null)[]|undefined = stocksRaw;
-            
             
             
             //#region validating privileges
@@ -346,10 +314,10 @@ You do not have the privilege to add new product.`
                 }, { status: 403 }); // handled with error: forbidden
             }
             else {
-                if (!session.role?.product_ud && ((name !== undefined) || (path !== undefined) || (excerpt !== undefined) || (description !== undefined))) return Response.json({ error:
+                if (!session.role?.product_ud && ((name !== undefined) || (path !== undefined) || (excerpt !== undefined) || (description !== undefined) || (categories !== undefined))) return Response.json({ error:
 `Access denied.
 
-You do not have the privilege to modify the product name, path, excerpt, and/or description.`
+You do not have the privilege to modify the product name, path, excerpt, description, and/or categories.`
                 }, { status: 403 }); // handled with error: forbidden
                 
                 if (!session.role?.product_ui && (images !== undefined)) return Response.json({ error:
@@ -672,17 +640,31 @@ You do not have the privilege to modify the product stock(s).`
                     }
                 } : undefined,
             } satisfies Prisma.ProductUpdateInput;
-            const productDetail : ProductDetail = (
+            const productDetail : ProductDetail = convertProductDetailDataToProductDetail(
                 !id
                 ? await prismaTransaction.product.create({
-                    data   : data as (typeof data & Required<Pick<ProductUpdateRequest, 'visibility'|'name'|'price'|'path'>>),
+                    data   : {
+                        ...data as (typeof data & Required<Pick<ProductUpdateRequest, 'visibility'|'name'|'price'|'path'>>),
+                        categories : (categories === undefined) ? undefined : {
+                            connect : categories.map((categoryId) => ({
+                                id : categoryId,
+                            })),
+                        },
+                    },
                     select : productDetailSelect,
                 })
                 : await prismaTransaction.product.update({
                     where  : {
                         id : id,
                     },
-                    data   : data,
+                    data   : {
+                        ...data,
+                        categories : (categories === undefined) ? undefined : {
+                            set : categories.map((categoryId) => ({
+                                id : categoryId,
+                            })),
+                        },
+                    },
                     select : productDetailSelect,
                 })
             );

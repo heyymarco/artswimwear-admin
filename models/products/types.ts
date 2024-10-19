@@ -99,6 +99,7 @@ export interface ProductDetail
 {
     variantGroups : VariantGroupDetail[]
     stocks        : StockDetail[]
+    categories    : Category['id'][]
 }
 
 export interface ProductUpdateRequest

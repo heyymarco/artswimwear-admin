@@ -6,6 +6,13 @@ import {
 // models:
 import {
     type ProductPreview,
+    type ProductDetail,
+    
+    type VariantDetail,
+    type VariantGroupDetail,
+    
+    type TemplateVariantDetail,
+    
     type CategoryPreview,
     type CategoryDetail,
 }                           from './types'
@@ -25,13 +32,6 @@ import {
 }                           from '@reduxjs/toolkit'
 
 // internals:
-import {
-    // types:
-    type VariantDetail,
-    type VariantGroupDetail,
-    
-    type TemplateVariantDetail,
-}                           from './types'
 import {
     // utilities:
     selectId,
@@ -144,7 +144,21 @@ export const productDetailSelect = {
             variantIds : true,
         },
     },
+    categories : {
+        select : {
+            id : true,
+        },
+    },
 } satisfies Prisma.ProductSelect;
+export const convertProductDetailDataToProductDetail = (productDetailData: Awaited<ReturnType<typeof prisma.product.findFirstOrThrow<{ select: typeof productDetailSelect }>>>): ProductDetail => {
+    const {
+        categories, // take
+    ...restProductDetail} = productDetailData;
+    return {
+        ...restProductDetail,
+        categories : categories.map(({id}) => id),
+    };
+};
 
 
 
