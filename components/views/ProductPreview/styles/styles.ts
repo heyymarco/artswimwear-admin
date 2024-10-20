@@ -6,9 +6,41 @@ import {
     descendants,
     style,
 }                           from '@cssfn/core'          // writes css in javascript
-import { spacers, typos, usesBorder, usesGroupable, usesPadding } from '@reusable-ui/core';
-import { basics } from '@reusable-ui/components';
-import { commerces } from '@/config';
+
+import {
+    // a spacer (gap) management system:
+    spacers,
+    
+    
+    
+    // a typography management system:
+    typos,
+    
+    
+    
+    // border (stroke) stuff of UI:
+    usesBorder,
+    
+    
+    
+    // padding (inner spacing) stuff of UI:
+    usesPadding,
+    
+    
+    
+    // groups a list of UIs into a single UI:
+    usesGroupable,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
+// reusable-ui components:
+import {
+    basics,
+}                           from '@reusable-ui/components'      // a set of official Reusable-UI components
+
+// configs:
+import {
+    commerces,
+}                           from '@/config'
 
 
 
@@ -108,15 +140,33 @@ const usesProductPreviewLayout = () => { // the <ListItem> of product list
                 ...rule(':not(.overlay)', {
                     marginInlineStart: '0.25em',
                 }),
-                // invert the edit overlay, so the edit overlay can be seen on busy background
+                
+                // invert the edit overlay, so the edit overlay can be seen on busy background:
                 ...rule('.overlay', {
+                    // animations:
+                    filter    : [['none'], '!important'],
+                    animation : [['none'], '!important'],
+                    
+                    
+                    
                     // children:
                     ...children('[role="img"]', {
-                        filter : [[
-                            'invert(1)',
-                        ]],
+                        transition: [
+                            ['backdrop-filter' , basics.defaultAnimationDuration],
+                            ['background-color', basics.defaultAnimationDuration],
+                        ],
+                        ...rule(':not(:hover)', {
+                            backdropFilter  : [[
+                                'invert(1)',
+                            ]],
+                            backgroundColor : 'transparent',
+                        }),
                     }),
                 }),
+            }),
+            // invert the edit overlay, so the edit overlay can be seen on busy background:
+            ...rule('& :has(>.edit.overlay)', { // select any element having children('>.edit.overlay') but within <ProductPreview>
+                filter : [['none'], '!important'],
             }),
             ...children('.preview', {
                 // positions:

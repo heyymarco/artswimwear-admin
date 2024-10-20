@@ -1,8 +1,9 @@
 // cssfn:
 import {
-    children,
-    descendants,
+    // writes css in javascript:
     rule,
+    descendants,
+    children,
     style,
     scope,
 }                           from '@cssfn/core'          // writes css in javascript
@@ -38,6 +39,7 @@ import {
     usesGroupable,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
+// reusable-ui components:
 import {
     basics,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
@@ -135,18 +137,7 @@ const usesOrderPreviewLayout = () => { // the <ListItem> of order list
                 fontStyle  : 'italic',
             }),
             ...descendants('.edit', {
-                ...rule(':not(.overlay)', {
-                    marginInlineStart: '0.25em',
-                }),
-                // invert the edit overlay, so the edit overlay can be seen on busy background
-                ...rule('.overlay', {
-                    // children:
-                    ...children('[role="img"]', {
-                        filter : [[
-                            'invert(1)',
-                        ]],
-                    }),
-                }),
+                marginInlineStart: '0.25em',
             }),
             ...children('.preview', {
                 // positions:

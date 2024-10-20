@@ -18,6 +18,11 @@ import {
     typos,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
+// reusable-ui components:
+import {
+    basics,
+}                           from '@reusable-ui/components'      // a set of official Reusable-UI components
+
 
 
 // styles:
@@ -76,16 +81,34 @@ export const usesProfilePageLayout = () => {
                         // typos:
                         fontSize : '0.75em',
                     }),
-                    // invert the edit overlay, so the edit overlay can be seen on busy background
+                    
+                    // invert the edit overlay, so the edit overlay can be seen on busy background:
                     ...rule('.overlay', {
+                        // animations:
+                        filter    : [['none'], '!important'],
+                        animation : [['none'], '!important'],
+                        
+                        
+                        
                         // children:
                         ...children('[role="img"]', {
-                            filter : [[
-                                'invert(1)',
-                            ]],
+                            transition: [
+                                ['backdrop-filter' , basics.defaultAnimationDuration],
+                                ['background-color', basics.defaultAnimationDuration],
+                            ],
+                            ...rule(':not(:hover)', {
+                                backdropFilter  : [[
+                                    'invert(1)',
+                                ]],
+                                backgroundColor : 'transparent',
+                            }),
                         }),
                     }),
                 }),
+            }),
+            // invert the edit overlay, so the edit overlay can be seen on busy background:
+            ...rule('& :has(>.edit.overlay)', { // select any element having children('>.edit.overlay') but within `<ProfilePage> > section > article`
+                filter : [['none'], '!important'],
             }),
             ...children('.image', {
                 gridArea: 'image',
