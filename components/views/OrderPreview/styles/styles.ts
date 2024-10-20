@@ -135,17 +135,127 @@ const usesOrderPreviewLayout = () => { // the <ListItem> of order list
                 fontStyle  : 'italic',
             }),
             ...descendants('.edit', {
-                ...rule(':not(:is(.overlay, .fullEditor))', {
+                ...rule(':not(.overlay)', {
                     marginInlineStart: '0.25em',
-                    opacity: 0.5,
-                    transition: [
-                        ['transform', '300ms', 'ease-out'],
-                    ],
-                    ...rule(':hover', {
-                        opacity: 'unset',
-                        transform: 'scale(105%)',
+                }),
+                // invert the edit overlay, so the edit overlay can be seen on busy background
+                ...rule('.overlay', {
+                    // children:
+                    ...children('[role="img"]', {
+                        filter : [[
+                            'invert(1)',
+                        ]],
                     }),
                 }),
+            }),
+            ...children('.preview', {
+                // positions:
+                gridArea    : 'preview',
+                
+                justifySelf : 'stretch', // stretch the self horizontally
+                alignSelf   : 'stretch', // stretch the self vertically
+                
+                
+                
+                // layouts:
+                display: 'grid',
+                alignItems: 'start',
+                
+                
+                
+                // borders:
+                // follows <parent>'s borderRadius
+                [borderVars.borderStartStartRadius] : groupableVars.borderStartStartRadius,
+                [borderVars.borderStartEndRadius  ] : '0px',
+                [borderVars.borderEndStartRadius  ] : groupableVars.borderEndStartRadius,
+                [borderVars.borderEndEndRadius    ] : '0px',
+                
+                [borderVars.borderWidth           ] : '0px', // only setup borderRadius, no borderStroke
+                borderInlineEndWidth                : basics.borderWidth,
+                
+                
+                
+                // spacings:
+                // cancel-out parent's padding with negative margin:
+                marginInlineStart : negativePaddingInline,
+                marginBlock       : negativePaddingBlock,
+                [paddingVars.paddingInline] : '0px',
+                [paddingVars.paddingBlock ] : '0px',
+                
+                
+                
+                // children:
+                ...children('.image', {
+                    // layouts:
+                    ...rule('.noImage', {
+                        // layouts:
+                        display: 'grid',
+                        
+                        
+                        
+                        // spacings:
+                        [paddingVars.paddingInline] : '0px',
+                        [paddingVars.paddingBlock ] : '0px',
+                        
+                        
+                        
+                        // children:
+                        ...children('*', {
+                            opacity: 0.4,
+                            
+                            justifySelf : 'center', // center the <Icon>
+                            alignSelf   : 'center', // center the <Icon>
+                        }),
+                    }),
+                    
+                    
+                    
+                    // spacings:
+                    [paddingVars.paddingInline] : '0px',
+                    [paddingVars.paddingBlock ] : '0px',
+                    
+                    
+                    
+                    // sizes:
+                    boxSizing   : 'border-box',
+                    aspectRatio : commerces.defaultProductAspectRatio,
+                    
+                    
+                    
+                    // borders:
+                    // follows the <ListItem>'s borderRadius, otherwise keeps the 4 edges has borderRadius(es)
+                    [borderVars.borderWidth           ] : '0px',
+                    
+                    [borderVars.borderStartStartRadius] : groupableVars.borderStartStartRadius,
+                    [borderVars.borderStartEndRadius  ] : '0px',
+                    [borderVars.borderEndStartRadius  ] : groupableVars.borderEndStartRadius,
+                    [borderVars.borderEndEndRadius    ] : '0px',
+                    
+                    
+                    
+                    // children:
+                    // a tweak for marco's <Image>:
+                    ...children(['ul>li>.prodImg', '.prodImg'], {
+                        inlineSize : '100%', // fills the entire <Carousel> area
+                        blockSize  : '100%', // fills the entire <Carousel> area
+                    }, { performGrouping: false }), // cannot grouping of different depth `:is(ul>li>.prodImg', .prodImg)`
+                    
+                    // a tweak for quantity <Badge>:
+                    ...children('ul>li', {
+                        ...children('.floatingQuantity', {
+                            translate: [[
+                                `calc(-100% - ${spacers.sm})`,
+                                spacers.sm,
+                            ]],
+                        }),
+                    }),
+                }),
+            }),
+            ...children('.floatingEdit', {
+                translate: [[
+                    `calc(100% + ${spacers.sm})`,
+                    spacers.sm,
+                ]],
             }),
             ...children('.orderId', {
                 // positions:
@@ -235,102 +345,6 @@ const usesOrderPreviewLayout = () => { // the <ListItem> of order list
                         }),
                     }),
                 }),
-            }),
-            ...children('.preview', {
-                // positions:
-                gridArea    : 'preview',
-                
-                justifySelf : 'stretch', // stretch the self horizontally
-                alignSelf   : 'stretch', // stretch the self vertically
-                
-                
-                
-                // layouts:
-                display: 'grid',
-                alignItems: 'start',
-                
-                
-                
-                // borders:
-                // follows <parent>'s borderRadius
-                [borderVars.borderStartStartRadius] : groupableVars.borderStartStartRadius,
-                [borderVars.borderStartEndRadius  ] : '0px',
-                [borderVars.borderEndStartRadius  ] : groupableVars.borderEndStartRadius,
-                [borderVars.borderEndEndRadius    ] : '0px',
-                
-                [borderVars.borderWidth           ] : '0px', // only setup borderRadius, no borderStroke
-                borderInlineEndWidth                : basics.borderWidth,
-                
-                
-                
-                // spacings:
-                // cancel-out parent's padding with negative margin:
-                marginInlineStart : negativePaddingInline,
-                marginBlock       : negativePaddingBlock,
-                [paddingVars.paddingInline] : '0px',
-                [paddingVars.paddingBlock ] : '0px',
-                
-                
-                
-                // children:
-                ...children('.image', {
-                    // layouts:
-                    ...rule('.noImage', {
-                        // layouts:
-                        display: 'grid',
-                        
-                        
-                        
-                        // spacings:
-                        [paddingVars.paddingInline] : '0px',
-                        [paddingVars.paddingBlock ] : '0px',
-                        
-                        
-                        
-                        // children:
-                        ...children('*', {
-                            opacity: 0.4,
-                        }),
-                    }),
-                    
-                    
-                    
-                    // sizes:
-                    aspectRatio : commerces.defaultProductAspectRatio,
-                    
-                    
-                    
-                    // borders:
-                    // follows the <ListItem>'s borderRadius, otherwise keeps the 4 edges has borderRadius(es)
-                    [borderVars.borderWidth           ] : '0px',
-                    
-                    [borderVars.borderStartStartRadius] : groupableVars.borderStartStartRadius,
-                    [borderVars.borderStartEndRadius  ] : '0px',
-                    [borderVars.borderEndStartRadius  ] : groupableVars.borderEndStartRadius,
-                    [borderVars.borderEndEndRadius    ] : '0px',
-                    
-                    
-                    
-                    // children:
-                    ...children(['ul>li>.prodImg', '.prodImg'], {
-                        inlineSize : '100%', // fills the entire <Carousel> area
-                        blockSize  : '100%', // fills the entire <Carousel> area
-                    }, { performGrouping: false }), // cannot grouping of different depth `:is(ul>li>.prodImg', .prodImg)`
-                    ...children('ul>li', {
-                        ...children('.floatingQuantity', {
-                            translate: [[
-                                `calc(-100% - ${spacers.sm})`,
-                                spacers.sm,
-                            ]],
-                        }),
-                    }),
-                }),
-            }),
-            ...children('.floatingEdit', {
-                translate: [[
-                    `calc(100% + ${spacers.sm})`,
-                    spacers.sm,
-                ]],
             }),
             ...children('.fullEditor', {
                 gridArea: 'fullEditor',

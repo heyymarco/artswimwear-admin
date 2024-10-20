@@ -31,6 +31,11 @@ import {
     
     
     
+    // simple-components:
+    Icon,
+    
+    
+    
     // layout-components:
     ListItem,
     
@@ -377,7 +382,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
             </p>
             
             <p className='fullEditor'>
-            <EditButton icon='list' title='View the order details' className='fullEditor' buttonStyle='regular' onClick={() => setEditMode('full')}>
+                <EditButton icon='list' title='View the order details' className='fullEditor' buttonStyle='regular' onClick={() => setEditMode('full')}>
                     View Details
                 </EditButton>
             </p>
@@ -422,13 +427,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                                 // classes:
                                 className='image noImage'
                             >
-                                <Image
-                                    className='prodImg'
-                                    
-                                    alt='No image'
-                                    src={undefined}
-                                    sizes={`${minImageWidth}px`}
-                                />
+                                <Icon icon='image' size='xl' />
                             </Basic>
                             : <MiniCarousel
                                 // variants:
