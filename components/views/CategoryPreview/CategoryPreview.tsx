@@ -516,8 +516,21 @@ const SubcategoryList = (props: SubcategoryListProps): JSX.Element|null => {
         
         
         // other props:
-        ...restListProps
+        ...restSubcategoryListProps
     } = props;
+    
+    
+    
+    // default props:
+    const {
+        // variants:
+        listStyle = 'flat',
+        
+        
+        
+        // other props:
+        ...restListProps
+    } = restSubcategoryListProps;
     
     
     
@@ -527,7 +540,11 @@ const SubcategoryList = (props: SubcategoryListProps): JSX.Element|null => {
         <List
             // other props:
             {...restListProps}
-            listStyle='flat'
+            
+            
+            
+            // variants:
+            listStyle={listStyle}
         >
             {subcategories.map((subcategory, index) =>
                 <SubcategoryListItem
