@@ -16,11 +16,10 @@ import {
     useSession,
 }                           from 'next-auth/react'
 
-// cssfn:
+// styles:
 import {
-    // style sheets:
-    dynamicStyleSheet,
-}                           from '@cssfn/cssfn-react'               // writes css in react hook
+    useProfilePageStyleSheet,
+}                           from './styles/loader'
 
 // reusable-ui core:
 import {
@@ -84,13 +83,6 @@ import {
 import {
     resolveMediaUrl,
 }                           from '@/libs/mediaStorage.client'
-
-
-
-// styles:
-const useProfilePageStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */ './page-styles')
-, { id: 'pmmu5ep2va' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 
 
 
@@ -188,10 +180,15 @@ export function ProfilePageContent() {
                             
                             
                             
+                            // classes:
+                            className='floatingEdit'
+                            
+                            
+                            
                             // floatable:
                             floatingPlacement='left-start'
-                            floatingShift={8}
-                            floatingOffset={-26}
+                            floatingShift={0}
+                            floatingOffset={0}
                         >
                             <EditButton className='edit overlay' onClick={() => handleEdit('image')}>
                                 <></>

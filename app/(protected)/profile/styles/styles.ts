@@ -16,16 +16,6 @@ import {
     
     // a typography management system:
     typos,
-    
-    
-    
-    // border (stroke) stuff of UI:
-    usesBorder,
-    
-    
-    
-    // padding (inner spacing) stuff of UI:
-    usesPadding,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 
@@ -77,23 +67,17 @@ export const usesProfilePageLayout = () => {
                     fontStyle  : 'italic',
                 }),
                 ...children('.edit', {
-                    marginInlineStart: '0.25em',
-                    opacity: 0.5,
-                    fontSize : typos.fontSizeSm,
-                    textDecoration: 'none',
-                    transition: [
-                        ['transform', '300ms', 'ease-out'],
-                    ],
-                    ...rule(':hover', {
-                        opacity: 'unset',
-                        transform: 'scale(105%)',
+                    ...rule(':not(.overlay)', {
+                        // spacings:
+                        marginInlineStart: '0.25em',
+                        
+                        
+                        
+                        // typos:
+                        fontSize : '0.75em',
                     }),
                     // invert the edit overlay, so the edit overlay can be seen on busy background
                     ...rule('.overlay', {
-                        opacity : 0.8,
-                        
-                        
-                        
                         // children:
                         ...children('[role="img"]', {
                             filter : [[
@@ -105,6 +89,12 @@ export const usesProfilePageLayout = () => {
             }),
             ...children('.image', {
                 gridArea: 'image',
+            }),
+            ...children('.floatingEdit', {
+                translate: [[
+                    `calc(100% + ${spacers.sm})`,
+                    spacers.sm,
+                ]],
             }),
             ...children('.name', {
                 gridArea: 'name',
