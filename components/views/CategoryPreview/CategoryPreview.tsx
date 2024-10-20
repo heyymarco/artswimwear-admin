@@ -369,13 +369,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                                 // classes:
                                 className='image noImage'
                             >
-                                <Image
-                                    className='prodImg'
-                                    
-                                    alt='No image'
-                                    src={undefined}
-                                    sizes={`${minImageWidth}px`}
-                                />
+                                <Icon icon='image' size='xl' />
                             </Basic>
                             : <MiniCarousel
                                 // variants:

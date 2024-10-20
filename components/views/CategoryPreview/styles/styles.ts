@@ -112,6 +112,21 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
             ...descendants(['.name', 'p'], {
                 margin: 0,
             }),
+            ...descendants('.edit', {
+                // do not alter the `.edit` button in `.name`:
+                // ...rule(':not(.overlay)', {
+                //     marginInlineStart: '0.25em',
+                // }),
+                // invert the edit overlay, so the edit overlay can be seen on busy background
+                ...rule('.overlay', {
+                    // children:
+                    ...children('[role="img"]', {
+                        filter : [[
+                            'invert(1)',
+                        ]],
+                    }),
+                }),
+            }),
             ...children('.preview', {
                 // positions:
                 gridArea    : 'preview',
@@ -183,12 +198,22 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
                         // children:
                         ...children('*', {
                             opacity: 0.4,
+                            
+                            justifySelf : 'center', // center the <Icon>
+                            alignSelf   : 'center', // center the <Icon>
                         }),
                     }),
                     
                     
                     
+                    // spacings:
+                    [paddingVars.paddingInline] : '0px',
+                    [paddingVars.paddingBlock ] : '0px',
+                    
+                    
+                    
                     // sizes:
+                    boxSizing   : 'border-box',
                     aspectRatio : commerces.defaultProductAspectRatio,
                     
                     
@@ -212,6 +237,7 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
                     
                     
                     // children:
+                    // a tweak for marco's <Image>:
                     ...children(['ul>li>.prodImg', '.prodImg'], {
                         inlineSize : '100%', // fills the entire <Carousel> area
                         blockSize  : '100%', // fills the entire <Carousel> area
