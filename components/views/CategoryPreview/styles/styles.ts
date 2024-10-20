@@ -76,6 +76,7 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
                 '"preview ... name         "', 'auto',
                 '"preview ... ............."', spacers.sm,
                 '"preview ... subcategories"', 'max-content',
+                '"preview ... ............."', 'auto', // an extra space if the `subcategories` is shorter than `preview`
                 '/',
                 `calc(((${switchOf(categoryPreviewVars.minImageHeight, `${minImageHeight}px`)} + (2 * ${paddingVars.paddingBlock})) * ${commerces.defaultProductAspectRatio}) - ${paddingVars.paddingInline}) ${spacers.md} 1fr`,
             ]],

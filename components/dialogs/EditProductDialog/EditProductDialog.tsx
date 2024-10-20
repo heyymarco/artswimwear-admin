@@ -270,6 +270,28 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     
     
     
+    // privileges:
+    const privilegeAdd    = !!role?.product_c;
+    const privilegeUpdate = useMemo(() => ({
+        description : !!role?.product_ud,
+        images      : !!role?.product_ui,
+        price       : !!role?.product_up,
+        stock       : !!role?.product_us,
+        visibility  : !!role?.product_uv,
+    }), [role]);
+    const privilegeDelete = !!role?.product_d;
+    
+    const privilegeCategoryRead   = !!role?.category_r;
+    const privilegeCategoryAdd    = !!role?.category_c;
+    const privilegeCategoryUpdate = useMemo(() => ({
+        description : !!role?.category_ud,
+        images      : !!role?.category_ui,
+        visibility  : !!role?.category_uv,
+    }), [role]);
+    const privilegeCategoryDelete = !!role?.category_d;
+    
+    
+    
     // stores:
     const [updateProduct    , {isLoading : isLoadingUpdate           }] = useUpdateProduct();
     const [deleteProduct    , {isLoading : isLoadingDelete           }] = useDeleteProduct();
@@ -329,6 +351,36 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         value    : categories,
         onChange : handleSetCategories,
     };
+    const categoryCreateComponent : CategoryStateProps['modelCreateComponent'] = (
+        privilegeCategoryAdd
+        ?
+        <EditCategoryDialog
+            // data:
+            model={null} // create a new model
+            
+            
+            
+            // workaround for penetrating <CategoryStateProvider> to showDialog():
+            // states:
+            categoryState={{
+                ...rootCategoryState,
+                
+                
+                
+                // privileges:
+                /*
+                    when create_mode (add):
+                    * ALWAYS be ABLE to edit   the Category (because the data is *not_yet_exsist* on the database)
+                    * ALWAYS be ABLE to delete the Category (because the data is *not_yet_exsist* on the database)
+                */
+                privilegeAdd    : privilegeCategoryAdd,
+                privilegeUpdate : privilegeCategoryUpdateFullAccess,
+                privilegeDelete : true,
+            }}
+        />
+        : undefined
+    );
+    rootCategoryState.modelCreateComponent = categoryCreateComponent;
     
     
     
@@ -470,28 +522,6 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             name.trim().toLowerCase().replace(/(\s|_|-)+/ig, '-')
         );
     });
-    
-    
-    
-    // privileges:
-    const privilegeAdd    = !!role?.product_c;
-    const privilegeUpdate = useMemo(() => ({
-        description : !!role?.product_ud,
-        images      : !!role?.product_ui,
-        price       : !!role?.product_up,
-        stock       : !!role?.product_us,
-        visibility  : !!role?.product_uv,
-    }), [role]);
-    const privilegeDelete = !!role?.product_d;
-    
-    const privilegeCategoryRead   = !!role?.category_r;
-    const privilegeCategoryAdd    = !!role?.category_c;
-    const privilegeCategoryUpdate = useMemo(() => ({
-        description : !!role?.category_ud,
-        images      : !!role?.category_ui,
-        visibility  : !!role?.category_uv,
-    }), [role]);
-    const privilegeCategoryDelete = !!role?.category_d;
     
     
     
@@ -959,35 +989,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                                     model={undefined as any}
                                 />
                             }
-                            modelCreateComponent={
-                                privilegeCategoryAdd
-                                ?
-                                <EditCategoryDialog
-                                    // data:
-                                    model={null} // create a new model
-                                    
-                                    
-                                    
-                                    // workaround for penetrating <CategoryStateProvider> to showDialog():
-                                    // states:
-                                    categoryState={{
-                                        ...rootCategoryState,
-                                        
-                                        
-                                        
-                                        // privileges:
-                                        /*
-                                            when create_mode (add):
-                                            * ALWAYS be ABLE to edit   the Category (because the data is *not_yet_exsist* on the database)
-                                            * ALWAYS be ABLE to delete the Category (because the data is *not_yet_exsist* on the database)
-                                        */
-                                        privilegeAdd    : privilegeCategoryAdd,
-                                        privilegeUpdate : privilegeCategoryUpdateFullAccess,
-                                        privilegeDelete : true,
-                                    }}
-                                />
-                                : undefined
-                            }
+                            modelCreateComponent={categoryCreateComponent}
                         />
                     </CategoryStateProvider>
                 </PaginationStateProvider>

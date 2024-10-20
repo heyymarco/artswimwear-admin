@@ -24,6 +24,13 @@ import {
     // types:
     type DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
+import {
+    // react components:
+    type EditCategoryDialogProps,
+}                           from '@/components/dialogs/EditCategoryDialog'
+import {
+    type ModelCreateProps,
+}                           from '@/components/explorers/Pagination'
 
 // models:
 import {
@@ -113,6 +120,11 @@ export interface CategoryState
     
     
     
+    // components:
+    modelCreateComponent : React.ReactComponentElement<any, ModelCreateProps & EditCategoryDialogProps> | (() => CategoryDetail|Promise<CategoryDetail>) | false
+    
+    
+    
     // handlers:
     onModelSelect        : EditorChangeEventHandler<ModelSelectEvent>
     onModelDelete        : DeleteHandler<CategoryDetail>
@@ -157,6 +169,11 @@ const defaultCategoryStateContext : CategoryState = {
     mockCategoryDb       : null,
     mockCurrentPaths     : null,
     notifyMockModified   : noopCallback,
+    
+    
+    
+    // components:
+    modelCreateComponent : false,
     
     
     
@@ -217,6 +234,11 @@ const CategoryStateProvider = (props: React.PropsWithChildren<CategoryStateProps
         
         
         
+        // components:
+        modelCreateComponent : defaultModelCreateComponent,
+        
+        
+        
         // handlers:
         onModelSelect        : defaultOnModelSelect,
         onModelDelete        : defaultOnModelDelete,
@@ -259,6 +281,11 @@ const CategoryStateProvider = (props: React.PropsWithChildren<CategoryStateProps
         mockCategoryDb       = defaultMockCategoryDb,
         mockCurrentPaths     = defaultMockCurrentPaths,
         notifyMockModified   = defaultNotifyMockModified,
+        
+        
+        
+        // components:
+        modelCreateComponent = defaultModelCreateComponent,
         
         
         
@@ -307,6 +334,11 @@ const CategoryStateProvider = (props: React.PropsWithChildren<CategoryStateProps
         
         
         
+        // components:
+        modelCreateComponent,
+        
+        
+        
         // handlers:
         onModelSelect,
         onModelDelete,
@@ -344,6 +376,11 @@ const CategoryStateProvider = (props: React.PropsWithChildren<CategoryStateProps
         mockCategoryDb,
         mockCurrentPaths,
         notifyMockModified,
+        
+        
+        
+        // components:
+        modelCreateComponent,
         
         
         

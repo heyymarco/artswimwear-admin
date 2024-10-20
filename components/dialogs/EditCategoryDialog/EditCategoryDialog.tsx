@@ -401,10 +401,10 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         
         
         
-        id ??= await (async () => {
+        id ??= isDbMocked ? (await (async () => {
             const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
             return ` ${await nanoid()}`; // starts with space{random-temporary-id}
-        })();
+        })()) : '';
         
         const mutatedData : MutationArgs<CategoryDetail> = {
             id             : id,

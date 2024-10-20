@@ -18,14 +18,10 @@ import {
 
 // reusable-ui core:
 import {
-    // a spacer (gap) management system:
-    spacerValues,
-    
-    
-    
     // react helper hooks:
     useEvent,
     type EventHandler,
+    useMountedFlag,
     type ActiveChangeEvent,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
@@ -43,6 +39,7 @@ import {
     
     // simple-components:
     Icon,
+    ButtonIcon,
     Check,
     
     
@@ -50,6 +47,7 @@ import {
     // layout-components:
     ListProps,
     List,
+    ListItemProps,
     ListItem,
     
     
@@ -61,7 +59,6 @@ import {
     
     // utility-components:
     useDialogMessage,
-    ListItemProps,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // heymarco components:
@@ -70,6 +67,9 @@ import {
 }                           from '@heymarco/image'
 
 // internal components:
+import {
+    type ModelCreateProps,
+}                           from '@/components/explorers/Pagination'
 import {
     ModelPreviewProps,
 }                           from '@/components/explorers/PaginationList'
@@ -83,6 +83,7 @@ import {
     
     
     // react components:
+    type CategoryStateProps,
     CategoryStateProvider,
 }                           from '@/components/editors/CategoryEditor'
 import {
@@ -103,6 +104,7 @@ import {
     type DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
+    type EditCategoryDialogProps,
     EditCategoryDialog,
 }                           from '@/components/dialogs/EditCategoryDialog'
 
@@ -521,6 +523,60 @@ const SubcategoryList = (props: SubcategoryListProps): JSX.Element|null => {
     
     
     
+    // states:
+    const categoryState = useCategoryState();
+    const {
+        // components:
+        modelCreateComponent,
+    } = categoryState;
+    
+    
+    
+    // dialogs:
+    const {
+        showDialog,
+    } = useDialogMessage();
+    
+    
+    
+    // effects:
+    const isMounted = useMountedFlag();
+    
+    
+    
+    // handlers:
+    const handleShowDialog = useEvent(async (): Promise<void> => {
+        // conditions:
+        if (modelCreateComponent === false) return;
+        
+        
+        
+        // actions:
+        const createdModel = (
+            (typeof(modelCreateComponent) === 'function')
+            ? await modelCreateComponent()
+            : await showDialog<ComplexEditModelDialogResult<CategoryDetail>>(
+                React.cloneElement<ModelCreateProps & EditCategoryDialogProps>(modelCreateComponent,
+                    // props:
+                    {
+                        // workaround for penetrating <CategoryStateProvider> to showDialog():
+                        // states:
+                        categoryState : categoryState,
+                    },
+                )
+            )
+        );
+        if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
+        
+        
+        
+        // if (createdModel) { // if closed of created Model (ignores of canceled or deleted Model)
+        //     onModelCreate?.(createdModel);
+        // } // if
+    });
+    
+    
+    
     // default props:
     const {
         // variants:
@@ -535,7 +591,7 @@ const SubcategoryList = (props: SubcategoryListProps): JSX.Element|null => {
     
     
     // jsx:
-    if (!subcategories.length) return null;
+    // if (!subcategories.length) return null;
     return (
         <List
             // other props:
@@ -546,6 +602,11 @@ const SubcategoryList = (props: SubcategoryListProps): JSX.Element|null => {
             // variants:
             listStyle={listStyle}
         >
+            {!!modelCreateComponent && <ListItem nude={true}>
+                <ButtonIcon icon='add' buttonStyle='link' size='sm' onClick={handleShowDialog}>
+                    Add New Subcategory
+                </ButtonIcon>
+            </ListItem>}
             {subcategories.map((subcategory, index) =>
                 <SubcategoryListItem
                     // identifiers:
