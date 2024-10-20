@@ -411,7 +411,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                 }
             />
             
-            <h3 className='name'>
+            <h3 className={`name ${selectable ? 'selectable' : ''}`}>
                 {!selectable && <span
                     // classes:
                     className='decorator'
@@ -894,7 +894,7 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                 }
             />
             
-            <h4 className='name'>
+            <h4 className={`name ${selectable ? 'selectable' : ''}`}>
                 {!selectable && <span
                     // classes:
                     className='decorator'

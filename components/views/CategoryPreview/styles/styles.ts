@@ -30,7 +30,7 @@ interface CategoryPreviewVars {
     decoratorPaddingInline : any
     decoratorPaddingBlock  : any
 }
-const [categoryPreviewVars] = cssVars<CategoryPreviewVars>();
+const [categoryPreviewVars] = cssVars<CategoryPreviewVars>({ prefix: 'catPrev' });
 
 
 
@@ -243,37 +243,34 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
                 
                 
                 // spacings:
-                gap: spacers.xs,
+                gap: spacers.xs, // a space between <Check>, <EditButton>, and <VisibilityBadge>
                 
                 
                 
                 // children:
-                ...children(['.decorator', '.edit', '.visibility'], {
-                    // positions:
-                    position: 'relative',
-                    insetInlineStart : `calc(0px - (${spacers.sm} + ${categoryPreviewVars.paddingInline} + 1em))`,
-                    insetBlockStart  : `calc(${categoryPreviewVars.decoratorPaddingBlock} - ${categoryPreviewVars.paddingBlock})`,
-                    
-                    
-                    
+                ...rule('.selectable', {
+                    ...children(['.decorator', '.edit', '.visibility'], {
+                        // positions:
+                        position: 'relative',
+                        insetInlineStart : `calc(0px - (${spacers.sm} + ${categoryPreviewVars.paddingInline} + 1em))`,
+                        insetBlockStart  : `calc(${categoryPreviewVars.decoratorPaddingBlock} - ${categoryPreviewVars.paddingBlock})`,
+                    }),
+                    ...children('.decorator', {
+                        // children:
+                        ...children(':first-child', {
+                            // spacings:
+                            marginInlineEnd : `calc(${spacers.sm} + ${categoryPreviewVars.paddingInline})`,
+                            
+                            
+                            
+                            // typos:
+                            fontSize: 'inherit',
+                        }),
+                    }),
                 }),
                 ...children('.decorator', {
                     // typos:
                     fontSize: switchOf(categoryPreviewVars.titleSize, typos.fontSizeXl),
-                    
-                    
-                    
-                    // children:
-                    ...children(':first-child', {
-                        // spacings:
-                        // marginInlineEnd: spacers.sm,
-                        marginInlineEnd : `calc(${spacers.sm} + ${categoryPreviewVars.paddingInline})`,
-                        
-                        
-                        
-                        // typos:
-                        fontSize: 'inherit',
-                    }),
                 }),
                 ...children('.visibility', {
                     // positions:
