@@ -374,7 +374,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                                     
                                     alt='No image'
                                     src={undefined}
-                                    sizes={`${minImageWidthSub}px`}
+                                    sizes={`${minImageWidth}px`}
                                 />
                             </Basic>
                             : <MiniCarousel
