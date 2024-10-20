@@ -367,7 +367,6 @@ const AdminPreview = (props: AdminPreviewProps): JSX.Element|null => {
                                 <Icon icon='person' size='xl' />
                             </Basic>
                             : <Basic
-                                tag='span'
                                 className='image'
                                 
                                 style={{
