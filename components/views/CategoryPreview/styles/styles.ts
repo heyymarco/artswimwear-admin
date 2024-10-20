@@ -213,9 +213,9 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
                     
                     // children:
                     ...children(['ul>li>.prodImg', '.prodImg'], {
-                        inlineSize : '100%',
-                        blockSize  : '100%',
-                    }),
+                        inlineSize : '100%', // fills the entire <Carousel> area
+                        blockSize  : '100%', // fills the entire <Carousel> area
+                    }, { performGrouping: false }), // cannot grouping of different depth `:is(ul>li>.prodImg', .prodImg)`
                 }),
             }),
             ...children('.floatingEdit', {
