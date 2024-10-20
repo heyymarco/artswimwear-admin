@@ -412,11 +412,6 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                                 
                                 // classes:
                                 className='image'
-                                
-                                
-                                
-                                // components:
-                                basicComponent={<Content theme='primary' />}
                             >
                                 {images.map((image, index) =>
                                     <Image
