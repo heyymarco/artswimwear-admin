@@ -170,6 +170,7 @@ const usesAdminPreviewLayout = () => { // the <ListItem> of admin list
                             alignSelf   : 'center', // center the <Icon>
                         }),
                     }),
+                    // a tweak for profileImage that using backgroundImage:
                     ...rule(':not(.noImage)', {
                         // backgrounds:
                         backgroundBlendMode : 'normal',
