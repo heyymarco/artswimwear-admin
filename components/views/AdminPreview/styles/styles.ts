@@ -49,16 +49,16 @@ const usesAdminPreviewLayout = () => { // the <ListItem> of admin list
             // layouts:
             display: 'grid',
             gridTemplate: [[
-                '"adminImg ... name      "', 'auto',
-                '"adminImg ... .........."', spacers.md,
-                '"adminImg ... username  "', 'auto',
-                '"adminImg ... .........."', spacers.md,
-                '"adminImg ... email     "', 'auto',
-                '"adminImg ... .........."', spacers.md,
-                '"adminImg ... role      "', 'auto',
-                '"adminImg ... .........."', spacers.md, // the minimum space between role and fullEditor
-                '"adminImg ... .........."', 'auto',     // the extra rest space (if any) between role and fullEditor
-                '"adminImg ... fullEditor"', 'auto',
+                '"preview ... name      "', 'auto',
+                '"preview ... .........."', spacers.md,
+                '"preview ... username  "', 'auto',
+                '"preview ... .........."', spacers.md,
+                '"preview ... email     "', 'auto',
+                '"preview ... .........."', spacers.md,
+                '"preview ... role      "', 'auto',
+                '"preview ... .........."', spacers.md, // the minimum space between role and fullEditor
+                '"preview ... .........."', 'auto',     // the extra rest space (if any) between role and fullEditor
+                '"preview ... fullEditor"', 'auto',
                 '/',
                 `calc(((${minImageHeight}px + (2 * ${paddingVars.paddingBlock})) * ${commerces.defaultProductAspectRatio}) - ${paddingVars.paddingInline}) ${spacers.md} 1fr`,
             ]],
@@ -98,21 +98,11 @@ const usesAdminPreviewLayout = () => { // the <ListItem> of admin list
                 fontStyle  : 'italic',
             }),
             ...descendants('.edit', {
-                marginInlineStart: '0.25em',
-                opacity: 0.5,
-                transition: [
-                    ['transform', '300ms', 'ease-out'],
-                ],
-                ...rule(':hover', {
-                    opacity: 'unset',
-                    transform: 'scale(105%)',
+                ...rule(':not(.overlay)', {
+                    marginInlineStart: '0.25em',
                 }),
                 // invert the edit overlay, so the edit overlay can be seen on busy background
                 ...rule('.overlay', {
-                    opacity : 0.8,
-                    
-                    
-                    
                     // children:
                     ...children('[role="img"]', {
                         filter : [[
@@ -121,29 +111,18 @@ const usesAdminPreviewLayout = () => { // the <ListItem> of admin list
                     }),
                 }),
             }),
-            ...children('.adminImg', {
+            ...children('.preview', {
                 // positions:
-                gridArea    : 'adminImg',
+                gridArea    : 'preview',
                 
                 justifySelf : 'stretch', // stretch the self horizontally
                 alignSelf   : 'stretch', // stretch the self vertically
                 
                 
                 
-                // layout:
-                ...rule('.empty', {
-                    display      : 'grid',
-                    justifyItems : 'center',  // default center the items horizontally
-                    alignItems   : 'center',  // default center the items vertically
-                }),
-                
-                
-                
-                // backgrounds:
-                backgroundBlendMode : 'normal',
-                backgroundRepeat    : 'no-repeat',
-                backgroundPosition  : 'center',
-                backgroundSize      : 'cover',
+                // layouts:
+                display: 'grid',
+                alignItems: 'start',
                 
                 
                 
@@ -153,8 +132,9 @@ const usesAdminPreviewLayout = () => { // the <ListItem> of admin list
                 [borderVars.borderStartEndRadius  ] : '0px',
                 [borderVars.borderEndStartRadius  ] : groupableVars.borderEndStartRadius,
                 [borderVars.borderEndEndRadius    ] : '0px',
+                
                 [borderVars.borderWidth           ] : '0px', // only setup borderRadius, no borderStroke
-                borderInlineEndWidth : basics.borderWidth,
+                borderInlineEndWidth                : basics.borderWidth,
                 
                 
                 
@@ -162,6 +142,68 @@ const usesAdminPreviewLayout = () => { // the <ListItem> of admin list
                 // cancel-out parent's padding with negative margin:
                 marginInlineStart : negativePaddingInline,
                 marginBlock       : negativePaddingBlock,
+                [paddingVars.paddingInline] : '0px',
+                [paddingVars.paddingBlock ] : '0px',
+                
+                
+                
+                // children:
+                ...children('.image', {
+                    // layouts:
+                    ...rule('.noImage', {
+                        // layouts:
+                        display: 'grid',
+                        
+                        
+                        
+                        // spacings:
+                        [paddingVars.paddingInline] : '0px',
+                        [paddingVars.paddingBlock ] : '0px',
+                        
+                        
+                        
+                        // children:
+                        ...children('*', {
+                            opacity: 0.4,
+                            
+                            justifySelf : 'center', // center the <Icon>
+                            alignSelf   : 'center', // center the <Icon>
+                        }),
+                    }),
+                    ...rule(':not(.noImage)', {
+                        // backgrounds:
+                        backgroundBlendMode : 'normal',
+                    }),
+                    
+                    
+                    
+                    // spacings:
+                    [paddingVars.paddingInline] : '0px',
+                    [paddingVars.paddingBlock ] : '0px',
+                    
+                    
+                    
+                    // sizes:
+                    boxSizing   : 'border-box',
+                    aspectRatio : commerces.defaultProductAspectRatio,
+                    
+                    
+                    
+                    // borders:
+                    // follows the <ListItem>'s borderRadius, otherwise keeps the 4 edges has borderRadius(es)
+                    [borderVars.borderWidth           ] : '0px',
+                    
+                    [borderVars.borderStartStartRadius] : groupableVars.borderStartStartRadius,
+                    [borderVars.borderStartEndRadius  ] : '0px',
+                    [borderVars.borderEndStartRadius  ] : groupableVars.borderEndStartRadius,
+                    [borderVars.borderEndEndRadius    ] : '0px',
+                }),
+            }),
+            ...children('.floatingEdit', {
+                translate: [[
+                    `calc(100% + ${spacers.sm})`,
+                    spacers.sm,
+                ]],
             }),
             ...children('.name', {
                 gridArea: 'name',

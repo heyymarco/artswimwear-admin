@@ -148,7 +148,7 @@ const AdminPreview = (props: AdminPreviewProps): JSX.Element|null => {
     const privilegeUpdateUsername    = !!role?.admin_uu;
     const privilegeUpdateEmail       = !!role?.admin_ue;
     const privilegeUpdatePassword    = !!role?.admin_up;
-    const privilegeUpdateImage       = !!role?.admin_ui;
+    const privilegeUpdateImages      = !!role?.admin_ui;
     const privilegeUpdateRole        = !!role?.admin_ur;
     const privilegeDelete            = !!role?.admin_d;
     const privilegeWrite             = (
@@ -157,7 +157,7 @@ const AdminPreview = (props: AdminPreviewProps): JSX.Element|null => {
         || privilegeUpdateUsername
         || privilegeUpdateEmail
         || privilegeUpdatePassword
-        || privilegeUpdateImage
+        || privilegeUpdateImages
         || privilegeUpdateRole
         || privilegeDelete
     );
@@ -322,33 +322,60 @@ const AdminPreview = (props: AdminPreviewProps): JSX.Element|null => {
                 // components:
                 wrapperComponent={<React.Fragment />}
                 badgeComponent={
-                    privilegeUpdateImage
+                    privilegeUpdateImages
                     ? <Badge
                         // variants:
                         nude={true}
                         
                         
                         
+                        // classes:
+                        className='floatingEdit'
+                        
+                        
+                        
                         // floatable:
                         floatingPlacement='left-start'
-                        floatingShift={10}
-                        floatingOffset={-30}
+                        floatingShift={0}
+                        floatingOffset={0}
                     >
                         <EditButton className='edit overlay' onClick={() => handleEdit('image')} />
                     </Badge>
                     : null
                 }
                 elementComponent={
-                    !!image
-                    ? <Basic
-                        tag='span'
-                        className='adminImg'
+                    <Basic
+                        // variants:
+                        mild={true}
                         
-                        style={{
-                            background: `no-repeat center/cover url("${resolveMediaUrl(image)}")`,
-                        }}
-                    />
-                    : <Generic className='adminImg empty'><Icon icon='person' size='xl' /></Generic>
+                        
+                        
+                        // classes:
+                        className='preview'
+                    >
+                        {
+                            !image
+                            ? <Basic
+                                // variants:
+                                mild={true}
+                                
+                                
+                                
+                                // classes:
+                                className='image noImage'
+                            >
+                                <Icon icon='person' size='xl' />
+                            </Basic>
+                            : <Basic
+                                tag='span'
+                                className='image'
+                                
+                                style={{
+                                    background: `no-repeat center/cover url("${resolveMediaUrl(image)}")`,
+                                }}
+                            />
+                        }
+                    </Basic>
                 }
             />
             
