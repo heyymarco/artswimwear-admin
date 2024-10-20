@@ -1,5 +1,7 @@
 // cssfn:
 import {
+    // writes css in javascript:
+    rule,
     children,
     descendants,
     style,
@@ -48,18 +50,18 @@ const usesProductPreviewLayout = () => { // the <ListItem> of product list
             // layouts:
             display: 'grid',
             gridTemplate: [[
-                '"images ... name      "', 'auto',
-                '"images ... .........."', spacers.sm,
-                '"images ... variants  "', 'auto',
-                '"images ... .........."', spacers.sm,
-                '"images ... price     "', 'auto',
-                '"images ... .........."', spacers.sm,
-                '"images ... stocks    "', 'auto',
-                '"images ... .........."', spacers.sm,
-                '"images ... visibility"', 'auto',
-                '"images ... .........."', spacers.sm, // the minimum space between visibility and fullEditor
-                '"images ... .........."', 'auto',     // the extra rest space (if any) between visibility and fullEditor
-                '"images ... fullEditor"', 'auto',
+                '"preview ... name      "', 'auto',
+                '"preview ... .........."', spacers.sm,
+                '"preview ... variants  "', 'auto',
+                '"preview ... .........."', spacers.sm,
+                '"preview ... price     "', 'auto',
+                '"preview ... .........."', spacers.sm,
+                '"preview ... stocks    "', 'auto',
+                '"preview ... .........."', spacers.sm,
+                '"preview ... visibility"', 'auto',
+                '"preview ... .........."', spacers.sm, // the minimum space between visibility and fullEditor
+                '"preview ... .........."', 'auto',     // the extra rest space (if any) between visibility and fullEditor
+                '"preview ... fullEditor"', 'auto',
                 '/',
                 `calc(((${minImageHeight}px + (2 * ${paddingVars.paddingBlock})) * ${commerces.defaultProductAspectRatio}) - ${paddingVars.paddingInline}) ${spacers.md} 1fr`,
             ]],
@@ -103,19 +105,22 @@ const usesProductPreviewLayout = () => { // the <ListItem> of product list
                 fontStyle  : 'italic',
             }),
             ...descendants('.edit', {
-                marginInlineStart: '0.25em',
+                ...rule(':not(.overlay)', {
+                    marginInlineStart: '0.25em',
+                }),
             }),
-            ...children('.images', {
+            ...children('.preview', {
                 // positions:
-                gridArea    : 'images',
+                gridArea    : 'preview',
                 
                 justifySelf : 'stretch', // stretch the self horizontally
                 alignSelf   : 'stretch', // stretch the self vertically
                 
                 
                 
-                // sizes:
-                aspectRatio : commerces.defaultProductAspectRatio,
+                // layouts:
+                display: 'grid',
+                alignItems: 'start',
                 
                 
                 
@@ -125,8 +130,9 @@ const usesProductPreviewLayout = () => { // the <ListItem> of product list
                 [borderVars.borderStartEndRadius  ] : '0px',
                 [borderVars.borderEndStartRadius  ] : groupableVars.borderEndStartRadius,
                 [borderVars.borderEndEndRadius    ] : '0px',
+                
                 [borderVars.borderWidth           ] : '0px', // only setup borderRadius, no borderStroke
-                borderInlineEndWidth : basics.borderWidth,
+                borderInlineEndWidth                : basics.borderWidth,
                 
                 
                 
@@ -134,14 +140,62 @@ const usesProductPreviewLayout = () => { // the <ListItem> of product list
                 // cancel-out parent's padding with negative margin:
                 marginInlineStart : negativePaddingInline,
                 marginBlock       : negativePaddingBlock,
+                [paddingVars.paddingInline] : '0px',
+                [paddingVars.paddingBlock ] : '0px',
                 
                 
                 
                 // children:
-                ...children('ul>li>.prodImg', {
-                    inlineSize : '100%',
-                    blockSize  : '100%',
+                ...children('.image', {
+                    // layouts:
+                    ...rule('.noImage', {
+                        // layouts:
+                        display: 'grid',
+                        
+                        
+                        
+                        // spacings:
+                        [paddingVars.paddingInline] : '0px',
+                        [paddingVars.paddingBlock ] : '0px',
+                        
+                        
+                        
+                        // children:
+                        ...children('*', {
+                            opacity: 0.4,
+                        }),
+                    }),
+                    
+                    
+                    
+                    // sizes:
+                    aspectRatio : commerces.defaultProductAspectRatio,
+                    
+                    
+                    
+                    // borders:
+                    // follows the <ListItem>'s borderRadius, otherwise keeps the 4 edges has borderRadius(es)
+                    [borderVars.borderWidth           ] : '0px',
+                    
+                    [borderVars.borderStartStartRadius] : groupableVars.borderStartStartRadius,
+                    [borderVars.borderStartEndRadius  ] : '0px',
+                    [borderVars.borderEndStartRadius  ] : groupableVars.borderEndStartRadius,
+                    [borderVars.borderEndEndRadius    ] : '0px',
+                    
+                    
+                    
+                    // children:
+                    ...children(['ul>li>.prodImg', '.prodImg'], {
+                        inlineSize : '100%', // fills the entire <Carousel> area
+                        blockSize  : '100%', // fills the entire <Carousel> area
+                    }, { performGrouping: false }), // cannot grouping of different depth `:is(ul>li>.prodImg', .prodImg)`
                 }),
+            }),
+            ...children('.floatingEdit', {
+                translate: [[
+                    `calc(100% + ${spacers.sm})`,
+                    spacers.sm,
+                ]],
             }),
             ...children('.name', {
                 gridArea: 'name',

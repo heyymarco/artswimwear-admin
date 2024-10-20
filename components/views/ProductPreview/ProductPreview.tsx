@@ -29,6 +29,11 @@ import {
 
 // reusable-ui components:
 import {
+    // base-components:
+    Basic,
+    
+    
+    
     // base-content-components:
     Content,
     
@@ -356,45 +361,80 @@ const ProductPreview = (props: ProductPreviewProps): JSX.Element|null => {
                         
                         
                         
+                        // classes:
+                        className='floatingEdit'
+                        
+                        
+                        
                         // floatable:
                         floatingPlacement='left-start'
-                        floatingShift={10}
-                        floatingOffset={-30}
+                        floatingShift={0}
+                        floatingOffset={0}
                     >
                         <EditButton className='edit overlay' onClick={() => handleEdit('images')} />
                     </Badge>
                     : null
                 }
                 elementComponent={
-                    <MiniCarousel
+                    <Basic
                         // variants:
-                        theme='danger'
+                        mild={true}
                         
                         
                         
                         // classes:
-                        className='images'
-                        
-                        
-                        
-                        // components:
-                        basicComponent={<Content theme='primary' />}
+                        className='preview'
                     >
-                        {images.map((image, index) =>
-                            <Image
-                                // identifiers:
-                                key={index}
+                        {
+                            !images.length
+                            ? <Basic
+                                // variants:
+                                mild={true}
                                 
                                 
                                 
-                                className='prodImg'
+                                // classes:
+                                className='image noImage'
+                            >
+                                <Image
+                                    className='prodImg'
+                                    
+                                    alt='No image'
+                                    src={undefined}
+                                    sizes={`${minImageWidth}px`}
+                                />
+                            </Basic>
+                            : <MiniCarousel
+                                // variants:
+                                theme='danger'
                                 
-                                alt={name ?? ''}
-                                src={resolveMediaUrl(image)}
-                                sizes={`${minImageWidth}px`}
-                            />
-                        )}
-                    </MiniCarousel>
+                                
+                                
+                                // classes:
+                                className='image'
+                                
+                                
+                                
+                                // components:
+                                basicComponent={<Content theme='primary' />}
+                            >
+                                {images.map((image, index) =>
+                                    <Image
+                                        // identifiers:
+                                        key={index}
+                                        
+                                        
+                                        
+                                        className='prodImg'
+                                        
+                                        alt={name ?? ''}
+                                        src={resolveMediaUrl(image)}
+                                        sizes={`${minImageWidth}px`}
+                                    />
+                                )}
+                            </MiniCarousel>
+                        }
+                    </Basic>
                 }
             />
             
