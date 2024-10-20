@@ -18,6 +18,11 @@ import {
 
 // reusable-ui core:
 import {
+    // a spacer (gap) management system:
+    spacerValues,
+    
+    
+    
     // react helper hooks:
     useEvent,
     type EventHandler,
@@ -327,10 +332,15 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                         
                         
                         
+                        // classes:
+                        className='floatingEdit'
+                        
+                        
+                        
                         // floatable:
                         floatingPlacement='left-start'
-                        floatingShift={10}
-                        floatingOffset={-30}
+                        floatingShift={0}
+                        floatingOffset={0}
                     >
                         <EditButton className='edit overlay' onClick={() => handleEdit('images')} />
                     </Badge>

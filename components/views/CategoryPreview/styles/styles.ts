@@ -21,8 +21,14 @@ import { commerces } from '@/config';
 
 // variables:
 interface CategoryPreviewVars {
-    minImageHeight : any
-    titleSize      : any
+    minImageHeight         : any
+    titleSize              : any
+    
+    paddingInline          : any
+    paddingBlock           : any
+    
+    decoratorPaddingInline : any
+    decoratorPaddingBlock  : any
 }
 const [categoryPreviewVars] = cssVars<CategoryPreviewVars>();
 
@@ -91,8 +97,13 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
             
             // spacings:
          // padding       : paddingVars.padding,
-            paddingInline : paddingVars.paddingInline,
-            paddingBlock  : paddingVars.paddingBlock,
+            [categoryPreviewVars.paddingInline] : paddingVars.paddingInline,
+            [categoryPreviewVars.paddingBlock ] : paddingVars.paddingBlock,
+            paddingInline : categoryPreviewVars.paddingInline,
+            paddingBlock  : categoryPreviewVars.paddingBlock,
+            
+            [categoryPreviewVars.decoratorPaddingInline] : spacers.sm,
+            [categoryPreviewVars.decoratorPaddingBlock ] : spacers.sm,
             
             
             
@@ -157,7 +168,21 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
                 ...children('.image', {
                     // layouts:
                     ...rule('.noImage', {
+                        // layouts:
                         display: 'grid',
+                        
+                        
+                        
+                        // spacings:
+                        [paddingVars.paddingInline] : '0px',
+                        [paddingVars.paddingBlock ] : '0px',
+                        
+                        
+                        
+                        // children:
+                        ...children('*', {
+                            opacity: 0.4,
+                        }),
                     }),
                     
                     
@@ -192,6 +217,12 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
                     }),
                 }),
             }),
+            ...children('.floatingEdit', {
+                translate: [[
+                    `calc(100% + ${categoryPreviewVars.decoratorPaddingInline})`,
+                    categoryPreviewVars.decoratorPaddingBlock,
+                ]],
+            }),
             ...children('.name', {
                 // positions:
                 gridArea   : 'name',
@@ -216,6 +247,15 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
                 
                 
                 // children:
+                ...children(['.decorator', '.edit', '.visibility'], {
+                    // positions:
+                    position: 'relative',
+                    insetInlineStart : `calc(0px - (${spacers.sm} + ${categoryPreviewVars.paddingInline} + 1em))`,
+                    insetBlockStart  : `calc(${categoryPreviewVars.decoratorPaddingBlock} - ${categoryPreviewVars.paddingBlock})`,
+                    
+                    
+                    
+                }),
                 ...children('.decorator', {
                     // typos:
                     fontSize: switchOf(categoryPreviewVars.titleSize, typos.fontSizeXl),
@@ -225,7 +265,8 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
                     // children:
                     ...children(':first-child', {
                         // spacings:
-                        marginInlineEnd: spacers.sm,
+                        // marginInlineEnd: spacers.sm,
+                        marginInlineEnd : `calc(${spacers.sm} + ${categoryPreviewVars.paddingInline})`,
                         
                         
                         
