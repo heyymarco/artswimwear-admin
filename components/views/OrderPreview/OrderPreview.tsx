@@ -26,6 +26,11 @@ import {
 
 // reusable-ui components:
 import {
+    // base-components:
+    Basic,
+    
+    
+    
     // layout-components:
     ListItem,
     
@@ -46,6 +51,9 @@ import {
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // heymarco components:
+import {
+    Image,
+}                           from '@heymarco/image'
 import {
     EmailEditor,
 }                           from '@heymarco/email-editor'
@@ -380,63 +388,108 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                 wrapperComponent={<React.Fragment />}
                 badgeComponent={
                     <Badge
+                        // classes:
+                        className='floatingEdit'
+                        
+                        
+                        
                         // floatable:
                         floatingPlacement='left-start'
-                        floatingShift={10}
-                        floatingOffset={-40}
+                        floatingShift={0}
+                        floatingOffset={0}
                     >
                         {getTotalQuantity(items)} Item(s)
                     </Badge>
                 }
                 elementComponent={
-                    <MiniCarousel
+                    <Basic
+                        // variants:
+                        mild={true}
+                        
+                        
+                        
                         // classes:
-                        className='images'
+                        className='preview'
                     >
-                        {items.map(({quantity, productId}, index: number) =>
-                            /* image + quantity */
-                            <CompoundWithBadge
-                                // identifiers:
-                                key={index}
+                        {
+                            !items.length
+                            ? <Basic
+                                // variants:
+                                mild={true}
                                 
                                 
                                 
-                                // components:
-                                wrapperComponent={<React.Fragment />}
-                                badgeComponent={
-                                    <Badge
-                                        // variants:
-                                        floatingPlacement='right-start'
-                                        floatingShift={10}
-                                        floatingOffset={-40}
-                                    >
-                                        {quantity}x
-                                    </Badge>
-                                }
-                                elementComponent={
-                                    <ProductImage
-                                        // data:
-                                        productId={productId}
+                                // classes:
+                                className='image noImage'
+                            >
+                                <Image
+                                    className='prodImg'
+                                    
+                                    alt='No image'
+                                    src={undefined}
+                                    sizes={`${minImageWidth}px`}
+                                />
+                            </Basic>
+                            : <MiniCarousel
+                                // variants:
+                                theme='inherit'
+                                
+                                
+                                
+                                // classes:
+                                className='image'
+                            >
+                                {items.map(({quantity, productId}, index: number) =>
+                                    /* image + quantity */
+                                    <CompoundWithBadge
+                                        // identifiers:
+                                        key={index}
                                         
                                         
                                         
-                                        // appearances:
-                                        sizes={`${minImageWidth}px`}
-                                        
-                                        
-                                        
-                                        // behaviors:
-                                        priority={false}
-                                        
-                                        
-                                        
-                                        // classes:
-                                        className='prodImg'
+                                        // components:
+                                        wrapperComponent={<React.Fragment />}
+                                        badgeComponent={
+                                            <Badge
+                                                // classes:
+                                                className='floatingQuantity'
+                                                
+                                                
+                                                
+                                                // variants:
+                                                floatingPlacement='right-start'
+                                                floatingShift={0}
+                                                floatingOffset={0}
+                                            >
+                                                {quantity}x
+                                            </Badge>
+                                        }
+                                        elementComponent={
+                                            <ProductImage
+                                                // data:
+                                                productId={productId}
+                                                
+                                                
+                                                
+                                                // appearances:
+                                                sizes={`${minImageWidth}px`}
+                                                
+                                                
+                                                
+                                                // behaviors:
+                                                priority={false}
+                                                
+                                                
+                                                
+                                                // classes:
+                                                className='prodImg'
+                                            />
+                                        }
                                     />
-                                }
-                            />
-                        )}
-                    </MiniCarousel>
+                                )}
+                            </MiniCarousel>
+                        }
+                    </Basic>
                 }
             />
         </ListItem>

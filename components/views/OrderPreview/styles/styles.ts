@@ -87,14 +87,14 @@ const usesOrderPreviewLayout = () => { // the <ListItem> of order list
             // layouts:
             display: 'grid',
             gridTemplate: [[
-                '"images ... orderId   "', 'auto',
-                '"images ... .........."', spacers.md,
-                '"images ... customer  "', 'auto',
-                '"images ... .........."', spacers.md,
-                '"images ... payment   "', 'auto',
-                '"images ... .........."', spacers.md, // the minimum space between payment and fullEditor
-                '"images ... .........."', 'auto',     // the extra rest space (if any) between payment and fullEditor
-                '"images ... fullEditor"', 'auto',
+                '"preview ... orderId   "', 'auto',
+                '"preview ... .........."', spacers.md,
+                '"preview ... customer  "', 'auto',
+                '"preview ... .........."', spacers.md,
+                '"preview ... payment   "', 'auto',
+                '"preview ... .........."', spacers.md, // the minimum space between payment and fullEditor
+                '"preview ... .........."', 'auto',     // the extra rest space (if any) between payment and fullEditor
+                '"preview ... fullEditor"', 'auto',
                 '/',
                 `calc(((${minImageHeight}px + (2 * ${paddingVars.paddingBlock})) * ${commerces.defaultProductAspectRatio}) - ${paddingVars.paddingInline}) ${spacers.md} 1fr`,
             ]],
@@ -135,7 +135,7 @@ const usesOrderPreviewLayout = () => { // the <ListItem> of order list
                 fontStyle  : 'italic',
             }),
             ...descendants('.edit', {
-                ...rule(':not(.fullEditor)', {
+                ...rule(':not(:is(.overlay, .fullEditor))', {
                     marginInlineStart: '0.25em',
                     opacity: 0.5,
                     transition: [
@@ -236,15 +236,18 @@ const usesOrderPreviewLayout = () => { // the <ListItem> of order list
                     }),
                 }),
             }),
-            ...children('.images', {
+            ...children('.preview', {
+                // positions:
+                gridArea    : 'preview',
+                
+                justifySelf : 'stretch', // stretch the self horizontally
+                alignSelf   : 'stretch', // stretch the self vertically
+                
+                
+                
                 // layouts:
-                gridArea    : 'images',
-                
-                
-                
-                // sizes:
-                alignSelf   : 'stretch',
-                aspectRatio : commerces.defaultProductAspectRatio,
+                display: 'grid',
+                alignItems: 'start',
                 
                 
                 
@@ -254,8 +257,9 @@ const usesOrderPreviewLayout = () => { // the <ListItem> of order list
                 [borderVars.borderStartEndRadius  ] : '0px',
                 [borderVars.borderEndStartRadius  ] : groupableVars.borderEndStartRadius,
                 [borderVars.borderEndEndRadius    ] : '0px',
+                
                 [borderVars.borderWidth           ] : '0px', // only setup borderRadius, no borderStroke
-                borderInlineEndWidth : basics.borderWidth,
+                borderInlineEndWidth                : basics.borderWidth,
                 
                 
                 
@@ -263,14 +267,70 @@ const usesOrderPreviewLayout = () => { // the <ListItem> of order list
                 // cancel-out parent's padding with negative margin:
                 marginInlineStart : negativePaddingInline,
                 marginBlock       : negativePaddingBlock,
+                [paddingVars.paddingInline] : '0px',
+                [paddingVars.paddingBlock ] : '0px',
                 
                 
                 
                 // children:
-                ...children('ul>li>.prodImg', {
-                    inlineSize : '100%',
-                    blockSize  : '100%',
+                ...children('.image', {
+                    // layouts:
+                    ...rule('.noImage', {
+                        // layouts:
+                        display: 'grid',
+                        
+                        
+                        
+                        // spacings:
+                        [paddingVars.paddingInline] : '0px',
+                        [paddingVars.paddingBlock ] : '0px',
+                        
+                        
+                        
+                        // children:
+                        ...children('*', {
+                            opacity: 0.4,
+                        }),
+                    }),
+                    
+                    
+                    
+                    // sizes:
+                    aspectRatio : commerces.defaultProductAspectRatio,
+                    
+                    
+                    
+                    // borders:
+                    // follows the <ListItem>'s borderRadius, otherwise keeps the 4 edges has borderRadius(es)
+                    [borderVars.borderWidth           ] : '0px',
+                    
+                    [borderVars.borderStartStartRadius] : groupableVars.borderStartStartRadius,
+                    [borderVars.borderStartEndRadius  ] : '0px',
+                    [borderVars.borderEndStartRadius  ] : groupableVars.borderEndStartRadius,
+                    [borderVars.borderEndEndRadius    ] : '0px',
+                    
+                    
+                    
+                    // children:
+                    ...children(['ul>li>.prodImg', '.prodImg'], {
+                        inlineSize : '100%', // fills the entire <Carousel> area
+                        blockSize  : '100%', // fills the entire <Carousel> area
+                    }, { performGrouping: false }), // cannot grouping of different depth `:is(ul>li>.prodImg', .prodImg)`
+                    ...children('ul>li', {
+                        ...children('.floatingQuantity', {
+                            translate: [[
+                                `calc(-100% - ${spacers.sm})`,
+                                spacers.sm,
+                            ]],
+                        }),
+                    }),
                 }),
+            }),
+            ...children('.floatingEdit', {
+                translate: [[
+                    `calc(100% + ${spacers.sm})`,
+                    spacers.sm,
+                ]],
             }),
             ...children('.fullEditor', {
                 gridArea: 'fullEditor',
