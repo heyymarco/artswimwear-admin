@@ -121,15 +121,18 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
                 [borderVars.borderStartEndRadius  ] : '0px',
                 [borderVars.borderEndStartRadius  ] : groupableVars.borderEndStartRadius,
                 [borderVars.borderEndEndRadius    ] : '0px',
+                
                 [borderVars.borderWidth           ] : '0px', // only setup borderRadius, no borderStroke
-                borderInlineEndWidth : basics.borderWidth,
+                borderInlineEndWidth                : basics.borderWidth,
                 
                 /*
                     :is(.flat) >   *  > .wh287.wh287 > .preview
                         <ul>     <li>   &&&&&&&&&&&&&&&&&&&&&&&
                 */
                 ...rule(':is(.flat)>*>&', {
-                    [borderVars.borderWidth] : basics.borderWidth,
+                    border: borderVars.border,
+                    
+                    // [borderVars.borderWidth] : basics.borderWidth,
                     [borderVars.borderStartStartRadius] : basics.borderRadius,
                     [borderVars.borderStartEndRadius  ] : basics.borderRadius,
                     [borderVars.borderEndStartRadius  ] : basics.borderRadius,
@@ -165,8 +168,6 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
                     
                     
                     // borders:
-                    [borderVars.borderWidth           ] : '0px',
-                    
                     // follows <parent>'s borderRadius
                     
                     /*
@@ -174,6 +175,8 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
                                  <ul>    <li>  &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
                     */
                     ...rule(':not(:is(.flat))>*>&', { // when the <ListItem> is not .flat => follows the <ListItem>'s borderRadius, otherwise keeps the 4 edges has borderRadius(es)
+                        [borderVars.borderWidth           ] : '0px',
+                        
                         [borderVars.borderStartStartRadius] : groupableVars.borderStartStartRadius,
                         [borderVars.borderStartEndRadius  ] : '0px',
                         [borderVars.borderEndStartRadius  ] : groupableVars.borderEndStartRadius,

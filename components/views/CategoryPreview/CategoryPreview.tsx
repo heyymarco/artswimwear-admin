@@ -351,7 +351,6 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                             ? <Basic
                                 // variants:
                                 mild={true}
-                                nude={true}
                                 
                                 
                                 
@@ -369,7 +368,6 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                             : <MiniCarousel
                                 // variants:
                                 theme='danger'
-                                // nude={true}
                                 
                                 
                                 
@@ -760,7 +758,6 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                             ? <Basic
                                 // variants:
                                 mild={true}
-                                nude={true}
                                 
                                 
                                 
@@ -778,7 +775,6 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                             : <MiniCarousel
                                 // variants:
                                 theme='danger'
-                                // nude={true}
                                 
                                 
                                 
