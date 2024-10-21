@@ -13,7 +13,6 @@ import {
     
     type TemplateVariantDetail,
     
-    type CategoryPreview,
     type CategoryDetail,
 }                           from './types'
 import {
@@ -572,23 +571,6 @@ export const createStockMap = (variantGroupDiff: Pick<VariantGroupDiff, 'variant
 
 
 
-export const categoryPreviewSelect = (orderBy: Extract<Prisma.CategorySelect['subcategories'], object>['orderBy']) => ({
-    id             : true,
-    
-    visibility     : true,
-    
-    name           : true,
-    
-    images         : true,
-    
-    subcategories  : {
-        select : {
-            id : true,
-        },
-        orderBy : orderBy,
-    },
-} satisfies Prisma.CategorySelect);
-
 export const categoryDetailSelect = (orderBy: Extract<Prisma.CategorySelect['subcategories'], object>['orderBy']) => ({
     id             : true,
     
@@ -610,46 +592,6 @@ export const categoryDetailSelect = (orderBy: Extract<Prisma.CategorySelect['sub
         orderBy : orderBy,
     },
 } satisfies Prisma.CategorySelect);
-
-export const convertCategoryPreviewDataToCategoryPreview = async (selector: ReturnType<typeof categoryPreviewSelect>, categoryPreviewData: Awaited<ReturnType<typeof prisma.category.findMany<{ select: ReturnType<typeof categoryPreviewSelect> }>>>, prismaTransaction: Parameters<Parameters<typeof prisma.$transaction>[0]>[0]): Promise<CategoryPreview[]> => {
-    const subcategoryIds = new Set<string>(categoryPreviewData.flatMap(({ subcategories }) => subcategories.map(({ id }) => id)));
-    if (!subcategoryIds.size) {
-        return (
-            categoryPreviewData
-            .map(({ images, subcategories, ...restCategoryPreview }): CategoryPreview => ({
-                ...restCategoryPreview,
-                image : images.length ? images[0] : null,
-                subcategories : [],
-            }))
-        );
-    } // if
-    
-    
-    
-    const subcategoryPreviewData = await prismaTransaction.category.findMany({
-        where  : {
-            id : { in : Array.from(subcategoryIds) },
-        },
-        select : selector,
-    });
-    const subcategoryPreviews = await convertCategoryPreviewDataToCategoryPreview(selector, subcategoryPreviewData, prismaTransaction);
-    const subcategoryListAdapter = createEntityAdapter<CategoryPreview>({
-        selectId : (subcategory) => subcategory.id,
-    });
-    const subcategoryListEntry = subcategoryListAdapter.addMany(subcategoryListAdapter.getInitialState(), subcategoryPreviews);
-    return (
-        categoryPreviewData
-        .map(({ images, subcategories, ...restCategoryPreview }): CategoryPreview => ({
-            ...restCategoryPreview,
-            image : images.length ? images[0] : null,
-            subcategories : (
-                subcategories
-                .map(({id: subcategoryId}) => subcategoryListEntry.entities?.[subcategoryId])
-                .filter((subcategory): subcategory is Exclude<typeof subcategory, undefined> => (subcategory !== undefined))
-            ),
-        }))
-    );
-}
 
 export const convertCategoryDetailDataToCategoryDetail = async (selector: ReturnType<typeof categoryDetailSelect>, categoryDetailData: Awaited<ReturnType<typeof prisma.category.findMany<{ select: ReturnType<typeof categoryDetailSelect> }>>>, prismaTransaction: Parameters<Parameters<typeof prisma.$transaction>[0]>[0]): Promise<CategoryDetail[]> => {
     const subcategoryIds = new Set<string>(categoryDetailData.flatMap(({ subcategories }) => subcategories.map(({ id }) => id)));
