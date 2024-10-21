@@ -32,11 +32,6 @@ import {
     
     
     
-    // base-content-components:
-    Content,
-    
-    
-    
     // simple-components:
     Icon,
     ButtonIcon,
@@ -856,11 +851,6 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                                 
                                 // classes:
                                 className='image'
-                                
-                                
-                                
-                                // components:
-                                basicComponent={<Content theme='primary' />}
                             >
                                 {images.map((image, index) =>
                                     <Image
