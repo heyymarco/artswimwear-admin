@@ -5,6 +5,11 @@ import {
     descendants,
     children,
     style,
+    
+    
+    
+    // strongly typed of css variables:
+    switchOf,
 }                           from '@cssfn/core'          // writes css in javascript
 
 // reusable-ui core:
@@ -131,6 +136,11 @@ const usesAdminPreviewLayout = () => { // the <ListItem> of admin list
                 // typos:
                 fontStyle  : 'italic',
             }),
+            ...rule(':has(>.preview>.noImage)', {
+                ...children('.floatingEdit>.edit.overlay', {
+                    '--backdropFilter': 'invert(0.4)',
+                }),
+            }),
             ...descendants('.edit', {
                 ...rule(':not(.overlay)', {
                     marginInlineStart: '0.25em',
@@ -152,7 +162,10 @@ const usesAdminPreviewLayout = () => { // the <ListItem> of admin list
                         ],
                         ...rule(':not(:hover)', {
                             backdropFilter  : [[
-                                'invert(1)',
+                                switchOf(
+                                    'var(--backdropFilter)',
+                                    'invert(1)',
+                                ),
                             ]],
                             backgroundColor : 'transparent',
                         }),

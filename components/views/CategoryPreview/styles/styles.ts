@@ -144,6 +144,11 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
             ...descendants(['.name', 'p'], {
                 margin: 0,
             }),
+            ...rule(':has(>.preview>.noImage)', {
+                ...children('.floatingEdit>.edit.overlay', {
+                    '--backdropFilter': 'invert(0.4)',
+                }),
+            }),
             ...descendants('.edit', {
                 // do not alter the `.edit` button in `.name`:
                 // ...rule(':not(.overlay)', {
@@ -166,7 +171,10 @@ const usesCategoryPreviewLayout = () => { // the <ListItem> of category list
                         ],
                         ...rule(':not(:hover)', {
                             backdropFilter  : [[
-                                'invert(1)',
+                                switchOf(
+                                    'var(--backdropFilter)',
+                                    'invert(1)',
+                                ),
                             ]],
                             backgroundColor : 'transparent',
                         }),

@@ -204,12 +204,13 @@ export function ProfilePageContent() {
                             
                             // variants:
                             theme='primary'
+                            mild={true}
                             // profileImageStyle='circle'
                             
                             
                             
                             // classes:
-                            className='image'
+                            className='preview'
                         />
                     }
                 />

@@ -5,6 +5,11 @@ import {
     descendants,
     children,
     style,
+    
+    
+    
+    // strongly typed of css variables:
+    switchOf,
 }                           from '@cssfn/core'                  // writes css in javascript
 
 // reusable-ui core:
@@ -36,10 +41,10 @@ export const usesProfilePageLayout = () => {
             // layouts:
             display        : 'grid',
             gridTemplate   : [[
-                '"image     name" auto',
-                '"image username" auto',
-                '"image    email" auto',
-                '"image ........" auto',
+                '"preview     name" auto',
+                '"preview username" auto',
+                '"preview    email" auto',
+                '"preview ........" auto',
                 '/',
                 '100px max-content',
             ]],
@@ -98,7 +103,10 @@ export const usesProfilePageLayout = () => {
                             ],
                             ...rule(':not(:hover)', {
                                 backdropFilter  : [[
-                                    'invert(1)',
+                                    switchOf(
+                                        'var(--backdropFilter)',
+                                        'invert(1)',
+                                    ),
                                 ]],
                                 backgroundColor : 'transparent',
                             }),
@@ -106,12 +114,17 @@ export const usesProfilePageLayout = () => {
                     }),
                 }),
             }),
+            ...rule(':has(>.preview:not(.hasImage))', {
+                ...children('.floatingEdit>.edit.overlay', {
+                    '--backdropFilter': 'invert(0.4)',
+                }),
+            }),
             // invert the edit overlay, so the edit overlay can be seen on busy background:
             ...rule('& :has(>.edit.overlay)', { // select any element having children('>.edit.overlay') but within `<ProfilePage> > section > article`
                 filter : [['none'], '!important'],
             }),
-            ...children('.image', {
-                gridArea: 'image',
+            ...children('.preview', {
+                gridArea: 'preview',
             }),
             ...children('.floatingEdit', {
                 translate: [[

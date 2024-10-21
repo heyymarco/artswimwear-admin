@@ -811,10 +811,15 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                         
                         
                         
+                        // classes:
+                        className='floatingEdit'
+                        
+                        
+                        
                         // floatable:
                         floatingPlacement='left-start'
-                        floatingShift={10}
-                        floatingOffset={-30}
+                        floatingShift={0}
+                        floatingOffset={0}
                     >
                         <EditButton className='edit overlay' onClick={() => handleEdit('images')} />
                     </Badge>
@@ -841,13 +846,7 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                                 // classes:
                                 className='image noImage'
                             >
-                                <Image
-                                    className='prodImg'
-                                    
-                                    alt='No image'
-                                    src={undefined}
-                                    sizes={`${minImageWidthSub}px`}
-                                />
+                                <Icon icon='image' size='xl' />
                             </Basic>
                             : <MiniCarousel
                                 // variants:

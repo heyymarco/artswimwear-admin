@@ -5,6 +5,11 @@ import {
     children,
     descendants,
     style,
+    
+    
+    
+    // strongly typed of css variables:
+    switchOf,
 }                           from '@cssfn/core'          // writes css in javascript
 
 import {
@@ -136,6 +141,11 @@ const usesProductPreviewLayout = () => { // the <ListItem> of product list
                 fontSize   : basics.fontSizeSm,
                 fontStyle  : 'italic',
             }),
+            ...rule(':has(>.preview>.noImage)', {
+                ...children('.floatingEdit>.edit.overlay', {
+                    '--backdropFilter': 'invert(0.4)',
+                }),
+            }),
             ...descendants('.edit', {
                 ...rule(':not(.overlay)', {
                     marginInlineStart: '0.25em',
@@ -157,7 +167,10 @@ const usesProductPreviewLayout = () => { // the <ListItem> of product list
                         ],
                         ...rule(':not(:hover)', {
                             backdropFilter  : [[
-                                'invert(1)',
+                                switchOf(
+                                    'var(--backdropFilter)',
+                                    'invert(1)',
+                                ),
                             ]],
                             backgroundColor : 'transparent',
                         }),
