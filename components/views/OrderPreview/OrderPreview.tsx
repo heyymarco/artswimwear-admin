@@ -394,7 +394,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                 badgeComponent={
                     <Badge
                         // classes:
-                        className='floatingEdit'
+                        className='floatingSumQuantity'
                         
                         
                         

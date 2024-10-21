@@ -58,9 +58,9 @@ const usesOrderPreviewLayout = () => { // the <ListItem> of order list
     
     // capabilities:
     const {groupableRule, groupableVars} = usesGroupable({
-        orientationInlineSelector : null,      // craft the <Carousel>'s borderRadius manually
-        orientationBlockSelector  : null,      // craft the <Carousel>'s borderRadius manually
-        itemsSelector             : '.images', // select the <Carousel>
+        orientationInlineSelector : null,       // craft the <Carousel>'s borderRadius manually
+        orientationBlockSelector  : null,       // craft the <Carousel>'s borderRadius manually
+        itemsSelector             : '.preview', // select the <Carousel>
     });
     
     // features:
@@ -242,7 +242,7 @@ const usesOrderPreviewLayout = () => { // the <ListItem> of order list
                     }),
                 }),
             }),
-            ...children('.floatingEdit', {
+            ...children('.floatingSumQuantity', {
                 translate: [[
                     `calc(100% + ${spacers.sm})`,
                     spacers.sm,
