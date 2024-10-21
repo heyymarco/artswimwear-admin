@@ -4,7 +4,7 @@ import {
     rule,
     descendants,
     children,
-    style,
+    scope,
     
     
     
@@ -31,8 +31,8 @@ import {
 
 
 // styles:
-export const usesProfilePageLayout = () => {
-    return style({
+export default [
+    scope('main', {
         ...children(['&', 'section'], {
             // layouts:
             display        : 'grid',
@@ -142,10 +142,5 @@ export const usesProfilePageLayout = () => {
                 gridArea: 'email',
             }),
         }),
-    });
-};
-
-export default () => style({
-    // layouts:
-    ...usesProfilePageLayout(),
-});
+    }),
+];
