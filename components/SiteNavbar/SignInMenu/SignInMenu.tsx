@@ -160,8 +160,8 @@ const SignInMenu = (props: SignInMenuProps): JSX.Element|null => {
         
         
         if (isSignedOut) {
-            router.push(signInPath);
-            toggleList(false);
+            router.push(signInPath); // goto signIn page
+            toggleList(false); // collapse the <Navbar> manually
         }
         else if (isSignedIn) {
             if (shownMenu) {
@@ -197,7 +197,7 @@ const SignInMenu = (props: SignInMenuProps): JSX.Element|null => {
                 newShownMenu.collapseEndEvent().then((event) => {
                     switch (event.data) {
                         case 'editProfile':
-                            router.push('/profile');
+                            router.push('/profile'); // goto admin's profile page
                             break;
                         
                         case 'signOut':
@@ -205,7 +205,7 @@ const SignInMenu = (props: SignInMenuProps): JSX.Element|null => {
                             signOut({ redirect: false, callbackUrl: pathname }); // when signed in back, redirects to current url
                             break;
                     } // switch
-                    toggleList(false);
+                    toggleList(false); // collapse the <Navbar> manually
                 });
             } // if
         } // if
