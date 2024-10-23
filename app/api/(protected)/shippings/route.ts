@@ -23,6 +23,11 @@ import {
     
     
     
+    // schemas:
+    PaginationArgSchema,
+    
+    
+    
     // utilities:
     shippingPreviewSelect,
     shippingDetailSelect,
@@ -94,41 +99,30 @@ router
     return Response.json(shippingPreviews); // handled with success
 })
 .post(async (req) => {
-    /* required for displaying shippings page */
-    
-    
-    
-    if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
-        await new Promise<void>((resolve) => {
-            setTimeout(() => {
-                resolve();
-            }, 2000);
-        });
-    } // if
-    
-    // throw '';
-    
-    //#region parsing request
-    const {
-        page    : pageStr    = 1,
-        perPage : perPageStr = 20,
-    } = await req.json();
-    const page = Number.parseInt(pageStr as string);
-    const perPage = Number.parseInt(perPageStr as string);
-    //#endregion parsing request
-    
-    
-    
-    //#region validating request
-    if ((typeof(page) !== 'number') || !isFinite(page) || (page < 1)
-        ||
-        (typeof(perPage) !== 'number') || !isFinite(perPage) || (perPage < 1)
-    ) {
+    //#region parsing and validating request
+    const requestData = await (async () => {
+        try {
+            const data = await req.json();
+            return {
+                paginationArg : PaginationArgSchema.parse(data),
+            };
+        }
+        catch {
+            return null;
+        } // try
+    })();
+    if (requestData === null) {
         return Response.json({
-            error: 'Invalid parameter(s).',
+            error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
-    //#endregion validating request
+    const {
+        paginationArg : {
+            page,
+            perPage,
+        },
+    } = requestData;
+    //#endregion parsing and validating request
     
     
     
@@ -150,7 +144,7 @@ You do not have the privilege to view the shippings.`
             orderBy : {
                 createdAt: 'desc',
             },
-            skip    : (page - 1) * perPage, // note: not scaleable but works in small commerce app -- will be fixed in the future
+            skip    : page * perPage, // note: not scaleable but works in small commerce app -- will be fixed in the future
             take    : perPage,
         }),
     ]);

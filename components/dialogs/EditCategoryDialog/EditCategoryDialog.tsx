@@ -312,7 +312,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
             // data:
             data         : {
                 total    : nestedMockCategoryDb?.length,
-                entities : nestedMockCategoryDb?.slice((arg.page - 1) * arg.perPage),
+                entities : nestedMockCategoryDb?.slice(arg.page * arg.perPage, (arg.page + 1) * arg.perPage),
             },
             isLoading    : false,
             isFetching   : false,

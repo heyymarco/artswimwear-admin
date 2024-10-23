@@ -184,7 +184,7 @@ You do not have the privilege to view the products.`
             orderBy : {
                 createdAt: 'desc',
             },
-            skip    : (page - 1) * perPage, // note: not scaleable but works in small commerce app -- will be fixed in the future
+            skip    : page * perPage, // note: not scaleable but works in small commerce app -- will be fixed in the future
             take    : perPage,
         }),
     ]);
