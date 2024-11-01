@@ -1,7 +1,6 @@
 // next-js:
 import {
-    NextRequest,
-    NextResponse,
+    type NextRequest,
 }                           from 'next/server'
 
 // next-auth:
@@ -108,7 +107,7 @@ router
 .use(async (req, ctx, next) => {
     // conditions:
     const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ error: 'Please sign in.' }, { status: 401 }); // handled with error: unauthorized
+    if (!session) return Response.json({ error: 'Please sign in.' }, { status: 401 }); // handled with error: unauthorized
     (req as any).session = session;
     
     
@@ -146,7 +145,7 @@ router
     
     //#region validating privileges
     const session = (req as any).session as Session;
-    if (!session.role?.order_r) return NextResponse.json({ error:
+    if (!session.role?.order_r) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to view the orders.`
@@ -170,7 +169,7 @@ You do not have the privilege to view the orders.`
         total    : total,
         entities : paged satisfies OrderDetail[],
     };
-    return NextResponse.json(paginationOrderDetail); // handled with success
+    return Response.json(paginationOrderDetail); // handled with success
 })
 .patch(async (req) => {
     if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
@@ -182,8 +181,8 @@ You do not have the privilege to view the orders.`
     } // if
     
     // throw '';
-    // return NextResponse.json({ message: 'not found'    }, { status: 400 }); // handled with error
-    // return NextResponse.json({ message: 'server error' }, { status: 500 }); // handled with error
+    // return Response.json({ message: 'not found'    }, { status: 400 }); // handled with error
+    // return Response.json({ message: 'server error' }, { status: 500 }); // handled with error
     
     //#region parsing request
     const body = await req.json();
@@ -227,45 +226,45 @@ You do not have the privilege to view the orders.`
     
     //#region validating request
     if ((orderStatus !== undefined) && (typeof(orderStatus) !== 'string') && !['NEW_ORDER', 'CANCELED', /* 'EXPIRED' should be done in backend_only, not by http_request */, 'PROCESSED', 'ON_THE_WAY', 'IN_TROUBLE', 'COMPLETED'].includes(orderStatus)) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
     if ((orderTrouble !== undefined) && (orderTrouble !== null) && (typeof(orderTrouble) !== 'object')) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
     if ((cancelationReason !== undefined) && (cancelationReason !== null) && (typeof(cancelationReason) !== 'object')) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
     
     if ((shippingCarrier !== undefined) && (shippingCarrier !== null) && ((typeof(shippingCarrier) !== 'string') || (shippingCarrier.length < 1) || (shippingCarrier.length > 50))) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
     if ((shippingNumber !== undefined) && (shippingNumber !== null) && ((typeof(shippingNumber) !== 'string') || (shippingNumber.length < 1) || (shippingNumber.length > 50))) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
     if ((shippingCost !== undefined) && (shippingCost !== null) && ((typeof(shippingCost) !== 'number') || !isFinite(shippingCost) || (shippingCost < 0))) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
     
     if ((typeof(id) !== 'string') || (id.length < 1)) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
     
     if ((customer !== undefined) && (guest !== undefined)) { // conflicting data! must be both undefined -or- one kind is existing
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
@@ -278,7 +277,7 @@ You do not have the privilege to view the orders.`
         ||
         ((customerOrGuest?.email        !== undefined) && ((typeof(customerOrGuest.email)        !== 'string') || (customerOrGuest.email.length < 5) || (customerOrGuest.email.length > 50)))
     ) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
@@ -298,7 +297,7 @@ You do not have the privilege to view the orders.`
             ((typeof(payment?.fee) !== 'number') || (payment?.fee < 0) || !isFinite(payment?.fee)) // the fee must be finite & non_negative
         )
     ) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
@@ -312,7 +311,7 @@ You do not have the privilege to view the orders.`
                 (typeof(rejectionReason) !== 'object')
             )
     ) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
@@ -326,7 +325,7 @@ You do not have the privilege to view the orders.`
         },
     });
     if (!order) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid ID.',
         }, { status: 400 }); // handled with error
     } // if
@@ -337,20 +336,20 @@ You do not have the privilege to view the orders.`
     //#region validating privileges
     const session = (req as any).session as Session;
     if (!id) {
-//         if (!session.role?.order_c) return NextResponse.json({ error:
+//         if (!session.role?.order_c) return Response.json({ error:
 // `Access denied.
 // 
 // You do not have the privilege to add new order.`
 //         }, { status: 403 }); // handled with error: forbidden
     }
     else {
-        if (!session.role?.order_us && ((orderStatus !== undefined) || (orderTrouble !== undefined) || (cancelationReason !== undefined) || (shippingCarrier !== undefined) || (shippingNumber !== undefined) || (shippingCost !== undefined))) return NextResponse.json({ error:
+        if (!session.role?.order_us && ((orderStatus !== undefined) || (orderTrouble !== undefined) || (cancelationReason !== undefined) || (shippingCarrier !== undefined) || (shippingNumber !== undefined) || (shippingCost !== undefined))) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the order's status.`
         }, { status: 403 }); // handled with error: forbidden
         
-        if (!session.role?.order_usa && (shippingAddress !== undefined)) return NextResponse.json({ error:
+        if (!session.role?.order_usa && (shippingAddress !== undefined)) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the order's shippingAddress.`
@@ -376,13 +375,13 @@ You do not have the privilege to modify the order's shippingAddress.`
             
             if (currentPaymentType) {
                 
-                if (!session.role?.order_upmu && (currentPaymentType === 'MANUAL')) return NextResponse.json({ error:
+                if (!session.role?.order_upmu && (currentPaymentType === 'MANUAL')) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to approve payment of the order.`
                 }, { status: 403 }); // handled with error: forbidden
                 
-                if (!session.role?.order_upmp && (currentPaymentType === 'MANUAL_PAID')) return NextResponse.json({ error:
+                if (!session.role?.order_upmp && (currentPaymentType === 'MANUAL_PAID')) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the payment of the order.`
@@ -699,13 +698,13 @@ You do not have the privilege to modify the payment of the order.`
         
         
         
-        if (!orderDetail) return NextResponse.json({ error: 'Order record not found.'}, { status: 404 }); // handled with error: not found
-        return NextResponse.json(orderDetail satisfies OrderDetail); // handled with success
+        if (!orderDetail) return Response.json({ error: 'Order record not found.'}, { status: 404 }); // handled with error: not found
+        return Response.json(orderDetail satisfies OrderDetail); // handled with success
     }
     catch (error: any) {
         console.log('ERROR: ', error);
-        // if (error instanceof RecordNotFound) return NextResponse.json({ error: 'invalid ID' }, { status: 400 }); // handled with error
-        return NextResponse.json({ error: error }, { status: 500 }); // handled with error
+        // if (error instanceof RecordNotFound) return Response.json({ error: 'invalid ID' }, { status: 400 }); // handled with error
+        return Response.json({ error: error }, { status: 500 }); // handled with error
     } // try
     //#endregion save changes
 });

@@ -1,7 +1,6 @@
 // next-js:
 import {
-    NextRequest,
-    NextResponse,
+    type NextRequest,
 }                           from 'next/server'
 
 // next-auth:
@@ -76,7 +75,7 @@ router
 .use(async (req, ctx, next) => {
     // conditions:
     const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ error: 'Please sign in.' }, { status: 401 }); // handled with error: unauthorized
+    if (!session) return Response.json({ error: 'Please sign in.' }, { status: 401 }); // handled with error: unauthorized
     (req as any).session = session;
     
     
@@ -90,12 +89,12 @@ router
     const file = data.get('image');
     // const file : Express.Multer.File = (req as any).file;
     if (!file || !(file instanceof Object)) {
-        return NextResponse.json({
+        return Response.json({
             error: 'No file uploaded.',
         }, { status: 400 }); // handled with error
     } // if
     if (file.size > (4 * 1024 * 1024)) { // limits to max 4MB
-        return NextResponse.json({
+        return Response.json({
             error: 'The file is too big. The limit is 4MB.',
         }, { status: 400 }); // handled with error
     } // if
@@ -104,7 +103,7 @@ router
     
     const folder = data.get('folder');
     if ((typeof(folder) !== 'string') || !folder) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid parameter(s).',
         }, { status: 400 }); // handled with error
     } // if
@@ -114,13 +113,13 @@ router
     //#region validating privileges
     const session = (req as any).session as Session;
     
-    if (!session.role?.product_ui && folder.startsWith('products/')) return NextResponse.json({ error:
+    if (!session.role?.product_ui && folder.startsWith('products/')) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the product images.`
     }, { status: 403 }); // handled with error: forbidden
     
-    if (!session.role?.admin_ui && folder.startsWith('admins/')) return NextResponse.json({ error:
+    if (!session.role?.admin_ui && folder.startsWith('admins/')) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the admin's image.`
@@ -202,11 +201,11 @@ You do not have the privilege to modify the admin's image.`
         
         
         
-        return NextResponse.json(fileId); // handled with success
+        return Response.json(fileId); // handled with success
     }
     catch (error: any) {
         console.log('ERROR: ', error);
-        return NextResponse.json({ error: 'Unable to process your image.\n\nPlease choose another image.' }, { status: 500 }); // handled with error
+        return Response.json({ error: 'Unable to process your image.\n\nPlease choose another image.' }, { status: 500 }); // handled with error
     } // try
 })
 .patch(async (req) => {
@@ -215,7 +214,7 @@ You do not have the privilege to modify the admin's image.`
     } = await req.json();
     
     if (!Array.isArray(imageIds) || !imageIds.length || !imageIds.every((imageId) => (typeof(imageId) === 'string'))) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid parameter(s).',
         }, { status: 400 }); // handled with error
     } // if
@@ -226,13 +225,13 @@ You do not have the privilege to modify the admin's image.`
         await Promise.all(imageIds.map((imageId) => deleteMedia(imageId)));
         
         
-        return NextResponse.json(imageIds); // deleted => success
+        return Response.json(imageIds); // deleted => success
     }
     catch (error: any) {
         if (error?.code === 404) { // not found => treat as success
-            return NextResponse.json(imageIds); // deleted => success
+            return Response.json(imageIds); // deleted => success
         } // if
-        return NextResponse.json({ error: error?.message ?? `${error}` }, { status: 500 }); // handled with error
+        return Response.json({ error: error?.message ?? `${error}` }, { status: 500 }); // handled with error
     } // try
 })
 .put(async (req) => {
@@ -242,13 +241,13 @@ You do not have the privilege to modify the admin's image.`
     } = await req.json();
     
     if (!Array.isArray(imageIds) || !imageIds.length || !imageIds.every((imageId) => (typeof(imageId) === 'string'))) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid parameter(s).',
         }, { status: 400 }); // handled with error
     } // if
     
     if ((typeof(folder) !== 'string') || !folder) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid parameter(s).',
         }, { status: 400 }); // handled with error
     } // if
@@ -260,9 +259,9 @@ You do not have the privilege to modify the admin's image.`
         
         
         
-        return NextResponse.json(moved); // update => success
+        return Response.json(moved); // update => success
     }
     catch (error: any) {
-        return NextResponse.json({ error: error?.message ?? `${error}` }, { status: 500 }); // handled with error
+        return Response.json({ error: error?.message ?? `${error}` }, { status: 500 }); // handled with error
     } // try
 });

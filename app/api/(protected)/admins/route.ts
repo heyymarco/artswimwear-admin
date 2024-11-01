@@ -1,7 +1,6 @@
 // next-js:
 import {
-    NextRequest,
-    NextResponse,
+    type NextRequest,
 }                           from 'next/server'
 
 // next-auth:
@@ -70,7 +69,7 @@ router
 .use(async (req, ctx, next) => {
     // conditions:
     const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ error: 'Please sign in.' }, { status: 401 }); // handled with error: unauthorized
+    if (!session) return Response.json({ error: 'Please sign in.' }, { status: 401 }); // handled with error: unauthorized
     (req as any).session = session;
     
     
@@ -108,7 +107,7 @@ router
     
     //#region validating privileges
     const session = (req as any).session as Session;
-    if (!session.role?.admin_r) return NextResponse.json({ error:
+    if (!session.role?.admin_r) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to view the admins.`
@@ -155,7 +154,7 @@ You do not have the privilege to view the admins.`
             };
         }),
     };
-    return NextResponse.json(paginationAdminDetail); // handled with success
+    return Response.json(paginationAdminDetail); // handled with success
 })
 .patch(async (req) => {
     if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
@@ -167,8 +166,8 @@ You do not have the privilege to view the admins.`
     } // if
     
     // throw '';
-    // return NextResponse.json({ message: 'not found'    }, { status: 400 }); // handled with error
-    // return NextResponse.json({ message: 'server error' }, { status: 500 }); // handled with error
+    // return Response.json({ message: 'not found'    }, { status: 400 }); // handled with error
+    // return Response.json({ message: 'server error' }, { status: 500 }); // handled with error
     
     //#region parsing request
     const {
@@ -204,7 +203,7 @@ You do not have the privilege to view the admins.`
         
         // TODO: validating data type & constraints
     ) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
@@ -215,50 +214,50 @@ You do not have the privilege to view the admins.`
     //#region validating privileges
     const session = (req as any).session as Session;
     if (!id) {
-        if (!session.role?.admin_c) return NextResponse.json({ error:
+        if (!session.role?.admin_c) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to add new admin.`
         }, { status: 403 }); // handled with error: forbidden
         
-        if (!session.role?.admin_ur && (roleId !== null) && (roleId !== undefined)) return NextResponse.json({ error:
+        if (!session.role?.admin_ur && (roleId !== null) && (roleId !== undefined)) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to add new admin with an admin role.`
         }, { status: 403 }); // handled with error: forbidden
     }
     else {
-        if (!session.role?.admin_un && (name !== undefined)) return NextResponse.json({ error:
+        if (!session.role?.admin_un && (name !== undefined)) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the admin's name.`
         }, { status: 403 }); // handled with error: forbidden
         
-        if (!session.role?.admin_uu && (username !== undefined)) return NextResponse.json({ error:
+        if (!session.role?.admin_uu && (username !== undefined)) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the admin's username.`
         }, { status: 403 }); // handled with error: forbidden
         
-        if (!session.role?.admin_ue && (email !== undefined)) return NextResponse.json({ error:
+        if (!session.role?.admin_ue && (email !== undefined)) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the admin's email.`
         }, { status: 403 }); // handled with error: forbidden
         
-        if (!session.role?.admin_up && (password !== undefined)) return NextResponse.json({ error:
+        if (!session.role?.admin_up && (password !== undefined)) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the admin's password.`
         }, { status: 403 }); // handled with error: forbidden
         
-        if (!session.role?.admin_ui && (image !== undefined)) return NextResponse.json({ error:
+        if (!session.role?.admin_ui && (image !== undefined)) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the admin's image.`
         }, { status: 403 }); // handled with error: forbidden
         
-        if (!session.role?.admin_ur && (roleId !== undefined)) return NextResponse.json({ error:
+        if (!session.role?.admin_ur && (roleId !== undefined)) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the admin's role.`
@@ -347,12 +346,12 @@ You do not have the privilege to modify the admin's role.`
             ...restAdmin,
             username : credentials?.username ?? null,
         };
-        return NextResponse.json(adminDetail); // handled with success
+        return Response.json(adminDetail); // handled with success
     }
     catch (error: any) {
         console.log('ERROR: ', error);
-        // if (error instanceof RecordNotFound) return NextResponse.json({ error: 'invalid ID' }, { status: 400 }); // handled with error
-        return NextResponse.json({ error: error }, { status: 500 }); // handled with error
+        // if (error instanceof RecordNotFound) return Response.json({ error: 'invalid ID' }, { status: 400 }); // handled with error
+        return Response.json({ error: error }, { status: 500 }); // handled with error
     } // try
     //#endregion save changes
 })
@@ -379,7 +378,7 @@ You do not have the privilege to modify the admin's role.`
     if (
         ((typeof(id) !== 'string') || (id.length < 1))
     ) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
@@ -389,7 +388,7 @@ You do not have the privilege to modify the admin's role.`
     
     //#region validating privileges
     const session = (req as any).session as Session;
-    if (!session.role?.admin_d) return NextResponse.json({ error:
+    if (!session.role?.admin_d) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to delete the admin.`
@@ -410,12 +409,12 @@ You do not have the privilege to delete the admin.`
                 },
             })
         );
-        return NextResponse.json(deletedAdmin); // handled with success
+        return Response.json(deletedAdmin); // handled with success
     }
     catch (error: any) {
         console.log('ERROR: ', error);
-        // if (error instanceof RecordNotFound) return NextResponse.json({ error: 'invalid ID' }, { status: 400 }); // handled with error
-        return NextResponse.json({ error: error }, { status: 500 }); // handled with error
+        // if (error instanceof RecordNotFound) return Response.json({ error: 'invalid ID' }, { status: 400 }); // handled with error
+        return Response.json({ error: error }, { status: 500 }); // handled with error
     } // try
     //#endregion save changes
 });

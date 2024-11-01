@@ -1,7 +1,6 @@
 // next-js:
 import {
-    NextRequest,
-    NextResponse,
+    type NextRequest,
 }                           from 'next/server'
 
 // next-auth:
@@ -69,7 +68,7 @@ router
 .use(async (req, ctx, next) => {
     // conditions:
     const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ error: 'Please sign in.' }, { status: 401 }); // handled with error: unauthorized
+    if (!session) return Response.json({ error: 'Please sign in.' }, { status: 401 }); // handled with error: unauthorized
     (req as any).session = session;
     
     
@@ -91,12 +90,12 @@ router
     } // if
     
     // throw '';
-    // return NextResponse.json({ message: 'not found'    }, { status: 400 }); // handled with error
-    // return NextResponse.json({ message: 'server error' }, { status: 500 }); // handled with error
+    // return Response.json({ message: 'not found'    }, { status: 400 }); // handled with error
+    // return Response.json({ message: 'server error' }, { status: 500 }); // handled with error
     
     //#region validating privileges
     const session = (req as any).session as Session;
-    if (!session.role?.product_r) return NextResponse.json({ error:
+    if (!session.role?.product_r) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to view the template_variant.`
@@ -135,7 +134,7 @@ You do not have the privilege to view the template_variant.`
             },
         }))
     );
-    return NextResponse.json(templateVariantGroupDetails); // handled with success
+    return Response.json(templateVariantGroupDetails); // handled with success
 })
 .patch(async (req) => {
     if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
@@ -147,8 +146,8 @@ You do not have the privilege to view the template_variant.`
     } // if
     
     // throw '';
-    // return NextResponse.json({ message: 'not found'    }, { status: 400 }); // handled with error
-    // return NextResponse.json({ message: 'server error' }, { status: 500 }); // handled with error
+    // return Response.json({ message: 'not found'    }, { status: 400 }); // handled with error
+    // return Response.json({ message: 'server error' }, { status: 500 }); // handled with error
     
     //#region parsing request
     const variantGroupRaw = await req.json();
@@ -202,7 +201,7 @@ You do not have the privilege to view the template_variant.`
             );
         })()
     )) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
@@ -264,7 +263,7 @@ You do not have the privilege to view the template_variant.`
             !session.role?.product_c
             &&
             !!variantAdds.length
-        ) return NextResponse.json({ error:
+        ) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to add new template_variant.`
@@ -275,7 +274,7 @@ You do not have the privilege to add new template_variant.`
             !session.role?.product_d
             &&
             !!variantDels.length
-        ) return NextResponse.json({ error:
+        ) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to delete the template_variant.`
@@ -293,7 +292,7 @@ You do not have the privilege to delete the template_variant.`
                     (name !== variantOri?.name)
                 );
             })
-        ) return NextResponse.json({ error:
+        ) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the template_variant name.`
@@ -318,7 +317,7 @@ You do not have the privilege to modify the template_variant name.`
                 
                 return true; // deep_equal
             })()
-        ) return NextResponse.json({ error:
+        ) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the template_variant order.`
@@ -338,7 +337,7 @@ You do not have the privilege to modify the template_variant order.`
                     (shippingWeight !== variantOri.shippingWeight)
                 );
             })
-        ) return NextResponse.json({ error:
+        ) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the template_variant price and/or shipping weight.`
@@ -356,7 +355,7 @@ You do not have the privilege to modify the template_variant price and/or shippi
                     (visibility !== variantOri?.visibility)
                 );
             })
-        ) return NextResponse.json({ error:
+        ) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the template_variant visibility.`
@@ -409,12 +408,12 @@ You do not have the privilege to modify the template_variant visibility.`
         // a workaround of non_working_orderBy of template.create() & template.update():
         templateVariantGroupDetail.variants.sort(({sort: sortA}, {sort: sortB}) => sortA - sortB); // mutate
         
-        return NextResponse.json(templateVariantGroupDetail); // handled with success
+        return Response.json(templateVariantGroupDetail); // handled with success
     }
     catch (error: any) {
         console.log('ERROR: ', error);
-        // if (error instanceof RecordNotFound) return NextResponse.json({ error: 'invalid ID' }, { status: 400 }); // handled with error
-        return NextResponse.json({ error: error }, { status: 500 }); // handled with error
+        // if (error instanceof RecordNotFound) return Response.json({ error: 'invalid ID' }, { status: 400 }); // handled with error
+        return Response.json({ error: error }, { status: 500 }); // handled with error
     } // try
     //#endregion save changes
 })
@@ -441,7 +440,7 @@ You do not have the privilege to modify the template_variant visibility.`
     if (
         ((typeof(id) !== 'string') || (id.length < 1))
     ) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
@@ -451,7 +450,7 @@ You do not have the privilege to modify the template_variant visibility.`
     
     //#region validating privileges
     const session = (req as any).session as Session;
-    if (!session.role?.product_d) return NextResponse.json({ error:
+    if (!session.role?.product_d) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to delete the template.`
@@ -472,12 +471,12 @@ You do not have the privilege to delete the template.`
                 },
             })
         );
-        return NextResponse.json(deletedTemplate); // handled with success
+        return Response.json(deletedTemplate); // handled with success
     }
     catch (error: any) {
         console.log('ERROR: ', error);
-        // if (error instanceof RecordNotFound) return NextResponse.json({ error: 'invalid ID' }, { status: 400 }); // handled with error
-        return NextResponse.json({ error: error }, { status: 500 }); // handled with error
+        // if (error instanceof RecordNotFound) return Response.json({ error: 'invalid ID' }, { status: 400 }); // handled with error
+        return Response.json({ error: error }, { status: 500 }); // handled with error
     } // try
     //#endregion save changes
 });

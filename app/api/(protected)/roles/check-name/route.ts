@@ -1,7 +1,6 @@
 // next-js:
 import {
-    NextRequest,
-    NextResponse,
+    type NextRequest,
 }                           from 'next/server'
 
 // next-auth:
@@ -53,7 +52,7 @@ router
 .use(async (req, ctx, next) => {
     // conditions:
     const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ error: 'Please sign in.' }, { status: 401 }); // handled with error: unauthorized
+    if (!session) return Response.json({ error: 'Please sign in.' }, { status: 401 }); // handled with error: unauthorized
     
     
     
@@ -83,7 +82,7 @@ router
     if (
         (((typeof(name) !== 'string') || (name.length < 1) || (name.length > 30)))
     ) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
@@ -102,21 +101,21 @@ router
             },
         });
         if (result) {
-            return NextResponse.json({
+            return Response.json({
                 error: `The name "${name}" is already taken.`,
             }, { status: 409 }); // handled with error
         } // if
         
         
         
-        return NextResponse.json({
+        return Response.json({
             ok       : true,
             message  : `The name "${name}" can be used.`,
         }); // handled with success
     }
     catch (error: any) {
         console.log('ERROR: ', error);
-        return NextResponse.json({ error: error }, { status: 500 }); // handled with error
+        return Response.json({ error: error }, { status: 500 }); // handled with error
     } // try
     //#endregion query result
 });

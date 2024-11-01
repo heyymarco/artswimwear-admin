@@ -1,7 +1,6 @@
 // next-js:
 import {
-    NextRequest,
-    NextResponse,
+    type NextRequest,
 }                           from 'next/server'
 
 // next-auth:
@@ -61,7 +60,7 @@ router
 .use(async (req, ctx, next) => {
     // conditions:
     const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ error: 'Please sign in.' }, { status: 401 }); // handled with error: unauthorized
+    if (!session) return Response.json({ error: 'Please sign in.' }, { status: 401 }); // handled with error: unauthorized
     (req as any).session = session;
     
     
@@ -82,7 +81,7 @@ router
             },
         }))
     );
-    return NextResponse.json(roleDetails); // handled with success
+    return Response.json(roleDetails); // handled with success
 })
 .patch(async (req) => {
     if (process.env.SIMULATE_SLOW_NETWORK === 'true') {
@@ -94,8 +93,8 @@ router
     } // if
     
     // throw '';
-    // return NextResponse.json({ message: 'not found'    }, { status: 400 }); // handled with error
-    // return NextResponse.json({ message: 'server error' }, { status: 500 }); // handled with error
+    // return Response.json({ message: 'not found'    }, { status: 400 }); // handled with error
+    // return Response.json({ message: 'server error' }, { status: 500 }); // handled with error
     
     //#region parsing request
     const {
@@ -159,7 +158,7 @@ router
         
         // TODO: validating data type & constraints
     ) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
@@ -170,14 +169,14 @@ router
     //#region validating privileges
     const session = (req as any).session as Session;
     if (!id) {
-        if (!session.role?.role_c) return NextResponse.json({ error:
+        if (!session.role?.role_c) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to add new role.`
         }, { status: 403 }); // handled with error: forbidden
     }
     else {
-        if (!session.role?.role_u) return NextResponse.json({ error:
+        if (!session.role?.role_u) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the role.`
@@ -249,12 +248,12 @@ You do not have the privilege to modify the role.`
                 select : roleDetailSelect,
             })
         );
-        return NextResponse.json(roleDetail); // handled with success
+        return Response.json(roleDetail); // handled with success
     }
     catch (error: any) {
         console.log('ERROR: ', error);
-        // if (error instanceof RecordNotFound) return NextResponse.json({ error: 'invalid ID' }, { status: 400 }); // handled with error
-        return NextResponse.json({ error: error }, { status: 500 }); // handled with error
+        // if (error instanceof RecordNotFound) return Response.json({ error: 'invalid ID' }, { status: 400 }); // handled with error
+        return Response.json({ error: error }, { status: 500 }); // handled with error
     } // try
     //#endregion save changes
 })
@@ -281,7 +280,7 @@ You do not have the privilege to modify the role.`
     if (
         ((typeof(id) !== 'string') || (id.length < 1))
     ) {
-        return NextResponse.json({
+        return Response.json({
             error: 'Invalid data.',
         }, { status: 400 }); // handled with error
     } // if
@@ -291,7 +290,7 @@ You do not have the privilege to modify the role.`
     
     //#region validating privileges
     const session = (req as any).session as Session;
-    if (!session.role?.role_d) return NextResponse.json({ error:
+    if (!session.role?.role_d) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to delete the role.`
@@ -312,12 +311,12 @@ You do not have the privilege to delete the role.`
                 },
             })
         );
-        return NextResponse.json(deletedRole); // handled with success
+        return Response.json(deletedRole); // handled with success
     }
     catch (error: any) {
         console.log('ERROR: ', error);
-        // if (error instanceof RecordNotFound) return NextResponse.json({ error: 'invalid ID' }, { status: 400 }); // handled with error
-        return NextResponse.json({ error: error }, { status: 500 }); // handled with error
+        // if (error instanceof RecordNotFound) return Response.json({ error: 'invalid ID' }, { status: 400 }); // handled with error
+        return Response.json({ error: error }, { status: 500 }); // handled with error
     } // try
     //#endregion save changes
 });

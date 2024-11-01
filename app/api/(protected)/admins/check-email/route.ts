@@ -1,7 +1,6 @@
 // next-js:
 import {
-    NextRequest,
-    NextResponse,
+    type NextRequest,
 }                           from 'next/server'
 
 // next-auth:
@@ -58,7 +57,7 @@ router
 .use(async (req, ctx, next) => {
     // conditions:
     const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ error: 'Please sign in.' }, { status: 401 }); // handled with error: unauthorized
+    if (!session) return Response.json({ error: 'Please sign in.' }, { status: 401 }); // handled with error: unauthorized
     
     
     
@@ -92,22 +91,22 @@ router
         email,
     } = Object.fromEntries(new URL(req.url, 'https://localhost/').searchParams.entries());
     if ((typeof(email) !== 'string') || !email) {
-        return NextResponse.json({
+        return Response.json({
             error: 'The required email is not provided.',
         }, { status: 400 }); // handled with error
     } // if
     if ((typeof(emailMinLength) === 'number') && Number.isFinite(emailMinLength) && (email.length < emailMinLength)) {
-        return NextResponse.json({
+        return Response.json({
             error: `The email is too short. Minimum is ${emailMinLength} characters.`,
         }, { status: 400 }); // handled with error
     } // if
     if ((typeof(emailMaxLength) === 'number') && Number.isFinite(emailMaxLength) && (email.length > emailMaxLength)) {
-        return NextResponse.json({
+        return Response.json({
             error: `The email is too long. Maximum is ${emailMaxLength} characters.`,
         }, { status: 400 }); // handled with error
     } // if
     if (!email.match(emailFormat)) {
-        return NextResponse.json({
+        return Response.json({
             error: `The email is not well formatted.`,
         }, { status: 400 }); // handled with error
     } // if
@@ -125,21 +124,21 @@ router
             },
         });
         if (result) {
-            return NextResponse.json({
+            return Response.json({
                 error: `The email "${email}" is already taken.`,
             }, { status: 409 }); // handled with error
         } // if
         
         
         
-        return NextResponse.json({
+        return Response.json({
             ok       : true,
             message  : `The email "${email}" can be used.`,
         }); // handled with success
     }
     catch (error: any) {
         console.log('ERROR: ', error);
-        return NextResponse.json({ error: error }, { status: 500 }); // handled with error
+        return Response.json({ error: error }, { status: 500 }); // handled with error
     } // try
     //#endregion query result
 });
