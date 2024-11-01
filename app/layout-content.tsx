@@ -1,5 +1,16 @@
 'use client'
 
+// styles:
+import {
+    StylesCSR,
+}                           from './StylesCSR'                  // client_side_rendering CSS (required)
+import {
+    StylesSSR,
+}                           from './StylesSSR'                  // server_side_rendering CSS (optional)
+import {
+    styleSheets,
+}                           from '@cssfn/core'                  // writes css in vanilla-js
+
 // themes:
 import '@/theme.config'
 import './layout-styles.scss'
@@ -8,12 +19,6 @@ import './layout-styles.scss'
 import {
     NextAuthSessionProvider,
 }                           from './NextAuthSessionProvider'
-
-// cssfn:
-import { styleSheets } from '@cssfn/core'
-
-import { StylesCSR } from './StylesCSR' // client_side_rendering CSS (required)
-import { StylesSSR } from './StylesSSR' // server_side_rendering CSS (optional)
 
 import { Header } from './Header'
 import { Footer } from './Footer'
