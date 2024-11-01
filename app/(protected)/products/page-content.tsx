@@ -89,8 +89,8 @@ function ProductPageContentInternal(): JSX.Element|null {
     if (isLoadingAndNoData || (sessionStatus === 'loading'        )) return <PageLoading />;
     if (isErrorAndNoData   || (sessionStatus === 'unauthenticated')) return <PageError onRetry={refetch} />;
     return (
-        <SimpleMainPage>
-            <Section theme='primary'>
+        <SimpleMainPage theme='primary'>
+            <Section>
                 <PaginationList<ProductDetail>
                     // accessibilities:
                     createItemText='Add New Product'

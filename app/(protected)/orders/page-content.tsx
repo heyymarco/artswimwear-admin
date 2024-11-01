@@ -109,8 +109,8 @@ function OrderPageContentInternal(): JSX.Element|null {
     if (isLoadingAndNoData) return <PageLoading />;
     if (isErrorAndNoData  ) return <PageError onRetry={refetch} />;
     return (
-        <SimpleMainPage>
-            <Section theme='primary'>
+        <SimpleMainPage theme='primary'>
+            <Section>
                 <PaginationList<OrderDetail>
                     // components:
                     modelPreviewComponent={
