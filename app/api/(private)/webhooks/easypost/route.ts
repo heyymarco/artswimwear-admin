@@ -33,7 +33,7 @@ export const maxDuration = 7; // You must respond within 7 seconds. If no respon
 
 
 
-export async function POST(req: Request, res: Response): Promise<Response> {
+export async function POST(req: Request): Promise<Response> {
     const signature = req.headers.get('X-Hmac-Signature') ?? req.headers.get('x-hmac-signature');
     const bodyArrayBuffer : ArrayBuffer = await (new Response(req.body)).arrayBuffer();
     const bodyBuffer      : Buffer      = Buffer.from(bodyArrayBuffer);

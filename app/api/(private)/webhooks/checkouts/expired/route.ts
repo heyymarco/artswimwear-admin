@@ -17,7 +17,7 @@ export const maxDuration = 20; // this function can run for a maximum of 20 seco
 
 
 
-export async function POST(req: Request, res: Response): Promise<Response> {
+export async function POST(req: Request): Promise<Response> {
     const secretHeader = req.headers.get('X-Secret');
     if (!secretHeader || (secretHeader !== process.env.APP_SECRET)) {
         return Response.json({
