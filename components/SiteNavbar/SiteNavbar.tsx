@@ -22,9 +22,9 @@ import {
 const SiteNavbar = (): JSX.Element|null => {
     // jsx:
     return (
-        <Navbar theme='primary' gradient={true} className='siteNavbar' breakpoint='md'>{(params) =>
-            <SiteNavbarMenu {...params} />
-        }</Navbar>
+        <Navbar theme='primary' gradient={true} className='siteNavbar' breakpoint='md'>
+            <SiteNavbarMenu />
+        </Navbar>
     );
 };
 export {

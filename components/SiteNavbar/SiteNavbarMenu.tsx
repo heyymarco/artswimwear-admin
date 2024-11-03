@@ -26,7 +26,7 @@ import {
     // composite-components:
     NavItem,
     Nav,
-    NavbarParams,
+    useNavbarState,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 import {
     // simple-components:
@@ -43,12 +43,26 @@ import {
 
 
 
-const SiteNavbarMenu = ({
+const SiteNavbarMenu = () => {
+    // states:
+    const {
+        // variants:
         basicVariantProps,
+        
+        
+        
+        // states:
         navbarExpanded,
         listExpanded,
+        
+        
+        
+        // handlers:
         handleClickToToggleList,
-    } : NavbarParams) => {
+    } = useNavbarState();
+    
+    
+    
     // sessions:
     const { data: session, status: sessionStatus } = useSession();
     const isFullySignedIn  = (sessionStatus === 'authenticated') && !!session;
