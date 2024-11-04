@@ -422,6 +422,7 @@ You do not have the privilege to modify the category visibility.`
             
             
             //#region save changes
+            const isCreate = !id;
             const defineDeleteDeepNestedSubcategories = (categoryDels: CategoryDiff['categoryDels']): Extract<Prisma.CategoryUpdateInput['subcategories'], {}>['delete'] => {
                 // conditions:
                 if (!categoryDels.length) return undefined;
@@ -503,7 +504,7 @@ You do not have the privilege to modify the category visibility.`
                     connect    : (parent === null) ? undefined : {
                         id: parent,
                     },
-                    disconnect : (parent !== null) ? undefined : true,
+                    disconnect : ((parent !== null) || isCreate) ? undefined : true,
                 },
                 
                 subcategories : (subcategoryDiff === undefined) ? undefined : {
@@ -520,7 +521,7 @@ You do not have the privilege to modify the category visibility.`
             };
             const categorySelect = categoryDetailSelect(categoryOrderBy);
             const categoryDetailData = (
-                !id
+                isCreate
                 ? await prismaTransaction.category.create({
                     data   : data as (typeof data & Required<Pick<CategoryUpdateRequest, 'visibility'|'name'|'path'>>),
                     select : categorySelect,
