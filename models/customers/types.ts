@@ -21,6 +21,10 @@ export interface CustomerDetail
             |'updatedAt'
             
             // data:
+            |'paypalCustomerId'
+            |'stripeCustomerId'
+            |'midtransCustomerId'
+            
             |'emailVerified'
             |'image'
         >
