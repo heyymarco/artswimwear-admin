@@ -82,6 +82,7 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
         // components:
         popupComponent,
         modalComponent,
+        modalCardComponent,
         
         
         
@@ -188,6 +189,7 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
             // components:
             popupComponent={popupComponent as EditVariantGroupDialogProps['popupComponent']}
             modalComponent={modalComponent as EditVariantGroupDialogProps['modalComponent']}
+            modalCardComponent={modalCardComponent as any}
             
             
             
