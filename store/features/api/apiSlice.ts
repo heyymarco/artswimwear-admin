@@ -775,10 +775,10 @@ const selectRangeFromArg    = (originalArg: unknown): { indexStart: number, inde
 
 
 
-interface GetQueryCachesOptions {
-    predicate ?: (originalArgs: unknown) => boolean
+interface GetQueryCachesOptions<TModel> {
+    predicate ?: (originalArgs: unknown, data: TModel) => boolean
 }
-const getQueryCaches = <TModel, TQueryArg, TBaseQuery extends BaseQueryFn = BaseQueryFn>(api: MutationLifecycleApi<unknown, TBaseQuery, unknown, 'api'>, endpointName: keyof (typeof apiSlice)['endpoints'], options?: GetQueryCachesOptions) => {
+const getQueryCaches = <TModel, TQueryArg, TBaseQuery extends BaseQueryFn = BaseQueryFn>(api: MutationLifecycleApi<unknown, TBaseQuery, unknown, 'api'>, endpointName: keyof (typeof apiSlice)['endpoints'], options?: GetQueryCachesOptions<TModel>) => {
     // options
     const {
         predicate,
@@ -800,7 +800,7 @@ const getQueryCaches = <TModel, TQueryArg, TBaseQuery extends BaseQueryFn = Base
             &&
             (allQueryCache.data !== undefined)
             &&
-            ((predicate === undefined) || predicate(allQueryCache.originalArgs))
+            ((predicate === undefined) || predicate(allQueryCache.originalArgs, allQueryCache.data as TModel))
         )
     );
     return collectionQueryCaches as QuerySubState<BaseEndpointDefinition<TQueryArg, TBaseQuery, TModel>>[];
@@ -814,7 +814,7 @@ type PaginationUpdateType =
     |'DELETE'
 interface PaginationUpdateOptions<TModel extends Model|string>
     extends
-        GetQueryCachesOptions
+        GetQueryCachesOptions<Pagination<TModel>>
 {
     providedMutatedModel ?: TModel
     invalidatePageTag    ?: (tag: Parameters<typeof apiSlice.util.invalidateTags>[0][number], page: number) => string|number
@@ -1209,7 +1209,7 @@ type EntityUpdateType =
     |'DELETE'
 interface EntityUpdateOptions<TModel extends Model|string>
     extends
-        GetQueryCachesOptions
+        GetQueryCachesOptions<Dictionary<TModel>>
 {
     providedMutatedModel ?: TModel
 }
@@ -1237,7 +1237,7 @@ const cumulativeUpdateEntityCache     = async <TModel extends Model|string, TQue
     
     
     // find related TModel data(s):
-    const collectionQueryCaches = getQueryCaches<Pagination<TModel>, TQueryArg, TBaseQuery>(api, endpointName, options);
+    const collectionQueryCaches = getQueryCaches<Dictionary<TModel>, TQueryArg, TBaseQuery>(api, endpointName, options);
     
     
     
