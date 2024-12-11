@@ -9,9 +9,42 @@ import {
 
 
 // types:
-export type CustomerOrGuestDetail =
-    &Pick<CustomerDetail, keyof CustomerDetail & keyof GuestDetail>
-    &Pick<GuestDetail   , keyof CustomerDetail & keyof GuestDetail>
+/**
+ * The minimum data exposed of customer|guest.
+ */
+export type CustomerOrGuestMinimumData =
+    |CustomerMinimumData
+    |GuestMinimumData
+
+/**
+ * The minimum data exposed of customer.
+ */
+export interface CustomerMinimumData
+    extends
+        Pick<Customer,
+            // data:
+            |'name'
+            |'email'
+        >
+{
+    preference : CustomerPreferenceDetail|null
+}
+
+/**
+ * The minimum data exposed of guest.
+ */
+export interface GuestMinimumData
+    extends
+        Pick<Guest,
+            // data:
+            |'name'
+            |'email'
+        >
+{
+    preference : GuestPreferenceDetail|null
+}
+
+
 
 export interface CustomerDetail
     extends
