@@ -236,7 +236,7 @@ export const apiSlice = createApi({
                     
                     
                     
-                    const updatedCategory = await(async () => {
+                    const updatedCategory = await (async () => {
                         try {
                             return (await api.queryFulfilled).data;
                         }
@@ -285,7 +285,7 @@ export const apiSlice = createApi({
                     
                     
                     
-                    const deletedCategoryId = await(async () => {
+                    const deletedCategoryId = await (async () => {
                         try {
                             return (await api.queryFulfilled).data.id;
                         }
