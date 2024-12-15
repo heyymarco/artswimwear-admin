@@ -241,7 +241,7 @@ export const apiSlice = createApi({
                             return (await api.queryFulfilled).data;
                         }
                         catch {
-                            return undefined;
+                            return undefined; // update failed
                         } // try
                     })();
                     if (!updatedCategory) return;
@@ -287,11 +287,10 @@ export const apiSlice = createApi({
                     
                     const deletedCategoryId = await(async () => {
                         try {
-                            await api.queryFulfilled;
-                            return arg.id;
+                            return (await api.queryFulfilled).data.id;
                         }
                         catch {
-                            return undefined;
+                            return undefined; // delete failed
                         } // try
                     })();
                     if (!deletedCategoryId) return;
