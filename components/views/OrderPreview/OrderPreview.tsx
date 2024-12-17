@@ -57,9 +57,6 @@ import {
 
 // heymarco components:
 import {
-    Image,
-}                           from '@heymarco/image'
-import {
     EmailEditor,
 }                           from '@heymarco/email-editor'
 import {
@@ -100,6 +97,9 @@ import {
 import {
     ProductImage,
 }                           from '@/components/views/ProductImage'
+import {
+    PaymentMethodBrand,
+}                           from '@/components/payments/PaymentMethodBrand'
 
 // models:
 import {
@@ -108,7 +108,6 @@ import {
     
     
     orderStatusTheme,
-    isKnownPaymentBrand,
 }                           from '@/models'
 
 // internals:
@@ -357,22 +356,7 @@ const OrderPreview = (props: OrderPreviewProps): JSX.Element|null => {
                     <CurrencyDisplay currency={currency} currencyRate={currencyRate} amount={[totalProductPrice, totalShippingCosts]} />
                     
                     <span className='paymentMethod'>
-                        {
-                            (!!payment.brand && isKnownPaymentBrand(payment.brand))
-                            ? <img
-                                // appearances:
-                                alt={payment.brand}
-                                src={`/brands/${payment.brand.toLowerCase()}.svg`}
-                                // width={42}
-                                // height={26}
-                                
-                                
-                                
-                                // classes:
-                                className='paymentProvider'
-                            />
-                            : (payment.brand || paymentType)
-                        }
+                        <PaymentMethodBrand model={payment} />
                         
                         {!!payment.identifier && <span className='paymentIdentifier txt-sec'>
                             ({payment.identifier})

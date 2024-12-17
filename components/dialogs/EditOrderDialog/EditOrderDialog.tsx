@@ -168,6 +168,9 @@ import {
     DateTimeDisplay,
 }                           from '@/components/DateTimeDisplay'
 import {
+    PaymentMethodBrand,
+}                           from '@/components/payments/PaymentMethodBrand'
+import {
     ViewCartItem,
 }                           from './ViewCartItem'
 import {
@@ -177,10 +180,6 @@ import {
 // models:
 import {
     type OrderDetail,
-    
-    
-    
-    isKnownPaymentBrand,
 }                           from '@/models'
 import type {
     OrderStatus,
@@ -1133,22 +1132,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
                                         (isManualPaid && !!role?.order_upmp) && <EditButton onClick={handleEditPayment} />
                                     }
                                 >
-                                    {
-                                        (!!paymentBrand && isKnownPaymentBrand(paymentBrand))
-                                        ? <img
-                                            // appearances:
-                                            alt={paymentBrand}
-                                            src={`/brands/${paymentBrand.toLowerCase()}.svg`}
-                                            // width={42}
-                                            // height={26}
-                                            
-                                            
-                                            
-                                            // classes:
-                                            className='paymentProvider'
-                                        />
-                                        : (paymentBrand || paymentType)
-                                    }
+                                    <PaymentMethodBrand model={payment} />
                                     {!!paymentIdentifier && <span className='paymentIdentifier txt-sec'>
                                         ({paymentIdentifier})
                                     </span>}

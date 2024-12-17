@@ -16,3 +16,5 @@ export      * from './emails'
 
 export      * from './admins'
 export      * from './roles'
+
+export      * from './payment-methods'
