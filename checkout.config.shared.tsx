@@ -29,6 +29,9 @@ export const checkoutConfigShared   : CheckoutConfigShared = {
                 fractionUnit        : 0.01,
             },
         },
+        /**
+         * @deprecated Use `checkoutConfigXXX.payment.defaultCurrency` instead.
+         */
         defaultCurrency             : process.env.NEXT_PUBLIC_INTL_DEFAULT_CURRENCY ?? 'USD',
         currencyConversionRounding  : 'ROUND',
     },
@@ -50,18 +53,27 @@ export const checkoutConfigShared   : CheckoutConfigShared = {
                 supportedCurrencies : [
                     'USD',
                 ],
+                savePaymentMethods  : {
+                    card            : true,
+                },
             },
             stripe                  : {
                 enabled             : true,
                 supportedCurrencies : [
                     'USD',
                 ],
+                savePaymentMethods  : {
+                    card            : true,
+                },
             },
             midtrans                : {
                 enabled             : true,
                 supportedCurrencies : [
                     'IDR',
                 ],
+                savePaymentMethods  : {
+                    card            : false,
+                },
             },
         },
         preferredProcessors         : [
