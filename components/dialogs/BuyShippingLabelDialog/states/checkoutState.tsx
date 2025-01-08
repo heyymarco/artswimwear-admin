@@ -91,16 +91,9 @@ import {
 import {
     calculateCheckoutProgress,
 }                           from './utilities'
-
-// configs:
 import {
-    checkoutConfigShared,
-}                           from '@/checkout.config.shared'
-
-
-
-// utilities:
-const invalidSelector = ':is(.invalidating, .invalidated):not([aria-invalid="false"])';
+    getInvalidFields,
+}                           from '@/libs/css-selectors'
 
 
 
@@ -517,8 +510,8 @@ const CheckoutStateProvider = (props: React.PropsWithChildren<CheckoutStateProps
             // wait for a validation state applied:
             if (!(await setTimeoutAsync(0))) return false; // the component was unloaded before the timer runs => do nothing
             if (!(await setTimeoutAsync(0))) return false; // the component was unloaded before the timer runs => do nothing
-            const originAddressFieldErrors   = originAddressSectionRef?.current?.querySelectorAll?.(invalidSelector);
-            const shippingAddressFieldErrors = shippingAddressSectionRef?.current?.querySelectorAll?.(invalidSelector);
+            const originAddressFieldErrors   = getInvalidFields(originAddressSectionRef?.current);
+            const shippingAddressFieldErrors = getInvalidFields(shippingAddressSectionRef?.current);
             if (originAddressFieldErrors?.length || shippingAddressFieldErrors?.length) { // there is an/some invalid field
                 if (originAddressFieldErrors?.length) {
                     setExpandedAddress('originAddress');
