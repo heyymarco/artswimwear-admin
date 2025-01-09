@@ -138,7 +138,6 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
     useEffect(() => {
         // actions:
         setModel(modelData ?? emptyShippingOrigin);
-        console.log('loaded');
     }, [modelData]);
     
     
