@@ -39,6 +39,11 @@ import {
 import {
     type EditorChangeEventHandler,
 }                           from '@heymarco/editor'
+import {
+    // react components:
+    type NumberUpDownEditorProps,
+    NumberUpDownEditor,
+}                           from '@heymarco/number-updown-editor'
 
 // reusable-ui components:
 import {
@@ -62,13 +67,6 @@ import {
     TabPanel,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
-// internals:
-import {
-    // react components:
-    QuantityEditorProps,
-    QuantityEditor,
-}                           from '@/components/editors/QuantityEditor'
-
 // configs:
 import {
     PAGE_PRODUCT_STOCK_UNLIMITED,
@@ -81,7 +79,7 @@ import {
 export interface StockEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Omit<QuantityEditorProps<TElement>,
+        Omit<NumberUpDownEditorProps<TElement>,
             // refs:
             |'outerRef'                // taken by <Tab>
             
@@ -94,7 +92,7 @@ export interface StockEditorProps<TElement extends Element = HTMLElement>
         >,
         Omit<TabProps<TElement>,
             // refs:
-            |'elmRef'                  // taken by <QuantityEditor>
+            |'elmRef'                  // taken by <NumberUpDownEditor>
             
             // states:
             |'defaultExpandedTabIndex' // already taken over
@@ -171,7 +169,7 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
         // components:
         decreaseButtonComponent,
         increaseButtonComponent,
-        inputComponent,
+        numberEditorComponent,
         listComponent = (<List<Element> /> as React.ReactComponentElement<any, ListProps<Element>>),
         
         
@@ -247,7 +245,7 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
     
     
     // effects:
-    // auto focus on <QuantityEditor> when the tab is active:
+    // auto focus on <NumberUpDownEditor> when the tab is active:
     useEffect(() => {
         // conditions:
         if (!selectedTabLimited) return;
@@ -328,7 +326,7 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                     >
                         Current stock:
                     </Label>
-                    <QuantityEditor<TElement>
+                    <NumberUpDownEditor<TElement>
                         // refs:
                         elmRef={numberInputRef}
                         
@@ -410,7 +408,7 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
                         {...{
                             decreaseButtonComponent,
                             increaseButtonComponent,
-                            inputComponent,
+                            numberEditorComponent,
                         }}
                         
                         

@@ -20,16 +20,20 @@ import {
     // react components:
     Label,
     
-    InputProps,
     Input,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
-// internals:
+// heymarco components:
 import {
     // react components:
-    QuantityEditorProps,
-    QuantityEditor,
-}                           from '@/components/editors/QuantityEditor'
+    type NumberEditorProps,
+    NumberEditor,
+}                           from '@heymarco/number-editor'
+import {
+    // react components:
+    type NumberUpDownEditorProps,
+    NumberUpDownEditor,
+}                           from '@heymarco/number-updown-editor'
 
 
 
@@ -37,15 +41,15 @@ import {
 export interface ShippingWeightEditorProps<TElement extends Element = HTMLSpanElement>
     extends
         // bases:
-        QuantityEditorProps<TElement>
+        NumberUpDownEditorProps<TElement>
 {
 }
 const ShippingWeightEditor = <TElement extends Element = HTMLSpanElement>(props: ShippingWeightEditorProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // components:
-        inputComponent = (<Input<TElement> /> as React.ReactComponentElement<any, InputProps<TElement>>),
-    ...restQuantityEditorProps} = props;
+        numberEditorComponent = (<NumberEditor<TElement, React.ChangeEvent<HTMLInputElement>, number|null> /> as React.ReactComponentElement<any, NumberEditorProps<TElement, React.ChangeEvent<HTMLInputElement>, number|null>>),
+    ...restNumberUpDownEditorProps} = props;
     
     
     
@@ -59,17 +63,17 @@ const ShippingWeightEditor = <TElement extends Element = HTMLSpanElement>(props:
         
         
         
-        // preserves the original `style` from `inputComponent` (can overwrite the `inputStyleInternal`):
-        inputComponent.props.style,
+        // preserves the original `style` from `numberEditorComponent` (can overwrite the `inputStyleInternal`):
+        numberEditorComponent.props.style,
     );
     
     
     
     // jsx:
     return (
-        <QuantityEditor<TElement>
+        <NumberUpDownEditor<TElement>
             // other props:
-            {...restQuantityEditorProps}
+            {...restNumberUpDownEditorProps}
             
             
             
@@ -87,7 +91,7 @@ const ShippingWeightEditor = <TElement extends Element = HTMLSpanElement>(props:
             
             
             // components:
-            inputComponent={React.cloneElement<InputProps<TElement>>(inputComponent,
+            numberEditorComponent={React.cloneElement<NumberEditorProps<TElement, React.ChangeEvent<HTMLInputElement>, number|null>>(numberEditorComponent,
                 // props:
                 {
                     // styles:
