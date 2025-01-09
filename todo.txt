@@ -13,6 +13,8 @@ moved items after shippingCost, both for DraftOrder and Order
 [med  prior] replace \(\s*\{\s*id\s*\}\s*\)\s*=>\s*id   with selectId
 [med  prior] fix PrintDialog split multiple pages on FireFox
 
+[low  prior] replace `@/components/editors/Editor` with `@heymarco/editor`
+
 [low  prior] prefer to use Request|Response instead of NextRequest|NextResponse
 [low  prior] update DropdownList & ModalBackdrop to apply `scrollbar-gutter: stable`
 
