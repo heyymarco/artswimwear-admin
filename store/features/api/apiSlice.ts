@@ -665,9 +665,9 @@ export const {
     
     useGetShippingListQuery                : useGetShippingList,
     
-    // useLazyGetCountryListQuery             : useGetCountryList,
-    // useLazyGetStateListQuery               : useGetStateList,
-    // useLazyGetCityListQuery                : useGetCityList,
+    useGetCountryListQuery                 : useGetCountryList,
+    useLazyGetStateListQuery               : useGetStateList,
+    useLazyGetCityListQuery                : useGetCityList,
     
     
     
@@ -703,8 +703,6 @@ export const {
     getProductPreview : { initiate : getProductPreview },
     
     
-    
-    getCountryList    : { initiate : getCountryList    },
     getStateList      : { initiate : getStateList      },
     getCityList       : { initiate : getCityList       },
 } = apiSlice.endpoints;
