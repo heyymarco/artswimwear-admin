@@ -136,7 +136,16 @@ const AddressEditor = <TElement extends Element = HTMLFormElement>(props: Addres
     useIsomorphicLayoutEffect(() => {
         // Initialize a new unresolved promise:
         const { promise, resolve } = Promise.withResolvers<string[]>();
-        setStateListPromise([promise, resolve]);
+        setStateListPromise((current) => {
+            // finishing the unresolved prev promise:
+            const [, resolve] = current;
+            resolve([]); // resolved as empty result
+            
+            
+            
+            // then set a new unresolved promise:
+            return [promise, resolve];
+        });
         
         
         
@@ -144,6 +153,7 @@ const AddressEditor = <TElement extends Element = HTMLFormElement>(props: Addres
             resolve([]); // no selected country => the states cannot be determined => empty result
         }
         else {
+            // fire a request and we will take care of the result later:
             getStateList({ countryCode: country });
         } // if
     }, [country, getStateList]);
@@ -153,7 +163,16 @@ const AddressEditor = <TElement extends Element = HTMLFormElement>(props: Addres
     useIsomorphicLayoutEffect(() => {
         // Initialize a new unresolved promise:
         const { promise, resolve } = Promise.withResolvers<string[]>();
-        setCityListPromise([promise, resolve]);
+        setCityListPromise((current) => {
+            // finishing the unresolved prev promise:
+            const [, resolve] = current;
+            resolve([]); // resolved as empty result
+            
+            
+            
+            // then set a new unresolved promise:
+            return [promise, resolve];
+        });
         
         
         
@@ -161,6 +180,7 @@ const AddressEditor = <TElement extends Element = HTMLFormElement>(props: Addres
             resolve([]); // no selected country or state => the cities cannot be determined => empty result
         }
         else {
+            // fire a request and we will take care of the result later:
             getCityList({ countryCode: country, state: state });
         } // if
     }, [country, state, getCityList]);
