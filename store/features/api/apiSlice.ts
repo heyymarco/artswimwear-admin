@@ -701,10 +701,6 @@ export const {
 
 export const {
     getProductPreview : { initiate : getProductPreview },
-    
-    
-    getStateList      : { initiate : getStateList      },
-    getCityList       : { initiate : getCityList       },
 } = apiSlice.endpoints;
 
 

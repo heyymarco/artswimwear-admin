@@ -130,19 +130,9 @@ import {
     useUpdateShipping,
     useDeleteShipping,
     
-    // useGetStateList,
-    // useGetCityList,
-    
-    
-    
-    // apis:
-    getStateList,
-    getCityList,
+    useGetStateList,
+    useGetCityList,
 }                           from '@/store/features/api/apiSlice'
-import {
-    // hooks:
-    useAppDispatch,
-}                           from '@/store/hooks'
 
 // configs:
 import {
@@ -251,30 +241,86 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     
     
     
-    // stores:
-    const dispatch = useAppDispatch();
+    // RTK Query hooks:
+    const [getStateList, { data: stateListData  , isFetching: stateListFetching  , isError: stateListError   }] = useGetStateList();
+    const [getCityList , { data: cityListData   , isFetching: cityListFetching   , isError: cityListError    }] = useGetCityList();
     
+    
+    
+    // states:
     const [country, setCountry] = useState<string>('');
     const [state  , setState  ] = useState<string>('');
     
-    const stateListRef   = useRef<Promise<string[]>>(emptyStringPromise);
-    const cityListRef    = useRef<Promise<string[]>>(emptyStringPromise);
+    const stateListPromiseRef    = useRef<Promise<string[]>>(emptyStringPromise);
+    const stateListResolverRef   = useRef<((value: string[]) => void)|undefined>(undefined);
+    const cityListPromiseRef     = useRef<Promise<string[]>>(emptyStringPromise);
+    const cityListResolverRef    = useRef<((value: string[]) => void)|undefined>(undefined);
+    
+    // Set stateListPromise when country changes:
     useEffect(() => {
+        // Initialize a new unresolved promise:
+        const { promise, resolve } = Promise.withResolvers<string[]>();
+        stateListPromiseRef.current  = promise;
+        stateListResolverRef.current = resolve;
+        
+        
+        
         if (!country) {
-            stateListRef.current = emptyStringPromise; // clear
+            resolve([]); // no selected country => the states cannot be determined => empty result
         }
         else {
-            stateListRef.current = dispatch(getStateList({ countryCode: country })).unwrap();
+            // fire a request and we will take care of the result later:
+            getStateList({ countryCode: country });
         } // if
-    }, [country]);
+    }, [country, getStateList]);
+    
+    // Set cityListPromise when country or state changes:
     useEffect(() => {
+        // Initialize a new unresolved promise:
+        const { promise, resolve } = Promise.withResolvers<string[]>();
+        cityListPromiseRef.current  = promise;
+        cityListResolverRef.current = resolve;
+        
+        
+        
         if (!country || !state) {
-            cityListRef.current = emptyStringPromise; // clear
+            resolve([]); // no selected country or state => the cities cannot be determined => empty result
         }
         else {
-            cityListRef.current = dispatch(getCityList({ countryCode: country, state: state })).unwrap();
+            // fire a request and we will take care of the result later:
+            getCityList({ countryCode: country, state: state });
         } // if
-    }, [country, state]);
+    }, [country, state, getCityList]);
+    
+    // Listen for stateListData and stateListError:
+    useEffect(() => {
+        const resolve = stateListResolverRef.current;
+        if (!resolve) return;
+        if (stateListError) {
+            resolve([]); // the states cannot be resolved => empty result
+        }
+        else if (stateListFetching) {
+            // do nothing, just wait until the data is ready
+        }
+        else if (stateListData) {
+            resolve(stateListData);
+        } // if
+    }, [stateListData, stateListError, stateListFetching]);
+    
+    // Listen for cityListData and cityListError:
+    useEffect(() => {
+        const resolve = cityListResolverRef.current;
+        if (!resolve) return;
+        if (cityListError) {
+            resolve([]); // the cities cannot be resolved => empty result
+        }
+        else if (cityListFetching) {
+            // do nothing, just wait until the data is ready
+        }
+        else if (cityListData) {
+            resolve(cityListData);
+        } // if
+    }, [cityListData, cityListError, cityListFetching]);
     
     
     
@@ -729,7 +775,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                                 zoneNameEditor={
                                     <SelectStateEditor
                                         // data:
-                                        valueOptions={stateListRef}
+                                        valueOptions={stateListPromiseRef}
                                         onChange={setState}
                                     />
                                 }
@@ -745,7 +791,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
                                         zoneNameEditor={
                                             <SelectCityEditor
                                                 // data:
-                                                valueOptions={cityListRef}
+                                                valueOptions={cityListPromiseRef}
                                             />
                                         }
                                         subzoneEditor={undefined} // no more nested subZones
