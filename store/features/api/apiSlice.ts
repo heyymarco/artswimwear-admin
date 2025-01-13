@@ -205,6 +205,7 @@ export const apiSlice = createApi({
                 url    : `products/check-path?path=${encodeURIComponent(arg)}`,
                 method : 'GET',
             }),
+            keepUnusedDataFor: 0, // each request must be passed to server, never cached
         }),
         
         
@@ -322,6 +323,7 @@ export const apiSlice = createApi({
                 url    : `products/categories/check-path?path=${encodeURIComponent(arg)}`,
                 method : 'GET',
             }),
+            keepUnusedDataFor: 0, // each request must be passed to server, never cached
         }),
         
         
@@ -507,6 +509,7 @@ export const apiSlice = createApi({
                 url    : `admins/check-username?username=${encodeURIComponent(username)}`, // cloned from @heymarco/next-auth, because this api was disabled in auth.config.shared
                 method : 'GET',
             }),
+            keepUnusedDataFor: 0, // each request must be passed to server, never cached
         }),
         notProhibitedUsername       : builder.query<boolean, string>({
             query: (username) => ({
@@ -519,6 +522,7 @@ export const apiSlice = createApi({
                 url    : `admins/check-email?email=${encodeURIComponent(email)}`, // cloned from @heymarco/next-auth, because this api was disabled in auth.config.shared
                 method : 'GET',
             }),
+            keepUnusedDataFor: 0, // each request must be passed to server, never cached
         }),
         
         
@@ -559,6 +563,7 @@ export const apiSlice = createApi({
                 url    : `roles/check-name?name=${encodeURIComponent(name)}`,
                 method : 'GET',
             }),
+            keepUnusedDataFor: 0, // each request must be passed to server, never cached
         }),
         
         

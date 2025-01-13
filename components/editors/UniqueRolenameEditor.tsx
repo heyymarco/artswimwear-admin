@@ -6,6 +6,11 @@ import {
 
 // reusable-ui core:
 import {
+    // a collection of TypeScript type utilities, assertions, and validations for ensuring type safety in reusable UI components:
+    type NoForeignProps,
+    
+    
+    
     // react helper hooks:
     useEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
@@ -18,8 +23,13 @@ import {
 
 // internals:
 import {
+    // types:
+    type CheckAvailableHandler,
+    
+    
+    
     // react components:
-    ImplementedUniqueEditorProps,
+    type UniqueEditorProps,
     UniqueEditor,
 }                           from '@/components/editors/UniqueEditor'
 
@@ -29,7 +39,7 @@ import {
 export interface UniqueRolenameEditorProps<TElement extends Element = HTMLSpanElement>
     extends
         // bases:
-        ImplementedUniqueEditorProps<TElement>
+        UniqueEditorProps<TElement>
 {
 }
 const UniqueRolenameEditor = <TElement extends Element = HTMLSpanElement>(props: UniqueRolenameEditorProps<TElement>): JSX.Element|null => {
@@ -39,9 +49,43 @@ const UniqueRolenameEditor = <TElement extends Element = HTMLSpanElement>(props:
     
     
     // handlers:
-    const handleCheckAvailable = useEvent(async (value: string): Promise<boolean> => {
-        return await availableRolename(value).unwrap();
+    const handleDefaultCheckAvailable = useEvent<CheckAvailableHandler>((value) => {
+        return availableRolename(value).unwrap();
     });
+    
+    
+    
+    // default props:
+    const {
+        // accessibilities:
+        'aria-label' : ariaLabel = 'Name',
+        
+        
+        
+        // validations:
+        required                 = true, // disallows role without name
+        
+        minLength                = 1,
+        maxLength                = 30,
+        
+        pattern                  = /^.+$/,
+        
+        onCheckAvailable         = handleDefaultCheckAvailable,
+        
+        patternHint              = <>Must be a common role-name pattern.</>,
+        
+        
+        
+        // formats:
+        type                     = 'text',
+        autoComplete             = 'nope',
+        autoCapitalize           = 'words',
+        
+        
+        
+        // other props:
+        ...restUniqueEditorProps
+    } = props satisfies NoForeignProps<typeof props, UniqueEditorProps<TElement>>;
     
     
     
@@ -49,39 +93,37 @@ const UniqueRolenameEditor = <TElement extends Element = HTMLSpanElement>(props:
     return (
         <UniqueEditor<TElement>
             // other props:
-            {...props}
+            {...restUniqueEditorProps}
             
             
             
             // accessibilities:
-            aria-label={props['aria-label'] ?? 'Name'}
+            aria-label           = {ariaLabel}
             
             
             
             // validations:
-            required={props.required ?? true}
+            required             = {required}
+            
+            minLength            = {minLength}
+            maxLength            = {maxLength}
+            
+            pattern              = {pattern}
+            
+            onCheckAvailable     = {onCheckAvailable}
+            
+            patternHint          = {patternHint}
             
             
             
             // formats:
-            type={props.type ?? 'text'}
-            autoComplete={props.autoComplete ?? 'nope'}
-            autoCapitalize={props.autoCapitalize ?? 'words'}
-            
-            
-            
-            // constraints:
-            minLength        = {1}
-            maxLength        = {30}
-            
-            format           = {/^.+$/}
-            formatHint       = {<>Must be a common role-name format.</>}
-            
-            onCheckAvailable = {handleCheckAvailable}
+            type                 = {type}
+            autoComplete         = {autoComplete}
+            autoCapitalize       = {autoCapitalize}
         />
     );
 };
 export {
-    UniqueRolenameEditor,
-    UniqueRolenameEditor as default,
+    UniqueRolenameEditor,            // named export for readibility
+    UniqueRolenameEditor as default, // default export to support React.lazy
 }

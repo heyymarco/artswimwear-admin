@@ -6,6 +6,11 @@ import {
 
 // reusable-ui core:
 import {
+    // a collection of TypeScript type utilities, assertions, and validations for ensuring type safety in reusable UI components:
+    type NoForeignProps,
+    
+    
+    
     // react helper hooks:
     useEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
@@ -26,8 +31,13 @@ import {
     EditorWithLabel,
 }                           from '@/components/EditorWithLabel'
 import {
+    // types:
+    type CheckAvailableHandler,
+    
+    
+    
     // react components:
-    ImplementedUniqueEditorProps,
+    type UniqueEditorProps,
     UniqueEditor,
 }                           from '@/components/editors/UniqueEditor'
 
@@ -64,33 +74,33 @@ export type UseGetModelAvailablePathApi = [
 export interface UniquePathEditorProps<TElement extends Element = HTMLSpanElement>
     extends
         // bases:
-        ImplementedUniqueEditorProps<TElement>
+        UniqueEditorProps<TElement>
 {
-    // appearances:
-    homeUrl   ?: string
-    modelSlug  : string
-    
-    
-    
     // data:
-    useModelAvailablePath : UseModelAvailablePath
+    useModelAvailablePath  : UseModelAvailablePath
+    
+    
+    
+    // appearances:
+    homeUrl               ?: string
+    modelSlug              : string
 }
 const UniquePathEditor = <TElement extends Element = HTMLSpanElement>(props: UniquePathEditorProps<TElement>): JSX.Element|null => {
-    // rest props:
+    // props:
     const {
+        // data:
+        useModelAvailablePath,
+        
+        
+        
         // appearances:
         homeUrl = STORE_WEBSITE_URL,
         modelSlug,
         
         
         
-        // data:
-        useModelAvailablePath,
-        
-        
-        
         // other props:
-        ...restUniqueEditorProps
+        ...restUniquePathEditorProps
     } = props;
     
     
@@ -101,9 +111,66 @@ const UniquePathEditor = <TElement extends Element = HTMLSpanElement>(props: Uni
     
     
     // handlers:
-    const handleCheckAvailable = useEvent(async (value: string): Promise<boolean> => {
-        return await availablePath(value).unwrap();
+    const handleDefaultCheckAvailable = useEvent<CheckAvailableHandler>((value) => {
+        return availablePath(value).unwrap();
     });
+    
+    
+    
+    // default props:
+    const {
+        // accessibilities:
+        'aria-label' : ariaLabel = 'Path',
+        
+        
+        
+        // validations:
+        required                 = true,
+        
+        minLength                = 1,
+        maxLength                = 100,
+        
+        pattern                  = /^[a-zA-Z0-9-_.!$%&'*+=^`|~(){}<>\[\]]+$/,
+        
+        onCheckAvailable         = handleDefaultCheckAvailable,
+        
+        patternHint              = <>Must be a common url-path pattern.</>,
+        
+        
+        
+        // components:
+        textEditorComponent      = (
+            <EditorWithLabel
+                // appearances:
+                icon='home'
+                
+                
+                
+                // accessibilities:
+                title={homeUrl}
+                
+                
+                
+                // components:
+                labelBeforeComponent={
+                    <Label
+                        // classes:
+                        className='solid'
+                    >
+                        {modelSlug}
+                    </Label>
+                }
+                editorComponent={
+                    <TextEditor<TElement> />
+                }
+            />
+        ),
+        
+        
+        
+        // other props:
+        ...restUniqueEditorProps
+    } = restUniquePathEditorProps satisfies NoForeignProps<typeof restUniquePathEditorProps, UniqueEditorProps<TElement>>;
     
     
     
@@ -116,57 +183,30 @@ const UniquePathEditor = <TElement extends Element = HTMLSpanElement>(props: Uni
             
             
             // accessibilities:
-            aria-label={props['aria-label'] ?? 'Path'}
-            
-            
-            
-            // constraints:
-            minLength        = {1}
-            maxLength        = {100}
-            
-            format           = {/^[a-zA-Z0-9-_.!$%&'*+=^`|~(){}<>\[\]]+$/}
-            formatHint       = {<>Must be a common url-path format.</>}
-            
-            onCheckAvailable = {handleCheckAvailable}
+            aria-label          = {ariaLabel}
             
             
             
             // validations:
-            required={props.required ?? true}
+            required            = {required}
+            
+            minLength           = {minLength}
+            maxLength           = {maxLength}
+            
+            pattern             = {pattern}
+            
+            onCheckAvailable    = {onCheckAvailable}
+            
+            patternHint         = {patternHint}
             
             
             
             // components:
-            editorComponent={
-                <EditorWithLabel
-                    // appearances:
-                    icon='home'
-                    
-                    
-                    
-                    // accessibilities:
-                    title={homeUrl}
-                    
-                    
-                    
-                    // components:
-                    labelBeforeComponent={
-                        <Label
-                            // classes:
-                            className='solid'
-                        >
-                            {modelSlug}
-                        </Label>
-                    }
-                    editorComponent={
-                        <TextEditor<TElement> />
-                    }
-                />
-            }
+            textEditorComponent = {textEditorComponent}
         />
     );
 };
 export {
-    UniquePathEditor,
-    UniquePathEditor as default,
+    UniquePathEditor,            // named export for readibility
+    UniquePathEditor as default, // default export to support React.lazy
 }

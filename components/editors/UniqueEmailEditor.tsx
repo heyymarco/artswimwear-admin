@@ -6,6 +6,11 @@ import {
 
 // reusable-ui core:
 import {
+    // a collection of TypeScript type utilities, assertions, and validations for ensuring type safety in reusable UI components:
+    type NoForeignProps,
+    
+    
+    
     // react helper hooks:
     useEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
@@ -18,8 +23,13 @@ import {
 
 // internals:
 import {
+    // types:
+    type CheckAvailableHandler,
+    
+    
+    
     // react components:
-    ImplementedUniqueEditorProps,
+    type UniqueEditorProps,
     UniqueEditor,
 }                           from '@/components/editors/UniqueEditor'
 
@@ -34,7 +44,7 @@ import {
 export interface UniqueEmailEditorProps<TElement extends Element = HTMLSpanElement>
     extends
         // bases:
-        ImplementedUniqueEditorProps<TElement>
+        UniqueEditorProps<TElement>
 {
 }
 const UniqueEmailEditor = <TElement extends Element = HTMLSpanElement>(props: UniqueEmailEditorProps<TElement>): JSX.Element|null => {
@@ -44,9 +54,42 @@ const UniqueEmailEditor = <TElement extends Element = HTMLSpanElement>(props: Un
     
     
     // handlers:
-    const handleCheckAvailable = useEvent(async (value: string): Promise<boolean> => {
-        return await availableEmail(value).unwrap();
+    const handleDefaultCheckAvailable = useEvent<CheckAvailableHandler>((value) => {
+        return availableEmail(value).unwrap();
     });
+    
+    
+    
+    // default props:
+    const {
+        // accessibilities:
+        'aria-label' : ariaLabel = 'Email',
+        
+        
+        
+        // validations:
+        required                 = true, // disallows account without email
+        
+        minLength                = credentialsConfigClient.email.minLength,
+        maxLength                = credentialsConfigClient.email.maxLength,
+        
+        pattern                  = credentialsConfigClient.email.format,
+        
+        onCheckAvailable         = handleDefaultCheckAvailable,
+        
+        patternHint              = credentialsConfigClient.email.formatHint,
+        
+        
+        
+        // formats:
+        type                     = 'email',
+        autoComplete             = 'nope',
+        
+        
+        
+        // other props:
+        ...restUniqueEditorProps
+    } = props satisfies NoForeignProps<typeof props, UniqueEditorProps<TElement>>;
     
     
     
@@ -54,38 +97,36 @@ const UniqueEmailEditor = <TElement extends Element = HTMLSpanElement>(props: Un
     return (
         <UniqueEditor<TElement>
             // other props:
-            {...props}
+            {...restUniqueEditorProps}
             
             
             
             // accessibilities:
-            aria-label={props['aria-label'] ?? 'Email'}
+            aria-label           = {ariaLabel}
             
             
             
             // validations:
-            required={props.required ?? true}
+            required             = {required}
+            
+            minLength            = {minLength}
+            maxLength            = {maxLength}
+            
+            pattern              = {pattern}
+            
+            onCheckAvailable     = {onCheckAvailable}
+            
+            patternHint          = {patternHint}
             
             
             
             // formats:
-            type={props.type ?? 'email'}
-            autoComplete={props.autoComplete ?? 'nope'}
-            
-            
-            
-            // constraints:
-            minLength        = {credentialsConfigClient.email.minLength}
-            maxLength        = {credentialsConfigClient.email.maxLength}
-            
-            format           = {credentialsConfigClient.email.format}
-            formatHint       = {credentialsConfigClient.email.formatHint}
-            
-            onCheckAvailable = {handleCheckAvailable}
+            type                 = {type}
+            autoComplete         = {autoComplete}
         />
     );
 };
 export {
-    UniqueEmailEditor,
-    UniqueEmailEditor as default,
+    UniqueEmailEditor,            // named export for readibility
+    UniqueEmailEditor as default, // default export to support React.lazy
 }
