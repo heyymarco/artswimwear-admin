@@ -48,7 +48,7 @@ const ShippingWeightEditor = <TElement extends Element = HTMLSpanElement>(props:
     // rest props:
     const {
         // components:
-        numberEditorComponent = (<NumberEditor<TElement, React.ChangeEvent<HTMLInputElement>, number|null> /> as React.ReactComponentElement<any, NumberEditorProps<TElement, React.ChangeEvent<HTMLInputElement>, number|null>>),
+        numberEditorComponent = (<NumberEditor<TElement, number|null, React.ChangeEvent<HTMLInputElement>> /> as React.ReactComponentElement<any, NumberEditorProps<TElement, number|null, React.ChangeEvent<HTMLInputElement>>>),
     ...restNumberUpDownEditorProps} = props;
     
     
@@ -91,7 +91,7 @@ const ShippingWeightEditor = <TElement extends Element = HTMLSpanElement>(props:
             
             
             // components:
-            numberEditorComponent={React.cloneElement<NumberEditorProps<TElement, React.ChangeEvent<HTMLInputElement>, number|null>>(numberEditorComponent,
+            numberEditorComponent={React.cloneElement<NumberEditorProps<TElement, number|null, React.ChangeEvent<HTMLInputElement>>>(numberEditorComponent,
                 // props:
                 {
                     // styles:

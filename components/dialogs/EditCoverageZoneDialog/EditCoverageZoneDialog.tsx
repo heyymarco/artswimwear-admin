@@ -572,7 +572,7 @@ const NameEditorWithHandler = (props: NameEditorWithHandlerProps): JSX.Element|n
     
     
     // handlers:
-    const handleChangeInternal = useEvent<EditorChangeEventHandler<React.ChangeEvent<HTMLInputElement>, string>>((value) => {
+    const handleChangeInternal = useEvent<EditorChangeEventHandler<string, React.ChangeEvent<HTMLInputElement>>>((value) => {
         setName(value);
         setIsModified(true);
     });

@@ -189,7 +189,7 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
     
     
     // states:
-    const handleControllableValueChangeInternal = useEvent<EditorChangeEventHandler<React.ChangeEvent<HTMLInputElement>, number|null>>((newValue, event) => {
+    const handleControllableValueChangeInternal = useEvent<EditorChangeEventHandler<number|null, React.ChangeEvent<HTMLInputElement>>>((newValue, event) => {
         // normalize: null => empty string, TValue => toString:
         onControllableTextChange?.((newValue !== null) ? `${newValue}` /* any TValue => toString */ : '' /* null => empty string */, event);
     });
@@ -236,7 +236,7 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
             : (!!numberEditorRefInternal.current?.value ? numberEditorRefInternal.current?.valueAsNumber : null)
         , { triggerAt: 'immediately', event: undefined as any /* TODO: fix this */ });
     });
-    const handleInputChange    = useEvent<EditorChangeEventHandler<React.ChangeEvent<HTMLInputElement>, number|null>>((newValue, event) => {
+    const handleInputChange    = useEvent<EditorChangeEventHandler<number|null, React.ChangeEvent<HTMLInputElement>>>((newValue, event) => {
         triggerValueChange(
             newValue
         , { triggerAt: 'immediately', event: event });
