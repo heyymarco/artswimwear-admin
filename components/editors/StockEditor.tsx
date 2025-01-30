@@ -8,7 +8,6 @@ import {
     // hooks:
     useRef,
     useEffect,
-    useState,
 }                           from 'react'
 
 // reusable-ui core:
@@ -205,11 +204,15 @@ const StockEditor = <TElement extends Element = HTMLDivElement, TValue extends n
     const isStockLimited = (value !== null);
     
     // preserves the last non-null `value` with initially `0` if the `value` is `null`:
-    const [lastLimitedValue, setLastLimitedValue] = useState<Exclude<TValue, null>>((value ?? 0) as Exclude<TValue, null>);
+    // INEFFICIENT: causes unnecessary re-renders:
+    // const [lastLimitedValue, setLastLimitedValue] = useState<Exclude<TValue, null>>((value ?? 0) as Exclude<TValue, null>);
     // syncs the `lastLimitedValue` with the `value` if the `value` is not `null`:
-    useEffect(() => {
-        if (value !== null) setLastLimitedValue(value as Exclude<TValue, null>);
-    }, [value]);
+    // useEffect(() => {
+    //     if (value !== null) setLastLimitedValue(value as Exclude<TValue, null>);
+    // }, [value]);
+    // MORE EFFICIENT: uses refs to avoid unnecessary re-renders:
+    const lastLimitedValueRef = useRef<Exclude<TValue, null>>((value ?? 0) as Exclude<TValue, null>);
+    if (value !== null) lastLimitedValueRef.current = value as Exclude<TValue, null>; // syncs the `lastLimitedValue` with the `value` if the `value` is not `null`
     
     
     
@@ -230,8 +233,8 @@ const StockEditor = <TElement extends Element = HTMLDivElement, TValue extends n
     const handleExpandedChange = useEvent<EventHandler<TabExpandedChangeEvent>>(({tabIndex}) => {
         triggerValueChange(
             (tabIndex === 0)
-            ? (null as TValue) // The selected tab is unlimited => set the value to null
-            : lastLimitedValue // The selected tab is limited   => set the value to the last non-null value
+            ? (null as TValue)            // The selected tab is unlimited => set the value to null
+            : lastLimitedValueRef.current // The selected tab is limited   => set the value to the last non-null value
         , { triggerAt: 'immediately', event: undefined as any /* TODO: fix this */ });
     });
     const handleInputChange    = useEvent<EditorChangeEventHandler<TValue, TChangeEvent>>((newValue, event) => {
@@ -371,8 +374,8 @@ const StockEditor = <TElement extends Element = HTMLDivElement, TValue extends n
                             
                             
                             // values:
-                            value={lastLimitedValue}     // internally controllable
-                            onChange={handleInputChange} // internally controllable
+                            value={lastLimitedValueRef.current} // internally controllable
+                            onChange={handleInputChange}        // internally controllable
                         />
                     </Group>
                 </TabPanel>
