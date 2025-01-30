@@ -8,7 +8,7 @@ import {
     // hooks:
     useRef,
     useEffect,
-    useMemo,
+    useState,
 }                           from 'react'
 
 // reusable-ui core:
@@ -204,8 +204,12 @@ const StockEditor = <TElement extends Element = HTMLDivElement, TValue extends n
     
     const isStockLimited = (value !== null);
     
-    // tracks the last non-null value:
-    const lastLimitedValue = useMemo((): Exclude<TValue, null> => ((value !== null) ? value as TValue : 0) as Exclude<TValue, null>, [value]);
+    // preserves the last non-null `value` with initially `0` if the `value` is `null`:
+    const [lastLimitedValue, setLastLimitedValue] = useState<Exclude<TValue, null>>((value ?? 0) as Exclude<TValue, null>);
+    // syncs the `lastLimitedValue` with the `value` if the `value` is not `null`:
+    useEffect(() => {
+        if (value !== null) setLastLimitedValue(value as Exclude<TValue, null>);
+    }, [value]);
     
     
     
