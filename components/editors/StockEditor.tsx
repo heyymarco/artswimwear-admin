@@ -8,20 +8,26 @@ import {
     // hooks:
     useRef,
     useEffect,
+    useMemo,
 }                           from 'react'
 
 // reusable-ui core:
 import {
+    // a collection of TypeScript type utilities, assertions, and validations for ensuring type safety in reusable UI components:
+    type NoForeignProps,
+    
+    
+    
     // react helper hooks:
     useEvent,
     EventHandler,
-    useMergeEvents,
     useMergeRefs,
     
     
     
     // an accessibility management system:
-    usePropReadOnly,
+    usePropAccessibility,
+    AccessibilityProvider,
     
     
     
@@ -52,12 +58,6 @@ import {
     
     
     
-    // layout-components:
-    ListProps,
-    List,
-    
-    
-    
     // composite-components:
     Group,
     
@@ -76,110 +76,114 @@ import {
 
 
 // react components:
-export interface StockEditorProps<TElement extends Element = HTMLElement>
+export interface StockEditorProps<out TElement extends Element = HTMLDivElement, TValue extends number|null = number|null, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>
     extends
         // bases:
-        Omit<NumberUpDownEditorProps<TElement>,
+        Pick<TabProps<TElement>,
             // refs:
-            |'outerRef'                // taken by <Tab>
+            |'outerRef'       // moved to <Tab>
+            
+            // identifiers:
+            |'id'             // moved to <Tab>
             
             // variants:
-            |'nude'                    // not supported
+            |'size'           // moved to <Tab>
+            |'theme'          // moved to <Tab>
+            |'gradient'       // moved to <Tab>
+            |'outlined'       // moved to <Tab>
+            |'mild'           // moved to <Tab>
             
-            // children:
-            |'children'                // not supported
-            |'dangerouslySetInnerHTML' // not supported
+            // classes:
+            |'mainClass'      // moved to <Tab>
+            |'classes'        // moved to <Tab>
+            |'variantClasses' // moved to <Tab>
+            |'stateClasses'   // moved to <Tab>
+            |'className'      // moved to <Tab>
+            
+            // styles:
+            |'style'          // moved to <Tab>
+            
+            // components:
+            |'listComponent'  // moved to <Tab>
         >,
-        Omit<TabProps<TElement>,
+        Omit<NumberUpDownEditorProps<Element, TValue, TChangeEvent>,
             // refs:
-            |'elmRef'                  // taken by <NumberUpDownEditor>
+            |'outerRef'       // moved to <Tab>
             
-            // states:
-            |'defaultExpandedTabIndex' // already taken over
-            |'expandedTabIndex'        // already taken over
-            |'onExpandedChange'        // already taken over
+            // identifiers:
+            |'id'             // moved to <Tab>
             
-            // children:
-            |'children'                // already taken over
+            // variants:
+            |'size'           // moved to <Tab>
+            |'theme'          // moved to <Tab>
+            |'gradient'       // moved to <Tab>
+            |'outlined'       // moved to <Tab>
+            |'mild'           // moved to <Tab>
+            
+            // classes:
+            |'mainClass'      // moved to <Tab>
+            |'classes'        // moved to <Tab>
+            |'variantClasses' // moved to <Tab>
+            |'stateClasses'   // moved to <Tab>
+            |'className'      // moved to <Tab>
+            
+            // styles:
+            |'style'          // moved to <Tab>
         >
 {
 }
-const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorProps<TElement>): JSX.Element|null => {
-    // rest props:
+const StockEditor = <TElement extends Element = HTMLDivElement, TValue extends number|null = number|null, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>(props: StockEditorProps<TElement, TValue, TChangeEvent>): JSX.Element|null => {
+    // props:
     const {
         // refs:
-        elmRef,
+        elmRef,                                            // take, moved to <NumberUpDownEditor>
+        outerRef,                                          // take, moved to <Tab>
+        
+        
+        
+        // identifiers:
+        id,                                                // take, moved to <Tab>
         
         
         
         // variants:
-        theme = 'primary',
+        size,                                              // take, moved to <Tab>
+        theme = 'primary',                                 // take, moved to <Tab>
+        gradient,                                          // take, moved to <Tab>
+        outlined,                                          // take, moved to <Tab>
+        mild,                                              // take, moved to <Tab>
         
         
         
-        // accessibilities:
-        autoFocus,
-        tabIndex,
-        enterKeyHint,
+        // classes:
+        mainClass,                                         // take, moved to <Tab>
+        classes,                                           // take, moved to <Tab>
+        variantClasses,                                    // take, moved to <Tab>
+        stateClasses,                                      // take, moved to <Tab>
+        className,                                         // take, moved to <Tab>
         
         
         
-        // validations:
-        enableValidation,
-        isValid,
-        inheritValidation,
-        onValidation,
-        
-        required,
-        
-        min = 0,
-        max = 9999,
-        step,
-        
-        
-        
-        // formats:
-        placeholder,
-        autoComplete,
-        list,
-        
-        
-        
-        // forms:
-        name,
-        form,
+        // styles:
+        style,                                             // take, moved to <Tab>
         
         
         
         // values:
-        defaultValue   : defaultUncontrollableValue = null,
-        value          : controllableValue,
-        onChange       : onControllableValueChange,
-        onChangeAsText : onControllableTextChange,
-        
-        
-        
-        // states:
-        focused,
-        assertiveFocusable,
-        arrived,
+        defaultValue            : defaultUncontrollableValue = (null as TValue), // defaults to unlimited stock
+        value                   : controllableValue,
+        onChange                : onValueChange,
         
         
         
         // components:
-        decreaseButtonComponent,
-        increaseButtonComponent,
-        numberEditorComponent,
-        listComponent = (<List<Element> /> as React.ReactComponentElement<any, ListProps<Element>>),
+        listComponent,                                     // take, moved to <Tab>
         
         
         
-        // children:
-        childrenBeforeButton,
-        childrenBeforeInput,
-        childrenAfterInput,
-        childrenAfterButton,
-    ...restTabProps} = props;
+        // other props:
+        ...restNumberUpDownEditorProps
+    } = props;
     
     
     
@@ -189,41 +193,31 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
     
     
     // states:
-    const handleControllableValueChangeInternal = useEvent<EditorChangeEventHandler<number|null, React.ChangeEvent<HTMLInputElement>>>((newValue, event) => {
-        // normalize: null => empty string, TValue => toString:
-        onControllableTextChange?.((newValue !== null) ? `${newValue}` /* any TValue => toString */ : '' /* null => empty string */, event);
-    });
-    const handleControllableValueChange         = useMergeEvents(
-        // preserves the original `onCollapseEnd` from `props`:
-        onControllableValueChange,
-        
-        
-        
-        // actions:
-        handleControllableValueChangeInternal,
-    );
     const {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllableAndUncontrollable<number|null, React.ChangeEvent<HTMLInputElement>>({
+    } = useControllableAndUncontrollable<TValue, TChangeEvent>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
-        onValueChange      : handleControllableValueChange,
+        onValueChange      : onValueChange,
     });
-    const selectedTabLimited = (value !== null);
     
-    const prevLimitedValue = useRef<number|null>(value ?? 0);
-    if ((value !== null) && (prevLimitedValue.current !== value)) {
-        prevLimitedValue.current = value;
-    } // if
+    const isStockLimited = (value !== null);
+    
+    // tracks the last non-null value:
+    const lastLimitedValue = useMemo((): Exclude<TValue, null> => ((value !== null) ? value as TValue : 0) as Exclude<TValue, null>, [value]);
     
     
     
     // refs:
-    const numberEditorRefInternal = useRef<HTMLInputElement|null>(null);
-    const numberInputRef = useMergeRefs(
+    const inputRefInternal = useRef<HTMLInputElement|null>(null);
+    const mergedInputRef   = useMergeRefs(
+        // preserves the original `elmRef` from `props`:
         elmRef,
-        numberEditorRefInternal,
+        
+        
+        
+        inputRefInternal,
     );
     
     
@@ -232,11 +226,11 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
     const handleExpandedChange = useEvent<EventHandler<TabExpandedChangeEvent>>(({tabIndex}) => {
         triggerValueChange(
             (tabIndex === 0)
-            ? null
-            : (!!numberEditorRefInternal.current?.value ? numberEditorRefInternal.current?.valueAsNumber : null)
+            ? (null as TValue) // The selected tab is unlimited => set the value to null
+            : lastLimitedValue // The selected tab is limited   => set the value to the last non-null value
         , { triggerAt: 'immediately', event: undefined as any /* TODO: fix this */ });
     });
-    const handleInputChange    = useEvent<EditorChangeEventHandler<number|null, React.ChangeEvent<HTMLInputElement>>>((newValue, event) => {
+    const handleInputChange    = useEvent<EditorChangeEventHandler<TValue, TChangeEvent>>((newValue, event) => {
         triggerValueChange(
             newValue
         , { triggerAt: 'immediately', event: event });
@@ -245,188 +239,144 @@ const StockEditor = <TElement extends Element = HTMLElement>(props: StockEditorP
     
     
     // effects:
-    // auto focus on <NumberUpDownEditor> when the tab is active:
+    // auto focus to <NumberUpDownEditor> when the tab is active:
     useEffect(() => {
         // conditions:
-        if (!selectedTabLimited) return;
+        if (!isStockLimited) return; // not in the limited stock tab => no need to focus the input
         
         
         
         // actions:
-        numberEditorRefInternal.current?.focus({ preventScroll: true });
-    }, [selectedTabLimited]);
+        inputRefInternal.current?.focus();
+    }, [isStockLimited]);
     
     
     
     // accessibilities:
-    const propReadOnly = usePropReadOnly(props);
+    const propAccess = usePropAccessibility(props);
+    const {enabled: propEnabled, readOnly: propReadOnly} = propAccess;
+    const isDisabledOrReadOnly = (!propEnabled || propReadOnly);
     
     
     
     // jsx:
     return (
-        <Tab<TElement>
-            // other props:
-            {...restTabProps}
-            
-            
-            
-            // variants:
-            theme={theme}
-            
-            
-            
-            // accessibilities:
-            aria-label={props['aria-label'] ?? 'Stock'}
-            
-            
-            
-            // states:
-            expandedTabIndex={selectedTabLimited ? 1 : 0}
-            onExpandedChange={handleExpandedChange}
-            
-            
-            
-            // components:
-            listComponent={
-                React.cloneElement<ListProps<Element>>(listComponent,
-                    // props:
-                    {
-                        // accessibilities:
-                        enabled : listComponent.props.enabled ?? !propReadOnly,
-                    },
-                )
-            }
-        >
-            <TabPanel label={PAGE_PRODUCT_STOCK_UNLIMITED}>
-                <p>
-                    The product stock is <em>always available</em>.
-                </p>
-            </TabPanel>
-            <TabPanel label={PAGE_PRODUCT_STOCK_LIMITED}>
-                <Group
-                    // variants:
-                    {...basicVariantProps}
-                    theme={
-                        (theme === 'secondary')
-                        ? 'primary'
-                        : (theme === 'primary')
-                        ? 'secondary'
-                        : theme
-                    }
-                    
-                    
-                    
-                    // classes:
-                    className={selectedTabLimited ? undefined : 'hidden'}
-                >
-                    <Label
-                        // classes:
-                        className='solid'
-                    >
-                        Current stock:
-                    </Label>
-                    <NumberUpDownEditor<TElement>
-                        // refs:
-                        elmRef={numberInputRef}
-                        
-                        
-                        
+        // can't switch the `<Tab>` nor change the `<NumberUpDownEditor>` if disabled or readonly
+        <AccessibilityProvider {...propAccess}>
+            <Tab<TElement>
+                // refs:
+                outerRef={outerRef}
+                
+                
+                
+                // identifiers:
+                id={id}
+                
+                
+                
+                // variants:
+                size={size}
+                theme={theme}
+                gradient={gradient}
+                outlined={outlined}
+                mild={mild}
+                
+                
+                
+                // classes:
+                mainClass={mainClass}
+                classes={classes}
+                variantClasses={variantClasses}
+                stateClasses={stateClasses}
+                className={className}
+                
+                
+                
+                // styles:
+                style={style}
+                
+                
+                
+                // states:
+                enabled={!isDisabledOrReadOnly} // can't switch the `<Tab>` if disabled or readonly
+                
+                expandedTabIndex={isStockLimited ? 1 : 0} // internally controllable
+                onExpandedChange={handleExpandedChange}   // internally controllable
+                
+                
+                
+                // components:
+                listComponent={listComponent}
+            >
+                <TabPanel label={PAGE_PRODUCT_STOCK_UNLIMITED}>
+                    <p>
+                        The product stock is <em>always available</em>.
+                    </p>
+                </TabPanel>
+                <TabPanel label={PAGE_PRODUCT_STOCK_LIMITED}>
+                    <Group
                         // variants:
-                        theme={
-                            (theme === 'primary')
-                            ? 'primaryAlt'
-                            :   (theme === 'primaryAlt')
-                                ? 'primary'
-                                : undefined
-                        }
+                        {...basicVariantProps}
+                        // theme={
+                        //     // swap the primary and secondary themes:
+                        //     (theme === 'secondary')
+                        //     ? 'primary'
+                        //     : (theme === 'primary')
+                        //     ? 'secondary'
+                        //     // or use the current theme if not primary nor secondary:
+                        //     : theme
+                        // }
                         
                         
                         
-                        // classes:
-                        className='fluid'
-                        
-                        
-                        
-                        // accessibilities:
-                        {...{
-                            autoFocus,
-                            tabIndex,
-                            enterKeyHint,
-                        }}
-                        
-                        
-                        
-                        // validations:
-                        {...{
-                            enableValidation,
-                            isValid           : props.isValid ?? (selectedTabLimited ? undefined : true),
-                            inheritValidation,
-                            onValidation,
-                        }}
-                        
-                        required={required}
-                        min  = {min }
-                        max  = {max }
-                        step = {step}
-                        
-                        
-                        
-                        // formats:
-                        {...{
-                            placeholder,
-                            autoComplete,
-                            list,
-                        }}
-                        
-                        
-                        
-                        // forms:
-                        {...{
-                            name,
-                            form,
-                        }}
-                        
-                        
-                        
-                        // values:
-                        value={prevLimitedValue.current}
-                        onChange={handleInputChange}
-                        
-                        
-                        
-                        // states:
-                        {...{
-                            focused,
-                            assertiveFocusable,
-                            arrived,
-                        }}
-                        
-                        
-                        
-                        // components:
-                        {...{
-                            decreaseButtonComponent,
-                            increaseButtonComponent,
-                            numberEditorComponent,
-                        }}
-                        
-                        
-                        
-                        // children:
-                        {...{
-                            childrenBeforeButton,
-                            childrenBeforeInput,
-                            childrenAfterInput,
-                            childrenAfterButton,
-                        }}
-                    />
-                </Group>
-            </TabPanel>
-        </Tab>
+                        // // classes:
+                        // className={isStockLimited ? undefined : 'hidden'}
+                    >
+                        <Label
+                            // classes:
+                            className='solid'
+                        >
+                            Current stock:
+                        </Label>
+                        <NumberUpDownEditor<Element, TValue, TChangeEvent>
+                            // other props:
+                            {...restNumberUpDownEditorProps satisfies NoForeignProps<typeof restNumberUpDownEditorProps, NumberUpDownEditorProps<Element, TValue, TChangeEvent>>}
+                            
+                            
+                            
+                            // refs:
+                            elmRef={mergedInputRef}
+                            
+                            
+                            
+                            // variants:
+                            theme={
+                                // swap the primary and primaryAlt themes:
+                                (theme === 'primary')
+                                ? 'primaryAlt'
+                                :   (theme === 'primaryAlt')
+                                    ? 'primary'
+                                    : undefined
+                            }
+                            
+                            
+                            
+                            // classes:
+                            className='fluid'
+                            
+                            
+                            
+                            // values:
+                            value={lastLimitedValue}     // internally controllable
+                            onChange={handleInputChange} // internally controllable
+                        />
+                    </Group>
+                </TabPanel>
+            </Tab>
+        </AccessibilityProvider>
     );
 };
 export {
-    StockEditor,
-    StockEditor as default,
+    StockEditor,            // named export for readibility
+    StockEditor as default, // default export to support React.lazy
 }
