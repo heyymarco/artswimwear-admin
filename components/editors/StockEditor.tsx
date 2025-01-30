@@ -19,7 +19,8 @@ import {
     
     // react helper hooks:
     useEvent,
-    EventHandler,
+    type EventHandler,
+    useMergeEvents,
     useMergeRefs,
     
     
@@ -171,7 +172,8 @@ const StockEditor = <TElement extends Element = HTMLDivElement, TValue extends n
         // values:
         defaultValue            : defaultUncontrollableValue = (null as TValue), // defaults to unlimited stock
         value                   : controllableValue,
-        onChange                : onValueChange,
+        onChange,
+        onChangeAsText,
         
         
         
@@ -192,13 +194,29 @@ const StockEditor = <TElement extends Element = HTMLDivElement, TValue extends n
     
     
     // states:
+    const handleChangeAsTextInternal = useEvent<EditorChangeEventHandler<TValue, TChangeEvent>>((newValue, event) => {
+        if (onChangeAsText) {
+            // normalize: null => empty string, any TValue => toString:
+            const newValueStr = (newValue !== null) ? `${newValue}` : '' /* null => empty string */;
+            onChangeAsText(newValueStr, event);
+        } // if
+    });
+    const handleValueChange          = useMergeEvents(
+        // preserves the original `onChange` from `props`:
+        onChange,
+        
+        
+        
+        // preserves the original `onChangeAsText` from `props`:
+        handleChangeAsTextInternal,
+    );
     const {
         value              : value,
         triggerValueChange : triggerValueChange,
     } = useControllableAndUncontrollable<TValue, TChangeEvent>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
-        onValueChange      : onValueChange,
+        onValueChange      : handleValueChange,
     });
     
     const isStockLimited = (value !== null);
