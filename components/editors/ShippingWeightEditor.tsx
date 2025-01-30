@@ -96,6 +96,7 @@ const ShippingWeightEditor = <TElement extends Element = HTMLDivElement, TValue 
         childrenAfterInput       = <Label className='solid'>Kg</Label>,
         
         
+        
         // other props:
         ...restNumberUpDownEditorProps
     } = restShippingWeightEditorProps satisfies NoForeignProps<typeof restShippingWeightEditorProps, NumberUpDownEditorProps<TElement, TValue, TChangeEvent>>;
