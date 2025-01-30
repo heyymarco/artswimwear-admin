@@ -21,10 +21,12 @@ import {
     useMountedFlag,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
+// heymarco components:
+import {
+    type EditorProps,
+}                           from '@heymarco/editor'
+
 // internal components:
-import type {
-    EditorProps,
-}                           from '@/components/editors/Editor'
 import {
     UploadImage,
 }                           from '@/components/editors/UploadImage'
@@ -193,7 +195,7 @@ export const SimpleEditAdminImageDialog = (props: SimpleEditAdminImageDialogProp
                 return true;
             }}
             onResolveImageUrl={resolveMediaUrl<never>}
-        /> as React.ReactComponentElement<any, EditorProps<Element, ValueOfModel<AdminImageModel>>>),
+        /> as React.ReactElement<EditorProps<Element, ValueOfModel<AdminImageModel>>>),
     } = props;
     
     
