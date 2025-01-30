@@ -2,19 +2,30 @@
 import {
     // react:
     default as React,
-    
-    
-    
-    // hooks:
-    useCallback,
 }                           from 'react'
 
-// internals:
+// reusable-ui core:
 import {
-    // react components:
-    SelectEditorProps,
-    SelectEditor,
-}                           from './SelectEditor'
+    // a collection of TypeScript type utilities, assertions, and validations for ensuring type safety in reusable UI components:
+    type NoForeignProps,
+    
+    
+    
+    // react helper hooks:
+    useEvent,
+}                           from '@reusable-ui/core'                    // a set of reusable-ui packages which are responsible for building any component
+
+// reusable-ui components:
+import {
+    // menu-components:
+    type DropdownListExpandedChangeEvent,
+}                           from '@reusable-ui/dropdown-list-button'
+
+// heymarco components:
+import {
+    type SelectDropdownEditorProps,
+    SelectDropdownEditor,
+}                           from '@heymarco/select-dropdown-editor'
 
 
 
@@ -26,7 +37,7 @@ export type BlockOption =
     |'h4'
     |'h5'
     |'h6'
-const valueOptions : (BlockOption|null)[] = [
+const defaultValueOptions : (BlockOption|null)[] = [
     null,
     'h1',
     'h2',
@@ -39,14 +50,17 @@ const valueOptions : (BlockOption|null)[] = [
 
 
 // react components:
-export interface HeadingEditorProps<TElement extends Element = HTMLElement>
+export interface HeadingEditorProps<out TElement extends Element = HTMLButtonElement, TValue extends BlockOption|null = BlockOption|null, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.MouseEvent<Element, MouseEvent>, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>
     extends
         // bases:
-        Omit<SelectEditorProps<TElement, BlockOption>,
+        Omit<SelectDropdownEditorProps<TElement, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>,
             // values:
-            |'valueOptions' // overriden internally
-            |'valueToText'  // overriden internally
-        >
+            |'valueOptions' // converted to optional
+        >,
+        Partial<Pick<SelectDropdownEditorProps<TElement, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>,
+            // values:
+            |'valueOptions' // converted to optional
+        >>
 {
     // options:
     headingNone ?: string
@@ -57,8 +71,8 @@ export interface HeadingEditorProps<TElement extends Element = HTMLElement>
     heading5    ?: string
     heading6    ?: string
 }
-const HeadingEditor = <TElement extends Element = HTMLElement>(props: HeadingEditorProps<TElement>): JSX.Element|null => {
-    // rest props:
+const HeadingEditor = <TElement extends Element = HTMLButtonElement, TValue extends BlockOption|null = BlockOption|null, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.MouseEvent<Element, MouseEvent>, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>(props: HeadingEditorProps<TElement, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>): JSX.Element|null => {
+    // props:
     const {
         // options:
         headingNone = 'Normal',
@@ -68,12 +82,17 @@ const HeadingEditor = <TElement extends Element = HTMLElement>(props: HeadingEdi
         heading4    = 'Heading 4',
         heading5    = 'Heading 5',
         heading6    = 'Heading 6',
-    ...restSelectEditorProps} = props;
+        
+        
+        
+        // other props:
+        ...restHeadingEditorProps
+    } = props;
     
     
     
     // utilities:
-    const valueToText = useCallback((value: BlockOption|null): string => {
+    const defaultValueToUi = useEvent((value: TValue|null): string => {
         return ({
             h1 : heading1,
             h2 : heading2,
@@ -82,33 +101,48 @@ const HeadingEditor = <TElement extends Element = HTMLElement>(props: HeadingEdi
             h5 : heading5,
             h6 : heading6,
         } as any)[value ?? ''] ?? headingNone;
-    }, [
-        headingNone,
-        heading1,
-        heading2,
-        heading3,
-        heading4,
-        heading5,
-        heading6,
-    ]);
+    });
+    
+    
+    
+    // default props:
+    const {
+        // values:
+        valueOptions = defaultValueOptions as TValue[],
+        valueToUi    = defaultValueToUi,
+        
+        
+        
+        // other props:
+        ...restSelectDropdownEditorProps
+    } = restHeadingEditorProps satisfies NoForeignProps<typeof restHeadingEditorProps,
+        &Omit<SelectDropdownEditorProps<TElement, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>,
+            // values:
+            |'valueOptions' // converted to optional
+        >
+        &Partial<Pick<SelectDropdownEditorProps<TElement, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>,
+            // values:
+            |'valueOptions' // converted to optional
+        >>
+    >;
     
     
     
     // jsx:
     return (
-        <SelectEditor<TElement, BlockOption>
+        <SelectDropdownEditor<TElement, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>
             // other props:
-            {...restSelectEditorProps}
+            {...restSelectDropdownEditorProps}
             
             
             
             // values:
             valueOptions={valueOptions}
-            valueToText={valueToText}
+            valueToUi={valueToUi}
         />
     );
 };
 export {
-    HeadingEditor,
-    HeadingEditor as default,
+    HeadingEditor,            // named export for readibility
+    HeadingEditor as default, // default export to support React.lazy
 }

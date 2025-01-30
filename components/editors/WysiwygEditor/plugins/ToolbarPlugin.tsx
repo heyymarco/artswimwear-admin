@@ -119,10 +119,13 @@ import {
     Group,
 }                           from '@reusable-ui/group'           // groups a list of components as a single component
 
+// heymarco components:
+import {
+    type EditorChangeEventHandler,
+    type EditorProps,
+}                           from '@heymarco/editor'
+
 // internals:
-import type {
-    BasicSelectEditorProps,
-}                           from './SelectEditor'
 import {
     // types:
     BlockOption,
@@ -167,20 +170,20 @@ export interface ToolbarPluginProps<TElement extends Element = HTMLElement>
         >
 {
     // components:
-    component                    ?: React.ReactComponentElement<any, BasicProps<TElement>>
-    undoRedoGroupComponent       ?: React.ReactComponentElement<any, GroupProps<Element>>
+    component                    ?: React.ReactElement<BasicProps<TElement>>
+    undoRedoGroupComponent       ?: React.ReactElement<GroupProps<Element>>
     undoButtonComponent          ?: ButtonComponentProps['buttonComponent']
     redoButtonComponent          ?: ButtonComponentProps['buttonComponent']
-    headingEditor                ?: React.ReactComponentElement<any, BasicSelectEditorProps<Element, BlockOption>>
-    formatGroupComponent         ?: React.ReactComponentElement<any, GroupProps<Element>>
+    headingEditor                ?: React.ReactElement<EditorProps<Element, BlockOption, React.SyntheticEvent<unknown, Event>>>
+    formatGroupComponent         ?: React.ReactElement<GroupProps<Element>>
     boldButtonComponent          ?: ButtonComponentProps['buttonComponent']
     italicButtonComponent        ?: ButtonComponentProps['buttonComponent']
     underlineButtonComponent     ?: ButtonComponentProps['buttonComponent']
     strikethroughButtonComponent ?: ButtonComponentProps['buttonComponent']
-    listGroupComponent           ?: React.ReactComponentElement<any, GroupProps<Element>>
+    listGroupComponent           ?: React.ReactElement<GroupProps<Element>>
     numberedButtonComponent      ?: ButtonComponentProps['buttonComponent']
     bulletedButtonComponent      ?: ButtonComponentProps['buttonComponent']
-    alignmentEditor              ?: React.ReactComponentElement<any, BasicSelectEditorProps<Element, AlignmentOption>>
+    alignmentEditor              ?: React.ReactElement<EditorProps<Element, AlignmentOption, React.SyntheticEvent<unknown, Event>>>
     quoteButtonComponent         ?: ButtonComponentProps['buttonComponent']
 }
 const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPluginProps<TElement>): JSX.Element|null => {
@@ -197,21 +200,21 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
         
         
         // components:
-        component                    = (<Basic />                                                        as React.ReactComponentElement<any, BasicProps<TElement>>),
-        undoRedoGroupComponent       = (<Group />                                                        as React.ReactComponentElement<any, GroupProps<Element>>),
-        undoButtonComponent          = (<ButtonIcon icon='undo'                 title='undo' />          as React.ReactComponentElement<any, ButtonProps>),
-        redoButtonComponent          = (<ButtonIcon icon='redo'                 title='redo' />          as React.ReactComponentElement<any, ButtonProps>),
-        headingEditor                = (<HeadingEditor className='headingEditor' />                      as React.ReactComponentElement<any, BasicSelectEditorProps<Element, BlockOption>>),
-        formatGroupComponent         = (<Group />                                                        as React.ReactComponentElement<any, GroupProps<Element>>),
-        boldButtonComponent          = (<ButtonIcon icon='format_bold'          title='bold' />          as React.ReactComponentElement<any, ButtonProps>),
-        italicButtonComponent        = (<ButtonIcon icon='format_italic'        title='italic' />        as React.ReactComponentElement<any, ButtonProps>),
-        underlineButtonComponent     = (<ButtonIcon icon='format_underline'     title='underline' />     as React.ReactComponentElement<any, ButtonProps>),
-        strikethroughButtonComponent = (<ButtonIcon icon='format_strikethrough' title='strikethrough' /> as React.ReactComponentElement<any, ButtonProps>),
-        listGroupComponent           = (<Group />                                                        as React.ReactComponentElement<any, GroupProps<Element>>),
-        numberedButtonComponent      = (<ButtonIcon icon='format_list_numbered' title='numbered' />      as React.ReactComponentElement<any, ButtonProps>),
-        bulletedButtonComponent      = (<ButtonIcon icon='format_list_bulleted' title='bulleted' />      as React.ReactComponentElement<any, ButtonProps>),
-        alignmentEditor              = (<AlignmentEditor className='alignmentEditor' />                  as React.ReactComponentElement<any, BasicSelectEditorProps<Element, AlignmentOption>>),
-        quoteButtonComponent         = (<ButtonIcon icon='format_quote'         title='quote' />         as React.ReactComponentElement<any, ButtonProps>),
+        component                    = (<Basic />                                                        as React.ReactElement<BasicProps<TElement>>),
+        undoRedoGroupComponent       = (<Group />                                                        as React.ReactElement<GroupProps<Element>>),
+        undoButtonComponent          = (<ButtonIcon icon='undo'                 title='undo' />          as React.ReactElement<ButtonProps>),
+        redoButtonComponent          = (<ButtonIcon icon='redo'                 title='redo' />          as React.ReactElement<ButtonProps>),
+        headingEditor                = (<HeadingEditor className='headingEditor' />                      as React.ReactElement<EditorProps<Element, BlockOption, React.SyntheticEvent<unknown, Event>>>),
+        formatGroupComponent         = (<Group />                                                        as React.ReactElement<GroupProps<Element>>),
+        boldButtonComponent          = (<ButtonIcon icon='format_bold'          title='bold' />          as React.ReactElement<ButtonProps>),
+        italicButtonComponent        = (<ButtonIcon icon='format_italic'        title='italic' />        as React.ReactElement<ButtonProps>),
+        underlineButtonComponent     = (<ButtonIcon icon='format_underline'     title='underline' />     as React.ReactElement<ButtonProps>),
+        strikethroughButtonComponent = (<ButtonIcon icon='format_strikethrough' title='strikethrough' /> as React.ReactElement<ButtonProps>),
+        listGroupComponent           = (<Group />                                                        as React.ReactElement<GroupProps<Element>>),
+        numberedButtonComponent      = (<ButtonIcon icon='format_list_numbered' title='numbered' />      as React.ReactElement<ButtonProps>),
+        bulletedButtonComponent      = (<ButtonIcon icon='format_list_bulleted' title='bulleted' />      as React.ReactElement<ButtonProps>),
+        alignmentEditor              = (<AlignmentEditor className='alignmentEditor' />                  as React.ReactElement<EditorProps<Element, AlignmentOption, React.SyntheticEvent<unknown, Event>>>),
+        quoteButtonComponent         = (<ButtonIcon icon='format_quote'         title='quote' />         as React.ReactElement<ButtonProps>),
     ...restElementProps} = props;
     
     
@@ -341,7 +344,7 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
     const handleRedo            = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
         editor.dispatchCommand(REDO_COMMAND, undefined);
     });
-    const handleChangeHeading   = useEvent<NonNullable<BasicSelectEditorProps<Element, BlockOption>['onChange']>>((value) => {
+    const handleChangeHeading   = useEvent<EditorChangeEventHandler<BlockOption, React.SyntheticEvent<unknown, Event>>>((value) => {
         editor.update(() => {
             // conditions:
             const selection = $getSelection();
@@ -392,7 +395,7 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
             setBlockType('paragraph');
         } // if
     });
-    const handleChangeAlignment = useEvent<NonNullable<BasicSelectEditorProps<Element, AlignmentOption>['onChange']>>((value) => {
+    const handleChangeAlignment = useEvent<EditorChangeEventHandler<AlignmentOption, React.SyntheticEvent<unknown, Event>>>((value) => {
         editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, value ?? '');
         setAlignmentType(value ?? 'auto');
     });
@@ -494,7 +497,7 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
                         },
                     ),
                 ),
-                React.cloneElement<BasicSelectEditorProps<Element, BlockOption>>(headingEditor,
+                React.cloneElement<EditorProps<Element, BlockOption, React.SyntheticEvent<unknown, Event>>>(headingEditor,
                     // props:
                     {
                         // basic variant props:
@@ -645,7 +648,7 @@ const ToolbarPlugin = <TElement extends Element = HTMLElement>(props: ToolbarPlu
                         },
                     ),
                 ),
-                React.cloneElement<BasicSelectEditorProps<Element, AlignmentOption>>(alignmentEditor,
+                React.cloneElement<EditorProps<Element, AlignmentOption, React.SyntheticEvent<unknown, Event>>>(alignmentEditor,
                     // props:
                     {
                         // basic variant props:
