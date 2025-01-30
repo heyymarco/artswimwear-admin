@@ -14,31 +14,34 @@ import {
 // reusable-ui components:
 import {
     // simple-components:
-    IconProps,
+    type IconProps,
     Icon,
-    LabelProps,
+    type LabelProps,
     Label,
     
     
     
     // composite-components:
-    GroupProps,
+    type GroupProps,
     Group,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
-// internals:
+// heymarco components:
 import {
-    // react components:
-    EditorProps,
-}                           from '@/components/editors/Editor'
+    type EditorProps,
+    type EditorComponentProps,
+}                           from '@heymarco/editor'
 
 
 
 // react components:
-export interface EditorWithLabelProps<TElement extends Element = HTMLElement, TValue extends any = string>
+export interface EditorWithLabelProps<out TElement extends Element = HTMLElement, TValue extends unknown = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>
     extends
         // bases:
-        EditorProps<TElement, TValue>
+        EditorProps<TElement, TValue, TChangeEvent>,
+        
+        // components:
+        Required<EditorComponentProps<TElement, TValue, TChangeEvent>>
 {
     // appearances:
     icon                  : IconProps<Element>['icon']
@@ -51,17 +54,13 @@ export interface EditorWithLabelProps<TElement extends Element = HTMLElement, TV
     
     
     // components:
-    /**
-     * The underlying `<Editor>` to be labeled.
-     */
-    editorComponent       : React.ReactComponentElement<any, EditorProps<TElement, TValue>>
-    groupComponent       ?: React.ReactComponentElement<any, GroupProps<Element>>
-    labelComponent       ?: React.ReactComponentElement<any, LabelProps<Element>>
-    labelBeforeComponent ?: React.ReactComponentElement<any, LabelProps<Element>>|null
-    labelAfterComponent  ?: React.ReactComponentElement<any, LabelProps<Element>>|null
-    iconComponent        ?: React.ReactComponentElement<any, IconProps<Element>>
+    groupComponent       ?: React.ReactElement<GroupProps<Element>>
+    labelComponent       ?: React.ReactElement<LabelProps<Element>>
+    labelBeforeComponent ?: React.ReactElement<LabelProps<Element>>|null
+    labelAfterComponent  ?: React.ReactElement<LabelProps<Element>>|null
+    iconComponent        ?: React.ReactElement<IconProps<Element>>
 }
-const EditorWithLabel = <TElement extends Element = HTMLElement, TValue extends any = string>(props: EditorWithLabelProps<TElement, TValue>): JSX.Element|null => {
+const EditorWithLabel = <TElement extends Element = HTMLElement, TValue extends unknown = string, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>(props: EditorWithLabelProps<TElement, TValue, TChangeEvent>): JSX.Element|null => {
     // rest props:
     const {
         // refs:
@@ -110,11 +109,11 @@ const EditorWithLabel = <TElement extends Element = HTMLElement, TValue extends 
         
         // components:
         editorComponent,
-        groupComponent        = (<Group            /> as React.ReactComponentElement<any, GroupProps<Element>>),
-        labelComponent        = (<Label            /> as React.ReactComponentElement<any, LabelProps<Element>>),
+        groupComponent        = (<Group            /> as React.ReactElement<GroupProps<Element>>),
+        labelComponent        = (<Label            /> as React.ReactElement<LabelProps<Element>>),
         labelBeforeComponent,
         labelAfterComponent,
-        iconComponent         = (<Icon icon={icon} /> as React.ReactComponentElement<any, IconProps<Element>>),
+        iconComponent         = (<Icon icon={icon} /> as React.ReactElement<IconProps<Element>>),
     ...restEditorProps} = props;
     
     
@@ -229,7 +228,7 @@ const EditorWithLabel = <TElement extends Element = HTMLElement, TValue extends 
             },
         )),
         /* <Editor> */
-        React.cloneElement<EditorProps<TElement, TValue>>(editorComponent,
+        React.cloneElement<EditorProps<TElement, TValue, TChangeEvent>>(editorComponent,
             // props:
             {
                 // other props:
