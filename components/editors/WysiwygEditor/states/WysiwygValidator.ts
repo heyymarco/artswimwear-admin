@@ -33,11 +33,12 @@ import {
     ValidityChangeEvent,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
+// heymarco components:
+import {
+    type EditorChangeEventHandler,
+}                           from '@heymarco/editor'
+
 // internals:
-import type {
-    // types:
-    EditorChangeEventHandler,
-}                           from '@/components/editors/Editor'
 import type {
     // types:
     WysiwygEditorState,
@@ -74,8 +75,8 @@ export interface WysiwygValidatorProps {
 }
 export interface WysiwygValidatorApi {
     handleValidation : EventHandler<ValidityChangeEvent>
-    handleInit       : EditorChangeEventHandler<WysiwygEditorState|null>
-    handleChange     : EditorChangeEventHandler<WysiwygEditorState|null>
+    handleInit       : EditorChangeEventHandler<WysiwygEditorState|null, React.SyntheticEvent<unknown, Event>>
+    handleChange     : EditorChangeEventHandler<WysiwygEditorState|null, React.SyntheticEvent<unknown, Event>>
 }
 export const useWysiwygValidator = (props: WysiwygValidatorProps): WysiwygValidatorApi => {
     // states:
@@ -148,11 +149,11 @@ export const useWysiwygValidator = (props: WysiwygValidatorProps): WysiwygValida
         if (event.isValid !== undefined) event.isValid = isValid.current;
     });
     
-    const handleInit       = useEvent<EditorChangeEventHandler<WysiwygEditorState|null>>((newValue) => {
+    const handleInit       = useEvent<EditorChangeEventHandler<WysiwygEditorState|null, React.SyntheticEvent<unknown, Event>>>((newValue) => {
         validate(newValue, /*immediately =*/true);
     });
     
-    const handleChange     = useEvent<EditorChangeEventHandler<WysiwygEditorState|null>>((newValue) => {
+    const handleChange     = useEvent<EditorChangeEventHandler<WysiwygEditorState|null, React.SyntheticEvent<unknown, Event>>>((newValue) => {
         validate(newValue);
     });
     

@@ -52,6 +52,16 @@ import {
     Group,
 }                           from '@reusable-ui/group'           // a base component
 
+// heymarco core:
+import {
+    createSyntheticEvent,
+}                           from '@heymarco/events'
+
+// heymarco components:
+import {
+    type EditorProps,
+}                           from '@heymarco/editor'
+
 // lexical functions:
 import {
     // types:
@@ -73,10 +83,6 @@ import {
 }                           from '@lexical/react/LexicalAutoFocusPlugin'
 
 // internals:
-import type {
-    // react components:
-    EditorProps,
-}                           from '@/components/editors/Editor'
 import type {
     // types:
     WysiwygEditorState,
@@ -119,7 +125,7 @@ import {
 export interface WysiwygEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Pick<EditorProps<TElement, WysiwygEditorState|null>,
+        Pick<EditorProps<TElement, WysiwygEditorState|null, React.SyntheticEvent<unknown, Event>>,
             // accessibilities:
             |'autoFocus'    // supported
             
@@ -252,7 +258,11 @@ const WysiwygEditor = <TElement extends Element = HTMLElement>(props: WysiwygEdi
     // dom effects:
     useIsomorphicLayoutEffect(() => {
         const normalizedValue = normalizeWysiwygEditorState(value ?? null);
-        wysiwygValidator.handleInit(normalizedValue);
+        
+        const initEvent = createSyntheticEvent({
+            nativeEvent : new Event('init'),
+        });
+        wysiwygValidator.handleInit(normalizedValue, initEvent);
     }, []);
     
     
