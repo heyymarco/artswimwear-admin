@@ -27,11 +27,14 @@ import {
     usePropReadOnly,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
-// heymarco:
+// heymarco core:
 import {
     // utilities:
     useControllableAndUncontrollable,
 }                           from '@heymarco/events'
+import {
+    DraggedEvent,
+}                           from '@heymarco/draggable'
 
 // reusable-ui components:
 import {
@@ -42,6 +45,11 @@ import {
 
 // heymarco components:
 import {
+    type EditorProps,
+}                           from '@heymarco/editor'
+import {
+    ChildrenChangeEventHandler,
+    
     OrderableListItemProps,
     OrderableListItem,
     
@@ -52,10 +60,6 @@ import {
 }                           from '@heymarco/text-dropdown-editor'
 
 // internal components:
-import type {
-    // react components:
-    EditorProps,
-}                           from '@/components/editors/Editor'
 import type {
     // types:
     UpdatedHandler,
@@ -112,7 +116,7 @@ export interface SubzoneCoverageZoneEditorProps {
 export interface CoverageZoneEditorProps<TCoverageZoneDetail extends CoverageZoneDetail<TCoverageSubzoneDetail>, TCoverageSubzoneDetail extends CoverageSubzoneDetail, TElement extends Element = HTMLElement>
     extends
         // bases:
-        Pick<EditorProps<TElement, TCoverageZoneDetail[]>,
+        Pick<EditorProps<TElement, TCoverageZoneDetail[], React.MouseEvent<Element, MouseEvent>|DraggedEvent<HTMLElement>>,
             // values:
             |'defaultValue' // not supported, controllable only
             |'value'
@@ -181,7 +185,7 @@ const CoverageZoneEditor = <TCoverageZoneDetail extends CoverageZoneDetail<TCove
     const {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllableAndUncontrollable<TCoverageZoneDetail[]>({
+    } = useControllableAndUncontrollable<TCoverageZoneDetail[], React.MouseEvent<Element, MouseEvent>|DraggedEvent<HTMLElement>>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
         onValueChange      : onControllableValueChange,
@@ -244,7 +248,7 @@ const CoverageZoneEditor = <TCoverageZoneDetail extends CoverageZoneDetail<TCove
     
     
     // handlers:
-    const handleChildrenChange = useEvent((newChildren: React.ReactComponentElement<any, OrderableListItemProps<HTMLElement, unknown>>[]) => {
+    const handleChildrenChange = useEvent<ChildrenChangeEventHandler>((newChildren, event) => {
         const restChildren = newChildren.slice(0); // copy
         restChildren.splice(-1, 1); // remove the <ModelCreate> component
         triggerValueChange(
@@ -256,7 +260,7 @@ const CoverageZoneEditor = <TCoverageZoneDetail extends CoverageZoneDetail<TCove
                     sort: index,
                 } satisfies TCoverageZoneDetail;
             })
-        , { triggerAt: 'immediately' });
+        , { triggerAt: 'immediately', event: event });
     });
     const handleModelCreated   = useEvent<CreateHandler<TCoverageZoneDetail>>((createdModel) => {
         const mutatedValue = value.slice(0); // copy
@@ -267,7 +271,7 @@ const CoverageZoneEditor = <TCoverageZoneDetail extends CoverageZoneDetail<TCove
                 sort: index,
             };
         } // for
-        triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
+        triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fix the event
     });
     const handleModelUpdated   = useEvent<UpdatedHandler<TCoverageZoneDetail>>((mutatedModel) => {
         const mutatedValue = value.slice(0); // copy
@@ -290,7 +294,7 @@ const CoverageZoneEditor = <TCoverageZoneDetail extends CoverageZoneDetail<TCove
             
             mutatedValue[modelIndex]  = currentModel;
         } // if
-        triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
+        triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fix the event
     });
     const handleModelDeleted   = useEvent<DeleteHandler<TCoverageZoneDetail>>(({id}) => {
         const mutatedValue = value.slice(0); // copy
@@ -303,7 +307,7 @@ const CoverageZoneEditor = <TCoverageZoneDetail extends CoverageZoneDetail<TCove
                 sort: index,
             };
         } // for
-        triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
+        triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fix the event
     });
     
     
