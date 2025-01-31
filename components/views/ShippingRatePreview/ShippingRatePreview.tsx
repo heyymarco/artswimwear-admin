@@ -34,6 +34,11 @@ import {
     ListItem,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
+// heymarco components:
+import {
+    type EditorChangeEventHandler,
+}                           from '@heymarco/editor'
+
 // internal components:
 import {
     ModelPreviewProps,
@@ -43,9 +48,6 @@ import type {
     UpdatedHandler,
     DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
-import {
-    type EditorChangeEventHandler,
-}                           from '@/components/editors/Editor'
 import {
     ShippingWeightEditor,
 }                           from '@/components/editors/ShippingWeightEditor'
@@ -109,7 +111,7 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
     
     
     // handlers:
-    const handleStartingWeightChange = useEvent<EditorChangeEventHandler<number|null>>((newValue) => {
+    const handleStartingWeightChange = useEvent<EditorChangeEventHandler<number|null, React.ChangeEvent<HTMLInputElement>>>((newValue) => {
         // conditions:
         if (!onModelUpdate) return;
         
@@ -126,7 +128,7 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
         model.start = newStart;
         onModelUpdate(model);
     });
-    const handleRateChange           = useEvent<EditorChangeEventHandler<number|null>>((newValue) => {
+    const handleRateChange           = useEvent<EditorChangeEventHandler<number|null, React.ChangeEvent<HTMLInputElement>>>((newValue) => {
         // conditions:
         if (!onModelUpdate) return;
         
