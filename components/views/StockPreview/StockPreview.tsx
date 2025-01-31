@@ -13,6 +13,11 @@ import {
 
 // reusable-ui core:
 import {
+    // a collection of TypeScript type utilities, assertions, and validations for ensuring type safety in reusable UI components:
+    type NoForeignProps,
+    
+    
+    
     // react helper hooks:
     useEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
@@ -25,6 +30,7 @@ import {
     
     
     // layout-components:
+    type ListItemProps,
     ListItem,
     
     
@@ -33,10 +39,12 @@ import {
     Group,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
+// heymarco components:
+import {
+    type EditorChangeEventHandler,
+}                           from '@heymarco/editor'
+
 // internal components:
-import type {
-    EditorChangeEventHandler
-}                           from '@/components/editors/Editor'
 import {
     StockEditor,
 }                           from '@/components/editors/StockEditor'
@@ -70,15 +78,15 @@ export interface StockPreviewProps
     
     
     // handlers:
-    onUpdated ?: UpdatedHandler<StockDetail>
+    onUpdated ?: EditorChangeEventHandler<StockDetail, React.ChangeEvent<HTMLInputElement>>
 }
 const StockPreview = (props: StockPreviewProps): JSX.Element|null => {
     // styles:
-    const styleSheet = useStockPreviewStyleSheet();
+    const styles = useStockPreviewStyleSheet();
     
     
     
-    // rest props:
+    // props:
     const {
         // data:
         model,
@@ -88,7 +96,13 @@ const StockPreview = (props: StockPreviewProps): JSX.Element|null => {
         
         // handlers:
         onUpdated,
-    ...restListItemProps} = props;
+        
+        
+        
+        // other props:
+        ...restListItemProps
+    } = props;
+    
     const {
         id,
         variantIds,
@@ -98,11 +112,11 @@ const StockPreview = (props: StockPreviewProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleChange = useEvent<EditorChangeEventHandler<number|null>>((value) => {
+    const handleChange = useEvent<EditorChangeEventHandler<number|null, React.ChangeEvent<HTMLInputElement>>>((value, event) => {
         onUpdated?.({
             ...model,
             value : value,
-        });
+        }, event);
     });
     
     
@@ -111,12 +125,12 @@ const StockPreview = (props: StockPreviewProps): JSX.Element|null => {
     return (
         <ListItem
             // other props:
-            {...restListItemProps}
+            {...restListItemProps satisfies NoForeignProps<typeof restListItemProps, ListItemProps>}
             
             
             
             // classes:
-            className={styleSheet.main}
+            className={styles.main}
         >
             {!!variantIds.length && <Group orientation='block' className='variants' theme='primaryAlt'>
                 {
@@ -148,6 +162,6 @@ const StockPreview = (props: StockPreviewProps): JSX.Element|null => {
     );
 };
 export {
-    StockPreview,
-    StockPreview as default,
+    StockPreview,            // named export for readibility
+    StockPreview as default, // default export to support React.lazy
 }
