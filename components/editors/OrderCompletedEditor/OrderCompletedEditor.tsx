@@ -22,7 +22,7 @@ import {
     ActiveChangeEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
-// heymarco:
+// heymarco coree:
 import {
     // utilities:
     useControllableAndUncontrollable,
@@ -41,11 +41,10 @@ import {
     Check,
 }                           from '@reusable-ui/components'  // a set of official Reusable-UI components
 
-// internals components:
-import type {
-    // react components:
-    EditorProps,
-}                           from '@/components/editors/Editor'
+// heymarco components:
+import {
+    type EditorProps,
+}                           from '@heymarco/editor'
 
 
 
@@ -71,7 +70,7 @@ export type OrderCompletedValue = {
 export interface OrderCompletedEditorProps
     extends
         // bases:
-        Pick<EditorProps<HTMLElement, OrderCompletedValue>,
+        Pick<EditorProps<HTMLElement, OrderCompletedValue, React.MouseEvent<Element, MouseEvent>>,
             // values:
             |'defaultValue' // supported
             |'value'        // supported
@@ -122,7 +121,7 @@ const OrderCompletedEditor = (props: OrderCompletedEditorProps): JSX.Element|nul
     const {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllableAndUncontrollable<OrderCompletedValue>({
+    } = useControllableAndUncontrollable<OrderCompletedValue, React.MouseEvent<Element, MouseEvent>>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
         onValueChange      : onControllableValueChange,
@@ -135,7 +134,7 @@ const OrderCompletedEditor = (props: OrderCompletedEditorProps): JSX.Element|nul
     
     
     // utilities:
-    const setValue = useEvent((newValue: Partial<OrderCompletedValue>) => {
+    const setValue = useEvent((newValue: Partial<OrderCompletedValue>, event: React.MouseEvent<Element, MouseEvent>) => {
         const combinedNewValue : OrderCompletedValue = {
             ...value,
             ...newValue,
@@ -144,7 +143,7 @@ const OrderCompletedEditor = (props: OrderCompletedEditorProps): JSX.Element|nul
         
         
         // update:
-        triggerValueChange(combinedNewValue, { triggerAt: 'immediately' });
+        triggerValueChange(combinedNewValue, { triggerAt: 'immediately', event: event });
     });
     
     
@@ -153,7 +152,7 @@ const OrderCompletedEditor = (props: OrderCompletedEditorProps): JSX.Element|nul
     const handleConfirmationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active: newConfirmation}) => {
         setValue({
             sendConfirmationEmail : newConfirmation,
-        });
+        }, undefined as any); // TODO: fix the event
     });
     
     
