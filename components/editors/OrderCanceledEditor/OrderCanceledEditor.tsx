@@ -27,7 +27,7 @@ import {
     ActiveChangeEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
-// heymarco:
+// heymarco core:
 import {
     // utilities:
     useControllableAndUncontrollable,
@@ -45,16 +45,13 @@ import {
     Check,
 }                           from '@reusable-ui/components'  // a set of official Reusable-UI components
 
+// heymarco components:
+import {
+    type EditorChangeEventHandler,
+    type EditorProps,
+}                           from '@heymarco/editor'
+
 // internals components:
-import type {
-    // types:
-    EditorChangeEventHandler,
-    
-    
-    
-    // react components:
-    EditorProps,
-}                           from '@/components/editors/Editor'
 import {
     WysiwygEditorState,
     
@@ -90,7 +87,7 @@ export type OrderCanceledValue = {
 export interface OrderCanceledEditorProps
     extends
         // bases:
-        Pick<EditorProps<HTMLElement, OrderCanceledValue>,
+        Pick<EditorProps<HTMLElement, OrderCanceledValue, React.SyntheticEvent<unknown, Event>>,
             // values:
             |'defaultValue' // supported
             |'value'        // supported
@@ -163,7 +160,7 @@ const OrderCanceledEditor = (props: OrderCanceledEditorProps): JSX.Element|null 
     const {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllableAndUncontrollable<OrderCanceledValue>({
+    } = useControllableAndUncontrollable<OrderCanceledValue, React.SyntheticEvent<unknown, Event>>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
         onValueChange      : onControllableValueChange,
@@ -177,7 +174,7 @@ const OrderCanceledEditor = (props: OrderCanceledEditorProps): JSX.Element|null 
     
     
     // utilities:
-    const setValue = useEvent((newValue: Partial<OrderCanceledValue>) => {
+    const setValue = useEvent((newValue: Partial<OrderCanceledValue>, event: React.SyntheticEvent<unknown, Event>) => {
         const combinedNewValue : OrderCanceledValue = {
             ...value,
             ...newValue,
@@ -186,21 +183,21 @@ const OrderCanceledEditor = (props: OrderCanceledEditorProps): JSX.Element|null 
         
         
         // update:
-        triggerValueChange(combinedNewValue, { triggerAt: 'immediately' });
+        triggerValueChange(combinedNewValue, { triggerAt: 'immediately', event: event });
     });
     
     
     
     // handlers:
-    const handleCancelationReasonChange = useEvent<EditorChangeEventHandler<WysiwygEditorState|null>>((newCancelationReason) => {
+    const handleCancelationReasonChange = useEvent<EditorChangeEventHandler<WysiwygEditorState|null, React.SyntheticEvent<unknown, Event>>>((newCancelationReason, event) => {
         setValue({
             cancelationReason     : newCancelationReason,
-        });
+        }, event);
     });
     const handleConfirmationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active: newConfirmation}) => {
         setValue({
             sendConfirmationEmail : newConfirmation,
-        });
+        }, undefined as any); // TODO: fix this event
     });
     
     
