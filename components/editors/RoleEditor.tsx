@@ -17,11 +17,12 @@ import {
     List,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
+// heymarco components:
+import {
+    type EditorProps,
+}                           from '@heymarco/editor'
+
 // internal components:
-import type {
-    // react components:
-    EditorProps,
-}                           from '@/components/editors/Editor'
 import {
     ModelCreateOuterProps,
     ModelCreateOuter,
@@ -41,7 +42,7 @@ import {
 interface RoleEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Pick<EditorProps<TElement, string|null>,
+        Pick<EditorProps<TElement, string|null, React.MouseEvent<HTMLElement, MouseEvent>>,
             // values:
             // |'defaultValue' // not supported, controllable only
             |'value'
