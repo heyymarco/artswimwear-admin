@@ -6,14 +6,21 @@ import {
 
 // reusable-ui core:
 import {
+    // a collection of TypeScript type utilities, assertions, and validations for ensuring type safety in reusable UI components:
+    type NoForeignProps,
+    
+    
+    
     // react helper hooks:
     useEvent,
-    EventHandler,
+    type EventHandler,
+    useMergeEvents,
     
     
     
     // an accessibility management system:
-    usePropReadOnly,
+    usePropAccessibility,
+    AccessibilityProvider,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // heymarco:
@@ -22,23 +29,14 @@ import {
     useControllableAndUncontrollable,
 }                           from '@heymarco/events'
 
-// internals:
-import type {
-    // types:
-    EditorChangeEventHandler,
-    
-    
-    
-    // react components:
-    EditorProps,
-}                           from '@/components/editors/Editor'
+// heymarco components:
 import {
-    // layout-components:
-    ListProps,
-    List,
-    
-    
-    
+    type EditorChangeEventHandler,
+    type EditorProps,
+}                           from '@heymarco/editor'
+
+// internals:
+import {
     // composite-components:
     TabExpandedChangeEvent,
     TabProps,
@@ -68,73 +66,103 @@ const reducedValueOptions : VariantVisibility[] = ['PUBLISHED',           'DRAFT
 
 
 // react components:
-interface BaseVisibilityEditorProps<TElement extends Element = HTMLElement>
+interface BaseVisibilityEditorProps<out TElement extends Element = HTMLDivElement, TValue extends unknown = unknown, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.MouseEvent<Element, MouseEvent>>
     extends
         // bases:
         Omit<TabProps<TElement>,
+            // children:
+            |'children'                // not supported
+        >,
+        // Pick<EditorProps<TElement, TValue, TChangeEvent>,
+        //     // values:
+        //     |'defaultValue'
+        //     |'value'
+        //     |'onChange'
+        // >
+        Omit<EditorProps<TElement, TValue, TChangeEvent>,
+            // refs:
+            |'elmRef'                  // moved to <TabHeader>
+            
+            // variants:
+            |'nude'                    // not supported
+            
+            // accessibilities:
+            |'autoFocus'               // not supported
+            
+            // forms:
+            |'name'|'form'             // not supported
+            
+            // values:
+            |'notifyValueChange'       // not supported
+            
+            // validations:
+            |'enableValidation'        // not supported
+            |'isValid'                 // not supported
+            |'inheritValidation'       // not supported
+            |'validationDeps'          // not supported
+            |'onValidation'            // not supported
+            |'customValidator'         // not supported
+            
+            |'validDelay'              // not supported
+            |'invalidDelay'            // not supported
+            |'noValidationDelay'       // not supported
+            
+            |'required'                // not supported
+            
             // states:
-            |'defaultExpandedTabIndex' // already taken over
-            |'expandedTabIndex'        // already taken over
-            |'onExpandedChange'        // already taken over
+            |'focused'                 // not supported
+            |'assertiveFocusable'      // not supported
+            |'arrived'                 // not supported
             
             // children:
-            |'children'                // already taken over
+            |'children'                // not supported
+            |'dangerouslySetInnerHTML' // not supported
         >
 {
-    // data:
+    // values:
     modelName    ?: string
 }
-interface CompletedVisibilityEditorProps<TElement extends Element = HTMLElement>
+interface CompletedVisibilityEditorProps<out TElement extends Element = HTMLDivElement, TValue extends ProductVisibility = ProductVisibility, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.MouseEvent<Element, MouseEvent>>
     extends
         // bases:
-        BaseVisibilityEditorProps<TElement>,
-        Pick<EditorProps<TElement, ProductVisibility>,
-            // values:
-            |'defaultValue'
-            |'value'
-            |'onChange'
-        >
+        BaseVisibilityEditorProps<TElement, TValue, TChangeEvent>
 {
     // values:
     optionHidden ?: undefined|true
 }
-interface ReducedVisibilityEditorProps<TElement extends Element = HTMLElement>
+interface ReducedVisibilityEditorProps<out TElement extends Element = HTMLDivElement, TValue extends VariantVisibility = VariantVisibility, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.MouseEvent<Element, MouseEvent>>
     extends
         // bases:
-        BaseVisibilityEditorProps<TElement>,
-        Pick<EditorProps<TElement, VariantVisibility>,
-            // values:
-            |'defaultValue'
-            |'value'
-            |'onChange'
-        >
+        BaseVisibilityEditorProps<TElement, TValue, TChangeEvent>
 {
     // values:
     optionHidden  : false
 }
-type VisibilityEditorProps<TElement extends Element = HTMLElement> =
-    |CompletedVisibilityEditorProps<TElement>
-    |ReducedVisibilityEditorProps<TElement>
-const VisibilityEditor = <TElement extends Element = HTMLElement>(props: VisibilityEditorProps<TElement>): JSX.Element|null => {
-    // rest props:
+type VisibilityEditorProps<TElement extends Element = HTMLDivElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.MouseEvent<Element, MouseEvent>> =
+    |CompletedVisibilityEditorProps<TElement, ProductVisibility, TChangeEvent>
+    |ReducedVisibilityEditorProps<TElement, VariantVisibility, TChangeEvent>
+const VisibilityEditor = <TElement extends Element = HTMLDivElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.MouseEvent<Element, MouseEvent>>(props: VisibilityEditorProps<TElement, TChangeEvent>): JSX.Element|null => {
+    // props:
     const {
-        // data:
-        modelName = 'product',
-        
-        
-        
         // values:
-        optionHidden = true,
+        modelName     = 'product',
         
-        defaultValue : defaultUncontrollableValue = 'DRAFT',
-        value        : controllableValue,
-        onChange     : onControllableValueChange,
+        optionHidden  = true,
+        
+        defaultValue  : defaultUncontrollableValue = 'DRAFT',
+        value         : controllableValue,
+        onChange      : onValueChange,
         
         
         
-        // components:
-        listComponent = (<List<Element> /> as React.ReactComponentElement<any, ListProps<Element>>),
-    ...restTabProps} = props;
+        // handlers:
+        onExpandedChange,
+        
+        
+        
+        // other props:
+        ...restVisibilityEditorProps
+    } = props;
     
     
     
@@ -142,88 +170,110 @@ const VisibilityEditor = <TElement extends Element = HTMLElement>(props: Visibil
     const {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllableAndUncontrollable<ProductVisibility | VariantVisibility>({
+    } = useControllableAndUncontrollable<ProductVisibility | VariantVisibility, TChangeEvent>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
-        onValueChange      : onControllableValueChange as (EditorChangeEventHandler<ProductVisibility> & EditorChangeEventHandler<VariantVisibility>),
+        onValueChange      : onValueChange as (EditorChangeEventHandler<ProductVisibility, TChangeEvent> & EditorChangeEventHandler<VariantVisibility, TChangeEvent>),
     });
     
     
     
     // handlers:
-    const handleExpandedChange = useEvent<EventHandler<TabExpandedChangeEvent>>(({tabIndex}) => {
+    const handleExpandedChangeInternal = useEvent<EventHandler<TabExpandedChangeEvent>>(({tabIndex}) => {
         triggerValueChange(
             (
                 optionHidden                    // if including hidden
                 ? valueOptions[tabIndex]        // with hidden
                 : reducedValueOptions[tabIndex] // without hidden
             ) as (ProductVisibility & VariantVisibility)
-        , { triggerAt: 'immediately' });
+        , { triggerAt: 'immediately', event: undefined as any /* TODO: fix this */ });
     });
+    const handleExpandedChange         = useMergeEvents(
+        // preserves the original `onExpandedChange` from `props`:
+        onExpandedChange,
+        
+        
+        
+        // actions:
+        handleExpandedChangeInternal,
+    );
     
     
     
     // accessibilities:
-    const propReadOnly = usePropReadOnly(props);
+    const propAccess = usePropAccessibility(props);
+    const {enabled: propEnabled, readOnly: propReadOnly} = propAccess;
+    const isDisabledOrReadOnly = (!propEnabled || propReadOnly);
+    
+    
+    
+    // default props:
+    const {
+        // accessibilities:
+        'aria-label' : ariaLabel = 'Visibility',
+        
+        
+        
+        // states:
+        enabled                  = !isDisabledOrReadOnly, // can't switch the `<Tab>` if disabled or readonly
+        expandedTabIndex         = (                      // internally controllable
+            (
+                optionHidden          // if including hidden
+                ? valueOptions        // with hidden
+                : reducedValueOptions // without hidden
+            )
+            .findIndex((valueOption) => (valueOption === value))
+        ),
+        
+        
+        
+        // other props:
+        ...restTabProps
+    } = restVisibilityEditorProps satisfies NoForeignProps<typeof restVisibilityEditorProps, Omit<TabProps<TElement>, 'children'>>;
     
     
     
     // jsx:
     return (
-        <Tab<TElement>
-            // other props:
-            {...restTabProps}
-            
-            
-            
-            // accessibilities:
-            aria-label={props['aria-label'] ?? 'Visibility'}
-            
-            
-            
-            // states:
-            expandedTabIndex={
-                (
-                    optionHidden          // if including hidden
-                    ? valueOptions        // with hidden
-                    : reducedValueOptions // without hidden
-                )
-                .findIndex((valueOption) => (valueOption === value))
-            }
-            onExpandedChange={handleExpandedChange}
-            
-            
-            
-            // components:
-            listComponent={
-                React.cloneElement<ListProps<Element>>(listComponent,
-                    // props:
-                    {
-                        // accessibilities:
-                        enabled : listComponent.props.enabled ?? !propReadOnly,
-                    },
-                )
-            }
-        >
-            <TabPanel label={PAGE_PRODUCT_VISIBILITY_PUBLISHED}>
-                <p>
-                    The {modelName} is <em>shown</em> on the webiste.
-                </p>
-            </TabPanel>
-            {optionHidden && <TabPanel label={PAGE_PRODUCT_VISIBILITY_HIDDEN}>
-                <p>
-                    The {modelName} can only be viewed via <em>a (bookmarked) link</em>.
-                </p>
-            </TabPanel>}
-            <TabPanel label={PAGE_PRODUCT_VISIBILITY_DRAFT}>
-                <p>
-                    The {modelName} <em>cannot be viewed</em> on the entire website.
-                </p>
-            </TabPanel>
-        </Tab>
+        // can't switch the `<Tab>` nor change the `<NumberUpDownEditor>` if disabled or readonly
+        <AccessibilityProvider {...propAccess}>
+            <Tab<TElement>
+                // other props:
+                {...restTabProps}
+                
+                
+                
+                // accessibilities:
+                aria-label={ariaLabel}
+                
+                
+                
+                // states:
+                enabled={enabled}
+                
+                expandedTabIndex={expandedTabIndex}     // internally controllable
+                onExpandedChange={handleExpandedChange} // internally controllable
+            >
+                <TabPanel label={PAGE_PRODUCT_VISIBILITY_PUBLISHED}>
+                    <p>
+                        The {modelName} is <em>shown</em> on the webiste.
+                    </p>
+                </TabPanel>
+                {optionHidden && <TabPanel label={PAGE_PRODUCT_VISIBILITY_HIDDEN}>
+                    <p>
+                        The {modelName} can only be viewed via <em>a (bookmarked) link</em>.
+                    </p>
+                </TabPanel>}
+                <TabPanel label={PAGE_PRODUCT_VISIBILITY_DRAFT}>
+                    <p>
+                        The {modelName} <em>cannot be viewed</em> on the entire website.
+                    </p>
+                </TabPanel>
+            </Tab>
+        </AccessibilityProvider>
     );
 };
 export {
-    VisibilityEditor,
-    VisibilityEditor as default,
+    VisibilityEditor,            // named export for readibility
+    VisibilityEditor as default, // default export to support React.lazy
 }
