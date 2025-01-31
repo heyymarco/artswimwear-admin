@@ -55,7 +55,7 @@ export interface ElementWithActionsProps<TElement extends Element = HTMLElement>
     // actions:
     deletingImageTitle          ?: React.ReactNode
     deleteButtonTitle           ?: string
-    onDeleteImage               ?: (args: { itemIndex: number }) => void|Promise<void>
+    onDeleteImage               ?: (args: { itemIndex: number }, event: React.MouseEvent<HTMLButtonElement>) => void|Promise<void>
     
     
     
@@ -65,12 +65,12 @@ export interface ElementWithActionsProps<TElement extends Element = HTMLElement>
      *   
      * The underlying `<Element>` to be actionable.
      */
-    elementComponent             : React.ReactComponentElement<any, React.HTMLAttributes<TElement>>
+    elementComponent             : React.ReactElement<React.HTMLAttributes<TElement>>
     
-    actionGroupComponent        ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
-    deletingImageTitleComponent ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
-    busyComponent               ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
-    deleteButtonComponent       ?: React.ReactComponentElement<any, ButtonProps>|null
+    actionGroupComponent        ?: React.ReactElement<React.HTMLAttributes<HTMLElement>>
+    deletingImageTitleComponent ?: React.ReactElement<Pick<React.HTMLAttributes<Element>, 'className'>>|null
+    busyComponent               ?: React.ReactElement<React.HTMLAttributes<HTMLElement>>
+    deleteButtonComponent       ?: React.ReactElement<ButtonProps>|null
 }
 const ElementWithActions = <TElement extends Element = HTMLElement>(props: ElementWithActionsProps<TElement>): JSX.Element|null => {
     // rest props:
@@ -90,10 +90,10 @@ const ElementWithActions = <TElement extends Element = HTMLElement>(props: Eleme
         // components:
         elementComponent,
         
-        actionGroupComponent        = (<div                                                                 /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
-        deletingImageTitleComponent = (<h1                                                                  /> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
-        busyComponent               = (<Busy                    size='lg'                                   /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
-        deleteButtonComponent       = (<ButtonIcon icon='clear' size='md' theme='danger' buttonStyle='link' /> as React.ReactComponentElement<any, ButtonProps>),
+        actionGroupComponent        = (<div                                                                 /> as React.ReactElement<React.HTMLAttributes<HTMLElement>>),
+        deletingImageTitleComponent = (<h1                                                                  /> as React.ReactElement<Pick<React.HTMLAttributes<Element>, 'className'>>),
+        busyComponent               = (<Busy                    size='lg'                                   /> as React.ReactElement<React.HTMLAttributes<HTMLElement>>),
+        deleteButtonComponent       = (<ButtonIcon icon='clear' size='md' theme='danger' buttonStyle='link' /> as React.ReactElement<ButtonProps>),
     ...restElementProps} = props;
     
     
@@ -112,7 +112,7 @@ const ElementWithActions = <TElement extends Element = HTMLElement>(props: Eleme
     
     
     // handlers:
-    const deleteButtonHandleClickInternal = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async () => {
+    const deleteButtonHandleClickInternal = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async (event) => {
         // conditions:
         if (isBusy)         return; // this component is busy => ignore
         if (!onDeleteImage) return; // the delete handler is not configured => ignore
@@ -123,7 +123,7 @@ const ElementWithActions = <TElement extends Element = HTMLElement>(props: Eleme
         try {
             await onDeleteImage({
                 itemIndex : itemIndex,
-            });
+            }, event);
         }
         catch {
             // ignore any error

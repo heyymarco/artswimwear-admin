@@ -47,11 +47,12 @@ import {
     getFetchErrorMessage,
 }                           from '@reusable-ui/components'
 
+// heymarco components:
+import {
+    type EditorProps,
+}                           from '@heymarco/editor'
+
 // internals:
-import type {
-    // react components:
-    EditorProps,
-}                           from '@/components/editors/Editor'
 import {
     // configs:
     galleryEditors,
@@ -114,8 +115,8 @@ type UploadingImageData = {
     imageFile   : File
     percentage  : number|null
     uploadError : React.ReactNode
-    onRetry     : () => void
-    onCancel    : () => void
+    onRetry     : (event: React.MouseEvent<HTMLButtonElement>) => void
+    onCancel    : (event: React.MouseEvent<HTMLButtonElement>) => void
 }
 
 
@@ -124,7 +125,7 @@ type UploadingImageData = {
 export interface GalleryEditorProps<TElement extends Element = HTMLElement, TValue extends ImageData = ImageData>
     extends
         // bases:
-        Pick<EditorProps<TElement, TValue[]>,
+        Pick<EditorProps<TElement, TValue[], React.MouseEvent<HTMLButtonElement>|React.ChangeEvent<HTMLInputElement>|React.DragEvent<Element>>,
             // accessibilities:
             |'readOnly'
             
@@ -197,10 +198,10 @@ export interface GalleryEditorProps<TElement extends Element = HTMLElement, TVal
     
     
     // components:
-    bodyComponent       ?: React.ReactComponentElement<any, BasicProps<TElement>>
+    bodyComponent       ?: React.ReactElement<BasicProps<TElement>>
     
-    mediaGroupComponent ?: React.ReactComponentElement<any, GenericProps<Element>>
-    imageComponent      ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
+    mediaGroupComponent ?: React.ReactElement<GenericProps<Element>>
+    imageComponent      ?: React.ReactElement<React.ImgHTMLAttributes<HTMLImageElement>>
     
     
     
@@ -257,10 +258,10 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         
         // components:
-        bodyComponent          = (<Content<TElement>           /> as React.ReactComponentElement<any, BasicProps<TElement>>),
+        bodyComponent          = (<Content<TElement>           /> as React.ReactElement<BasicProps<TElement>>),
         
-        mediaGroupComponent    = (<Basic tag='div' mild={true} /> as React.ReactComponentElement<any, GenericProps<Element>>),
-        imageComponent         = (<img                         /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
+        mediaGroupComponent    = (<Basic tag='div' mild={true} /> as React.ReactElement<GenericProps<Element>>),
+        imageComponent         = (<img                         /> as React.ReactElement<React.ImgHTMLAttributes<HTMLImageElement>>),
         
         actionGroupComponent,
         
@@ -298,7 +299,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
     let {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllableAndUncontrollable<TValue[]>({
+    } = useControllableAndUncontrollable<TValue[], React.MouseEvent<HTMLButtonElement>|React.ChangeEvent<HTMLInputElement>|React.DragEvent<Element>>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
         onValueChange      : onControllableValueChange,
@@ -330,7 +331,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
     
     
     // handlers:
-    const handlePreviewMoved   = useEvent((newDroppedItemIndex: number): TValue[]|undefined => {
+    const handlePreviewMoved   = useEvent((newDroppedItemIndex: number, event: React.MouseEvent<HTMLButtonElement>|React.ChangeEvent<HTMLInputElement>|React.DragEvent<Element>): TValue[]|undefined => {
         if (draggedItemIndex === newDroppedItemIndex) { // no change => nothing to shift => return the (original) *source of truth* images
             // reset the preview:
             return handleRevertPreview();
@@ -382,15 +383,15 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         // return the modified:
         return newDraftImages;
     });
-    const handleMoved          = useEvent((newDroppedItemIndex: number): void => {
+    const handleMoved          = useEvent((newDroppedItemIndex: number, event: React.DragEvent<Element>): void => {
         // update the preview:
-        const newDraftImages = handlePreviewMoved(newDroppedItemIndex);
+        const newDraftImages = handlePreviewMoved(newDroppedItemIndex, event);
         if (!newDraftImages) return; // no change => ignore
         
         
         
         // notify the gallery's images changed:
-        triggerValueChange(newDraftImages, { triggerAt: 'macrotask' }); // then at the *next re-render*, the *controllable* `images` will change and trigger the `handleRevertPreview` and the `droppedItemIndex` will be reset
+        triggerValueChange(newDraftImages, { triggerAt: 'macrotask', event: event }); // then at the *next re-render*, the *controllable* `images` will change and trigger the `handleRevertPreview` and the `droppedItemIndex` will be reset
     });
     const handleRevertPreview  = useEvent((): TValue[] => {
         // reset the preview:
@@ -416,7 +417,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
     
     // droppable handlers:
     const handleDragEnter      = handlePreviewMoved;
-    const handleDragLeave      = useEvent((itemIndex: number): void => {
+    const handleDragLeave      = useEvent((itemIndex: number, event: React.DragEvent<Element>): void => {
         // conditions:
         if (droppedItemIndex !== itemIndex) return; // the last preview is already updated by another item => no need to revert
         
@@ -428,7 +429,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
     const handleDrop           = handleMoved;
     
     // handlers:
-    const handleDeleteImage    = useEvent(async (args: { itemIndex: number }): Promise<void> => {
+    const handleDeleteImage    = useEvent(async (args: { itemIndex: number }, event: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
         // params:
         const {
             itemIndex,
@@ -467,12 +468,12 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         
         
         // update the preview:
-        if (droppedItemIndex !== -1) handlePreviewMoved(droppedItemIndex);
+        if (droppedItemIndex !== -1) handlePreviewMoved(droppedItemIndex, event);
         
         
         
         // notify the gallery's images changed:
-        triggerValueChange(newDraftImages, { triggerAt: 'macrotask' }); // then at the *next re-render*, the *controllable* `images` will change and trigger the `handleRevertPreview` and the `droppedItemIndex` will be reset
+        triggerValueChange(newDraftImages, { triggerAt: 'macrotask', event: event }); // then at the *next re-render*, the *controllable* `images` will change and trigger the `handleRevertPreview` and the `droppedItemIndex` will be reset
         
         
         
@@ -489,7 +490,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
         value = newDraftImages; // a temporary update regradless of (/*controllable*/ ?? /*uncontrollable*/), will be re-updated on *next re-render*
         if (controllableValue !== undefined) triggerRender(); // force to re-render
     });
-    const handleUploadImage    = useEvent((args: { imageFile: File }): void => {
+    const handleUploadImage    = useEvent((args: { imageFile: File }, event: React.ChangeEvent<HTMLInputElement>|React.DragEvent<HTMLElement>): void => {
         // conditions:
         if (!onUploadImage) return; // the upload image handler is not configured => ignore
         
@@ -512,7 +513,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                 abortSignal.aborted
             );
         };
-        const handleUploadRetry  = (): void => {
+        const handleUploadRetry  = (event: React.MouseEvent<HTMLButtonElement>): void => {
             // conditions:
             if (isUploadCanceled()) return; // the uploader was canceled => do nothing
             
@@ -526,9 +527,9 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
             
             
             // actions:
-            performUpload();
+            performUpload(event);
         };
-        const handleUploadCancel = (): void => {
+        const handleUploadCancel = (event: React.MouseEvent<HTMLButtonElement>): void => {
             // conditions:
             if (isUploadCanceled()) return; // the uploader was canceled => do nothing
             
@@ -574,7 +575,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                 return current.slice(0); // force to re-render
             });
         };
-        const performUpload        = async (): Promise<void> => {
+        const performUpload        = async (event: React.MouseEvent<HTMLButtonElement>|React.ChangeEvent<HTMLInputElement>|React.DragEvent<Element>): Promise<void> => {
             let imageData : TValue|Error|null|undefined = undefined;
             try {
                 imageData = await onUploadImage({
@@ -618,12 +619,12 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
                 
                 
                 // update the preview:
-                if (droppedItemIndex !== -1) handlePreviewMoved(droppedItemIndex);
+                if (droppedItemIndex !== -1) handlePreviewMoved(droppedItemIndex, event);
                 
                 
                 
                 // notify the gallery's images changed:
-                triggerValueChange(newDraftImages, { triggerAt: 'macrotask' }); // then at the *next re-render*, the *controllable* `images` will change and trigger the `handleRevertPreview` and the `droppedItemIndex` will be reset
+                triggerValueChange(newDraftImages, { triggerAt: 'macrotask', event: event }); // then at the *next re-render*, the *controllable* `images` will change and trigger the `handleRevertPreview` and the `droppedItemIndex` will be reset
                 
                 
                 
@@ -645,7 +646,7 @@ const GalleryEditor = <TElement extends Element = HTMLElement, TValue extends Im
             // remove the uploading status:
             scheduleTriggerEvent(performRemove); // runs the `performRemove` function *next after* `onChange` event fired (to avoid blinking of previous image issue)
         };
-        performUpload();
+        performUpload(event);
     });
     
     

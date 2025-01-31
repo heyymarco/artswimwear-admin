@@ -56,23 +56,23 @@ export interface UploadingImageProps
     uploadingImagePercentage           : number|null
     uploadingImageErrorMessage         : React.ReactNode
     onUploadImageProgress             ?: (args: { imageFile: File, percentage: number|null }) => string
-    onUploadImageRetry                 : () => void
-    onUploadImageCancel                : () => void
+    onUploadImageRetry                 : (event: React.MouseEvent<HTMLButtonElement>) => void
+    onUploadImageCancel                : (event: React.MouseEvent<HTMLButtonElement>) => void
     
     
     
     // components:
-    imageComponent                    ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
-    previewImageComponent             ?: React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>
+    imageComponent                    ?: React.ReactElement<React.ImgHTMLAttributes<HTMLImageElement>>
+    previewImageComponent             ?: React.ReactElement<React.ImgHTMLAttributes<HTMLImageElement>>
     
-    actionGroupComponent              ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
-    uploadingImageTitleComponent      ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
-    progressComponent                 ?: React.ReactComponentElement<any, ProgressProps<Element>>
-    progressBarComponent              ?: React.ReactComponentElement<any, ProgressBarProps<Element>>
-    uploadErrorComponent              ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
-    uploadingImageErrorTitleComponent ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
-    retryButtonComponent              ?: React.ReactComponentElement<any, ButtonProps>
-    cancelButtonComponent             ?: React.ReactComponentElement<any, ButtonProps>
+    actionGroupComponent              ?: React.ReactElement<React.HTMLAttributes<HTMLElement>>
+    uploadingImageTitleComponent      ?: React.ReactElement<Pick<React.HTMLAttributes<Element>, 'className'>>|null
+    progressComponent                 ?: React.ReactElement<ProgressProps<Element>>
+    progressBarComponent              ?: React.ReactElement<ProgressBarProps<Element>>
+    uploadErrorComponent              ?: React.ReactElement<React.HTMLAttributes<HTMLElement>>
+    uploadingImageErrorTitleComponent ?: React.ReactElement<Pick<React.HTMLAttributes<Element>, 'className'>>|null
+    retryButtonComponent              ?: React.ReactElement<ButtonProps>
+    cancelButtonComponent             ?: React.ReactElement<ButtonProps>
 }
 const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
     // rest props:
@@ -97,16 +97,16 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
         
         // components:
         imageComponent,
-        previewImageComponent             = imageComponent ?? (<img                                  /> as React.ReactComponentElement<any, React.ImgHTMLAttributes<HTMLImageElement>>),
+        previewImageComponent             = imageComponent ?? (<img                                  /> as React.ReactElement<React.ImgHTMLAttributes<HTMLImageElement>>),
         
-        actionGroupComponent              = (<div                                                    /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
-        uploadingImageTitleComponent      = (<h1                                                     /> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
-        progressComponent                 = (<Progress    size='sm'                                  /> as React.ReactComponentElement<any, ProgressProps<Element>>),
-        progressBarComponent              = (<ProgressBar                                            /> as React.ReactComponentElement<any, ProgressBarProps<Element>>),
-        uploadErrorComponent              = (<Basic       size='sm'      mild={true} theme='danger'  /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
-        uploadingImageErrorTitleComponent = (<h1                                                     /> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
-        retryButtonComponent              = (<ButtonIcon  icon='refresh'             theme='success' /> as React.ReactComponentElement<any, ButtonProps>),
-        cancelButtonComponent             = (<ButtonIcon  icon='cancel'              theme='danger'  /> as React.ReactComponentElement<any, ButtonProps>),
+        actionGroupComponent              = (<div                                                    /> as React.ReactElement<React.HTMLAttributes<HTMLElement>>),
+        uploadingImageTitleComponent      = (<h1                                                     /> as React.ReactElement<Pick<React.HTMLAttributes<Element>, 'className'>>),
+        progressComponent                 = (<Progress    size='sm'                                  /> as React.ReactElement<ProgressProps<Element>>),
+        progressBarComponent              = (<ProgressBar                                            /> as React.ReactElement<ProgressBarProps<Element>>),
+        uploadErrorComponent              = (<Basic       size='sm'      mild={true} theme='danger'  /> as React.ReactElement<React.HTMLAttributes<HTMLElement>>),
+        uploadingImageErrorTitleComponent = (<h1                                                     /> as React.ReactElement<Pick<React.HTMLAttributes<Element>, 'className'>>),
+        retryButtonComponent              = (<ButtonIcon  icon='refresh'             theme='success' /> as React.ReactElement<ButtonProps>),
+        cancelButtonComponent             = (<ButtonIcon  icon='cancel'              theme='danger'  /> as React.ReactElement<ButtonProps>),
     } = props;
     
     
@@ -140,8 +140,8 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
     
     
     // handlers:
-    const retryButtonHandleClickInternal  = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
-        onUploadImageRetry();
+    const retryButtonHandleClickInternal  = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
+        onUploadImageRetry(event);
     });
     const retryButtonHandleClick          = useMergeEvents(
         // preserves the original `onClick` from `retryButtonComponent`:
@@ -153,8 +153,8 @@ const UploadingImage = (props: UploadingImageProps): JSX.Element|null => {
         retryButtonHandleClickInternal,
     );
     
-    const cancelButtonHandleClickInternal = useEvent<React.MouseEventHandler<HTMLButtonElement>>(() => {
-        onUploadImageCancel();
+    const cancelButtonHandleClickInternal = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
+        onUploadImageCancel(event);
     });
     const cancelButtonHandleClick         = useMergeEvents(
         // preserves the original `onClick` from `cancelButtonComponent`:

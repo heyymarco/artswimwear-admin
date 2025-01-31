@@ -60,10 +60,10 @@ export interface ElementWithDroppableProps<TElement extends Element = HTMLElemen
     
     
     // droppable:
-    onDragEnter     ?: (itemIndex: number) => void
-    onDragOver      ?: (itemIndex: number) => void
-    onDragLeave     ?: (itemIndex: number) => void
-    onDrop          ?: (itemIndex: number) => void
+    onDragEnter     ?: (itemIndex: number, event: React.DragEvent<TElement>) => void
+    onDragOver      ?: (itemIndex: number, event: React.DragEvent<TElement>) => void
+    onDragLeave     ?: (itemIndex: number, event: React.DragEvent<TElement>) => void
+    onDrop          ?: (itemIndex: number, event: React.DragEvent<TElement>) => void
     
     
     
@@ -73,7 +73,7 @@ export interface ElementWithDroppableProps<TElement extends Element = HTMLElemen
      *   
      * The underlying `<Element>` to be droppable.
      */
-    elementComponent : React.ReactComponentElement<any, GenericProps<TElement>>
+    elementComponent : React.ReactElement<GenericProps<TElement>>
 }
 const ElementWithDroppable = <TElement extends Element = HTMLElement>(props: ElementWithDroppableProps<TElement>): JSX.Element|null => {
     // rest props:
@@ -119,7 +119,7 @@ const ElementWithDroppable = <TElement extends Element = HTMLElement>(props: Ele
         
         // callback:
         dragEnterCounter.current++;
-        if (dragEnterCounter.current === 1) onDragEnter?.(itemIndex);
+        if (dragEnterCounter.current === 1) onDragEnter?.(itemIndex, event);
     });
     const handleDragOver    = useEvent<React.DragEventHandler<TElement>>((event) => {
         // conditions:
@@ -135,13 +135,13 @@ const ElementWithDroppable = <TElement extends Element = HTMLElement>(props: Ele
         
         
         // callback:
-        onDragOver?.(itemIndex);
+        onDragOver?.(itemIndex, event);
     });
     const handleDragLeave   = useEvent<React.DragEventHandler<TElement>>((event) => {
         // callback:
         if (dragEnterCounter.current >= 1) {
             dragEnterCounter.current--;
-            if (dragEnterCounter.current === 0) onDragLeave?.(itemIndex);
+            if (dragEnterCounter.current === 0) onDragLeave?.(itemIndex, event);
         } // if
     });
     const handleDrop        = useEvent<React.DragEventHandler<TElement>>((event) => {
@@ -160,9 +160,9 @@ const ElementWithDroppable = <TElement extends Element = HTMLElement>(props: Ele
         // callback:
         if (dragEnterCounter.current >= 1) {
             dragEnterCounter.current = 0;
-            onDragLeave?.(itemIndex);
+            onDragLeave?.(itemIndex, event);
         } // if
-        onDrop?.(itemIndex);
+        onDrop?.(itemIndex, event);
     });
     
     

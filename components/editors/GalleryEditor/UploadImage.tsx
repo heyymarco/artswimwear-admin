@@ -46,14 +46,14 @@ export interface UploadImageProps
     
     
     // upload activities:
-    onUploadImage             ?: (args: { imageFile: File }) => void
+    onUploadImage             ?: (args: { imageFile: File }, event: React.ChangeEvent<HTMLInputElement>|React.DragEvent<HTMLElement>) => void
     
     
     
     // components:
-    actionGroupComponent      ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
-    uploadImageTitleComponent ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>|null
-    selectButtonComponent     ?: React.ReactComponentElement<any, ButtonProps>
+    actionGroupComponent      ?: React.ReactElement<React.HTMLAttributes<HTMLElement>>
+    uploadImageTitleComponent ?: React.ReactElement<Pick<React.HTMLAttributes<Element>, 'className'>>|null
+    selectButtonComponent     ?: React.ReactElement<ButtonProps>
 }
 const UploadImage = (props: UploadImageProps): JSX.Element|null => {
     // rest props:
@@ -72,9 +72,9 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         
         
         // components:
-        actionGroupComponent      = (<div                           /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
-        uploadImageTitleComponent = (<h1                            /> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
-        selectButtonComponent     = (<ButtonIcon icon='upload_file' /> as React.ReactComponentElement<any, ButtonProps>),
+        actionGroupComponent      = (<div                           /> as React.ReactElement<React.HTMLAttributes<HTMLElement>>),
+        uploadImageTitleComponent = (<h1                            /> as React.ReactElement<Pick<React.HTMLAttributes<Element>, 'className'>>),
+        selectButtonComponent     = (<ButtonIcon icon='upload_file' /> as React.ReactElement<ButtonProps>),
     } = props;
     
     
@@ -91,7 +91,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleFilesAdded  = useEvent((files: FileList): void => {
+    const handleFilesAdded  = useEvent((files: FileList, event: React.ChangeEvent<HTMLInputElement>|React.DragEvent<HTMLElement>): void => {
         // conditions:
         if (!onUploadImage) return; // the upload image handler is not configured => ignore
         
@@ -110,7 +110,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
             // actions:
             onUploadImage({
                 imageFile : file,
-            });
+            }, event);
         } // for
     });
     
@@ -163,7 +163,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
             dragEnterCounter.current = 0;
             setHasEnterCounter(false);
         } // if
-        handleFilesAdded(event.dataTransfer.files);
+        handleFilesAdded(event.dataTransfer.files, event);
     });
     
     
@@ -181,7 +181,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         // actions:
         selectButtonHandleClickInternal,
     );
-    const inputFileHandleChange           = useEvent<React.ChangeEventHandler<HTMLInputElement>>(() => {
+    const inputFileHandleChange           = useEvent<React.ChangeEventHandler<HTMLInputElement>>((event) => {
         // conditions:
         const inputFileElm = inputFileRef.current;
         if (!inputFileElm)       return; // input file is not loaded => ignore
@@ -193,7 +193,7 @@ const UploadImage = (props: UploadImageProps): JSX.Element|null => {
         
         // actions:
         try {
-            handleFilesAdded(files);
+            handleFilesAdded(files, event);
         }
         finally {
             // unselect files after the selected files has taken:
