@@ -35,11 +35,17 @@ import {
     ActiveChangeEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
-// heymarco:
+// heymarco core:
 import {
     // utilities:
     useControllableAndUncontrollable,
 }                           from '@heymarco/events'
+
+// heymarco components:
+import {
+    type EditorChangeEventHandler,
+    type EditorProps,
+}                           from '@heymarco/editor'
 
 // reusable-ui components:
 import {
@@ -72,15 +78,6 @@ import {
 import {
     CurrencyDisplay,
 }                           from '@/components/CurrencyDisplay'
-import type {
-    // types:
-    EditorChangeEventHandler,
-    
-    
-    
-    // react components:
-    EditorProps,
-}                           from '@/components/editors/Editor'
 import {
     PriceEditor,
 }                           from '@/components/editors/PriceEditor'
@@ -129,7 +126,7 @@ export type OrderOnTheWayValue = {
 export interface OrderOnTheWayEditorProps
     extends
         // bases:
-        Pick<EditorProps<HTMLElement, OrderOnTheWayValue>,
+        Pick<EditorProps<HTMLElement, OrderOnTheWayValue, React.ChangeEvent<HTMLInputElement>>,
             // values:
             |'defaultValue' // supported
             |'value'        // supported
@@ -160,7 +157,7 @@ export interface OrderOnTheWayEditorProps
     // data:
     currencyOptions      ?: string[]
     currency             ?: string
-    onCurrencyChange     ?: EditorChangeEventHandler<string>
+    onCurrencyChange     ?: EditorChangeEventHandler<string, React.MouseEvent<Element, MouseEvent>>
     
     currencyRate         ?: number
     
@@ -245,7 +242,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
     const {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllableAndUncontrollable<OrderOnTheWayValue>({
+    } = useControllableAndUncontrollable<OrderOnTheWayValue, React.ChangeEvent<HTMLInputElement>>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
         onValueChange      : onControllableValueChange,
@@ -288,7 +285,7 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
     
     
     // utilities:
-    const setValue = useEvent((newValue: Partial<OrderOnTheWayValue>) => {
+    const setValue = useEvent((newValue: Partial<OrderOnTheWayValue>, event: React.ChangeEvent<HTMLInputElement>) => {
         const combinedNewValue : OrderOnTheWayValue = {
             ...value,
             ...newValue,
@@ -318,32 +315,32 @@ const OrderOnTheWayEditor = (props: OrderOnTheWayEditorProps): JSX.Element|null 
         
         
         // update:
-        triggerValueChange(finalValue, { triggerAt: 'immediately' });
+        triggerValueChange(finalValue, { triggerAt: 'immediately', event: event });
     });
     
     
     
     // handlers:
-    const handleShippingCarrierChange   = useEvent<EditorChangeEventHandler<string|null>>((newShippingCarrier) => {
+    const handleShippingCarrierChange   = useEvent<EditorChangeEventHandler<string|null, React.ChangeEvent<HTMLInputElement>>>((newShippingCarrier, event) => {
         setValue({
             carrier               : newShippingCarrier,
-        });
+        }, event);
     });
-    const handleShippingNumberChange    = useEvent<EditorChangeEventHandler<string|null>>((newShippingNumber) => {
+    const handleShippingNumberChange    = useEvent<EditorChangeEventHandler<string|null, React.ChangeEvent<HTMLInputElement>>>((newShippingNumber, event) => {
         setValue({
             number                : newShippingNumber,
-        });
+        }, event);
     });
-    const handleShippingCostChange      = useEvent<EditorChangeEventHandler<number|null>>((newShippingCost) => {
+    const handleShippingCostChange      = useEvent<EditorChangeEventHandler<number|null, React.ChangeEvent<HTMLInputElement>>>((newShippingCost, event) => {
         setEditedCost(newShippingCost);
         setValue({
             cost                  : revertSystemCurrencyIfRequired(newShippingCost, currencyRate, customerCurrency),
-        });
+        }, event);
     });
     const handleNotificationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active: newNotification}) => {
         setValue({
             sendConfirmationEmail : newNotification,
-        });
+        }, undefined as any); // TODO: fix the event
     });
     
     const handleCarrierFocus            = useEvent((): void => {
