@@ -10,20 +10,17 @@ import {
     useEvent,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
+// heymarco components:
+import {
+    type EditorChangeEventHandler,
+    type EditorProps,
+}                           from '@heymarco/editor'
+
 // internal components:
 import {
     // types:
     type DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
-import {
-    // types:
-    type EditorChangeEventHandler,
-    
-    
-    
-    // react components:
-    type EditorProps,
-}                           from '@/components/editors/Editor'
 import {
     ModelCreateOuterProps,
     
@@ -63,7 +60,7 @@ import {
 interface CategoryEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Pick<EditorProps<TElement, Set<string>>,
+        Pick<EditorProps<TElement, Set<string>, React.MouseEvent<Element, MouseEvent>>,
             // values:
             // |'defaultValue' // not supported, controllable only
             |'value'
@@ -186,7 +183,7 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
     
     
     // handlers:
-    const handleModelSelect = useEvent<EditorChangeEventHandler<ModelSelectEvent>>(({ id, selected }) => {
+    const handleModelSelect = useEvent<EditorChangeEventHandler<ModelSelectEvent, React.MouseEvent<Element, MouseEvent>>>(({ id, selected }, event) => {
         // conditions:
         if (!onChange) return; // no onChange handler => noop
         
@@ -197,7 +194,7 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
             if (!value /* no collection */ || !value.has(id) /* the collection not having the id */) {
                 const valueCopy = new Set<string>(value);
                 valueCopy.add(id);
-                onChange(valueCopy);
+                onChange(valueCopy, event);
             } // if
         }
         else {
@@ -205,13 +202,13 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
             if (value /* has collection */ && value.has(id) /* the collection having the id */) {
                 const valueCopy = new Set<string>(value);
                 valueCopy.delete(id);
-                onChange(valueCopy);
+                onChange(valueCopy, event);
             } // if
         } // if
     });
     const handleModelDelete = useEvent<DeleteHandler<CategoryDetail>>(({ id }) => {
         // if the model deleted => treat as unselect:
-        handleModelSelect({ id, selected: false });
+        handleModelSelect({ id, selected: false }, undefined as any); // TODO: fix the event
     });
     
     

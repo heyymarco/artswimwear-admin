@@ -283,7 +283,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
     });
     
     const handleCheckActiveChange = useEvent<EventHandler<ActiveChangeEvent>>(({ active }) => {
-        onModelSelect?.({ id: id, selected: active });
+        onModelSelect?.({ id: id, selected: active }, undefined as any); // TODO: fix the event
     });
     
     
@@ -760,7 +760,7 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
     });
     
     const handleCheckActiveChange = useEvent<EventHandler<ActiveChangeEvent>>(({ active }) => {
-        onModelSelect?.({ id: id, selected: active });
+        onModelSelect?.({ id: id, selected: active }, undefined as any); // TODO: fix the event
     });
     
     

@@ -15,11 +15,12 @@ import {
     useMemo,
 }                           from 'react'
 
-// internal components:
+// heymarco components:
 import {
-    // types:
     type EditorChangeEventHandler,
-}                           from '@/components/editors/Editor'
+}                           from '@heymarco/editor'
+
+// internal components:
 import {
     // types:
     type DeleteHandler,
@@ -109,7 +110,7 @@ export interface CategoryState
     
     // values:
     value                : Set<string>
-    onChange             : EditorChangeEventHandler<Set<string>>
+    onChange             : EditorChangeEventHandler<Set<string>, React.MouseEvent<Element, MouseEvent>>
     
     
     
@@ -126,7 +127,7 @@ export interface CategoryState
     
     
     // handlers:
-    onModelSelect        : EditorChangeEventHandler<ModelSelectEvent>
+    onModelSelect        : EditorChangeEventHandler<ModelSelectEvent, React.MouseEvent<Element, MouseEvent>>
     onModelDelete        : DeleteHandler<CategoryDetail>
 }
 
