@@ -34,11 +34,17 @@ import {
     ActiveChangeEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
-// heymarco:
+// heymarco core::
 import {
     // utilities:
     useControllableAndUncontrollable,
 }                           from '@heymarco/events'
+
+// heymarco components:
+import {
+    type EditorChangeEventHandler,
+    type EditorProps,
+}                           from '@heymarco/editor'
 
 // reusable-ui components:
 import {
@@ -82,15 +88,6 @@ import {
 import {
     CurrencyDisplay,
 }                           from '@/components/CurrencyDisplay'
-import type {
-    // types:
-    EditorChangeEventHandler,
-    
-    
-    
-    // react components:
-    EditorProps,
-}                           from '@/components/editors/Editor'
 import {
     PriceEditor,
 }                           from '@/components/editors/PriceEditor'
@@ -159,7 +156,7 @@ export type PaymentValue =
 export interface PaymentEditorProps
     extends
         // bases:
-        Pick<EditorProps<HTMLElement, PaymentValue>,
+        Pick<EditorProps<HTMLElement, PaymentValue, React.MouseEvent<HTMLElement, MouseEvent>|React.ChangeEvent<HTMLInputElement>>,
             // values:
             |'defaultValue' // supported
             |'value'        // supported
@@ -185,7 +182,7 @@ export interface PaymentEditorProps
     // data:
     currencyOptions    ?: string[]
     currency           ?: string
-    onCurrencyChange   ?: EditorChangeEventHandler<string>
+    onCurrencyChange   ?: EditorChangeEventHandler<string, React.MouseEvent<Element, MouseEvent>>
     
     currencyRate       ?: number
     
@@ -267,7 +264,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     const {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllableAndUncontrollable<PaymentValue>({
+    } = useControllableAndUncontrollable<PaymentValue, React.MouseEvent<HTMLElement, MouseEvent>|React.ChangeEvent<HTMLInputElement>>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
         onValueChange      : onControllableValueChange,
@@ -304,7 +301,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
     
     
     // events:
-    const setValue = useEvent((newValue: Partial<PaymentValue>) => {
+    const setValue = useEvent((newValue: Partial<PaymentValue>, event: React.MouseEvent<HTMLElement, MouseEvent>|React.ChangeEvent<HTMLInputElement>) => {
         const combinedNewValue : PaymentValue = {
             ...value,
             ...newValue,
@@ -313,33 +310,33 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
         
         
         // update:
-        triggerValueChange(combinedNewValue, { triggerAt: 'immediately' });
+        triggerValueChange(combinedNewValue, { triggerAt: 'immediately', event: event });
     });
     
     
     
     // handlers:
-    const handleProviderChange          = useEvent((newBrand: string) => {
+    const handleProviderChange          = useEvent((newBrand: string, event: React.MouseEvent<HTMLElement, MouseEvent>) => {
         setValue({
             brand                 : newBrand,
-        });
+        }, event);
     });
-    const handleAmountChange            = useEvent<EditorChangeEventHandler<number|null>>((newEditedAmount) => {
+    const handleAmountChange            = useEvent<EditorChangeEventHandler<number|null, React.ChangeEvent<HTMLInputElement>>>((newEditedAmount, event) => {
         setEditedAmount(newEditedAmount);
         setValue({
             amount                : revertSystemCurrencyIfRequired(newEditedAmount, currencyRate, customerCurrency),
-        });
+        }, event);
     });
-    const handleFeeChange               = useEvent<EditorChangeEventHandler<number|null>>((newEditedFee) => {
+    const handleFeeChange               = useEvent<EditorChangeEventHandler<number|null, React.ChangeEvent<HTMLInputElement>>>((newEditedFee, event) => {
         setEditedFee(newEditedFee);
         setValue({
             fee                   : revertSystemCurrencyIfRequired(newEditedFee, currencyRate, customerCurrency),
-        });
+        }, event);
     });
     const handleConfirmationEmailChange = useEvent<EventHandler<ActiveChangeEvent>>(({active: newConfirmation}) => {
         setValue({
             sendConfirmationEmail : newConfirmation,
-        });
+        }, undefined as any); // TODO: fix the event
     });
     
     const handleAmountFocus             = useEvent((): void => {
@@ -549,7 +546,7 @@ const PaymentEditor = (props: PaymentEditorProps): JSX.Element|null => {
                                 
                                 
                                 // handlers:
-                                onClick={() => handleProviderChange(provider)}
+                                onClick={(event) => handleProviderChange(provider, event)}
                             >
                                 {provider}
                             </ListItem>
