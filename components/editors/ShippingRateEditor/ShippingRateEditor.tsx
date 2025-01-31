@@ -41,11 +41,12 @@ import {
     List,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
+// heymarco components:
+import {
+    type EditorProps,
+}                           from '@heymarco/editor'
+
 // internal components:
-import type {
-    // react components:
-    EditorProps,
-}                           from '@/components/editors/Editor'
 import type {
     // types:
     UpdatedHandler,
@@ -80,7 +81,7 @@ import {
 export interface ShippingRateEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Pick<EditorProps<TElement, ShippingRate[]>,
+        Pick<EditorProps<TElement, ShippingRate[], React.MouseEvent<Element, MouseEvent>>,
             // values:
             |'defaultValue' // not supported, controllable only
             |'value'
@@ -119,7 +120,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
     const {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllableAndUncontrollable<ShippingRate[]>({
+    } = useControllableAndUncontrollable<ShippingRate[], React.MouseEvent<Element, MouseEvent>>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
         onValueChange      : onControllableValueChange,
@@ -184,7 +185,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
         
         const mutatedValue = value.slice(0); // copy
         mutatedValue.push(createdModel as ShippingRateWithId);
-        triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
+        triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fix this event
     });
     const handleModelUpdated = useEvent<UpdatedHandler<ShippingRateWithId>>((updatedModelWithId) => {
         const {
@@ -205,14 +206,14 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
             mutatedValue[modelIndex] = currentModel;
         } // if
         mutatedValue.sort((a, b) => (a.start - b.start));
-        triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
+        triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fix this event
     });
     const handleModelDeleted = useEvent<DeleteHandler<ShippingRateWithId>>(({id}) => {
         const mutatedValue = value.slice(0); // copy
         const modelIndex = mirrorValueWithId.findIndex((model) => model.id === id);
         if (modelIndex < 0) return;
         mutatedValue.splice(modelIndex, 1);
-        triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
+        triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fix this event
     });
     
     
