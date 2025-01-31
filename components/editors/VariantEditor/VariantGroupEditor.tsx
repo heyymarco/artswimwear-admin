@@ -10,11 +10,14 @@ import {
     useEvent,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
-// heymarco:
+// heymarco core:
 import {
     // utilities:
     useControllableAndUncontrollable,
 }                           from '@heymarco/events'
+import {
+    type DraggedEvent,
+}                           from '@heymarco/draggable'
 
 // reusable-ui components:
 import {
@@ -24,6 +27,11 @@ import {
 
 // heymarco components:
 import {
+    type EditorProps,
+}                           from '@heymarco/editor'
+import {
+    type ChildrenChangeEventHandler,
+    
     OrderableListItemProps,
     OrderableListItem,
     
@@ -31,10 +39,6 @@ import {
 }                           from '@heymarco/orderable-list'
 
 // internal components:
-import type {
-    // react components:
-    EditorProps,
-}                           from '@/components/editors/Editor'
 import type {
     // types:
     UpdatedHandler,
@@ -83,7 +87,7 @@ import {
 interface VariantGroupEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Pick<EditorProps<TElement, VariantGroupDetail[]>,
+        Pick<EditorProps<TElement, VariantGroupDetail[], React.MouseEvent<Element, MouseEvent>|DraggedEvent<HTMLElement>>,
             // values:
             |'defaultValue' // not supported, controllable only
             |'value'
@@ -111,8 +115,8 @@ interface VariantGroupEditorProps<TElement extends Element = HTMLElement>
         VariantStateProps
 {
     // components:
-    modelCreateComponent  ?: React.ReactComponentElement<any, ModelCreateProps & EditVariantGroupDialogProps>
-    modelPreviewComponent  : React.ReactComponentElement<any, VariantGroupPreviewProps>
+    modelCreateComponent  ?: React.ReactElement<ModelCreateProps & EditVariantGroupDialogProps>
+    modelPreviewComponent  : React.ReactElement<VariantGroupPreviewProps>
 }
 const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: VariantGroupEditorProps<TElement>): JSX.Element|null => {
     // rest props:
@@ -148,7 +152,7 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
     const {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllableAndUncontrollable<VariantGroupDetail[]>({
+    } = useControllableAndUncontrollable<VariantGroupDetail[], React.MouseEvent<Element, MouseEvent>|DraggedEvent<HTMLElement>>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
         onValueChange      : onControllableValueChange,
@@ -157,7 +161,7 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
     
     
     // handlers:
-    const handleChildrenChange = useEvent((children: React.ReactComponentElement<any, OrderableListItemProps<HTMLElement, unknown>>[]) => {
+    const handleChildrenChange = useEvent<ChildrenChangeEventHandler<unknown>>((children, event) => {
         const restChildren = children.slice(0); // copy
         if (!!modelCreateComponent) restChildren.splice(0, 1); // remove the <ModelCreate> component
         triggerValueChange(
@@ -169,7 +173,7 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
                     sort: index,
                 } satisfies VariantGroupDetail;
             })
-        , { triggerAt: 'immediately' });
+        , { triggerAt: 'immediately', event: event });
     });
     const handleModelCreated   = useEvent<CreateHandler<VariantGroupDetail>>((createdModel) => {
         const mutatedValue = value.slice(0); // copy
@@ -180,7 +184,7 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
                 sort: index,
             };
         } // for
-        triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
+        triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fis this event
     });
     const handleModelUpdated   = useEvent<UpdatedHandler<VariantGroupDetail>>((updatedModel) => {
         const mutatedValue = value.slice(0); // copy
@@ -192,7 +196,7 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
         else {
             mutatedValue[modelIndex] = updatedModel as VariantGroupDetail;
         } // if
-        triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
+        triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fis this event
     });
     const handleModelDeleted   = useEvent<DeleteHandler<VariantGroupDetail>>(({id}) => {
         const mutatedValue = value.slice(0); // copy
@@ -205,7 +209,7 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
                 sort: index,
             };
         } // for
-        triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
+        triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fis this event
     });
     
     
