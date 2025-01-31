@@ -6,6 +6,11 @@ import {
 
 // reusable-ui core:
 import {
+    // a collection of TypeScript type utilities, assertions, and validations for ensuring type safety in reusable UI components:
+    type NoForeignProps,
+    
+    
+    
     // react helper hooks:
     useEvent,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
@@ -23,15 +28,13 @@ import {
     List,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
+// heymarco components:
+import {
+    type EditorChangeEventHandler,
+    type EditorProps,
+}                           from '@heymarco/editor'
+
 // internal components:
-import type {
-    // react components:
-    EditorProps,
-}                           from '@/components/editors/Editor'
-import type {
-    // types:
-    UpdatedHandler,
-}                           from '@/components/dialogs/ComplexEditModelDialog'
 import type {
     StockPreviewProps,
 }                           from '@/components/views/StockPreview'
@@ -49,7 +52,7 @@ import {
 interface StockListEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Pick<EditorProps<TElement, StockDetail[]>,
+        Pick<EditorProps<TElement, StockDetail[], React.ChangeEvent<HTMLInputElement>>,
             // values:
             |'defaultValue' // not supported, controllable only
             |'value'
@@ -92,7 +95,12 @@ const StockListEditor = <TElement extends Element = HTMLElement>(props: StockLis
         
         // components:
         modelPreviewComponent,
-    ...restListProps} = props;
+        
+        
+        
+        // other props:
+        ...restListProps
+    } = props;
     
     
     
@@ -100,7 +108,7 @@ const StockListEditor = <TElement extends Element = HTMLElement>(props: StockLis
     const {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllableAndUncontrollable<StockDetail[]>({
+    } = useControllableAndUncontrollable<StockDetail[], React.ChangeEvent<HTMLInputElement>>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
         onValueChange      : onControllableValueChange,
@@ -109,7 +117,7 @@ const StockListEditor = <TElement extends Element = HTMLElement>(props: StockLis
     
     
     // handlers:
-    const handleModelUpdated   = useEvent<UpdatedHandler<StockDetail>>((updatedModel) => {
+    const handleModelUpdated   = useEvent<EditorChangeEventHandler<StockDetail, React.ChangeEvent<HTMLInputElement>>>((updatedModel, event) => {
         const mutatedValue = value.slice(0); // copy
         const id = updatedModel.id;
         const modelIndex = mutatedValue.findIndex((model) => model.id === id);
@@ -119,7 +127,7 @@ const StockListEditor = <TElement extends Element = HTMLElement>(props: StockLis
         else {
             mutatedValue[modelIndex] = updatedModel as StockDetail;
         } // if
-        triggerValueChange(mutatedValue, { triggerAt: 'immediately' });
+        triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: event });
     });
     
     
@@ -129,7 +137,7 @@ const StockListEditor = <TElement extends Element = HTMLElement>(props: StockLis
     return (
         <List<TElement>
             // other props:
-            {...restListProps}
+            {...restListProps satisfies NoForeignProps<typeof restListProps, ListProps<TElement>>}
         >
             {value.map((stockItem) =>
                 /* <ModelPreview> */
@@ -156,6 +164,6 @@ const StockListEditor = <TElement extends Element = HTMLElement>(props: StockLis
     );
 };
 export {
-    StockListEditor,
-    StockListEditor as default,
+    StockListEditor,            // named export for readibility
+    StockListEditor as default, // default export to support React.lazy
 }
