@@ -103,6 +103,9 @@ export interface StockEditorProps<out TElement extends Element = HTMLDivElement,
             // styles:
             |'style'          // moved to <Tab>
             
+            // accessibilities:
+            |'aria-label'     // moved to <Tab>
+            
             // components:
             |'listComponent'  // moved to <Tab>
         >,
@@ -129,6 +132,9 @@ export interface StockEditorProps<out TElement extends Element = HTMLDivElement,
             
             // styles:
             |'style'          // moved to <Tab>
+            
+            // accessibilities:
+            |'aria-label'     // moved to <Tab>
         >
 {
 }
@@ -166,6 +172,11 @@ const StockEditor = <TElement extends Element = HTMLDivElement, TValue extends n
         
         // styles:
         style,                                             // take, moved to <Tab>
+        
+        
+        
+        // accessibilities:
+        'aria-label'            : ariaLabel = 'Stock',     // take, moved to <Tab>
         
         
         
@@ -319,6 +330,11 @@ const StockEditor = <TElement extends Element = HTMLDivElement, TValue extends n
                 
                 // styles:
                 style={style}
+                
+                
+                
+                // accessibilities:
+                aria-label={ariaLabel}
                 
                 
                 
