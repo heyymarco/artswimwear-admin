@@ -54,7 +54,6 @@ import type {
     // types:
     ComplexEditModelDialogResult,
     UpdatedHandler,
-    DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
     EditTemplateVariantGroupDialogProps,
@@ -73,6 +72,8 @@ import {
 // models:
 import {
     // types:
+    type ModelDeletingEventHandler,
+    
     type TemplateVariantGroupDetail,
 }                           from '@/models'
 
@@ -96,7 +97,7 @@ export interface TemplateVariantGroupPreviewProps
 {
     // handlers:
     onModelUpdate ?: UpdatedHandler<TemplateVariantGroupDetail>
-    onModelDelete ?: DeleteHandler<TemplateVariantGroupDetail>
+    onModelDelete ?: ModelDeletingEventHandler<TemplateVariantGroupDetail>
     onModelEdit   ?: React.MouseEventHandler<HTMLButtonElement>
 }
 const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): JSX.Element|null => {
@@ -190,7 +191,7 @@ const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): J
                 break;
             
             case false:     // dialog deleted
-                await onModelDelete?.(model);
+                await onModelDelete?.({ draft: model, event: event });
                 break;
             
             default:        // dialog updated

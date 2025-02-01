@@ -74,8 +74,6 @@ import {
     UpdateHandler,
     AfterUpdateHandler,
     
-    DeleteHandler,
-    
     UpdateSideHandler,
     DeleteSideHandler,
     
@@ -97,6 +95,7 @@ import {
     // types:
     type ModelConfirmUnsavedEventHandler,
     type ModelConfirmDeleteEventHandler,
+    type ModelDeletingEventHandler,
     
     type AdminDetail,
     type RoleDetail,
@@ -223,7 +222,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
         if (!!sessionEmail && (sessionEmail.toLowerCase() === initialEmailRef.current.toLowerCase())) await updateSession(); // update the session if updated current admin
     });
     
-    const handleDelete               = useEvent<DeleteHandler<AdminDetail>>(async ({id}) => {
+    const handleDelete               = useEvent<ModelDeletingEventHandler<AdminDetail>>(async ({ draft: { id } }) => {
         await deleteAdmin({
             id : id,
         }).unwrap();
@@ -233,7 +232,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
         setRoleId(id); // select the last created role
         setIsModified(true);
     });
-    const handleRoleDeleted          = useEvent<DeleteHandler<RoleDetail>>(async ({id}) => {
+    const handleRoleDeleted          = useEvent<ModelDeletingEventHandler<RoleDetail>>(async ({ draft: { id } }) => {
         if (id && (id === roleId)) { // if currently selected
             // the related role was deleted => set to null (no selection):
             setRoleId(null);

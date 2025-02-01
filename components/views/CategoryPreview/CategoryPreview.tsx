@@ -96,7 +96,6 @@ import {
 import {
     // types:
     type ComplexEditModelDialogResult,
-    type DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
     type EditCategoryDialogProps,
@@ -222,7 +221,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
     
     // handlers:
     type EditMode = 'images'|'full'
-    const handleEdit = useEvent((editMode: EditMode): void => {
+    const handleEdit = useEvent((editMode: EditMode, event: React.MouseEvent<Element, MouseEvent>): void => {
         // just for cosmetic backdrop:
         const dummyPromise = (
             ['images', 'full'].includes(editMode)
@@ -277,7 +276,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
         
         dialogPromise.then((updatedModel) => {
             if (updatedModel === false) {
-                onModelDelete?.(model);
+                onModelDelete?.({ draft: model, event: event });
             } // if
         });
     });
@@ -339,7 +338,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                         floatingShift={0}
                         floatingOffset={0}
                     >
-                        <EditButton className='edit overlay' onClick={() => handleEdit('images')} />
+                        <EditButton className='edit overlay' onClick={(event) => handleEdit('images', event)} />
                     </Badge>
                     : null
                 }
@@ -432,7 +431,7 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
                     
                     
                     // handlers:
-                    onClick={() => handleEdit('full')}
+                    onClick={(event) => handleEdit('full', event)}
                 />}
                 
                 <VisibilityBadge visibility={visibility} className='visibility' />
@@ -699,7 +698,7 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
     
     // handlers:
     type EditMode = 'images'|'full'
-    const handleEdit = useEvent((editMode: EditMode): void => {
+    const handleEdit = useEvent((editMode: EditMode, event: React.MouseEvent<Element, MouseEvent>): void => {
         // just for cosmetic backdrop:
         const dummyPromise = (
             ['images', 'full'].includes(editMode)
@@ -754,7 +753,7 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
         
         dialogPromise.then((updatedModel) => {
             if (updatedModel === false) {
-                onModelDelete?.(model);
+                onModelDelete?.({ draft: model, event: event });
             } // if
         });
     });
@@ -816,7 +815,7 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                         floatingShift={0}
                         floatingOffset={0}
                     >
-                        <EditButton className='edit overlay' onClick={() => handleEdit('images')} />
+                        <EditButton className='edit overlay' onClick={(event) => handleEdit('images', event)} />
                     </Badge>
                     : null
                 }
@@ -909,7 +908,7 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
                     
                     
                     // handlers:
-                    onClick={() => handleEdit('full')}
+                    onClick={(event) => handleEdit('full', event)}
                 />}
                 
                 <VisibilityBadge visibility={visibility} className='visibility' />

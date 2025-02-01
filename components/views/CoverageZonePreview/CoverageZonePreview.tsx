@@ -57,7 +57,6 @@ import {
     // types:
     type ComplexEditModelDialogResult,
     type UpdatedHandler,
-    type DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
     type EditCoverageZoneDialogProps,
@@ -75,6 +74,8 @@ import {
 
 // models:
 import {
+    type ModelDeletingEventHandler,
+    
     type CoverageZoneDetail,
     type CoverageSubzoneDetail,
 }                           from '@/models'
@@ -108,7 +109,7 @@ export interface CoverageZonePreviewProps<TCoverageZoneDetail extends CoverageZo
     
     // handlers:
     onModelUpdate ?: UpdatedHandler<TCoverageZoneDetail>
-    onModelDelete ?: DeleteHandler<TCoverageZoneDetail>
+    onModelDelete ?: ModelDeletingEventHandler<TCoverageZoneDetail>
 }
 const CoverageZonePreview = <TCoverageZoneDetail extends CoverageZoneDetail<TCoverageSubzoneDetail>, TCoverageSubzoneDetail extends CoverageSubzoneDetail>(props: CoverageZonePreviewProps<TCoverageZoneDetail, TCoverageSubzoneDetail>): JSX.Element|null => {
     // styles:
@@ -188,7 +189,7 @@ const CoverageZonePreview = <TCoverageZoneDetail extends CoverageZoneDetail<TCov
     
     
     // handlers:
-    const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async () => {
+    const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async (event) => {
         const updatedCoverageZoneModel = await showDialog<ComplexEditModelDialogResult<TCoverageZoneDetail>>(
             <EditCoverageZoneDialog<TCoverageZoneDetail, TCoverageSubzoneDetail>
                 // data:
@@ -220,7 +221,7 @@ const CoverageZonePreview = <TCoverageZoneDetail extends CoverageZoneDetail<TCov
                 break;
             
             case false:     // dialog deleted
-                await onModelDelete?.(model);
+                await onModelDelete?.({ draft: model, event: event });
                 break;
             
             default:        // dialog updated

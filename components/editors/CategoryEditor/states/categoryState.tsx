@@ -22,10 +22,6 @@ import {
 
 // internal components:
 import {
-    // types:
-    type DeleteHandler,
-}                           from '@/components/dialogs/ComplexEditModelDialog'
-import {
     // react components:
     type EditCategoryDialogProps,
 }                           from '@/components/dialogs/EditCategoryDialog'
@@ -36,6 +32,8 @@ import {
 // models:
 import {
     // types:
+    type ModelDeletingEventHandler,
+    
     type CategoryDetail,
 }                           from '@/models'
 
@@ -128,7 +126,7 @@ export interface CategoryState
     
     // handlers:
     onModelSelect        : EditorChangeEventHandler<ModelSelectEvent, React.MouseEvent<Element, MouseEvent>>
-    onModelDelete        : DeleteHandler<CategoryDetail>
+    onModelDelete        : ModelDeletingEventHandler<CategoryDetail>
 }
 
 const noopCallback = () => {};

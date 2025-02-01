@@ -46,7 +46,6 @@ import {
 import type {
     // types:
     UpdatedHandler,
-    DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
     ShippingWeightEditor,
@@ -57,6 +56,8 @@ import {
 
 // models:
 import {
+    type ModelDeletingEventHandler,
+    
     type ShippingRateWithId,
 }                           from '@/models'
 
@@ -71,7 +72,7 @@ export interface ShippingRatePreviewProps extends ModelPreviewProps<ShippingRate
     
     // handlers:
     onModelUpdate ?: UpdatedHandler<ShippingRateWithId>
-    onModelDelete ?: DeleteHandler<ShippingRateWithId>
+    onModelDelete ?: ModelDeletingEventHandler<ShippingRateWithId>
 }
 const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null => {
     // styles:
@@ -138,8 +139,8 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
         model.rate = newValue ?? 0;
         onModelUpdate(model);
     });
-    const handleDelete               = useEvent(() => {
-        onModelDelete?.(model);
+    const handleDelete               = useEvent((event) => {
+        onModelDelete?.({ draft: model, event: event });
     });
     
     

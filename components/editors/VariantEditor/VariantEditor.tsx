@@ -42,7 +42,6 @@ import {
 import type {
     // types:
     UpdatedHandler,
-    DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import type {
     EditVariantDialogProps,
@@ -69,6 +68,8 @@ import {
 // models:
 import {
     // types:
+    type ModelDeletingEventHandler,
+    
     type VariantDetail,
 }                           from '@/models'
 
@@ -176,7 +177,7 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
         } // if
         triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fix this event
     });
-    const handleModelDeleted   = useEvent<DeleteHandler<VariantDetail>>(({id}) => {
+    const handleModelDeleted   = useEvent<ModelDeletingEventHandler<VariantDetail>>(({ draft: { id } }) => {
         const mutatedValue = value.slice(0); // copy
         const modelIndex = mutatedValue.findIndex((model) => model.id === id);
         if (modelIndex < 0) return;

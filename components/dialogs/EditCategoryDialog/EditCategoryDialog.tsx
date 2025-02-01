@@ -79,8 +79,6 @@ import {
     // types:
     UpdateHandler,
     
-    DeleteHandler,
-    
     UpdateSideHandler,
     DeleteSideHandler,
     
@@ -102,6 +100,7 @@ import {
     
     type ModelConfirmUnsavedEventHandler,
     type ModelConfirmDeleteEventHandler,
+    type ModelDeletingEventHandler,
     
     type ProductVisibility,
     type CategoryDetail,
@@ -465,7 +464,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         } // if
     });
     
-    const handleDelete               = useEvent<DeleteHandler<CategoryDetail>>(async ({id}) => {
+    const handleDelete               = useEvent<ModelDeletingEventHandler<CategoryDetail>>(async ({ draft: { id } }) => {
         if (isDbMocked) {
             const recordIndex = mockCategoryDb.findIndex(({id: searchId}) => (searchId === id));
             if (recordIndex < 0) return;

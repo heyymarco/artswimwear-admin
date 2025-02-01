@@ -24,8 +24,6 @@ import type {
     
     UpdateDraftHandler,
     
-    DeleteHandler,
-    
     
     
     // react components:
@@ -41,6 +39,9 @@ import {
 import {
     // types:
     type PartialModel,
+    
+    type ModelDeletingEventHandler,
+    
     type VariantGroupDetail,
     type TemplateVariantGroupDetail,
 }                           from '@/models'
@@ -129,7 +130,7 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
         return await updateTemplateVariantGroup(templateVariantGroupDetail).unwrap();
     });
     
-    const handleDelete         = useEvent<DeleteHandler<VariantGroupDetail>>(async ({id}) => {
+    const handleDelete         = useEvent<ModelDeletingEventHandler<VariantGroupDetail>>(async ({ draft: { id } }) => {
         await deleteTemplateVariantGroup({
             id : id,
         }).unwrap();

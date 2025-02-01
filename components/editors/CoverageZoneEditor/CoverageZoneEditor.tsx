@@ -63,7 +63,6 @@ import {
 import type {
     // types:
     UpdatedHandler,
-    DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
     type EditCoverageZoneDialogProps,
@@ -97,6 +96,8 @@ import {
 // models:
 import {
     // types:
+    type ModelDeletingEventHandler,
+    
     type CoverageZoneDetail,
     type CoverageSubzoneDetail,
 }                           from '@/models'
@@ -296,7 +297,7 @@ const CoverageZoneEditor = <TCoverageZoneDetail extends CoverageZoneDetail<TCove
         } // if
         triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fix the event
     });
-    const handleModelDeleted   = useEvent<DeleteHandler<TCoverageZoneDetail>>(({id}) => {
+    const handleModelDeleted   = useEvent<ModelDeletingEventHandler<TCoverageZoneDetail>>(({ draft: { id } }) => {
         const mutatedValue = value.slice(0); // copy
         const modelIndex = value.findIndex((model) => model.id === id);
         if (modelIndex < 0) return;

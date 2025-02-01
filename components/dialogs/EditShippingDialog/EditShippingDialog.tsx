@@ -98,8 +98,6 @@ import {
     // types:
     UpdateHandler,
     
-    DeleteHandler,
-    
     
     
     // react components:
@@ -115,6 +113,7 @@ import {
     // types:
     type ModelConfirmUnsavedEventHandler,
     type ModelConfirmDeleteEventHandler,
+    type ModelDeletingEventHandler,
     
     type ShippingDetail,
     type ShippingRate,
@@ -378,7 +377,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
         }).unwrap();
     });
     
-    const handleDelete         = useEvent<DeleteHandler<ShippingDetail>>(async ({id}) => {
+    const handleDelete         = useEvent<ModelDeletingEventHandler<ShippingDetail>>(async ({ draft: { id } }) => {
         await deleteShipping({
             id : id,
         }).unwrap();

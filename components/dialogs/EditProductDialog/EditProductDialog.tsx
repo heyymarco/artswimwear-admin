@@ -88,8 +88,6 @@ import {
     // types:
     UpdateHandler,
     
-    DeleteHandler,
-    
     UpdateSideHandler,
     DeleteSideHandler,
     
@@ -136,6 +134,7 @@ import {
     
     type ModelConfirmUnsavedEventHandler,
     type ModelConfirmDeleteEventHandler,
+    type ModelDeletingEventHandler,
     
     type ProductVisibility,
     type Stock,
@@ -458,7 +457,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         } // try
     });
     
-    const handleDelete               = useEvent<DeleteHandler<ProductDetail>>(async ({id}) => {
+    const handleDelete               = useEvent<ModelDeletingEventHandler<ProductDetail>>(async ({ draft: { id } }) => {
         await deleteProduct({
             id : id,
         }).unwrap();

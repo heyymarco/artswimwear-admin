@@ -18,10 +18,6 @@ import {
 
 // internal components:
 import {
-    // types:
-    type DeleteHandler,
-}                           from '@/components/dialogs/ComplexEditModelDialog'
-import {
     ModelCreateOuterProps,
     
     PaginationListProps,
@@ -34,6 +30,8 @@ import {
 
 // models:
 import {
+    type ModelDeletingEventHandler,
+    
     type CategoryDetail,
 }                           from '@/models'
 
@@ -206,7 +204,7 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
             } // if
         } // if
     });
-    const handleModelDelete = useEvent<DeleteHandler<CategoryDetail>>(({ id }) => {
+    const handleModelDelete = useEvent<ModelDeletingEventHandler<CategoryDetail>>(({ draft: { id } }) => {
         // if the model deleted => treat as unselect:
         handleModelSelect({ id, selected: false }, undefined as any); // TODO: fix the event
     });

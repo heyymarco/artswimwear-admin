@@ -50,7 +50,6 @@ import {
 import type {
     // types:
     UpdatedHandler,
-    DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
     type CreateHandler,
@@ -66,6 +65,8 @@ import {
 // models:
 import {
     // types:
+    type ModelDeletingEventHandler,
+    
     type ShippingRate,
     type ShippingRateWithId,
 }                           from '@/models'
@@ -208,7 +209,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
         mutatedValue.sort((a, b) => (a.start - b.start));
         triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fix this event
     });
-    const handleModelDeleted = useEvent<DeleteHandler<ShippingRateWithId>>(({id}) => {
+    const handleModelDeleted = useEvent<ModelDeletingEventHandler<ShippingRateWithId>>(({ draft: { id } }) => {
         const mutatedValue = value.slice(0); // copy
         const modelIndex = mirrorValueWithId.findIndex((model) => model.id === id);
         if (modelIndex < 0) return;

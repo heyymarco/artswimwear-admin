@@ -67,8 +67,6 @@ import {
     UpdateHandler,
     AfterUpdateHandler,
     
-    DeleteHandler,
-    
     
     
     // react components:
@@ -80,6 +78,7 @@ import {
 import {
     type ModelConfirmUnsavedEventHandler,
     type ModelConfirmDeleteEventHandler,
+    type ModelDeletingEventHandler,
     
     type RoleDetail,
 }                           from '@/models'
@@ -256,7 +255,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
         if (!!currentRoleId && (currentRoleId === model?.id)) await updateSession(); // update the session if updated current role
     });
     
-    const handleDelete         = useEvent<DeleteHandler<RoleDetail>>(async ({id}) => {
+    const handleDelete         = useEvent<ModelDeletingEventHandler<RoleDetail>>(async ({ draft: { id } }) => {
         await deleteRole({
             id : id,
         }).unwrap();

@@ -62,7 +62,6 @@ import type {
     // types:
     ComplexEditModelDialogResult,
     UpdatedHandler,
-    DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
     EditVariantGroupDialogProps,
@@ -81,6 +80,8 @@ import {
 // models:
 import {
     // types:
+    type ModelDeletingEventHandler,
+    
     type VariantGroupDetail,
 }                           from '@/models'
 
@@ -104,7 +105,7 @@ export interface VariantGroupPreviewProps
 {
     // handlers:
     onModelUpdate ?: UpdatedHandler<VariantGroupDetail>
-    onModelDelete ?: DeleteHandler<VariantGroupDetail>
+    onModelDelete ?: ModelDeletingEventHandler<VariantGroupDetail>
 }
 const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null => {
     // styles:
@@ -168,7 +169,7 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
     
     
     // handlers:
-    const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async () => {
+    const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async (event) => {
         const updatedVariantGroupModel = await showDialog<ComplexEditModelDialogResult<VariantGroupDetail>>(
             <EditVariantGroupDialog
                 // data:
@@ -192,7 +193,7 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
                 break;
             
             case false:     // dialog deleted
-                await onModelDelete?.(model);
+                await onModelDelete?.({ draft: model, event: event });
                 break;
             
             default:        // dialog updated

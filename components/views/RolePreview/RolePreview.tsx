@@ -58,7 +58,6 @@ import type {
 import type {
     // types:
     ComplexEditModelDialogResult,
-    DeleteHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
     EditRoleDialog,
@@ -66,6 +65,8 @@ import {
 
 // models:
 import {
+    type ModelDeletingEventHandler,
+    
     type RoleDetail,
 }                           from '@/models'
 
@@ -84,7 +85,7 @@ export interface RolePreviewProps
     
     // handlers:
     onModelSelect ?: EditorChangeEventHandler<string|null, React.MouseEvent<HTMLElement, MouseEvent>>
-    onModelDelete ?: DeleteHandler<RoleDetail>
+    onModelDelete ?: ModelDeletingEventHandler<RoleDetail>
 }
 const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     // styles:
@@ -164,7 +165,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
             />
         );
         if (updatedRoleModel === false) {
-            onModelDelete?.(model);
+            onModelDelete?.({ draft: model, event: event });
         } // if
     });
     
