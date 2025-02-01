@@ -619,7 +619,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
             // onAfterUpdate={handleAfterUpdate}
             
             onDelete={handleDelete}
-            // onAfterDelete={undefined}
+            // onDeleted={undefined}
             
             onSideUpdate={handleSideUpdate}
             onSideDelete={handleSideDelete}

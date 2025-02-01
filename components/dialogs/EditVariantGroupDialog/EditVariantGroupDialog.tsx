@@ -131,7 +131,7 @@ export interface EditVariantGroupDialogProps
             |'onAfterUpdate'
             
             |'onDelete'
-            |'onAfterDelete'
+            |'onDeleted'
             
             |'onSideUpdate'
             |'onSideDelete'
@@ -298,7 +298,7 @@ const EditVariantGroupDialog = (props: EditVariantGroupDialogProps): JSX.Element
             // onAfterUpdate={handleAfterUpdate}
             
             // onDelete={handleDelete}
-            // onAfterDelete={undefined}
+            // onDeleted={undefined}
             
             onConfirmDelete={handleConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}

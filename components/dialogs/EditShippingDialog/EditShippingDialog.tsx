@@ -457,7 +457,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             // onAfterUpdate={handleAfterUpdate}
             
             onDelete={handleDelete}
-            // onAfterDelete={undefined}
+            // onDeleted={undefined}
             
             onConfirmDelete={handleConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}
