@@ -80,7 +80,6 @@ import {
     DeleteSideHandler,
     
     ConfirmDeleteHandler,
-    ConfirmUnsavedHandler,
     
     
     
@@ -98,6 +97,8 @@ import {
 // models:
 import {
     // types:
+    type ModelConfirmUnsavedEventHandler,
+    
     type AdminDetail,
     type RoleDetail,
 }                           from '@/models'
@@ -286,7 +287,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
             </p>,
         };
     });
-    const handleConfirmUnsaved       = useEvent<ConfirmUnsavedHandler<AdminDetail>>(() => {
+    const handleConfirmUnsaved       = useEvent<ModelConfirmUnsavedEventHandler<AdminDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>

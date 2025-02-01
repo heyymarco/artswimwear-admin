@@ -72,7 +72,6 @@ import {
     UpdateHandler,
     
     ConfirmDeleteHandler,
-    ConfirmUnsavedHandler,
     
     
     
@@ -98,6 +97,9 @@ import {
 import {
     // types:
     type PartialModel,
+    
+    type ModelConfirmUnsavedEventHandler,
+    
     type CoverageZoneDetail,
     type CoverageSubzoneDetail,
     type ShippingEta,
@@ -253,7 +255,7 @@ const EditCoverageZoneDialog = <TCoverageZoneDetail extends CoverageZoneDetail<T
             </>,
         };
     });
-    const handleConfirmUnsaved = useEvent<ConfirmUnsavedHandler<TCoverageZoneDetail>>(() => {
+    const handleConfirmUnsaved = useEvent<ModelConfirmUnsavedEventHandler<TCoverageZoneDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>

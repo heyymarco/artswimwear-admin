@@ -68,7 +68,6 @@ import {
     DeleteSideHandler,
     
     ConfirmDeleteHandler,
-    ConfirmUnsavedHandler,
     
     
     
@@ -95,6 +94,8 @@ import type {
 // models:
 import {
     // types:
+    type ModelConfirmUnsavedEventHandler,
+    
     type VariantDetail,
 }                           from '@/models'
 
@@ -269,7 +270,7 @@ const EditVariantDialog = (props: EditVariantDialogProps): JSX.Element|null => {
             </>,
         };
     });
-    const handleConfirmUnsaved       = useEvent<ConfirmUnsavedHandler<VariantDetail>>(() => {
+    const handleConfirmUnsaved       = useEvent<ModelConfirmUnsavedEventHandler<VariantDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>

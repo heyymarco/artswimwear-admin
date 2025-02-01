@@ -70,7 +70,6 @@ import {
     DeleteHandler,
     
     ConfirmDeleteHandler,
-    ConfirmUnsavedHandler,
     
     
     
@@ -81,6 +80,8 @@ import {
 
 // models:
 import {
+    type ModelConfirmUnsavedEventHandler,
+    
     type RoleDetail,
 }                           from '@/models'
 
@@ -276,7 +277,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             </>,
         };
     });
-    const handleConfirmUnsaved = useEvent<ConfirmUnsavedHandler<RoleDetail>>(() => {
+    const handleConfirmUnsaved = useEvent<ModelConfirmUnsavedEventHandler<RoleDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>

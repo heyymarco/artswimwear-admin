@@ -70,7 +70,6 @@ import {
     UpdateDraftHandler,
     
     ConfirmDeleteHandler,
-    ConfirmUnsavedHandler,
     
     
     
@@ -88,6 +87,8 @@ import {
 // models:
 import {
     // types:
+    type ModelConfirmUnsavedEventHandler,
+    
     type VariantDetail,
     type VariantGroupDetail,
 }                           from '@/models'
@@ -237,7 +238,7 @@ const EditVariantGroupDialog = (props: EditVariantGroupDialogProps): JSX.Element
             </>,
         };
     });
-    const handleConfirmUnsaved       = useEvent<ConfirmUnsavedHandler<VariantGroupDetail>>(() => {
+    const handleConfirmUnsaved       = useEvent<ModelConfirmUnsavedEventHandler<VariantGroupDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>

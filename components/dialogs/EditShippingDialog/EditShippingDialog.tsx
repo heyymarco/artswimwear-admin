@@ -101,7 +101,6 @@ import {
     DeleteHandler,
     
     ConfirmDeleteHandler,
-    ConfirmUnsavedHandler,
     
     
     
@@ -116,6 +115,8 @@ import type {
 }                           from '@prisma/client'
 import {
     // types:
+    type ModelConfirmUnsavedEventHandler,
+    
     type ShippingDetail,
     type ShippingRate,
     type CoverageCountryDetail,
@@ -397,7 +398,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             </>,
         };
     });
-    const handleConfirmUnsaved = useEvent<ConfirmUnsavedHandler<ShippingDetail>>(() => {
+    const handleConfirmUnsaved = useEvent<ModelConfirmUnsavedEventHandler<ShippingDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>

@@ -41,8 +41,6 @@ import {
     // types:
     UpdateHandler,
     
-    ConfirmUnsavedHandler,
-    
     
     
     // react components:
@@ -52,6 +50,8 @@ import {
 
 // models:
 import {
+    type ModelConfirmUnsavedEventHandler,
+    
     type AdminPreferenceDetail,
     defaultAdminPreferenceDetail,
 }                           from '@/models'
@@ -160,7 +160,7 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
         }).unwrap();
     });
     
-    const handleConfirmUnsaved = useEvent<ConfirmUnsavedHandler<AdminPreferenceDetail>>(() => {
+    const handleConfirmUnsaved = useEvent<ModelConfirmUnsavedEventHandler<AdminPreferenceDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>

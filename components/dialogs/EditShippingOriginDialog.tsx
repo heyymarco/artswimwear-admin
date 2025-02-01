@@ -40,8 +40,6 @@ import {
     // types:
     UpdateHandler,
     
-    ConfirmUnsavedHandler,
-    
     
     
     // react components:
@@ -51,6 +49,8 @@ import {
 
 // models:
 import {
+    type ModelConfirmUnsavedEventHandler,
+    
     type DefaultShippingOriginDetail,
 }                           from '@/models'
 
@@ -147,7 +147,7 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
         return await updateDefaultShippingOrigin(model).unwrap();
     });
     
-    const handleConfirmUnsaved = useEvent<ConfirmUnsavedHandler<DefaultShippingOriginDetail>>(() => {
+    const handleConfirmUnsaved = useEvent<ModelConfirmUnsavedEventHandler<DefaultShippingOriginDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>

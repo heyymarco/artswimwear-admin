@@ -94,7 +94,6 @@ import {
     DeleteSideHandler,
     
     ConfirmDeleteHandler,
-    ConfirmUnsavedHandler,
     
     
     
@@ -136,6 +135,8 @@ import {
 import {
     // types:
     type PaginationArgs,
+    
+    type ModelConfirmUnsavedEventHandler,
     
     type ProductVisibility,
     type Stock,
@@ -502,7 +503,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             </>,
         };
     });
-    const handleConfirmUnsaved       = useEvent<ConfirmUnsavedHandler<ProductDetail>>(() => {
+    const handleConfirmUnsaved       = useEvent<ModelConfirmUnsavedEventHandler<ProductDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>

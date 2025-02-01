@@ -85,7 +85,6 @@ import {
     DeleteSideHandler,
     
     ConfirmDeleteHandler,
-    ConfirmUnsavedHandler,
     
     
     
@@ -102,6 +101,8 @@ import {
     // types:
     type MutationArgs,
     type PaginationArgs,
+    
+    type ModelConfirmUnsavedEventHandler,
     
     type ProductVisibility,
     type CategoryDetail,
@@ -516,7 +517,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
             </>,
         };
     });
-    const handleConfirmUnsaved       = useEvent<ConfirmUnsavedHandler<CategoryDetail>>(() => {
+    const handleConfirmUnsaved       = useEvent<ModelConfirmUnsavedEventHandler<CategoryDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>
