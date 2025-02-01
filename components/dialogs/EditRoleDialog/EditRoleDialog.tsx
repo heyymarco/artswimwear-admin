@@ -69,8 +69,6 @@ import {
     
     DeleteHandler,
     
-    ConfirmDeleteHandler,
-    
     
     
     // react components:
@@ -81,6 +79,7 @@ import {
 // models:
 import {
     type ModelConfirmUnsavedEventHandler,
+    type ModelConfirmDeleteEventHandler,
     
     type RoleDetail,
 }                           from '@/models'
@@ -263,15 +262,15 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
         }).unwrap();
     });
     
-    const handleConfirmDelete  = useEvent<ConfirmDeleteHandler<RoleDetail>>(({model}) => {
+    const handleConfirmDelete  = useEvent<ModelConfirmDeleteEventHandler<RoleDetail>>(({ draft }) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
                 <p>
-                    Are you sure to delete <strong>{model.name}</strong> role?
+                    Are you sure to delete <strong>{draft.name}</strong> role?
                 </p>
                 <p>
-                    The admins associated with the {model.name} role will still be logged in but will not have any access.<br />
+                    The admins associated with the {draft.name} role will still be logged in but will not have any access.<br />
                     You can re-assign their roles later.
                 </p>
             </>,

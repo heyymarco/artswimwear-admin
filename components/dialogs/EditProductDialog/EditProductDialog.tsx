@@ -93,8 +93,6 @@ import {
     UpdateSideHandler,
     DeleteSideHandler,
     
-    ConfirmDeleteHandler,
-    
     
     
     // react components:
@@ -137,6 +135,7 @@ import {
     type PaginationArgs,
     
     type ModelConfirmUnsavedEventHandler,
+    type ModelConfirmDeleteEventHandler,
     
     type ProductVisibility,
     type Stock,
@@ -490,12 +489,12 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         } // try
     });
     
-    const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<ProductDetail>>(({model}) => {
+    const handleConfirmDelete        = useEvent<ModelConfirmDeleteEventHandler<ProductDetail>>(({ draft }) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
                 <p>
-                    Are you sure to delete product <strong>{model.name}</strong>?
+                    Are you sure to delete product <strong>{draft.name}</strong>?
                 </p>
                 <p>
                     The associated product in existing orders will be marked as <strong>DELETED PRODUCT</strong>.

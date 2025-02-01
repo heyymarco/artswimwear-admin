@@ -100,8 +100,6 @@ import {
     
     DeleteHandler,
     
-    ConfirmDeleteHandler,
-    
     
     
     // react components:
@@ -116,6 +114,7 @@ import type {
 import {
     // types:
     type ModelConfirmUnsavedEventHandler,
+    type ModelConfirmDeleteEventHandler,
     
     type ShippingDetail,
     type ShippingRate,
@@ -385,12 +384,12 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
         }).unwrap();
     });
     
-    const handleConfirmDelete  = useEvent<ConfirmDeleteHandler<ShippingDetail>>(({model}) => {
+    const handleConfirmDelete  = useEvent<ModelConfirmDeleteEventHandler<ShippingDetail>>(({ draft }) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
                 <p>
-                    Are you sure to delete shipping <strong>{model.name}</strong>?
+                    Are you sure to delete shipping <strong>{draft.name}</strong>?
                 </p>
                 <p>
                     The associated shipping in existing orders will be marked as <strong>DELETED SHIPPING</strong>.

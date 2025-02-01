@@ -69,8 +69,6 @@ import {
     UpdateHandler,
     UpdateDraftHandler,
     
-    ConfirmDeleteHandler,
-    
     
     
     // react components:
@@ -88,6 +86,7 @@ import {
 import {
     // types:
     type ModelConfirmUnsavedEventHandler,
+    type ModelConfirmDeleteEventHandler,
     
     type VariantDetail,
     type VariantGroupDetail,
@@ -225,12 +224,12 @@ const EditVariantGroupDialog = (props: EditVariantGroupDialogProps): JSX.Element
         return (onUpdate !== undefined) ? onUpdate({draftModel, whenAdd, whenUpdate}) : draftModel;
     });
     
-    const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<VariantGroupDetail>>(({model}) => {
+    const handleConfirmDelete        = useEvent<ModelConfirmDeleteEventHandler<VariantGroupDetail>>(({ draft }) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
                 <p>
-                    Are you sure to delete variant group <strong>{model.name}</strong>?
+                    Are you sure to delete variant group <strong>{draft.name}</strong>?
                 </p>
                 <p>
                     The associated product variant in existing orders will be marked as <strong>DELETED VARIANT</strong>.

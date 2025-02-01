@@ -71,8 +71,6 @@ import {
     // types:
     UpdateHandler,
     
-    ConfirmDeleteHandler,
-    
     
     
     // react components:
@@ -99,6 +97,7 @@ import {
     type PartialModel,
     
     type ModelConfirmUnsavedEventHandler,
+    type ModelConfirmDeleteEventHandler,
     
     type CoverageZoneDetail,
     type CoverageSubzoneDetail,
@@ -245,12 +244,12 @@ const EditCoverageZoneDialog = <TCoverageZoneDetail extends CoverageZoneDetail<T
         } as PartialModel<TCoverageZoneDetail>;
     });
     
-    const handleConfirmDelete  = useEvent<ConfirmDeleteHandler<TCoverageZoneDetail>>(({model}) => {
+    const handleConfirmDelete  = useEvent<ModelConfirmDeleteEventHandler<TCoverageZoneDetail>>(({ draft }) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
                 <p>
-                    Are you sure to delete <strong>{zoneNameOverride ? zoneNameOverride(model.name) : model.name}</strong>?
+                    Are you sure to delete <strong>{zoneNameOverride ? zoneNameOverride(draft.name) : draft.name}</strong>?
                 </p>
             </>,
         };

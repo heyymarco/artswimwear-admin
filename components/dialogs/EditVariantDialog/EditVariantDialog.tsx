@@ -64,11 +64,6 @@ import {
     // types:
     UpdateHandler,
     
-    UpdateSideHandler,
-    DeleteSideHandler,
-    
-    ConfirmDeleteHandler,
-    
     
     
     // react components:
@@ -95,6 +90,7 @@ import type {
 import {
     // types:
     type ModelConfirmUnsavedEventHandler,
+    type ModelConfirmDeleteEventHandler,
     
     type VariantDetail,
 }                           from '@/models'
@@ -257,12 +253,12 @@ const EditVariantDialog = (props: EditVariantDialogProps): JSX.Element|null => {
         } // try
     });
     
-    const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<VariantDetail>>(({model}) => {
+    const handleConfirmDelete        = useEvent<ModelConfirmDeleteEventHandler<VariantDetail>>(({ draft }) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
                 <p>
-                    Are you sure to delete variant <strong>{model.name}</strong>?
+                    Are you sure to delete variant <strong>{draft.name}</strong>?
                 </p>
                 <p>
                     The associated product variant in existing orders will be marked as <strong>DELETED VARIANT</strong>.

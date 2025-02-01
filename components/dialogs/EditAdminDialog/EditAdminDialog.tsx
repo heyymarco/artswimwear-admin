@@ -79,8 +79,6 @@ import {
     UpdateSideHandler,
     DeleteSideHandler,
     
-    ConfirmDeleteHandler,
-    
     
     
     // react components:
@@ -98,6 +96,7 @@ import {
 import {
     // types:
     type ModelConfirmUnsavedEventHandler,
+    type ModelConfirmDeleteEventHandler,
     
     type AdminDetail,
     type RoleDetail,
@@ -279,11 +278,11 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
         } // try
     });
     
-    const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<AdminDetail>>(({model}) => {
+    const handleConfirmDelete        = useEvent<ModelConfirmDeleteEventHandler<AdminDetail>>(({ draft }) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <p>
-                Are you sure to delete admin <strong>{model.name}</strong>?
+                Are you sure to delete admin <strong>{draft.name}</strong>?
             </p>,
         };
     });

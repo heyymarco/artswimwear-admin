@@ -84,8 +84,6 @@ import {
     UpdateSideHandler,
     DeleteSideHandler,
     
-    ConfirmDeleteHandler,
-    
     
     
     // react components:
@@ -103,6 +101,7 @@ import {
     type PaginationArgs,
     
     type ModelConfirmUnsavedEventHandler,
+    type ModelConfirmDeleteEventHandler,
     
     type ProductVisibility,
     type CategoryDetail,
@@ -507,12 +506,12 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         } // try
     });
     
-    const handleConfirmDelete        = useEvent<ConfirmDeleteHandler<CategoryDetail>>(({model}) => {
+    const handleConfirmDelete        = useEvent<ModelConfirmDeleteEventHandler<CategoryDetail>>(({ draft }) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
                 <p>
-                    Are you sure to delete category <strong>{model.name}</strong>?
+                    Are you sure to delete category <strong>{draft.name}</strong>?
                 </p>
             </>,
         };
