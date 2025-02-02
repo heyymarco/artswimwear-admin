@@ -38,11 +38,6 @@ import {
 
 // internal components:
 import {
-    // types:
-    UpdateHandler,
-    
-    
-    
     // react components:
     ImplementedComplexEditModelDialogProps,
     ComplexEditModelDialog,
@@ -51,6 +46,7 @@ import {
 // models:
 import {
     type ModelConfirmUnsavedEventHandler,
+    type ModelCreatingOrUpdatingEventHandler,
     
     type AdminPreferenceDetail,
     defaultAdminPreferenceDetail,
@@ -144,7 +140,7 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
     
     
     // handlers:
-    const handleUpdate         = useEvent<UpdateHandler<AdminPreferenceDetail>>(async ({id}) => {
+    const handleUpdate         = useEvent<ModelCreatingOrUpdatingEventHandler<AdminPreferenceDetail>>(async ({ id }) => {
         return await updatePreference({
             id : id ?? '',
             

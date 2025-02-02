@@ -71,7 +71,6 @@ import type {
 }                           from '@/components/explorers/Pagination'
 import {
     // types:
-    UpdateHandler,
     AfterUpdateHandler,
     
     UpdateSideHandler,
@@ -95,6 +94,7 @@ import {
     // types:
     type ModelConfirmUnsavedEventHandler,
     type ModelConfirmDeleteEventHandler,
+    type ModelCreatingOrUpdatingEventHandler,
     type ModelDeletingEventHandler,
     
     type AdminDetail,
@@ -206,15 +206,15 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleUpdate               = useEvent<UpdateHandler<AdminDetail>>(async ({id, whenAdd, whenUpdate}) => {
+    const handleUpdate               = useEvent<ModelCreatingOrUpdatingEventHandler<AdminDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
         return await updateAdmin({
             id       : id ?? '',
             
-            name     : (whenUpdate.name     || whenAdd) ? name               : undefined,
-            email    : (whenUpdate.email    || whenAdd) ? email              : undefined,
-            image    : (whenUpdate.image    || whenAdd) ? image              : undefined,
-            roleId   : (whenUpdate.role               ) ? roleId             : ((!id && whenAdd) ? null : undefined),
-            username : (whenUpdate.username || whenAdd) ? (username || null) : undefined, // convert empty string to null
+            name     : (updatePermissions.name     || addPermission) ? name               : undefined,
+            email    : (updatePermissions.email    || addPermission) ? email              : undefined,
+            image    : (updatePermissions.image    || addPermission) ? image              : undefined,
+            roleId   : (updatePermissions.role                     ) ? roleId             : ((!id && addPermission) ? null : undefined),
+            username : (updatePermissions.username || addPermission) ? (username || null) : undefined, // convert empty string to null
         }).unwrap();
     });
     const handleAfterUpdate          = useEvent<AfterUpdateHandler>(async () => {

@@ -64,7 +64,6 @@ import {
 }                           from '@/components/editors/UniqueRolenameEditor'
 import {
     // types:
-    UpdateHandler,
     AfterUpdateHandler,
     
     
@@ -78,6 +77,7 @@ import {
 import {
     type ModelConfirmUnsavedEventHandler,
     type ModelConfirmDeleteEventHandler,
+    type ModelCreatingOrUpdatingEventHandler,
     type ModelDeletingEventHandler,
     
     type RoleDetail,
@@ -200,7 +200,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleUpdate         = useEvent<UpdateHandler<RoleDetail>>(async ({id}) => {
+    const handleUpdate         = useEvent<ModelCreatingOrUpdatingEventHandler<RoleDetail>>(async ({ id }) => {
         return await updateRole({
             id : id ?? '',
             

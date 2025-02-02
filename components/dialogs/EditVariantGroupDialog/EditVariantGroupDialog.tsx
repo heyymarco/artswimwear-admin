@@ -66,7 +66,6 @@ import {
 }                           from '@/components/views/VariantPreview'
 import {
     // types:
-    UpdateHandler,
     UpdateDraftHandler,
     
     
@@ -87,6 +86,7 @@ import {
     // types:
     type ModelConfirmUnsavedEventHandler,
     type ModelConfirmDeleteEventHandler,
+    type ModelCreatingOrUpdatingEventHandler,
     
     type VariantDetail,
     type VariantGroupDetail,
@@ -205,7 +205,7 @@ const EditVariantGroupDialog = (props: EditVariantGroupDialogProps): JSX.Element
     
     
     // handlers:
-    const handleUpdate               = useEvent<UpdateHandler<VariantGroupDetail>>(async ({id, whenAdd, whenUpdate}) => {
+    const handleUpdate               = useEvent<ModelCreatingOrUpdatingEventHandler<VariantGroupDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
         const draftModel : VariantGroupDetail = {
             ...model,
             
@@ -216,12 +216,12 @@ const EditVariantGroupDialog = (props: EditVariantGroupDialogProps): JSX.Element
                 return ` ${await nanoid()}`; // starts with space{random-temporary-id}
             })(),
             
-            name               : (whenUpdate.description || whenAdd)               ? name               : (model?.name               ?? ''   ),
-            hasDedicatedStocks : (whenUpdate.stock       || whenAdd)               ? hasDedicatedStocks : (model?.hasDedicatedStocks ?? false),
+            name               : (updatePermissions.description || addPermission)  ? name               : (model?.name               ?? ''   ),
+            hasDedicatedStocks : (updatePermissions.stock       || addPermission)  ? hasDedicatedStocks : (model?.hasDedicatedStocks ?? false),
             
             variants           : (!!variants && (variants !== unmodifiedVariants)) ? variants           : (unmodifiedVariants        ?? []   ),
         };
-        return (onUpdate !== undefined) ? onUpdate({draftModel, whenAdd, whenUpdate}) : draftModel;
+        return (onUpdate !== undefined) ? onUpdate({draftModel, whenAdd: addPermission, whenUpdate: updatePermissions}) : draftModel;
     });
     
     const handleConfirmDelete        = useEvent<ModelConfirmDeleteEventHandler<VariantGroupDetail>>(({ draft }) => {

@@ -95,11 +95,6 @@ import {
     ShippingStateProvider,
 }                           from '@/components/editors/CoverageZoneEditor/states/shippingState'
 import {
-    // types:
-    UpdateHandler,
-    
-    
-    
     // react components:
     ImplementedComplexEditModelDialogProps,
     ComplexEditModelDialog,
@@ -113,6 +108,7 @@ import {
     // types:
     type ModelConfirmUnsavedEventHandler,
     type ModelConfirmDeleteEventHandler,
+    type ModelCreatingOrUpdatingEventHandler,
     type ModelDeletingEventHandler,
     
     type ShippingDetail,
@@ -359,21 +355,21 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     
     
     // handlers:
-    const handleUpdate         = useEvent<UpdateHandler<ShippingDetail>>(async ({id, whenAdd, whenUpdate}) => {
+    const handleUpdate         = useEvent<ModelCreatingOrUpdatingEventHandler<ShippingDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
         return await updateShipping({
             id         : id ?? '',
             
-            visibility : (whenUpdate.visibility  || whenAdd) ? visibility    : undefined,
-            name       : (whenUpdate.description || whenAdd) ? name          : undefined,
+            visibility : (updatePermissions.visibility  || addPermission) ? visibility    : undefined,
+            name       : (updatePermissions.description || addPermission) ? name          : undefined,
             
-            autoUpdate : (whenUpdate.price       || whenAdd) ? autoUpdate    : undefined,
+            autoUpdate : (updatePermissions.price       || addPermission) ? autoUpdate    : undefined,
             
-            weightStep : (whenUpdate.price       || whenAdd) ? weightStep    : undefined,
-            eta        : (whenUpdate.description || whenAdd) ? (eta || null) : undefined,
-            rates      : (whenUpdate.price       || whenAdd) ? rates         : undefined,
+            weightStep : (updatePermissions.price       || addPermission) ? weightStep    : undefined,
+            eta        : (updatePermissions.description || addPermission) ? (eta || null) : undefined,
+            rates      : (updatePermissions.price       || addPermission) ? rates         : undefined,
             
-            useZones   : (whenUpdate.price       || whenAdd) ? useZones      : undefined,
-            zones      : (whenUpdate.price       || whenAdd) ? countries     : undefined,
+            useZones   : (updatePermissions.price       || addPermission) ? useZones      : undefined,
+            zones      : (updatePermissions.price       || addPermission) ? countries     : undefined,
         }).unwrap();
     });
     

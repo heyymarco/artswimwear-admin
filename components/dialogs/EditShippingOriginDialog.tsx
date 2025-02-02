@@ -37,11 +37,6 @@ import {
     AddressEditor,
 }                           from '@/components/editors/AddressEditor'
 import {
-    // types:
-    UpdateHandler,
-    
-    
-    
     // react components:
     ImplementedComplexEditModelDialogProps,
     ComplexEditModelDialog,
@@ -50,6 +45,7 @@ import {
 // models:
 import {
     type ModelConfirmUnsavedEventHandler,
+    type ModelCreatingOrUpdatingEventHandler,
     
     type DefaultShippingOriginDetail,
 }                           from '@/models'
@@ -143,7 +139,7 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
     
     
     // handlers:
-    const handleUpdate         = useEvent<UpdateHandler<DefaultShippingOriginDetail>>(async ({id}) => {
+    const handleUpdate         = useEvent<ModelCreatingOrUpdatingEventHandler<DefaultShippingOriginDetail>>(async ({ id }) => {
         return await updateDefaultShippingOrigin(model).unwrap();
     });
     

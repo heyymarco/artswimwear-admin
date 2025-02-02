@@ -77,8 +77,6 @@ import {
 }                           from '@/components/explorers/Pagination'
 import {
     // types:
-    UpdateHandler,
-    
     UpdateSideHandler,
     DeleteSideHandler,
     
@@ -100,6 +98,7 @@ import {
     
     type ModelConfirmUnsavedEventHandler,
     type ModelConfirmDeleteEventHandler,
+    type ModelCreatingOrUpdatingEventHandler,
     type ModelDeletingEventHandler,
     
     type ProductVisibility,
@@ -363,7 +362,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
     
     
     // handlers:
-    const handleUpdate               = useEvent<UpdateHandler<CategoryDetail>>(async ({id, whenAdd, whenUpdate}) => {
+    const handleUpdate               = useEvent<ModelCreatingOrUpdatingEventHandler<CategoryDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
         const immigratedImages : string[] = [];
         let updatedImages = images;
         if (updatedImages.length) {
@@ -408,11 +407,11 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         const mutatedData : MutationArgs<CategoryDetail> = {
             id             : id,
             
-            visibility     : (whenUpdate.visibility  || whenAdd) ? visibility                                        : undefined,
-            name           : (whenUpdate.description || whenAdd) ? name                                              : undefined,
-            path           : (whenUpdate.description || whenAdd) ? path                                              : undefined,
-            images         : (whenUpdate.images      || whenAdd) ? updatedImages                                     : undefined,
-            description    : (whenUpdate.description || whenAdd) ? ((description?.toJSON?.() ?? description) as any) : undefined,
+            visibility     : (updatePermissions.visibility  || addPermission) ? visibility                                        : undefined,
+            name           : (updatePermissions.description || addPermission) ? name                                              : undefined,
+            path           : (updatePermissions.description || addPermission) ? path                                              : undefined,
+            images         : (updatePermissions.images      || addPermission) ? updatedImages                                     : undefined,
+            description    : (updatePermissions.description || addPermission) ? ((description?.toJSON?.() ?? description) as any) : undefined,
         };
         
         

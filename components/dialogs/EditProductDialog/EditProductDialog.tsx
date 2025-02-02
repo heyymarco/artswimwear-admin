@@ -85,9 +85,6 @@ import {
     CategoryEditor,
 }                           from '@/components/editors/CategoryEditor'
 import {
-    // types:
-    UpdateHandler,
-    
     UpdateSideHandler,
     DeleteSideHandler,
     
@@ -134,6 +131,7 @@ import {
     
     type ModelConfirmUnsavedEventHandler,
     type ModelConfirmDeleteEventHandler,
+    type ModelCreatingOrUpdatingEventHandler,
     type ModelDeletingEventHandler,
     
     type ProductVisibility,
@@ -389,7 +387,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleUpdate               = useEvent<UpdateHandler<ProductDetail>>(async ({id, whenAdd, whenUpdate}) => {
+    const handleUpdate               = useEvent<ModelCreatingOrUpdatingEventHandler<ProductDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
         const immigratedImages : string[] = [];
         let updatedImages = images;
         if (updatedImages.length) {
@@ -430,17 +428,17 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             return await updateProduct({
                 id             : id ?? '',
                 
-                visibility     : (whenUpdate.visibility  || whenAdd)         ? visibility                                        : undefined,
-                name           : (whenUpdate.description || whenAdd)         ? name                                              : undefined,
-                path           : (whenUpdate.description || whenAdd)         ? path                                              : undefined,
-                price          : (whenUpdate.price       || whenAdd)         ? price                                             : undefined,
-                shippingWeight : (whenUpdate.price       || whenAdd)         ? shippingWeight                                    : undefined,
-                images         : (whenUpdate.images      || whenAdd)         ? updatedImages                                     : undefined,
-                description    : (whenUpdate.description || whenAdd)         ? ((description?.toJSON?.() ?? description) as any) : undefined,
+                visibility     : (updatePermissions.visibility  || addPermission) ? visibility                                        : undefined,
+                name           : (updatePermissions.description || addPermission) ? name                                              : undefined,
+                path           : (updatePermissions.description || addPermission) ? path                                              : undefined,
+                price          : (updatePermissions.price       || addPermission) ? price                                             : undefined,
+                shippingWeight : (updatePermissions.price       || addPermission) ? shippingWeight                                    : undefined,
+                images         : (updatePermissions.images      || addPermission) ? updatedImages                                     : undefined,
+                description    : (updatePermissions.description || addPermission) ? ((description?.toJSON?.() ?? description) as any) : undefined,
                 
-                variantGroups  : (variantGroups !== unmodifiedVariantGroups) ? variantGroups                                     : undefined,
-                stocks         : (stocks        !== unmodifiedStocks       ) ? stocks.map(({value}) => value)                    : undefined,
-                categories     : (whenUpdate.description || whenAdd)         ? Array.from(categories)                            : undefined,
+                variantGroups  : (variantGroups !== unmodifiedVariantGroups)      ? variantGroups                                     : undefined,
+                stocks         : (stocks        !== unmodifiedStocks       )      ? stocks.map(({value}) => value)                    : undefined,
+                categories     : (updatePermissions.description || addPermission) ? Array.from(categories)                            : undefined,
             }).unwrap();
         }
         finally {

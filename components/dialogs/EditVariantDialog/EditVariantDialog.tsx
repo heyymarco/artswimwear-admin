@@ -61,11 +61,6 @@ import type {
     VariantState,
 }                           from '@/components/editors/VariantEditor'
 import {
-    // types:
-    UpdateHandler,
-    
-    
-    
     // react components:
     ImplementedComplexEditModelDialogProps,
     ComplexEditModelDialog,
@@ -91,6 +86,7 @@ import {
     // types:
     type ModelConfirmUnsavedEventHandler,
     type ModelConfirmDeleteEventHandler,
+    type ModelCreatingOrUpdatingEventHandler,
     
     type VariantDetail,
 }                           from '@/models'
@@ -186,7 +182,7 @@ const EditVariantDialog = (props: EditVariantDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleUpdate               = useEvent<UpdateHandler<VariantDetail>>(async ({id, whenAdd, whenUpdate}) => {
+    const handleUpdate               = useEvent<ModelCreatingOrUpdatingEventHandler<VariantDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
         const immigratedImages : string[] = [];
         let updatedImages = images;
         if (updatedImages.length) {
@@ -232,11 +228,11 @@ const EditVariantDialog = (props: EditVariantDialogProps): JSX.Element|null => {
                     return ` ${await nanoid()}`; // starts with space{random-temporary-id}
                 })(),
                 
-                visibility     : (whenUpdate.visibility  || whenAdd) ? visibility     : model?.visibility,
-                name           : (whenUpdate.description || whenAdd) ? name           : model?.name,
-                price          : (whenUpdate.price       || whenAdd) ? price          : model?.price,
-                shippingWeight : (whenUpdate.price       || whenAdd) ? shippingWeight : model?.shippingWeight,
-                images         : (whenUpdate.images      || whenAdd) ? updatedImages  : model?.images,
+                visibility     : (updatePermissions.visibility  || addPermission) ? visibility     : model?.visibility,
+                name           : (updatePermissions.description || addPermission) ? name           : model?.name,
+                price          : (updatePermissions.price       || addPermission) ? price          : model?.price,
+                shippingWeight : (updatePermissions.price       || addPermission) ? shippingWeight : model?.shippingWeight,
+                images         : (updatePermissions.images      || addPermission) ? updatedImages  : model?.images,
             };
         }
         finally {

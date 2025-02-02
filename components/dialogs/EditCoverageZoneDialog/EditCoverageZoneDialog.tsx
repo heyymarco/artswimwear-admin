@@ -68,11 +68,6 @@ import {
     ShippingRateEditor,
 }                           from '@/components/editors/ShippingRateEditor'
 import {
-    // types:
-    UpdateHandler,
-    
-    
-    
     // react components:
     ImplementedComplexEditModelDialogProps,
     ComplexEditModelDialog,
@@ -98,6 +93,7 @@ import {
     
     type ModelConfirmUnsavedEventHandler,
     type ModelConfirmDeleteEventHandler,
+    type ModelCreatingOrUpdatingEventHandler,
     
     type CoverageZoneDetail,
     type CoverageSubzoneDetail,
@@ -227,20 +223,20 @@ const EditCoverageZoneDialog = <TCoverageZoneDetail extends CoverageZoneDetail<T
     
     
     // handlers:
-    const handleUpdate         = useEvent<UpdateHandler<TCoverageZoneDetail>>(({id, whenAdd, whenUpdate}) => {
+    const handleUpdate         = useEvent<ModelCreatingOrUpdatingEventHandler<TCoverageZoneDetail>>(({ id, options: { addPermission, updatePermissions } }) => {
         return {
             id       : id ?? (() => {
                 const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
                 return ` ${nanoid()}`; // starts with space{random-temporary-id}
             })(),
             
-            name     :                 (whenUpdate.description || whenAdd)  ? name          : undefined,
+            name     :                 (updatePermissions.description || addPermission)  ? name          : undefined,
             
-            eta      :                 (whenUpdate.description || whenAdd)  ? (eta || null) : undefined,
-            rates    :                 (whenUpdate.price       || whenAdd)  ? rates         : undefined,
+            eta      :                 (updatePermissions.description || addPermission)  ? (eta || null) : undefined,
+            rates    :                 (updatePermissions.price       || addPermission)  ? rates         : undefined,
             
-            useZones : (hasSubzones && (whenUpdate.price       || whenAdd)) ? useZones      : undefined,
-            zones    : (hasSubzones && (whenUpdate.price       || whenAdd)) ? zones         : undefined,
+            useZones : (hasSubzones && (updatePermissions.price       || addPermission)) ? useZones      : undefined,
+            zones    : (hasSubzones && (updatePermissions.price       || addPermission)) ? zones         : undefined,
         } as PartialModel<TCoverageZoneDetail>;
     });
     
