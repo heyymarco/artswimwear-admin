@@ -22,8 +22,6 @@ import type {
     // types:
     ComplexEditModelDialogExpandedChangeEvent,
     
-    UpdateDraftHandler,
-    
     
     
     // react components:
@@ -40,6 +38,7 @@ import {
     // types:
     type PartialModel,
     
+    type ModelCreatingOrUpdatingOfDraftEventHandler,
     type ModelDeletingEventHandler,
     
     type VariantGroupDetail,
@@ -113,7 +112,7 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
     
     
     // handlers:
-    const handleUpdate         = useEvent<UpdateDraftHandler<VariantGroupDetail>>(async ({draftModel: variantGroupDetail}) => {
+    const handleUpdate         = useEvent<ModelCreatingOrUpdatingOfDraftEventHandler<VariantGroupDetail>>(async ({ draft: variantGroupDetail }) => {
         const {
             id,
             sort : _sort, // remove
