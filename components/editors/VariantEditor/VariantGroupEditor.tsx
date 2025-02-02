@@ -39,10 +39,6 @@ import {
 }                           from '@heymarco/orderable-list'
 
 // internal components:
-import type {
-    // types:
-    UpdatedHandler,
-}                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
     EditVariantGroupDialogProps,
 }                           from '@/components/dialogs/EditVariantGroupDialog'
@@ -78,6 +74,7 @@ import {
 import {
     // types:
     type ModelDeletingEventHandler,
+    type ModelCreatedOrUpdatedEventHandler,
     
     type VariantGroupDetail,
 }                           from '@/models'
@@ -187,7 +184,7 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
         } // for
         triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fis this event
     });
-    const handleModelUpdated   = useEvent<UpdatedHandler<VariantGroupDetail>>((updatedModel) => {
+    const handleModelUpdated   = useEvent<ModelCreatedOrUpdatedEventHandler<VariantGroupDetail>>(({ model: updatedModel }) => {
         const mutatedValue = value.slice(0); // copy
         const id = updatedModel.id;
         const modelIndex = mutatedValue.findIndex((model) => model.id === id);

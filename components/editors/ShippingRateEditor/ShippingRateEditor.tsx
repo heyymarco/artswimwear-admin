@@ -47,10 +47,6 @@ import {
 }                           from '@heymarco/editor'
 
 // internal components:
-import type {
-    // types:
-    UpdatedHandler,
-}                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
     type CreateHandler,
 }                           from '@/components/explorers/Pagination'
@@ -66,6 +62,7 @@ import {
 import {
     // types:
     type ModelDeletingEventHandler,
+    type ModelCreatedOrUpdatedEventHandler,
     
     type ShippingRate,
     type ShippingRateWithId,
@@ -188,7 +185,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
         mutatedValue.push(createdModel as ShippingRateWithId);
         triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fix this event
     });
-    const handleModelUpdated = useEvent<UpdatedHandler<ShippingRateWithId>>((updatedModelWithId) => {
+    const handleModelUpdated = useEvent<ModelCreatedOrUpdatedEventHandler<ShippingRateWithId, React.ChangeEvent<HTMLInputElement>>>(({ model: updatedModelWithId }) => {
         const {
             id : findId, // take
             ...mutatedModel

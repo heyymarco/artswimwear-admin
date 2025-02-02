@@ -61,7 +61,6 @@ import type {
 import type {
     // types:
     ComplexEditModelDialogResult,
-    UpdatedHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
     EditVariantDialogProps,
@@ -81,6 +80,7 @@ import {
 import {
     // types:
     type ModelDeletingEventHandler,
+    type ModelCreatedOrUpdatedEventHandler,
     
     type VariantDetail,
 }                           from '@/models'
@@ -104,7 +104,7 @@ export interface VariantPreviewProps
         >
 {
     // handlers:
-    onModelUpdate ?: UpdatedHandler<VariantDetail>
+    onModelUpdate ?: ModelCreatedOrUpdatedEventHandler<VariantDetail>
     onModelDelete ?: ModelDeletingEventHandler<VariantDetail>
 }
 const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
@@ -197,7 +197,7 @@ const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
                 break;
             
             default:        // dialog updated
-                await onModelUpdate?.(updatedVariantModel);
+                await onModelUpdate?.({ model: updatedVariantModel, event: event });
         } // switch
     });
     

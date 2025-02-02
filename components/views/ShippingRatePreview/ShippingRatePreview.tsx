@@ -43,10 +43,6 @@ import {
 import {
     ModelPreviewProps,
 }                           from '@/components/explorers/PaginationList'
-import type {
-    // types:
-    UpdatedHandler,
-}                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
     ShippingWeightEditor,
 }                           from '@/components/editors/ShippingWeightEditor'
@@ -57,6 +53,7 @@ import {
 // models:
 import {
     type ModelDeletingEventHandler,
+    type ModelCreatedOrUpdatedEventHandler,
     
     type ShippingRateWithId,
 }                           from '@/models'
@@ -71,7 +68,7 @@ export interface ShippingRatePreviewProps extends ModelPreviewProps<ShippingRate
     
     
     // handlers:
-    onModelUpdate ?: UpdatedHandler<ShippingRateWithId>
+    onModelUpdate ?: ModelCreatedOrUpdatedEventHandler<ShippingRateWithId, React.ChangeEvent<HTMLInputElement>>
     onModelDelete ?: ModelDeletingEventHandler<ShippingRateWithId>
 }
 const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null => {
@@ -112,7 +109,7 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
     
     
     // handlers:
-    const handleStartingWeightChange = useEvent<EditorChangeEventHandler<number|null, React.ChangeEvent<HTMLInputElement>>>((newValue) => {
+    const handleStartingWeightChange = useEvent<EditorChangeEventHandler<number|null, React.ChangeEvent<HTMLInputElement>>>((newValue, event) => {
         // conditions:
         if (!onModelUpdate) return;
         
@@ -127,9 +124,9 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
         
         // actions:
         model.start = newStart;
-        onModelUpdate(model);
+        onModelUpdate({ model, event: event });
     });
-    const handleRateChange           = useEvent<EditorChangeEventHandler<number|null, React.ChangeEvent<HTMLInputElement>>>((newValue) => {
+    const handleRateChange           = useEvent<EditorChangeEventHandler<number|null, React.ChangeEvent<HTMLInputElement>>>((newValue, event) => {
         // conditions:
         if (!onModelUpdate) return;
         
@@ -137,7 +134,7 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
         
         // actions:
         model.rate = newValue ?? 0;
-        onModelUpdate(model);
+        onModelUpdate({ model, event: event });
     });
     const handleDelete               = useEvent((event) => {
         onModelDelete?.({ draft: model, event: event });

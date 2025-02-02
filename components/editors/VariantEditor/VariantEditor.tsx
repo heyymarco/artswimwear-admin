@@ -40,10 +40,6 @@ import {
 
 // internal components:
 import type {
-    // types:
-    UpdatedHandler,
-}                           from '@/components/dialogs/ComplexEditModelDialog'
-import type {
     EditVariantDialogProps,
 }                           from '@/components/dialogs/EditVariantDialog'
 import {
@@ -69,6 +65,7 @@ import {
 import {
     // types:
     type ModelDeletingEventHandler,
+    type ModelCreatedOrUpdatedEventHandler,
     
     type VariantDetail,
 }                           from '@/models'
@@ -165,7 +162,7 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
         } // for
         triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fix this event
     });
-    const handleModelUpdated   = useEvent<UpdatedHandler<VariantDetail>>((updatedModel) => {
+    const handleModelUpdated   = useEvent<ModelCreatedOrUpdatedEventHandler<VariantDetail>>(({ model: updatedModel }) => {
         const mutatedValue = value.slice(0); // copy
         const id = updatedModel.id;
         const modelIndex = mutatedValue.findIndex((model) => model.id === id);

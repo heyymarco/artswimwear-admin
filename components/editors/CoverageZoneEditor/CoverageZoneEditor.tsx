@@ -60,10 +60,6 @@ import {
 }                           from '@heymarco/text-dropdown-editor'
 
 // internal components:
-import type {
-    // types:
-    UpdatedHandler,
-}                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
     type EditCoverageZoneDialogProps,
     EditCoverageZoneDialog,
@@ -97,6 +93,7 @@ import {
 import {
     // types:
     type ModelDeletingEventHandler,
+    type ModelCreatedOrUpdatedEventHandler,
     
     type CoverageZoneDetail,
     type CoverageSubzoneDetail,
@@ -274,7 +271,7 @@ const CoverageZoneEditor = <TCoverageZoneDetail extends CoverageZoneDetail<TCove
         } // for
         triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fix the event
     });
-    const handleModelUpdated   = useEvent<UpdatedHandler<TCoverageZoneDetail>>((mutatedModel) => {
+    const handleModelUpdated   = useEvent<ModelCreatedOrUpdatedEventHandler<TCoverageZoneDetail>>(({ model: mutatedModel }) => {
         const mutatedValue = value.slice(0); // copy
         const modelIndex = value.findIndex((model) => model.id === mutatedModel.id);
         if (modelIndex < 0) {

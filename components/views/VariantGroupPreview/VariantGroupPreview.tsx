@@ -61,7 +61,6 @@ import type {
 import type {
     // types:
     ComplexEditModelDialogResult,
-    UpdatedHandler,
 }                           from '@/components/dialogs/ComplexEditModelDialog'
 import {
     EditVariantGroupDialogProps,
@@ -81,6 +80,7 @@ import {
 import {
     // types:
     type ModelDeletingEventHandler,
+    type ModelCreatedOrUpdatedEventHandler,
     
     type VariantGroupDetail,
 }                           from '@/models'
@@ -104,7 +104,7 @@ export interface VariantGroupPreviewProps
         >
 {
     // handlers:
-    onModelUpdate ?: UpdatedHandler<VariantGroupDetail>
+    onModelUpdate ?: ModelCreatedOrUpdatedEventHandler<VariantGroupDetail>
     onModelDelete ?: ModelDeletingEventHandler<VariantGroupDetail>
 }
 const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null => {
@@ -197,7 +197,7 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
                 break;
             
             default:        // dialog updated
-                await onModelUpdate?.(updatedVariantGroupModel);
+                await onModelUpdate?.({ model: updatedVariantGroupModel, event: event });
         } // switch
     });
     

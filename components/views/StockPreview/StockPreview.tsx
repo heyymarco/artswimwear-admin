@@ -52,10 +52,6 @@ import type {
     // react components:
     ModelPreviewProps,
 }                           from '@/components/explorers/PaginationList'
-import type {
-    // types:
-    UpdatedHandler,
-}                           from '@/components/dialogs/ComplexEditModelDialog'
 
 // models:
 import {
