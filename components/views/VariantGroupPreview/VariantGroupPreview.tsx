@@ -79,8 +79,8 @@ import {
 // models:
 import {
     // types:
-    type ModelDeletingEventHandler,
     type ModelCreatedOrUpdatedEventHandler,
+    type ModelDeletedEventHandler,
     
     type VariantGroupDetail,
 }                           from '@/models'
@@ -104,8 +104,8 @@ export interface VariantGroupPreviewProps
         >
 {
     // handlers:
-    onModelUpdate ?: ModelCreatedOrUpdatedEventHandler<VariantGroupDetail>
-    onModelDelete ?: ModelDeletingEventHandler<VariantGroupDetail>
+    onModelUpdated ?: ModelCreatedOrUpdatedEventHandler<VariantGroupDetail>
+    onModelDeleted ?: ModelDeletedEventHandler<VariantGroupDetail>
 }
 const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null => {
     // styles:
@@ -121,8 +121,8 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
         
         
         // handlers:
-        onModelUpdate,
-        onModelDelete,
+        onModelUpdated,
+        onModelDeleted,
     ...restListItemProps} = props;
     const {
         id,
@@ -193,11 +193,11 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
                 break;
             
             case false:     // dialog deleted
-                await onModelDelete?.({ draft: model, event: event });
+                await onModelDeleted?.({ model, event });
                 break;
             
             default:        // dialog updated
-                await onModelUpdate?.({ model: updatedVariantGroupModel, event: event });
+                await onModelUpdated?.({ model: updatedVariantGroupModel, event });
         } // switch
     });
     

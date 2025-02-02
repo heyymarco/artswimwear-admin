@@ -64,8 +64,8 @@ import {
 // models:
 import {
     // types:
-    type ModelDeletingEventHandler,
     type ModelCreatedOrUpdatedEventHandler,
+    type ModelDeletedEventHandler,
     
     type VariantDetail,
 }                           from '@/models'
@@ -174,7 +174,7 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
         } // if
         triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fix this event
     });
-    const handleModelDeleted   = useEvent<ModelDeletingEventHandler<VariantDetail>>(({ draft: { id } }) => {
+    const handleModelDeleted   = useEvent<ModelDeletedEventHandler<VariantDetail>>(({ model: { id } }) => {
         const mutatedValue = value.slice(0); // copy
         const modelIndex = mutatedValue.findIndex((model) => model.id === id);
         if (modelIndex < 0) return;
@@ -243,18 +243,18 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
                     // props:
                     {
                         // identifiers:
-                        key           : modelPreviewComponent.key         ?? modelOption.id,
+                        key            : modelPreviewComponent.key         ?? modelOption.id,
                         
                         
                         
                         // data:
-                        model         : modelPreviewComponent.props.model ?? modelOption,
+                        model          : modelPreviewComponent.props.model ?? modelOption,
                         
                         
                         
                         // handlers:
-                        onModelUpdate : handleModelUpdated,
-                        onModelDelete : handleModelDeleted,
+                        onModelUpdated : handleModelUpdated,
+                        onModelDeleted : handleModelDeleted,
                     },
                 )
             )}

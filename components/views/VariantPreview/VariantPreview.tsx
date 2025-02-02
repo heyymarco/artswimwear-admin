@@ -79,8 +79,8 @@ import {
 // models:
 import {
     // types:
-    type ModelDeletingEventHandler,
     type ModelCreatedOrUpdatedEventHandler,
+    type ModelDeletedEventHandler,
     
     type VariantDetail,
 }                           from '@/models'
@@ -104,8 +104,8 @@ export interface VariantPreviewProps
         >
 {
     // handlers:
-    onModelUpdate ?: ModelCreatedOrUpdatedEventHandler<VariantDetail>
-    onModelDelete ?: ModelDeletingEventHandler<VariantDetail>
+    onModelUpdated ?: ModelCreatedOrUpdatedEventHandler<VariantDetail>
+    onModelDeleted ?: ModelDeletedEventHandler<VariantDetail>
 }
 const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
     // styles:
@@ -121,8 +121,8 @@ const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
         
         
         // handlers:
-        onModelUpdate,
-        onModelDelete,
+        onModelUpdated,
+        onModelDeleted,
     ...restListItemProps} = props;
     const {
         id,
@@ -193,11 +193,11 @@ const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
                 break;
             
             case false:     // dialog deleted
-                await onModelDelete?.({ draft: model, event: event });
+                await onModelDeleted?.({ model, event });
                 break;
             
             default:        // dialog updated
-                await onModelUpdate?.({ model: updatedVariantModel, event: event });
+                await onModelUpdated?.({ model: updatedVariantModel, event });
         } // switch
     });
     

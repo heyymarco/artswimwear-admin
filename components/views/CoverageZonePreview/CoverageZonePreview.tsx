@@ -73,8 +73,8 @@ import {
 
 // models:
 import {
-    type ModelDeletingEventHandler,
     type ModelCreatedOrUpdatedEventHandler,
+    type ModelDeletedEventHandler,
     
     type CoverageZoneDetail,
     type CoverageSubzoneDetail,
@@ -103,13 +103,13 @@ export interface CoverageZonePreviewProps<TCoverageZoneDetail extends CoverageZo
         >
 {
     // data:
-    modelName      : string
+    modelName       : string
     
     
     
     // handlers:
-    onModelUpdate ?: ModelCreatedOrUpdatedEventHandler<TCoverageZoneDetail>
-    onModelDelete ?: ModelDeletingEventHandler<TCoverageZoneDetail>
+    onModelUpdated ?: ModelCreatedOrUpdatedEventHandler<TCoverageZoneDetail>
+    onModelDeleted ?: ModelDeletedEventHandler<TCoverageZoneDetail>
 }
 const CoverageZonePreview = <TCoverageZoneDetail extends CoverageZoneDetail<TCoverageSubzoneDetail>, TCoverageSubzoneDetail extends CoverageSubzoneDetail>(props: CoverageZonePreviewProps<TCoverageZoneDetail, TCoverageSubzoneDetail>): JSX.Element|null => {
     // styles:
@@ -126,8 +126,8 @@ const CoverageZonePreview = <TCoverageZoneDetail extends CoverageZoneDetail<TCov
         
         
         // handlers:
-        onModelUpdate,
-        onModelDelete,
+        onModelUpdated,
+        onModelDeleted,
         
         
         
@@ -221,11 +221,11 @@ const CoverageZonePreview = <TCoverageZoneDetail extends CoverageZoneDetail<TCov
                 break;
             
             case false:     // dialog deleted
-                await onModelDelete?.({ draft: model, event: event });
+                await onModelDeleted?.({ model, event });
                 break;
             
             default:        // dialog updated
-                await onModelUpdate?.({ model: updatedCoverageZoneModel, event: event });
+                await onModelUpdated?.({ model: updatedCoverageZoneModel, event });
         } // switch
     });
     
