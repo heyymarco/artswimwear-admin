@@ -294,7 +294,7 @@ const CoverageZoneEditor = <TCoverageZoneDetail extends CoverageZoneDetail<TCove
         } // if
         triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fix the event
     });
-    const handleModelDeleted   = useEvent<ModelDeletedEventHandler<TCoverageZoneDetail>>(({ model: { id } }) => {
+    const handleModelDeleted   = useEvent<ModelDeletedEventHandler<TCoverageZoneDetail>>(({ draft: { id } }) => {
         const mutatedValue = value.slice(0); // copy
         const modelIndex = value.findIndex((model) => model.id === id);
         if (modelIndex < 0) return;

@@ -193,7 +193,7 @@ const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null 
                 break;
             
             case false:     // dialog deleted
-                await onModelDeleted?.({ model, event });
+                await onModelDeleted?.({ draft: model, event });
                 break;
             
             default:        // dialog updated

@@ -191,7 +191,7 @@ const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): J
                 break;
             
             case false:     // dialog deleted
-                await onModelDeleted?.({ model, event });
+                await onModelDeleted?.({ draft: model, event });
                 break;
             
             default:        // dialog updated

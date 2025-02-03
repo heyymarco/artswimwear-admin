@@ -129,8 +129,8 @@ export interface EditVariantGroupDialogProps
             |'onDelete'
             |'onDeleted'
             
-            |'onSideUpdate'
-            |'onSideDelete'
+            |'onSideModelCommitting'
+            |'onSideModelDiscarding'
         >>,
         
         // privileges & states:

@@ -85,11 +85,6 @@ import {
     CategoryEditor,
 }                           from '@/components/editors/CategoryEditor'
 import {
-    UpdateSideHandler,
-    DeleteSideHandler,
-    
-    
-    
     // react components:
     ImplementedComplexEditModelDialogProps,
     ComplexEditModelDialog,
@@ -461,13 +456,13 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         }).unwrap();
     });
     
-    const handleSideUpdate           = useEvent<UpdateSideHandler>(async () => {
-        await handleSideSave(/*commitImages = */true);
+    const handleSideModelCommitting  = useEvent(async (): Promise<void> => {
+        await handleSideModelSave(/*commitImages = */true);
     });
-    const handleSideDelete           = useEvent<DeleteSideHandler>(async () => {
-        await handleSideSave(/*commitImages = */false);
+    const handleSideModelDiscarding  = useEvent(async (): Promise<void> => {
+        await handleSideModelSave(/*commitImages = */false);
     });
-    const handleSideSave             = useEvent(async (commitImages : boolean) => {
+    const handleSideModelSave        = useEvent(async (commitImages : boolean): Promise<void> => {
         // search for unused image(s) and delete them:
         const {unusedImages} = draftDifferentialImages.commitChanges(commitImages);
         
@@ -605,8 +600,8 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             onDelete={handleDelete}
             // onDeleted={undefined}
             
-            onSideUpdate={handleSideUpdate}
-            onSideDelete={handleSideDelete}
+            onSideModelCommitting={handleSideModelCommitting}
+            onSideModelDiscarding={handleSideModelDiscarding}
             
             onConfirmDelete={handleConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}

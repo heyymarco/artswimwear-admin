@@ -174,7 +174,7 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
         } // if
         triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fix this event
     });
-    const handleModelDeleted   = useEvent<ModelDeletedEventHandler<VariantDetail>>(({ model: { id } }) => {
+    const handleModelDeleted   = useEvent<ModelDeletedEventHandler<VariantDetail>>(({ draft: { id } }) => {
         const mutatedValue = value.slice(0); // copy
         const modelIndex = mutatedValue.findIndex((model) => model.id === id);
         if (modelIndex < 0) return;

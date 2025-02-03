@@ -221,7 +221,7 @@ const CoverageZonePreview = <TCoverageZoneDetail extends CoverageZoneDetail<TCov
                 break;
             
             case false:     // dialog deleted
-                await onModelDeleted?.({ model, event });
+                await onModelDeleted?.({ draft: model, event });
                 break;
             
             default:        // dialog updated

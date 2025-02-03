@@ -139,7 +139,7 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
     const handleDelete               = useEvent((event) => {
         // actions:
         // actually nothing has deleted here, just inform as deleted:
-        onModelDeleted?.({ model, event });
+        onModelDeleted?.({ draft: model, event });
     });
     
     

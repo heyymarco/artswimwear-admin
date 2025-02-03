@@ -70,12 +70,6 @@ import type {
     CreateHandler,
 }                           from '@/components/explorers/Pagination'
 import {
-    // types:
-    UpdateSideHandler,
-    DeleteSideHandler,
-    
-    
-    
     // react components:
     ImplementedComplexEditModelDialogProps,
     ComplexEditModelDialog,
@@ -243,13 +237,13 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
         } // if
     });
     
-    const handleSideUpdate           = useEvent<UpdateSideHandler>(async () => {
-        await handleSideSave(/*commitImages = */true);
+    const handleSideModelCommitting  = useEvent(async (): Promise<void> => {
+        await handleSideModelSave(/*commitImages = */true);
     });
-    const handleSideDelete           = useEvent<DeleteSideHandler>(async () => {
-        await handleSideSave(/*commitImages = */false);
+    const handleSideModelDiscarding  = useEvent(async (): Promise<void> => {
+        await handleSideModelSave(/*commitImages = */false);
     });
-    const handleSideSave             = useEvent(async (commitImages : boolean) => {
+    const handleSideModelSave        = useEvent(async (commitImages : boolean): Promise<void> => {
         // initial_image have been replaced with new image:
         if (commitImages && initialImageRef.current && (initialImageRef.current !== image)) {
             // register to actual_delete the initial_image when committed:
@@ -362,8 +356,8 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
             onDelete={handleDelete}
             // onDeleted={undefined}
             
-            onSideUpdate={handleSideUpdate}
-            onSideDelete={handleSideDelete}
+            onSideModelCommitting={handleSideModelCommitting}
+            onSideModelDiscarding={handleSideModelDiscarding}
             
             onConfirmDelete={handleConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}
@@ -485,7 +479,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
                             }).unwrap();
                             
                             // replace => delete prev drafts:
-                            await handleSideDelete();
+                            await handleSideModelDiscarding();
                             
                             // register to actual_delete the new_image when reverted:
                             draftDifferentialImages.registerAddedImage(imageId);
