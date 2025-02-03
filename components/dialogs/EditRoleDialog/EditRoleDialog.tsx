@@ -63,11 +63,6 @@ import {
     UniqueRolenameEditor,
 }                           from '@/components/editors/UniqueRolenameEditor'
 import {
-    // types:
-    AfterUpdateHandler,
-    
-    
-    
     // react components:
     ImplementedComplexEditModelDialogProps,
     ComplexEditModelDialog,
@@ -79,6 +74,7 @@ import {
     type ModelConfirmDeleteEventHandler,
     type ModelCreatingOrUpdatingEventHandler,
     type ModelDeletingEventHandler,
+    type ModelCreatedOrUpdatedEventHandler,
     
     type RoleDetail,
 }                           from '@/models'
@@ -250,7 +246,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             role_d,
         }).unwrap();
     });
-    const handleAfterUpdate    = useEvent<AfterUpdateHandler>(async () => {
+    const handleUpdated        = useEvent<ModelCreatedOrUpdatedEventHandler<RoleDetail>>(async () => {
         const currentRoleId = session?.role?.id;
         if (!!currentRoleId && (currentRoleId === model?.id)) await updateSession(); // update the session if updated current role
     });
@@ -335,7 +331,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             
             // handlers:
             onUpdate={handleUpdate}
-            onAfterUpdate={handleAfterUpdate}
+            onUpdated={handleUpdated}
             
             onDelete={handleDelete}
             // onDeleted={undefined}

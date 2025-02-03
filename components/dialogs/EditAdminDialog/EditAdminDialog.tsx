@@ -71,8 +71,6 @@ import type {
 }                           from '@/components/explorers/Pagination'
 import {
     // types:
-    AfterUpdateHandler,
-    
     UpdateSideHandler,
     DeleteSideHandler,
     
@@ -96,6 +94,7 @@ import {
     type ModelConfirmDeleteEventHandler,
     type ModelCreatingOrUpdatingEventHandler,
     type ModelDeletingEventHandler,
+    type ModelCreatedOrUpdatedEventHandler,
     
     type AdminDetail,
     type RoleDetail,
@@ -217,7 +216,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
             username : (updatePermissions.username || addPermission) ? (username || null) : undefined, // convert empty string to null
         }).unwrap();
     });
-    const handleAfterUpdate          = useEvent<AfterUpdateHandler>(async () => {
+    const handleUpdated              = useEvent<ModelCreatedOrUpdatedEventHandler<AdminDetail>>(async () => {
         const sessionEmail = session?.user?.email;
         if (!!sessionEmail && (sessionEmail.toLowerCase() === initialEmailRef.current.toLowerCase())) await updateSession(); // update the session if updated current admin
     });
@@ -358,7 +357,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
             
             // handlers:
             onUpdate={handleUpdate}
-            onAfterUpdate={handleAfterUpdate}
+            onUpdated={handleUpdated}
             
             onDelete={handleDelete}
             // onDeleted={undefined}

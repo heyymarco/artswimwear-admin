@@ -195,7 +195,7 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
             
             // handlers:
             onUpdate={handleUpdate}
-            // onAfterUpdate={handleAfterUpdate}
+            // onUpdated={handleUpdated}
             
             onDelete={handleDelete}
             // onDeleted={undefined}
