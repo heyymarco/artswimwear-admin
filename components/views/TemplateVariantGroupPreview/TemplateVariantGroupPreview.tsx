@@ -71,6 +71,8 @@ import {
 // models:
 import {
     // types:
+    type ModelEditEventHandler,
+    
     type ModelCreateOrUpdateEventHandler,
     type ModelDeleteEventHandler,
     
@@ -98,7 +100,7 @@ export interface TemplateVariantGroupPreviewProps
     // handlers:
     onModelUpdate  ?: ModelCreateOrUpdateEventHandler<TemplateVariantGroupDetail>
     onModelDelete  ?: ModelDeleteEventHandler<TemplateVariantGroupDetail>
-    onModelEdit    ?: React.MouseEventHandler<HTMLButtonElement>
+    onModelEdit    ?: ModelEditEventHandler<TemplateVariantGroupDetail>
 }
 const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): JSX.Element|null => {
     // styles:
@@ -164,7 +166,11 @@ const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): J
     
     // handlers:
     const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async (event) => {
-        onModelEdit?.(event);
+        event.preventDefault(); // prevents trigger onClick of <OrderableListItem>
+        onModelEdit?.({
+            model : model,
+            event : event,
+        });
         
         
         
