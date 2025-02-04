@@ -72,7 +72,7 @@ import {
 import {
     // types:
     type ModelCreateOrUpdateEventHandler,
-    type ModelDeletedEventHandler,
+    type ModelDeleteEventHandler,
     
     type TemplateVariantGroupDetail,
 }                           from '@/models'
@@ -97,7 +97,7 @@ export interface TemplateVariantGroupPreviewProps
 {
     // handlers:
     onModelUpdate  ?: ModelCreateOrUpdateEventHandler<TemplateVariantGroupDetail>
-    onModelDeleted ?: ModelDeletedEventHandler<TemplateVariantGroupDetail>
+    onModelDelete  ?: ModelDeleteEventHandler<TemplateVariantGroupDetail>
     onModelEdit    ?: React.MouseEventHandler<HTMLButtonElement>
 }
 const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): JSX.Element|null => {
@@ -115,7 +115,7 @@ const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): J
         
         // handlers:
         onModelUpdate,
-        onModelDeleted,
+        onModelDelete,
         onModelEdit,
     ...restListItemProps} = props;
     const {
@@ -191,7 +191,7 @@ const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): J
                 break;
             
             case false:     // dialog deleted
-                await onModelDeleted?.({ draft: model, event });
+                await onModelDelete?.({ draft: model, event });
                 break;
             
             default:        // dialog updated

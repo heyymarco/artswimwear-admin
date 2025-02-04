@@ -53,7 +53,7 @@ import {
 // models:
 import {
     type ModelCreateOrUpdateEventHandler,
-    type ModelDeletedEventHandler,
+    type ModelDeleteEventHandler,
     
     type ShippingRateWithId,
 }                           from '@/models'
@@ -69,7 +69,7 @@ export interface ShippingRatePreviewProps extends ModelPreviewProps<ShippingRate
     
     // handlers:
     onModelUpdate  ?: ModelCreateOrUpdateEventHandler<ShippingRateWithId, React.ChangeEvent<HTMLInputElement>>
-    onModelDeleted ?: ModelDeletedEventHandler<ShippingRateWithId>
+    onModelDelete  ?: ModelDeleteEventHandler<ShippingRateWithId>
 }
 const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null => {
     // styles:
@@ -91,7 +91,7 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
         
         // handlers:
         onModelUpdate,
-        onModelDeleted,
+        onModelDelete,
     ...restListItemProps} = props;
     const {
         id,
@@ -139,7 +139,7 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
     const handleDelete               = useEvent((event) => {
         // actions:
         // actually nothing has deleted here, just inform as deleted:
-        onModelDeleted?.({ draft: model, event });
+        onModelDelete?.({ draft: model, event });
     });
     
     

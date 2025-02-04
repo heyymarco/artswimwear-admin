@@ -62,7 +62,7 @@ import {
 import {
     // types:
     type ModelCreateOrUpdateEventHandler,
-    type ModelDeletedEventHandler,
+    type ModelDeleteEventHandler,
     
     type ShippingRate,
     type ShippingRateWithId,
@@ -206,7 +206,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
         mutatedValue.sort((a, b) => (a.start - b.start));
         triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fix this event
     });
-    const handleModelDeleted = useEvent<ModelDeletedEventHandler<ShippingRateWithId>>(({ draft: { id } }) => {
+    const handleModelDelete  = useEvent<ModelDeleteEventHandler<ShippingRateWithId>>(({ draft: { id } }) => {
         const mutatedValue = value.slice(0); // copy
         const modelIndex = mirrorValueWithId.findIndex((model) => model.id === id);
         if (modelIndex < 0) return;
@@ -285,7 +285,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
                         
                         // handlers:
                         onModelUpdate={handleModelUpdate}
-                        onModelDeleted={handleModelDeleted}
+                        onModelDelete={handleModelDelete}
                     />
                 )}
                 

@@ -93,7 +93,7 @@ import {
 import {
     // types:
     type ModelCreateOrUpdateEventHandler,
-    type ModelDeletedEventHandler,
+    type ModelDeleteEventHandler,
     
     type CoverageZoneDetail,
     type CoverageSubzoneDetail,
@@ -294,7 +294,7 @@ const CoverageZoneEditor = <TCoverageZoneDetail extends CoverageZoneDetail<TCove
         } // if
         triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fix the event
     });
-    const handleModelDeleted   = useEvent<ModelDeletedEventHandler<TCoverageZoneDetail>>(({ draft: { id } }) => {
+    const handleModelDelete    = useEvent<ModelDeleteEventHandler<TCoverageZoneDetail>>(({ draft: { id } }) => {
         const mutatedValue = value.slice(0); // copy
         const modelIndex = value.findIndex((model) => model.id === id);
         if (modelIndex < 0) return;
@@ -406,7 +406,7 @@ const CoverageZoneEditor = <TCoverageZoneDetail extends CoverageZoneDetail<TCove
                             
                             // handlers:
                             onModelUpdate={handleModelUpdate}
-                            onModelDeleted={handleModelDeleted}
+                            onModelDelete={handleModelDelete}
                         />
                     )}
                     

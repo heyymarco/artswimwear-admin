@@ -354,7 +354,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
             onUpdate={handleUpdate}
             
             onDeleting={handleDeleting}
-            // onDeleted={undefined}
+            // onDelete={undefined}
             
             onSideModelCommitting={handleSideModelCommitting}
             onSideModelDiscarding={handleSideModelDiscarding}
