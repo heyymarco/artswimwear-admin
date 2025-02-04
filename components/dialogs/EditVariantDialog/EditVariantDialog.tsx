@@ -323,7 +323,7 @@ const EditVariantDialog = (props: EditVariantDialogProps): JSX.Element|null => {
             onUpdating={handleUpdating}
             // onUpdated={handleUpdated}
             
-            // onDelete={handleDelete}
+            // onDeleting={handleDeleting}
             // onDeleted={undefined}
             
             // onSideModelCommitting={handleSideModelCommitting}
