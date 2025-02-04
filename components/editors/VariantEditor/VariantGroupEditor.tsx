@@ -73,7 +73,7 @@ import {
 // models:
 import {
     // types:
-    type ModelCreatedOrUpdatedEventHandler,
+    type ModelCreateOrUpdateEventHandler,
     type ModelDeletedEventHandler,
     
     type VariantGroupDetail,
@@ -184,7 +184,7 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
         } // for
         triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fis this event
     });
-    const handleModelUpdated   = useEvent<ModelCreatedOrUpdatedEventHandler<VariantGroupDetail>>(({ model: updatedModel }) => {
+    const handleModelUpdate    = useEvent<ModelCreateOrUpdateEventHandler<VariantGroupDetail>>(({ model: updatedModel }) => {
         const mutatedValue = value.slice(0); // copy
         const id = updatedModel.id;
         const modelIndex = mutatedValue.findIndex((model) => model.id === id);
@@ -310,7 +310,7 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
                             
                             
                             // handlers:
-                            onModelUpdated : handleModelUpdated,
+                            onModelUpdate  : handleModelUpdate,
                             onModelDeleted : handleModelDeleted,
                         },
                     )

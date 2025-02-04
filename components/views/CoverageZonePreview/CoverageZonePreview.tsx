@@ -73,7 +73,7 @@ import {
 
 // models:
 import {
-    type ModelCreatedOrUpdatedEventHandler,
+    type ModelCreateOrUpdateEventHandler,
     type ModelDeletedEventHandler,
     
     type CoverageZoneDetail,
@@ -108,7 +108,7 @@ export interface CoverageZonePreviewProps<TCoverageZoneDetail extends CoverageZo
     
     
     // handlers:
-    onModelUpdated ?: ModelCreatedOrUpdatedEventHandler<TCoverageZoneDetail>
+    onModelUpdate  ?: ModelCreateOrUpdateEventHandler<TCoverageZoneDetail>
     onModelDeleted ?: ModelDeletedEventHandler<TCoverageZoneDetail>
 }
 const CoverageZonePreview = <TCoverageZoneDetail extends CoverageZoneDetail<TCoverageSubzoneDetail>, TCoverageSubzoneDetail extends CoverageSubzoneDetail>(props: CoverageZonePreviewProps<TCoverageZoneDetail, TCoverageSubzoneDetail>): JSX.Element|null => {
@@ -126,7 +126,7 @@ const CoverageZonePreview = <TCoverageZoneDetail extends CoverageZoneDetail<TCov
         
         
         // handlers:
-        onModelUpdated,
+        onModelUpdate,
         onModelDeleted,
         
         
@@ -225,7 +225,7 @@ const CoverageZonePreview = <TCoverageZoneDetail extends CoverageZoneDetail<TCov
                 break;
             
             default:        // dialog updated
-                await onModelUpdated?.({ model: updatedCoverageZoneModel, event });
+                await onModelUpdate?.({ model: updatedCoverageZoneModel, event });
         } // switch
     });
     

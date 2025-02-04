@@ -74,7 +74,7 @@ export interface StockPreviewProps
     
     
     // handlers:
-    onUpdated ?: EditorChangeEventHandler<StockDetail, React.ChangeEvent<HTMLInputElement>>
+    onChange  ?: EditorChangeEventHandler<StockDetail, React.ChangeEvent<HTMLInputElement>>
 }
 const StockPreview = (props: StockPreviewProps): JSX.Element|null => {
     // styles:
@@ -91,7 +91,7 @@ const StockPreview = (props: StockPreviewProps): JSX.Element|null => {
         
         
         // handlers:
-        onUpdated,
+        onChange,
         
         
         
@@ -109,7 +109,7 @@ const StockPreview = (props: StockPreviewProps): JSX.Element|null => {
     
     // handlers:
     const handleChange = useEvent<EditorChangeEventHandler<number|null, React.ChangeEvent<HTMLInputElement>>>((value, event) => {
-        onUpdated?.({
+        onChange?.({
             ...model,
             value : value,
         }, event);

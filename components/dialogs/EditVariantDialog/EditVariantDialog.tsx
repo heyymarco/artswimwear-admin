@@ -321,7 +321,7 @@ const EditVariantDialog = (props: EditVariantDialogProps): JSX.Element|null => {
             
             // handlers:
             onUpdating={handleUpdating}
-            // onUpdated={handleUpdated}
+            // onUpdate={handleUpdate}
             
             // onDeleting={handleDeleting}
             // onDeleted={undefined}

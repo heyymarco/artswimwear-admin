@@ -124,7 +124,7 @@ export interface EditVariantGroupDialogProps
             
             // handlers:
             // |'onUpdating' // replace from `ModelCreatingOrUpdatingEventHandler<VariantGroupDetail>` to `ModelCreatingOrUpdatingOfDraftEventHandler<VariantGroupDetail>`
-            |'onUpdated'
+            |'onUpdate'
             
             |'onDeleting'
             |'onDeleted'
@@ -291,7 +291,7 @@ const EditVariantGroupDialog = (props: EditVariantGroupDialogProps): JSX.Element
             
             // handlers:
             onUpdating={handleUpdating}
-            // onUpdated={handleUpdated}
+            // onUpdate={handleUpdate}
             
             // onDeleting={handleDeleting}
             // onDeleted={undefined}

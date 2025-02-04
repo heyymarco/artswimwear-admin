@@ -74,7 +74,7 @@ import {
     type ModelConfirmDeleteEventHandler,
     type ModelCreatingOrUpdatingEventHandler,
     type ModelDeletingEventHandler,
-    type ModelCreatedOrUpdatedEventHandler,
+    type ModelCreateOrUpdateEventHandler,
     
     type RoleDetail,
 }                           from '@/models'
@@ -246,7 +246,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             role_d,
         }).unwrap();
     });
-    const handleUpdated        = useEvent<ModelCreatedOrUpdatedEventHandler<RoleDetail>>(async () => {
+    const handleUpdate         = useEvent<ModelCreateOrUpdateEventHandler<RoleDetail>>(async () => {
         const currentRoleId = session?.role?.id;
         if (!!currentRoleId && (currentRoleId === model?.id)) await updateSession(); // update the session if updated current role
     });
@@ -331,7 +331,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             
             // handlers:
             onUpdating={handleUpdating}
-            onUpdated={handleUpdated}
+            onUpdate={handleUpdate}
             
             onDeleting={handleDeleting}
             // onDeleted={undefined}

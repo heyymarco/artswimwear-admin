@@ -117,7 +117,7 @@ const StockListEditor = <TElement extends Element = HTMLElement>(props: StockLis
     
     
     // handlers:
-    const handleModelUpdated   = useEvent<EditorChangeEventHandler<StockDetail, React.ChangeEvent<HTMLInputElement>>>((updatedModel, event) => {
+    const handleModelChange = useEvent<EditorChangeEventHandler<StockDetail, React.ChangeEvent<HTMLInputElement>>>((updatedModel, event) => {
         const mutatedValue = value.slice(0); // copy
         const id = updatedModel.id;
         const modelIndex = mutatedValue.findIndex((model) => model.id === id);
@@ -156,7 +156,7 @@ const StockListEditor = <TElement extends Element = HTMLElement>(props: StockLis
                         
                         
                         // handlers:
-                        onUpdated : handleModelUpdated,
+                        onChange  : handleModelChange,
                     },
                 )
             )}

@@ -52,7 +52,7 @@ import {
 
 // models:
 import {
-    type ModelCreatedOrUpdatedEventHandler,
+    type ModelCreateOrUpdateEventHandler,
     type ModelDeletedEventHandler,
     
     type ShippingRateWithId,
@@ -68,7 +68,7 @@ export interface ShippingRatePreviewProps extends ModelPreviewProps<ShippingRate
     
     
     // handlers:
-    onModelUpdated ?: ModelCreatedOrUpdatedEventHandler<ShippingRateWithId, React.ChangeEvent<HTMLInputElement>>
+    onModelUpdate  ?: ModelCreateOrUpdateEventHandler<ShippingRateWithId, React.ChangeEvent<HTMLInputElement>>
     onModelDeleted ?: ModelDeletedEventHandler<ShippingRateWithId>
 }
 const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null => {
@@ -90,7 +90,7 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
         
         
         // handlers:
-        onModelUpdated,
+        onModelUpdate,
         onModelDeleted,
     ...restListItemProps} = props;
     const {
@@ -111,7 +111,7 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
     // handlers:
     const handleStartingWeightChange = useEvent<EditorChangeEventHandler<number|null, React.ChangeEvent<HTMLInputElement>>>((newValue, event) => {
         // conditions:
-        if (!onModelUpdated) return;
+        if (!onModelUpdate) return;
         
         let newStart = newValue ?? 0;
         if (rates.some(({id: otherId, start: otherStart}) => (otherId !== id) && (otherStart === newStart))) { // a duplicate found
@@ -124,17 +124,17 @@ const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null 
         
         // actions:
         model.start = newStart; // update the model
-        onModelUpdated({ model, event: event });
+        onModelUpdate({ model, event: event });
     });
     const handleRateChange           = useEvent<EditorChangeEventHandler<number|null, React.ChangeEvent<HTMLInputElement>>>((newValue, event) => {
         // conditions:
-        if (!onModelUpdated) return;
+        if (!onModelUpdate) return;
         
         
         
         // actions:
         model.rate = newValue ?? 0; // update the model
-        onModelUpdated({ model, event });
+        onModelUpdate({ model, event });
     });
     const handleDelete               = useEvent((event) => {
         // actions:

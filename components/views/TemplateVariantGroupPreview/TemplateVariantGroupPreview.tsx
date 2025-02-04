@@ -71,7 +71,7 @@ import {
 // models:
 import {
     // types:
-    type ModelCreatedOrUpdatedEventHandler,
+    type ModelCreateOrUpdateEventHandler,
     type ModelDeletedEventHandler,
     
     type TemplateVariantGroupDetail,
@@ -96,7 +96,7 @@ export interface TemplateVariantGroupPreviewProps
         >
 {
     // handlers:
-    onModelUpdated ?: ModelCreatedOrUpdatedEventHandler<TemplateVariantGroupDetail>
+    onModelUpdate  ?: ModelCreateOrUpdateEventHandler<TemplateVariantGroupDetail>
     onModelDeleted ?: ModelDeletedEventHandler<TemplateVariantGroupDetail>
     onModelEdit    ?: React.MouseEventHandler<HTMLButtonElement>
 }
@@ -114,7 +114,7 @@ const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): J
         
         
         // handlers:
-        onModelUpdated,
+        onModelUpdate,
         onModelDeleted,
         onModelEdit,
     ...restListItemProps} = props;
@@ -195,7 +195,7 @@ const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): J
                 break;
             
             default:        // dialog updated
-                await onModelUpdated?.({ model: updatedVariantGroupModel, event });
+                await onModelUpdate?.({ model: updatedVariantGroupModel, event });
         } // switch
     });
     

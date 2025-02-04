@@ -450,7 +450,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             
             // handlers:
             onUpdating={handleUpdating}
-            // onUpdated={handleUpdated}
+            // onUpdate={handleUpdate}
             
             onDeleting={handleDeleting}
             // onDeleted={undefined}
