@@ -356,7 +356,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
     
     
     // handlers:
-    const handleUpdate               = useEvent<ModelCreatingOrUpdatingEventHandler<CategoryDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
+    const handleUpdating             = useEvent<ModelCreatingOrUpdatingEventHandler<CategoryDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
         const immigratedImages : string[] = [];
         let updatedImages = images;
         if (updatedImages.length) {
@@ -608,7 +608,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
             
             
             // handlers:
-            onUpdate={handleUpdate}
+            onUpdating={handleUpdating}
             // onUpdated={handleAfterUpdate}
             
             onDelete={handleDelete}

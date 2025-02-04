@@ -140,7 +140,7 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
     
     
     // handlers:
-    const handleUpdate         = useEvent<ModelCreatingOrUpdatingEventHandler<AdminPreferenceDetail>>(async ({ id }) => {
+    const handleUpdating       = useEvent<ModelCreatingOrUpdatingEventHandler<AdminPreferenceDetail>>(async ({ id }) => {
         return await updatePreference({
             id : id ?? '',
             
@@ -206,7 +206,7 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
             
             
             // handlers:
-            onUpdate={handleUpdate}
+            onUpdating={handleUpdating}
             
             onConfirmUnsaved={handleConfirmUnsaved}
         >

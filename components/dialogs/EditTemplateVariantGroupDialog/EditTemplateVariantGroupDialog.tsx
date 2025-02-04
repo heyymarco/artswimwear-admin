@@ -112,7 +112,7 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
     
     
     // handlers:
-    const handleUpdate         = useEvent<ModelCreatingOrUpdatingOfDraftEventHandler<VariantGroupDetail>>(async ({ draft: variantGroupDetail }) => {
+    const handleUpdating       = useEvent<ModelCreatingOrUpdatingOfDraftEventHandler<VariantGroupDetail>>(async ({ draft: variantGroupDetail }) => {
         const {
             id,
             sort : _sort, // remove
@@ -194,7 +194,7 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
             
             
             // handlers:
-            onUpdate={handleUpdate}
+            onUpdating={handleUpdating}
             // onUpdated={handleUpdated}
             
             onDelete={handleDelete}

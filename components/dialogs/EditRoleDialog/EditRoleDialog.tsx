@@ -196,7 +196,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleUpdate         = useEvent<ModelCreatingOrUpdatingEventHandler<RoleDetail>>(async ({ id }) => {
+    const handleUpdating       = useEvent<ModelCreatingOrUpdatingEventHandler<RoleDetail>>(async ({ id }) => {
         return await updateRole({
             id : id ?? '',
             
@@ -330,7 +330,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             
             
             // handlers:
-            onUpdate={handleUpdate}
+            onUpdating={handleUpdating}
             onUpdated={handleUpdated}
             
             onDelete={handleDelete}

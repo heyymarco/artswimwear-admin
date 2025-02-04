@@ -182,7 +182,7 @@ const EditVariantDialog = (props: EditVariantDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleUpdate               = useEvent<ModelCreatingOrUpdatingEventHandler<VariantDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
+    const handleUpdating             = useEvent<ModelCreatingOrUpdatingEventHandler<VariantDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
         const immigratedImages : string[] = [];
         let updatedImages = images;
         if (updatedImages.length) {
@@ -320,7 +320,7 @@ const EditVariantDialog = (props: EditVariantDialogProps): JSX.Element|null => {
             
             
             // handlers:
-            onUpdate={handleUpdate}
+            onUpdating={handleUpdating}
             // onUpdated={handleUpdated}
             
             // onDelete={handleDelete}

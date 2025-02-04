@@ -223,7 +223,7 @@ const EditCoverageZoneDialog = <TCoverageZoneDetail extends CoverageZoneDetail<T
     
     
     // handlers:
-    const handleUpdate         = useEvent<ModelCreatingOrUpdatingEventHandler<TCoverageZoneDetail>>(({ id, options: { addPermission, updatePermissions } }) => {
+    const handleUpdating       = useEvent<ModelCreatingOrUpdatingEventHandler<TCoverageZoneDetail>>(({ id, options: { addPermission, updatePermissions } }) => {
         return {
             id       : id ?? (() => {
                 const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
@@ -304,7 +304,7 @@ const EditCoverageZoneDialog = <TCoverageZoneDetail extends CoverageZoneDetail<T
             
             
             // handlers:
-            onUpdate={handleUpdate}
+            onUpdating={handleUpdating}
             
             onConfirmDelete={handleConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}

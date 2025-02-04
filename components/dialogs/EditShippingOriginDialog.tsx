@@ -139,7 +139,7 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
     
     
     // handlers:
-    const handleUpdate         = useEvent<ModelCreatingOrUpdatingEventHandler<DefaultShippingOriginDetail>>(async ({ id }) => {
+    const handleUpdating       = useEvent<ModelCreatingOrUpdatingEventHandler<DefaultShippingOriginDetail>>(async ({ id }) => {
         return await updateDefaultShippingOrigin(model).unwrap();
     });
     
@@ -187,7 +187,7 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
             
             
             // handlers:
-            onUpdate={handleUpdate}
+            onUpdating={handleUpdating}
             
             onConfirmUnsaved={handleConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
