@@ -125,9 +125,9 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
     
     
     // handlers:
-    const handleModelSelect = useEvent<ModelSelectEventHandler<RoleDetail>>(({ model: { id }, event }) => {
+    const handleModelSelect = useEvent<ModelSelectEventHandler<RoleDetail|null>>(({ model, event }) => {
         onChange?.(
-            id || null, // null (no selection) if the id is an empty string
+            model ? model.id : null,
             event
         );
     });

@@ -82,7 +82,7 @@ export interface RolePreviewProps
     
     
     // handlers:
-    onModelSelect ?: ModelSelectEventHandler<RoleDetail>
+    onModelSelect ?: ModelSelectEventHandler<RoleDetail|null>
     onModelDelete ?: ModelDeletingEventHandler<RoleDetail>
 }
 const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
@@ -150,8 +150,7 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         
         // actions:
         onModelSelect?.({
-            // model : id ? model : null, // null (no selection) if the id is an empty string
-            model : model,
+            model : id ? model : null, // null (no selection) if the id is an empty string
             event : event,
         });
     });
