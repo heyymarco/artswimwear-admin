@@ -89,6 +89,7 @@ import {
     type ModelCreatingOrUpdatingEventHandler,
     type ModelDeletingEventHandler,
     type ModelCreateOrUpdateEventHandler,
+    type ModelDeleteEventHandler,
     
     type AdminDetail,
     type RoleDetail,
@@ -225,7 +226,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
         setRoleId(id); // select the last created role
         setIsModified(true);
     });
-    const handleRoleDeleted          = useEvent<ModelDeletingEventHandler<RoleDetail>>(async ({ draft: { id } }) => {
+    const handleRoleDelete           = useEvent<ModelDeleteEventHandler<RoleDetail>>(async ({ draft: { id } }) => {
         if (id && (id === roleId)) { // if currently selected
             // the related role was deleted => set to null (no selection):
             setRoleId(null);
@@ -555,7 +556,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
                                 
                                 
                                 // handlers:
-                                onModelDelete={handleRoleDeleted}
+                                onModelDelete={handleRoleDelete}
                             />
                         }
                         modelCreateComponent={

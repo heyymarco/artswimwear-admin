@@ -63,7 +63,7 @@ import {
 // models:
 import {
     type ModelSelectEventHandler,
-    type ModelDeletingEventHandler,
+    type ModelDeleteEventHandler,
     
     type RoleDetail,
 }                           from '@/models'
@@ -83,7 +83,7 @@ export interface RolePreviewProps
     
     // handlers:
     onModelSelect ?: ModelSelectEventHandler<RoleDetail|null>
-    onModelDelete ?: ModelDeletingEventHandler<RoleDetail>
+    onModelDelete ?: ModelDeleteEventHandler<RoleDetail>
 }
 const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
     // styles:
@@ -166,7 +166,10 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
             />
         );
         if (updatedRoleModel === false) {
-            onModelDelete?.({ draft: model, event: event });
+            onModelDelete?.({
+                draft : model,
+                event : event,
+            });
         } // if
     });
     
