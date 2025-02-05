@@ -33,7 +33,7 @@ import {
 import {
     // types:
     type ModelToggleSelectEventHandler,
-    type ModelDeletingEventHandler,
+    type ModelDeleteEventHandler,
     
     type CategoryDetail,
 }                           from '@/models'
@@ -122,7 +122,7 @@ export interface CategoryState
     
     // handlers:
     onModelSelect        : ModelToggleSelectEventHandler<CategoryDetail>
-    onModelDelete        : ModelDeletingEventHandler<CategoryDetail>
+    onModelDelete        : ModelDeleteEventHandler<CategoryDetail>
 }
 
 const noopCallback = () => {};

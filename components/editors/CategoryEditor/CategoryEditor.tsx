@@ -29,7 +29,7 @@ import {
 // models:
 import {
     type ModelToggleSelectEventHandler,
-    type ModelDeletingEventHandler,
+    type ModelDeleteEventHandler,
     
     type CategoryDetail,
 }                           from '@/models'
@@ -203,7 +203,7 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
             } // if
         } // if
     });
-    const handleModelDelete = useEvent<ModelDeletingEventHandler<CategoryDetail>>(({ draft, event }) => {
+    const handleModelDelete = useEvent<ModelDeleteEventHandler<CategoryDetail>>(({ draft, event }) => {
         handleModelSelect({
             model    : draft,
             event    : event,

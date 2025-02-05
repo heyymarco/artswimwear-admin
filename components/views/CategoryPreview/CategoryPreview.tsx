@@ -268,7 +268,10 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
         
         dialogPromise.then((updatedModel) => {
             if (updatedModel === false) {
-                onModelDelete?.({ draft: model, event: event });
+                onModelDelete?.({
+                    draft : model,
+                    event : event,
+                });
             } // if
         });
     });
@@ -749,7 +752,10 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
         
         dialogPromise.then((updatedModel) => {
             if (updatedModel === false) {
-                onModelDelete?.({ draft: model, event: event });
+                onModelDelete?.({
+                    draft : model,
+                    event : event,
+                });
             } // if
         });
     });
