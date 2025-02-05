@@ -180,7 +180,7 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
     
     
     // handlers:
-    const handleModelSelect = useEvent<ModelToggleSelectEventHandler<CategoryDetail>>(({ model: { id }, event, selected }) => {
+    const handleCategorySelect = useEvent<ModelToggleSelectEventHandler<CategoryDetail>>(({ model: { id }, event, selected }) => {
         // conditions:
         if (!onChange) return; // no onChange handler => noop
         
@@ -203,8 +203,8 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
             } // if
         } // if
     });
-    const handleModelDelete = useEvent<ModelDeleteEventHandler<CategoryDetail>>(({ draft, event }) => {
-        handleModelSelect({
+    const handleCategoryDelete = useEvent<ModelDeleteEventHandler<CategoryDetail>>(({ draft, event }) => {
+        handleCategorySelect({
             model    : draft,
             event    : event,
             selected : false, // if the model deleted => treat as unselect
@@ -241,8 +241,8 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
             
             
             // handlers:
-            onModelSelect={handleModelSelect}
-            onModelDelete={handleModelDelete}
+            onModelSelect={handleCategorySelect}
+            onModelDelete={handleCategoryDelete}
         >
             <PaginationList<CategoryDetail, TElement>
                 // other props:
