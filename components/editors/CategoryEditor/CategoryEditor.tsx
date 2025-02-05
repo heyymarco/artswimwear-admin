@@ -12,7 +12,6 @@ import {
 
 // heymarco components:
 import {
-    type EditorChangeEventHandler,
     type EditorProps,
 }                           from '@heymarco/editor'
 
