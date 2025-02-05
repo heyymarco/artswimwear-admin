@@ -9,6 +9,12 @@ import type {
     EntityState
 }                           from '@reduxjs/toolkit'
 
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useEvent,
+}                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
+
 // reusable-ui components:
 import {
     // layout-components:
@@ -33,6 +39,8 @@ import type {
 
 // models:
 import {
+    type ModelSelectEventHandler,
+    
     type RoleDetail,
 }                           from '@/models'
 
@@ -42,7 +50,7 @@ import {
 interface RoleEditorProps<TElement extends Element = HTMLElement>
     extends
         // bases:
-        Pick<EditorProps<TElement, string|null, React.MouseEvent<HTMLElement, MouseEvent>>,
+        Pick<EditorProps<TElement, string|null, React.MouseEvent<Element, MouseEvent>>,
             // values:
             // |'defaultValue' // not supported, controllable only
             |'value'
@@ -116,6 +124,16 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
     
     
     
+    // handlers:
+    const handleModelSelect = useEvent<ModelSelectEventHandler<RoleDetail>>(({ model: { id }, event }) => {
+        onChange?.(
+            id || null, // null (no selection) if the id is an empty string
+            event
+        );
+    });
+    
+    
+    
     // jsx:
     return (
         <List<TElement>
@@ -164,7 +182,7 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
                         
                         
                         // handlers:
-                        onModelSelect : onChange,
+                        onModelSelect : handleModelSelect,
                     },
                 )
             )}

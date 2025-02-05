@@ -41,9 +41,6 @@ import {
 
 // heymarco components:
 import {
-    type EditorChangeEventHandler,
-}                           from '@heymarco/editor'
-import {
     RadioDecorator,
 }                           from '@heymarco/radio-decorator'
 
@@ -65,6 +62,7 @@ import {
 
 // models:
 import {
+    type ModelSelectEventHandler,
     type ModelDeletingEventHandler,
     
     type RoleDetail,
@@ -84,7 +82,7 @@ export interface RolePreviewProps
     
     
     // handlers:
-    onModelSelect ?: EditorChangeEventHandler<string|null, React.MouseEvent<HTMLElement, MouseEvent>>
+    onModelSelect ?: ModelSelectEventHandler<RoleDetail>
     onModelDelete ?: ModelDeletingEventHandler<RoleDetail>
 }
 const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
@@ -151,7 +149,11 @@ const RolePreview = (props: RolePreviewProps): JSX.Element|null => {
         
         
         // actions:
-        onModelSelect?.(id || null, event); // null (no selection) if the id is an empty string
+        onModelSelect?.({
+            // model : id ? model : null, // null (no selection) if the id is an empty string
+            model : model,
+            event : event,
+        });
     });
     const handleEditButtonClick = useEvent<React.MouseEventHandler<HTMLButtonElement>>(async (event) => {
         event.stopPropagation(); // prevents triggering `ListItem::onClick`
