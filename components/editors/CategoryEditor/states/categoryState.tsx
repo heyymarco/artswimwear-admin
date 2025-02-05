@@ -32,6 +32,7 @@ import {
 // models:
 import {
     // types:
+    type ModelToggleSelectEventHandler,
     type ModelDeletingEventHandler,
     
     type CategoryDetail,
@@ -61,11 +62,6 @@ export interface CategoryPrivilege
         visibility    : boolean,
     }
     privilegeDelete  ?: boolean
-}
-
-export interface ModelSelectEvent {
-    id       : string
-    selected : boolean
 }
 
 
@@ -125,7 +121,7 @@ export interface CategoryState
     
     
     // handlers:
-    onModelSelect        : EditorChangeEventHandler<ModelSelectEvent, React.MouseEvent<Element, MouseEvent>>
+    onModelSelect        : ModelToggleSelectEventHandler<CategoryDetail>
     onModelDelete        : ModelDeletingEventHandler<CategoryDetail>
 }
 

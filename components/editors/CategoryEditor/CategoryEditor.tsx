@@ -24,12 +24,12 @@ import {
     PaginationList,
 }                           from '@/components/explorers/PaginationList'
 import {
-    type ModelSelectEvent,
     type CategoryPreviewProps,
 }                           from '@/components/views/CategoryPreview'
 
 // models:
 import {
+    type ModelToggleSelectEventHandler,
     type ModelDeletingEventHandler,
     
     type CategoryDetail,
@@ -181,7 +181,7 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
     
     
     // handlers:
-    const handleModelSelect = useEvent<EditorChangeEventHandler<ModelSelectEvent, React.MouseEvent<Element, MouseEvent>>>(({ id, selected }, event) => {
+    const handleModelSelect = useEvent<ModelToggleSelectEventHandler<CategoryDetail>>(({ model: { id }, event, selected }) => {
         // conditions:
         if (!onChange) return; // no onChange handler => noop
         
@@ -204,9 +204,12 @@ const CategoryEditor = <TElement extends Element = HTMLElement>(props: CategoryE
             } // if
         } // if
     });
-    const handleModelDelete = useEvent<ModelDeletingEventHandler<CategoryDetail>>(({ draft: { id } }) => {
-        // if the model deleted => treat as unselect:
-        handleModelSelect({ id, selected: false }, undefined as any); // TODO: fix the event
+    const handleModelDelete = useEvent<ModelDeletingEventHandler<CategoryDetail>>(({ draft, event }) => {
+        handleModelSelect({
+            model    : draft,
+            event    : event,
+            selected : false, // if the model deleted => treat as unselect
+        });
     });
     
     

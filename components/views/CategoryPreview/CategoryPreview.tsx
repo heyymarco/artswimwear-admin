@@ -121,14 +121,6 @@ const minImageWidthSub = 75;   // 75px === (80px + (2* paddingBlock)) * aspectRa
 
 
 
-// types:
-export interface ModelSelectEvent {
-    id       : string
-    selected : boolean
-}
-
-
-
 // react components:
 export interface CategoryPreviewProps
     extends
@@ -282,7 +274,11 @@ const CategoryPreview = (props: CategoryPreviewProps): JSX.Element|null => {
     });
     
     const handleCheckActiveChange = useEvent<EventHandler<ActiveChangeEvent>>(({ active }) => {
-        onModelSelect?.({ id: id, selected: active }, undefined as any); // TODO: fix the event
+        onModelSelect?.({
+            model    : model,
+            event    : undefined as any, // TODO: fix the event
+            selected : active,
+        });
     });
     
     
@@ -759,7 +755,11 @@ const SubcategoryListItem = (props: SubcategoryListItemProps): JSX.Element|null 
     });
     
     const handleCheckActiveChange = useEvent<EventHandler<ActiveChangeEvent>>(({ active }) => {
-        onModelSelect?.({ id: id, selected: active }, undefined as any); // TODO: fix the event
+        onModelSelect?.({
+            model    : model,
+            event    : undefined as any, // TODO: fix the event
+            selected : active,
+        });
     });
     
     
