@@ -92,7 +92,7 @@ import {
     
     type ModelConfirmUnsavedEventHandler,
     type ModelConfirmDeleteEventHandler,
-    type ModelCreatingOrUpdatingEventHandler,
+    type ModelUpsertingEventHandler,
     type ModelDeletingEventHandler,
     
     type ProductVisibility,
@@ -356,7 +356,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
     
     
     // handlers:
-    const handleUpdating             = useEvent<ModelCreatingOrUpdatingEventHandler<CategoryDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
+    const handleUpdating             = useEvent<ModelUpsertingEventHandler<CategoryDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
         const immigratedImages : string[] = [];
         let updatedImages = images;
         if (updatedImages.length) {

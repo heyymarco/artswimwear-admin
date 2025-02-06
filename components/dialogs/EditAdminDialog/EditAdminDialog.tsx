@@ -83,7 +83,7 @@ import {
     // types:
     type ModelConfirmUnsavedEventHandler,
     type ModelConfirmDeleteEventHandler,
-    type ModelCreatingOrUpdatingEventHandler,
+    type ModelUpsertingEventHandler,
     type ModelDeletingEventHandler,
     type ModelCreateOrUpdateEventHandler,
     type ModelDeleteEventHandler,
@@ -197,7 +197,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleUpdating             = useEvent<ModelCreatingOrUpdatingEventHandler<AdminDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
+    const handleUpdating             = useEvent<ModelUpsertingEventHandler<AdminDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
         return await updateAdmin({
             id       : id ?? '',
             

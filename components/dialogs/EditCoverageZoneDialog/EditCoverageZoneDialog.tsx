@@ -93,7 +93,7 @@ import {
     
     type ModelConfirmUnsavedEventHandler,
     type ModelConfirmDeleteEventHandler,
-    type ModelCreatingOrUpdatingEventHandler,
+    type ModelUpsertingEventHandler,
     
     type CoverageZoneDetail,
     type CoverageSubzoneDetail,
@@ -223,7 +223,7 @@ const EditCoverageZoneDialog = <TCoverageZoneDetail extends CoverageZoneDetail<T
     
     
     // handlers:
-    const handleUpdating       = useEvent<ModelCreatingOrUpdatingEventHandler<TCoverageZoneDetail>>(({ id, options: { addPermission, updatePermissions } }) => {
+    const handleUpdating       = useEvent<ModelUpsertingEventHandler<TCoverageZoneDetail>>(({ id, options: { addPermission, updatePermissions } }) => {
         return {
             id       : id ?? (() => {
                 const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);

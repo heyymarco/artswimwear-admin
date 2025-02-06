@@ -47,7 +47,7 @@ import {
 import {
     type ModelRetryErrorEventHandler,
     type ModelConfirmUnsavedEventHandler,
-    type ModelCreatingOrUpdatingEventHandler,
+    type ModelUpsertingEventHandler,
     
     type AdminPreferenceDetail,
     defaultAdminPreferenceDetail,
@@ -141,7 +141,7 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
     
     
     // handlers:
-    const handleUpdating       = useEvent<ModelCreatingOrUpdatingEventHandler<AdminPreferenceDetail>>(async ({ id }) => {
+    const handleUpdating       = useEvent<ModelUpsertingEventHandler<AdminPreferenceDetail>>(async ({ id }) => {
         return await updatePreference({
             id : id ?? '',
             

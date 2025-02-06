@@ -46,7 +46,7 @@ import {
 import {
     type ModelRetryErrorEventHandler,
     type ModelConfirmUnsavedEventHandler,
-    type ModelCreatingOrUpdatingEventHandler,
+    type ModelUpsertingEventHandler,
     
     type DefaultShippingOriginDetail,
 }                           from '@/models'
@@ -140,7 +140,7 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
     
     
     // handlers:
-    const handleUpdating       = useEvent<ModelCreatingOrUpdatingEventHandler<DefaultShippingOriginDetail>>(async ({ id }) => {
+    const handleUpdating       = useEvent<ModelUpsertingEventHandler<DefaultShippingOriginDetail>>(async ({ id }) => {
         return await updateDefaultShippingOrigin(model).unwrap();
     });
     

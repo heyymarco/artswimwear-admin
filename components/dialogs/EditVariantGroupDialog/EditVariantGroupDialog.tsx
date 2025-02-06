@@ -81,7 +81,7 @@ import {
     // types:
     type ModelConfirmUnsavedEventHandler,
     type ModelConfirmDeleteEventHandler,
-    type ModelCreatingOrUpdatingEventHandler,
+    type ModelUpsertingEventHandler,
     type ModelCreatingOrUpdatingOfDraftEventHandler,
     
     type VariantDetail,
@@ -123,7 +123,7 @@ export interface EditVariantGroupDialogProps
             
             
             // handlers:
-            // |'onUpdating' // replace from `ModelCreatingOrUpdatingEventHandler<VariantGroupDetail>` to `ModelCreatingOrUpdatingOfDraftEventHandler<VariantGroupDetail>`
+            // |'onUpdating' // replace from `ModelUpsertingEventHandler<VariantGroupDetail>` to `ModelCreatingOrUpdatingOfDraftEventHandler<VariantGroupDetail>`
             |'onUpdate'
             
             |'onDeleting'
@@ -201,7 +201,7 @@ const EditVariantGroupDialog = (props: EditVariantGroupDialogProps): JSX.Element
     
     
     // handlers:
-    const handleUpdating             = useEvent<ModelCreatingOrUpdatingEventHandler<VariantGroupDetail>>(async ({ id, event, options: { addPermission, updatePermissions } }) => {
+    const handleUpdating             = useEvent<ModelUpsertingEventHandler<VariantGroupDetail>>(async ({ id, event, options: { addPermission, updatePermissions } }) => {
         const draft : VariantGroupDetail = {
             ...model,
             

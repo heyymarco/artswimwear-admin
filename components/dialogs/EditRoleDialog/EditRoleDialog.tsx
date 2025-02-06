@@ -72,7 +72,7 @@ import {
 import {
     type ModelConfirmUnsavedEventHandler,
     type ModelConfirmDeleteEventHandler,
-    type ModelCreatingOrUpdatingEventHandler,
+    type ModelUpsertingEventHandler,
     type ModelDeletingEventHandler,
     type ModelCreateOrUpdateEventHandler,
     
@@ -196,7 +196,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleUpdating       = useEvent<ModelCreatingOrUpdatingEventHandler<RoleDetail>>(async ({ id }) => {
+    const handleUpdating       = useEvent<ModelUpsertingEventHandler<RoleDetail>>(async ({ id }) => {
         return await updateRole({
             id : id ?? '',
             

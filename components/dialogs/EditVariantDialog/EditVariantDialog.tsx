@@ -86,7 +86,7 @@ import {
     // types:
     type ModelConfirmUnsavedEventHandler,
     type ModelConfirmDeleteEventHandler,
-    type ModelCreatingOrUpdatingEventHandler,
+    type ModelUpsertingEventHandler,
     
     type VariantDetail,
 }                           from '@/models'
@@ -182,7 +182,7 @@ const EditVariantDialog = (props: EditVariantDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleUpdating             = useEvent<ModelCreatingOrUpdatingEventHandler<VariantDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
+    const handleUpdating             = useEvent<ModelUpsertingEventHandler<VariantDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
         const immigratedImages : string[] = [];
         let updatedImages = images;
         if (updatedImages.length) {
