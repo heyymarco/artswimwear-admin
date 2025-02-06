@@ -334,7 +334,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             onModelUpsert={handleModelUpsert}
             
             onModelDeleting={handleModelDeleting}
-            // onDelete={undefined}
+            // onModelDelete={undefined}
             
             onConfirmDelete={handleConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}

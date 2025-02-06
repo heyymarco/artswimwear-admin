@@ -324,7 +324,7 @@ const EditVariantDialog = (props: EditVariantDialogProps): JSX.Element|null => {
             // onModelUpsert={handleModelUpsert}
             
             // onModelDeleting={handleModelDeleting}
-            // onDelete={undefined}
+            // onModelDelete={undefined}
             
             // onSideModelCommitting={handleSideModelCommitting}
             // onSideModelDiscarding={handleSideModelDiscarding}
