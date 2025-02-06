@@ -208,7 +208,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
             username : (updatePermissions.username || addPermission) ? (username || null) : undefined, // convert empty string to null
         }).unwrap();
     });
-    const handleUpdate               = useEvent<ModelUpsertEventHandler<AdminDetail>>(async () => {
+    const handleModelUpsert          = useEvent<ModelUpsertEventHandler<AdminDetail>>(async () => {
         const sessionEmail = session?.user?.email;
         if (!!sessionEmail && (sessionEmail.toLowerCase() === initialEmailRef.current.toLowerCase())) await updateSession(); // update the session if updated current admin
     });
@@ -349,7 +349,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
             
             // handlers:
             onModelUpserting={handleModelUpserting}
-            onUpdate={handleUpdate}
+            onModelUpsert={handleModelUpsert}
             
             onDeleting={handleDeleting}
             // onDelete={undefined}

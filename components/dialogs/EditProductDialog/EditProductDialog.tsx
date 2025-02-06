@@ -595,7 +595,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             
             // handlers:
             onModelUpserting={handleModelUpserting}
-            // onUpdate={handleUpdate}
+            // onModelUpsert={handleModelUpsert}
             
             onDeleting={handleDeleting}
             // onDelete={undefined}

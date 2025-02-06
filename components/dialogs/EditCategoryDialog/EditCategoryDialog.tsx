@@ -609,7 +609,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
             
             // handlers:
             onModelUpserting={handleModelUpserting}
-            // onUpdate={handleUpdate}
+            // onModelUpsert={handleModelUpsert}
             
             onDeleting={handleDeleting}
             // onDelete={undefined}
