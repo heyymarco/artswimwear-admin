@@ -52,7 +52,7 @@ import {
 
 // models:
 import {
-    type ModelCreateOrUpdateEventHandler,
+    type ModelUpsertEventHandler,
     type ModelDeleteEventHandler,
     
     type ShippingRateWithId,
@@ -68,7 +68,7 @@ export interface ShippingRatePreviewProps extends ModelPreviewProps<ShippingRate
     
     
     // handlers:
-    onModelUpdate  ?: ModelCreateOrUpdateEventHandler<ShippingRateWithId, React.ChangeEvent<HTMLInputElement>>
+    onModelUpdate  ?: ModelUpsertEventHandler<ShippingRateWithId, React.ChangeEvent<HTMLInputElement>>
     onModelDelete  ?: ModelDeleteEventHandler<ShippingRateWithId>
 }
 const ShippingRatePreview = (props: ShippingRatePreviewProps): JSX.Element|null => {

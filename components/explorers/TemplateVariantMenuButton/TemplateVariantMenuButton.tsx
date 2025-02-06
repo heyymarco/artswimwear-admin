@@ -71,7 +71,7 @@ import {
 import {
     // types:
     type ModelEditEventHandler,
-    type ModelCreateOrUpdateEventHandler,
+    type ModelUpsertEventHandler,
     
     type VariantGroupDetail,
     type TemplateVariantGroupDetail,
@@ -93,7 +93,7 @@ export interface TemplateVariantMenuButtonProps
         DropdownListButtonProps
 {
     // handlers:
-    onModelCreate ?: ModelCreateOrUpdateEventHandler<VariantGroupDetail>
+    onModelCreate ?: ModelUpsertEventHandler<VariantGroupDetail>
 }
 const TemplateVariantMenuButton = (props: TemplateVariantMenuButtonProps): JSX.Element|null => {
     // props:
@@ -230,7 +230,7 @@ export {
 
 interface TemplateVariantMenuItemsProps {
     // handlers:
-    onModelCreate ?: ModelCreateOrUpdateEventHandler<VariantGroupDetail>
+    onModelCreate ?: ModelUpsertEventHandler<VariantGroupDetail>
     onClose       ?: () => void
 }
 const TemplateVariantMenuItems = (props: TemplateVariantMenuItemsProps): JSX.Element|null => {

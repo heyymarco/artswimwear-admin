@@ -58,7 +58,7 @@ import {
 // models:
 import {
     // types:
-    type ModelCreateOrUpdateEventHandler,
+    type ModelUpsertEventHandler,
     type ModelDeleteEventHandler,
     
     type ShippingRate,
@@ -172,7 +172,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
             rate  : (lastValue === undefined) ? 0 :   lastValue.rate,
         };
     });
-    const handleModelCreate   = useEvent<ModelCreateOrUpdateEventHandler<ShippingRateWithId>>(({ model: createdModelWithId }) => {
+    const handleModelCreate   = useEvent<ModelUpsertEventHandler<ShippingRateWithId>>(({ model: createdModelWithId }) => {
         const {
             id : _id, // remove
             ...createdModel
@@ -182,7 +182,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
         mutatedValue.push(createdModel as ShippingRateWithId);
         triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fix this event
     });
-    const handleModelUpdate   = useEvent<ModelCreateOrUpdateEventHandler<ShippingRateWithId, React.ChangeEvent<HTMLInputElement>>>(({ model: updatedModelWithId }) => {
+    const handleModelUpdate   = useEvent<ModelUpsertEventHandler<ShippingRateWithId, React.ChangeEvent<HTMLInputElement>>>(({ model: updatedModelWithId }) => {
         const {
             id : findId, // take
             ...mutatedModel

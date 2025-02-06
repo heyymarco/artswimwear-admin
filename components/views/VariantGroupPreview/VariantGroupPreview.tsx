@@ -79,7 +79,7 @@ import {
 // models:
 import {
     // types:
-    type ModelCreateOrUpdateEventHandler,
+    type ModelUpsertEventHandler,
     type ModelDeleteEventHandler,
     
     type VariantGroupDetail,
@@ -104,7 +104,7 @@ export interface VariantGroupPreviewProps
         >
 {
     // handlers:
-    onModelUpdate  ?: ModelCreateOrUpdateEventHandler<VariantGroupDetail>
+    onModelUpdate  ?: ModelUpsertEventHandler<VariantGroupDetail>
     onModelDelete  ?: ModelDeleteEventHandler<VariantGroupDetail>
 }
 const VariantGroupPreview = (props: VariantGroupPreviewProps): JSX.Element|null => {

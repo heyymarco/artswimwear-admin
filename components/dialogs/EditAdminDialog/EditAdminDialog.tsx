@@ -85,7 +85,7 @@ import {
     type ModelConfirmDeleteEventHandler,
     type ModelUpsertingEventHandler,
     type ModelDeletingEventHandler,
-    type ModelCreateOrUpdateEventHandler,
+    type ModelUpsertEventHandler,
     type ModelDeleteEventHandler,
     
     type AdminDetail,
@@ -208,7 +208,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
             username : (updatePermissions.username || addPermission) ? (username || null) : undefined, // convert empty string to null
         }).unwrap();
     });
-    const handleUpdate               = useEvent<ModelCreateOrUpdateEventHandler<AdminDetail>>(async () => {
+    const handleUpdate               = useEvent<ModelUpsertEventHandler<AdminDetail>>(async () => {
         const sessionEmail = session?.user?.email;
         if (!!sessionEmail && (sessionEmail.toLowerCase() === initialEmailRef.current.toLowerCase())) await updateSession(); // update the session if updated current admin
     });
@@ -219,7 +219,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
         }).unwrap();
     });
     
-    const handleRoleCreate           = useEvent<ModelCreateOrUpdateEventHandler<RoleDetail>>(async ({ model: { id } }) => {
+    const handleRoleCreate           = useEvent<ModelUpsertEventHandler<RoleDetail>>(async ({ model: { id } }) => {
         setRoleId(id); // select the last created role
         setIsModified(true);
     });

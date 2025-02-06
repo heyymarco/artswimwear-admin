@@ -73,7 +73,7 @@ import {
     // types:
     type ModelEditEventHandler,
     
-    type ModelCreateOrUpdateEventHandler,
+    type ModelUpsertEventHandler,
     type ModelDeleteEventHandler,
     
     type TemplateVariantGroupDetail,
@@ -98,7 +98,7 @@ export interface TemplateVariantGroupPreviewProps
         >
 {
     // handlers:
-    onModelUpdate  ?: ModelCreateOrUpdateEventHandler<TemplateVariantGroupDetail>
+    onModelUpdate  ?: ModelUpsertEventHandler<TemplateVariantGroupDetail>
     onModelDelete  ?: ModelDeleteEventHandler<TemplateVariantGroupDetail>
     onModelEdit    ?: ModelEditEventHandler<TemplateVariantGroupDetail>
 }

@@ -73,7 +73,7 @@ import {
 
 // models:
 import {
-    type ModelCreateOrUpdateEventHandler,
+    type ModelUpsertEventHandler,
     type ModelDeleteEventHandler,
     
     type CoverageZoneDetail,
@@ -108,7 +108,7 @@ export interface CoverageZonePreviewProps<TCoverageZoneDetail extends CoverageZo
     
     
     // handlers:
-    onModelUpdate  ?: ModelCreateOrUpdateEventHandler<TCoverageZoneDetail>
+    onModelUpdate  ?: ModelUpsertEventHandler<TCoverageZoneDetail>
     onModelDelete  ?: ModelDeleteEventHandler<TCoverageZoneDetail>
 }
 const CoverageZonePreview = <TCoverageZoneDetail extends CoverageZoneDetail<TCoverageSubzoneDetail>, TCoverageSubzoneDetail extends CoverageSubzoneDetail>(props: CoverageZonePreviewProps<TCoverageZoneDetail, TCoverageSubzoneDetail>): JSX.Element|null => {

@@ -63,7 +63,7 @@ import {
 // models:
 import {
     // types:
-    type ModelCreateOrUpdateEventHandler,
+    type ModelUpsertEventHandler,
     type ModelDeleteEventHandler,
     
     type VariantDetail,
@@ -150,7 +150,7 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
             })
         , { triggerAt: 'immediately', event: event });
     });
-    const handleModelCreate    = useEvent<ModelCreateOrUpdateEventHandler<VariantDetail>>(({ model: createdModel }) => {
+    const handleModelCreate    = useEvent<ModelUpsertEventHandler<VariantDetail>>(({ model: createdModel }) => {
         const mutatedValue = value.slice(0); // copy
         mutatedValue.unshift(createdModel as VariantDetail);
         for (let index = 0; index < mutatedValue.length; index++) {
@@ -161,7 +161,7 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
         } // for
         triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fix this event
     });
-    const handleModelUpdate    = useEvent<ModelCreateOrUpdateEventHandler<VariantDetail>>(({ model: updatedModel }) => {
+    const handleModelUpdate    = useEvent<ModelUpsertEventHandler<VariantDetail>>(({ model: updatedModel }) => {
         const mutatedValue = value.slice(0); // copy
         const id = updatedModel.id;
         const modelIndex = mutatedValue.findIndex((model) => model.id === id);

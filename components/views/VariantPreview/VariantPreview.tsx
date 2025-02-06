@@ -79,7 +79,7 @@ import {
 // models:
 import {
     // types:
-    type ModelCreateOrUpdateEventHandler,
+    type ModelUpsertEventHandler,
     type ModelDeleteEventHandler,
     
     type VariantDetail,
@@ -104,7 +104,7 @@ export interface VariantPreviewProps
         >
 {
     // handlers:
-    onModelUpdate  ?: ModelCreateOrUpdateEventHandler<VariantDetail>
+    onModelUpdate  ?: ModelUpsertEventHandler<VariantDetail>
     onModelDelete  ?: ModelDeleteEventHandler<VariantDetail>
 }
 const VariantPreview = (props: VariantPreviewProps): JSX.Element|null => {
