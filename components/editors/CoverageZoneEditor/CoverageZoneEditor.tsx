@@ -65,9 +65,6 @@ import {
     EditCoverageZoneDialog,
 }                           from '@/components/dialogs/EditCoverageZoneDialog'
 import {
-    type CreateHandler,
-}                           from '@/components/explorers/Pagination'
-import {
     ModelCreateOuter,
     ModelEmpty,
 }                           from '@/components/explorers/PaginationList'
@@ -260,7 +257,7 @@ const CoverageZoneEditor = <TCoverageZoneDetail extends CoverageZoneDetail<TCove
             })
         , { triggerAt: 'immediately', event: event });
     });
-    const handleModelCreated   = useEvent<CreateHandler<TCoverageZoneDetail>>((createdModel) => {
+    const handleModelCreate    = useEvent<ModelCreateOrUpdateEventHandler<TCoverageZoneDetail>>(({ model: createdModel }) => {
         const mutatedValue = value.slice(0); // copy
         mutatedValue.push(createdModel as TCoverageZoneDetail);
         for (let index = 0; index < mutatedValue.length; index++) {
@@ -470,7 +467,7 @@ const CoverageZoneEditor = <TCoverageZoneDetail extends CoverageZoneDetail<TCove
                         
                         
                         // handlers:
-                        onModelCreate={handleModelCreated}
+                        onModelCreate={handleModelCreate}
                     />
                 </OrderableList>
             </ShippingStateProvider>

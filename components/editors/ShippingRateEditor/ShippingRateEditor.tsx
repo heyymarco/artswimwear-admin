@@ -48,9 +48,6 @@ import {
 
 // internal components:
 import {
-    type CreateHandler,
-}                           from '@/components/explorers/Pagination'
-import {
     ModelCreateOuter,
     ModelEmpty,
 }                           from '@/components/explorers/PaginationList'
@@ -167,7 +164,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
     
     
     // handlers:
-    const handleModelCreate  = useEvent((): ShippingRateWithId => {
+    const handleModelCreating = useEvent((): ShippingRateWithId => {
         return {
             id    : '', // will be removed
             
@@ -175,7 +172,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
             rate  : (lastValue === undefined) ? 0 :   lastValue.rate,
         };
     });
-    const handleModelCreated = useEvent<CreateHandler<ShippingRateWithId>>((createdModelWithId) => {
+    const handleModelCreate   = useEvent<ModelCreateOrUpdateEventHandler<ShippingRateWithId>>(({ model: createdModelWithId }) => {
         const {
             id : _id, // remove
             ...createdModel
@@ -185,7 +182,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
         mutatedValue.push(createdModel as ShippingRateWithId);
         triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fix this event
     });
-    const handleModelUpdate  = useEvent<ModelCreateOrUpdateEventHandler<ShippingRateWithId, React.ChangeEvent<HTMLInputElement>>>(({ model: updatedModelWithId }) => {
+    const handleModelUpdate   = useEvent<ModelCreateOrUpdateEventHandler<ShippingRateWithId, React.ChangeEvent<HTMLInputElement>>>(({ model: updatedModelWithId }) => {
         const {
             id : findId, // take
             ...mutatedModel
@@ -206,7 +203,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
         mutatedValue.sort((a, b) => (a.start - b.start));
         triggerValueChange(mutatedValue, { triggerAt: 'immediately', event: undefined as any }); // TODO: fix this event
     });
-    const handleModelDelete  = useEvent<ModelDeleteEventHandler<ShippingRateWithId>>(({ draft: { id } }) => {
+    const handleModelDelete   = useEvent<ModelDeleteEventHandler<ShippingRateWithId>>(({ draft: { id } }) => {
         const mutatedValue = value.slice(0); // copy
         const modelIndex = mirrorValueWithId.findIndex((model) => model.id === id);
         if (modelIndex < 0) return;
@@ -305,7 +302,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
                     modelCreateComponent={
                         (isDisabledOrReadOnly || ((lastValue !== undefined) && (lastValue.start >= 1000))) // reaches the limit => disable adding
                         ? false
-                        : handleModelCreate
+                        : handleModelCreating
                     }
                     listItemComponent={
                         <ListItem />
@@ -314,7 +311,7 @@ const ShippingRateEditor = <TElement extends Element = HTMLElement>(props: Shipp
                     
                     
                     // handlers:
-                    onModelCreate={handleModelCreated}
+                    onModelCreate={handleModelCreate}
                 />
             </List>
         </EditableControl>

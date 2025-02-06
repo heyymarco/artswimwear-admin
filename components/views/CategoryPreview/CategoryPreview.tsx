@@ -553,7 +553,10 @@ const SubcategoryList = (props: SubcategoryListProps): JSX.Element|null => {
         
         
         // if (createdModel) { // if closed of created Model (ignores of canceled or deleted Model)
-        //     onModelCreate?.(createdModel);
+        //     onModelCreate?.({
+        //         model : createdModel,
+        //         event : event,
+        //     });
         // } // if
     });
     

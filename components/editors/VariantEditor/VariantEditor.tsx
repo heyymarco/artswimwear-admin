@@ -43,7 +43,6 @@ import type {
     EditVariantDialogProps,
 }                           from '@/components/dialogs/EditVariantDialog'
 import {
-    type CreateHandler,
     type ModelCreateProps,
 }                           from '@/components/explorers/Pagination'
 import {
@@ -151,7 +150,7 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
             })
         , { triggerAt: 'immediately', event: event });
     });
-    const handleModelCreated   = useEvent<CreateHandler<VariantDetail>>((createdModel) => {
+    const handleModelCreate    = useEvent<ModelCreateOrUpdateEventHandler<VariantDetail>>(({ model: createdModel }) => {
         const mutatedValue = value.slice(0); // copy
         mutatedValue.unshift(createdModel as VariantDetail);
         for (let index = 0; index < mutatedValue.length; index++) {
@@ -232,7 +231,7 @@ const VariantEditor = <TElement extends Element = HTMLElement>(props: VariantEdi
                 
                 
                 // handlers:
-                onModelCreate={handleModelCreated}
+                onModelCreate={handleModelCreate}
             />}
             
             {!value.length && <ModelEmpty />}

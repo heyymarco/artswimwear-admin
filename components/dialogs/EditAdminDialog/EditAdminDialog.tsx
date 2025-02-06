@@ -66,9 +66,6 @@ import {
 import {
     RoleEditor,
 }                           from '@/components/editors/RoleEditor'
-import type {
-    CreateHandler,
-}                           from '@/components/explorers/Pagination'
 import {
     // react components:
     ImplementedComplexEditModelDialogProps,
@@ -222,7 +219,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
         }).unwrap();
     });
     
-    const handleRoleCreated          = useEvent<CreateHandler<RoleDetail>>(async ({id}) => {
+    const handleRoleCreate           = useEvent<ModelCreateOrUpdateEventHandler<RoleDetail>>(async ({ model: { id } }) => {
         setRoleId(id); // select the last created role
         setIsModified(true);
     });
@@ -571,7 +568,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
                         
                         
                         // handlers:
-                        onModelCreate={handleRoleCreated}
+                        onModelCreate={handleRoleCreate}
                     />
             }</TabPanel>
         </>}</ComplexEditModelDialog>

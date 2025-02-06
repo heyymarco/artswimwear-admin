@@ -35,11 +35,6 @@ import {
     useDialogMessage,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
-// heymarco components:
-import {
-    LoadingBar,
-}                           from '@heymarco/loading-bar'
-
 // internal components:
 import type {
     // types:
@@ -76,6 +71,7 @@ import {
 import {
     // types:
     type ModelEditEventHandler,
+    type ModelCreateOrUpdateEventHandler,
     
     type VariantGroupDetail,
     type TemplateVariantGroupDetail,
@@ -94,19 +90,16 @@ import {
 export interface TemplateVariantMenuButtonProps
     extends
         // bases:
-        Omit<DropdownListButtonProps,
-            // handlers:
-            |'onPaste'
-        >
+        DropdownListButtonProps
 {
     // handlers:
-    onPaste ?: (newModel : VariantGroupDetail) => void
+    onModelCreate ?: ModelCreateOrUpdateEventHandler<VariantGroupDetail>
 }
 const TemplateVariantMenuButton = (props: TemplateVariantMenuButtonProps): JSX.Element|null => {
     // props:
     const {
         // handlers:
-        onPaste,
+        onModelCreate,
     ...restDropdownListButtonProps} = props;
     
     
@@ -222,7 +215,7 @@ const TemplateVariantMenuButton = (props: TemplateVariantMenuButtonProps): JSX.E
             
             <TemplateVariantMenuItems
                 // handlers:
-                onPaste={onPaste}
+                onModelCreate={onModelCreate}
                 onClose={handleMenuClose}
             />
         </DropdownListButton>
@@ -237,14 +230,14 @@ export {
 
 interface TemplateVariantMenuItemsProps {
     // handlers:
-    onPaste ?: (newModel : VariantGroupDetail) => void
-    onClose ?: () => void
+    onModelCreate ?: ModelCreateOrUpdateEventHandler<VariantGroupDetail>
+    onClose       ?: () => void
 }
 const TemplateVariantMenuItems = (props: TemplateVariantMenuItemsProps): JSX.Element|null => {
     // props:
     const {
         // handlers:
-        onPaste,
+        onModelCreate,
         onClose,
     } = props;
     
@@ -260,7 +253,7 @@ const TemplateVariantMenuItems = (props: TemplateVariantMenuItemsProps): JSX.Ele
         // conditions:
         if (event.defaultPrevented) return; // ignores clicking by <EditButton>
         onClose?.();                        // preserves the prevented default closing <DropdownMenu>
-        if (!onPaste) return;               // the `onPaste()` handler is not assigned => ignore
+        if (!onModelCreate) return;         // the `onModelCreate()` handler is not assigned => ignore
         
         
         
@@ -284,7 +277,10 @@ const TemplateVariantMenuItems = (props: TemplateVariantMenuItemsProps): JSX.Ele
                 })(),
             }))),
         };
-        onPaste(variantGroupDetail);
+        onModelCreate({
+            model : variantGroupDetail,
+            event : event,
+        });
     });
     const handleEditTemplateVariant   = useEvent<ModelEditEventHandler<TemplateVariantGroupDetail>>(() => {
         onClose?.(); // preserves the prevented default closing <DropdownMenu>

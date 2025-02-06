@@ -43,7 +43,6 @@ import {
     EditVariantGroupDialogProps,
 }                           from '@/components/dialogs/EditVariantGroupDialog'
 import {
-    type CreateHandler,
     type ModelCreateProps,
 }                           from '@/components/explorers/Pagination'
 import {
@@ -173,7 +172,7 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
             })
         , { triggerAt: 'immediately', event: event });
     });
-    const handleModelCreated   = useEvent<CreateHandler<VariantGroupDetail>>((createdModel) => {
+    const handleModelCreate    = useEvent<ModelCreateOrUpdateEventHandler<VariantGroupDetail>>(({ model: createdModel }) => {
         const mutatedValue = value.slice(0); // copy
         mutatedValue.unshift(createdModel as VariantGroupDetail);
         for (let index = 0; index < mutatedValue.length; index++) {
@@ -277,7 +276,7 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
                     moreButtonComponent={
                         <TemplateVariantMenuButton
                             // handlers:
-                            onPaste={handleModelCreated}
+                            onModelCreate={handleModelCreate}
                         />
                     }
                     listItemComponent={
@@ -289,7 +288,7 @@ const VariantGroupEditor = <TElement extends Element = HTMLElement>(props: Varia
                     
                     
                     // handlers:
-                    onModelCreate={handleModelCreated}
+                    onModelCreate={handleModelCreate}
                 />}
                 
                 {!value.length && <ModelEmpty />}
