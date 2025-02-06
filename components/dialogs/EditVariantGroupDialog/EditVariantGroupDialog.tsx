@@ -126,7 +126,7 @@ export interface EditVariantGroupDialogProps
             // |'onModelUpserting' // replace from `ModelUpsertingEventHandler<VariantGroupDetail>` to `ModelUpsertingOfDraftEventHandler<VariantGroupDetail>`
             |'onModelUpsert'
             
-            |'onDeleting'
+            |'onModelDeleting'
             |'onDelete'
             
             |'onSideModelCommitting'
@@ -293,7 +293,7 @@ const EditVariantGroupDialog = (props: EditVariantGroupDialogProps): JSX.Element
             onModelUpserting={handleModelUpserting}
             // onModelUpsert={handleModelUpsert}
             
-            // onDeleting={handleDeleting}
+            // onModelDeleting={handleModelDeleting}
             // onDelete={undefined}
             
             onConfirmDelete={handleConfirmDelete}

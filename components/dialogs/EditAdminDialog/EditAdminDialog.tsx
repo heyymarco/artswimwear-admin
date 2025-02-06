@@ -213,7 +213,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
         if (!!sessionEmail && (sessionEmail.toLowerCase() === initialEmailRef.current.toLowerCase())) await updateSession(); // update the session if updated current admin
     });
     
-    const handleDeleting             = useEvent<ModelDeletingEventHandler<AdminDetail>>(async ({ draft: { id } }) => {
+    const handleModelDeleting        = useEvent<ModelDeletingEventHandler<AdminDetail>>(async ({ draft: { id } }) => {
         await deleteAdmin({
             id : id,
         }).unwrap();
@@ -351,7 +351,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
             onModelUpserting={handleModelUpserting}
             onModelUpsert={handleModelUpsert}
             
-            onDeleting={handleDeleting}
+            onModelDeleting={handleModelDeleting}
             // onDelete={undefined}
             
             onSideModelCommitting={handleSideModelCommitting}

@@ -129,7 +129,7 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
         return await updateTemplateVariantGroup(templateVariantGroupDetail).unwrap();
     });
     
-    const handleDeleting       = useEvent<ModelDeletingEventHandler<VariantGroupDetail>>(async ({ draft: { id } }) => {
+    const handleModelDeleting  = useEvent<ModelDeletingEventHandler<VariantGroupDetail>>(async ({ draft: { id } }) => {
         await deleteTemplateVariantGroup({
             id : id,
         }).unwrap();
@@ -197,7 +197,7 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
             onModelUpserting={handleModelUpserting}
             // onModelUpsert={handleModelUpsert}
             
-            onDeleting={handleDeleting}
+            onModelDeleting={handleModelDeleting}
             // onDelete={undefined}
             
             // onConfirmDelete={handleConfirmDelete}

@@ -373,7 +373,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
         }).unwrap();
     });
     
-    const handleDeleting       = useEvent<ModelDeletingEventHandler<ShippingDetail>>(async ({ draft: { id } }) => {
+    const handleModelDeleting  = useEvent<ModelDeletingEventHandler<ShippingDetail>>(async ({ draft: { id } }) => {
         await deleteShipping({
             id : id,
         }).unwrap();
@@ -452,7 +452,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             onModelUpserting={handleModelUpserting}
             // onModelUpsert={handleModelUpsert}
             
-            onDeleting={handleDeleting}
+            onModelDeleting={handleModelDeleting}
             // onDelete={undefined}
             
             onConfirmDelete={handleConfirmDelete}
