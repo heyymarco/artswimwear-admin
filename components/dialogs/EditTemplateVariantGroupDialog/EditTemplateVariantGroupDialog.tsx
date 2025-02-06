@@ -38,7 +38,7 @@ import {
     // types:
     type PartialModel,
     
-    type ModelCreatingOrUpdatingOfDraftEventHandler,
+    type ModelUpsertingOfDraftEventHandler,
     type ModelDeletingEventHandler,
     
     type VariantGroupDetail,
@@ -112,7 +112,7 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
     
     
     // handlers:
-    const handleUpdating       = useEvent<ModelCreatingOrUpdatingOfDraftEventHandler<VariantGroupDetail>>(async ({ draft: variantGroupDetail }) => {
+    const handleUpdating       = useEvent<ModelUpsertingOfDraftEventHandler<VariantGroupDetail>>(async ({ draft: variantGroupDetail }) => {
         const {
             id,
             sort : _sort, // remove
