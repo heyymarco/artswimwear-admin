@@ -355,7 +355,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     
     
     // handlers:
-    const handleUpdating       = useEvent<ModelUpsertingEventHandler<ShippingDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
+    const handleModelUpserting = useEvent<ModelUpsertingEventHandler<ShippingDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
         return await updateShipping({
             id         : id ?? '',
             
@@ -449,7 +449,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             
             
             // handlers:
-            onUpdating={handleUpdating}
+            onModelUpserting={handleModelUpserting}
             // onUpdate={handleUpdate}
             
             onDeleting={handleDeleting}

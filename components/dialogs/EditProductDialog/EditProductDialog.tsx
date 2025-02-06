@@ -382,7 +382,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleUpdating             = useEvent<ModelUpsertingEventHandler<ProductDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
+    const handleModelUpserting       = useEvent<ModelUpsertingEventHandler<ProductDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
         const immigratedImages : string[] = [];
         let updatedImages = images;
         if (updatedImages.length) {
@@ -594,7 +594,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             
             
             // handlers:
-            onUpdating={handleUpdating}
+            onModelUpserting={handleModelUpserting}
             // onUpdate={handleUpdate}
             
             onDeleting={handleDeleting}

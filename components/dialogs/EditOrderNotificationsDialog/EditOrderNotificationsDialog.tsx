@@ -141,7 +141,7 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
     
     
     // handlers:
-    const handleUpdating       = useEvent<ModelUpsertingEventHandler<AdminPreferenceDetail>>(async ({ id }) => {
+    const handleModelUpserting = useEvent<ModelUpsertingEventHandler<AdminPreferenceDetail>>(async ({ id }) => {
         return await updatePreference({
             id : id ?? '',
             
@@ -211,7 +211,7 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
             
             
             // handlers:
-            onUpdating={handleUpdating}
+            onModelUpserting={handleModelUpserting}
             
             onConfirmUnsaved={handleConfirmUnsaved}
         >

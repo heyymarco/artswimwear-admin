@@ -197,7 +197,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleUpdating             = useEvent<ModelUpsertingEventHandler<AdminDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
+    const handleModelUpserting       = useEvent<ModelUpsertingEventHandler<AdminDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
         return await updateAdmin({
             id       : id ?? '',
             
@@ -348,7 +348,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
             
             
             // handlers:
-            onUpdating={handleUpdating}
+            onModelUpserting={handleModelUpserting}
             onUpdate={handleUpdate}
             
             onDeleting={handleDeleting}
