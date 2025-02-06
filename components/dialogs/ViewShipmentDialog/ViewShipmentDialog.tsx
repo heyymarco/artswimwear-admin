@@ -15,6 +15,12 @@ import {
     useViewShipmentDialogStyleSheet,
 }                           from './styles/loader'
 
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useEvent,
+}                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
+
 // reusable-ui components:
 import {
     // base-components:
@@ -53,6 +59,8 @@ import {
 
 // models:
 import {
+    type ModelRetryErrorEventHandler,
+    
     type ShipmentDetail,
 }                           from '@/models'
 
@@ -108,6 +116,13 @@ export const ViewShipmentDialog = (props: ViewShipmentDialogProps) => {
     
     
     
+    // handlers:
+    const handleModelRetry = useEvent<ModelRetryErrorEventHandler<void>>((): void => {
+        refetch();
+    });
+    
+    
+    
     // jsx:
     return (
         <ComplexEditModelDialog<ShipmentDetail & { id: never }>
@@ -131,7 +146,7 @@ export const ViewShipmentDialog = (props: ViewShipmentDialogProps) => {
             // stores:
             isModelLoading = {isLoading}
             isModelError   = {isError}
-            onModelRetry   = {refetch}
+            onModelRetry   = {handleModelRetry}
         >
             <div className={styleSheet.page}>
                 <DataTable breakpoint='sm' className={styleSheet.tableInfo}>

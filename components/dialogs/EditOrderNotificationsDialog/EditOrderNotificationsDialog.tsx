@@ -45,6 +45,7 @@ import {
 
 // models:
 import {
+    type ModelRetryErrorEventHandler,
     type ModelConfirmUnsavedEventHandler,
     type ModelCreatingOrUpdatingEventHandler,
     
@@ -165,6 +166,10 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
         };
     });
     
+    const handleModelRetry     = useEvent<ModelRetryErrorEventHandler<void>>((): void => {
+        refetch();
+    });
+    
     
     
     // jsx:
@@ -193,7 +198,7 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
             // stores:
             isModelLoading = {isLoading}
             isModelError   = {isError}
-            onModelRetry   = {refetch}
+            onModelRetry   = {handleModelRetry}
             
             isModified     = {isModified}
             isCommiting    = {isUpdating}

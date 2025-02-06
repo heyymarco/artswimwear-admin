@@ -182,6 +182,8 @@ import {
 
 // models:
 import {
+    type ModelRetryErrorEventHandler,
+    
     type OrderDetail,
 }                           from '@/models'
 import type {
@@ -558,7 +560,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
         setShouldTriggerAutoFocus(true);
     });
     
-    const refetchModel               = useEvent((): void => {
+    const handleModelRetry           = useEvent<ModelRetryErrorEventHandler<void>>((): void => {
         if (isErrorShipping && !isLoadingShipping) refetchShipping();
     });
     
@@ -828,7 +830,7 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
             // stores:
             isModelLoading = {isLoading}
             isModelError   = {isError}
-            onModelRetry   = {refetchModel}
+            onModelRetry   = {handleModelRetry}
             
             isCommiting    = {isUpdating}
             

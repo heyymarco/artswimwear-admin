@@ -44,6 +44,7 @@ import {
 
 // models:
 import {
+    type ModelRetryErrorEventHandler,
     type ModelConfirmUnsavedEventHandler,
     type ModelCreatingOrUpdatingEventHandler,
     
@@ -152,6 +153,10 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
         };
     });
     
+    const handleModelRetry     = useEvent<ModelRetryErrorEventHandler<void>>((): void => {
+        refetch();
+    });
+    
     
     
     // jsx:
@@ -179,7 +184,7 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
             // stores:
             isModelLoading = {isLoading}
             isModelError   = {isError}
-            onModelRetry   = {refetch}
+            onModelRetry   = {handleModelRetry}
             
             isModified     = {isModified}
             isCommiting    = {isUpdating}
