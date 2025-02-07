@@ -125,7 +125,7 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
     
     
     // handlers:
-    const handleRoleSelect = useEvent<ModelSelectEventHandler<RoleDetail|null>>(({ model, event }) => {
+    const handleModelSelect = useEvent<ModelSelectEventHandler<RoleDetail|null>>(({ model, event }) => {
         onChange?.(
             model ? model.id : null,
             event
@@ -182,7 +182,7 @@ const RoleEditor = <TElement extends Element = HTMLElement>(props: RoleEditorPro
                         
                         
                         // handlers:
-                        onModelSelect : handleRoleSelect,
+                        onModelSelect : handleModelSelect,
                     },
                 )
             )}
