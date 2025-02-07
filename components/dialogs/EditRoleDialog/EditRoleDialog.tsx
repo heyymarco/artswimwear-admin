@@ -337,7 +337,6 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             onModelDeleting={handleModelDeleting}
             
             onModelUpsert={handleModelUpsert}
-            // onModelDelete={undefined}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_ROLE_TAB_ROLE} panelComponent={<Generic className={styleSheet.roleTab} />}>
                 <form>

@@ -358,7 +358,6 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
             onSideModelDiscarding={handleSideModelDiscarding}
             
             onModelUpsert={handleModelUpsert}
-            // onModelDelete={undefined}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_ADMIN_TAB_ACCOUNT} panelComponent={<Generic className={styleSheet.accountTab} />}>
                 <form>

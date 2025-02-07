@@ -453,8 +453,6 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             
             onModelUpserting={handleModelUpserting}
             onModelDeleting={handleModelDeleting}
-            
-            // onModelDelete={undefined}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_SHIPPING_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>
