@@ -494,7 +494,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             </>,
         };
     });
-    const handleConfirmUnsaved       = useEvent<ModelConfirmUnsavedEventHandler<ProductDetail>>(() => {
+    const handleModelConfirmUnsaved  = useEvent<ModelConfirmUnsavedEventHandler<ProductDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>
@@ -604,7 +604,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             onSideModelDiscarding={handleSideModelDiscarding}
             
             onModelConfirmDelete={handleModelConfirmDelete}
-            onConfirmUnsaved={handleConfirmUnsaved}
+            onModelConfirmUnsaved={handleModelConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_PRODUCT_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>

@@ -233,7 +233,7 @@ const EditVariantGroupDialog = (props: EditVariantGroupDialogProps): JSX.Element
             </>,
         };
     });
-    const handleConfirmUnsaved       = useEvent<ModelConfirmUnsavedEventHandler<VariantGroupDetail>>(() => {
+    const handleModelConfirmUnsaved  = useEvent<ModelConfirmUnsavedEventHandler<VariantGroupDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>
@@ -297,7 +297,7 @@ const EditVariantGroupDialog = (props: EditVariantGroupDialogProps): JSX.Element
             // onModelDelete={undefined}
             
             onModelConfirmDelete={handleModelConfirmDelete}
-            onConfirmUnsaved={handleConfirmUnsaved}
+            onModelConfirmUnsaved={handleModelConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_VARIANT_GROUP_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>

@@ -508,7 +508,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
             </>,
         };
     });
-    const handleConfirmUnsaved       = useEvent<ModelConfirmUnsavedEventHandler<CategoryDetail>>(() => {
+    const handleModelConfirmUnsaved  = useEvent<ModelConfirmUnsavedEventHandler<CategoryDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>
@@ -618,7 +618,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
             onSideModelDiscarding={handleSideModelDiscarding}
             
             onModelConfirmDelete={handleModelConfirmDelete}
-            onConfirmUnsaved={handleConfirmUnsaved}
+            onModelConfirmUnsaved={handleModelConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_CATEGORY_TAB_INFORMATIONS}  panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>

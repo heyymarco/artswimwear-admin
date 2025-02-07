@@ -355,7 +355,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     
     
     // handlers:
-    const handleModelUpserting     = useEvent<ModelUpsertingEventHandler<ShippingDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
+    const handleModelUpserting      = useEvent<ModelUpsertingEventHandler<ShippingDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
         return await updateShipping({
             id         : id ?? '',
             
@@ -373,13 +373,13 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
         }).unwrap();
     });
     
-    const handleModelDeleting      = useEvent<ModelDeletingEventHandler<ShippingDetail>>(async ({ draft: { id } }) => {
+    const handleModelDeleting       = useEvent<ModelDeletingEventHandler<ShippingDetail>>(async ({ draft: { id } }) => {
         await deleteShipping({
             id : id,
         }).unwrap();
     });
     
-    const handleModelConfirmDelete = useEvent<ModelConfirmDeleteEventHandler<ShippingDetail>>(({ draft }) => {
+    const handleModelConfirmDelete  = useEvent<ModelConfirmDeleteEventHandler<ShippingDetail>>(({ draft }) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
@@ -392,7 +392,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             </>,
         };
     });
-    const handleConfirmUnsaved     = useEvent<ModelConfirmUnsavedEventHandler<ShippingDetail>>(() => {
+    const handleModelConfirmUnsaved = useEvent<ModelConfirmUnsavedEventHandler<ShippingDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>
@@ -456,7 +456,7 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             // onModelDelete={undefined}
             
             onModelConfirmDelete={handleModelConfirmDelete}
-            onConfirmUnsaved={handleConfirmUnsaved}
+            onModelConfirmUnsaved={handleModelConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_SHIPPING_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>

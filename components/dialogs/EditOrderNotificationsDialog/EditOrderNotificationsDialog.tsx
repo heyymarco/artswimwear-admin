@@ -141,7 +141,7 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
     
     
     // handlers:
-    const handleModelUpserting = useEvent<ModelUpsertingEventHandler<AdminPreferenceDetail>>(async ({ id }) => {
+    const handleModelUpserting      = useEvent<ModelUpsertingEventHandler<AdminPreferenceDetail>>(async ({ id }) => {
         return await updatePreference({
             id : id ?? '',
             
@@ -157,7 +157,7 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
         }).unwrap();
     });
     
-    const handleConfirmUnsaved = useEvent<ModelConfirmUnsavedEventHandler<AdminPreferenceDetail>>(() => {
+    const handleModelConfirmUnsaved = useEvent<ModelConfirmUnsavedEventHandler<AdminPreferenceDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>
@@ -166,7 +166,7 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
         };
     });
     
-    const handleModelRetry     = useEvent<ModelRetryErrorEventHandler<void>>((): void => {
+    const handleModelRetry          = useEvent<ModelRetryErrorEventHandler<void>>((): void => {
         refetch();
     });
     
@@ -213,7 +213,7 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
             // handlers:
             onModelUpserting={handleModelUpserting}
             
-            onConfirmUnsaved={handleConfirmUnsaved}
+            onModelConfirmUnsaved={handleModelConfirmUnsaved}
         >
             <form className={styleSheet.notifications}>
                 <ValidationProvider

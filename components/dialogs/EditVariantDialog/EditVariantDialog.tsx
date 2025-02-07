@@ -262,7 +262,7 @@ const EditVariantDialog = (props: EditVariantDialogProps): JSX.Element|null => {
             </>,
         };
     });
-    const handleConfirmUnsaved       = useEvent<ModelConfirmUnsavedEventHandler<VariantDetail>>(() => {
+    const handleModelConfirmUnsaved  = useEvent<ModelConfirmUnsavedEventHandler<VariantDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>
@@ -330,7 +330,7 @@ const EditVariantDialog = (props: EditVariantDialogProps): JSX.Element|null => {
             // onSideModelDiscarding={handleSideModelDiscarding}
             
             onModelConfirmDelete={handleModelConfirmDelete}
-            onConfirmUnsaved={handleConfirmUnsaved}
+            onModelConfirmUnsaved={handleModelConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_VARIANT_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>

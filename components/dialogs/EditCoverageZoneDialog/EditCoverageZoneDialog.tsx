@@ -223,7 +223,7 @@ const EditCoverageZoneDialog = <TCoverageZoneDetail extends CoverageZoneDetail<T
     
     
     // handlers:
-    const handleModelUpserting     = useEvent<ModelUpsertingEventHandler<TCoverageZoneDetail>>(({ id, options: { addPermission, updatePermissions } }) => {
+    const handleModelUpserting      = useEvent<ModelUpsertingEventHandler<TCoverageZoneDetail>>(({ id, options: { addPermission, updatePermissions } }) => {
         return {
             id       : id ?? (() => {
                 const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10);
@@ -240,7 +240,7 @@ const EditCoverageZoneDialog = <TCoverageZoneDetail extends CoverageZoneDetail<T
         } as PartialModel<TCoverageZoneDetail>;
     });
     
-    const handleModelConfirmDelete = useEvent<ModelConfirmDeleteEventHandler<TCoverageZoneDetail>>(({ draft }) => {
+    const handleModelConfirmDelete  = useEvent<ModelConfirmDeleteEventHandler<TCoverageZoneDetail>>(({ draft }) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
@@ -250,7 +250,7 @@ const EditCoverageZoneDialog = <TCoverageZoneDetail extends CoverageZoneDetail<T
             </>,
         };
     });
-    const handleConfirmUnsaved     = useEvent<ModelConfirmUnsavedEventHandler<TCoverageZoneDetail>>(() => {
+    const handleModelConfirmUnsaved = useEvent<ModelConfirmUnsavedEventHandler<TCoverageZoneDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>
@@ -307,7 +307,7 @@ const EditCoverageZoneDialog = <TCoverageZoneDetail extends CoverageZoneDetail<T
             onModelUpserting={handleModelUpserting}
             
             onModelConfirmDelete={handleModelConfirmDelete}
-            onConfirmUnsaved={handleConfirmUnsaved}
+            onModelConfirmUnsaved={handleModelConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_SHIPPING_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>

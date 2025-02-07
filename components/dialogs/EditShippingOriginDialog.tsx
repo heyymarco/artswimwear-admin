@@ -140,11 +140,11 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
     
     
     // handlers:
-    const handleModelUpserting = useEvent<ModelUpsertingEventHandler<DefaultShippingOriginDetail>>(async ({ id }) => {
+    const handleModelUpserting      = useEvent<ModelUpsertingEventHandler<DefaultShippingOriginDetail>>(async ({ id }) => {
         return await updateDefaultShippingOrigin(model).unwrap();
     });
     
-    const handleConfirmUnsaved = useEvent<ModelConfirmUnsavedEventHandler<DefaultShippingOriginDetail>>(() => {
+    const handleModelConfirmUnsaved = useEvent<ModelConfirmUnsavedEventHandler<DefaultShippingOriginDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>
@@ -153,7 +153,7 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
         };
     });
     
-    const handleModelRetry     = useEvent<ModelRetryErrorEventHandler<void>>((): void => {
+    const handleModelRetry          = useEvent<ModelRetryErrorEventHandler<void>>((): void => {
         refetch();
     });
     
@@ -194,7 +194,7 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
             // handlers:
             onModelUpserting={handleModelUpserting}
             
-            onConfirmUnsaved={handleConfirmUnsaved}
+            onModelConfirmUnsaved={handleModelConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
             <AccessibilityProvider
                 // accessibilities:

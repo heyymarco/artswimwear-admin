@@ -276,7 +276,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
             </p>,
         };
     });
-    const handleConfirmUnsaved       = useEvent<ModelConfirmUnsavedEventHandler<AdminDetail>>(() => {
+    const handleModelConfirmUnsaved  = useEvent<ModelConfirmUnsavedEventHandler<AdminDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>
@@ -358,7 +358,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
             onSideModelDiscarding={handleSideModelDiscarding}
             
             onModelConfirmDelete={handleModelConfirmDelete}
-            onConfirmUnsaved={handleConfirmUnsaved}
+            onModelConfirmUnsaved={handleModelConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_ADMIN_TAB_ACCOUNT} panelComponent={<Generic className={styleSheet.accountTab} />}>
                 <form>
