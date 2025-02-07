@@ -44,7 +44,7 @@ import {
 
 // models:
 import {
-    type ModelRetryErrorEventHandler,
+    type ModelRetryEventHandler,
     type ModelConfirmUnsavedEventHandler,
     type ModelUpsertingEventHandler,
     
@@ -153,7 +153,7 @@ export const EditShippingOriginDialog = (props: EditShippingOriginDialogProps) =
         };
     });
     
-    const handleModelRetry          = useEvent<ModelRetryErrorEventHandler<void>>((): void => {
+    const handleModelRetry          = useEvent<ModelRetryEventHandler<void>>((): void => {
         refetch();
     });
     
