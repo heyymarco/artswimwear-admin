@@ -475,7 +475,6 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
             } // try
         } // if
     });
-    
     const handleModelDeleting        = useEvent<ModelDeletingEventHandler<CategoryDetail>>(async ({ draft: { id } }) => {
         if (isDbMocked) {
             const recordIndex = mockCategoryDb.findIndex(({id: searchId}) => (searchId === id));
@@ -612,9 +611,9 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
             onModelConfirmDelete={handleModelConfirmDelete}
             
             onModelUpserting={handleModelUpserting}
-            // onModelUpsert={handleModelUpsert}
-            
             onModelDeleting={handleModelDeleting}
+            
+            // onModelUpsert={handleModelUpsert}
             // onModelDelete={undefined}
             
             onSideModelCommitting={handleSideModelCommitting}

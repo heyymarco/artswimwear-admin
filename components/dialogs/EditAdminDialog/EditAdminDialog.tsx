@@ -225,15 +225,15 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
             username : (updatePermissions.username || addPermission) ? (username || null) : undefined, // convert empty string to null
         }).unwrap();
     });
-    const handleModelUpsert          = useEvent<ModelUpsertEventHandler<AdminDetail>>(async () => {
-        const sessionEmail = session?.user?.email;
-        if (!!sessionEmail && (sessionEmail.toLowerCase() === initialEmailRef.current.toLowerCase())) await updateSession(); // update the session if updated current admin
-    });
-    
     const handleModelDeleting        = useEvent<ModelDeletingEventHandler<AdminDetail>>(async ({ draft: { id } }) => {
         await deleteAdmin({
             id : id,
         }).unwrap();
+    });
+    
+    const handleModelUpsert          = useEvent<ModelUpsertEventHandler<AdminDetail>>(async () => {
+        const sessionEmail = session?.user?.email;
+        if (!!sessionEmail && (sessionEmail.toLowerCase() === initialEmailRef.current.toLowerCase())) await updateSession(); // update the session if updated current admin
     });
     
     const handleRoleCreate           = useEvent<ModelUpsertEventHandler<RoleDetail>>(async ({ model: { id } }) => {
@@ -352,9 +352,9 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
             onModelConfirmDelete={handleModelConfirmDelete}
             
             onModelUpserting={handleModelUpserting}
-            onModelUpsert={handleModelUpsert}
-            
             onModelDeleting={handleModelDeleting}
+            
+            onModelUpsert={handleModelUpsert}
             // onModelDelete={undefined}
             
             onSideModelCommitting={handleSideModelCommitting}

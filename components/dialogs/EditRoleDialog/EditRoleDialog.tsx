@@ -269,15 +269,15 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             role_d,
         }).unwrap();
     });
-    const handleModelUpsert         = useEvent<ModelUpsertEventHandler<RoleDetail>>(async () => {
-        const currentRoleId = session?.role?.id;
-        if (!!currentRoleId && (currentRoleId === model?.id)) await updateSession(); // update the session if updated current role
-    });
-    
     const handleModelDeleting       = useEvent<ModelDeletingEventHandler<RoleDetail>>(async ({ draft: { id } }) => {
         await deleteRole({
             id : id,
         }).unwrap();
+    });
+    
+    const handleModelUpsert         = useEvent<ModelUpsertEventHandler<RoleDetail>>(async () => {
+        const currentRoleId = session?.role?.id;
+        if (!!currentRoleId && (currentRoleId === model?.id)) await updateSession(); // update the session if updated current role
     });
     
     
@@ -334,9 +334,9 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             onModelConfirmDelete={handleModelConfirmDelete}
             
             onModelUpserting={handleModelUpserting}
-            onModelUpsert={handleModelUpsert}
-            
             onModelDeleting={handleModelDeleting}
+            
+            onModelUpsert={handleModelUpsert}
             // onModelDelete={undefined}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_ROLE_TAB_ROLE} panelComponent={<Generic className={styleSheet.roleTab} />}>

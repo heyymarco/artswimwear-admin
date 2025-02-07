@@ -394,7 +394,6 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             zones      : (updatePermissions.price       || addPermission) ? countries     : undefined,
         }).unwrap();
     });
-    
     const handleModelDeleting       = useEvent<ModelDeletingEventHandler<ShippingDetail>>(async ({ draft: { id } }) => {
         await deleteShipping({
             id : id,
@@ -453,9 +452,9 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             onModelConfirmDelete={handleModelConfirmDelete}
             
             onModelUpserting={handleModelUpserting}
-            // onModelUpsert={handleModelUpsert}
-            
             onModelDeleting={handleModelDeleting}
+            
+            // onModelUpsert={handleModelUpsert}
             // onModelDelete={undefined}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_SHIPPING_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>

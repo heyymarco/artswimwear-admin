@@ -471,7 +471,6 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             } // if
         } // try
     });
-    
     const handleModelDeleting        = useEvent<ModelDeletingEventHandler<ProductDetail>>(async ({ draft: { id } }) => {
         await deleteProduct({
             id : id,
@@ -598,9 +597,9 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             onModelConfirmDelete={handleModelConfirmDelete}
             
             onModelUpserting={handleModelUpserting}
-            // onModelUpsert={handleModelUpsert}
-            
             onModelDeleting={handleModelDeleting}
+            
+            // onModelUpsert={handleModelUpsert}
             // onModelDelete={undefined}
             
             onSideModelCommitting={handleSideModelCommitting}
