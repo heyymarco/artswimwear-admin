@@ -124,13 +124,13 @@ export interface EditVariantGroupDialogProps
             
             // handlers:
             // |'onModelUpserting' // replace from `ModelUpsertingEventHandler<VariantGroupDetail>` to `ModelUpsertingOfDraftEventHandler<VariantGroupDetail>`
-            |'onModelUpsert'
-            
             |'onModelDeleting'
-            |'onModelDelete'
             
             |'onSideModelCommitting'
             |'onSideModelDiscarding'
+            
+            |'onModelUpsert'
+            |'onModelDelete'
         >>,
         
         // privileges & states:
