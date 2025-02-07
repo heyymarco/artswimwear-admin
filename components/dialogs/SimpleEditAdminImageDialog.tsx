@@ -94,12 +94,6 @@ export const SimpleEditAdminImageDialog = (props: SimpleEditAdminImageDialogProp
     
     
     // handlers:
-    const handleSideModelCommitting = useEvent(async (): Promise<void> => {
-        await handleSideModelSave(/*commitImages = */true);
-    });
-    const handleSideModelDiscarding = useEvent(async (): Promise<void> => {
-        await handleSideModelSave(/*commitImages = */false);
-    });
     const handleSideModelSave       = useEvent(async (commitImages : boolean): Promise<void> => {
         // initial_image have been replaced with new image:
         if (commitImages && initialImageRef.current && (initialImageRef.current !== image)) {
@@ -125,6 +119,12 @@ export const SimpleEditAdminImageDialog = (props: SimpleEditAdminImageDialogProp
             // ignore any error
             return; // but do not clear the draft
         } // try
+    });
+    const handleSideModelCommitting = useEvent(async (): Promise<void> => {
+        await handleSideModelSave(/*commitImages = */true);
+    });
+    const handleSideModelDiscarding = useEvent(async (): Promise<void> => {
+        await handleSideModelSave(/*commitImages = */false);
     });
     
     

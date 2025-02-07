@@ -491,12 +491,6 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         } // if
     });
     
-    const handleSideModelCommitting  = useEvent(async (): Promise<void> => {
-        await handleSideModelSave(/*commitImages = */true);
-    });
-    const handleSideModelDiscarding  = useEvent(async (): Promise<void> => {
-        await handleSideModelSave(/*commitImages = */false);
-    });
     const handleSideModelSave        = useEvent(async (commitImages : boolean): Promise<void> => {
         // search for unused image(s) and delete them:
         const {unusedImages} = draftDifferentialImages.commitChanges(commitImages);
@@ -514,6 +508,12 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
             // ignore any error
             return; // but do not clear the draft
         } // try
+    });
+    const handleSideModelCommitting  = useEvent(async (): Promise<void> => {
+        await handleSideModelSave(/*commitImages = */true);
+    });
+    const handleSideModelDiscarding  = useEvent(async (): Promise<void> => {
+        await handleSideModelSave(/*commitImages = */false);
     });
     
     const handleNameChange           = useEvent((name: string) => {
@@ -613,11 +613,11 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
             onModelUpserting={handleModelUpserting}
             onModelDeleting={handleModelDeleting}
             
-            // onModelUpsert={handleModelUpsert}
-            // onModelDelete={undefined}
-            
             onSideModelCommitting={handleSideModelCommitting}
             onSideModelDiscarding={handleSideModelDiscarding}
+            
+            // onModelUpsert={handleModelUpsert}
+            // onModelDelete={undefined}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_CATEGORY_TAB_INFORMATIONS}  panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>

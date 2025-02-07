@@ -231,33 +231,6 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
         }).unwrap();
     });
     
-    const handleModelUpsert          = useEvent<ModelUpsertEventHandler<AdminDetail>>(async () => {
-        const sessionEmail = session?.user?.email;
-        if (!!sessionEmail && (sessionEmail.toLowerCase() === initialEmailRef.current.toLowerCase())) await updateSession(); // update the session if updated current admin
-    });
-    
-    const handleRoleCreate           = useEvent<ModelUpsertEventHandler<RoleDetail>>(async ({ model: { id } }) => {
-        setRoleId(id); // select the last created role
-        setIsModified(true);
-    });
-    const handleRoleDelete           = useEvent<ModelDeleteEventHandler<RoleDetail>>(async ({ draft: { id } }) => {
-        if (id && (id === roleId)) { // if currently selected
-            // the related role was deleted => set to null (no selection):
-            setRoleId(null);
-            setIsModified(true);
-            console.log('related role deleted'); // TODO: refresh the Admin model
-        }
-        else {
-            // TODO: refresh the Admin models where (admin.roleId === id)
-        } // if
-    });
-    
-    const handleSideModelCommitting  = useEvent(async (): Promise<void> => {
-        await handleSideModelSave(/*commitImages = */true);
-    });
-    const handleSideModelDiscarding  = useEvent(async (): Promise<void> => {
-        await handleSideModelSave(/*commitImages = */false);
-    });
     const handleSideModelSave        = useEvent(async (commitImages : boolean): Promise<void> => {
         // initial_image have been replaced with new image:
         if (commitImages && initialImageRef.current && (initialImageRef.current !== image)) {
@@ -283,6 +256,33 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
             // ignore any error
             return; // but do not clear the draft
         } // try
+    });
+    const handleSideModelCommitting  = useEvent(async (): Promise<void> => {
+        await handleSideModelSave(/*commitImages = */true);
+    });
+    const handleSideModelDiscarding  = useEvent(async (): Promise<void> => {
+        await handleSideModelSave(/*commitImages = */false);
+    });
+    
+    const handleModelUpsert          = useEvent<ModelUpsertEventHandler<AdminDetail>>(async () => {
+        const sessionEmail = session?.user?.email;
+        if (!!sessionEmail && (sessionEmail.toLowerCase() === initialEmailRef.current.toLowerCase())) await updateSession(); // update the session if updated current admin
+    });
+    
+    const handleRoleCreate           = useEvent<ModelUpsertEventHandler<RoleDetail>>(async ({ model: { id } }) => {
+        setRoleId(id); // select the last created role
+        setIsModified(true);
+    });
+    const handleRoleDelete           = useEvent<ModelDeleteEventHandler<RoleDetail>>(async ({ draft: { id } }) => {
+        if (id && (id === roleId)) { // if currently selected
+            // the related role was deleted => set to null (no selection):
+            setRoleId(null);
+            setIsModified(true);
+            console.log('related role deleted'); // TODO: refresh the Admin model
+        }
+        else {
+            // TODO: refresh the Admin models where (admin.roleId === id)
+        } // if
     });
     
     const handleTabRoleCollapseStart = useEvent<EventHandler<void>>(() => {
@@ -354,11 +354,11 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
             onModelUpserting={handleModelUpserting}
             onModelDeleting={handleModelDeleting}
             
-            onModelUpsert={handleModelUpsert}
-            // onModelDelete={undefined}
-            
             onSideModelCommitting={handleSideModelCommitting}
             onSideModelDiscarding={handleSideModelDiscarding}
+            
+            onModelUpsert={handleModelUpsert}
+            // onModelDelete={undefined}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_ADMIN_TAB_ACCOUNT} panelComponent={<Generic className={styleSheet.accountTab} />}>
                 <form>
