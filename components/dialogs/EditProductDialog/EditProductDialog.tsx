@@ -481,7 +481,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         } // try
     });
     
-    const handleConfirmDelete        = useEvent<ModelConfirmDeleteEventHandler<ProductDetail>>(({ draft }) => {
+    const handleModelConfirmDelete   = useEvent<ModelConfirmDeleteEventHandler<ProductDetail>>(({ draft }) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
@@ -603,7 +603,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             onSideModelCommitting={handleSideModelCommitting}
             onSideModelDiscarding={handleSideModelDiscarding}
             
-            onConfirmDelete={handleConfirmDelete}
+            onModelConfirmDelete={handleModelConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_PRODUCT_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>

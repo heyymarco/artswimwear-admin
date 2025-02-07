@@ -498,7 +498,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         } // try
     });
     
-    const handleConfirmDelete        = useEvent<ModelConfirmDeleteEventHandler<CategoryDetail>>(({ draft }) => {
+    const handleModelConfirmDelete   = useEvent<ModelConfirmDeleteEventHandler<CategoryDetail>>(({ draft }) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
@@ -617,7 +617,7 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
             onSideModelCommitting={handleSideModelCommitting}
             onSideModelDiscarding={handleSideModelDiscarding}
             
-            onConfirmDelete={handleConfirmDelete}
+            onModelConfirmDelete={handleModelConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_CATEGORY_TAB_INFORMATIONS}  panelComponent={<Generic className={styleSheet.infoTab} />}>

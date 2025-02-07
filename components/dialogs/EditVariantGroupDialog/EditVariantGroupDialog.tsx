@@ -220,7 +220,7 @@ const EditVariantGroupDialog = (props: EditVariantGroupDialogProps): JSX.Element
         return (onModelUpserting !== undefined) ? onModelUpserting({ draft, event, options: { addPermission, updatePermissions} }) : draft;
     });
     
-    const handleConfirmDelete        = useEvent<ModelConfirmDeleteEventHandler<VariantGroupDetail>>(({ draft }) => {
+    const handleModelConfirmDelete   = useEvent<ModelConfirmDeleteEventHandler<VariantGroupDetail>>(({ draft }) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
@@ -296,7 +296,7 @@ const EditVariantGroupDialog = (props: EditVariantGroupDialogProps): JSX.Element
             // onModelDeleting={handleModelDeleting}
             // onModelDelete={undefined}
             
-            onConfirmDelete={handleConfirmDelete}
+            onModelConfirmDelete={handleModelConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_VARIANT_GROUP_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>

@@ -249,7 +249,7 @@ const EditVariantDialog = (props: EditVariantDialogProps): JSX.Element|null => {
         } // try
     });
     
-    const handleConfirmDelete        = useEvent<ModelConfirmDeleteEventHandler<VariantDetail>>(({ draft }) => {
+    const handleModelConfirmDelete   = useEvent<ModelConfirmDeleteEventHandler<VariantDetail>>(({ draft }) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
@@ -329,7 +329,7 @@ const EditVariantDialog = (props: EditVariantDialogProps): JSX.Element|null => {
             // onSideModelCommitting={handleSideModelCommitting}
             // onSideModelDiscarding={handleSideModelDiscarding}
             
-            onConfirmDelete={handleConfirmDelete}
+            onModelConfirmDelete={handleModelConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_VARIANT_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>

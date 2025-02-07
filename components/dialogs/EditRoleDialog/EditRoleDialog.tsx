@@ -196,7 +196,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
     
     
     // handlers:
-    const handleModelUpserting = useEvent<ModelUpsertingEventHandler<RoleDetail>>(async ({ id }) => {
+    const handleModelUpserting     = useEvent<ModelUpsertingEventHandler<RoleDetail>>(async ({ id }) => {
         return await updateRole({
             id : id ?? '',
             
@@ -246,18 +246,18 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             role_d,
         }).unwrap();
     });
-    const handleModelUpsert    = useEvent<ModelUpsertEventHandler<RoleDetail>>(async () => {
+    const handleModelUpsert        = useEvent<ModelUpsertEventHandler<RoleDetail>>(async () => {
         const currentRoleId = session?.role?.id;
         if (!!currentRoleId && (currentRoleId === model?.id)) await updateSession(); // update the session if updated current role
     });
     
-    const handleModelDeleting  = useEvent<ModelDeletingEventHandler<RoleDetail>>(async ({ draft: { id } }) => {
+    const handleModelDeleting      = useEvent<ModelDeletingEventHandler<RoleDetail>>(async ({ draft: { id } }) => {
         await deleteRole({
             id : id,
         }).unwrap();
     });
     
-    const handleConfirmDelete  = useEvent<ModelConfirmDeleteEventHandler<RoleDetail>>(({ draft }) => {
+    const handleModelConfirmDelete = useEvent<ModelConfirmDeleteEventHandler<RoleDetail>>(({ draft }) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <>
@@ -271,7 +271,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             </>,
         };
     });
-    const handleConfirmUnsaved = useEvent<ModelConfirmUnsavedEventHandler<RoleDetail>>(() => {
+    const handleConfirmUnsaved     = useEvent<ModelConfirmUnsavedEventHandler<RoleDetail>>(() => {
         return {
             title   : <h1>Unsaved Data</h1>,
             message : <p>
@@ -336,7 +336,7 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             onModelDeleting={handleModelDeleting}
             // onModelDelete={undefined}
             
-            onConfirmDelete={handleConfirmDelete}
+            onModelConfirmDelete={handleModelConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_ROLE_TAB_ROLE} panelComponent={<Generic className={styleSheet.roleTab} />}>

@@ -268,7 +268,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
         } // try
     });
     
-    const handleConfirmDelete        = useEvent<ModelConfirmDeleteEventHandler<AdminDetail>>(({ draft }) => {
+    const handleModelConfirmDelete   = useEvent<ModelConfirmDeleteEventHandler<AdminDetail>>(({ draft }) => {
         return {
             title   : <h1>Delete Confirmation</h1>,
             message : <p>
@@ -357,7 +357,7 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
             onSideModelCommitting={handleSideModelCommitting}
             onSideModelDiscarding={handleSideModelDiscarding}
             
-            onConfirmDelete={handleConfirmDelete}
+            onModelConfirmDelete={handleModelConfirmDelete}
             onConfirmUnsaved={handleConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_ADMIN_TAB_ACCOUNT} panelComponent={<Generic className={styleSheet.accountTab} />}>
