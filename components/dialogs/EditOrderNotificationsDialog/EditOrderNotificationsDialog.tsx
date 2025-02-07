@@ -141,6 +141,10 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
     
     
     // handlers:
+    const handleModelRetry          = useEvent<ModelRetryEventHandler<void>>((): void => {
+        refetch();
+    });
+    
     const handleModelUpserting      = useEvent<ModelUpsertingEventHandler<AdminPreferenceDetail>>(async ({ id }) => {
         return await updatePreference({
             id : id ?? '',
@@ -164,10 +168,6 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
                 Do you want to save the changes?
             </p>,
         };
-    });
-    
-    const handleModelRetry          = useEvent<ModelRetryEventHandler<void>>((): void => {
-        refetch();
     });
     
     
@@ -198,7 +198,6 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
             // stores:
             isModelLoading = {isLoading}
             isModelError   = {isError}
-            onModelRetry   = {handleModelRetry}
             
             isModified     = {isModified}
             isCommiting    = {isUpdating}
@@ -211,6 +210,8 @@ const EditOrderNotificationsDialog = (props: EditOrderNotificationsDialogProps):
             
             
             // handlers:
+            onModelRetry={handleModelRetry}
+            
             onModelUpserting={handleModelUpserting}
             
             onModelConfirmUnsaved={handleModelConfirmUnsaved}

@@ -830,7 +830,6 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
             // stores:
             isModelLoading = {isLoading}
             isModelError   = {isError}
-            onModelRetry   = {handleModelRetry}
             
             isCommiting    = {isUpdating}
             
@@ -848,6 +847,8 @@ const EditOrderDialog = (props: EditOrderDialogProps): JSX.Element|null => {
             
             // handlers:
             onExpandEnd={handleExpandedEnd}
+            
+            onModelRetry={handleModelRetry}
         >
             <TabPanel label={PAGE_ORDER_TAB_ORDER_N_SHIPPING} panelComponent={<Generic className={styleSheet.orderShippingTab} />}>
                 <OrderAndShipping />
