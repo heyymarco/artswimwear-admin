@@ -112,28 +112,6 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
     
     
     // handlers:
-    const handleModelUpserting = useEvent<ModelUpsertingOfDraftEventHandler<VariantGroupDetail>>(async ({ draft: variantGroupDetail }) => {
-        const {
-            id,
-            sort : _sort, // remove
-            variants,
-            ...restVariantGroupDetail
-        } = variantGroupDetail;
-        
-        const templateVariantGroupDetail : TemplateVariantGroupDetail = {
-            ...restVariantGroupDetail,
-            id : (!id || (id[0] === ' ')) ? '' : id,
-            variants,
-        };
-        
-        return await updateTemplateVariantGroup(templateVariantGroupDetail).unwrap();
-    });
-    
-    const handleModelDeleting  = useEvent<ModelDeletingEventHandler<VariantGroupDetail>>(async ({ draft: { id } }) => {
-        await deleteTemplateVariantGroup({
-            id : id,
-        }).unwrap();
-    });
     const handleExpandedChange = useEvent<EventHandler<ComplexEditModelDialogExpandedChangeEvent<VariantGroupDetail>>>((event) => {
         const data = event.data;
         if (!data) {
@@ -156,6 +134,28 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
             };
             onExpandedChange({...event, data: templateVariantGroupDetail});
         } // if
+    });
+    
+    const handleModelUpserting = useEvent<ModelUpsertingOfDraftEventHandler<VariantGroupDetail>>(async ({ draft: variantGroupDetail }) => {
+        const {
+            id,
+            sort : _sort, // remove
+            variants,
+            ...restVariantGroupDetail
+        } = variantGroupDetail;
+        
+        const templateVariantGroupDetail : TemplateVariantGroupDetail = {
+            ...restVariantGroupDetail,
+            id : (!id || (id[0] === ' ')) ? '' : id,
+            variants,
+        };
+        
+        return await updateTemplateVariantGroup(templateVariantGroupDetail).unwrap();
+    });
+    const handleModelDeleting  = useEvent<ModelDeletingEventHandler<VariantGroupDetail>>(async ({ draft: { id } }) => {
+        await deleteTemplateVariantGroup({
+            id : id,
+        }).unwrap();
     });
     
     
@@ -194,16 +194,10 @@ const EditTemplateVariantGroupDialog = (props: EditTemplateVariantGroupDialogPro
             
             
             // handlers:
-            onModelUpserting={handleModelUpserting}
-            // onModelUpsert={handleModelUpsert}
-            
-            onModelDeleting={handleModelDeleting}
-            // onModelDelete={undefined}
-            
-            // onModelConfirmDelete={handleModelConfirmDelete}
-            // onConfirmUnsaved={handleConfirmUnsaved}
-            
             onExpandedChange={handleExpandedChange}
+            
+            onModelUpserting={handleModelUpserting}
+            onModelDeleting={handleModelDeleting}
         />
     );
 };
