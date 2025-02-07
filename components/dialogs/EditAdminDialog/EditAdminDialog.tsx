@@ -197,6 +197,23 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
     
     
     // handlers:
+    const handleModelConfirmUnsaved  = useEvent<ModelConfirmUnsavedEventHandler<AdminDetail>>(() => {
+        return {
+            title   : <h1>Unsaved Data</h1>,
+            message : <p>
+                Do you want to save the changes?
+            </p>,
+        };
+    });
+    const handleModelConfirmDelete   = useEvent<ModelConfirmDeleteEventHandler<AdminDetail>>(({ draft }) => {
+        return {
+            title   : <h1>Delete Confirmation</h1>,
+            message : <p>
+                Are you sure to delete admin <strong>{draft.name}</strong>?
+            </p>,
+        };
+    });
+    
     const handleModelUpserting       = useEvent<ModelUpsertingEventHandler<AdminDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
         return await updateAdmin({
             id       : id ?? '',
@@ -268,23 +285,6 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
         } // try
     });
     
-    const handleModelConfirmDelete   = useEvent<ModelConfirmDeleteEventHandler<AdminDetail>>(({ draft }) => {
-        return {
-            title   : <h1>Delete Confirmation</h1>,
-            message : <p>
-                Are you sure to delete admin <strong>{draft.name}</strong>?
-            </p>,
-        };
-    });
-    const handleModelConfirmUnsaved  = useEvent<ModelConfirmUnsavedEventHandler<AdminDetail>>(() => {
-        return {
-            title   : <h1>Unsaved Data</h1>,
-            message : <p>
-                Do you want to save the changes?
-            </p>,
-        };
-    });
-    
     const handleTabRoleCollapseStart = useEvent<EventHandler<void>>(() => {
         setIsTabRoleShown(false);
     });
@@ -348,6 +348,9 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
             
             
             // handlers:
+            onModelConfirmUnsaved={handleModelConfirmUnsaved}
+            onModelConfirmDelete={handleModelConfirmDelete}
+            
             onModelUpserting={handleModelUpserting}
             onModelUpsert={handleModelUpsert}
             
@@ -356,9 +359,6 @@ const EditAdminDialog = (props: EditAdminDialogProps): JSX.Element|null => {
             
             onSideModelCommitting={handleSideModelCommitting}
             onSideModelDiscarding={handleSideModelDiscarding}
-            
-            onModelConfirmDelete={handleModelConfirmDelete}
-            onModelConfirmUnsaved={handleModelConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_ADMIN_TAB_ACCOUNT} panelComponent={<Generic className={styleSheet.accountTab} />}>
                 <form>

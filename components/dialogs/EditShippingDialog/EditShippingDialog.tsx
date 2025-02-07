@@ -355,6 +355,28 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
     
     
     // handlers:
+    const handleModelConfirmUnsaved = useEvent<ModelConfirmUnsavedEventHandler<ShippingDetail>>(() => {
+        return {
+            title   : <h1>Unsaved Data</h1>,
+            message : <p>
+                Do you want to save the changes?
+            </p>,
+        };
+    });
+    const handleModelConfirmDelete  = useEvent<ModelConfirmDeleteEventHandler<ShippingDetail>>(({ draft }) => {
+        return {
+            title   : <h1>Delete Confirmation</h1>,
+            message : <>
+                <p>
+                    Are you sure to delete shipping <strong>{draft.name}</strong>?
+                </p>
+                <p>
+                    The associated shipping in existing orders will be marked as <strong>DELETED SHIPPING</strong>.
+                </p>
+            </>,
+        };
+    });
+    
     const handleModelUpserting      = useEvent<ModelUpsertingEventHandler<ShippingDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
         return await updateShipping({
             id         : id ?? '',
@@ -377,28 +399,6 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
         await deleteShipping({
             id : id,
         }).unwrap();
-    });
-    
-    const handleModelConfirmDelete  = useEvent<ModelConfirmDeleteEventHandler<ShippingDetail>>(({ draft }) => {
-        return {
-            title   : <h1>Delete Confirmation</h1>,
-            message : <>
-                <p>
-                    Are you sure to delete shipping <strong>{draft.name}</strong>?
-                </p>
-                <p>
-                    The associated shipping in existing orders will be marked as <strong>DELETED SHIPPING</strong>.
-                </p>
-            </>,
-        };
-    });
-    const handleModelConfirmUnsaved = useEvent<ModelConfirmUnsavedEventHandler<ShippingDetail>>(() => {
-        return {
-            title   : <h1>Unsaved Data</h1>,
-            message : <p>
-                Do you want to save the changes?
-            </p>,
-        };
     });
     
     
@@ -449,14 +449,14 @@ const EditShippingDialog = (props: EditShippingDialogProps): JSX.Element|null =>
             
             
             // handlers:
+            onModelConfirmUnsaved={handleModelConfirmUnsaved}
+            onModelConfirmDelete={handleModelConfirmDelete}
+            
             onModelUpserting={handleModelUpserting}
             // onModelUpsert={handleModelUpsert}
             
             onModelDeleting={handleModelDeleting}
             // onModelDelete={undefined}
-            
-            onModelConfirmDelete={handleModelConfirmDelete}
-            onModelConfirmUnsaved={handleModelConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_SHIPPING_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>

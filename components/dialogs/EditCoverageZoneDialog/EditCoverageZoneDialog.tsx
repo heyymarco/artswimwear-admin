@@ -223,6 +223,25 @@ const EditCoverageZoneDialog = <TCoverageZoneDetail extends CoverageZoneDetail<T
     
     
     // handlers:
+    const handleModelConfirmUnsaved = useEvent<ModelConfirmUnsavedEventHandler<TCoverageZoneDetail>>(() => {
+        return {
+            title   : <h1>Unsaved Data</h1>,
+            message : <p>
+                Do you want to save the changes?
+            </p>,
+        };
+    });
+    const handleModelConfirmDelete  = useEvent<ModelConfirmDeleteEventHandler<TCoverageZoneDetail>>(({ draft }) => {
+        return {
+            title   : <h1>Delete Confirmation</h1>,
+            message : <>
+                <p>
+                    Are you sure to delete <strong>{zoneNameOverride ? zoneNameOverride(draft.name) : draft.name}</strong>?
+                </p>
+            </>,
+        };
+    });
+    
     const handleModelUpserting      = useEvent<ModelUpsertingEventHandler<TCoverageZoneDetail>>(({ id, options: { addPermission, updatePermissions } }) => {
         return {
             id       : id ?? (() => {
@@ -238,25 +257,6 @@ const EditCoverageZoneDialog = <TCoverageZoneDetail extends CoverageZoneDetail<T
             useZones : (hasSubzones && (updatePermissions.price       || addPermission)) ? useZones      : undefined,
             zones    : (hasSubzones && (updatePermissions.price       || addPermission)) ? zones         : undefined,
         } as PartialModel<TCoverageZoneDetail>;
-    });
-    
-    const handleModelConfirmDelete  = useEvent<ModelConfirmDeleteEventHandler<TCoverageZoneDetail>>(({ draft }) => {
-        return {
-            title   : <h1>Delete Confirmation</h1>,
-            message : <>
-                <p>
-                    Are you sure to delete <strong>{zoneNameOverride ? zoneNameOverride(draft.name) : draft.name}</strong>?
-                </p>
-            </>,
-        };
-    });
-    const handleModelConfirmUnsaved = useEvent<ModelConfirmUnsavedEventHandler<TCoverageZoneDetail>>(() => {
-        return {
-            title   : <h1>Unsaved Data</h1>,
-            message : <p>
-                Do you want to save the changes?
-            </p>,
-        };
     });
     
     
@@ -304,10 +304,10 @@ const EditCoverageZoneDialog = <TCoverageZoneDetail extends CoverageZoneDetail<T
             
             
             // handlers:
-            onModelUpserting={handleModelUpserting}
-            
-            onModelConfirmDelete={handleModelConfirmDelete}
             onModelConfirmUnsaved={handleModelConfirmUnsaved}
+            onModelConfirmDelete={handleModelConfirmDelete}
+            
+            onModelUpserting={handleModelUpserting}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_SHIPPING_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>

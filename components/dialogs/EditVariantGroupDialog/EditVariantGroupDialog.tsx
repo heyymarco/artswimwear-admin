@@ -201,6 +201,28 @@ const EditVariantGroupDialog = (props: EditVariantGroupDialogProps): JSX.Element
     
     
     // handlers:
+    const handleModelConfirmUnsaved  = useEvent<ModelConfirmUnsavedEventHandler<VariantGroupDetail>>(() => {
+        return {
+            title   : <h1>Unsaved Data</h1>,
+            message : <p>
+                Do you want to save the changes?
+            </p>,
+        };
+    });
+    const handleModelConfirmDelete   = useEvent<ModelConfirmDeleteEventHandler<VariantGroupDetail>>(({ draft }) => {
+        return {
+            title   : <h1>Delete Confirmation</h1>,
+            message : <>
+                <p>
+                    Are you sure to delete variant group <strong>{draft.name}</strong>?
+                </p>
+                <p>
+                    The associated product variant in existing orders will be marked as <strong>DELETED VARIANT</strong>.
+                </p>
+            </>,
+        };
+    });
+    
     const handleModelUpserting       = useEvent<ModelUpsertingEventHandler<VariantGroupDetail>>(async ({ id, event, options: { addPermission, updatePermissions } }) => {
         const draft : VariantGroupDetail = {
             ...model,
@@ -218,28 +240,6 @@ const EditVariantGroupDialog = (props: EditVariantGroupDialogProps): JSX.Element
             variants           : (!!variants && (variants !== unmodifiedVariants)) ? variants           : (unmodifiedVariants        ?? []   ),
         };
         return (onModelUpserting !== undefined) ? onModelUpserting({ draft, event, options: { addPermission, updatePermissions} }) : draft;
-    });
-    
-    const handleModelConfirmDelete   = useEvent<ModelConfirmDeleteEventHandler<VariantGroupDetail>>(({ draft }) => {
-        return {
-            title   : <h1>Delete Confirmation</h1>,
-            message : <>
-                <p>
-                    Are you sure to delete variant group <strong>{draft.name}</strong>?
-                </p>
-                <p>
-                    The associated product variant in existing orders will be marked as <strong>DELETED VARIANT</strong>.
-                </p>
-            </>,
-        };
-    });
-    const handleModelConfirmUnsaved  = useEvent<ModelConfirmUnsavedEventHandler<VariantGroupDetail>>(() => {
-        return {
-            title   : <h1>Unsaved Data</h1>,
-            message : <p>
-                Do you want to save the changes?
-            </p>,
-        };
     });
     
     
@@ -290,14 +290,14 @@ const EditVariantGroupDialog = (props: EditVariantGroupDialogProps): JSX.Element
             
             
             // handlers:
+            onModelConfirmUnsaved={handleModelConfirmUnsaved}
+            onModelConfirmDelete={handleModelConfirmDelete}
+            
             onModelUpserting={handleModelUpserting}
             // onModelUpsert={handleModelUpsert}
             
             // onModelDeleting={handleModelDeleting}
             // onModelDelete={undefined}
-            
-            onModelConfirmDelete={handleModelConfirmDelete}
-            onModelConfirmUnsaved={handleModelConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_VARIANT_GROUP_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>

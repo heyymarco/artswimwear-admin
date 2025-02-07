@@ -182,6 +182,28 @@ const EditVariantDialog = (props: EditVariantDialogProps): JSX.Element|null => {
     
     
     // handlers:
+    const handleModelConfirmUnsaved  = useEvent<ModelConfirmUnsavedEventHandler<VariantDetail>>(() => {
+        return {
+            title   : <h1>Unsaved Data</h1>,
+            message : <p>
+                Do you want to save the changes?
+            </p>,
+        };
+    });
+    const handleModelConfirmDelete   = useEvent<ModelConfirmDeleteEventHandler<VariantDetail>>(({ draft }) => {
+        return {
+            title   : <h1>Delete Confirmation</h1>,
+            message : <>
+                <p>
+                    Are you sure to delete variant <strong>{draft.name}</strong>?
+                </p>
+                <p>
+                    The associated product variant in existing orders will be marked as <strong>DELETED VARIANT</strong>.
+                </p>
+            </>,
+        };
+    });
+    
     const handleModelUpserting       = useEvent<ModelUpsertingEventHandler<VariantDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
         const immigratedImages : string[] = [];
         let updatedImages = images;
@@ -249,28 +271,6 @@ const EditVariantDialog = (props: EditVariantDialogProps): JSX.Element|null => {
         } // try
     });
     
-    const handleModelConfirmDelete   = useEvent<ModelConfirmDeleteEventHandler<VariantDetail>>(({ draft }) => {
-        return {
-            title   : <h1>Delete Confirmation</h1>,
-            message : <>
-                <p>
-                    Are you sure to delete variant <strong>{draft.name}</strong>?
-                </p>
-                <p>
-                    The associated product variant in existing orders will be marked as <strong>DELETED VARIANT</strong>.
-                </p>
-            </>,
-        };
-    });
-    const handleModelConfirmUnsaved  = useEvent<ModelConfirmUnsavedEventHandler<VariantDetail>>(() => {
-        return {
-            title   : <h1>Unsaved Data</h1>,
-            message : <p>
-                Do you want to save the changes?
-            </p>,
-        };
-    });
-    
     
     
     // jsx:
@@ -320,6 +320,9 @@ const EditVariantDialog = (props: EditVariantDialogProps): JSX.Element|null => {
             
             
             // handlers:
+            onModelConfirmUnsaved={handleModelConfirmUnsaved}
+            onModelConfirmDelete={handleModelConfirmDelete}
+            
             onModelUpserting={handleModelUpserting}
             // onModelUpsert={handleModelUpsert}
             
@@ -328,9 +331,6 @@ const EditVariantDialog = (props: EditVariantDialogProps): JSX.Element|null => {
             
             // onSideModelCommitting={handleSideModelCommitting}
             // onSideModelDiscarding={handleSideModelDiscarding}
-            
-            onModelConfirmDelete={handleModelConfirmDelete}
-            onModelConfirmUnsaved={handleModelConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_VARIANT_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>

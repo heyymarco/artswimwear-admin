@@ -382,6 +382,28 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
     
     
     // handlers:
+    const handleModelConfirmUnsaved  = useEvent<ModelConfirmUnsavedEventHandler<ProductDetail>>(() => {
+        return {
+            title   : <h1>Unsaved Data</h1>,
+            message : <p>
+                Do you want to save the changes?
+            </p>,
+        };
+    });
+    const handleModelConfirmDelete   = useEvent<ModelConfirmDeleteEventHandler<ProductDetail>>(({ draft }) => {
+        return {
+            title   : <h1>Delete Confirmation</h1>,
+            message : <>
+                <p>
+                    Are you sure to delete product <strong>{draft.name}</strong>?
+                </p>
+                <p>
+                    The associated product in existing orders will be marked as <strong>DELETED PRODUCT</strong>.
+                </p>
+            </>,
+        };
+    });
+    
     const handleModelUpserting       = useEvent<ModelUpsertingEventHandler<ProductDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
         const immigratedImages : string[] = [];
         let updatedImages = images;
@@ -481,28 +503,6 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
         } // try
     });
     
-    const handleModelConfirmDelete   = useEvent<ModelConfirmDeleteEventHandler<ProductDetail>>(({ draft }) => {
-        return {
-            title   : <h1>Delete Confirmation</h1>,
-            message : <>
-                <p>
-                    Are you sure to delete product <strong>{draft.name}</strong>?
-                </p>
-                <p>
-                    The associated product in existing orders will be marked as <strong>DELETED PRODUCT</strong>.
-                </p>
-            </>,
-        };
-    });
-    const handleModelConfirmUnsaved  = useEvent<ModelConfirmUnsavedEventHandler<ProductDetail>>(() => {
-        return {
-            title   : <h1>Unsaved Data</h1>,
-            message : <p>
-                Do you want to save the changes?
-            </p>,
-        };
-    });
-    
     const handleNameChange           = useEvent((name: string) => {
         // conditions:
         if (isPathModified) return; // path is already modified by user, do not perform *auto* modify
@@ -594,6 +594,9 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             
             
             // handlers:
+            onModelConfirmUnsaved={handleModelConfirmUnsaved}
+            onModelConfirmDelete={handleModelConfirmDelete}
+            
             onModelUpserting={handleModelUpserting}
             // onModelUpsert={handleModelUpsert}
             
@@ -602,9 +605,6 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             
             onSideModelCommitting={handleSideModelCommitting}
             onSideModelDiscarding={handleSideModelDiscarding}
-            
-            onModelConfirmDelete={handleModelConfirmDelete}
-            onModelConfirmUnsaved={handleModelConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_PRODUCT_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>

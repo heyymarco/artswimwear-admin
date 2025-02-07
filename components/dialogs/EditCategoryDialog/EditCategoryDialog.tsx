@@ -356,6 +356,25 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
     
     
     // handlers:
+    const handleModelConfirmUnsaved  = useEvent<ModelConfirmUnsavedEventHandler<CategoryDetail>>(() => {
+        return {
+            title   : <h1>Unsaved Data</h1>,
+            message : <p>
+                Do you want to save the changes?
+            </p>,
+        };
+    });
+    const handleModelConfirmDelete   = useEvent<ModelConfirmDeleteEventHandler<CategoryDetail>>(({ draft }) => {
+        return {
+            title   : <h1>Delete Confirmation</h1>,
+            message : <>
+                <p>
+                    Are you sure to delete category <strong>{draft.name}</strong>?
+                </p>
+            </>,
+        };
+    });
+    
     const handleModelUpserting       = useEvent<ModelUpsertingEventHandler<CategoryDetail>>(async ({ id, options: { addPermission, updatePermissions } }) => {
         const immigratedImages : string[] = [];
         let updatedImages = images;
@@ -498,25 +517,6 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
         } // try
     });
     
-    const handleModelConfirmDelete   = useEvent<ModelConfirmDeleteEventHandler<CategoryDetail>>(({ draft }) => {
-        return {
-            title   : <h1>Delete Confirmation</h1>,
-            message : <>
-                <p>
-                    Are you sure to delete category <strong>{draft.name}</strong>?
-                </p>
-            </>,
-        };
-    });
-    const handleModelConfirmUnsaved  = useEvent<ModelConfirmUnsavedEventHandler<CategoryDetail>>(() => {
-        return {
-            title   : <h1>Unsaved Data</h1>,
-            message : <p>
-                Do you want to save the changes?
-            </p>,
-        };
-    });
-    
     const handleNameChange           = useEvent((name: string) => {
         // conditions:
         if (isPathModified) return; // path is already modified by user, do not perform *auto* modify
@@ -608,6 +608,9 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
             
             
             // handlers:
+            onModelConfirmUnsaved={handleModelConfirmUnsaved}
+            onModelConfirmDelete={handleModelConfirmDelete}
+            
             onModelUpserting={handleModelUpserting}
             // onModelUpsert={handleModelUpsert}
             
@@ -616,9 +619,6 @@ const EditCategoryDialog = (props: EditCategoryDialogProps): JSX.Element|null =>
             
             onSideModelCommitting={handleSideModelCommitting}
             onSideModelDiscarding={handleSideModelDiscarding}
-            
-            onModelConfirmDelete={handleModelConfirmDelete}
-            onModelConfirmUnsaved={handleModelConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_CATEGORY_TAB_INFORMATIONS}  panelComponent={<Generic className={styleSheet.infoTab} />}>
                 <form>

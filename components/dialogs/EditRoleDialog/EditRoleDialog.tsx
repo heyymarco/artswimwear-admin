@@ -196,6 +196,29 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
     
     
     // handlers:
+    const handleModelConfirmUnsaved = useEvent<ModelConfirmUnsavedEventHandler<RoleDetail>>(() => {
+        return {
+            title   : <h1>Unsaved Data</h1>,
+            message : <p>
+                Do you want to save the changes?
+            </p>,
+        };
+    });
+    const handleModelConfirmDelete  = useEvent<ModelConfirmDeleteEventHandler<RoleDetail>>(({ draft }) => {
+        return {
+            title   : <h1>Delete Confirmation</h1>,
+            message : <>
+                <p>
+                    Are you sure to delete <strong>{draft.name}</strong> role?
+                </p>
+                <p>
+                    The admins associated with the {draft.name} role will still be logged in but will not have any access.<br />
+                    You can re-assign their roles later.
+                </p>
+            </>,
+        };
+    });
+    
     const handleModelUpserting      = useEvent<ModelUpsertingEventHandler<RoleDetail>>(async ({ id }) => {
         return await updateRole({
             id : id ?? '',
@@ -257,29 +280,6 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
         }).unwrap();
     });
     
-    const handleModelConfirmDelete  = useEvent<ModelConfirmDeleteEventHandler<RoleDetail>>(({ draft }) => {
-        return {
-            title   : <h1>Delete Confirmation</h1>,
-            message : <>
-                <p>
-                    Are you sure to delete <strong>{draft.name}</strong> role?
-                </p>
-                <p>
-                    The admins associated with the {draft.name} role will still be logged in but will not have any access.<br />
-                    You can re-assign their roles later.
-                </p>
-            </>,
-        };
-    });
-    const handleModelConfirmUnsaved = useEvent<ModelConfirmUnsavedEventHandler<RoleDetail>>(() => {
-        return {
-            title   : <h1>Unsaved Data</h1>,
-            message : <p>
-                Do you want to save the changes?
-            </p>,
-        };
-    });
-    
     
     
     // jsx:
@@ -330,14 +330,14 @@ const EditRoleDialog = (props: EditRoleDialogProps): JSX.Element|null => {
             
             
             // handlers:
+            onModelConfirmUnsaved={handleModelConfirmUnsaved}
+            onModelConfirmDelete={handleModelConfirmDelete}
+            
             onModelUpserting={handleModelUpserting}
             onModelUpsert={handleModelUpsert}
             
             onModelDeleting={handleModelDeleting}
             // onModelDelete={undefined}
-            
-            onModelConfirmDelete={handleModelConfirmDelete}
-            onModelConfirmUnsaved={handleModelConfirmUnsaved}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_ROLE_TAB_ROLE} panelComponent={<Generic className={styleSheet.roleTab} />}>
                 <form>
