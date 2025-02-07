@@ -325,7 +325,6 @@ const EditVariantDialog = (props: EditVariantDialogProps): JSX.Element|null => {
             
             onModelUpserting={handleModelUpserting}
             
-            // onModelUpsert={handleModelUpsert}
             // onModelDelete={undefined}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_VARIANT_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>

@@ -295,7 +295,6 @@ const EditVariantGroupDialog = (props: EditVariantGroupDialogProps): JSX.Element
             
             onModelUpserting={handleModelUpserting}
             
-            // onModelUpsert={handleModelUpsert}
             // onModelDelete={undefined}
         >{({whenAdd, whenUpdate}) => <>
             <TabPanel label={PAGE_VARIANT_GROUP_TAB_INFORMATIONS} panelComponent={<Generic className={styleSheet.infoTab} />}>
