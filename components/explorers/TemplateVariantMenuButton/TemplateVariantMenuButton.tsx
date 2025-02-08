@@ -249,7 +249,7 @@ const TemplateVariantMenuItems = (props: TemplateVariantMenuItemsProps): JSX.Ele
     
     
     // handlers:
-    const handleSelectTemplateVariant = useEvent(async (event: React.MouseEvent<HTMLElement, MouseEvent>, templateVariantGroupDetail: TemplateVariantGroupDetail) => {
+    const handleModelClick = useEvent(async (event: React.MouseEvent<HTMLElement, MouseEvent>, templateVariantGroupDetail: TemplateVariantGroupDetail) => {
         // conditions:
         if (event.defaultPrevented) return; // ignores clicking by <EditButton>
         onClose?.();                        // preserves the prevented default closing <DropdownMenu>
@@ -282,7 +282,7 @@ const TemplateVariantMenuItems = (props: TemplateVariantMenuItemsProps): JSX.Ele
             event : event,
         });
     });
-    const handleEditTemplateVariant   = useEvent<ModelEditEventHandler<TemplateVariantGroupDetail>>(() => {
+    const handleModelEdit  = useEvent<ModelEditEventHandler<TemplateVariantGroupDetail>>(() => {
         onClose?.(); // preserves the prevented default closing <DropdownMenu>
     });
     
@@ -352,8 +352,8 @@ const TemplateVariantMenuItems = (props: TemplateVariantMenuItemsProps): JSX.Ele
                     
                     
                     // handlers:
-                    onClick     = {(event) => handleSelectTemplateVariant(event, model)}
-                    onModelEdit = {handleEditTemplateVariant}
+                    onClick     = {(event) => handleModelClick(event, model)}
+                    onModelEdit = {handleModelEdit}
                 />
             )}
         </>
