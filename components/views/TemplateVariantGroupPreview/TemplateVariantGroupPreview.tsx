@@ -98,9 +98,10 @@ export interface TemplateVariantGroupPreviewProps
         >
 {
     // handlers:
+    onModelEdit    ?: ModelEditEventHandler<TemplateVariantGroupDetail>
+    
     onModelUpdate  ?: ModelUpsertEventHandler<TemplateVariantGroupDetail>
     onModelDelete  ?: ModelDeleteEventHandler<TemplateVariantGroupDetail>
-    onModelEdit    ?: ModelEditEventHandler<TemplateVariantGroupDetail>
 }
 const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): JSX.Element|null => {
     // styles:
@@ -116,9 +117,10 @@ const TemplateVariantGroupPreview = (props: TemplateVariantGroupPreviewProps): J
         
         
         // handlers:
+        onModelEdit,
+        
         onModelUpdate,
         onModelDelete,
-        onModelEdit,
     ...restListItemProps} = props;
     const {
         id,
