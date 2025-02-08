@@ -95,6 +95,9 @@ export interface ProductDetail
         Omit<Product,
             |'createdAt'
             |'updatedAt'
+            
+            |'autoKeywords'
+            |'keywords'
         >
 {
     variantGroups : VariantGroupDetail[]
