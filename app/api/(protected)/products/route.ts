@@ -271,7 +271,7 @@ You do not have the privilege to view the products.`
             ...extractKeywords(name),
             ...extractKeywords(extractContentFromWysiwygEditorState(description)),
         ])
-    );
+    ).slice(0, 100); // Limit to max 100 keywords
     
     
     
