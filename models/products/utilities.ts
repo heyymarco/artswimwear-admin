@@ -36,6 +36,16 @@ import {
     selectId,
 }                           from '../utilities'
 
+// internal components:
+import {
+    type WysiwygEditorState,
+}                           from '@/components/editors/WysiwygEditor'
+import {
+    type LexicalNode,
+    type ElementNode,
+    type TextNode,
+}                           from 'lexical'
+
 
 
 // utilities:
@@ -696,4 +706,192 @@ export const createCategoryDiff = (categories: CategoryDetail[], categoryOris : 
         categoryAdds,
         categoryMods,
     };
+}
+
+
+
+export const extractKeywords = (text: string|null|undefined): string[] => {
+    // conditions:
+    if (!text) return [];
+    
+    
+    
+    // Simple keyword extraction logic (you can use more advanced techniques)
+    return (
+        (
+            text
+            .toLowerCase()
+            .match(/\b\w+\b/g)
+            ??
+            []
+        )
+        .filter((value, index, self) => self.indexOf(value) === index) // Remove duplicates
+    );
+}
+
+export const extractContentFromWysiwygEditorState = (editorState: Prisma.JsonValue|null|undefined): string => {
+    // conditions:
+    if ((typeof(editorState) !== 'object') || (editorState === null)) return '';
+    const root = ('root' in editorState) ? editorState.root : undefined;
+    if ((typeof(root) !== 'object') || (root === null)) return '';
+    const children = ('children' in root) ? root.children : undefined;
+    if (!Array.isArray(children)) return '';
+    
+    
+    
+    /*
+        const sample = {
+            root: {
+                type: "root",
+                format: "",
+                indent: 0,
+                version: 1,
+                children: [
+                    {
+                        type: "paragraph",
+                        format: "",
+                        indent: 0,
+                        version: 1,
+                        children: [
+                            {
+                                mode: "normal",
+                                text: "Test ",
+                                type: "text",
+                                style: "",
+                                detail: 0,
+                                format: 0,
+                                version: 1,
+                            },
+                            {
+                                mode: "normal",
+                                text: "hello",
+                                type: "text",
+                                style: "",
+                                detail: 0,
+                                format: 1,
+                                version: 1,
+                            },
+                            {
+                                mode: "normal",
+                                text: " world.",
+                                type: "text",
+                                style: "",
+                                detail: 0,
+                                format: 0,
+                                version: 1,
+                            },
+                        ],
+                        direction: "ltr",
+                    },
+                    {
+                        tag: "ol",
+                        type: "list",
+                        start: 1,
+                        format: "",
+                        indent: 0,
+                        version: 1,
+                        children: [
+                            {
+                                type: "listitem",
+                                value: 1,
+                                format: "",
+                                indent: 0,
+                                version: 1,
+                                children: [
+                                    {
+                                        mode: "normal",
+                                        text: "One",
+                                        type: "text",
+                                        style: "",
+                                        detail: 0,
+                                        format: 0,
+                                        version: 1,
+                                    },
+                                ],
+                                direction: "ltr",
+                            },
+                            {
+                                type: "listitem",
+                                value: 2,
+                                format: "",
+                                indent: 0,
+                                version: 1,
+                                children: [
+                                    {
+                                        mode: "normal",
+                                        text: "Two",
+                                        type: "text",
+                                        style: "",
+                                        detail: 0,
+                                        format: 0,
+                                        version: 1,
+                                    },
+                                ],
+                                direction: "ltr",
+                            },
+                            {
+                                type: "listitem",
+                                value: 3,
+                                format: "",
+                                indent: 0,
+                                version: 1,
+                                children: [
+                                    {
+                                        mode: "normal",
+                                        text: "Three ",
+                                        type: "text",
+                                        style: "",
+                                        detail: 0,
+                                        format: 0,
+                                        version: 1,
+                                    },
+                                    {
+                                        mode: "normal",
+                                        text: "yess",
+                                        type: "text",
+                                        style: "",
+                                        detail: 0,
+                                        format: 8,
+                                        version: 1,
+                                    },
+                                    {
+                                        mode: "normal",
+                                        text: " great.",
+                                        type: "text",
+                                        style: "",
+                                        detail: 0,
+                                        format: 0,
+                                        version: 1,
+                                    },
+                                ],
+                                direction: "ltr",
+                            },
+                        ],
+                        listType: "number",
+                        direction: "ltr",
+                    },
+                ],
+                direction: "ltr",
+            },
+        };
+    */
+    
+    
+    
+    const traverseNodes = (children: any[]): string => {
+        let textContent = '';
+        
+        for (const child of children) {
+            if ((child?.type === 'text') && (typeof(child?.text) === 'string')) {
+                textContent += child.text + ' ';
+            }
+            else if (Array.isArray(child?.children)) {
+                textContent += traverseNodes(child.children);
+            } // if
+        } // for
+        
+        return textContent;
+    }
+    
+    return traverseNodes(children).trim();
 }

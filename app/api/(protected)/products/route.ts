@@ -43,6 +43,9 @@ import {
     selectId,
     createVariantGroupDiff,
     createStockMap,
+    
+    extractKeywords,
+    extractContentFromWysiwygEditorState,
 }                           from '@/models'
 import {
     Prisma,
@@ -259,6 +262,16 @@ You do not have the privilege to view the products.`
         },
     } = requestData;
     //#endregion parsing and validating request
+    
+    
+    
+    // generate auto keywords based on name and description:
+    const autoKeywords : string[] = Array.from(
+        new Set<string>([
+            ...extractKeywords(name),
+            ...extractKeywords(extractContentFromWysiwygEditorState(description)),
+        ])
+    );
     
     
     
@@ -582,6 +595,7 @@ You do not have the privilege to modify the product stock(s).`
                 
                 excerpt,
                 description : (description === null) ? Prisma.DbNull : description,
+                autoKeywords,
                 keywords,
                 
                 images,
