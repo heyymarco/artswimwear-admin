@@ -126,6 +126,7 @@ export const ProductDetailSchema = z.object({
     
     excerpt            : z.string().trim().min(1).max(200).nullable(),
     description        : JsonSchema.nullable(),
+    keywords           : z.array(z.string().trim().min(1).max(50)).max(50),
     
     images             : z.array(ImageUrlSchema),
     

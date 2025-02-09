@@ -97,7 +97,6 @@ export interface ProductDetail
             |'updatedAt'
             
             |'autoKeywords'
-            |'keywords'
         >
 {
     variantGroups : VariantGroupDetail[]

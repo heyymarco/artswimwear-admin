@@ -101,6 +101,7 @@ export const productDetailSelect = {
     
     excerpt        : true,
     description    : true,
+    keywords       : true,
     
     images         : true,
     

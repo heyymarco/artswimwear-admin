@@ -66,6 +66,9 @@ const usesInfoTabLayout = () => {
                 '"sWeight-label    "', 'auto',
                 '"sWeight-editor   "', 'auto',
                 '"................."', spacers.sm,
+                '"keywords-label   "', 'auto',
+                '"keywords-editor  "', 'auto',
+                '"................."', spacers.sm,
                 '"visibility-label "', 'auto',
                 '"visibility-editor"', 'auto',
                 '/',
@@ -81,6 +84,9 @@ const usesInfoTabLayout = () => {
                     '"................. ................."', spacers.sm,
                     '"price-label           sWeight-label"', 'auto',
                     '"price-editor         sWeight-editor"', 'auto',
+                    '"................. ................."', spacers.sm,
+                    '"keywords-label       keywords-label"', 'auto',
+                    '"keywords-editor     keywords-editor"', 'auto',
                     '"................. ................."', spacers.sm,
                     '"visibility-label   visibility-label"', 'auto',
                     '"visibility-editor visibility-editor"', 'auto',
@@ -109,6 +115,9 @@ const usesInfoTabLayout = () => {
             
             ...children('.sWeight.label'    , { gridArea: 'sWeight-label'     }),
             ...children('.sWeight.editor'   , { gridArea: 'sWeight-editor'    }),
+            
+            ...children('.keywords.label'   , { gridArea: 'keywords-label'    }),
+            ...children('.keywords.editor'  , { gridArea: 'keywords-editor'   }),
             
             ...children('.visibility.label' , { gridArea: 'visibility-label'  }),
             ...children('.visibility.editor', { gridArea: 'visibility-editor' }),

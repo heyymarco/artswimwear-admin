@@ -62,6 +62,9 @@ import {
     StockListEditor,
 }                           from '@/components/editors/StockListEditor'
 import {
+    KeywordEditor,
+}                           from '@/components/editors/KeywordEditor'
+import {
     VisibilityEditor,
 }                           from '@/components/editors/VisibilityEditor'
 import {
@@ -250,6 +253,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
             return null;
         } // try
     });
+    const [keywords        , setKeywords      ] = useState<string[]               >(model?.keywords       ?? []     );
     const [categories      , setCategories    ] = useState<Set<string>            >(() => new Set<string>(model?.categories));
     
     const draftDifferentialImages               = useDraftDifferentialImages();
@@ -452,6 +456,7 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                 shippingWeight : (updatePermissions.price       || addPermission) ? shippingWeight                                    : undefined,
                 images         : (updatePermissions.images      || addPermission) ? updatedImages                                     : undefined,
                 description    : (updatePermissions.description || addPermission) ? ((description?.toJSON?.() ?? description) as any) : undefined,
+                keywords       : (updatePermissions.description || addPermission) ? keywords                                          : undefined,
                 
                 variantGroups  : (variantGroups !== unmodifiedVariantGroups)      ? variantGroups                                     : undefined,
                 stocks         : (stocks        !== unmodifiedStocks       )      ? stocks.map(({value}) => value)                    : undefined,
@@ -702,6 +707,26 @@ const EditProductDialog = (props: EditProductDialogProps): JSX.Element|null => {
                         value={shippingWeight}
                         onChange={(value) => {
                             setShippingWeight(value);
+                            setIsModified(true);
+                        }}
+                    />
+                    
+                    <span className='keywords label'>Keywords:</span>
+                    <KeywordEditor
+                        // classes:
+                        className='keywords editor'
+                        
+                        
+                        
+                        // accessibilities:
+                        enabled={whenUpdate.description || whenAdd}
+                        
+                        
+                        
+                        // values:
+                        value={keywords}
+                        onChange={(value) => {
+                            setKeywords(value);
                             setIsModified(true);
                         }}
                     />

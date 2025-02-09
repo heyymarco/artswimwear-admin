@@ -249,6 +249,7 @@ You do not have the privilege to view the products.`
             
             excerpt,
             description,
+            keywords,
             
             images,
             
@@ -314,7 +315,7 @@ You do not have the privilege to add new product.`
                 }, { status: 403 }); // handled with error: forbidden
             }
             else {
-                if (!session.role?.product_ud && ((name !== undefined) || (path !== undefined) || (excerpt !== undefined) || (description !== undefined) || (categories !== undefined))) return Response.json({ error:
+                if (!session.role?.product_ud && ((name !== undefined) || (path !== undefined) || (excerpt !== undefined) || (description !== undefined) || (keywords !== undefined) || (categories !== undefined))) return Response.json({ error:
 `Access denied.
 
 You do not have the privilege to modify the product name, path, excerpt, description, and/or categories.`
@@ -581,6 +582,7 @@ You do not have the privilege to modify the product stock(s).`
                 
                 excerpt,
                 description : (description === null) ? Prisma.DbNull : description,
+                keywords,
                 
                 images,
                 
