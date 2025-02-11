@@ -144,8 +144,8 @@ export interface CheckoutState {
     
     
     // relation data:
-    shippingLabelList            : EntityState<ShippingLabelDetail> | undefined
-    shippingList                 : EntityState<ShippingPreview> | undefined
+    shippingLabelList            : EntityState<ShippingLabelDetail, string> | undefined
+    shippingList                 : EntityState<ShippingPreview, string> | undefined
     
     
     

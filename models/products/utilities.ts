@@ -625,7 +625,7 @@ export const convertCategoryDetailDataToCategoryDetail = async (selector: Return
         select : selector,
     });
     const subcategoryDetails = await convertCategoryDetailDataToCategoryDetail(selector, subcategoryDetailData, prismaTransaction);
-    const subcategoryListAdapter = createEntityAdapter<CategoryDetail>({
+    const subcategoryListAdapter = createEntityAdapter<CategoryDetail, string>({
         selectId : (subcategory) => subcategory.id,
     });
     const subcategoryListEntry = subcategoryListAdapter.addMany(subcategoryListAdapter.getInitialState(), subcategoryDetails);

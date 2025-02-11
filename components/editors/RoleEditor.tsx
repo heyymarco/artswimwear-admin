@@ -79,7 +79,7 @@ interface RoleEditorProps<TElement extends Element = HTMLElement>
         >>
 {
     // values:
-    valueOptions          ?: EntityState<RoleDetail>
+    valueOptions          ?: EntityState<RoleDetail, string>
     
     
     

@@ -1,6 +1,5 @@
 // redux:
 import {
-    type Dictionary,
     type EntityState,
     
     createEntityAdapter,
@@ -8,14 +7,11 @@ import {
 import {
     type QuerySubState,
     type BaseQueryFn,
+    type BaseEndpointDefinition,
     QueryStatus,
     
     createApi,
 }                           from '@reduxjs/toolkit/query/react'
-import {
-    type BaseEndpointDefinition,
-    type MutationLifecycleApi,
-}                           from '@reduxjs/toolkit/dist/query/endpointDefinitions'
 
 // models:
 import {
@@ -66,16 +62,16 @@ import {
 
 
 
-const shippingListAdapter             = createEntityAdapter<ShippingPreview>({
+const shippingListAdapter             = createEntityAdapter<ShippingPreview, string>({
     selectId : (shippingPreview) => shippingPreview.id,
 });
-const templateVariantGroupListAdapter = createEntityAdapter<TemplateVariantGroupDetail>({
+const templateVariantGroupListAdapter = createEntityAdapter<TemplateVariantGroupDetail, string>({
     selectId : (roleDetail) => roleDetail.id,
 });
-const roleListAdapter                 = createEntityAdapter<RoleDetail>({
+const roleListAdapter                 = createEntityAdapter<RoleDetail, string>({
     selectId : (roleDetail) => roleDetail.id,
 });
-const shippingLabelListAdapter        = createEntityAdapter<ShippingLabelDetail>({
+const shippingLabelListAdapter        = createEntityAdapter<ShippingLabelDetail, string>({
     selectId : (shippingLabelDetail) => shippingLabelDetail.id,
 });
 
@@ -328,7 +324,7 @@ export const apiSlice = createApi({
         
         
         
-        getTemplateVariantGroupList : builder.query<EntityState<TemplateVariantGroupDetail>, void>({
+        getTemplateVariantGroupList : builder.query<EntityState<TemplateVariantGroupDetail, string>, void>({
             query : () => ({
                 url    : 'products/template-variants',
                 method : 'GET',
@@ -386,7 +382,7 @@ export const apiSlice = createApi({
                 method : 'GET',
             }),
         }),
-        getShippingLabelRates       : builder.query<EntityState<ShippingLabelDetail>, ShippingLabelRequest>({
+        getShippingLabelRates       : builder.query<EntityState<ShippingLabelDetail, string>, ShippingLabelRequest>({
             query : (shippingLabelRequest) => ({
                 url    : 'orders/shipping-label',
                 method : 'POST',
@@ -444,7 +440,7 @@ export const apiSlice = createApi({
             invalidatesTags: ['DefaultShippingOriginData'],
         }),
         
-        getShippingList             : builder.query<EntityState<ShippingPreview>, void>({
+        getShippingList             : builder.query<EntityState<ShippingPreview, string>, void>({
             query : () => ({
                 url    : 'shippings',
                 method : 'GET',
@@ -527,7 +523,7 @@ export const apiSlice = createApi({
         
         
         
-        getRoleList                 : builder.query<EntityState<RoleDetail>, void>({
+        getRoleList                 : builder.query<EntityState<RoleDetail, string>, void>({
             query : () => ({
                 url    : 'roles',
                 method : 'GET',
@@ -713,15 +709,15 @@ export const {
 // utilities:
 const selectTotalFromData   = (data: unknown): number => {
     return (
-        ('ids' in (data as EntityState<unknown>|Pagination<unknown>))
-        ? (data as EntityState<unknown>).ids.length
+        ('ids' in (data as EntityState<unknown, string|number>|Pagination<unknown>))
+        ? (data as EntityState<unknown, string|number>).ids.length
         : (data as Pagination<unknown>).total
     );
 };
 const selectModelsFromData  = <TModel extends Model|string>(data: unknown): TModel[] => {
     const items = (
-        ('ids' in (data as EntityState<TModel>|Pagination<TModel>))
-        ? Object.values((data as EntityState<TModel>).entities).filter((entity) : entity is Exclude<typeof entity, undefined> => (entity !== undefined))
+        ('ids' in (data as EntityState<TModel, string|number>|Pagination<TModel>))
+        ? Object.values((data as EntityState<TModel, string|number>).entities).filter((entity) : entity is Exclude<typeof entity, undefined> => (entity !== undefined))
         : (data as Pagination<TModel>).entities
     );
     return items;
@@ -731,9 +727,9 @@ const selectIdFromModel     = <TModel extends Model|string>(model: TModel): stri
 };
 const selectIndexOfId       = <TModel extends Model|string>(data: unknown, id: string): number => {
     return (
-        ('ids' in (data as EntityState<TModel>|Pagination<TModel>))
+        ('ids' in (data as EntityState<TModel, string|number>|Pagination<TModel>))
         ? (
-            (data as EntityState<TModel>).ids
+            (data as EntityState<TModel, string|number>).ids
             .findIndex((searchId) =>
                 (searchId === id)
             )
@@ -776,7 +772,8 @@ const selectRangeFromArg    = (originalArg: unknown): { indexStart: number, inde
 interface GetQueryCachesOptions<TModel> {
     predicate ?: (originalArgs: unknown, data: TModel) => boolean
 }
-const getQueryCaches = <TModel, TQueryArg, TBaseQuery extends BaseQueryFn = BaseQueryFn>(api: MutationLifecycleApi<unknown, TBaseQuery, unknown, 'api'>, endpointName: keyof (typeof apiSlice)['endpoints'], options?: GetQueryCachesOptions<TModel>) => {
+export type Api = Parameters<Exclude<Parameters<Parameters<Parameters<typeof createApi>[0]['endpoints']>[0]['mutation']>[0]['onQueryStarted'], undefined>>[1]
+const getQueryCaches = <TModel, TQueryArg, TBaseQuery extends BaseQueryFn = BaseQueryFn>(api: Api, endpointName: keyof (typeof apiSlice)['endpoints'], options?: GetQueryCachesOptions<TModel>) => {
     // options
     const {
         predicate,
@@ -815,13 +812,13 @@ interface PaginationUpdateOptions<TModel extends Model|string>
         GetQueryCachesOptions<Pagination<TModel>>
 {
     providedMutatedModel ?: TModel
-    invalidatePageTag    ?: (tag: Parameters<typeof apiSlice.util.invalidateTags>[0][number], page: number) => string|number
+    invalidatePageTag    ?: (tag: Exclude<Parameters<typeof apiSlice.util.invalidateTags>[0][number], null|undefined>, page: number) => string|number
 }
-const cumulativeUpdatePaginationCache = async <TModel extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationLifecycleApi<TQueryArg, TBaseQuery, TModel, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getCategoryPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, updateType: PaginationUpdateType, invalidateTag: Parameters<typeof apiSlice.util.invalidateTags>[0][number], options?: PaginationUpdateOptions<TModel>) => {
+const cumulativeUpdatePaginationCache = async <TModel extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: Api, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getCategoryPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, updateType: PaginationUpdateType, invalidateTag: Exclude<Parameters<typeof apiSlice.util.invalidateTags>[0][number], null|undefined>, options?: PaginationUpdateOptions<TModel>) => {
     // options
     const {
         providedMutatedModel,
-        invalidatePageTag = (tag: Parameters<typeof apiSlice.util.invalidateTags>[0][number], page: number) => {
+        invalidatePageTag = ((tag, page) => {
             if (typeof(tag) === 'string') {
                 return page; // the tag doesn't have id => just use page number
             }
@@ -829,7 +826,7 @@ const cumulativeUpdatePaginationCache = async <TModel extends Model|string, TQue
                 const { id } = tag;
                 return `${id}:${page}`; // merges tag's id and page number
             } // if
-        },
+        }) satisfies PaginationUpdateOptions<TModel>['invalidatePageTag'],
     } = options ?? {};
     
     
@@ -838,7 +835,7 @@ const cumulativeUpdatePaginationCache = async <TModel extends Model|string, TQue
     const mutatedModel : TModel|undefined = (providedMutatedModel !== undefined) ? providedMutatedModel : await (async (): Promise<TModel|undefined> => {
         try {
             const { data: mutatedModel } = await api.queryFulfilled;
-            return mutatedModel;
+            return mutatedModel as TModel|undefined;
         }
         catch {
             return undefined;
@@ -1207,11 +1204,11 @@ type EntityUpdateType =
     |'DELETE'
 interface EntityUpdateOptions<TModel extends Model|string>
     extends
-        GetQueryCachesOptions<Dictionary<TModel>>
+        GetQueryCachesOptions<Record<string|number, TModel>>
 {
     providedMutatedModel ?: TModel
 }
-const cumulativeUpdateEntityCache     = async <TModel extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: MutationLifecycleApi<TQueryArg, TBaseQuery, TModel, 'api'>, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getTemplateVariantGroupList'|'getRoleList'>, updateType: EntityUpdateType, invalidateTag: Parameters<typeof apiSlice.util.invalidateTags>[0][number], options?: EntityUpdateOptions<TModel>) => {
+const cumulativeUpdateEntityCache     = async <TModel extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: Api, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getTemplateVariantGroupList'|'getRoleList'>, updateType: EntityUpdateType, invalidateTag: Exclude<Parameters<typeof apiSlice.util.invalidateTags>[0][number], null|undefined>, options?: EntityUpdateOptions<TModel>) => {
     // options
     const {
         providedMutatedModel,
@@ -1223,7 +1220,7 @@ const cumulativeUpdateEntityCache     = async <TModel extends Model|string, TQue
     const mutatedModel : TModel|undefined = (providedMutatedModel !== undefined) ? providedMutatedModel : await (async (): Promise<TModel|undefined> => {
         try {
             const { data: mutatedModel } = await api.queryFulfilled;
-            return mutatedModel;
+            return mutatedModel as TModel|undefined;
         }
         catch {
             return undefined;
@@ -1235,7 +1232,7 @@ const cumulativeUpdateEntityCache     = async <TModel extends Model|string, TQue
     
     
     // find related TModel data(s):
-    const collectionQueryCaches = getQueryCaches<Dictionary<TModel>, TQueryArg, TBaseQuery>(api, endpointName, options);
+    const collectionQueryCaches = getQueryCaches<Record<string|number, TModel>, TQueryArg, TBaseQuery>(api, endpointName, options);
     
     
     
@@ -1277,8 +1274,9 @@ const cumulativeUpdateEntityCache     = async <TModel extends Model|string, TQue
                 apiSlice.util.updateQueryData(endpointName, originalArgs as any, (data) => {
                     if (selectIndexOfId<TModel>(data, mutatedId) >= 0) { // is FOUND
                         // UPDATE the existing model:
-                        const currentModel = (data.entities as Dictionary<TModel>)[mutatedId];
-                        (data.entities as Dictionary<TModel>)[mutatedId] = (
+                        const test = data.entities;
+                        const currentModel = (data.entities as unknown as Record<string|number, TModel>)[mutatedId];
+                        (data.entities as unknown as Record<string|number, TModel>)[mutatedId] = (
                             ((typeof(currentModel) === 'object') && (typeof(mutatedModel) === 'object'))
                             ? {
                                 ...currentModel,
@@ -1289,10 +1287,10 @@ const cumulativeUpdateEntityCache     = async <TModel extends Model|string, TQue
                     }
                     else {
                         // INSERT the new model:
-                        (data.entities as Dictionary<TModel>) = {
+                        (data.entities as unknown as Record<string|number, TModel>) = {
                             [mutatedId] : mutatedModel, // place the inserted model to the first property
-                            ...data.entities as Dictionary<TModel>,
-                        } satisfies Dictionary<TModel>;
+                            ...data.entities as unknown as Record<string|number, TModel>,
+                        } satisfies Record<string|number, TModel>;
                         
                         
                         
@@ -1326,7 +1324,7 @@ const cumulativeUpdateEntityCache     = async <TModel extends Model|string, TQue
             api.dispatch(
                 apiSlice.util.updateQueryData(endpointName, originalArgs as any, (data) => {
                     // REMOVE the deleted model:
-                    delete (data.entities as Dictionary<TModel>)[mutatedId];
+                    delete (data.entities as unknown as Record<string|number, TModel>)[mutatedId];
                     
                     
                     

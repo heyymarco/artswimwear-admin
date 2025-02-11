@@ -171,7 +171,7 @@ export const sendConfirmationEmail = async (orderId: string, emailConfig: EmailC
                     },
                     // enabled: true
                 });
-                const countryListAdapter = createEntityAdapter<CountryPreview>({
+                const countryListAdapter = createEntityAdapter<CountryPreview, string>({
                     selectId : (countryEntry) => countryEntry.code,
                 });
                 const countryList = countryListAdapter.addMany(

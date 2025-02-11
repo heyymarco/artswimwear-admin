@@ -71,6 +71,7 @@ export const SimpleEditCustomerDialog = (props: SimpleEditCustomerDialogProps) =
     
     
     // jsx:
+    const test = useUpdateOrder();
     return (
         <SimpleEditModelDialog<CustomerModel>
             // other props:
@@ -85,7 +86,7 @@ export const SimpleEditCustomerDialog = (props: SimpleEditCustomerDialogProps) =
             
             
             // stores:
-            useUpdateModel={useUpdateOrder as () => UpdateModelApi<CustomerModel>}
+            useUpdateModel={useUpdateOrder as unknown as () => UpdateModelApi<CustomerModel>}
         />
     );
 };

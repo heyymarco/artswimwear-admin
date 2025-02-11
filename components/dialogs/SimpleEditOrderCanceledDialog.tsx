@@ -98,7 +98,7 @@ export const SimpleEditOrderCanceledDialog = (props: SimpleEditOrderCanceledDial
             
             
             // stores:
-            useUpdateModel={useUpdateOrder as () => UpdateModelApi<OrderCanceledModel>}
+            useUpdateModel={useUpdateOrder as unknown as () => UpdateModelApi<OrderCanceledModel>}
         />
     );
 };
