@@ -26,6 +26,7 @@
     "@heymarco/events": "^6.7.1",
     "@heymarco/image": "^7.0.0",
     "@heymarco/input-dropdown-editor": "^7.1.0",
+    "@heymarco/list-editor": "^7.0.2",
     "@heymarco/loading-bar": "^6.5.0",
     "@heymarco/name-editor": "^7.0.0",
     "@heymarco/next-auth": "^7.0.6",
