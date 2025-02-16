@@ -160,7 +160,7 @@ const SignInMenu = (props: SignInMenuProps): JSX.Element|null => {
         
         
         if (isSignedOut) {
-            router.push(signInPath, { scroll: false }); // goto signIn page, do not scroll the page because it's an interceptor signIn dialog
+            router.push(signInPath, { scroll: false }); // goto signIn page // do not scroll the page because it triggers the signIn_dialog interceptor
             toggleList(false); // collapse the <Navbar> manually
         }
         else if (isSignedIn) {
@@ -197,7 +197,7 @@ const SignInMenu = (props: SignInMenuProps): JSX.Element|null => {
                 newShownMenu.collapseEndEvent().then((event) => {
                     switch (event.data) {
                         case 'editProfile':
-                            router.push('/profile'); // goto admin's profile page
+                            router.push('/profile'); // goto admin's profile page // may scroll the page because it navigates to admin's profile page
                             break;
                         
                         case 'signOut':
