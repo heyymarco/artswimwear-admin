@@ -15,19 +15,46 @@ import {
 import '@/theme.config'
 import './layout-styles.scss'
 
+// react:
+import {
+    // react:
+    default as React,
+}                           from 'react'
+
+// redux:
+import {
+    Provider,
+}                           from 'react-redux'
+
 // next-auth:
 import {
     NextAuthSessionProvider,
 }                           from './NextAuthSessionProvider'
 
-import { Header } from './Header'
-import { Footer } from './Footer'
+// reusable-ui components:
+import {
+    // utility-components:
+    FetchErrorMessage,
+    DialogMessageProvider,
+}                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
-import { store } from '@/store/store'
-import { Provider } from 'react-redux'
+// stores:
+import {
+    store,
+}                           from '@/store/store'
 
-import { WEBSITE_LANGUAGE } from '@/website.config'
-import { FetchErrorMessage, DialogMessageProvider } from '@reusable-ui/components'
+// internal components:
+import {
+    Header,
+}                           from './Header'
+import {
+    Scroller,
+}                           from './Scroller'
+
+// configs:
+import {
+    WEBSITE_LANGUAGE,
+}                           from '@/website.config'
 
 
 
@@ -114,9 +141,9 @@ function RootLayoutContentInternal({
         <>
             <Header />
             
-            {children}
-            
-            <Footer />
+            <Scroller>
+                {children}
+            </Scroller>
         </>
     );
 }
