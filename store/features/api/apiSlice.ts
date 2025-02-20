@@ -774,7 +774,7 @@ interface GetQueryCachesOptions<TModel> {
 }
 export type Api = Parameters<Exclude<Parameters<Parameters<Parameters<typeof createApi>[0]['endpoints']>[0]['mutation']>[0]['onQueryStarted'], undefined>>[1]
 const getQueryCaches = <TModel, TQueryArg, TBaseQuery extends BaseQueryFn = BaseQueryFn>(api: Api, endpointName: keyof (typeof apiSlice)['endpoints'], options?: GetQueryCachesOptions<TModel>) => {
-    // options
+    // options:
     const {
         predicate,
     } = options ?? {};
@@ -815,7 +815,7 @@ interface PaginationUpdateOptions<TModel extends Model|string>
     invalidatePageTag    ?: (tag: Exclude<Parameters<typeof apiSlice.util.invalidateTags>[0][number], null|undefined>, page: number) => string|number
 }
 const cumulativeUpdatePaginationCache = async <TModel extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: Api, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getProductPage'|'getCategoryPage'|'getOrderPage'|'getShippingPage'|'getAdminPage'>, updateType: PaginationUpdateType, invalidateTag: Exclude<Parameters<typeof apiSlice.util.invalidateTags>[0][number], null|undefined>, options?: PaginationUpdateOptions<TModel>) => {
-    // options
+    // options:
     const {
         providedMutatedModel,
         invalidatePageTag = ((tag, page) => {
@@ -855,19 +855,6 @@ const cumulativeUpdatePaginationCache = async <TModel extends Model|string, TQue
     if (lastCollectionQueryCache === undefined) {
         // there's no queryCaches to update => nothing to do
         return;
-    } // if
-    const validTotalModels               = selectTotalFromData(lastCollectionQueryCache.data);
-    const hasInvalidCollectionQueryCache = collectionQueryCaches.some(({ data }) =>
-        (selectTotalFromData(data) !== validTotalModels)
-    );
-    if (hasInvalidCollectionQueryCache) {
-        // the queryCaches has a/some inconsistent data => panic => clear all the caches and (may) trigger the rtk to re-fetch
-        
-        // clear caches:
-        api.dispatch(
-            apiSlice.util.invalidateTags([invalidateTag])
-        );
-        return; // panic => cannot further reconstruct
     } // if
     
     
@@ -1004,8 +991,6 @@ const cumulativeUpdatePaginationCache = async <TModel extends Model|string, TQue
         
         // INSERT the new_model at the BEGINNING of the list:
         mergedModelList.unshift(mutatedModel);
-        // re-calculate the total models:
-        const newTotalModels = validTotalModels + 1;
         
         
         
@@ -1037,7 +1022,7 @@ const cumulativeUpdatePaginationCache = async <TModel extends Model|string, TQue
                         
                         
                         // update the total data:
-                        data.total = newTotalModels;
+                        data.total++;
                         
                         
                         
@@ -1136,8 +1121,6 @@ const cumulativeUpdatePaginationCache = async <TModel extends Model|string, TQue
         
         // REMOVE the del_model at the DELETED_INDEX of the list:
         mergedModelList.splice(indexDeleted, 1);
-        // re-calculate the total models:
-        const newTotalModels = validTotalModels - 1;
         
         
         
@@ -1182,7 +1165,7 @@ const cumulativeUpdatePaginationCache = async <TModel extends Model|string, TQue
                     
                     
                     // update the total data:
-                    data.total = newTotalModels;
+                    data.total--;
                     
                     
                     
@@ -1209,7 +1192,7 @@ interface EntityUpdateOptions<TModel extends Model|string>
     providedMutatedModel ?: TModel
 }
 const cumulativeUpdateEntityCache     = async <TModel extends Model|string, TQueryArg, TBaseQuery extends BaseQueryFn>(api: Api, endpointName: Extract<keyof (typeof apiSlice)['endpoints'], 'getTemplateVariantGroupList'|'getRoleList'>, updateType: EntityUpdateType, invalidateTag: Exclude<Parameters<typeof apiSlice.util.invalidateTags>[0][number], null|undefined>, options?: EntityUpdateOptions<TModel>) => {
-    // options
+    // options:
     const {
         providedMutatedModel,
     } = options ?? {};
@@ -1240,19 +1223,6 @@ const cumulativeUpdateEntityCache     = async <TModel extends Model|string, TQue
     if (lastCollectionQueryCache === undefined) {
         // there's no queryCaches to update => nothing to do
         return;
-    } // if
-    const validTotalModels               = selectTotalFromData(lastCollectionQueryCache.data);
-    const hasInvalidCollectionQueryCache = collectionQueryCaches.some(({ data }) =>
-        (selectTotalFromData(data) !== validTotalModels)
-    );
-    if (hasInvalidCollectionQueryCache) {
-        // the queryCaches has a/some inconsistent data => panic => clear all the caches and (may) trigger the rtk to re-fetch
-        
-        // clear caches:
-        api.dispatch(
-            apiSlice.util.invalidateTags([invalidateTag])
-        );
-        return; // panic => cannot further reconstruct
     } // if
     
     
