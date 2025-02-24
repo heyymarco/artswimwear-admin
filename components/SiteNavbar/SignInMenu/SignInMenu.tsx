@@ -65,6 +65,9 @@ import {
     SignInDropdownResult,
     SignInDropdown,
 }                           from '../SignInDropdown'
+import {
+    NotifyDialog,
+}                           from '@/components/dialogs/NotifyDialog'
 
 // internals:
 import {
@@ -152,7 +155,7 @@ const SignInMenu = (props: SignInMenuProps): JSX.Element|null => {
     
     // handlers:
     const router = useRouter();
-    const pathname = usePathname();
+    const mayInterceptedPathname = usePathname();
     const handleClick = useEvent<React.MouseEventHandler<HTMLElement>>((event) => {
         event.preventDefault();  // prevent the `href='/signin'` to HARD|SOFT navigate
         event.stopPropagation(); // prevents the <Navbar> from auto collapsing, we'll collapse the <Navbar> manually
@@ -194,7 +197,7 @@ const SignInMenu = (props: SignInMenuProps): JSX.Element|null => {
                 newShownMenu.collapseStartEvent().then(() => {
                     setShownMenu(null);
                 });
-                newShownMenu.collapseEndEvent().then((event) => {
+                newShownMenu.collapseEndEvent().then(async (event): Promise<void> => {
                     switch (event.data) {
                         case 'editProfile':
                             router.push('/profile', { scroll: true }); // goto admin's profile page // may scroll the page because it navigates to admin's profile page
@@ -202,7 +205,23 @@ const SignInMenu = (props: SignInMenuProps): JSX.Element|null => {
                         
                         case 'signOut':
                             setIsLoading(true); // the `sessionStatus === 'loading'` is not quite reliable, so we use additional loading state
-                            signOut({ redirect: false, callbackUrl: pathname }); // when signed in back, redirects to current url
+                            
+                            /*
+                                If you need to redirect to another page but you want to avoid a page reload,
+                                you can try:
+                                ```ts
+                                    const data = await signOut({redirect: false, callbackUrl: '/foo'});
+                                ```
+                                where `data.url` is the validated URL you can redirect the user to without any flicker by using Next.js's `useRouter().push(data.url)`
+                            */
+                            await signOut({ redirect: false, callbackUrl: mayInterceptedPathname });
+                            showDialog<unknown>(
+                                <NotifyDialog theme='success'>
+                                    <p>
+                                        You've successfully signed out.
+                                    </p>
+                                </NotifyDialog>
+                            );
                             break;
                     } // switch
                     toggleList(false); // collapse the <Navbar> manually
@@ -243,7 +262,7 @@ const SignInMenu = (props: SignInMenuProps): JSX.Element|null => {
             
             
             // states:
-            active={(isBusy || pathname?.startsWith(signInPath) || !!shownMenu) ? true : undefined}
+            active={(isBusy || mayInterceptedPathname?.startsWith(signInPath) || !!shownMenu) ? true : undefined}
             
             
             
