@@ -218,7 +218,7 @@ const SignInMenu = (props: SignInMenuProps): JSX.Element|null => {
                             showDialog<unknown>(
                                 <NotifyDialog theme='success'>
                                     <p>
-                                        You've successfully signed out.
+                                        You&apos;ve successfully signed out.
                                     </p>
                                 </NotifyDialog>
                             );
