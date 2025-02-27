@@ -15,24 +15,26 @@ import {
     flattenChildren,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
-// internals:
-import type {
-    CollapsibleSuspendableProps,
+// types:
+import {
+    type CollapsibleSuspendableProps,
 }                           from './types'
+
+// internal components:
 import {
     // react components:
-    SuspendableWithSuspense,
-}                           from './SuspendableWithSuspense'
+    SuspendableWithDelay,
+}                           from './SuspendableWithDelay'
 
 
 
 // react components:
 export interface CollapsibleSuspenseProps {
     // components:
-    children : React.ReactNode
+    children ?: React.ReactNode
 }
 const CollapsibleSuspense = (props: CollapsibleSuspenseProps): JSX.Element|null => {
-    // rest props:
+    // props:
     const {
         // components:
         children,
@@ -43,47 +45,23 @@ const CollapsibleSuspense = (props: CollapsibleSuspenseProps): JSX.Element|null 
     // children:
     const wrappedChildren = useMemo<React.ReactNode[]>(() =>
         flattenChildren(children)
-        .map<React.ReactNode>((collapsibleSuspendable, childIndex) => {
+        .map<React.ReactNode>((suspendableComponent, childIndex) => {
             // conditions:
-            if (!React.isValidElement<CollapsibleSuspendableProps>(collapsibleSuspendable)) return collapsibleSuspendable; // not a <CollapsibleSuspendableProps> => place it anyway
-            
-            
-            
-            // props:
-            const suspendableProps = collapsibleSuspendable.props;
+            if (!React.isValidElement<CollapsibleSuspendableProps>(suspendableComponent)) return suspendableComponent; // not a <CollapsibleSuspendableProps> => place it anyway
             
             
             
             // jsx:
             return (
-                /* wrap collapsibleSuspendable with <SuspendableWithSuspense> */
-                <SuspendableWithSuspense
-                    // other props:
-                    {...suspendableProps} // steals all collapsibleSuspendable's props, so the <Owner> can recognize the <SuspendableWithSuspense> as <TheirChild>
-                    
-                    
-                    
+                /* wrap suspendableComponent with <SuspendableWithDelay> */
+                <SuspendableWithDelay
                     // identifiers:
-                    key={collapsibleSuspendable.key ?? childIndex}
+                    key={suspendableComponent.key ?? childIndex}
                     
                     
                     
                     // components:
-                    suspendableComponent={
-                        // clone collapsibleSuspendable element with (almost) blank props:
-                        <collapsibleSuspendable.type
-                            // identifiers:
-                            key={collapsibleSuspendable.key}
-                            
-                            
-                            
-                            //#region restore conflicting props
-                            {...{
-                                ...(('suspendableComponent' in suspendableProps) ? { suspendableComponent : suspendableProps.suspendableComponent } : undefined),
-                            }}
-                            //#endregion restore conflicting props
-                        />
-                    }
+                    suspendableComponent={suspendableComponent}
                 />
             );
         })
@@ -96,9 +74,9 @@ const CollapsibleSuspense = (props: CollapsibleSuspenseProps): JSX.Element|null 
         <>
             {wrappedChildren}
         </>
-    )
+    );
 };
 export {
-    CollapsibleSuspense,
-    CollapsibleSuspense as default,
+    CollapsibleSuspense,            // named export for readibility
+    CollapsibleSuspense as default, // default export to support React.lazy
 }
