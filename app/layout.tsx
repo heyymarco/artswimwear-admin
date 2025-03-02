@@ -45,10 +45,12 @@ export const metadata: Metadata = {
 export default function RootLayout({
     // children:
     header,
+    footer,
     children,
 }: {
     // children:
     header   : React.ReactNode
+    footer   : React.ReactNode
     children : React.ReactNode
 }): JSX.Element|null {
     // jsx:
@@ -56,6 +58,7 @@ export default function RootLayout({
         <RootLayoutContent
             // children:
             header={header}
+            footer={footer}
         >
             {children}
         </RootLayoutContent>

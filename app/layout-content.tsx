@@ -38,15 +38,20 @@ import {
     DialogMessageProvider,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
+// internal components:
+import {
+    Scroller,
+}                           from './Scroller'
+
 // stores:
 import {
     store,
 }                           from '@/store/store'
 
-// internal components:
+// states:
 import {
-    Scroller,
-}                           from './Scroller'
+    ScrollerStateProvider,
+}                           from '@/states/scrollerState'
 
 // configs:
 import {
@@ -104,10 +109,12 @@ const fetchErrorMessageDefault : FetchErrorMessage = ({isRequestError, isClientE
 export function RootLayoutContent({
     // children:
     header,
+    footer,
     children,
 }: {
     // children:
     header   : React.ReactNode
+    footer   : React.ReactNode
     children : React.ReactNode
 }): JSX.Element|null {
     // jsx:
@@ -126,6 +133,7 @@ export function RootLayoutContent({
                             <RootLayoutContentInternal
                                 // children:
                                 header={header}
+                                footer={footer}
                             >
                                 {children}
                             </RootLayoutContentInternal>
@@ -139,10 +147,12 @@ export function RootLayoutContent({
 function RootLayoutContentInternal({
     // children:
     header,
+    footer,
     children,
 }: {
     // children:
     header   : React.ReactNode
+    footer   : React.ReactNode
     children : React.ReactNode
 }): JSX.Element|null {
     // jsx:
@@ -150,9 +160,13 @@ function RootLayoutContentInternal({
         <>
             {header}
             
-            <Scroller>
-                {children}
-            </Scroller>
+            <ScrollerStateProvider>
+                <Scroller>
+                    {children}
+                </Scroller>
+                
+                {footer}
+            </ScrollerStateProvider>
         </>
     );
 }
