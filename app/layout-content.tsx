@@ -45,9 +45,6 @@ import {
 
 // internal components:
 import {
-    Header,
-}                           from './Header'
-import {
     Scroller,
 }                           from './Scroller'
 
@@ -103,11 +100,16 @@ const fetchErrorMessageDefault : FetchErrorMessage = ({isRequestError, isClientE
 
 
 
+// react components:
 export function RootLayoutContent({
+    // children:
+    header,
     children,
 }: {
+    // children:
+    header   : React.ReactNode
     children : React.ReactNode
-}) {
+}): JSX.Element|null {
     // jsx:
     return (
         <html lang={WEBSITE_LANGUAGE}>
@@ -121,7 +123,10 @@ export function RootLayoutContent({
                         <DialogMessageProvider
                             fetchErrorMessageDefault={fetchErrorMessageDefault}
                         >
-                            <RootLayoutContentInternal>
+                            <RootLayoutContentInternal
+                                // children:
+                                header={header}
+                            >
                                 {children}
                             </RootLayoutContentInternal>
                         </DialogMessageProvider>
@@ -132,14 +137,18 @@ export function RootLayoutContent({
     );
 }
 function RootLayoutContentInternal({
+    // children:
+    header,
     children,
 }: {
+    // children:
+    header   : React.ReactNode
     children : React.ReactNode
 }): JSX.Element|null {
     // jsx:
     return (
         <>
-            <Header />
+            {header}
             
             <Scroller>
                 {children}

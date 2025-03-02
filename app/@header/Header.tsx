@@ -1,8 +1,12 @@
-import { SiteNavbar } from '@/components/SiteNavbar'
+// private components:
+import {
+    SiteNavbar,
+}                           from '@/components/SiteNavbar'
 
 
 
-export const Header = () => {
+export const Header = (): JSX.Element|null => {
+    // jsx:
     return (
         <header className='siteHeader'>
             {/* <Suspense fallback={
